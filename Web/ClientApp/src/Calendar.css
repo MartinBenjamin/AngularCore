@@ -1,0 +1,59 @@
+﻿table.calendar
+{
+    border-collapse: collapse;
+    table-layout: fixed;
+    text-align: center;
+    margin: 0px;
+}
+
+table.calendar col
+{
+    width: 18px;
+}
+
+table.calendar > tbody > tr > td
+{
+    height: 18px;
+    padding: 0px;
+    border: none;
+    color: #666;
+}
+
+table.calendar > tbody > tr.month > td
+{
+    background-color: #54789e;
+    color: #fff;
+    font-weight: bold;
+}
+
+table.calendar > tbody.calendarDays > tr > td
+{
+    cursor: pointer;
+    border: 1px solid #ccf;
+    background-color: #ccc;
+}
+
+table.calendar > tbody.calendarDays > tr > td.current
+{
+    background-color: #fff;
+}
+
+table.popUpCalendar
+{
+    border-collapse: separate;
+    border-spacing: 2px;
+    border: 1px solid #ccf;
+    background-color: #fff;
+    font-size: smaller;
+}
+
+table.popUpCalendar > tbody > tr > td
+{
+    border: 0px;
+    padding: 0px;
+}
+
+table.popUpCalendar > tbody > tr > td > input[type=button]
+{
+    margin: 0px;
+}
