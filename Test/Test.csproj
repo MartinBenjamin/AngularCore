@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.9.3" />
+    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="NHibernate" Version="5.2.5" />
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.111" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CommonDomainObjects.Mapping\CommonDomainObjects.Mapping.csproj" />
+    <ProjectReference Include="..\CommonDomainObjects\CommonDomainObjects.csproj" />
+    <ProjectReference Include="..\Log4NetIntegration\Log4NetIntegration.csproj" />
+    <ProjectReference Include="..\NHibernateIntegration\NHibernateIntegration.csproj" />
+    <ProjectReference Include="..\Peg\Peg.csproj" />
+    <ProjectReference Include="..\Process\Process.csproj" />
+    <ProjectReference Include="..\QuartzIntegration\QuartzIntegration.csproj" />
+    <ProjectReference Include="..\Service\Service.csproj" />
+  </ItemGroup>
+
+</Project>
