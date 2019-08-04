@@ -25,6 +25,20 @@ namespace Test
 
         public abstract TNamed Create(string name);
 
+        [Test]
+        public void Get()
+        {
+            var named = Create("ABC");
+            Assert.That(named, Is.Not.Null);
+
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<INamedService<TId, TNamed>>();
+                var retrieved = service.Get(named.Id);
+                Assert.That(retrieved, Is.EqualTo(named));
+            }
+        }
+
         [TestCaseSource("NameFragmentTestCases")]
         public void FindForNameFragment(
             string name,
