@@ -4,14 +4,14 @@ using NHibernate;
 using NHibernate.Tool.hbm2ddl;
 using NHibernateIntegration;
 using NUnit.Framework;
+using Service;
 using System.IO;
 
 namespace Test
 {
     [TestFixture]
-    public class TestCountryService: TestNamedService<string, Country>
+    public class TestCountryService: TestNamedService<string, Country, NamedFilters>
     {
-
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {

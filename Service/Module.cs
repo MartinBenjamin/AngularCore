@@ -10,8 +10,8 @@ namespace Service
             )
         {
             builder
-                .RegisterType<NamedService<string, Country>>()
-                .As<INamedService<string, Country>>();
+                .RegisterType<NamedService<string, Country, NamedFilters>>()
+                .As<INamedService<string, Country, NamedFilters>>();
         }
     }
 }

@@ -9,10 +9,12 @@ namespace Service
         public int?   MaxResults   { get; set; }
     }
 
-    public interface INamedService<TId, out TNamed> where TNamed: Named<TId>
+    public interface INamedService<TId, out TNamed, TFilters> 
+        where TNamed: Named<TId>
+        where TFilters: NamedFilters
     {
         TNamed Get(TId id);
 
-        IEnumerable<TNamed> Find(NamedFilters filters);
+        IEnumerable<TNamed> Find(TFilters filters);
     }
 }

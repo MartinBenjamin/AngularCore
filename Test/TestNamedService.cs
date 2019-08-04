@@ -8,7 +8,9 @@ using System.Linq;
 
 namespace Test
 {
-    public abstract class TestNamedService<TId, TNamed> where TNamed: Named<TId>
+    public abstract class TestNamedService<TId, TNamed, TFilters>
+        where TNamed: Named<TId>
+        where TFilters: NamedFilters, new ()
     {
         private const string _listenerName = "TestListener";
         protected IContainer _container;
@@ -33,7 +35,7 @@ namespace Test
 
             using(var scope = _container.BeginLifetimeScope())
             {
-                var service = scope.Resolve<INamedService<TId, TNamed>>();
+                var service = scope.Resolve<INamedService<TId, TNamed, TFilters>>();
                 var retrieved = service.Get(named.Id);
                 Assert.That(retrieved, Is.EqualTo(named));
             }
@@ -51,9 +53,9 @@ namespace Test
 
             using(var scope = _container.BeginLifetimeScope())
             {
-                var service = scope.Resolve<INamedService<TId, TNamed>>();
+                var service = scope.Resolve<INamedService<TId, TNamed, TFilters>>();
                 var result = service.Find(
-                    new NamedFilters
+                    new TFilters
                     {
                         NameFragment = nameFragment
                     });
@@ -121,6 +123,5 @@ namespace Test
                 return testCases;
             }
         }
-
     }
 }
