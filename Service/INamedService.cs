@@ -9,7 +9,7 @@ namespace Service
         public int?   MaxResults   { get; set; }
     }
 
-    public interface INamedService<TId, TNamed> where TNamed: Named<TId>
+    public interface INamedService<TId, out TNamed> where TNamed: Named<TId>
     {
         TNamed Get(TId id);
 
