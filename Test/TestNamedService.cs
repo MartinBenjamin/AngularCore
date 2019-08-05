@@ -5,6 +5,7 @@ using Service;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Test
 {
@@ -28,7 +29,7 @@ namespace Test
         public abstract TNamed Create(string name);
 
         [Test]
-        public void Get()
+        public async Task Get()
         {
             var named = Create("ABC");
             Assert.That(named, Is.Not.Null);
@@ -36,13 +37,13 @@ namespace Test
             using(var scope = _container.BeginLifetimeScope())
             {
                 var service = scope.Resolve<INamedService<TId, TNamed, TNamedFilters>>();
-                var retrieved = service.GetAsync(named.Id).GetAwaiter().GetResult();
-                Assert.That(retrieved, Is.EqualTo(named));
+                await service.GetAsync(named.Id).ContinueWith(
+                    retrieved => Assert.That(retrieved.Result, Is.EqualTo(named)));
             }
         }
 
         [TestCaseSource("NameFragmentTestCases")]
-        public void FindForNameFragment(
+        public async Task FindForNameFragment(
             string name,
             string nameFragment,
             bool   contains
@@ -54,12 +55,12 @@ namespace Test
             using(var scope = _container.BeginLifetimeScope())
             {
                 var service = scope.Resolve<INamedService<TId, TNamed, TNamedFilters>>();
-                var result = service.FindAsync(
+                await service.FindAsync(
                     new TNamedFilters
                     {
                         NameFragment = nameFragment
-                    }).GetAwaiter().GetResult();
-                Assert.That(result.Contains(named), Is.EqualTo(contains));
+                    }).ContinueWith(
+                    result => Assert.That(result.Result.Contains(named), Is.EqualTo(contains)));
             }
         }
 
