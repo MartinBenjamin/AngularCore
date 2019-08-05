@@ -6,9 +6,9 @@ using System.Text.RegularExpressions;
 
 namespace Service
 {
-    public class NamedService<TId, TNamed, TFilters>: INamedService<TId, TNamed, TFilters>
+    public class NamedService<TId, TNamed, TNamedFilters>: INamedService<TId, TNamed, TNamedFilters>
         where TNamed: Named<TId>
-        where TFilters: NamedFilters
+        where TNamedFilters: NamedFilters
     {
         private static readonly Regex _escaped = new Regex(
             "[%_[]",
@@ -23,7 +23,7 @@ namespace Service
             _session = session;
         }
 
-        TNamed INamedService<TId, TNamed, TFilters>.Get(
+        TNamed INamedService<TId, TNamed, TNamedFilters>.Get(
             TId id
             )
         {
@@ -32,8 +32,8 @@ namespace Service
                 id).UniqueResult<TNamed>();
         }
 
-        IEnumerable<TNamed> INamedService<TId, TNamed, TFilters>.Find(
-            TFilters filters
+        IEnumerable<TNamed> INamedService<TId, TNamed, TNamedFilters>.Find(
+            TNamedFilters filters
             )
         {
             return CreateCriteria(
@@ -61,8 +61,8 @@ namespace Service
         }
 
         protected virtual ICriteria CreateCriteria(
-            ISession session,
-            TFilters filters
+            ISession      session,
+            TNamedFilters filters
             )
         {
             var criteria = CreateCriteria(session);
