@@ -36,7 +36,7 @@ namespace Test
             using(var scope = _container.BeginLifetimeScope())
             {
                 var service = scope.Resolve<INamedService<TId, TNamed, TNamedFilters>>();
-                var retrieved = service.Get(named.Id);
+                var retrieved = service.GetAsync(named.Id).GetAwaiter().GetResult();
                 Assert.That(retrieved, Is.EqualTo(named));
             }
         }
@@ -54,11 +54,11 @@ namespace Test
             using(var scope = _container.BeginLifetimeScope())
             {
                 var service = scope.Resolve<INamedService<TId, TNamed, TNamedFilters>>();
-                var result = service.Find(
+                var result = service.FindAsync(
                     new TNamedFilters
                     {
                         NameFragment = nameFragment
-                    });
+                    }).GetAwaiter().GetResult();
                 Assert.IsNotNull(service);
                 Assert.That(result.Contains(named), Is.EqualTo(contains));
             }

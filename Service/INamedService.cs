@@ -1,5 +1,6 @@
 ﻿using CommonDomainObjects;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Service
 {
@@ -9,12 +10,12 @@ namespace Service
         public int?   MaxResults   { get; set; }
     }
 
-    public interface INamedService<TId, out TNamed, TNamedFilters> 
+    public interface INamedService<TId, TNamed, TNamedFilters> 
         where TNamed: Named<TId>
         where TNamedFilters: NamedFilters
     {
-        TNamed Get(TId id);
+        Task<TNamed> GetAsync(TId id);
 
-        IEnumerable<TNamed> Find(TNamedFilters filters);
+        Task<IEnumerable<TNamed>> FindAsync(TNamedFilters filters);
     }
 }
