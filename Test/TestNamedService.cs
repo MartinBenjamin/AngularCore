@@ -59,7 +59,6 @@ namespace Test
                     {
                         NameFragment = nameFragment
                     }).GetAwaiter().GetResult();
-                Assert.IsNotNull(service);
                 Assert.That(result.Contains(named), Is.EqualTo(contains));
             }
         }
