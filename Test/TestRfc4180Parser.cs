@@ -1,26 +1,12 @@
-﻿using Peg;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using Peg;
 using System.IO;
-using System.Diagnostics;
-using System.Linq;
 
 namespace Test
 {
     [TestFixture]
     public class TestRfc4180Parser
     {
-        private const string _listenerName = "TestListener";
-
-        [SetUp]
-        public void SetUp()
-        {
-            if(!Trace.Listeners.Cast<TraceListener>().Any(traceListener => traceListener.Name == _listenerName))
-                Trace.Listeners.Add(
-                    new TextWriterTraceListener(
-                        TestContext.Out,
-                        _listenerName));
-        }
-
         [Test]
         public void Test()
         {
