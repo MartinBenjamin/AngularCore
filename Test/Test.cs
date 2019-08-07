@@ -19,7 +19,7 @@ namespace Test
             var repository = LogManager.GetRepository(Assembly.GetEntryAssembly());
             XmlConfigurator.Configure(
                 repository,
-                new FileInfo(@"C:\Users\Martin\Documents\GitHub\AngularCore\Test\Log4Net.config"));
+                new FileInfo(@"Log4Net.config"));
         }
 
         [SetUp]
