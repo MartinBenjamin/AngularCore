@@ -13,18 +13,7 @@ namespace Test
         where TNamed: Named<TId>
         where TNamedFilters: NamedFilters, new ()
     {
-        private const string _listenerName = "TestListener";
         protected IContainer _container;
-
-        [SetUp]
-        public void BaseSetUp()
-        {
-            if(!Trace.Listeners.Cast<TraceListener>().Any(traceListener => traceListener.Name == _listenerName))
-                Trace.Listeners.Add(
-                    new TextWriterTraceListener(
-                        TestContext.Out,
-                        _listenerName));
-        }
 
         public abstract TNamed Create(string name);
 
