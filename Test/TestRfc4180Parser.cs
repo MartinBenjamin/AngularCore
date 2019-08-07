@@ -10,7 +10,7 @@ namespace Test
         [Test]
         public void Test()
         {
-            var content = File.ReadAllText(@"C:\Users\Martin\Documents\GitHub\CommonDomainObjects\Test\ISO3166-1.csv");
+            var content = File.ReadAllText("ISO3166-1.csv");
             int count = 0;
             var parser = new Rfc4180Parser(
                 field => { },
