@@ -13,15 +13,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Process", "Process\Process.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Log4NetIntegration", "Log4NetIntegration\Log4NetIntegration.csproj", "{CFE182DD-317B-4373-8DDA-DEAE2B7CD3D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernateIntegration", "NHibernateIntegration\NHibernateIntegration.csproj", "{1FD9F893-1901-4930-B937-212BC416DFBA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NHibernateIntegration", "NHibernateIntegration\NHibernateIntegration.csproj", "{1FD9F893-1901-4930-B937-212BC416DFBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuartzIntegration", "QuartzIntegration\QuartzIntegration.csproj", "{7782D5CB-846A-48E9-8CAC-4D202549F41B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuartzIntegration", "QuartzIntegration\QuartzIntegration.csproj", "{7782D5CB-846A-48E9-8CAC-4D202549F41B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Service\Service.csproj", "{D3BAEB7E-EF45-4DE3-93FA-57107D30999D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service", "Service\Service.csproj", "{D3BAEB7E-EF45-4DE3-93FA-57107D30999D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{529027B5-A315-4D88-8019-8154AD76226C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", "{529027B5-A315-4D88-8019-8154AD76226C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonDomainObjects.Mapping", "CommonDomainObjects.Mapping\CommonDomainObjects.Mapping.csproj", "{865A2823-0692-415C-8E8F-F51F2DFF6139}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonDomainObjects.Mapping", "CommonDomainObjects.Mapping\CommonDomainObjects.Mapping.csproj", "{865A2823-0692-415C-8E8F-F51F2DFF6139}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageBroker", "MessageBroker\MessageBroker.csproj", "{71B339EA-D875-45B8-9075-149F5D19BBF6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,10 @@ Global
 		{865A2823-0692-415C-8E8F-F51F2DFF6139}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{865A2823-0692-415C-8E8F-F51F2DFF6139}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{865A2823-0692-415C-8E8F-F51F2DFF6139}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71B339EA-D875-45B8-9075-149F5D19BBF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71B339EA-D875-45B8-9075-149F5D19BBF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71B339EA-D875-45B8-9075-149F5D19BBF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71B339EA-D875-45B8-9075-149F5D19BBF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
