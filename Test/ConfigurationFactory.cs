@@ -6,7 +6,7 @@ namespace Test
 {
     public class ConfigurationFactory: IConfigurationFactory
     {
-        public static readonly string DatabasePath = @"C:\Users\Martin\Documents\Test.db";
+        public static readonly string DatabasePath = "Test.db";
 
         private static readonly IDictionary<string, string> _properties = new Dictionary<string, string>
         {
