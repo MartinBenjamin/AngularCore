@@ -11,7 +11,7 @@ namespace MessageBroker
         {
             builder
                 .RegisterType<MessagePump>()
-                .As<IJob>()
+                .AsSelf()
                 .InstancePerLifetimeScope();
 
             builder

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Log4NetIntegration
 {
-    class Module: Autofac.Module
+    public class Module: Autofac.Module
     {
         protected override void AttachToComponentRegistration(
             IComponentRegistry     componentRegistry,
