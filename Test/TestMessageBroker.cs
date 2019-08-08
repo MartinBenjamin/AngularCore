@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using CommonDomainObjects;
 using MessageBroker;
 using NHibernate;
 using NHibernate.Mapping.ByCode;
@@ -116,8 +117,7 @@ namespace Test
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
-                foreach(var message in messages)
-                    await session.SaveAsync(message);
+                await messages.Dispatch(message => session.SaveAsync(message), 10);
                 await session.FlushAsync();
             }
 
