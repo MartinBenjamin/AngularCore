@@ -30,7 +30,7 @@ namespace MessageBroker
                     messageId,
                     LockMode.Upgrade);
 
-                // Message may have been processed by a concurrent Message Bnoker and no longer exist.
+                // Message may have been processed by a concurrent Message Broker and no longer exist.
                 if(message != null)
                 {
                     await Consume(message);
