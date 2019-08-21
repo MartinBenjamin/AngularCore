@@ -83,7 +83,7 @@ namespace Test
                 .As<IModelMapperFactory>()
                 .SingleInstance();
             builder
-                .RegisterType<ConfigurationFactory>()
+                .RegisterType<LocalDbConfigurationFactory>()
                 .As<IConfigurationFactory>()
                 .SingleInstance();
             builder
@@ -100,15 +100,13 @@ namespace Test
 
             _container = builder.Build();
 
-            File.Delete(ConfigurationFactory.DatabasePath);
-            var schemaUpdate = new SchemaUpdate(_container.Resolve<IConfigurationFactory>().Build("Test"));
-            schemaUpdate.Execute(
+            var schemaExport = new SchemaExport(_container.Resolve<IConfigurationFactory>().Build("Test"));
+            schemaExport.Create(
                 scriptAction => { },
                 true);
         }
 
         [Test]
-        [Explicit] // SQLite does not IsolationLevel.RepeatableRead used by the MessageBroker.
         public async Task Run()
         {
             var messages = Enumerable.Range(0, 10).Select(i => new Message(Guid.NewGuid())).ToList();
