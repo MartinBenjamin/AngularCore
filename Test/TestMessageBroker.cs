@@ -40,11 +40,10 @@ namespace Test
         {
             public static AutoResetEvent AutoResetEvent { get; } = new AutoResetEvent(false);
 
-            public IList<Message> Messages { get; private set; }
+            public IList<Message> Messages { get; } = new List<Message>();
 
             public MessageHandler(): base()
             {
-                Messages = new List<Message>();
             }
 
             Type IMessageHandler.Type => typeof(Message);
