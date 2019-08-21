@@ -60,7 +60,7 @@ namespace Test
         {
             { "connection.driver_class"     , "NHibernate.Driver.SqlClientDriver"                                                 },
             { "connection.connection_string", "Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=Test;Integrated Security=SSPI" },
-            { "dialect"                     , "NHibernate.Dialect.MsSql2008Dialect"                                               },
+            { "dialect"                     , "NHibernate.Dialect.MsSql2012Dialect"                                               },
             { "show_sql"                    , "false"                                                                             }
         };
 
