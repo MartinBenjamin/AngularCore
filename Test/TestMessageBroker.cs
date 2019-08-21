@@ -10,8 +10,8 @@ using Quartz;
 using Quartz.Impl.Matchers;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Test
@@ -19,6 +19,8 @@ namespace Test
     [TestFixture]
     public class TestMessageBroker: Test
     {
+        private static readonly int _maxMessages = 10;
+
         private IContainer _container;
 
         public class Message: MessageBroker.Message
@@ -34,8 +36,10 @@ namespace Test
             }
         }
 
-        public class MessageHandler: MessageBroker.IMessageHandler
+        public class MessageHandler: IMessageHandler
         {
+            public static AutoResetEvent AutoResetEvent { get; } = new AutoResetEvent(false);
+
             public IList<Message> Messages { get; private set; }
 
             public MessageHandler(): base()
@@ -50,7 +54,13 @@ namespace Test
                 MessageBroker.Message message
                 )
             {
-                Messages.Add((Message)message);
+                lock(Messages)
+                {
+                    Messages.Add((Message)message);
+
+                    if(Messages.Count == _maxMessages)
+                        AutoResetEvent.Set();
+                }
             }
         }
 
@@ -109,7 +119,7 @@ namespace Test
         [Test]
         public async Task Run()
         {
-            var messages = Enumerable.Range(0, 10).Select(i => new Message(Guid.NewGuid())).ToList();
+            var messages = Enumerable.Range(0, _maxMessages).Select(i => new Message(Guid.NewGuid())).ToList();
             var messageHandler = _container.Resolve<MessageHandler>();
             Assert.That(messageHandler.Messages.Count, Is.EqualTo(0));
             using(var scope = _container.BeginLifetimeScope())
@@ -134,7 +144,7 @@ namespace Test
             await scheduler.Start();
             await scheduler.ScheduleJob(jobDetail, trigger);
 
-            await Task.Delay(1000);
+            Assert.That(await Task.Run(() => MessageHandler.AutoResetEvent.WaitOne(1000)), Is.True);
 
             Assert.That(
                 messageHandler.Messages.OrderBy(message => message.Id).SequenceEqual(
