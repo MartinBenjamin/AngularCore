@@ -85,11 +85,20 @@ namespace Test
         }
 
         [Test]
-        public void SchemaGeneration()
+        public void SchemaCreate()
         {
-            var schemaUpdate = new SchemaUpdate(_container.Resolve<IConfigurationFactory>().Build("Test"));
-            schemaUpdate.Execute(
-                scriptAction => Trace.WriteLine(scriptAction),
+            var schemaExport = new SchemaExport(_container.Resolve<IConfigurationFactory>().Build("Test"));
+            schemaExport.Create(
+                TestContext.Out,
+                true);
+        }
+
+        [Test]
+        public void SchemaDrop()
+        {
+            var schemaExport = new SchemaExport(_container.Resolve<IConfigurationFactory>().Build("Test"));
+            schemaExport.Drop(
+                TestContext.Out,
                 true);
         }
 

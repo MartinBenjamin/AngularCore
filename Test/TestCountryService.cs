@@ -34,8 +34,8 @@ namespace Test
             _container = builder.Build();
 
             File.Delete(ConfigurationFactory.DatabasePath);
-            var schemaUpdate = new SchemaUpdate(_container.Resolve<IConfigurationFactory>().Build("Test"));
-            schemaUpdate.Execute(
+            var schemaExport = new SchemaExport(_container.Resolve<IConfigurationFactory>().Build("Test"));
+            schemaExport.Create(
                 scriptAction => { },
                 true);
         }
