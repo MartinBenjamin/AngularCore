@@ -38,8 +38,7 @@ namespace CommonDomainObjects.Mapping
 
             Property(
                 country => country.Alpha4Code,
-                propertyMapper => propertyMapper.Column(
-                    columnMapper => columnMapper.SqlType("NCHAR(4)")));
+                propertyMapper => propertyMapper.Column(columnMapper => columnMapper.SqlType("NCHAR(4)")));
 
             Property(
                 country => country.NumericCode,

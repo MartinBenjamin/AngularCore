@@ -16,8 +16,7 @@ namespace CommonDomainObjects.Mapping
 
             Bag(
                 geographicalArea => geographicalArea.Children,
-                collectionMapper => collectionMapper.Key(
-                    keyMapper => keyMapper.Column("ParentId")));
+                collectionMapper => collectionMapper.Key(keyMapper => keyMapper.Column("ParentId")));
         }
     }
 }
