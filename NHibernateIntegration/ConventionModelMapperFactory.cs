@@ -23,28 +23,28 @@ namespace NHibernateIntegration
             mapper.BeforeMapManyToOne += (
                 IModelInspector  modelInspector,
                 PropertyPath     member,
-                IManyToOneMapper manyToOneMapping
+                IManyToOneMapper manyToOneMapper
                 ) =>
             {
-                manyToOneMapping.Column(NameBuilder(member) + "Id");
-                manyToOneMapping.ForeignKey(NameBuilder(member) + "_FK");
+                manyToOneMapper.Column(NameBuilder(member) + "Id");
+                manyToOneMapper.ForeignKey(NameBuilder(member) + "_FK");
             };
 
             mapper.BeforeMapBag += (
                 IModelInspector      modelInspector,
                 PropertyPath         member,
-                IBagPropertiesMapper bagMapping
+                IBagPropertiesMapper bagMapper
                 ) =>
             {
-                bagMapping.Key(keyMapping => keyMapping.Column(TypeName(member) + "Id"));
-                bagMapping.Inverse(true);
+                bagMapper.Key(keyMapper => keyMapper.Column(TypeName(member) + "Id"));
+                bagMapper.Inverse(true);
             };
 
             mapper.BeforeMapProperty += (
                 IModelInspector modelInspector,
                 PropertyPath    member,
-                IPropertyMapper propertyMapping
-                ) => propertyMapping.Column(NameBuilder(member));
+                IPropertyMapper propertyMapper
+                ) => propertyMapper.Column(NameBuilder(member));
         }
 
         private string NameBuilder(

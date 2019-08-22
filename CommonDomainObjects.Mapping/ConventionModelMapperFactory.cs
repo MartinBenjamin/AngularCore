@@ -19,15 +19,25 @@ namespace CommonDomainObjects.Mapping
             mapper.Class<DomainObject<Guid>>(
                 classMapper => classMapper.Id(
                     domainObject => domainObject.Id,
-                    idMapping => idMapping.Generator(Generators.Guid)));
+                    idMapper => idMapper.Generator(Generators.Guid)));
 
 
             mapper.Class<GeographicalArea>(
                 geographicalAreaMapper =>
+                {
+                    geographicalAreaMapper.Id(
+                        geographicalArea => geographicalArea.Id,
+                        idMapper => idMapper.Column(columnMapper => columnMapper.SqlType("NCHAR(2)")));
+
+                    geographicalAreaMapper.ManyToOne(
+                        geographicalArea => geographicalArea.Parent,
+                        manyToOneMapper => manyToOneMapper.Column(columnMapper => columnMapper.SqlType("NCHAR(2)")));
+
                     geographicalAreaMapper.Bag(
                         geographicalArea => geographicalArea.Children,
-                        collectionMapping => collectionMapping.Key(
-                            keyMapping => keyMapping.Column("ParentId"))));
+                        collectionMapper => collectionMapper.Key(
+                            keyMapper => keyMapper.Column("ParentId")));
+                });
 
             mapper.JoinedSubclass<Country>(
                 countryMapper =>
@@ -35,7 +45,13 @@ namespace CommonDomainObjects.Mapping
                     countryMapper.Key(
                         keyMapper =>
                         {
-                            keyMapper.Column("Alpha2Code");
+                            keyMapper.Column(
+                                columnMapper =>
+                                {
+                                    columnMapper.Name("Alpha2Code");
+                                    columnMapper.SqlType("NCHAR(2)");
+                                });
+
                             keyMapper.ForeignKey("FK_" + nameof(GeographicalArea));
                         });
 
@@ -49,11 +65,25 @@ namespace CommonDomainObjects.Mapping
 
                     countryMapper.Property(
                         country => country.Alpha3Code,
-                        propertyMapper => propertyMapper.Unique(true));
+                        propertyMapper =>
+                        {
+                            propertyMapper.Column(columnMapper => columnMapper.SqlType("NCHAR(3)"));
+                            propertyMapper.Unique(true);
+                            propertyMapper.NotNullable(true);
+                        });
+
+                    countryMapper.Property(
+                        country => country.Alpha4Code,
+                        propertyMapper => propertyMapper.Column(
+                            columnMapper => columnMapper.SqlType("NCHAR(4)")));
 
                     countryMapper.Property(
                         country => country.NumericCode,
-                        propertyMapper => propertyMapper.Unique(true));
+                        propertyMapper =>
+                        {
+                            propertyMapper.Unique(true);
+                            propertyMapper.NotNullable(true);
+                        });
                 });
         }
 
