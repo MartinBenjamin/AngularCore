@@ -62,7 +62,7 @@ namespace MessageBroker
             catch(Exception exception)
             {
                 _logger.Error(
-                    "Exception during execution",
+                    "Exception during execution.",
                     exception);
             }
         }

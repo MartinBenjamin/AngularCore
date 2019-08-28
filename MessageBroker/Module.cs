@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Quartz;
 
 namespace MessageBroker
 {
