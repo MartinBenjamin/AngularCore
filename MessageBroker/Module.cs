@@ -15,7 +15,7 @@ namespace MessageBroker
 
             builder
                 .RegisterType<MessageBroker>()
-                .As<IMessageConsumer>()
+                .Keyed<IMessageConsumer>(MessageQueueIdentifier.MessageBroker)
                 .As<IMessageBroker>()
                 .InstancePerLifetimeScope();
         }

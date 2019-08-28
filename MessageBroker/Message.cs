@@ -5,6 +5,8 @@ namespace MessageBroker
 {
     public abstract class Message: DomainObject<Guid>
     {
+        public virtual MessageQueue Queue { get; set; }
+
         protected Message()
             : base()
         {

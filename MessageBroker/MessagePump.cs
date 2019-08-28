@@ -1,4 +1,5 @@
-﻿using Autofac.Features.OwnedInstances;
+﻿using Autofac.Features.Indexed;
+using Autofac.Features.OwnedInstances;
 using CommonDomainObjects;
 using log4net;
 using NHibernate;
@@ -16,14 +17,14 @@ namespace MessageBroker
         private static readonly int _maxMessages   = 100;
         private static readonly int _maxConcurrent = 10;
 
-        private readonly ISession                      _session;
-        private readonly Func<Owned<IMessageConsumer>> _messageConsumerFactory;
-        private readonly ILog                          _logger;
+        private readonly ISession                                    _session;
+        private readonly IIndex<Guid, Func<Owned<IMessageConsumer>>> _messageConsumerFactory;
+        private readonly ILog                                        _logger;
 
         public MessagePump(
-            ISession                      session,
-            Func<Owned<IMessageConsumer>> messageConsumerFactory,
-            ILog                          logger
+            ISession                                    session,
+            IIndex<Guid, Func<Owned<IMessageConsumer>>> messageConsumerFactory,
+            ILog                                        logger
             )
         {
             _session                = session;
@@ -35,29 +36,47 @@ namespace MessageBroker
             IJobExecutionContext context
             )
         {
-            IList<Guid> messagelds = null;
+            IList<object[]> messages = null;
 
             try
             {
                 var maxMessages   = _maxMessages;
                 var maxConcurrent = _maxConcurrent;
 
-                if(context.JobDetail.JobDataMap.ContainsKey("MaxMessages"))
-                    maxMessages = context.JobDetail.JobDataMap.GetIntValue("MaxMessages");
+                var jobDataMap = context.JobDetail.JobDataMap;
+                if(jobDataMap.ContainsKey("MaxMessages"))
+                    maxMessages = jobDataMap.GetIntValue("MaxMessages");
 
-                if(context.JobDetail.JobDataMap.ContainsKey("MaxConcurrent"))
-                    maxConcurrent = context.JobDetail.JobDataMap.GetIntValue("MaxConcurrent");
+                if(jobDataMap.ContainsKey("MaxConcurrent"))
+                    maxConcurrent = jobDataMap.GetIntValue("MaxConcurrent");
+
+                var queueIds = (Guid[])jobDataMap["QueueIds"];
 
                 using(var transaction = _session.BeginTransaction(IsolationLevel.ReadCommitted))
-                    messagelds = await _session
-                        .CreateCriteria<Message>()
-                        .SetMaxResults(maxMessages)
-                        .SetProjection(Projections.Property("Id"))
-                        .ListAsync<Guid>();
+                {
+                    var criteria = _session
+                        .CreateCriteria<Message>("message");
 
-                await messagelds.Dispatch(
-                    Consume,
-                    maxConcurrent);
+                    criteria
+                        .CreateCriteria("Queue", "queue")
+                            .Add(Expression.In("queue.Id", queueIds));
+
+                    criteria
+                        .SetProjection(
+                            Projections.Property("message.Id"),
+                            Projections.Property("queue.Id"  ));
+
+                    messages = await criteria
+                        .SetMaxResults(maxMessages)
+                        .ListAsync<object[]>();
+                }
+
+                await messages
+                    .Dispatch(
+                        messageDetails => Consume(
+                            (Guid)messageDetails[0],
+                            (Guid)messageDetails[1]),
+                        maxConcurrent);
             }
             catch(Exception exception)
             {
@@ -68,12 +87,13 @@ namespace MessageBroker
         }
 
         private async Task Consume(
-            Guid messageId
+            Guid messageId,
+            Guid queueId
             )
         {
             try
             {
-                using(var ownedMessageConsumer = _messageConsumerFactory())
+                using(var ownedMessageConsumer = _messageConsumerFactory[queueId]())
                     await ownedMessageConsumer.Value.Consume(messageId);
 
             }

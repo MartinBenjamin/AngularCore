@@ -76,6 +76,15 @@ namespace Test
                     {
                         messaageMapper.Table("Message");
                     });
+
+                mapper.Class<MessageQueue>(
+                    messaageQueueMapper =>
+                    {
+                        messaageQueueMapper.Table("MessageQueue");
+                        messaageQueueMapper.Id(
+                            messageQueue => messageQueue.Id,
+                            idMapper     => idMapper.Generator(Generators.Assigned));
+                    });
             }
         }
 
@@ -115,15 +124,32 @@ namespace Test
                 true);
         }
 
+        [SetUp]
+        public void SetUp()
+        {
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var session = scope.Resolve<ISession>();
+                var messageQueue = session.Get<MessageQueue>(MessageQueueIdentifier.MessageBroker);
+                if(messageQueue != null)
+                    session.Delete(messageQueue);
+
+                session.Flush();
+            }
+        }
+
         [Test]
         public async Task Run()
         {
+            var messageQueue = new MessageQueue(MessageQueueIdentifier.MessageBroker);
             var messages = Enumerable.Range(0, _maxMessages).Select(i => new Message(Guid.NewGuid())).ToList();
+            messages.ForEach(message => message.Queue = messageQueue);
             var messageHandler = _container.Resolve<MessageHandler>();
             Assert.That(messageHandler.Messages.Count, Is.EqualTo(0));
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
+                await session.SaveAsync(messageQueue);
                 await messages.Dispatch(message => session.SaveAsync(message), 10);
                 await session.FlushAsync();
             }
@@ -131,6 +157,8 @@ namespace Test
             var jobDetail = JobBuilder
                 .Create<MessagePump>()
                 .Build();
+
+            jobDetail.JobDataMap["QueueIds"] = new[] { MessageQueueIdentifier.MessageBroker };
 
             var trigger = TriggerBuilder.Create()
                 .StartNow()
