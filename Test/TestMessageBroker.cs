@@ -79,10 +79,10 @@ namespace Test
                             idMapper     => idMapper.Generator(Generators.Assigned)));
 
                 mapper.Class<MessageSummary>(
-                    messageMapper =>
+                    messageSummaryMapper =>
                     {
-                        messageMapper.Table("Message");
-                        messageMapper.SchemaAction(SchemaAction.None);
+                        messageSummaryMapper.Table("Message");
+                        messageSummaryMapper.SchemaAction(SchemaAction.None);
                     });
             }
         }
