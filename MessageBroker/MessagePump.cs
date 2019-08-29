@@ -53,23 +53,14 @@ namespace MessageBroker
                 var queueIds = (Guid[])jobDataMap["QueueIds"];
 
                 using(var transaction = _session.BeginTransaction(IsolationLevel.ReadCommitted))
-                {
-                    var criteria = _session
-                        .CreateCriteria<Message>("message");
-
-                    criteria
-                        .CreateCriteria("Queue", "queue")
-                            .Add(Expression.In("queue.Id", queueIds));
-
-                    criteria
+                    messages = await _session
+                        .CreateCriteria<Message>()
+                        .Add(Expression.In("Queue.Id", queueIds))
                         .SetProjection(
-                            Projections.Property("message.Id"),
-                            Projections.Property("queue.Id"  ));
-
-                    messages = await criteria
+                            Projections.Property("Id"),
+                            Projections.Property("Queue.Id"))
                         .SetMaxResults(maxMessages)
                         .ListAsync<object[]>();
-                }
 
                 await messages
                     .Dispatch(
