@@ -71,20 +71,12 @@ namespace Test
             {
                 base.Populate(mapper);
 
-                mapper.Class<Message>(
-                    messaageMapper =>
-                    {
-                        messaageMapper.Table("Message");
-                    });
+                mapper.Class<Message>(messageMapper => messageMapper.Table("Message"));
 
                 mapper.Class<MessageQueue>(
-                    messaageQueueMapper =>
-                    {
-                        messaageQueueMapper.Table("MessageQueue");
-                        messaageQueueMapper.Id(
+                    messageQueueMapper => messageQueueMapper.Id(
                             messageQueue => messageQueue.Id,
-                            idMapper     => idMapper.Generator(Generators.Assigned));
-                    });
+                            idMapper     => idMapper.Generator(Generators.Assigned)));
             }
         }
 
