@@ -36,7 +36,7 @@ namespace MessageBroker
             IJobExecutionContext context
             )
         {
-            IList<object[]> messages = null;
+            IList<MessageSummary> messages = null;
 
             try
             {
@@ -54,19 +54,14 @@ namespace MessageBroker
 
                 using(var transaction = _session.BeginTransaction(IsolationLevel.ReadCommitted))
                     messages = await _session
-                        .CreateCriteria<Message>()
-                        .Add(Expression.In("Queue.Id", queueIds))
-                        .SetProjection(
-                            Projections.Property("Id"),
-                            Projections.Property("Queue.Id"))
-                        .SetMaxResults(maxMessages)
-                        .ListAsync<object[]>();
+                        .CreateCriteria<MessageSummary>()
+                            .Add(Expression.In("QueueId", queueIds))
+                            .SetMaxResults(maxMessages)
+                            .ListAsync<MessageSummary>();
 
                 await messages
                     .Dispatch(
-                        messageDetails => Consume(
-                            (Guid)messageDetails[0],
-                            (Guid)messageDetails[1]),
+                        Consume,
                         maxConcurrent);
             }
             catch(Exception exception)
@@ -78,14 +73,13 @@ namespace MessageBroker
         }
 
         private async Task Consume(
-            Guid messageId,
-            Guid queueId
+            MessageSummary message
             )
         {
             try
             {
-                using(var ownedMessageConsumer = _messageConsumerFactory[queueId]())
-                    await ownedMessageConsumer.Value.Consume(messageId);
+                using(var ownedMessageConsumer = _messageConsumerFactory[message.QueueId]())
+                    await ownedMessageConsumer.Value.Consume(message.Id);
 
             }
             catch(Exception exception)
@@ -93,7 +87,7 @@ namespace MessageBroker
                 _logger.Error(
                     string.Format(
                         "Exception thrown while consuming message {0}.",
-                        messageId),
+                        message.Id),
                     exception);
             }
         }

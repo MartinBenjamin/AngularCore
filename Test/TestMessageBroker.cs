@@ -77,6 +77,13 @@ namespace Test
                     messageQueueMapper => messageQueueMapper.Id(
                             messageQueue => messageQueue.Id,
                             idMapper     => idMapper.Generator(Generators.Assigned)));
+
+                mapper.Class<MessageSummary>(
+                    messageMapper =>
+                    {
+                        messageMapper.Table("Message");
+                        messageMapper.SchemaAction(SchemaAction.None);
+                    });
             }
         }
 

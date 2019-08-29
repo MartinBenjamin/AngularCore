@@ -19,4 +19,14 @@ namespace MessageBroker
         {
         }
     }
+
+    public class MessageSummary: DomainObject<Guid>
+    {
+        public virtual Guid QueueId { get; protected set; }
+
+        protected MessageSummary()
+            : base()
+        {
+        }
+    }
 }
