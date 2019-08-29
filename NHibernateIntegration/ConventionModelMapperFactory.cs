@@ -51,7 +51,7 @@ namespace NHibernateIntegration
             PropertyPath member
             )
         {
-            return member.PreviousPath != null ? NameBuilder(member.PreviousPath) + member.LocalMember.Name : member.LocalMember.Name;
+            return member == null ? string.Empty : NameBuilder(member.PreviousPath) + member.LocalMember.Name;
         }
 
         private string TypeName(
@@ -61,6 +61,5 @@ namespace NHibernateIntegration
             var type = member.GetRootMember().DeclaringType;
             return type.IsGenericType ? _genericArity.Replace(type.Name, string.Empty) : type.Name;
         }
-
     }
 }
