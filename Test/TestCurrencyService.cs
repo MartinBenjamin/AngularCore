@@ -62,7 +62,7 @@ namespace Test
                 "AAA",
                 0,
                 name,
-                0);
+                null);
 
             using(var scope = _container.BeginLifetimeScope())
             {
