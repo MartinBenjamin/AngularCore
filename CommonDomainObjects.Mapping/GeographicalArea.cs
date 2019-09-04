@@ -8,11 +8,11 @@ namespace CommonDomainObjects.Mapping
         {
             Id(
                 geographicalArea => geographicalArea.Id,
-                idMapper => idMapper.Column(columnMapper => columnMapper.SqlType("NCHAR(2)")));
+                idMapper => idMapper.Column(columnMapper => columnMapper.SqlType("NVARCHAR(6)")));
 
             ManyToOne(
                 geographicalArea => geographicalArea.Parent,
-                manyToOneMapper => manyToOneMapper.Column(columnMapper => columnMapper.SqlType("NCHAR(2)")));
+                manyToOneMapper => manyToOneMapper.Column(columnMapper => columnMapper.SqlType("NVARCHAR(6)")));
 
             Bag(
                 geographicalArea => geographicalArea.Children,

@@ -23,6 +23,7 @@ namespace CommonDomainObjects.Mapping
 
             mapper.AddMapping<GeographicalArea>();
             mapper.AddMapping<Country         >();
+            mapper.AddMapping<Subdivision     >();
         }
 
         private static bool IsDomainObject<TId>(
