@@ -24,6 +24,7 @@ namespace CommonDomainObjects.Mapping
             mapper.AddMapping<GeographicalArea>();
             mapper.AddMapping<Country         >();
             mapper.AddMapping<Subdivision     >();
+            mapper.AddMapping<Currency        >();
         }
 
         private static bool IsDomainObject<TId>(

@@ -10,7 +10,7 @@ using System.IO;
 namespace Test
 {
     [TestFixture]
-    public class TestCountryService: TestNamedService<string, Country, NamedFilters>
+    public class TestCurrencyService: TestNamedService<string, Currency, NamedFilters>
     {
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -46,33 +46,32 @@ namespace Test
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
-                var country = session.Get<Country>("AA");
-                if(country != null)
-                    session.Delete(country);
+                var currency = session.Get<Currency>("AAA");
+                if(currency != null)
+                    session.Delete(currency);
 
                 session.Flush();
             }
         }
 
-        public override Country Create(
+        public override Currency Create(
             string name
             )
         {
-            var country = new Country(
-                "AA",
+            var currency = new Currency(
                 "AAA",
-                null,
                 0,
-                name);
+                name,
+                0);
 
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
-                session.Save(country);
+                session.Save(currency);
                 session.Flush();
             }
 
-            return country;
+            return currency;
         }
     }
 }
