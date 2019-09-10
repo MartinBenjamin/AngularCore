@@ -7,10 +7,13 @@ namespace Test
     [TestFixture]
     public class TestRfc4180Parser
     {
-        [Test]
-        public void Test()
+        [TestCase("ISO3166-1.csv")]
+        [TestCase("ISO4217.csv")]
+        public void Test(
+            string fileName
+            )
         {
-            var content = File.ReadAllText("ISO3166-1.csv");
+            var content = File.ReadAllText(fileName);
             int count = 0;
             var parser = new Rfc4180Parser(
                 field => { },
