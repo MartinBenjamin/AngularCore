@@ -28,8 +28,8 @@ namespace Data
 
         private static IList<T> Load<T>(
             string                 fileName,
-            bool                   heading,
-            Func<IList<string>, T> constructor
+            Func<IList<string>, T> constructor,
+            bool                   heading = true
             )
         {
             var list = new List<T>();
@@ -61,7 +61,6 @@ namespace Data
         {
             return Load<Country>(
                 "ISO3166-1.csv",
-                true,
                 record => new Country(
                     record[2],
                     record[3],
@@ -74,7 +73,6 @@ namespace Data
         {
             return Load<Currency>(
                 "ISO4217.csv",
-                false,
                 record => !string.IsNullOrEmpty(record[2]) ?
                     new Currency(
                         record[2],
