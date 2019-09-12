@@ -3,6 +3,7 @@ using System.Text;
 
 namespace Peg
 {
+    // http://bford.info/pub/lang/peg.pdf
     public class Parser
     {
         // Hierarchical syntax
