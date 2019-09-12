@@ -17,6 +17,15 @@ namespace Data
             return Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof(Loader).Namespace + '.' + fileName);
         }
 
+        public static string ReadAllText(
+            string fileName
+            )
+        {
+            using(var stream = Load(fileName))
+            using(var reader = new StreamReader(stream))
+                return reader.ReadToEnd();
+        }
+
         private static IList<T> Load<T>(
             string                 fileName,
             bool                   heading,
@@ -24,30 +33,26 @@ namespace Data
             )
         {
             var list = new List<T>();
-            using(var stream = Load(fileName))
-            using(var reader = new StreamReader(stream))
-            {
-                var record = new List<string>();
-                var parser = new Rfc4180Parser(
-                    field => record.Add(field),
-                    () =>
+            var record = new List<string>();
+            var parser = new Rfc4180Parser(
+                field => record.Add(field),
+                () =>
+                {
+                    if(heading)
+                        heading = false;
+
+                    else
                     {
-                        if(heading)
-                            heading = false;
+                        var t = constructor(record);
 
-                        else
-                        {
-                            var t = constructor(record);
+                        if(t != null)
+                            list.Add(t);
+                    }
 
-                            if(t != null)
-                                list.Add(t);
-                        }
+                    record.Clear();
+                });
 
-                        record.Clear();
-                    });
-
-                parser.Parse(reader.ReadToEnd());
-            }
+            parser.Parse(ReadAllText(fileName));
 
             return list;
         }
