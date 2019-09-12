@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="ISO3166-1.csv" />
+    <None Remove="ISO4217.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="ISO3166-1.csv" />
+    <EmbeddedResource Include="ISO4217.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CommonDomainObjects\CommonDomainObjects.csproj" />
+    <ProjectReference Include="..\Peg\Peg.csproj" />
+  </ItemGroup>
+
+</Project>

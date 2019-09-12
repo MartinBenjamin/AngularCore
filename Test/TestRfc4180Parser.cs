@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Data;
+using NUnit.Framework;
 using Peg;
 using System.IO;
 
@@ -20,6 +21,14 @@ namespace Test
                 ()    => count += 1);
             var length = parser.Parse(content);
             Assert.That(length, Is.EqualTo(content.Length));
+        }
+
+
+
+        [Test]
+        public void Load()
+        {
+            var currencies = Loader.LoadCurrencies();
         }
     }
 }
