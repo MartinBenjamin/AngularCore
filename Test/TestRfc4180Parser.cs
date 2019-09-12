@@ -1,7 +1,6 @@
 ﻿using Data;
 using NUnit.Framework;
 using Peg;
-using System.IO;
 
 namespace Test
 {
@@ -9,12 +8,12 @@ namespace Test
     public class TestRfc4180Parser
     {
         [TestCase("ISO3166-1.csv")]
-        [TestCase("ISO4217.csv")]
+        [TestCase("ISO4217.csv"  )]
         public void Test(
             string fileName
             )
         {
-            var content = File.ReadAllText(fileName);
+            var content = Loader.ReadAllText(fileName);
             int count = 0;
             var parser = new Rfc4180Parser(
                 field => { },
@@ -22,8 +21,6 @@ namespace Test
             var length = parser.Parse(content);
             Assert.That(length, Is.EqualTo(content.Length));
         }
-
-
 
         [Test]
         public void Load()
