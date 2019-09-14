@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using Peg;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Test
 {
@@ -23,22 +24,28 @@ namespace Test
             Assert.That(length, Is.EqualTo(content.Length));
         }
 
-        [TestCaseSource("TestCases")]
-        public void Test(
+        [TestCaseSource("ParseCases")]
+        public void Parse(
             string               input,
             IList<IList<string>> expected,
             int                  expectedLength
             )
         {
-            int count = 0;
+            var row = 0;
+            var record = new List<string>();
             var parser = new Rfc4180Parser(
-                field => { },
-                ()    => { });
+                field => record.Add(field),
+                () =>
+                {
+                    Assert.That(record.SequenceEqual(expected[row]), Is.True);
+                    row += 1;
+                    record.Clear();
+                });
             var length = parser.Parse(input);
             Assert.That(length, Is.EqualTo(expectedLength));
         }
 
-        public static IEnumerable<object[]> TestCases
+        public static IEnumerable<object[]> ParseCases
         {
             get
             {
@@ -60,9 +67,23 @@ namespace Test
                 testCases.Add(
                     new object[]
                     {
+                        "ab\r\n",
+                        Convert(new string[,]{ { "ab" } }),
+                        4
+                    });
+                testCases.Add(
+                    new object[]
+                    {
                         "ab\r\ncd\r\n",
                         Convert(new string[,]{ { "ab" }, { "cd" } }),
                         8
+                    });
+                testCases.Add(
+                    new object[]
+                    {
+                        "ab,cd\r\n",
+                        Convert(new string[,]{ { "ab", "cd" } }),
+                        7
                     });
                 testCases.Add(
                     new object[]
