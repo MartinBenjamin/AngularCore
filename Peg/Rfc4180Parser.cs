@@ -6,18 +6,18 @@ namespace Peg
     // https://www.ietf.org/rfc/rfc4180.txt
     public class Rfc4180Parser
     {
-        public Identifier File              = new Identifier();
-        public Identifier Record            = new Identifier();
-        public Identifier CrLf              = new Identifier();
-        public Identifier Field             = new Identifier();
-        public Identifier Comma             = new Identifier();
-        public Identifier NotEscaped        = new Identifier();
-        public Identifier Escaped           = new Identifier();
-        public Identifier Dquote            = new Identifier();
-        public Identifier DquoteDquote      = new Identifier();
-        public Identifier NotEscapedContent = new Identifier();
-        public Identifier EscapedContent    = new Identifier();
-        public Identifier EndOfFile         = new Identifier();
+        public Identifier File              = new Identifier(nameof(File             ));
+        public Identifier Record            = new Identifier(nameof(Record           ));
+        public Identifier CrLf              = new Identifier(nameof(CrLf             ));
+        public Identifier Field             = new Identifier(nameof(Field            ));
+        public Identifier Comma             = new Identifier(nameof(Comma            ));
+        public Identifier NotEscaped        = new Identifier(nameof(NotEscaped       ));
+        public Identifier Escaped           = new Identifier(nameof(Escaped          ));
+        public Identifier Dquote            = new Identifier(nameof(Dquote           ));
+        public Identifier DquoteDquote      = new Identifier(nameof(DquoteDquote     ));
+        public Identifier NotEscapedContent = new Identifier(nameof(NotEscapedContent));
+        public Identifier EscapedContent    = new Identifier(nameof(EscapedContent   ));
+        public Identifier EndOfFile         = new Identifier(nameof(EndOfFile        ));
 
         private Action<string> _fieldAction;
         private Action         _recordAction;

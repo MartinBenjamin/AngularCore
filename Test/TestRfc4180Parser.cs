@@ -92,6 +92,14 @@ namespace Test
                         Convert(new string[,]{ { "ab", "cd" }, { "ef", "gh" } }),
                         14
                     });
+
+                testCases.Add(
+                    new object[]
+                    {
+                        "ab",
+                        Convert(new string[,]{ { "ab" } }),
+                        -1
+                    });
                 return testCases;
             }
         }
