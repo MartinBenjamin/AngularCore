@@ -100,6 +100,27 @@ namespace Test
                         Convert(new string[,]{ { "ab" } }),
                         -3
                     });
+                testCases.Add(
+                    new object[]
+                    {
+                        "ab\r\ncd",
+                        Convert(new string[,]{ { "ab" }, { "cd" } }),
+                        -7
+                    });
+                testCases.Add(
+                    new object[]
+                    {
+                        "ab,cd",
+                        Convert(new string[,]{ { "ab", "cd" } }),
+                        -6
+                    });
+                testCases.Add(
+                    new object[]
+                    {
+                        "ab,cd\r\nef,gh",
+                        Convert(new string[,]{ { "ab", "cd" }, { "ef", "gh" } }),
+                        -13
+                    });
                 return testCases;
             }
         }
