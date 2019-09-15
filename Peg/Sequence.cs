@@ -26,7 +26,7 @@ namespace Peg
                     position + length);
 
                 if(childLength < 0)
-                    return NoMatch(position + length);
+                    return childLength;
 
                 length += childLength;
             }

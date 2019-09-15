@@ -30,8 +30,9 @@ namespace Peg
             _fieldAction  = fieldAction;
             _recordAction = recordAction;
 
-            File             .Expression = new Sequence(new ZeroOrMore(new Sequence(Record, CrLf)), EndOfFile);
-            Record           .Expression = new Sequence(Field, new ZeroOrMore(new Sequence(Comma, Field)));
+            //File             .Expression = new Sequence(new ZeroOrMore(new Sequence(Record, CrLf)), EndOfFile);
+            File             .Expression = new Sequence(Record, new ZeroOrMore(new Sequence(CrLf, Record)), new Sequence(CrLf, EndOfFile));
+            Record           .Expression = new Sequence(new Not(EndOfFile), Field, new ZeroOrMore(new Sequence(Comma, Field)));
             Field            .Expression = new Choice(Escaped, NotEscaped);
             Escaped          .Expression = new Sequence(Dquote, new ZeroOrMore(new Choice(EscapedContent, DquoteDquote)), Dquote);
             NotEscaped       .Expression = new ZeroOrMore(NotEscapedContent);
@@ -53,7 +54,7 @@ namespace Peg
                 _fieldAction(fieldBuilder.ToString());
                 fieldBuilder.Clear();
             };
-            CrLf.Match              = (expression, input, position, length) => _recordAction();
+            Record.Match            = (expression, input, position, length) => _recordAction();
         }
 
         public int Parse(

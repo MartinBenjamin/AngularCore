@@ -55,7 +55,7 @@ namespace Test
                     {
                         string.Empty,
                         Convert(new string[,]{}),
-                        string.Empty.Length
+                        -1
                     });
                 testCases.Add(
                     new object[]
@@ -98,7 +98,7 @@ namespace Test
                     {
                         "ab",
                         Convert(new string[,]{ { "ab" } }),
-                        -1
+                        -3
                     });
                 return testCases;
             }
