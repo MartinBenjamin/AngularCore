@@ -139,6 +139,42 @@ namespace Test
                         Convert(new string[,]{ { "ab", "cd" }, { "ef", "gh" } }),
                         -13
                     });
+                testCases.Add(
+                    new object[]
+                    {
+                        "\na",
+                        Convert(new string[,]{ { string.Empty } }),
+                        -1
+                    });
+                testCases.Add(
+                    new object[]
+                    {
+                        "a\n",
+                        Convert(new string[,]{ { "a" } }),
+                        -2
+                    });
+                testCases.Add(
+                    new object[]
+                    {
+                        "\"",
+                        Convert(new string[,]{ { string.Empty } }),
+                        -1
+                    });
+                testCases.Add(
+                   new object[]
+                   {
+                        "\"a\"b",
+                        Convert(new string[,]{ { "a" } }),
+                        -4
+                   });
+                testCases.Add(
+                    new object[]
+                    {
+                        "a\"",
+                        Convert(new string[,]{ { "a" } }),
+                        -2
+                    });
+
                 return testCases;
             }
         }
