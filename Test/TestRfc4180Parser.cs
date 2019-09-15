@@ -1,4 +1,5 @@
-﻿using Data;
+﻿using CommonDomainObjects;
+using Data;
 using NUnit.Framework;
 using Peg;
 using System.Collections.Generic;
@@ -92,15 +93,14 @@ namespace Test
                         Convert(new string[,]{ { "ab", "cd" }, { "ef", "gh" } }),
                         14
                     });
-
                 testCases.AddRange(
                     from escaped in ",\rn"
-                    let field = "\"" + escaped + '"'
-                    let file = field + "\r\n"
+                    from field in ("ab" + escaped).Permute().Select(charArray => new string(charArray.ToArray()))
+                    let file = "\"" + field + "\"\r\n"
                     select new object[]
                     {
                         file,
-                        Convert(new string[,]{ { escaped.ToString() } }),
+                        Convert(new string[,]{ { field } }),
                         file.Length
                     });
 
