@@ -54,16 +54,16 @@ namespace Test
                 testCases.Add(
                     new object[]
                     {
-                        string.Empty,
-                        Convert(new string[,]{}),
-                        -1
+                        "\r\n",
+                        Convert(new string[,]{ { string.Empty } }),
+                        2
                     });
                 testCases.Add(
                     new object[]
                     {
-                        "\r\n",
-                        Convert(new string[,]{ { string.Empty } }),
-                        2
+                        "\r\n\r\n",
+                        Convert(new string[,]{ { string.Empty }, { string.Empty } }),
+                        4
                     });
                 testCases.Add(
                     new object[]
@@ -95,7 +95,7 @@ namespace Test
                     });
                 testCases.AddRange(
                     from escaped in ",\r\n\""
-                    from field in ("ab" + escaped).Permute().Select(charArray => new string(charArray.ToArray()))
+                    from field in ("ab" + escaped).Permute().Select(charList => new string(charList.ToArray()))
                     let file = "\"" + field.Replace("\"", "\"\"") + "\"\r\n"
                     select new object[]
                     {
@@ -104,6 +104,13 @@ namespace Test
                         file.Length
                     });
 
+                testCases.Add(
+                    new object[]
+                    {
+                        string.Empty,
+                        Convert(new string[,]{}),
+                        -1
+                    });
                 testCases.Add(
                     new object[]
                     {
