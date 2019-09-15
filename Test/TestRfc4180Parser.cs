@@ -94,9 +94,9 @@ namespace Test
                         14
                     });
                 testCases.AddRange(
-                    from escaped in ",\rn"
+                    from escaped in ",\r\n\""
                     from field in ("ab" + escaped).Permute().Select(charArray => new string(charArray.ToArray()))
-                    let file = "\"" + field + "\"\r\n"
+                    let file = "\"" + field.Replace("\"", "\"\"") + "\"\r\n"
                     select new object[]
                     {
                         file,
