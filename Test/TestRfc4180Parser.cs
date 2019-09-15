@@ -93,6 +93,17 @@ namespace Test
                         14
                     });
 
+                testCases.AddRange(
+                    from escaped in ",\rn"
+                    let field = "\"" + escaped + '"'
+                    let file = field + "\r\n"
+                    select new object[]
+                    {
+                        file,
+                        Convert(new string[,]{ { escaped.ToString() } }),
+                        file.Length
+                    });
+
                 testCases.Add(
                     new object[]
                     {
