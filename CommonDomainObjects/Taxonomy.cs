@@ -66,9 +66,9 @@ namespace CommonDomainObjects
             var next = 0;
 
             Terms
-                .Where(term => term.Broader == null)
+                .Where(taxonomyTerm => taxonomyTerm.Broader == null)
                 .ToList()
-                .ForEach(term => next = term.AssignInterval(next));
+                .ForEach(taxonomyTerm => next = taxonomyTerm.AssignInterval(next));
         }
 
         public virtual void Visit(
@@ -77,16 +77,16 @@ namespace CommonDomainObjects
             )
         {
             Terms
-                .Where(term => term.Broader == null)
+                .Where(taxonomyTerm => taxonomyTerm.Broader == null)
                 .ToList()
-                .ForEach(term => term.Visit(
+                .ForEach(taxonomyTerm => taxonomyTerm.Visit(
                     before,
                     after));
         }
 
         protected abstract TTaxonomyTerm NewTaxonomyTerm(
             TTerm         term,
-            TTaxonomyTerm broaderTerm);
+            TTaxonomyTerm broaderTaxonomyTerm);
     }
 
     public abstract class TaxonomyTerm<TId, TTaxonomy, TTaxonomyTerm, TTerm>: DomainObject<TId>
@@ -190,13 +190,13 @@ namespace CommonDomainObjects
 
         protected override TaxonomyTerm<TTerm> NewTaxonomyTerm(
             TTerm               term,
-            TaxonomyTerm<TTerm> broaderTerm
+            TaxonomyTerm<TTerm> broaderTaxonomyTerm
             )
         {
             return new TaxonomyTerm<TTerm>(
                 this,
                 term,
-                broaderTerm);
+                broaderTaxonomyTerm);
         }
     }
 

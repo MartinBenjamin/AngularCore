@@ -5,15 +5,17 @@ using System.Linq;
 
 namespace CommonDomainObjects
 {
-    public class Hierarchy: DomainObject<Guid>
+    public abstract class Hierarchy<TId, THierarchy, THierarchyMember, TMember>: DomainObject<TId>
+        where THierarchy : Hierarchy<TId, THierarchy, THierarchyMember, TMember>
+        where THierarchyMember : HierarchyMember<TId, THierarchy, THierarchyMember, TMember>
     {
-        private IList<HierarchyOrganisation> _organisations;
+        private IList<THierarchyMember> _members;
 
-        public virtual IReadOnlyList<HierarchyOrganisation> Organisations
+        public virtual IReadOnlyList<THierarchyMember> Members
         {
             get
             {
-                return new ReadOnlyCollection<HierarchyOrganisation>(_organisations);
+                return new ReadOnlyCollection<THierarchyMember>(_members);
             }
         }
 
@@ -22,42 +24,40 @@ namespace CommonDomainObjects
         }
 
         public Hierarchy(
-            IDictionary<Organisation, IList<Organisation>> hierachy
-            ) : base(Guid.NewGuid())
+            TId                                  id,
+            IDictionary<TMember, IList<TMember>> hierachy
+            ) : base(id)
         {
-            _organisations = new List<HierarchyOrganisation>();
+            _members = new List<THierarchyMember>();
 
-            foreach(var organisation in hierachy.TopologicalSort())
+            foreach(var member in hierachy.TopologicalSort())
             {
-                HierarchyOrganisation parentHierarchyOrganisation = null;
+                THierarchyMember parentHierarchyMember = null;
 
-                var adjacent = hierachy[organisation];
+                var adjacent = hierachy[member];
 
                 if(adjacent.Count > 0)
                 {
-                    var parentOrganisation = adjacent.First();
-                    parentHierarchyOrganisation = _organisations
-                        .FirstOrDefault(hierarchyOrganisation => hierarchyOrganisation.Organisation == parentOrganisation);
+                    var parent = adjacent.First();
+                    parentHierarchyMember = _members.FirstOrDefault(hierarchyMember => hierarchyMember.Member.Equals(parent));
                 }
 
-                _organisations.Add(
-                    new HierarchyOrganisation(
-                        this,
-                        organisation,
-                        parentHierarchyOrganisation));
+                _members.Add(
+                    NewHierarchyMember(
+                        member,
+                        parentHierarchyMember));
             }
 
             AssignIntervals();
         }
 
-        public HierarchyOrganisation this[
-            Organisation organisation
+        public virtual THierarchyMember this[
+            TMember member
             ]
         {
             get
             {
-                return _organisations.FirstOrDefault(
-                    hierarchyOrganisation => hierarchyOrganisation.Organisation.Equals(organisation));
+                return _members.FirstOrDefault(hierarchyMember => hierarchyMember.Member.Equals(member));
             }
         }
 
@@ -65,55 +65,75 @@ namespace CommonDomainObjects
         {
             var next = 0;
 
-            Organisations
-                .Where(term => term.Parent == null)
+            Members
+                .Where(hierarchyMember => hierarchyMember.Parent == null)
                 .ToList()
-                .ForEach(term => next = term.AssignInterval(next));
+                .ForEach(hierarchyMember => next = hierarchyMember.AssignInterval(next));
         }
+
+        public virtual void Visit(
+            Action<THierarchyMember> before,
+            Action<THierarchyMember> after = null
+            )
+        {
+            Members
+                .Where(hierarchyMember => hierarchyMember.Parent == null)
+                .ToList()
+                .ForEach(hierarchyMember => hierarchyMember.Visit(
+                    before,
+                    after));
+        }
+
+        protected abstract THierarchyMember NewHierarchyMember(
+            TMember          member,
+            THierarchyMember parentHierarchyMember);
     }
 
-    public class HierarchyOrganisation: DomainObject<Guid>
+    public abstract class HierarchyMember<TId, THierarchy, THierarchyMember, TMember>: DomainObject<TId>
+        where THierarchy : Hierarchy<TId, THierarchy, THierarchyMember, TMember>
+        where THierarchyMember : HierarchyMember<TId, THierarchy, THierarchyMember, TMember>
     {
-        private IList<HierarchyOrganisation> _children;
+        private IList<THierarchyMember> _children;
 
-        public virtual Hierarchy             Hierarchy    { get; protected set; }
-        public virtual Organisation          Organisation { get; protected set; }
-        public virtual HierarchyOrganisation Parent       { get; protected set; }
-        public virtual Range<int>            Interval     { get; protected set; }
+        public virtual THierarchy       Hierarchy { get; protected set; }
+        public virtual TMember          Member    { get; protected set; }
+        public virtual THierarchyMember Parent    { get; protected set; }
+        public virtual Range<int>       Interval  { get; protected set; }
 
-        public virtual IReadOnlyList<HierarchyOrganisation> Children
+        public virtual IReadOnlyList<THierarchyMember> Children
         {
             get
             {
-                return new ReadOnlyCollection<HierarchyOrganisation>(_children);
+                return new ReadOnlyCollection<THierarchyMember>(_children);
             }
         }
 
-        protected HierarchyOrganisation() : base()
+        protected HierarchyMember() : base()
         {
         }
 
-        internal HierarchyOrganisation(
-            Hierarchy             hierarchy,
-            Organisation          organisation,
-            HierarchyOrganisation parent
-            ) : base(Guid.NewGuid())
+        internal HierarchyMember(
+            TId              id,
+            THierarchy       hierarchy,
+            TMember          member,
+            THierarchyMember parent
+            ) : base(id)
         {
-            _children = new List<HierarchyOrganisation>();
-            Hierarchy    = hierarchy;
-            Organisation = organisation;
-            Parent       = parent;
-            Parent?._children.Add(this);
+            _children = new List<THierarchyMember>();
+            Hierarchy = hierarchy;
+            Member    = member;
+            Parent    = parent;
+            Parent?._children.Add((THierarchyMember)this);
         }
 
         public virtual bool Contains(
-            HierarchyOrganisation hierarchyOrganisation
+            THierarchyMember hierarchyMember
             )
         {
-            return Interval.Contains(hierarchyOrganisation.Interval);
+            return Interval.Contains(hierarchyMember.Interval);
         }
 
-        protected internal int AssignInterval(
+        protected internal virtual int AssignInterval(
             int next
             )
         {
@@ -130,18 +150,117 @@ namespace CommonDomainObjects
         }
 
         public virtual void Visit(
-            Action<HierarchyOrganisation> before,
-            Action<HierarchyOrganisation> after = null
+            Action<THierarchyMember> before,
+            Action<THierarchyMember> after = null
             )
         {
-            before?.Invoke(this);
+            before?.Invoke((THierarchyMember)this);
 
             foreach(var child in Children)
                 child.Visit(
                     before,
                     after);
 
-            after?.Invoke(this);
+            after?.Invoke((THierarchyMember)this);
+        }
+    }
+
+    public class Hierarchy<TMember>: Hierarchy<Guid, Hierarchy<TMember>, HierarchyMember<TMember>, TMember>
+    {
+        protected Hierarchy() : base()
+        {
+        }
+
+        public Hierarchy(
+            Guid                                 id,
+            IDictionary<TMember, IList<TMember>> hierachy
+            ) : base(
+                id,
+                hierachy)
+        {
+        }
+
+        public Hierarchy(
+            IDictionary<TMember, IList<TMember>> hierachy
+            ) : this(
+                Guid.NewGuid(),
+                hierachy)
+        {
+        }
+
+        protected override HierarchyMember<TMember> NewHierarchyMember(
+            TMember                  member,
+            HierarchyMember<TMember> parentHierarchyMember
+            )
+        {
+            return new HierarchyMember<TMember>(
+                this,
+                member,
+                parentHierarchyMember);
+        }
+    }
+
+    public class HierarchyMember<TMember>: HierarchyMember<Guid, Hierarchy<TMember>, HierarchyMember<TMember>, TMember>
+    {
+        protected HierarchyMember() : base()
+        {
+        }
+
+        internal HierarchyMember(
+            Hierarchy<TMember>       hierarchy,
+            TMember                  member,
+            HierarchyMember<TMember> parent
+            ) : base(
+                Guid.NewGuid(),
+                hierarchy,
+                member,
+                parent)
+        {
+        }
+    }
+
+    public class Hierarchy: Hierarchy<Guid, Hierarchy, HierarchyMember, Organisation>
+    {
+        protected Hierarchy() : base()
+        {
+        }
+
+        public Hierarchy(
+            IDictionary<Organisation, IList<Organisation>> hierachy
+            ) : base(
+                Guid.NewGuid(),
+                hierachy)
+        {
+        }
+
+        protected override HierarchyMember NewHierarchyMember(
+            Organisation    organisation,
+            HierarchyMember parentHierarchyMember
+            )
+        {
+            return new HierarchyMember(
+                this,
+                organisation,
+                parentHierarchyMember);
+        }
+    }
+
+    public class HierarchyMember: HierarchyMember<Guid, Hierarchy, HierarchyMember, Organisation>
+    {
+        protected HierarchyMember() : base()
+        {
+        }
+
+        internal HierarchyMember(
+            Hierarchy       hierarchy,
+            Organisation    organisation,
+            HierarchyMember parent
+            ) : base(
+                Guid.NewGuid(),
+                hierarchy,
+                organisation,
+                parent)
+        {
         }
     }
 }
