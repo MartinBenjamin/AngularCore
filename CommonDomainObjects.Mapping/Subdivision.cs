@@ -30,11 +30,6 @@ namespace CommonDomainObjects.Mapping
             ManyToOne(
                 subdivision => subdivision.Country,
                 manyToOneMapper => manyToOneMapper.Column(columnMapper => columnMapper.SqlType("NVARCHAR(6)")));
-
-            ManyToOne(
-                subdivision => subdivision.ParentSubdivision,
-                manyToOneMapper => manyToOneMapper.Column(columnMapper => columnMapper.SqlType("NVARCHAR(6)")));
-
         }
     }
 }
