@@ -103,9 +103,9 @@ namespace Data
                 .ForEach(
                     record =>
                     {
-                        var code = record[1];
-                        var parentCode = record[6];
-                        var countryCode = record[1].Substring(0, 2);
+                        var code        = record[1];
+                        var parentCode  = record[6];
+                        var countryCode = code.Substring(0, 2);
 
                         Subdivision parent = null;
                         if(!string.IsNullOrEmpty(parentCode))
