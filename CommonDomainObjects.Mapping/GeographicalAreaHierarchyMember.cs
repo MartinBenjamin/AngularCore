@@ -8,7 +8,7 @@ namespace CommonDomainObjects.Mapping
         {
             ManyToOne(
                 geographicalAreaHierarchyMember => geographicalAreaHierarchyMember.Member,
-                manyToOneMapping => manyToOneMapping.Column(columnMapping => columnMapping.SqlType("NVARCHAR(6)")));
+                manyToOneMapping => manyToOneMapping.Column(columnMapping => columnMapping.SqlType(GeographicalArea.IdSqlType)));
 
             ManyToOne(
                 geographicalAreaHierarchyMember => geographicalAreaHierarchyMember.Parent,
