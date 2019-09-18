@@ -69,44 +69,63 @@ namespace Data
                     record[0]));
         }
 
-        //public static GeographicalAreaHierarchy LoadIso3166()
-        //{
-        //    //var countries = 
-        //    IDictionary<string, GeographicalArea> areas = LoadCountries()
-        //        .Cast<GeographicalArea>()
-        //        .ToDictionary(country => country.Id);
+        public static GeographicalAreaHierarchy LoadIso3166()
+        {
+            var emptyGeographicalAreaArray = new GeographicalArea[] { };
+            IDictionary<string, GeographicalArea> areaMap = LoadCountries()
+                .Cast<GeographicalArea>()
+                .ToDictionary(country => country.Id);
 
-        //    var hierarchy = areas.Keys.ToDictionary(
-        //        area => area,
-        //        area => new GeographicalArea[] { });
+            var areaHierarchy = areaMap
+                .Values
+                .ToDictionary<GeographicalArea, GeographicalArea, IList<GeographicalArea>>(
+                    area => area,
+                    area => emptyGeographicalAreaArray);
 
-        //    var subdivisions = Load<Subdivision>(
-        //        "ISO3166-2(US).csv",
-        //        record =>
-        //        {
-        //            var code        = record[1];
-        //            var parentCode  = record[6];
-        //            var countryCode = record[1].Substring(0, 2);
-        //            hierarchy[code] = string.IsNullOrEmpty(parentCode) ? countryCode : parentCode;
+            var recordMap = Load(
+                "ISO3166-2(US).csv",
+                record => record.ToList()).ToDictionary(record => record[1]);
 
-        //            return new Subdivision(
-        //                code,
-        //                record[2],
-        //                countries[countryCode],
-        //                record[0]);
-        //        });
+            var emptyRecordArray = new IList<string>[] { };
+            var recordHierarchy = recordMap
+                .Values
+                .ToDictionary<IList<string>, IList<string>, IList<IList<string>>>(
+                    record => record,
+                    record =>
+                    {
+                        var parentCode = record[6];
+                        return string.IsNullOrEmpty(parentCode) ? emptyRecordArray : new IList<string>[] { recordMap[parentCode] };
+                    });
 
-        //    var areas = countries
-        //        .Values
-        //        .Cast<GeographicalArea>()
-        //        .Concat(subdivisions)
-        //        .ToDictionary(area => area.Id);
+            recordHierarchy
+                .TopologicalSort()
+                .ToList()
+                .ForEach(
+                    record =>
+                    {
+                        var code = record[1];
+                        var parentCode = record[6];
+                        var countryCode = record[1].Substring(0, 2);
 
-        //    return new GeographicalAreaHierarchy(
-        //        areas.Keys.ToDictionary<string, GeographicalArea, IList<GeographicalArea>>(
-        //            code => areas[code],
-        //            code => new[] { areas[hierarchy[code]] }));
-        //}
+                        Subdivision parent = null;
+                        if(!string.IsNullOrEmpty(parentCode))
+                            parent = (Subdivision)areaMap[parentCode];
+
+                        var country = (Country)areaMap[countryCode];
+
+                        var subdivision = new Subdivision(
+                            code,
+                            record[2],
+                            country,
+                            parent,
+                            record[0]);
+
+                        areaMap[subdivision.Id] = subdivision;
+                        areaHierarchy[subdivision] = new[] { (GeographicalArea)parent ?? country };
+                    });
+
+            return new GeographicalAreaHierarchy(areaHierarchy);
+        }
 
         public static IList<Currency> LoadCurrencies()
         {

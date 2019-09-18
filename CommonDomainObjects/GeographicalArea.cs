@@ -32,7 +32,8 @@ namespace CommonDomainObjects
                 name)
         {
             _children = new List<GeographicalArea>();
-            parent?._children.Add(this);
+            Parent = parent;
+            Parent?._children.Add(this);
         }
 
         public virtual bool Contains(
