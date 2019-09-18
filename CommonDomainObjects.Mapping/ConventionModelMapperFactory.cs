@@ -21,12 +21,10 @@ namespace CommonDomainObjects.Mapping
                     domainObject => domainObject.Id,
                     idMapper => idMapper.Generator(Generators.Guid)));
 
-            mapper.AddMapping<GeographicalArea               >();
-            mapper.AddMapping<GeographicalAreaHierarchy      >();
-            mapper.AddMapping<GeographicalAreaHierarchyMember>();
-            mapper.AddMapping<Country                        >();
-            mapper.AddMapping<Subdivision                    >();
-            mapper.AddMapping<Currency                       >();
+            mapper.AddMapping<GeographicalArea>();
+            mapper.AddMapping<Country         >();
+            mapper.AddMapping<Subdivision     >();
+            mapper.AddMapping<Currency        >();
         }
 
         private static bool IsDomainObject<TId>(

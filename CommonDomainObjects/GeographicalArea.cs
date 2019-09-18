@@ -6,17 +6,56 @@ namespace CommonDomainObjects
 {
     public abstract class GeographicalArea: Named<string>
     {
+        private IList<GeographicalArea> _children;
+
+        public virtual GeographicalArea Parent   { get; protected set; }
+        public virtual Range<int>       Interval { get; protected set; }
+
+        public virtual IReadOnlyList<GeographicalArea> Children
+        {
+            get
+            {
+                return new ReadOnlyCollection<GeographicalArea>(_children);
+            }
+        }
+
         protected GeographicalArea() : base()
         {
         }
 
         protected GeographicalArea(
-            string id,
-            string name
+            string           id,
+            string           name,
+            GeographicalArea parent
             ) : base(
                 id,
                 name)
         {
+            _children = new List<GeographicalArea>();
+            parent?._children.Add(this);
+        }
+
+        public virtual bool Contains(
+            GeographicalArea geographicalArea
+            )
+        {
+            return Interval.Contains(geographicalArea.Interval);
+        }
+
+        protected internal virtual int AssignInterval(
+            int next
+            )
+        {
+            var start = next++;
+
+            foreach(var child in _children)
+                next = child.AssignInterval(next);
+
+            Interval = new Range<int>(
+                start,
+                next++);
+
+            return next;
         }
     }
 
@@ -41,7 +80,8 @@ namespace CommonDomainObjects
             string shortName
             ) : base(
                 alpha2Code,
-                shortName)
+                shortName,
+                null)
         {
             Alpha2Code  = alpha2Code;
             Alpha3Code  = alpha3Code;
@@ -56,6 +96,7 @@ namespace CommonDomainObjects
     {
         public virtual string      Code              { get; protected set; }
         public virtual Country     Country           { get; protected set; }
+        public virtual Subdivision ParentSubdivision { get; protected set; }
         public virtual string      Category          { get; protected set; }
 
         protected Subdivision() : base()
@@ -66,14 +107,17 @@ namespace CommonDomainObjects
             string      code,
             string      name,
             Country     country,
+            Subdivision parentSubdivision,
             string      category
             ) : base(
                 code,
-                name)
+                name,
+                (GeographicalArea)parentSubdivision ?? country)
         {
-            Code     = code;
-            Country  = country;
-            Category = category;
+            Code              = code;
+            Country           = country;
+            ParentSubdivision = parentSubdivision;
+            Category          = category;
         }
 
         public virtual string CategoryTitleCase
