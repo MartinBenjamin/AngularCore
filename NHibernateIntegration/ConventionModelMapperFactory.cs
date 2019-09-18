@@ -27,7 +27,7 @@ namespace NHibernateIntegration
                 ) =>
             {
                 manyToOneMapper.Column(NameBuilder(member) + "Id");
-                manyToOneMapper.ForeignKey(NameBuilder(member) + "_FK");
+                manyToOneMapper.ForeignKey(ForeignKeyNameBuilder(member));
             };
 
             mapper.BeforeMapBag += (
@@ -60,6 +60,13 @@ namespace NHibernateIntegration
         {
             var type = member.GetRootMember().DeclaringType;
             return type.IsGenericType ? _genericArity.Replace(type.Name, string.Empty) : type.Name;
+        }
+
+        private string ForeignKeyNameBuilder(
+            PropertyPath member
+            )
+        {
+            return TypeName(member) + "_" + NameBuilder(member) + "_FK"; 
         }
     }
 }
