@@ -6,11 +6,13 @@
 
   <ItemGroup>
     <None Remove="ISO3166-1.csv" />
+    <None Remove="ISO3166-2%28US%29.csv" />
     <None Remove="ISO4217.csv" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="ISO3166-1.csv" />
+    <EmbeddedResource Include="ISO3166-2(US).csv" />
     <EmbeddedResource Include="ISO4217.csv" />
   </ItemGroup>
 

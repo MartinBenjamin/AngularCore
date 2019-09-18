@@ -69,6 +69,45 @@ namespace Data
                     record[0]));
         }
 
+        //public static GeographicalAreaHierarchy LoadIso3166()
+        //{
+        //    //var countries = 
+        //    IDictionary<string, GeographicalArea> areas = LoadCountries()
+        //        .Cast<GeographicalArea>()
+        //        .ToDictionary(country => country.Id);
+
+        //    var hierarchy = areas.Keys.ToDictionary(
+        //        area => area,
+        //        area => new GeographicalArea[] { });
+
+        //    var subdivisions = Load<Subdivision>(
+        //        "ISO3166-2(US).csv",
+        //        record =>
+        //        {
+        //            var code        = record[1];
+        //            var parentCode  = record[6];
+        //            var countryCode = record[1].Substring(0, 2);
+        //            hierarchy[code] = string.IsNullOrEmpty(parentCode) ? countryCode : parentCode;
+
+        //            return new Subdivision(
+        //                code,
+        //                record[2],
+        //                countries[countryCode],
+        //                record[0]);
+        //        });
+
+        //    var areas = countries
+        //        .Values
+        //        .Cast<GeographicalArea>()
+        //        .Concat(subdivisions)
+        //        .ToDictionary(area => area.Id);
+
+        //    return new GeographicalAreaHierarchy(
+        //        areas.Keys.ToDictionary<string, GeographicalArea, IList<GeographicalArea>>(
+        //            code => areas[code],
+        //            code => new[] { areas[hierarchy[code]] }));
+        //}
+
         public static IList<Currency> LoadCurrencies()
         {
             return Load<Currency>(
