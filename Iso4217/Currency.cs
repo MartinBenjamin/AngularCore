@@ -1,4 +1,6 @@
-﻿namespace CommonDomainObjects
+﻿using CommonDomainObjects;
+
+namespace Iso4217
 {
     public class Currency: Named<string>
     {

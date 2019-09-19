@@ -2,7 +2,7 @@
 
 namespace CommonDomainObjects.Mapping
 {
-    public class Currency: ClassMapping<CommonDomainObjects.Currency>
+    public class Currency: ClassMapping<Iso4217.Currency>
     {
         public Currency()
         {
