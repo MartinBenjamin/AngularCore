@@ -2,7 +2,7 @@
 
 namespace CommonDomainObjects.Mapping
 {
-    class Country: JoinedSubclassMapping<CommonDomainObjects.Country>
+    class Country: JoinedSubclassMapping<Iso3166._1.Country>
     {
         public Country()
         {

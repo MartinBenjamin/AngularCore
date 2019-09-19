@@ -1,5 +1,5 @@
 ﻿using Autofac;
-using CommonDomainObjects;
+using Iso3166._1;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
 using NHibernateIntegration;

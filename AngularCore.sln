@@ -25,7 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonDomainObjects.Mapping
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessageBroker", "MessageBroker\MessageBroker.csproj", "{71B339EA-D875-45B8-9075-149F5D19BBF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{03283303-637E-4850-9E91-E9FCCF7E3B85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", "{03283303-637E-4850-9E91-E9FCCF7E3B85}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Iso3166", "Iso3166\Iso3166.csproj", "{36EF4507-6ED1-4680-8F86-AEE59663F928}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +83,10 @@ Global
 		{03283303-637E-4850-9E91-E9FCCF7E3B85}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03283303-637E-4850-9E91-E9FCCF7E3B85}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03283303-637E-4850-9E91-E9FCCF7E3B85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36EF4507-6ED1-4680-8F86-AEE59663F928}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36EF4507-6ED1-4680-8F86-AEE59663F928}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36EF4507-6ED1-4680-8F86-AEE59663F928}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36EF4507-6ED1-4680-8F86-AEE59663F928}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

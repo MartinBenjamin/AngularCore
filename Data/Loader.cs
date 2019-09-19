@@ -1,4 +1,6 @@
 ﻿using CommonDomainObjects;
+using Iso3166._1;
+using Iso3166._2;
 using Peg;
 using System;
 using System.Collections.Generic;
@@ -59,7 +61,7 @@ namespace Data
 
         public static IList<Country> LoadCountries()
         {
-            return Load<Country>(
+            return Load(
                 "ISO3166-1.csv",
                 record => new Country(
                     record[2],
@@ -129,7 +131,7 @@ namespace Data
 
         public static IList<Currency> LoadCurrencies()
         {
-            return Load<Currency>(
+            return Load(
                 "ISO4217.csv",
                 record => !string.IsNullOrEmpty(record[2]) ?
                     new Currency(

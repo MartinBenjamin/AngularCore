@@ -2,7 +2,7 @@
 
 namespace CommonDomainObjects.Mapping
 {
-    public class Subdivision: JoinedSubclassMapping<CommonDomainObjects.Subdivision>
+    public class Subdivision: JoinedSubclassMapping<Iso3166._2.Subdivision>
     {
         public Subdivision()
         {
