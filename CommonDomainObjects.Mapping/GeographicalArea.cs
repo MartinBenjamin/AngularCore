@@ -12,6 +12,13 @@ namespace CommonDomainObjects.Mapping
                 geographicalArea => geographicalArea.Id,
                 idMapper => idMapper.Column(columnMapper => columnMapper.SqlType(IdSqlType)));
 
+            Discriminator(
+                discriminatorMapper =>
+                {
+                    discriminatorMapper.Column("Type");
+                    discriminatorMapper.Length(50);
+                });
+
             ManyToOne(
                 geographicalArea => geographicalArea.Parent,
                 manyToOneMapper => manyToOneMapper.Column(columnMapper => columnMapper.SqlType(IdSqlType)));

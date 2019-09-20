@@ -2,6 +2,7 @@
 using Iso3166._1;
 using Iso3166._2;
 using Iso4217;
+using UnsdM49;
 
 namespace Service
 {
@@ -20,6 +21,9 @@ namespace Service
             builder
                 .RegisterType<NamedService<string, Currency, NamedFilters>>()
                 .As<INamedService<string, Currency, NamedFilters>>();
+            builder
+                .RegisterType<NamedService<string, Global, NamedFilters>>()
+                .As<INamedService<string, Global, NamedFilters>>();
         }
     }
 }

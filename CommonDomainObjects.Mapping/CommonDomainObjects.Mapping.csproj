@@ -13,6 +13,7 @@
     <ProjectReference Include="..\Iso3166\Iso3166.csproj" />
     <ProjectReference Include="..\Iso4217\Iso4217.csproj" />
     <ProjectReference Include="..\NHibernateIntegration\NHibernateIntegration.csproj" />
+    <ProjectReference Include="..\UnsdM49\UnsdM49.csproj" />
   </ItemGroup>
 
 </Project>
