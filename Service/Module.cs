@@ -24,6 +24,16 @@ namespace Service
             builder
                 .RegisterType<NamedService<string, Global, NamedFilters>>()
                 .As<INamedService<string, Global, NamedFilters>>();
+            builder
+                .RegisterType<NamedService<string, Region, NamedFilters>>()
+                .As<INamedService<string, Region, NamedFilters>>();
+            builder
+                .RegisterType<NamedService<string, SubRegion, NamedFilters>>()
+                .As<INamedService<string, SubRegion, NamedFilters>>();
+            builder
+                .RegisterType<NamedService<string, IntermediateRegion, NamedFilters>>()
+                .As<INamedService<string, IntermediateRegion, NamedFilters>>();
+
         }
     }
 }
