@@ -24,15 +24,4 @@ namespace CommonDomainObjects.Mapping
                 collectionMapper => collectionMapper.Key(keyMapper => keyMapper.Column("AreaId")));
         }
     }
-
-    public class GeographicalSubArea: SubclassMapping<CommonDomainObjects.GeographicalSubArea>
-    {
-
-        public GeographicalSubArea()
-        {
-            ManyToOne(
-                geographicalArea => geographicalArea.Area,
-                manyToOneMapper => manyToOneMapper.Column(columnMapper => columnMapper.SqlType(GeographicalArea.IdSqlType)));
-        }
-    }
 }
