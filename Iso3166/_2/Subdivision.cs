@@ -5,7 +5,7 @@ namespace Iso3166._2
 {
     using _1;
 
-    public class Subdivision: GeographicalArea
+    public class Subdivision: GeographicalSubArea
     {
         public virtual string      Code              { get; protected set; }
         public virtual Country     Country           { get; protected set; }

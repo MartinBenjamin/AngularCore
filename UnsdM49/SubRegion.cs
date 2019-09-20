@@ -2,19 +2,20 @@
 
 namespace UnsdM49
 {
-    public class SubRegion: GeographicalArea
+    public class SubRegion: GeographicalSubArea
     {
         protected SubRegion() : base()
         {
         }
 
         public SubRegion(
-            string code,
-            string name
+            string           code,
+            string           name,
+            GeographicalArea area
             ) : base(
                 code,
                 name,
-                null)
+                area)
         {
         }
     }

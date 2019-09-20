@@ -22,8 +22,7 @@ namespace Iso3166._1
             string shortName
             ) : base(
                 alpha2Code,
-                shortName,
-                null)
+                shortName)
         {
             Alpha2Code  = alpha2Code;
             Alpha3Code  = alpha3Code;

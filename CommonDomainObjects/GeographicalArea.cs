@@ -1,21 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 
 namespace CommonDomainObjects
 {
     public abstract class GeographicalArea: Named<string>
     {
-        private IList<GeographicalArea> _children;
+        private IList<GeographicalSubArea> _subAreas;
 
-        public virtual GeographicalArea Parent   { get; protected set; }
-        public virtual Range<int>       Interval { get; protected set; }
+        public virtual Range<int> Interval { get; protected set; }
 
-        public virtual IReadOnlyList<GeographicalArea> Children
+        public virtual IReadOnlyList<GeographicalSubArea> SubAreas
         {
             get
             {
-                return new ReadOnlyCollection<GeographicalArea>(_children);
+                return new ReadOnlyCollection<GeographicalSubArea>(_subAreas);
             }
         }
 
@@ -24,16 +22,13 @@ namespace CommonDomainObjects
         }
 
         protected GeographicalArea(
-            string           id,
-            string           name,
-            GeographicalArea parent
+            string id,
+            string name
             ) : base(
                 id,
                 name)
         {
-            _children = new List<GeographicalArea>();
-            Parent = parent;
-            Parent?._children.Add(this);
+            _subAreas = new List<GeographicalSubArea>();
         }
 
         public virtual bool Contains(
@@ -49,7 +44,7 @@ namespace CommonDomainObjects
         {
             var start = next++;
 
-            foreach(var child in _children)
+            foreach(var child in _subAreas)
                 next = child.AssignInterval(next);
 
             Interval = new Range<int>(
@@ -57,6 +52,34 @@ namespace CommonDomainObjects
                 next++);
 
             return next;
+        }
+
+        protected internal virtual void Add(
+            GeographicalSubArea subArea
+            )
+        {
+            _subAreas.Add(subArea);
+        }
+    }
+
+    public abstract class GeographicalSubArea: GeographicalArea
+    {
+        public virtual GeographicalArea Area { get; protected set; }
+
+        protected GeographicalSubArea() : base()
+        {
+        }
+
+        protected GeographicalSubArea(
+            string           id,
+            string           name,
+            GeographicalArea area
+            ) : base(
+                id,
+                name)
+        {
+            Area = area;
+            Area?.Add(this);
         }
     }
 }

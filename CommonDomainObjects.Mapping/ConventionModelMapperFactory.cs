@@ -22,6 +22,7 @@ namespace CommonDomainObjects.Mapping
                     idMapper => idMapper.Generator(Generators.Guid)));
 
             mapper.AddMapping<GeographicalArea               >();
+            mapper.AddMapping<GeographicalSubArea            >();
             mapper.AddMapping<GeographicalAreaHierarchy      >();
             mapper.AddMapping<GeographicalAreaHierarchyMember>();
             mapper.AddMapping<CountryJoin                    >();

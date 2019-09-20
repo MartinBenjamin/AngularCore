@@ -19,13 +19,20 @@ namespace CommonDomainObjects.Mapping
                     discriminatorMapper.Length(50);
                 });
 
-            ManyToOne(
-                geographicalArea => geographicalArea.Parent,
-                manyToOneMapper => manyToOneMapper.Column(columnMapper => columnMapper.SqlType(IdSqlType)));
-
             Bag(
-                geographicalArea => geographicalArea.Children,
-                collectionMapper => collectionMapper.Key(keyMapper => keyMapper.Column("ParentId")));
+                geographicalArea => geographicalArea.SubAreas,
+                collectionMapper => collectionMapper.Key(keyMapper => keyMapper.Column("AreaId")));
+        }
+    }
+
+    public class GeographicalSubArea: SubclassMapping<CommonDomainObjects.GeographicalSubArea>
+    {
+
+        public GeographicalSubArea()
+        {
+            ManyToOne(
+                geographicalArea => geographicalArea.Area,
+                manyToOneMapper => manyToOneMapper.Column(columnMapper => columnMapper.SqlType(GeographicalArea.IdSqlType)));
         }
     }
 }

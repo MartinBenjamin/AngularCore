@@ -13,8 +13,7 @@ namespace UnsdM49
             string name
             ) : base(
                 code,
-                name,
-                null)
+                name)
         {
         }
     }
