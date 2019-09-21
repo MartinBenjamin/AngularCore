@@ -80,7 +80,46 @@ namespace CommonDomainObjects
         }
     }
 
-    public class AgreementOrganisationalSubUnit: AgreementParty
+    public class AgreementOrganisation: AgreementParty
+    {
+        public virtual Organisation Organisation { get; protected set; }
+
+        protected AgreementOrganisation() : base()
+        {
+        }
+
+        public AgreementOrganisation(
+            Guid             id,
+            Agreement        agreement,
+            Organisation     organisation,
+            Role             role,
+            Range2<DateTime> period
+            ) : base(
+                id,
+                agreement,
+                organisation,
+                role,
+                period)
+        {
+            Organisation = organisation;
+        }
+
+        public AgreementOrganisation(
+            Agreement        agreement,
+            Organisation     organisation,
+            Role             role,
+            Range2<DateTime> period
+            ) : this(
+                Guid.NewGuid(),
+                agreement,
+                organisation,
+                role,
+                period)
+        {
+        }
+    }
+
+    public class AgreementOrganisationalSubUnit: AgreementOrganisation
     {
         public virtual OrganisationalSubUnit OrganisationalSubUnit { get; protected set; }
 
