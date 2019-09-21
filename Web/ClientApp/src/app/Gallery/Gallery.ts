@@ -9,88 +9,88 @@ import { TestTab } from './TestTab';
 
 @Component({
   selector: 'gallery',
-  template: '<h1>Gallery</h1>\
-<table>\
-    <tr>\
-        <td>dtTextModel</td>\
-        <td><input type="text" [(dtTextModel)]="text" [dtModelErrors]="errors?.A"/></td>\
-        <td>{{text}}</td>\
-    </tr>\
-    <tr>\
-        <td>dtDateModel</td>\
-        <td><input type="text" [(dtDateModel)]="date" [dtModelErrors]="errors?.B?.C"/></td>\
-        <td>{{date}}</td>\
-    </tr>\
-    <tr>\
-        <td>dtAmountModel</td>\
-        <td><input type="text" [(dtAmountModel)]="amount" [dtModelErrors]="errors?.B?.D"/></td>\
-        <td>{{amount}}</td>\
-    </tr>\
-    <tr>\
-        <td>dtPercentageModel</td>\
-        <td><input type="text" [(dtPercentageModel)]="percentage"/></td>\
-        <td>{{percentage}}</td>\
-    </tr>\
-    <tr>\
-        <td>dtPercentage100Model</td>\
-        <td><input type="text" [(dtPercentage100Model)]="percentage"/></td>\
-        <td>{{percentage}}</td>\
-    </tr>\
-    <tr>\
-        <td>dt-calendar</td>\
-        <td><dt-calendar (dateSelected)="date = $event"></dt-calendar></td>\
-        <td>{{date}}</td>\
-    </tr>\
-    <tr>\
-        <td>utcDate (Pipe)</td>\
-        <td>{{utcDate|utcDate}}</td>\
-    </tr>\
-    <tr>\
-        <td>100000|amount</td>\
-        <td>{{100000|amount}}</td>\
-    </tr>\
-    <tr>\
-        <td>99|percentage</td>\
-        <td>{{99|percentage}}</td>\
-    </tr>\
-    <tr>\
-        <td>dt-dialog</td>\
-        <td><dt-dialog\
-                Title="abc"\
-                [Open]="open">\
-                <dt-dialog-body>Body Body</dt-dialog-body>\
-                <dt-dialog-buttons><input type="Button" value="Close" (click)="open=false"></dt-dialog-buttons>\
-            </dt-dialog><input type="Button" value="Open" (click)="open = true">\
-        </td>\
-        <td></td>\
-    </tr>\
-    <tr>\
-        <td>dt-tabbed-view</td>\
-        <td colspan="2"><dt-tabbed-view [Tabs]="tabs"></dt-tabbed-view></td>\
-    </tr>\
-    <tr>\
-        <td><input type="Button" value="dt-errors" (click)="toggle()"/></td>\
-        <td colspan="2"><dt-errors [Errors]="errors"></dt-errors></td>\
-    </tr>\
-    <tr>\
-        <td><input type="Button" value="dt-organisational-unit-selector" (click)="select()"/></td>\
-        <td colspan="2"><dt-organisational-unit-selector\
-            Title="Primary ECA Office"\
-            [Hierarchy]="hierarchy" #organisationalUnitSelector\
-            (Oncancel)="organisationalUnit = \'Cancelled\'"></dt-organisational-unit-selector>{{organisationalUnit}}</td>\
-    </tr>\
-    <tr>\
-        <td><input type="Button" value="dt-organisational-unit-selector-v2" (click)="selectV2()"/></td>\
-        <td colspan="2"><dt-organisational-unit-selector-v2\
-            Title="V2"\
-            [Hierarchy]="hierarchy" #organisationalUnitSelectorV2\
-            (Oncancel)="organisationalUnit = \'Cancelled\'"></dt-organisational-unit-selector-v2>{{organisationalUnit}}</td>\
-    </tr>\
-    <tr>\
-        <td><input type="Button" value="assessment-viewer" (click)="viewAssessment()"/></td>\
-        <td colspan="2"><assessment-viewer #assessmentViewer></assessment-viewer></td>\
-    </tr>\
-</table>',
+  template: `<h1>Gallery</h1>
+<table style="border-collapse: separate;border-spacing: 1px;">
+    <tr>
+        <td>dtTextModel</td>
+        <td><input type="text" [(dtTextModel)]="text" [dtModelErrors]="errors?.A"/></td>
+        <td>{{text}}</td>
+    </tr>
+    <tr>
+        <td>dtDateModel</td>
+        <td><input type="text" [(dtDateModel)]="date" [dtModelErrors]="errors?.B?.C"/></td>
+        <td>{{date}}</td>
+    </tr>
+    <tr>
+        <td>dtAmountModel</td>
+        <td><input type="text" [(dtAmountModel)]="amount" [dtModelErrors]="errors?.B?.D"/></td>
+        <td>{{amount}}</td>
+    </tr>
+    <tr>
+        <td>dtPercentageModel</td>
+        <td><input type="text" [(dtPercentageModel)]="percentage"/></td>
+        <td>{{percentage}}</td>
+    </tr>
+    <tr>
+        <td>dtPercentage100Model</td>
+        <td><input type="text" [(dtPercentage100Model)]="percentage"/></td>
+        <td>{{percentage}}</td>
+    </tr>
+    <tr>
+        <td>dt-calendar</td>
+        <td><dt-calendar (dateSelected)="date = $event"></dt-calendar></td>
+        <td>{{date}}</td>
+    </tr>
+    <tr>
+        <td>utcDate (Pipe)</td>
+        <td>{{utcDate|utcDate}}</td>
+    </tr>
+    <tr>
+        <td>100000|amount</td>
+        <td>{{100000|amount}}</td>
+    </tr>
+    <tr>
+        <td>99|percentage</td>
+        <td>{{99|percentage}}</td>
+    </tr>
+    <tr>
+        <td>dt-dialog</td>
+        <td><dt-dialog
+                Title="abc"
+                [Open]="open">
+                <dt-dialog-body>Body Body</dt-dialog-body>
+                <dt-dialog-buttons><input type="Button" value="Close" (click)="open=false"></dt-dialog-buttons>
+            </dt-dialog><input type="Button" value="Open" (click)="open = true">
+        </td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>dt-tabbed-view</td>
+        <td colspan="2"><dt-tabbed-view [Tabs]="tabs"></dt-tabbed-view></td>
+    </tr>
+    <tr>
+        <td><input type="Button" value="dt-errors" (click)="toggle()"/></td>
+        <td colspan="2"><dt-errors [Errors]="errors"></dt-errors></td>
+    </tr>
+    <tr>
+        <td><input type="Button" value="dt-organisational-unit-selector" (click)="select()"/></td>
+        <td colspan="2"><dt-organisational-unit-selector
+            Title="Primary ECA Office"
+            [Hierarchy]="hierarchy" #organisationalUnitSelector
+            (Oncancel)="organisationalUnit = 'Cancelled'"></dt-organisational-unit-selector>{{organisationalUnit}}</td>
+    </tr>
+    <tr>
+        <td><input type="Button" value="dt-organisational-unit-selector-v2" (click)="selectV2()"/></td>
+        <td colspan="2"><dt-organisational-unit-selector-v2
+            Title="V2"
+            [Hierarchy]="hierarchy" #organisationalUnitSelectorV2
+            (Oncancel)="organisationalUnit = 'Cancelled'"></dt-organisational-unit-selector-v2>{{organisationalUnit}}</td>
+    </tr>
+    <tr>
+        <td><input type="Button" value="assessment-viewer" (click)="viewAssessment()"/></td>
+        <td colspan="2"><assessment-viewer #assessmentViewer></assessment-viewer></td>
+    </tr>
+</table>`,
 })
 export class Gallery
 {
