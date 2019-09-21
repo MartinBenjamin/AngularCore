@@ -66,7 +66,7 @@ namespace NHibernateIntegration
             PropertyPath member
             )
         {
-            return TypeName(member) + "_" + NameBuilder(member) + "_FK"; 
+            return "FK_" + TypeName(member) + "_" + NameBuilder(member); 
         }
     }
 }

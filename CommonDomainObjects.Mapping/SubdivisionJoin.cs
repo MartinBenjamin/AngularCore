@@ -22,7 +22,7 @@ namespace CommonDomainObjects.Mapping
                                     columnMapper.SqlType(GeographicalArea.IdSqlType);
                                 });
 
-                            keyMapper.ForeignKey("FK_" + nameof(Subdivision) + nameof(GeographicalArea));
+                            keyMapper.ForeignKey("FK_" + nameof(Subdivision) + "_" + nameof(GeographicalArea));
                         });
 
                     joinMapper.Property(
