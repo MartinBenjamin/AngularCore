@@ -6,7 +6,7 @@ namespace CommonDomainObjects.Mapping
     {
         public Region()
         {
-            DiscriminatorValue("Region");
+            DiscriminatorValue(nameof(UnsdM49.Region));
         }
     }
 }

@@ -6,7 +6,7 @@ namespace CommonDomainObjects.Mapping
     {
         public Global()
         {
-            DiscriminatorValue("Global");
+            DiscriminatorValue(nameof(UnsdM49.Global));
         }
     }
 }

@@ -30,6 +30,8 @@ namespace CommonDomainObjects.Mapping
             mapper.AddMapping<Currency                       >();
             mapper.AddMapping<Global                         >();
             mapper.AddMapping<Region                         >();
+            mapper.AddMapping<SubRegion                      >();
+            mapper.AddMapping<IntermediateRegion             >();
         }
 
         private static bool IsDomainObject<TId>(
