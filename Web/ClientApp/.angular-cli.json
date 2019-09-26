@@ -22,8 +22,7 @@
         "Calendar.css",
         "Dialog.css",
         "TabbedView.css",
-        "font-awesome-4.7.0\\css\\font-awesome.min.css",
-        "../node_modules/bootstrap/dist/css/bootstrap.min.css"
+        "font-awesome-4.7.0\\css\\font-awesome.min.css"
       ],
       "scripts": [
         "./assets/Date.js",

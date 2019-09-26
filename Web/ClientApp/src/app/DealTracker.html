@@ -1,0 +1,134 @@
+<style type="text/css">
+  div.DealTracker
+  {
+    font-family: Arial;
+    font-size: 11px;
+    color: #7a7a7a;
+  }
+
+  .ApplicationTitle
+  {
+    font-size: 20pt;
+    font-weight: bold;
+    color: #5a5a5a;
+    text-transform: uppercase;
+    text-wrap: none;
+  }
+
+  .ApplicationSubTitle
+  {
+    font-size: 10pt;
+    letter-spacing: 10px;
+    color: #5a5a5a;
+  }
+
+  span.Field
+  {
+    display: inline-block;
+    border: 1px solid #3a3a3a;
+    height: 20px;
+  }
+
+  span.DealID
+  {
+    width: 200px;
+    text-align: right;
+  }
+
+  table.Header
+  {
+    background-color: black;
+  }
+
+  *.RowHeading
+  {
+    font-weight: bold;
+  }
+
+  select
+  {
+    width: 200px;
+    height: 20px;
+    padding: 0px;
+    border: 1px solid #7a7a7a;
+    background-color: #000000;
+  }
+
+  table.Header td.Mufg
+  {
+    font-size: 70px;
+    font-weight: bold;
+    letter-spacing: -4px;
+    color: #5a5a5a;
+  }
+
+  table.DataGrid
+  {
+    border-collapse: separate;
+    border-spacing: 1px;
+    font-family: Arial;
+  }
+
+  table.DataGrid td
+  {
+    padding: 0px;
+    border: none;
+  }
+</style>
+<div class="DealTracker">
+  <table class="Header">
+    <tr>
+      <td style="width: 100%; vertical-align: top;">
+        <span class="ApplicationTitle">Dark Deal Tracker</span><br />
+        <span class="ApplicationSubTitle">Azure Cloud Platform</span>
+      </td>
+      <td rowspan="2">
+        <svg width="118" height="100" style="background-color: black;">
+          <g transform="translate(1, 50)">
+            <circle cx="40" cy="0" r="40" fill="#e60000" />
+            <circle cx="76" cy="0" r="40" fill="#e60000" />
+            <circle cx="58" cy="0" r="36" fill="#000000" />
+            <circle cx="58" cy="0" r="18" fill="#e60000" />
+          </g>
+        </svg>
+      </td>
+      <td class="Mufg" style="padding-left: 15px;">
+        MUFG
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+    </tr>
+  </table>
+  <div style="height: 2px; background-color: #e60000;"></div>
+  <div style="height: 30px; background-color: #151515;"></div>
+  <div style="padding: 5px;">
+    <table class="DataGrid">
+      <tr>
+        <td class="RowHeading">Deal ID:</td>
+        <td><span class="Field DealID">000001</span></td>
+      </tr>
+      <tr>
+        <td class="RowHeading">Stage:</td>
+        <td>
+          <select>
+            <option></option>
+            <option>Prospect</option>
+            <option>Business Screened</option>
+            <option>Submitted To Credit</option>
+            <option>Signed</option>
+            <option>Closed</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td class="RowHeading">Bid Status:</td>
+        <td><select></select></td>
+      </tr>
+      <tr>
+        <td class="RowHeading">Restricted:</td>
+        <td><select></select></td>
+      </tr>
+    </table>
+  </div>
+</div>

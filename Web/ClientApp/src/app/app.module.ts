@@ -11,6 +11,7 @@ import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { GalleryModule } from './Gallery/GalleryModule';
 import { Gallery } from './Gallery/Gallery'
+import { DealTracker } from './DealTracker';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { Gallery } from './Gallery/Gallery'
     NavMenuComponent,
     HomeComponent,
     CounterComponent,
-    FetchDataComponent
+    FetchDataComponent,
+    DealTracker
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -33,6 +35,6 @@ import { Gallery } from './Gallery/Gallery'
     ])
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [DealTracker]
 })
 export class AppModule { }
