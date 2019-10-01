@@ -1,39 +1,22 @@
-﻿table.TabStrip
+table.TabbedView th.Spacer
 {
-    border-collapse: collapse;
-    table-layout: fixed;
-}
-table.TabStrip th.Spacer
-{
-    border-width: 0px 0px 1px 0px;
-    border-style: solid;
-    border-color: #ccccff;
-    width: 2px;
-}
-table.TabStrip th.Spacerl
-{
-    border-width: 1px 0px 0px 0px;
-    border-style: solid;
     border-color: #ccf;
 }
-table.TabStrip th.Tab
+table.TabbedView th.Spacer1
 {
-    border-width: 1px;
-    border-style: solid;
-    border-color: #ccccff;
-    background-color : #f0f0f0;
+    border-color: #ccf;
+}
+table.TabbedView th.Tab
+{
+    border-color: #ccf;
+    background-color: #f0f0f0;
     width: 110px;
-    cursor: pointer;
 }
-table.TabStrip td.View
+table.TabbedView td.View
 {
-    border-width: 0px 1px 1px 1px;
-    border-style: solid;
     border-color: #ccf;
-    padding: 5px;
 }
-table.TabStrip th.Selected
+table.TabbedView th.Selected
 {
     background-color: White;
-    border-bottom-width: 0px;
 }

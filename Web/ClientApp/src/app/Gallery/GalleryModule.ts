@@ -10,7 +10,7 @@ import { NumberModule } from './NumberModule';
 import { OrganisationalUnitSelectorModule } from './OrganisationalUnitSelector';
 import { OrganisationalUnitSelectorModuleV2 } from './OrganisationalUnitSelectorV2';
 import { TabbedViewModule } from './TabbedView';
-import { TestTab } from './TestTab';
+import { TestTab0, TestTab1 } from './TestTab';
 import { TextModel } from './TextModel';
 
 @NgModule(
@@ -31,12 +31,14 @@ import { TextModel } from './TextModel';
     [
         Gallery,
         TextModel,
-        TestTab,
+        TestTab0,
+        TestTab1,
         AssessmentViewer
     ],
     entryComponents:
     [
-        TestTab
+        TestTab0,
+        TestTab1
     ],
     bootstrap:
     [

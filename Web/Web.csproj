@@ -28,10 +28,7 @@
 
   <ItemGroup>
     <None Remove="ClientApp\src\app\DealTracker.ts" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ClientApp\src\app\Gallery\" />
+    <None Remove="ClientApp\src\app\Gallery\TestTab.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +37,7 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\DealTracker.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Gallery\TestTab.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

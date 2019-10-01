@@ -1,17 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, ComponentFactoryResolver, Input, NgModule, Type, ViewChild, ViewContainerRef } from '@angular/core';
 
-export interface TabComponent
-{
-    Model: any;
-}
-
 export class Tab
 {
     constructor(
         public Title    : string,
-        public Component: Type<TabComponent>,
-        public Model    : any,
+        public Component: Type<any>,
         public Selected = false
         )
     {
@@ -41,8 +35,7 @@ export class TabContainer
     {
         let componentFactory = this._componentFactoryResolver.resolveComponentFactory(tab.Component);
         this._viewContainerRef.clear();
-        let tabComponentRef = this._viewContainerRef.createComponent(componentFactory);
-        tabComponentRef.instance.Model = tab.Model;
+        this._viewContainerRef.createComponent(componentFactory);
     }
 }
 
@@ -60,22 +53,17 @@ export class TabContainer
     {
         border-width: 0px 0px 1px 0px;
         border-style: solid;
-        border-color: #ccf;
         width: 2px;
     }
     table.TabbedView th.Spacer1
     {
         border-width: 1px 0px 0px 0px;
         border-style: solid;
-        border-color: #ccf;
     }
     table.TabbedView th.Tab
     {
         border-width: 1px;
         border-style: solid;
-        border-color: #ccccff;
-        background-color : #f0f0f0;
-        width: 110px;
         cursor: pointer;
         text-align: center;
     }
@@ -83,12 +71,10 @@ export class TabContainer
     {
         border-width: 0px 1px 1px 1px;
         border-style: solid;
-        border-color: #ccf;
         padding: 5px;
     }
     table.TabbedView th.Selected
     {
-        background-color: White;
         border-bottom-width: 0px;
     }
 </style>
@@ -100,7 +86,7 @@ export class TabContainer
                 <th
                     (click)="Selected = tab"
                     [innerHTML]="tab.Title"
-                    class="Tab" [ngClass]="{ \'Selected\': tab == Selected }"></th>
+                    class="Tab" [ngClass]="{ 'Selected': tab == Selected }"></th>
             </ng-container>
             <th class="Spacer" style= "width: auto;"></th>
         </tr>
@@ -118,7 +104,7 @@ export class TabContainer
             <table>
                 <tr
                     *ngFor="let tab of Tabs"
-                    [style.display] = "tab == Selected ? \'table-row\' : \'none\'"
+                    [style.display] = "tab == Selected ? 'table-row' : 'none'"
                     (SelectTab)="Selected = tab">
                     <td><dt-tab-container [Tab]="tab"></dt-tab-container></td>
                 </tr>
