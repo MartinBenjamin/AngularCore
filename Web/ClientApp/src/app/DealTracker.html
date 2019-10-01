@@ -75,13 +75,13 @@
     color: #5a5a5a;
   }
 
-  table.DataGrid
+  table.GridLayout
   {
     border-collapse: separate;
     border-spacing: 2px;
   }
 
-  table.DataGrid td
+  table.GridLayout td
   {
     padding: 0px;
     border: none;
@@ -115,7 +115,7 @@
   <div style="height: 2px; background-color: #b60000;"></div>
   <div style="height: 30px; background-color: #151515;"></div>
   <div style="padding: 5px;">
-    <table class="DataGrid">
+    <table class="GridLayout" style="padding-bottom: 5px;">
       <tr>
         <td class="RowHeading">Deal ID:</td>
         <td><span class="Field DealID">000001</span></td>
@@ -142,5 +142,6 @@
         <td><select></select></td>
       </tr>
     </table>
+    <dt-tabbed-view [Tabs]="Tabs"></dt-tabbed-view>
   </div>
 </div>

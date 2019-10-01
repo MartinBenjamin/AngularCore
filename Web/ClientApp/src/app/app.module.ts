@@ -9,9 +9,12 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
+import { TabbedViewModule } from './Gallery/TabbedView';
 import { GalleryModule } from './Gallery/GalleryModule';
 import { Gallery } from './Gallery/Gallery'
 import { DealTracker } from './DealTracker';
+import { KeyDealData } from './KeyDealData';
+import { OriginationTab } from './OriginationTab';
 
 @NgModule({
   declarations: [
@@ -20,12 +23,15 @@ import { DealTracker } from './DealTracker';
     HomeComponent,
     CounterComponent,
     FetchDataComponent,
-    DealTracker
+    DealTracker,
+    KeyDealData,
+    OriginationTab
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
+    TabbedViewModule,
     GalleryModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -34,6 +40,11 @@ import { DealTracker } from './DealTracker';
       { path: 'gallery', component: Gallery }
     ])
   ],
+  entryComponents:
+    [
+      KeyDealData,
+      OriginationTab
+    ],
   providers: [],
   bootstrap: [DealTracker]
 })
