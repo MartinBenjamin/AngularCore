@@ -5,7 +5,7 @@ import { OriginationTab } from './OriginationTab';
 import { MoreTabs } from './MoreTabs';
 
 @Component({
-    selector: 'DealTracker',
+    selector: 'body',
     templateUrl: './DealTracker.html'
 })
 export class DealTracker

@@ -1,4 +1,4 @@
-input[type="text"], select, div.DealTracker
+body, input[type="text"], select
 {
   font-family: Arial;
   font-size: 11px;
