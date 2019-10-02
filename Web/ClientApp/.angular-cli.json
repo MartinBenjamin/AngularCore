@@ -19,6 +19,7 @@
       "prefix": "app",
       "styles": [
         "styles.css",
+        "DealTracker.css",
         "Calendar.css",
         "Dialog.css",
         "TabbedView.css",
