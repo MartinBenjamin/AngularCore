@@ -20,3 +20,8 @@ table.TabbedView th.Selected
 {
     background-color: #000;
 }
+
+dt-tabbed-view.Origination table.TabbedView
+{
+  width: 100%;
+}
