@@ -15,6 +15,7 @@ import { Gallery } from './Gallery/Gallery'
 import { DealTracker } from './DealTracker';
 import { KeyDealData } from './KeyDealData';
 import { OriginationTab } from './OriginationTab';
+import { MoreTabs } from './MoreTabs';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { OriginationTab } from './OriginationTab';
     FetchDataComponent,
     DealTracker,
     KeyDealData,
-    OriginationTab
+    OriginationTab,
+    MoreTabs
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -43,7 +45,8 @@ import { OriginationTab } from './OriginationTab';
   entryComponents:
     [
       KeyDealData,
-      OriginationTab
+      OriginationTab,
+      MoreTabs
     ],
   providers: [],
   bootstrap: [DealTracker]
