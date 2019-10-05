@@ -85,9 +85,15 @@ namespace Data
                     area => area,
                     area => emptyGeographicalAreaArray);
 
-            var recordMap = Load(
-                "ISO3166-2(US).csv",
-                record => record.ToList()).ToDictionary(record => record[1]);
+            var recordMap = new[]
+            {
+                "ISO3166-2(GB).csv",
+                "ISO3166-2(US).csv"
+            }.SelectMany(
+                fileName => Load(
+                    fileName,
+                    record => record.ToList()))
+            .ToDictionary(record => record[1]);
 
             var emptyRecordArray = new IList<string>[] { };
             var recordHierarchy = recordMap
