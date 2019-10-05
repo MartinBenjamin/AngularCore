@@ -1,16 +1,14 @@
 ﻿using Autofac;
 using Data;
+using Iso4217;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
 using NHibernateIntegration;
 using NUnit.Framework;
 using Service;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using Iso4217;
 using System.Threading.Tasks;
 
 namespace Test
