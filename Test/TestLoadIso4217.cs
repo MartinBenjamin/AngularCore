@@ -62,10 +62,7 @@ namespace Test
             using(var scope = _container.BeginLifetimeScope())
             {
                 var service = scope.Resolve<INamedService<string, Currency, NamedFilters>>();
-                var loaded = await service.FindAsync(
-                    new NamedFilters
-                    {
-                    });
+                var loaded = await service.FindAsync(new NamedFilters());
                 Assert.That(
                     loaded.OrderBy(currency => currency.Id).SequenceEqual(currencies.OrderBy(currency => currency.Id)), Is.True);
             }

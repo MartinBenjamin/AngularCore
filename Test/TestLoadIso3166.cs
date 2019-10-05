@@ -1,10 +1,13 @@
 ﻿using Autofac;
+using CommonDomainObjects;
 using Data;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
 using NHibernateIntegration;
 using NUnit.Framework;
+using Service;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Test
@@ -59,6 +62,13 @@ namespace Test
                         await session.SaveAsync(member);
                     });
                 await session.FlushAsync();
+            }
+
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var loaded = await scope.Resolve<ISession>().GetAsync<GeographicalAreaHierarchy>(geographicalAreas.Id);
+                Assert.That(loaded, Is.Not.Null);
+                Assert.That(loaded.Members.Count, Is.EqualTo(geographicalAreas.Members.Count));
             }
         }
     }
