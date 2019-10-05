@@ -48,14 +48,15 @@ namespace Test
         [Test]
         public async Task Load()
         {
-            var geographicalAreas = Loader.LoadIso3166();
-            Assert.That(geographicalAreas.Members.Count, Is.GreaterThan(0));
+            var hierarchy = Loader.LoadIso3166();
+            Assert.That(hierarchy.Members.Count, Is.GreaterThan(0));
+            Validate(hierarchy);
 
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
-                await session.SaveAsync(geographicalAreas);
-                await geographicalAreas.VisitAsync(
+                await session.SaveAsync(hierarchy);
+                await hierarchy.VisitAsync(
                     async member =>
                     {
                         await session.SaveAsync(member.Member);
@@ -66,25 +67,47 @@ namespace Test
 
             using(var scope = _container.BeginLifetimeScope())
             {
-                var loaded = await scope.Resolve<ISession>().GetAsync<GeographicalAreaHierarchy>(geographicalAreas.Id);
-                Assert.That(loaded, Is.Not.Null);
-                Assert.That(loaded.Members.Count, Is.EqualTo(geographicalAreas.Members.Count));
+                var loadedHierarchy = await scope.Resolve<ISession>().GetAsync<GeographicalAreaHierarchy>(hierarchy.Id);
+                Assert.That(loadedHierarchy, Is.Not.Null);
+                Validate(loadedHierarchy);
 
-                var loadedMemberMap = loaded.Members.ToDictionary(member => member.Id);
-                foreach(var member in geographicalAreas.Members)
+                var loadedMemberMap = loadedHierarchy.Members.ToDictionary(member => member.Id);
+                foreach(var member in hierarchy.Members)
                 {
                     Assert.That(loadedMemberMap.ContainsKey(member.Id));
                     var loadedMember = loadedMemberMap[member.Id];
                     Assert.That(loadedMember.Member, Is.EqualTo(member.Member));
                     Assert.That(loadedMember.Parent, Is.EqualTo(member.Parent));
-
-                    if(loadedMember.Parent != null)
-                        Assert.That(loadedMember.Parent.Children.Contains(loadedMember));
-
-                    foreach(var child in loadedMember.Children)
-                        Assert.That(child.Parent, Is.EqualTo(loadedMember));
                 }
             }
+        }
+
+        private void Validate(
+            GeographicalAreaHierarchy hierarchy
+            )
+        {
+            hierarchy
+                .Members
+                .ToList()
+                .ForEach(
+                    member =>
+                    {
+                        if(member.Parent != null)
+                        {
+                            Assert.That(member.Member.Is<GeographicalSubArea>());
+                            Assert.That(member.Parent.Children.Contains(member));
+                            Assert.That(member.Parent.Member, Is.EqualTo(member.Member.As<GeographicalSubArea>().Area));
+                            Assert.That(member.Parent.Member.SubAreas.Contains(member.Member));
+                        }
+
+                        foreach(var child in member.Children)
+                        {
+                            Assert.That(child.Member.Is<GeographicalSubArea>());
+                            Assert.That(child.Parent, Is.EqualTo(member));
+                            Assert.That(child.Member.As<GeographicalSubArea>().Area, Is.EqualTo(member.Member));
+                            Assert.That(member.Member.SubAreas.Contains(child.Member));
+                        }
+                    });
         }
     }
 }
