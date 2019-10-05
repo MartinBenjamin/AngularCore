@@ -4,11 +4,14 @@ using NHibernate;
 using NHibernate.Tool.hbm2ddl;
 using NHibernateIntegration;
 using NUnit.Framework;
+using Service;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Iso4217;
+using System.Threading.Tasks;
 
 namespace Test
 {
@@ -46,17 +49,27 @@ namespace Test
         }
 
         [Test]
-        public void Load()
+        public async Task Load()
         {
             var currencies = Loader.LoadCurrencies();
             Assert.That(currencies.Count, Is.GreaterThan(0));
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
-                currencies
-                    .ToList()
-                    .ForEach(currency => session.Save(currency));
+                foreach(var currency in currencies)
+                    await session.SaveAsync(currency);
                 session.Flush();
+            }
+
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<INamedService<string, Currency, NamedFilters>>();
+                var loaded = await service.FindAsync(
+                    new NamedFilters
+                    {
+                    });
+                Assert.That(
+                    loaded.OrderBy(currency => currency.Id).SequenceEqual(currencies.OrderBy(currency => currency.Id)), Is.True);
             }
         }
     }
