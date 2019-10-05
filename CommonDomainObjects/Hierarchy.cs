@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CommonDomainObjects
 {
@@ -84,6 +85,17 @@ namespace CommonDomainObjects
                     after));
         }
 
+        public virtual async Task VisitAsync(
+            Func<THierarchyMember, Task> before,
+            Func<THierarchyMember, Task> after = null
+            )
+        {
+            foreach(var member in Members.Where(hierarchyMember => hierarchyMember.Parent == null))
+                await member.VisitAsync(
+                    before,
+                    after);
+        }
+
         protected abstract THierarchyMember NewHierarchyMember(
             TMember          member,
             THierarchyMember parentHierarchyMember);
@@ -162,6 +174,23 @@ namespace CommonDomainObjects
                     after);
 
             after?.Invoke((THierarchyMember)this);
+        }
+
+        public virtual async Task VisitAsync(
+            Func<THierarchyMember, Task> before,
+            Func<THierarchyMember, Task> after = null
+            )
+        {
+            if(before != null)
+                await before((THierarchyMember)this);
+
+            foreach(var child in Children)
+                await child.VisitAsync(
+                    before,
+                    after);
+
+            if(after != null)
+                await after((THierarchyMember)this);
         }
     }
 

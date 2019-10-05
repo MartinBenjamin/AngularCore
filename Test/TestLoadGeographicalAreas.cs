@@ -56,13 +56,13 @@ namespace Test
             {
                 var session = scope.Resolve<ISession>();
                 await session.SaveAsync(geographicalAreas);
-                geographicalAreas.Visit(
-                    member =>
+                await geographicalAreas.VisitAsync(
+                    async member =>
                     {
-                        session.Save(member.Member);
-                        session.Save(member);
+                        await session.SaveAsync(member.Member);
+                        await session.SaveAsync(member);
                     });
-                session.Flush();
+                await session.FlushAsync();
             }
         }
     }

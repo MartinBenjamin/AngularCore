@@ -56,7 +56,7 @@ namespace Test
                 var session = scope.Resolve<ISession>();
                 foreach(var currency in currencies)
                     await session.SaveAsync(currency);
-                session.Flush();
+                session.FlushAsync();
             }
 
             using(var scope = _container.BeginLifetimeScope())
