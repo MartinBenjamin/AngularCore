@@ -130,7 +130,7 @@ namespace Data
                             record[0]);
 
                         areaMap[subdivision.Id] = subdivision;
-                        areaHierarchy[subdivision] = new[] { (GeographicalArea)parent ?? country };
+                        areaHierarchy[subdivision] = new[] { subdivision.Area };
                     });
 
             return new GeographicalAreaHierarchy(areaHierarchy);
