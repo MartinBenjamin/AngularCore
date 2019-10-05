@@ -60,7 +60,7 @@ namespace Data
             return list;
         }
 
-        public static IList<Country> LoadCountries()
+        public static IList<Country> LoadIso3166_1()
         {
             return Load(
                 "ISO3166-1.csv",
@@ -75,7 +75,7 @@ namespace Data
         public static GeographicalAreaHierarchy LoadIso3166()
         {
             var emptyGeographicalAreaArray = new GeographicalArea[] { };
-            IDictionary<string, GeographicalArea> areaMap = LoadCountries()
+            IDictionary<string, GeographicalArea> areaMap = LoadIso3166_1()
                 .Cast<GeographicalArea>()
                 .ToDictionary(country => country.Id);
 
@@ -130,7 +130,7 @@ namespace Data
             return new GeographicalAreaHierarchy(areaHierarchy);
         }
 
-        public static IList<Currency> LoadCurrencies()
+        public static IList<Currency> LoadIso4217()
         {
             return Load(
                 "ISO4217.csv",

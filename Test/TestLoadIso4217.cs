@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace Test
 {
     [TestFixture]
-    public class TestLoadCurrencies
+    public class TestLoadIso4217
     {
         protected IContainer _container;
 
@@ -49,7 +49,7 @@ namespace Test
         [Test]
         public async Task Load()
         {
-            var currencies = Loader.LoadCurrencies();
+            var currencies = Loader.LoadIso4217();
             Assert.That(currencies.Count, Is.GreaterThan(0));
             using(var scope = _container.BeginLifetimeScope())
             {

@@ -193,11 +193,5 @@ namespace Test
             }
             return encoded;
         }
-
-        [Test]
-        public void Load()
-        {
-            var currencies = Loader.LoadCurrencies();
-        }
     }
 }
