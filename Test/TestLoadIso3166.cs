@@ -69,6 +69,21 @@ namespace Test
                 var loaded = await scope.Resolve<ISession>().GetAsync<GeographicalAreaHierarchy>(geographicalAreas.Id);
                 Assert.That(loaded, Is.Not.Null);
                 Assert.That(loaded.Members.Count, Is.EqualTo(geographicalAreas.Members.Count));
+
+                var loadedMemberMap = loaded.Members.ToDictionary(member => member.Id);
+                foreach(var member in geographicalAreas.Members)
+                {
+                    Assert.That(loadedMemberMap.ContainsKey(member.Id));
+                    var loadedMember = loadedMemberMap[member.Id];
+                    Assert.That(loadedMember.Member, Is.EqualTo(member.Member));
+                    Assert.That(loadedMember.Parent, Is.EqualTo(member.Parent));
+
+                    if(loadedMember.Parent != null)
+                        Assert.That(loadedMember.Parent.Children.Contains(loadedMember));
+
+                    foreach(var child in loadedMember.Children)
+                        Assert.That(child.Parent, Is.EqualTo(loadedMember));
+                }
             }
         }
     }
