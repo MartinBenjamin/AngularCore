@@ -52,10 +52,8 @@ namespace Test
         [Test]
         public async Task Load()
         {
-            var currencies = _container.Resolve<ICsvExtractor>().ExtractIso4217();
+            var currencies = await _container.Resolve<IEtl<IEnumerable<Currency>>>().ExecuteAsync();
             Assert.That(currencies.Count, Is.GreaterThan(0));
-
-            await _container.Resolve<ILoader<IEnumerable<Currency>>>().LoadAsync(currencies);
 
             using(var scope = _container.BeginLifetimeScope())
             {

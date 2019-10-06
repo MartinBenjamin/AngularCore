@@ -18,12 +18,12 @@ namespace Data
 
             builder
                 .RegisterType<CurrencyLoader>()
-                .As<ILoader<IEnumerable<Currency>>>()
+                .As<IEtl<IEnumerable<Currency>>>()
                 .SingleInstance();
 
             builder
                 .RegisterType<GeographicalAreaHierarchyLoader>()
-                .As<ILoader<GeographicalAreaHierarchy>>();
+                .As<IEtl<GeographicalAreaHierarchy>>();
         }
     }
 }

@@ -50,11 +50,9 @@ namespace Test
         [Test]
         public async Task Load()
         {
-            var hierarchy = _container.Resolve<ICsvExtractor>().ExtractIso3166();
+            var hierarchy = await _container.Resolve<IEtl<GeographicalAreaHierarchy>>().ExecuteAsync();
             Assert.That(hierarchy.Members.Count, Is.GreaterThan(0));
             Validate(hierarchy);
-
-            await _container.Resolve<ILoader<GeographicalAreaHierarchy>>().LoadAsync(hierarchy);
 
             using(var scope = _container.BeginLifetimeScope())
             {
