@@ -37,7 +37,7 @@ namespace Data
             return currencies;
         }
 
-        async Task LoadAsync(
+        private async Task LoadAsync(
             IEnumerable<Currency> currencies
             )
         {

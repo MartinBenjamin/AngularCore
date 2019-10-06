@@ -97,7 +97,7 @@ namespace Data
                     record[0]));
         }
 
-        async Task LoadAsync(
+        private async Task LoadAsync(
             GeographicalAreaHierarchy hierarchy
             )
         {
