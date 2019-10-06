@@ -100,9 +100,7 @@ namespace Test
                 .As<IModelMapperFactory>()
                 .SingleInstance();
             builder
-                .RegisterType<LocalDbConfigurationFactory>()
-                .As<IConfigurationFactory>()
-                .SingleInstance();
+                .RegisterModule<LocalDbModule>();
             builder
                 .RegisterModule(new SessionFactoryModule("Test"));
             builder
