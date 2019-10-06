@@ -7,6 +7,7 @@ using NHibernateIntegration;
 using NUnit.Framework;
 using Service;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,6 +36,8 @@ namespace Test
             builder
                 .RegisterModule(new SessionFactoryModule("Test"));
             builder
+                .RegisterModule<Data.Module>();
+            builder
                 .RegisterModule<Service.Module>();
 
             _container = builder.Build();
@@ -49,15 +52,10 @@ namespace Test
         [Test]
         public async Task Load()
         {
-            var currencies = Loader.LoadIso4217();
+            var currencies = _container.Resolve<ICsvExtractor>().ExtractIso4217();
             Assert.That(currencies.Count, Is.GreaterThan(0));
-            using(var scope = _container.BeginLifetimeScope())
-            {
-                var session = scope.Resolve<ISession>();
-                foreach(var currency in currencies)
-                    await session.SaveAsync(currency);
-                await session.FlushAsync();
-            }
+
+            await _container.Resolve<ILoader<IEnumerable<Currency>>>().LoadAsync(currencies);
 
             using(var scope = _container.BeginLifetimeScope())
             {

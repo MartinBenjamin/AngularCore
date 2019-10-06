@@ -34,6 +34,8 @@ namespace Test
             builder
                 .RegisterModule(new SessionFactoryModule("Test"));
             builder
+                .RegisterModule<Data.Module>();
+            builder
                 .RegisterModule<Service.Module>();
 
             _container = builder.Build();
@@ -48,22 +50,11 @@ namespace Test
         [Test]
         public async Task Load()
         {
-            var hierarchy = Loader.LoadIso3166();
+            var hierarchy = _container.Resolve<ICsvExtractor>().ExtractIso3166();
             Assert.That(hierarchy.Members.Count, Is.GreaterThan(0));
             Validate(hierarchy);
 
-            using(var scope = _container.BeginLifetimeScope())
-            {
-                var session = scope.Resolve<ISession>();
-                await session.SaveAsync(hierarchy);
-                await hierarchy.VisitAsync(
-                    async member =>
-                    {
-                        await session.SaveAsync(member.Member);
-                        await session.SaveAsync(member);
-                    });
-                await session.FlushAsync();
-            }
+            await _container.Resolve<ILoader<GeographicalAreaHierarchy>>().LoadAsync(hierarchy);
 
             using(var scope = _container.BeginLifetimeScope())
             {
