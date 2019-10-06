@@ -43,9 +43,7 @@ namespace Test
                 .As<IModelMapperFactory>()
                 .SingleInstance();
             builder
-                .RegisterType<SQLiteConfigurationFactory>()
-                .As<IConfigurationFactory>()
-                .SingleInstance();
+                .RegisterModule<SQLiteModule>();
             builder
                 .RegisterModule(new SessionFactoryModule("Test"));
 
@@ -61,7 +59,7 @@ namespace Test
                         TestContext.Out,
                         _listenerName));
 
-            File.Delete(SQLiteConfigurationFactory.DatabasePath);
+            File.Delete(SQLiteModule.DatabasePath);
         }
 
         [Test]

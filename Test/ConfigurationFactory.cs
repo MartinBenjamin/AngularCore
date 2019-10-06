@@ -1,4 +1,5 @@
-﻿using NHibernate.Cfg;
+﻿using Autofac;
+using NHibernate.Cfg;
 using NHibernateIntegration;
 using System.Collections.Generic;
 
@@ -33,7 +34,7 @@ namespace Test
         }
     }
 
-    public class SQLiteConfigurationFactory: ConfigurationFactory
+    public class SQLiteModule: Autofac.Module
     {
         public static readonly string DatabasePath = "Test.db";
 
@@ -45,14 +46,41 @@ namespace Test
             { "show_sql"                    , "false"                                            }
         };
 
-        public SQLiteConfigurationFactory(
-            IModelMapperFactory modelMapperFactory
-            ) : base(
-                modelMapperFactory,
-                _properties)
+        protected override void Load(
+            ContainerBuilder builder
+            )
         {
+            builder
+                .RegisterType<NHibernateIntegration.ConfigurationFactory>()
+                .As<IConfigurationFactory>()
+                .WithParameter(
+                    new TypedParameter(
+                        typeof(IDictionary<string, string>),
+                        _properties))
+                .SingleInstance();;
         }
     }
+
+    //public class SQLiteConfigurationFactory: ConfigurationFactory
+    //{
+    //    public static readonly string DatabasePath = "Test.db";
+
+    //    private static readonly IDictionary<string, string> _properties = new Dictionary<string, string>
+    //    {
+    //        { "connection.driver_class"     , "NHibernate.Driver.SQLite20Driver"                 },
+    //        { "connection.connection_string", $"Data Source={ DatabasePath };Version=3;New=True" },
+    //        { "dialect"                     , "NHibernate.Dialect.SQLiteDialect"                 },
+    //        { "show_sql"                    , "false"                                            }
+    //    };
+
+    //    public SQLiteConfigurationFactory(
+    //        IModelMapperFactory modelMapperFactory
+    //        ) : base(
+    //            modelMapperFactory,
+    //            _properties)
+    //    {
+    //    }
+    //}
 
     public class LocalDbConfigurationFactory: ConfigurationFactory
     {
