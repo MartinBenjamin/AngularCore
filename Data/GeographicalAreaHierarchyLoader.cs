@@ -82,7 +82,6 @@ namespace Data
 
             var geographicalAreaHierarchy = new GeographicalAreaHierarchy(areaHierarchy);
             await LoadAsync(geographicalAreaHierarchy);
-
             return geographicalAreaHierarchy;
         }
 
