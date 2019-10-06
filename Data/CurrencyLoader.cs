@@ -8,8 +8,8 @@ namespace Data
 {
     public class CurrencyLoader: IEtl<IEnumerable<Currency>>
     {
-        private ICsvExtractor   _csvExtractor;
-        private ISessionFactory _sessionFactory;
+        private readonly ICsvExtractor   _csvExtractor;
+        private readonly ISessionFactory _sessionFactory;
 
         public CurrencyLoader(
             ICsvExtractor   csvExtractor,
