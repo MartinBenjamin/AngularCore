@@ -18,7 +18,7 @@ namespace Test
             string fileName
             )
         {
-            var content = Loader.ReadAllText(fileName);
+            var content = CsvExtractor.ReadAllText(fileName);
             int count = 0;
             var parser = new Rfc4180Parser(
                 field => { },

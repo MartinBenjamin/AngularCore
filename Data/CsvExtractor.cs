@@ -39,20 +39,20 @@ namespace Data
             return list;
         }
 
-        private string ReadAllText(
+        public static string ReadAllText(
             string fileName
             )
         {
-            using(var stream = Load(fileName))
+            using(var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(ResourceName(fileName)))
             using(var reader = new StreamReader(stream))
                 return reader.ReadToEnd();
         }
 
-        private Stream Load(
+        public static string ResourceName(
             string fileName
             )
         {
-            return Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof(CsvExtractor).Namespace + '.' + fileName);
+            return typeof(CsvExtractor).Namespace + '.' + fileName;
         }
     }
 }
