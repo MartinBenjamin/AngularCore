@@ -39,10 +39,7 @@ namespace Data
             {
                 "ISO3166-2(GB).csv",
                 "ISO3166-2(US).csv"
-            }.SelectMany(
-                fileName => _csvExtractor.Extract(
-                    fileName,
-                    record => record.ToList()))
+            }.SelectMany(fileName => _csvExtractor.Extract(fileName))
             .ToDictionary(record => record[1]);
 
             var emptyRecordArray = new IList<string>[] { };

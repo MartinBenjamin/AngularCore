@@ -2,12 +2,22 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace Data
 {
     public class CsvExtractor: ICsvExtractor
     {
+        public IList<IList<string>> Extract(
+            string fileName
+            )
+        {
+            return Extract(
+                fileName,
+                record => (IList<string>)record.ToList());
+        }
+
         public IList<T> Extract<T>(
             string                 fileName,
             Func<IList<string>, T> transform
