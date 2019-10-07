@@ -2,6 +2,7 @@
 using NHibernate;
 using NHibernate.Criterion;
 using System.Collections.Generic;
+using System.Data;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -28,18 +29,20 @@ namespace Service
             TId id
             )
         {
-            return await CreateCriteria(
-                _session,
-                id).UniqueResultAsync<TNamed>();
+            using(_session.BeginTransaction(IsolationLevel.ReadCommitted))
+                return await CreateCriteria(
+                    _session,
+                    id).UniqueResultAsync<TNamed>();
         }
 
         async Task<IEnumerable<TNamed>> INamedService<TId, TNamed, TNamedFilters>.FindAsync(
             TNamedFilters filters
             )
         {
-            return await CreateCriteria(
-                _session,
-                filters).ListAsync<TNamed>();
+            using(_session.BeginTransaction(IsolationLevel.ReadCommitted))
+                return await CreateCriteria(
+                    _session,
+                    filters).ListAsync<TNamed>();
         }
 
         protected virtual ICriteria CreateCriteria(
