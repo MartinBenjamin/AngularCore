@@ -4,16 +4,14 @@ using System.Collections.Generic;
 
 namespace Test
 {
-    public class SQLiteModule: Autofac.Module
+    public class LocalDbModule: Autofac.Module
     {
-        public static readonly string DatabasePath = "Test.db";
-
         private static readonly IDictionary<string, string> _properties = new Dictionary<string, string>
         {
-            { "connection.driver_class"     , "NHibernate.Driver.SQLite20Driver"                 },
-            { "connection.connection_string", $"Data Source={ DatabasePath };Version=3;New=True" },
-            { "dialect"                     , "NHibernate.Dialect.SQLiteDialect"                 },
-            { "show_sql"                    , "false"                                            }
+            { "connection.driver_class"     , "NHibernate.Driver.SqlClientDriver"                                                 },
+            { "connection.connection_string", "Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=Test;Integrated Security=SSPI" },
+            { "dialect"                     , "NHibernate.Dialect.MsSql2012Dialect"                                               },
+            { "show_sql"                    , "false"                                                                             }
         };
 
         protected override void Load(
@@ -27,7 +25,7 @@ namespace Test
                     new TypedParameter(
                         typeof(IDictionary<string, string>),
                         _properties))
-                .SingleInstance();
+                .SingleInstance(); ;
         }
     }
 }

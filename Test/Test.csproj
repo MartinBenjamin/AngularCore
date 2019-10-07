@@ -25,6 +25,7 @@
     <ProjectReference Include="..\Process\Process.csproj" />
     <ProjectReference Include="..\QuartzIntegration\QuartzIntegration.csproj" />
     <ProjectReference Include="..\Service\Service.csproj" />
+    <ProjectReference Include="..\Web\Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>

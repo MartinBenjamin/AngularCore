@@ -5,7 +5,6 @@ using NHibernate;
 using NHibernate.Tool.hbm2ddl;
 using NHibernateIntegration;
 using NUnit.Framework;
-using Service;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;

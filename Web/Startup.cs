@@ -7,21 +7,26 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NHibernateIntegration;
 using System;
+using System.IO;
 
 namespace Web
 {
     public class Startup
     {
-        public IConfiguration Configuration        { get; }
+        public IConfiguration      Configuration        { get; }
+        public IHostingEnvironment HostingEnvironment   { get; }
 
-        public IContainer     ApplicationContainer { get; private set; }
+        public IContainer          ApplicationContainer { get; private set; }
 
         public Startup(
-            IConfiguration configuration
+            IConfiguration      configuration,
+            IHostingEnvironment hostingEnvironment
             )
         {
-            Configuration = configuration;
+            Configuration      = configuration;
+            HostingEnvironment = hostingEnvironment;
         }
 
         public IServiceProvider ConfigureServices(
@@ -41,7 +46,24 @@ namespace Web
             // Create the container builder.
             var builder = new ContainerBuilder();
             builder.Populate(services);
-            builder.RegisterModule<Service.Module>();
+
+            builder
+                .RegisterModule<NHibernateIntegration.Module>();
+            builder
+                .RegisterType<CommonDomainObjects.Mapping.ConventionModelMapperFactory>()
+                .As<IModelMapperFactory>()
+                .SingleInstance();
+            builder
+                .RegisterModule(
+                    new SQLiteModule(
+                        Path.Combine(
+                            HostingEnvironment.ContentRootPath,
+                            "Database.db")));
+            builder
+                .RegisterModule(new SessionFactoryModule("Database"));
+            builder
+                .RegisterModule<Service.Module>();
+
             ApplicationContainer = builder.Build();
 
             // Create the IServiceProvider based on the container.
@@ -49,7 +71,10 @@ namespace Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(
+            IApplicationBuilder app,
+            IHostingEnvironment env
+            )
         {
             if(env.IsDevelopment())
             {
