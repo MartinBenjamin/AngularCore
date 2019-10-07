@@ -42,10 +42,11 @@ namespace Data
             )
         {
             using(var session = _sessionFactory.OpenSession())
+            using(var transaction = session.BeginTransaction())
             {
                 foreach(var currency in currencies)
                     await session.SaveAsync(currency);
-                await session.FlushAsync();
+                await transaction.CommitAsync();
             }
         }
     }

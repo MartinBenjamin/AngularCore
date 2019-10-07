@@ -46,7 +46,6 @@ namespace Test
         }
 
         [Test]
-        [Explicit]
         public async Task Load()
         {
             var hierarchy = await _container.Resolve<IEtl<GeographicalAreaHierarchy>>().ExecuteAsync();

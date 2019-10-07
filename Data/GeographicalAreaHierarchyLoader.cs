@@ -102,6 +102,7 @@ namespace Data
             )
         {
             using(var session = _sessionFactory.OpenSession())
+            using(var transaction = session.BeginTransaction())
             {
                 await session.SaveAsync(hierarchy);
                 await hierarchy.VisitAsync(
@@ -110,7 +111,7 @@ namespace Data
                         await session.SaveAsync(member.Member);
                         await session.SaveAsync(member);
                     });
-                await session.FlushAsync();
+                await transaction.CommitAsync();
             }
         }
     }
