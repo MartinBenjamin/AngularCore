@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Web
 {
@@ -8,6 +9,12 @@ namespace Web
             ContainerBuilder builder
             )
         {
+            builder
+                .RegisterAssemblyTypes(ThisAssembly)
+                .Where(type => type.IsAssignableTo<Controller>())
+                .AsSelf()
+                .PropertiesAutowired()
+                .InstancePerLifetimeScope();
         }
     }
 }

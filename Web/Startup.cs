@@ -2,8 +2,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +16,6 @@ namespace Web
     {
         public IConfiguration      Configuration        { get; }
         public IHostingEnvironment HostingEnvironment   { get; }
-
         public IContainer          ApplicationContainer { get; private set; }
 
         public Startup(
@@ -48,6 +46,9 @@ namespace Web
             builder.Populate(services);
 
             builder
+                .RegisterType<ServiceBasedControllerActivator>()
+                .As<IControllerActivator>();
+            builder
                 .RegisterModule<NHibernateIntegration.Module>();
             builder
                 .RegisterType<CommonDomainObjects.Mapping.ConventionModelMapperFactory>()
@@ -61,9 +62,9 @@ namespace Web
                             HostingEnvironment.ContentRootPath,
                             "Database.db")));
             builder
-                .RegisterModule(new SessionFactoryModule("Database"));
-            builder
                 .RegisterModule<Service.Module>();
+            builder
+                .RegisterModule<Module>();
 
             ApplicationContainer = builder.Build();
 
