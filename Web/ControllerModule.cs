@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Web
 {
-    public class Module: Autofac.Module
+    public class ControllerModule: Autofac.Module
     {
         protected override void Load(
             ContainerBuilder builder
@@ -11,7 +11,7 @@ namespace Web
         {
             builder
                 .RegisterAssemblyTypes(ThisAssembly)
-                .Where(type => type.IsAssignableTo<Controller>())
+                .Where(type => type.IsAssignableTo<ControllerBase>())
                 .AsSelf()
                 .PropertiesAutowired()
                 .InstancePerLifetimeScope();
