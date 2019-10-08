@@ -43,9 +43,7 @@ namespace Test
                 .As<IModelMapperFactory>()
                 .SingleInstance();
             builder
-                .RegisterModule<SQLiteModule>();
-            builder
-                .RegisterModule(new SessionFactoryModule("Test"));
+                .RegisterModule(new SQLiteModule("Test"));
 
             _container = builder.Build();
         }
@@ -85,7 +83,7 @@ namespace Test
         [Test]
         public void SchemaCreate()
         {
-            var schemaExport = new SchemaExport(_container.Resolve<IConfigurationFactory>().Build("Test"));
+            var schemaExport = new SchemaExport(_container.Resolve<IConfigurationFactory>().Build());
             schemaExport.Create(
                 TestContext.Out,
                 true);
@@ -94,7 +92,7 @@ namespace Test
         [Test]
         public void SchemaDrop()
         {
-            var schemaExport = new SchemaExport(_container.Resolve<IConfigurationFactory>().Build("Test"));
+            var schemaExport = new SchemaExport(_container.Resolve<IConfigurationFactory>().Build());
             schemaExport.Drop(
                 TestContext.Out,
                 true);
@@ -103,7 +101,7 @@ namespace Test
         [Test]
         public void Persist()
         {
-            var schemaUpdate = new SchemaUpdate(_container.Resolve<IConfigurationFactory>().Build("Test"));
+            var schemaUpdate = new SchemaUpdate(_container.Resolve<IConfigurationFactory>().Build());
             schemaUpdate.Execute(
                 scriptAction => Trace.WriteLine(scriptAction),
                 true);

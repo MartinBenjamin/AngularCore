@@ -56,6 +56,7 @@ namespace Web
             builder
                 .RegisterModule(
                     new SQLiteModule(
+                        "Database",
                         Path.Combine(
                             HostingEnvironment.ContentRootPath,
                             "Database.db")));

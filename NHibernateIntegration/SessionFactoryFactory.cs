@@ -18,7 +18,7 @@ namespace NHibernateIntegration
             )
         {
             return _configurationFactory
-                .Build(name)
+                .Build()
                 .BuildSessionFactory();
         }
     }

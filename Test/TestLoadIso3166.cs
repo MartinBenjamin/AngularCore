@@ -27,9 +27,7 @@ namespace Test
                 .As<IModelMapperFactory>()
                 .SingleInstance();
             builder
-                .RegisterModule<SQLiteModule>();
-            builder
-                .RegisterModule(new SessionFactoryModule("Test"));
+                .RegisterModule(new SQLiteModule("Test"));
             builder
                 .RegisterModule<Data.Module>();
             builder
@@ -38,7 +36,7 @@ namespace Test
             _container = builder.Build();
 
             File.Delete(SQLiteModule.DatabasePath);
-            var schemaExport = new SchemaExport(_container.Resolve<IConfigurationFactory>().Build("Test"));
+            var schemaExport = new SchemaExport(_container.Resolve<IConfigurationFactory>().Build());
             schemaExport.Create(
                 scriptAction => { },
                 true);

@@ -17,9 +17,7 @@ namespace NHibernateIntegration
             _properties         = properties;
         }
 
-        Configuration IConfigurationFactory.Build(
-            string name
-            )
+        Configuration IConfigurationFactory.Build()
         {
             var mapper = _modelMapperFactory.Build();
             var mapping = mapper.CompileMappingForAllExplicitlyAddedEntities();

@@ -5,7 +5,7 @@ namespace NHibernateIntegration
 {
     public class SessionFactoryModule: Autofac.Module
     {
-        private string _name;
+        protected string _name;
 
         public SessionFactoryModule(
             string name
@@ -19,7 +19,7 @@ namespace NHibernateIntegration
             )
         {
             builder
-                .Register(c => c.Resolve<ISessionFactoryFactory>().Build(_name))
+                .Register(c => c.ResolveNamed<IConfigurationFactory>(_name).Build().BuildSessionFactory())
                 .Named<ISessionFactory>(_name)
                 .As<ISessionFactory>()
                 .PreserveExistingDefaults()

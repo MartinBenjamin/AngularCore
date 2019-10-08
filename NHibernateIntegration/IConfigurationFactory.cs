@@ -4,6 +4,6 @@ namespace NHibernateIntegration
 {
     public interface IConfigurationFactory
     {
-        Configuration Build(string name);
+        Configuration Build();
     }
 }

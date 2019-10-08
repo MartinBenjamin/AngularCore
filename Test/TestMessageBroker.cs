@@ -100,9 +100,7 @@ namespace Test
                 .As<IModelMapperFactory>()
                 .SingleInstance();
             builder
-                .RegisterModule<LocalDbModule>();
-            builder
-                .RegisterModule(new SessionFactoryModule("Test"));
+                .RegisterModule(new LocalDbModule("Test"));
             builder
                 .RegisterModule<QuartzIntegration.Module>();
             builder
@@ -115,7 +113,7 @@ namespace Test
 
             _container = builder.Build();
 
-            var schemaExport = new SchemaExport(_container.Resolve<IConfigurationFactory>().Build("Test"));
+            var schemaExport = new SchemaExport(_container.Resolve<IConfigurationFactory>().Build());
             schemaExport.Create(
                 scriptAction => { },
                 true);

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Test
 {
-    public class SQLiteModule: Autofac.Module
+    public class SQLiteModule: SessionFactoryModule
     {
         public static readonly string DatabasePath = "Test.db";
 
@@ -16,17 +16,27 @@ namespace Test
             { "show_sql"                    , "false"                                            }
         };
 
+        public SQLiteModule(
+            string name
+            ): base(name)
+        {
+            _name = name;
+        }
+
         protected override void Load(
             ContainerBuilder builder
             )
         {
+            base.Load(builder);
             builder
                 .RegisterType<ConfigurationFactory>()
+                .Named<IConfigurationFactory>(_name)
                 .As<IConfigurationFactory>()
                 .WithParameter(
                     new TypedParameter(
                         typeof(IDictionary<string, string>),
                         _properties))
+                .PreserveExistingDefaults()
                 .SingleInstance();
         }
     }

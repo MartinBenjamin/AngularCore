@@ -4,13 +4,14 @@ using System.Collections.Generic;
 
 namespace Web
 {
-    public class SQLiteModule: Autofac.Module
+    public class SQLiteModule: SessionFactoryModule
     {
         private readonly IDictionary<string, string> _properties;
 
         public SQLiteModule(
+            string name,
             string databasePath
-            )
+            ) : base(name)
         {
             _properties = new Dictionary<string, string>
             {
@@ -25,13 +26,16 @@ namespace Web
             ContainerBuilder builder
             )
         {
+            base.Load(builder);
             builder
                 .RegisterType<ConfigurationFactory>()
+                .Named<IConfigurationFactory>(_name)
                 .As<IConfigurationFactory>()
                 .WithParameter(
                     new TypedParameter(
                         typeof(IDictionary<string, string>),
                         _properties))
+                .PreserveExistingDefaults()
                 .SingleInstance();
         }
     }
