@@ -63,7 +63,6 @@ namespace Test
         [Test]
         public void TestContainerRegistrations()
         {
-            Assert.That(_container.Resolve<ISessionFactoryFactory>()    , Is.Not.Null);
             Assert.That(_container.ResolveNamed<ISessionFactory>("Test"), Is.Not.Null);
             Assert.That(_container.Resolve<ISessionFactory>()           , Is.Not.Null);
         }

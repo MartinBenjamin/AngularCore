@@ -8,10 +8,6 @@ namespace NHibernateIntegration
             ContainerBuilder builder
             )
         {
-            builder
-                .RegisterType<SessionFactoryFactory>()
-                .As<ISessionFactoryFactory>()
-                .SingleInstance();
         }
     }
 }
