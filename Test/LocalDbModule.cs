@@ -29,11 +29,11 @@ namespace Test
                 .RegisterType<ConfigurationFactory>()
                 .Named<IConfigurationFactory>(_name)
                 .As<IConfigurationFactory>()
+                .PreserveExistingDefaults()
                 .WithParameter(
                     new TypedParameter(
                         typeof(IDictionary<string, string>),
                         _properties))
-                .PreserveExistingDefaults()
                 .SingleInstance();
         }
     }
