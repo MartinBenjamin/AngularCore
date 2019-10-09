@@ -65,6 +65,8 @@ namespace Web
                 .RegisterModule<Service.Module>();
             builder
                 .RegisterModule<ControllerModule>();
+            builder
+                .RegisterModule<MapperModule>();
 
             ApplicationContainer = builder.Build();
 
