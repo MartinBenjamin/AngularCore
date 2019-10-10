@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Web.Model
+﻿namespace Web.Model
 {
     public class Currency: Named<string>
     {
+        public int  NumericCode { get; set; }
+        public int? MinorUnit   { get; set; }
     }
 }
