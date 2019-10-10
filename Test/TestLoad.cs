@@ -1,10 +1,13 @@
 ﻿using Autofac;
 using CommonDomainObjects;
 using Data;
+using Iso4217;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
 using NHibernateIntegration;
 using NUnit.Framework;
+using Service;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,7 +37,11 @@ namespace Test
                 .RegisterModule<Service.Module>();
 
             _container = builder.Build();
+        }
 
+        [SetUp]
+        public void SetUp()
+        {
             File.Delete(SQLiteModule.DatabasePath);
             var schemaExport = new SchemaExport(_container.Resolve<IConfigurationFactory>().Build());
             schemaExport.Create(
@@ -43,7 +50,7 @@ namespace Test
         }
 
         [Test]
-        public async Task Load()
+        public async Task Iso3166()
         {
             var hierarchy = await _container.Resolve<IEtl<GeographicalAreaHierarchy>>().ExecuteAsync();
             Assert.That(hierarchy.Members.Count, Is.GreaterThan(0));
@@ -64,6 +71,28 @@ namespace Test
                     Assert.That(loadedMember.Parent, Is.EqualTo(member.Parent));
                 }
             }
+        }
+
+        [Test]
+        public async Task Iso4217()
+        {
+            var currencies = await _container.Resolve<IEtl<IEnumerable<Currency>>>().ExecuteAsync();
+            Assert.That(currencies.Count, Is.GreaterThan(0));
+
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<INamedService<string, Currency, NamedFilters>>();
+                var loaded = await service.FindAsync(new NamedFilters());
+                Assert.That(
+                    loaded.OrderBy(currency => currency.Id).SequenceEqual(currencies.OrderBy(currency => currency.Id)), Is.True);
+            }
+        }
+
+        [Test]
+        public async Task Load()
+        {
+            await _container.Resolve<IEtl<GeographicalAreaHierarchy>>().ExecuteAsync();
+            await _container.Resolve<IEtl<IEnumerable<Currency>>>().ExecuteAsync();
         }
 
         private void Validate(
