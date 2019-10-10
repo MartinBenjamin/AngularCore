@@ -34,11 +34,13 @@ namespace Web.Controllers
         }
 
         [HttpGet]
-        public Action<IEnumerable<TNamedModel>> Find(
+        public async Task<IActionResult> FindAsync(
+            [FromQuery]
             TNamedFilters filters
             )
         {
-            return null;
+            var result = await _service.FindAsync(_mapper.Map<TNamedFilters>(filters));
+            return Ok(_mapper.Map<IEnumerable<TNamedModel>>(result));
         }
     }
 }

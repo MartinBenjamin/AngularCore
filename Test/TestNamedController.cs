@@ -13,7 +13,7 @@ namespace Test
 {
     public abstract class TestNamedController<TId, TNamed, TNamedFilters, TNamedModel, TNamedFiltersModel, TNamedController>
         where TNamed : Named<TId>
-        where TNamedFilters : NamedFilters
+        where TNamedFilters : NamedFilters, new()
         where TNamedModel: Web.Model.Named<TId>
         where TNamedController: NamedController<TId, TNamed, TNamedFilters, TNamedModel, TNamedFiltersModel>
     {
@@ -29,7 +29,6 @@ namespace Test
 
             using(var scope = _container.BeginLifetimeScope())
             {
-                var mapper = scope.Resolve<IMapper>();
                 var controller = scope.Resolve<TNamedController>();
                 var actionResult = await controller.GetAsync(named.Id);
                 Assert.That(actionResult, Is.Not.Null);
@@ -41,27 +40,32 @@ namespace Test
             }
         }
 
-        //[TestCaseSource("NameFragmentTestCases")]
-        //public async Task FindForNameFragment(
-        //    string name,
-        //    string nameFragment,
-        //    bool contains
-        //    )
-        //{
-        //    var named = Create(name);
-        //    Assert.That(named, Is.Not.Null);
+        [TestCaseSource("NameFragmentTestCases")]
+        public async Task FindForNameFragment(
+            string name,
+            string nameFragment,
+            bool   contains
+            )
+        {
+            var named = Create(name);
+            Assert.That(named, Is.Not.Null);
 
-        //    using(var scope = _container.BeginLifetimeScope())
-        //    {
-        //        var service = scope.Resolve<INamedService<TId, TNamed, TNamedFilters>>();
-        //        var result = await service.FindAsync(
-        //            new TNamedFilters
-        //            {
-        //                NameFragment = nameFragment
-        //            });
-        //        Assert.That(result.Contains(named), Is.EqualTo(contains));
-        //    }
-        //}
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var controller = scope.Resolve<TNamedController>();
+                var actionResult = await controller.FindAsync(
+                    new TNamedFilters
+                    {
+                        NameFragment = nameFragment
+                    });
+                Assert.That(actionResult, Is.Not.Null);
+                Assert.That(actionResult, Is.InstanceOf<OkObjectResult>());
+                var okObjectResult = (OkObjectResult)actionResult;
+                Assert.That(okObjectResult.Value, Is.InstanceOf<IEnumerable<TNamedModel>>());
+                var result = (IEnumerable<TNamedModel>)okObjectResult.Value;
+                Assert.That(result.Where(namedModel => namedModel.Id.Equals(named.Id)).Count(), Is.EqualTo(contains ? 1 : 0));
+            }
+        }
 
         public static IEnumerable<object[]> NameFragmentTestCases
         {
