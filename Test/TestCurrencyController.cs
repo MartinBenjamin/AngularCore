@@ -15,7 +15,7 @@ using Web.Controllers;
 namespace Test
 {
     [TestFixture]
-    public class TestCurrencyController: TestNamedController<string, Currency, NamedFilters, string, Web.Model.Currency, NamedFilters, CurrencyController>
+    public class TestCurrencyController: TestNamedController<string, Currency, NamedFilters, Web.Model.Currency, NamedFilters, CurrencyController>
     {
         [OneTimeSetUp]
         public void OneTimeSetUp()

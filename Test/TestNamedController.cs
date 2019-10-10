@@ -11,11 +11,11 @@ using Web.Controllers;
 
 namespace Test
 {
-    public abstract class TestNamedController<TId, TNamed, TNamedFilters, TIdModel, TNamedModel, TNamedFiltersModel, TNamedController>
+    public abstract class TestNamedController<TId, TNamed, TNamedFilters, TNamedModel, TNamedFiltersModel, TNamedController>
         where TNamed : Named<TId>
         where TNamedFilters : NamedFilters
-        where TNamedModel: Web.Model.Named<TIdModel>
-        where TNamedController: NamedController<TId, TNamed, TNamedFilters, TIdModel, TNamedModel, TNamedFiltersModel>
+        where TNamedModel: Web.Model.Named<TId>
+        where TNamedController: NamedController<TId, TNamed, TNamedFilters, TNamedModel, TNamedFiltersModel>
     {
         protected IContainer _container;
 
@@ -31,13 +31,13 @@ namespace Test
             {
                 var mapper = scope.Resolve<IMapper>();
                 var controller = scope.Resolve<TNamedController>();
-                var actionResult = await controller.GetAsync(mapper.Map<TIdModel>(named.Id));
+                var actionResult = await controller.GetAsync(named.Id);
                 Assert.That(actionResult, Is.Not.Null);
                 Assert.That(actionResult, Is.InstanceOf<OkObjectResult>());
                 var okObjectResult = (OkObjectResult)actionResult;
                 Assert.That(okObjectResult.Value, Is.InstanceOf<TNamedModel>());
                 var namedModel = (TNamedModel)okObjectResult.Value;
-                Assert.That(namedModel.Id, Is.EqualTo(mapper.Map<TIdModel>(named.Id)));
+                Assert.That(namedModel.Id, Is.EqualTo(named.Id));
             }
         }
 

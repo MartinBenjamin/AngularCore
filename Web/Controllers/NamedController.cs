@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Web.Controllers
 {
-    public abstract class NamedController<TId, TNamed, TNamedFilters, TIdModel, TNamedModel, TNamedFiltersModel> : ControllerBase
+    public abstract class NamedController<TId, TNamed, TNamedFilters, TNamedModel, TNamedFiltersModel> : ControllerBase
         where TNamed: Named<TId>
         where TNamedFilters: NamedFilters
     {
@@ -26,10 +26,10 @@ namespace Web.Controllers
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync(
-            TIdModel id
+            TId id
             )
         {
-            var named = await _service.GetAsync(_mapper.Map<TId>(id));
+            var named = await _service.GetAsync(id);
             return named == null ? (IActionResult)NotFound() : Ok(_mapper.Map<TNamedModel>(named));
         }
 

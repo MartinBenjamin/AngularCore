@@ -7,7 +7,7 @@ namespace Web.Controllers
 {
     [Route("api/currencies")]
     [ApiController]
-    public class CurrencyController : NamedController<string, Currency, NamedFilters, string, Model.Currency, NamedFilters>
+    public class CurrencyController : NamedController<string, Currency, NamedFilters, Model.Currency, NamedFilters>
     {
         public CurrencyController(
             INamedService<string, Currency, NamedFilters> service,
