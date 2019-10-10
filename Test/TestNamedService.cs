@@ -1,8 +1,11 @@
 ﻿using Autofac;
 using CommonDomainObjects;
+using NHibernate.Tool.hbm2ddl;
+using NHibernateIntegration;
 using NUnit.Framework;
 using Service;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,6 +18,30 @@ namespace Test
         protected IContainer _container;
 
         public abstract TNamed Create(string name);
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            var builder = new ContainerBuilder();
+            builder
+                .RegisterModule<NHibernateIntegration.Module>();
+            builder
+                .RegisterType<CommonDomainObjects.Mapping.ConventionModelMapperFactory>()
+                .As<IModelMapperFactory>()
+                .SingleInstance();
+            builder
+                .RegisterModule(new SQLiteModule("Test"));
+            builder
+                .RegisterModule<Service.Module>();
+
+            _container = builder.Build();
+
+            File.Delete(SQLiteModule.DatabasePath);
+            var schemaExport = new SchemaExport(_container.Resolve<IConfigurationFactory>().Build());
+            schemaExport.Create(
+                scriptAction => { },
+                true);
+        }
 
         [Test]
         public async Task Get()

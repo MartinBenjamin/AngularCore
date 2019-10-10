@@ -2,41 +2,14 @@
 using Iso3166._1;
 using Iso3166._2;
 using NHibernate;
-using NHibernate.Tool.hbm2ddl;
-using NHibernateIntegration;
 using NUnit.Framework;
 using Service;
-using System.IO;
 
 namespace Test
 {
     [TestFixture]
     public class TestSubdivisionService: TestNamedService<string, Subdivision, NamedFilters>
     {
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
-            var builder = new ContainerBuilder();
-            builder
-                .RegisterModule<NHibernateIntegration.Module>();
-            builder
-                .RegisterType<CommonDomainObjects.Mapping.ConventionModelMapperFactory>()
-                .As<IModelMapperFactory>()
-                .SingleInstance();
-            builder
-                .RegisterModule(new SQLiteModule("Test"));
-            builder
-                .RegisterModule<Service.Module>();
-
-            _container = builder.Build();
-
-            File.Delete(SQLiteModule.DatabasePath);
-            var schemaExport = new SchemaExport(_container.Resolve<IConfigurationFactory>().Build());
-            schemaExport.Create(
-                scriptAction => { },
-                true);
-        }
-
         [SetUp]
         public void SetUp()
         {
