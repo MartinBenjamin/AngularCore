@@ -37,8 +37,8 @@ namespace Data
 
             var recordMap = new[]
             {
-                "ISO3166-2(GB).csv",
-                "ISO3166-2(US).csv"
+                "ISO3166-2.GB.csv",
+                "ISO3166-2.US.csv"
             }.SelectMany(fileName => _csvExtractor.Extract(fileName))
             .ToDictionary(record => record[1]);
 
