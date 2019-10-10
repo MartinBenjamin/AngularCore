@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using CommonDomainObjects;
 using Iso3166._1;
 using Iso3166._2;
 using Iso4217;
@@ -12,6 +13,9 @@ namespace Service
             ContainerBuilder builder
             )
         {
+            builder
+                .RegisterType<NamedService<string, GeographicalArea, NamedFilters>>()
+                .As<INamedService<string, GeographicalArea, NamedFilters>>();
             builder
                 .RegisterType<NamedService<string, Country, NamedFilters>>()
                 .As<INamedService<string, Country, NamedFilters>>();
