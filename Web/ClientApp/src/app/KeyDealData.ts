@@ -10,17 +10,14 @@ import { LoadableArray } from './LoadableArray';
 })
 export class KeyDealData
 {
-  private _currencies: LoadableArray<Currency>;
-
   constructor(
     @Inject(CurrenciesToken)
-    currenciesObserver: Observable<LoadableArray<Currency>>
+    private _currencies: Observable<LoadableArray<Currency>>
     )
   {
-    currenciesObserver.subscribe(currencies => this._currencies = currencies);
   }
 
-  get Currencies(): LoadableArray<Currency>
+  get Currencies(): Observable<LoadableArray<Currency>>
   {
     return this._currencies;
   }

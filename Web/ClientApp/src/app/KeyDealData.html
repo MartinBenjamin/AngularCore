@@ -46,7 +46,7 @@
       <td class="RowHeading">Base Currency:</td>
       <td><select>
          <option [value]="null"></option>
-         <option *ngFor="let currency of Currencies" [value]="currency.Id">{{currency.Name}}</option>
+         <option *ngFor="let currency of (Currencies|async)" [value]="currency.Id">{{currency.Name}}</option>
          </select></td>
     </tr>
     <tr>
