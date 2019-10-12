@@ -16,6 +16,8 @@ import { DealTracker } from './DealTracker';
 import { KeyDealData } from './KeyDealData';
 import { OriginationTab } from './OriginationTab';
 import { MoreTabs } from './MoreTabs';
+import { CurrenciesToken, CurrencyServiceProvider, CurrencyServiceUrlToken, CurrenciesProvider } from './CurrencyServiceProvider';
+
 
 @NgModule({
   declarations: [
@@ -43,12 +45,20 @@ import { MoreTabs } from './MoreTabs';
     ])
   ],
   entryComponents:
-    [
-      KeyDealData,
-      OriginationTab,
-      MoreTabs
-    ],
-  providers: [],
+  [
+    KeyDealData,
+    OriginationTab,
+    MoreTabs
+  ],
+  providers:
+  [
+    {
+      provide : CurrencyServiceUrlToken,
+      useValue: '/api/currencies'
+      },
+      CurrencyServiceProvider,
+      CurrenciesProvider
+  ],
   bootstrap: [DealTracker]
 })
 export class AppModule { }

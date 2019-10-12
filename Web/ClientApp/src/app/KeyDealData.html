@@ -44,7 +44,10 @@
     </tr>
     <tr>
       <td class="RowHeading">Base Currency:</td>
-      <td><select></select></td>
+      <td><select>
+         <option [value]="null"></option>
+         <option *ngFor="let currency of Currencies" [value]="currency.Id">{{currency.Name}}</option>
+         </select></td>
     </tr>
     <tr>
       <td class="RowHeading">Exclusivity:</td>

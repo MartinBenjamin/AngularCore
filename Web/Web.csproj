@@ -30,9 +30,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\src\app\CommonDomainObjects.ts" />
+    <None Remove="ClientApp\src\app\CurrencyServiceProvider.ts" />
     <None Remove="ClientApp\src\app\DealTracker.ts" />
     <None Remove="ClientApp\src\app\Gallery\TestTab.ts" />
+    <None Remove="ClientApp\src\app\INamedService.ts" />
+    <None Remove="ClientApp\src\app\Iso4217.ts" />
     <None Remove="ClientApp\src\app\KeyDealData.ts" />
+    <None Remove="ClientApp\src\app\LoadableArray.ts" />
     <None Remove="ClientApp\src\app\MoreTabs.ts" />
     <None Remove="ClientApp\src\app\OriginationTab.ts" />
   </ItemGroup>
@@ -44,9 +49,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\CurrencyServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\DealTracker.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\CommonDomainObjects.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Gallery\TestTab.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\INamedService.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Iso4217.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\KeyDealData.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\LoadableArray.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\MoreTabs.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\OriginationTab.ts" />
   </ItemGroup>
