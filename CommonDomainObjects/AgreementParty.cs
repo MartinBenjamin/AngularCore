@@ -4,7 +4,11 @@ namespace CommonDomainObjects
 {
     public class AgreementParty: PartyInRole
     {
-        public virtual Agreement Agreement { get; protected set; }
+        public virtual Agreement    Agreement    { get; protected set; }
+
+        // A Party is a Person or an Organisation but not both.
+        public virtual Person       Person       { get; protected set; }
+        public virtual Organisation Organisation { get; protected set; }
 
         protected AgreementParty() : base()
         {
@@ -13,113 +17,71 @@ namespace CommonDomainObjects
         public AgreementParty(
             Guid             id,
             Agreement        agreement,
-            AutonomousAgent  autonomousAgent,
+            Person           person,
             Role             role,
             Range2<DateTime> period
             ) : base(
                 id,
-                autonomousAgent,
+                person,
                 role,
                 period)
         {
             Agreement = agreement;
             Agreement.Parties.Add(this);
+            Person = person;
+        }
+
+        public AgreementParty(
+            Guid             id,
+            Agreement        agreement,
+            Organisation     organisation,
+            Role             role,
+            Range2<DateTime> period
+            ) : base(
+                id,
+                organisation,
+                role,
+                period)
+        {
+            Agreement = agreement;
+            Agreement.Parties.Add(this);
+            Organisation = organisation;
+        }
+        
+        public AgreementParty(
+            Agreement        agreement,
+            Person           person,
+            Role             role,
+            Range2<DateTime> period
+            ) : base(
+                Guid.NewGuid(),
+                person,
+                role,
+                period)
+        {
+            Agreement = agreement;
+            Agreement.Parties.Add(this);
+            Person = person;
         }
 
         public AgreementParty(
             Agreement        agreement,
-            AutonomousAgent  autonomousAgent,
-            Role             role,
-            Range2<DateTime> period
-            ) : this(
-                Guid.NewGuid(),
-                agreement,
-                autonomousAgent,
-                role,
-                period)
-        {
-        }
-    }
-
-    public class AgreementPerson: AgreementParty
-    {
-        public virtual Person Person { get; protected set; }
-
-        protected AgreementPerson() : base()
-        {
-        }
-        
-        public AgreementPerson(
-            Guid             id,
-            Agreement        agreement,
-            Person           person,
-            Role             role,
-            Range2<DateTime> period
-            ) : base(
-                id,
-                agreement,
-                person,
-                role,
-                period)
-        {
-            Person = person;
-        }
-
-        public AgreementPerson(
-            Agreement        agreement,
-            Person           person,
-            Role             role,
-            Range2<DateTime> period
-            ) : this(
-                Guid.NewGuid(),
-                agreement,
-                person,
-                role,
-                period)
-        {
-        }
-    }
-
-    public class AgreementOrganisation: AgreementParty
-    {
-        public virtual Organisation Organisation { get; protected set; }
-
-        protected AgreementOrganisation() : base()
-        {
-        }
-
-        public AgreementOrganisation(
-            Guid             id,
-            Agreement        agreement,
             Organisation     organisation,
             Role             role,
             Range2<DateTime> period
             ) : base(
-                id,
-                agreement,
+                Guid.NewGuid(),
                 organisation,
                 role,
                 period)
         {
+            Agreement = agreement;
+            Agreement.Parties.Add(this);
             Organisation = organisation;
         }
-
-        public AgreementOrganisation(
-            Agreement        agreement,
-            Organisation     organisation,
-            Role             role,
-            Range2<DateTime> period
-            ) : this(
-                Guid.NewGuid(),
-                agreement,
-                organisation,
-                role,
-                period)
-        {
-        }
     }
 
-    public class AgreementOrganisationalSubUnit: AgreementOrganisation
+    public class AgreementOrganisationalSubUnit: AgreementParty
     {
         public virtual OrganisationalSubUnit OrganisationalSubUnit { get; protected set; }
 
