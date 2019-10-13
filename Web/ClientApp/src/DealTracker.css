@@ -28,6 +28,15 @@ span.Field
   vertical-align: middle;
 }
 
+span.Loading
+{
+  display: inline-block;
+  height: 18px;
+  line-height: 18px;
+  border: 1px solid #bababa;
+  vertical-align: middle;
+}
+
 *.RowHeading
 {
   font-weight: bold;

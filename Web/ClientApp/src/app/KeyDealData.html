@@ -1,5 +1,5 @@
 <style type="text/css">
-  input[type="text"], select, span.Field
+  input[type="text"], select, span.Field, span.Loading
   {
     width: 200px;
   }
@@ -44,10 +44,15 @@
     </tr>
     <tr>
       <td class="RowHeading">Base Currency:</td>
-      <td><select>
-         <option [value]="null"></option>
-         <option *ngFor="let currency of (Currencies|async)" [value]="currency.Id">{{currency.Name}}</option>
-         </select></td>
+      <td *ngIf="Currencies.Loaded; else Loading">
+        <select>
+          <option [value]="null"></option>
+          <option *ngFor="let currency of Currencies" [value]="currency.Id">{{currency.Name}}</option>
+        </select>
+      </td>
+      <ng-template #Loading>
+        <td><span class="Loading">Loading...</span></td>
+      </ng-template>
     </tr>
     <tr>
       <td class="RowHeading">Exclusivity:</td>
