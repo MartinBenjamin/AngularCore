@@ -5,7 +5,6 @@ import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { Observable } from "rxjs/Observable";
 import { INamedService, NamedFilters, NamedService } from "./INamedService";
 import { Currency } from "./Iso4217";
-import { LoadableArray } from "./LoadableArray";
 
 export const CurrencyServiceToken    = new InjectionToken<INamedService<string, Currency, NamedFilters>>('CurrencyService');
 export const CurrencyServiceUrlToken = new InjectionToken<string>('CurrencyServiceUrl');
@@ -30,14 +29,8 @@ export const CurrenciesProvider: Provider =
     currencyService: INamedService<string, Currency, NamedFilters>,
     ) =>
   {
-    const currencies = new BehaviorSubject<LoadableArray<Currency>>(<LoadableArray<Currency>>[]);
-    currencyService.Find(new NamedFilters()).map(
-      result =>
-      {
-        var loadableCurrencies = <LoadableArray<Currency>>result;
-        loadableCurrencies.Loaded = true;
-        return loadableCurrencies;
-      }).subscribe(currencies);
+    const currencies = new BehaviorSubject<Currency[]>(null);
+    currencyService.Find(new NamedFilters()).subscribe(currencies);
     return currencies;
   },
   deps: [CurrencyServiceToken]

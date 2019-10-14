@@ -1,8 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { Currency } from './Iso4217';
 import { CurrenciesToken } from './CurrencyServiceProvider';
-import { LoadableArray } from './LoadableArray';
+import { Currency } from './Iso4217';
 
 @Component({
   selector: 'KeyDealData',
@@ -10,17 +9,14 @@ import { LoadableArray } from './LoadableArray';
 })
 export class KeyDealData
 {
-  private _currencies: LoadableArray<Currency>;
-
   constructor(
     @Inject(CurrenciesToken)
-    currenciesObserver: Observable<LoadableArray<Currency>>
+    private _currencies: Observable<Currency[]>
     )
   {
-    currenciesObserver.subscribe(currencies => this._currencies = currencies);
   }
 
-  get Currencies(): LoadableArray<Currency>
+  get Currencies(): Observable<Currency[]>
   {
     return this._currencies;
   }

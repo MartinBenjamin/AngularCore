@@ -44,10 +44,10 @@
     </tr>
     <tr>
       <td class="RowHeading">Base Currency:</td>
-      <td *ngIf="Currencies.Loaded; else Loading">
+      <td *ngIf="(Currencies|async) as currencies; else Loading">
         <select>
           <option [value]="null"></option>
-          <option *ngFor="let currency of Currencies" [value]="currency.Id">{{currency.Name}}</option>
+          <option *ngFor="let currency of currencies" [value]="currency.Id">{{currency.Name}}</option>
         </select>
       </td>
       <ng-template #Loading>

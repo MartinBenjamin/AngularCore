@@ -37,7 +37,6 @@
     <None Remove="ClientApp\src\app\INamedService.ts" />
     <None Remove="ClientApp\src\app\Iso4217.ts" />
     <None Remove="ClientApp\src\app\KeyDealData.ts" />
-    <None Remove="ClientApp\src\app\LoadableArray.ts" />
     <None Remove="ClientApp\src\app\MoreTabs.ts" />
     <None Remove="ClientApp\src\app\OriginationTab.ts" />
   </ItemGroup>
@@ -56,7 +55,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\INamedService.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Iso4217.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\KeyDealData.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\LoadableArray.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\MoreTabs.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\OriginationTab.ts" />
   </ItemGroup>
