@@ -148,7 +148,7 @@ namespace CommonDomainObjects
 
     public class Vertex<TUnderlying>: Vertex<Guid, Graph<TUnderlying>, Vertex<TUnderlying>, Edge<TUnderlying>, TUnderlying>
     {
-        protected Vertex(
+        public Vertex(
             Guid               id,
             Graph<TUnderlying> graph,
             TUnderlying        underlying
@@ -162,7 +162,7 @@ namespace CommonDomainObjects
 
     public class Edge<TUnderlying>: Edge<Guid, Graph<TUnderlying>, Vertex<TUnderlying>, Edge<TUnderlying>, TUnderlying>
     {
-        protected Edge(
+        public Edge(
             Guid                id,
             Graph<TUnderlying>  graph,
             Vertex<TUnderlying> @out,

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CommonDomainObjects
@@ -44,6 +45,27 @@ namespace CommonDomainObjects
                     longestPaths,
                     vertex)
                 select vertex;
+        }
+
+        public static Graph<TVertex> ToGraph<TVertex>(
+            this IDictionary<TVertex, IList<TVertex>> adjacencyList
+            )
+        {
+            var graph = new Graph<TVertex>(Guid.Empty);
+            var vertexMap = new Dictionary<TVertex, Vertex<TVertex>>();
+            foreach(var vertex in adjacencyList.Keys)
+                vertexMap[vertex] = new Vertex<TVertex>(
+                    Guid.Empty,
+                    graph,
+                    vertex);
+            foreach(var vertex in adjacencyList.Keys)
+                foreach(var adjacentVertex in adjacencyList[vertex])
+                    new Edge<TVertex>(
+                        Guid.Empty,
+                        graph,
+                        vertexMap[vertex],
+                        vertexMap[adjacentVertex]);
+            return graph;
         }
     }
 }
