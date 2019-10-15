@@ -73,27 +73,27 @@ namespace CommonDomainObjects
         }
 
         public virtual void Visit(
-            Action<THierarchyMember> before,
-            Action<THierarchyMember> after = null
+            Action<THierarchyMember> enter,
+            Action<THierarchyMember> exit = null
             )
         {
             Members
                 .Where(hierarchyMember => hierarchyMember.Parent == null)
                 .ToList()
                 .ForEach(hierarchyMember => hierarchyMember.Visit(
-                    before,
-                    after));
+                    enter,
+                    exit));
         }
 
         public virtual async Task VisitAsync(
-            Func<THierarchyMember, Task> before,
-            Func<THierarchyMember, Task> after = null
+            Func<THierarchyMember, Task> enter,
+            Func<THierarchyMember, Task> exit = null
             )
         {
             foreach(var member in Members.Where(hierarchyMember => hierarchyMember.Parent == null))
                 await member.VisitAsync(
-                    before,
-                    after);
+                    enter,
+                    exit);
         }
 
         protected abstract THierarchyMember NewHierarchyMember(
@@ -162,35 +162,35 @@ namespace CommonDomainObjects
         }
 
         public virtual void Visit(
-            Action<THierarchyMember> before,
-            Action<THierarchyMember> after = null
+            Action<THierarchyMember> enter,
+            Action<THierarchyMember> exit = null
             )
         {
-            before?.Invoke((THierarchyMember)this);
+            enter?.Invoke((THierarchyMember)this);
 
             foreach(var child in Children)
                 child.Visit(
-                    before,
-                    after);
+                    enter,
+                    exit);
 
-            after?.Invoke((THierarchyMember)this);
+            exit?.Invoke((THierarchyMember)this);
         }
 
         public virtual async Task VisitAsync(
-            Func<THierarchyMember, Task> before,
-            Func<THierarchyMember, Task> after = null
+            Func<THierarchyMember, Task> enter,
+            Func<THierarchyMember, Task> exit = null
             )
         {
-            if(before != null)
-                await before((THierarchyMember)this);
+            if(enter != null)
+                await enter((THierarchyMember)this);
 
             foreach(var child in Children)
                 await child.VisitAsync(
-                    before,
-                    after);
+                    enter,
+                    exit);
 
-            if(after != null)
-                await after((THierarchyMember)this);
+            if(exit != null)
+                await exit((THierarchyMember)this);
         }
     }
 

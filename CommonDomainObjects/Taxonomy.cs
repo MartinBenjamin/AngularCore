@@ -72,16 +72,16 @@ namespace CommonDomainObjects
         }
 
         public virtual void Visit(
-            Action<TTaxonomyTerm> before,
-            Action<TTaxonomyTerm> after = null
+            Action<TTaxonomyTerm> enter,
+            Action<TTaxonomyTerm> exit = null
             )
         {
             Terms
                 .Where(taxonomyTerm => taxonomyTerm.Broader == null)
                 .ToList()
                 .ForEach(taxonomyTerm => taxonomyTerm.Visit(
-                    before,
-                    after));
+                    enter,
+                    exit));
         }
 
         protected abstract TTaxonomyTerm NewTaxonomyTerm(
@@ -150,18 +150,18 @@ namespace CommonDomainObjects
         }
 
         public virtual void Visit(
-            Action<TTaxonomyTerm> before,
-            Action<TTaxonomyTerm> after = null
+            Action<TTaxonomyTerm> enter,
+            Action<TTaxonomyTerm> exit = null
             )
         {
-            before?.Invoke((TTaxonomyTerm)this);
+            enter?.Invoke((TTaxonomyTerm)this);
 
             foreach(var narrower in Narrower)
                 narrower.Visit(
-                    before,
-                    after);
+                    enter,
+                    exit);
 
-            after?.Invoke((TTaxonomyTerm)this);
+            exit?.Invoke((TTaxonomyTerm)this);
         }
     }
 
