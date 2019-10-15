@@ -1,22 +1,23 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-
 import { AppComponent } from './app.component';
-import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
-import { TabbedViewModule } from './Gallery/TabbedView';
-import { GalleryModule } from './Gallery/GalleryModule';
-import { Gallery } from './Gallery/Gallery'
+import { CurrenciesProvider, CurrencyServiceProvider, CurrencyServiceUrlToken } from './CurrencyServiceProvider';
 import { DealTracker } from './DealTracker';
+import { FetchDataComponent } from './fetch-data/fetch-data.component';
+import { Gallery } from './Gallery/Gallery';
+import { GalleryModule } from './Gallery/GalleryModule';
+import { TabbedViewModule } from './Gallery/TabbedView';
+import { HomeComponent } from './home/home.component';
 import { KeyDealData } from './KeyDealData';
-import { OriginationTab } from './OriginationTab';
 import { MoreTabs } from './MoreTabs';
-import { CurrenciesToken, CurrencyServiceProvider, CurrencyServiceUrlToken, CurrenciesProvider } from './CurrencyServiceProvider';
+import { NavMenuComponent } from './nav-menu/nav-menu.component';
+import { OriginationTab } from './OriginationTab';
+import { Menu } from './Origination/Menu';
+
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { CurrenciesToken, CurrencyServiceProvider, CurrencyServiceUrlToken, Curr
     DealTracker,
     KeyDealData,
     OriginationTab,
-    MoreTabs
+    MoreTabs,
+    Menu
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
