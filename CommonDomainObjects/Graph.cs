@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace CommonDomainObjects
 {
-    public abstract class Graph<TId, TGraph, TVertex, TEdge>: DomainObject<TId>
-        where TGraph : Graph<TId, TGraph, TVertex, TEdge>
-        where TEdge  : Edge <TId, TGraph, TVertex, TEdge>
+    public abstract class Graph<TGraph, TVertex, TEdge>
+        where TGraph : Graph<TGraph, TVertex, TEdge>
+        where TEdge  : Edge <TGraph, TVertex, TEdge>
     {
         public virtual IList<TVertex> Vertices { get; protected set; }
         public virtual IList<TEdge>   Edges    { get; protected set; }
 
-        protected Graph(
-            TId id
-            ) : base(id)
+        protected Graph()
         {
             Vertices = new List<TVertex>();
             Edges    = new List<TEdge>();
@@ -59,20 +56,19 @@ namespace CommonDomainObjects
         }
     }
 
-    public abstract class Edge<TId, TGraph, TVertex, TEdge>: DomainObject<TId>
-        where TGraph : Graph<TId, TGraph, TVertex, TEdge>
-        where TEdge  : Edge <TId, TGraph, TVertex, TEdge>
+    public abstract class Edge<TGraph, TVertex, TEdge>
+        where TGraph : Graph<TGraph, TVertex, TEdge>
+        where TEdge  : Edge <TGraph, TVertex, TEdge>
     {
         public virtual TGraph  Graph { get; protected set; }
         public virtual TVertex Out   { get; protected set; }
         public virtual TVertex In    { get; protected set; }
 
         protected Edge(
-            TId     id,
             TGraph  graph,
             TVertex @out,
             TVertex @in
-            ) : base(id)
+            )
         {
             Graph = graph;
             Out   = @out;
@@ -88,24 +84,20 @@ namespace CommonDomainObjects
         }
     }
 
-    public class Graph<TVertex>: Graph<Guid, Graph<TVertex>, TVertex, Edge<TVertex>>
+    public class Graph<TVertex>: Graph<Graph<TVertex>, TVertex, Edge<TVertex>>
     {
-        public Graph(
-            Guid id
-            ) : base(id)
+        public Graph() : base()
         {
         }
     }
 
-    public class Edge<TVertex>: Edge<Guid, Graph<TVertex>, TVertex, Edge<TVertex>>
+    public class Edge<TVertex>: Edge<Graph<TVertex>, TVertex, Edge<TVertex>>
     {
         public Edge(
-            Guid           id,
             Graph<TVertex> graph,
             TVertex        @out,
             TVertex        @in
             ) : base(
-                id,
                 graph,
                 @out,
                 @in)

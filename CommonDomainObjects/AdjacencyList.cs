@@ -51,11 +51,10 @@ namespace CommonDomainObjects
             this IDictionary<TVertex, IList<TVertex>> adjacencyList
             )
         {
-            var graph = new Graph<TVertex>(Guid.Empty);
+            var graph = new Graph<TVertex>();
             foreach(var vertex in adjacencyList.Keys)
                 foreach(var adjacentVertex in adjacencyList[vertex])
                     new Edge<TVertex>(
-                        Guid.Empty,
                         graph,
                         vertex,
                         adjacentVertex);
