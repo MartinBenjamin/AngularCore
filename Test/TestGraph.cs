@@ -7,7 +7,7 @@ namespace Test
     [TestFixture]
     public class TestGraph
     {
-        private static readonly IDictionary<char, IList<char>> _graph = new Dictionary<char, IList<char>>
+        private static readonly IDictionary<char, IList<char>> _adjacencyList = new Dictionary<char, IList<char>>
         {
             {'A', new char[]{} },
             {'B', new char[]{ 'A' } },
@@ -22,7 +22,7 @@ namespace Test
             int  longestPath
             )
         {
-            Assert.That(_graph.ToGraph().LongestPath(vertex), Is.EqualTo(longestPath));
+            Assert.That(_adjacencyList.ToGraph().LongestPath(vertex), Is.EqualTo(longestPath));
         }
 
         [Test]
@@ -33,7 +33,7 @@ namespace Test
                 {
                     {'A', new char[]{} }
                 }.ToGraph().TopologicalSort(), Is.EqualTo(new object[] { 'A' }));
-            Assert.That(_graph.ToGraph().TopologicalSort(), Is.EqualTo(new[] { 'A', 'B', 'C' }));
+            Assert.That(_adjacencyList.ToGraph().TopologicalSort(), Is.EqualTo(new[] { 'A', 'B', 'C' }));
         }
     }
 }

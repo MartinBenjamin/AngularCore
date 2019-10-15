@@ -7,7 +7,7 @@ namespace Test
     [TestFixture]
     public class TestAdjacencyList
     {
-        private static readonly IDictionary<char, IList<char>> _graph = new Dictionary<char, IList<char>>
+        private static readonly IDictionary<char, IList<char>> _adjacencyList = new Dictionary<char, IList<char>>
         {
             {'A', new char[]{} },
             {'B', new char[]{ 'A' } },
@@ -22,13 +22,13 @@ namespace Test
             int  longestPath
             )
         {
-            Assert.That(_graph.LongestPath(vertex), Is.EqualTo(longestPath));
+            Assert.That(_adjacencyList.LongestPath(vertex), Is.EqualTo(longestPath));
         }
 
         [Test]
         public void TopologicalSort()
         {
-            Assert.That(_graph.TopologicalSort(), Is.EqualTo(new []{ 'A', 'B', 'C' }));
+            Assert.That(_adjacencyList.TopologicalSort(), Is.EqualTo(new []{ 'A', 'B', 'C' }));
         }
     }
 }
