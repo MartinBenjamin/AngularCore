@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CommonDomainObjects
 {
@@ -84,6 +85,17 @@ namespace CommonDomainObjects
                     exit));
         }
 
+        public virtual async Task VisitAsync(
+            Func<TTaxonomyTerm, Task> enter,
+            Func<TTaxonomyTerm, Task> exit = null
+            )
+        {
+            foreach(var term in Terms.Where(taxonomyTerm => taxonomyTerm.Broader == null))
+                await term.VisitAsync(
+                    enter,
+                    exit);
+        }
+
         protected abstract TTaxonomyTerm NewTaxonomyTerm(
             TTerm         term,
             TTaxonomyTerm broaderTaxonomyTerm);
@@ -162,6 +174,23 @@ namespace CommonDomainObjects
                     exit);
 
             exit?.Invoke((TTaxonomyTerm)this);
+        }
+
+        public virtual async Task VisitAsync(
+            Func<TTaxonomyTerm, Task> enter,
+            Func<TTaxonomyTerm, Task> exit = null
+            )
+        {
+            if(enter != null)
+                await enter((TTaxonomyTerm)this);
+
+            foreach(var narrower in Narrower)
+                await narrower.VisitAsync(
+                    enter,
+                    exit);
+
+            if(exit != null)
+                await exit((TTaxonomyTerm)this);
         }
     }
 
