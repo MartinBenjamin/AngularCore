@@ -53,11 +53,15 @@ namespace CommonDomainObjects
         {
             var graph = new Graph<TVertex>();
             foreach(var vertex in adjacencyList.Keys)
+                graph.Vertices.Add(vertex);
+
+            foreach(var vertex in adjacencyList.Keys)
                 foreach(var adjacentVertex in adjacencyList[vertex])
                     new Edge<TVertex>(
                         graph,
                         vertex,
                         adjacentVertex);
+
             return graph;
         }
     }

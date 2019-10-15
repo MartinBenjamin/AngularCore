@@ -28,6 +28,11 @@ namespace Test
         [Test]
         public void TopologicalSort()
         {
+            Assert.That(
+                new Dictionary<char, IList<char>>
+                {
+                    {'A', new char[]{} }
+                }.ToGraph().TopologicalSort(), Is.EqualTo(new object[] { 'A' }));
             Assert.That(_graph.ToGraph().TopologicalSort(), Is.EqualTo(new[] { 'A', 'B', 'C' }));
         }
     }
