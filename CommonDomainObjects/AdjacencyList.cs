@@ -52,19 +52,13 @@ namespace CommonDomainObjects
             )
         {
             var graph = new Graph<TVertex>(Guid.Empty);
-            var vertexMap = new Dictionary<TVertex, Vertex<TVertex>>();
-            foreach(var vertex in adjacencyList.Keys)
-                vertexMap[vertex] = new Vertex<TVertex>(
-                    Guid.Empty,
-                    graph,
-                    vertex);
             foreach(var vertex in adjacencyList.Keys)
                 foreach(var adjacentVertex in adjacencyList[vertex])
                     new Edge<TVertex>(
                         Guid.Empty,
                         graph,
-                        vertexMap[vertex],
-                        vertexMap[adjacentVertex]);
+                        vertex,
+                        adjacentVertex);
             return graph;
         }
     }
