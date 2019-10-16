@@ -40,6 +40,7 @@
     <None Remove="ClientApp\src\app\MoreTabs.ts" />
     <None Remove="ClientApp\src\app\OriginationTab.ts" />
     <None Remove="ClientApp\src\app\Origination\Menu.ts" />
+    <None Remove="ClientApp\src\app\Origination\OriginationModule.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -59,6 +60,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\MoreTabs.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\OriginationTab.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Menu.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\OriginationModule.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

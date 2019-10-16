@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { Tab } from './Gallery/TabbedView';
 import { OriginationTab } from './OriginationTab';
 
-@Component({
+@Component(
+{
     selector: 'MoreTabs',
     templateUrl: './MoreTabs.html'
 })

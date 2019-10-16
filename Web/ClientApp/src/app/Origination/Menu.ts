@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
-@Component({
+@Component(
+{
     selector: 'nav',
     templateUrl: './Menu.html'
 })
