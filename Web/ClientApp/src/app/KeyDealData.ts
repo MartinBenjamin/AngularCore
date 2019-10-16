@@ -4,16 +4,16 @@ import { CurrenciesToken } from './CurrencyServiceProvider';
 import { Currency } from './Iso4217';
 
 @Component(
-{
-    selector: 'KeyDealData',
-    templateUrl: './KeyDealData.html'
-})
+    {
+        selector: 'KeyDealData',
+        templateUrl: './KeyDealData.html'
+    })
 export class KeyDealData
 {
     constructor(
         @Inject(CurrenciesToken)
         private _currencies: Observable<Currency[]>
-        )
+    )
     {
     }
 

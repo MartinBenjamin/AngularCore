@@ -5,10 +5,10 @@ import { OriginationTab } from './OriginationTab';
 import { MoreTabs } from './MoreTabs';
 
 @Component(
-{
-    selector: 'body',
-    templateUrl: './DealTracker.html'
-})
+    {
+        selector: 'body',
+        templateUrl: './DealTracker.html'
+    })
 export class DealTracker
 {
     public Tabs =
