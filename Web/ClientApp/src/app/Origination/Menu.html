@@ -14,29 +14,43 @@
   div.SubMenu
   {
     position: absolute;
-    z-index: 2;
     color: #bababa;
-    background-color: #151515;
+    background-color: #000;
     border: 1px solid #bababa;
+    display: none;
+  }
+
+  span.MenuContainer:hover span.MenuTitle
+  {
+    color: #000;
+    background-color: #bababa;
+  }
+
+  span.MenuContainer:hover div.SubMenu
+  {
+    display: block;
   }
 </style>
 <span style="white-space: nowrap">
-  <span style="display: inline-block;"><span class="MenuTitle">Home</span></span>
-  <span style="display: inline-block;"><span class="MenuTitle">My Deals</span></span>
-  <span style="display: inline-block;">
+  <span style="display: inline-block;"><span class="MenuTitle"><a>Home</a></span></span>
+  <span style="display: inline-block;"><span class="MenuTitle"><a>My Deals</a></span></span>
+  <span style="display: inline-block;" class="MenuContainer">
     <span class="MenuTitle">Originate</span
-    ><div class="SubMenu"
-      ><table class="MenuItems">
-        <tr>
-          <td>Advisory</td>
-        </tr>
-        <tr>
-          <td>Project Finance (ESFO)</td>
-        </tr>
-        <tr>
-          <td>Project Finance (ASFO)</td>
-        </tr>
-      </table>
+    ><div class="SubMenu">
+       <table class="MenuItems">
+         <tr>
+           <td><a>Advisory</a></td>
+         </tr>
+         <tr>
+           <td><a>Aviation Finance</a></td>
+         </tr>
+         <tr>
+           <td><a>Leveraged Finance</a></td>
+         </tr>
+         <tr>
+           <td><a>Project Finance</a></td>
+         </tr>
+       </table>
     </div>
   </span>
 </span>

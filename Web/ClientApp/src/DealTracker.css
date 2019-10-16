@@ -18,6 +18,11 @@ select
   box-sizing: content-box;
 }
 
+a:hover
+{
+  text-decoration: underline;
+}
+
 span.Field
 {
   display: inline-block;
