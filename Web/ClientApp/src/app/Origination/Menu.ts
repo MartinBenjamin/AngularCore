@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-    selector: 'OriginationMenu',
+    selector: 'nav',
     templateUrl: './Menu.html'
 })
 export class Menu
