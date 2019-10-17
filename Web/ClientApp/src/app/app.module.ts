@@ -25,9 +25,9 @@ import { ProjectFinance } from './Origination/ProjectFinance';
             OriginationModule,
             RouterModule.forRoot([
                 { path: '', component: MyDeals },
-                { path: 'myDeals', component: MyDeals },
-                { path: 'projectFinance', component: ProjectFinance },
-                { path: 'gallery', component: Gallery }
+                { path: 'MyDeals', component: MyDeals },
+                { path: 'ProjectFinance', component: ProjectFinance },
+                { path: 'Gallery', component: Gallery }
             ])
         ],
     providers:
