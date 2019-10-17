@@ -13,7 +13,7 @@ export class KeyDealData
     constructor(
         @Inject(CurrenciesToken)
         private _currencies: Observable<Currency[]>
-    )
+        )
     {
     }
 
