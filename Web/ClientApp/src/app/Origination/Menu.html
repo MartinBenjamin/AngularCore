@@ -30,10 +30,21 @@
   {
     display: block;
   }
+
+  a[ng-reflect-router-link]
+  {
+    color: #bababa;
+    text-decoration: none;
+  }
+
+  a[ng-reflect-router-link]:hover
+  {
+    text-decoration: underline;
+  }
 </style>
 <span style="white-space: nowrap">
   <span style="display: inline-block;"><span class="MenuTitle"><a>Home</a></span></span>
-  <span style="display: inline-block;"><span class="MenuTitle"><a  [routerLink]='["/myDeals"]'>My Deals</a></span></span>
+  <span style="display: inline-block;"><span class="MenuTitle"><a [routerLink]='["/myDeals"]'>My Deals</a></span></span>
   <span style="display: inline-block;"><span class="MenuTitle"><a>My Customers</a></span></span>
   <span style="display: inline-block;"><span class="MenuTitle"><a>Tree'd Deals</a></span></span>
   <span style="display: inline-block;" class="MenuContainer">
