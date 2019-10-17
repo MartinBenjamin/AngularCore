@@ -36,9 +36,6 @@
     <None Remove="ClientApp\src\app\Gallery\TestTab.ts" />
     <None Remove="ClientApp\src\app\INamedService.ts" />
     <None Remove="ClientApp\src\app\Iso4217.ts" />
-    <None Remove="ClientApp\src\app\KeyDealData.ts" />
-    <None Remove="ClientApp\src\app\MoreTabs.ts" />
-    <None Remove="ClientApp\src\app\OriginationTab.ts" />
     <None Remove="ClientApp\src\app\Origination\DealModule.ts" />
     <None Remove="ClientApp\src\app\Origination\Menu.ts" />
     <None Remove="ClientApp\src\app\Origination\OriginationModule.ts" />
@@ -58,9 +55,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\Gallery\TestTab.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\INamedService.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Iso4217.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\KeyDealData.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\MoreTabs.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\OriginationTab.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\DealModule.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Menu.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\OriginationModule.ts" />
