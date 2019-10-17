@@ -1,7 +1,9 @@
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { DealModule } from './DealModule';
 import { Menu } from './Menu';
 import { MyDeals } from './MyDeals';
-import { DealModule } from './DealModule';
+
 
 @NgModule(
     {
@@ -10,6 +12,10 @@ import { DealModule } from './DealModule';
                 Menu,
                 MyDeals
             ],
+        imports:
+            [
+                RouterModule
+            ]
         exports:
             [
                 Menu,
