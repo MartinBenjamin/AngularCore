@@ -30,7 +30,7 @@ export const CurrenciesProvider: Provider =
         ) =>
     {
         const currencies = new BehaviorSubject<Currency[]>(null);
-        currencyService.Find(new NamedFilters()).subscribe(currencies);
+        currencyService.Find(new NamedFilters()).subscribe(result => currencies.next(result));
         return currencies;
     },
     deps: [CurrencyServiceToken]
