@@ -7,8 +7,8 @@ import { CurrenciesProvider, CurrencyServiceProvider, CurrencyServiceUrlToken } 
 import { DealTracker } from './DealTracker';
 import { Gallery } from './Gallery/Gallery';
 import { GalleryModule } from './Gallery/GalleryModule';
-import { OriginationModule } from './Origination/OriginationModule';
 import { MyDeals } from './Origination/MyDeals';
+import { OriginationModule } from './Origination/OriginationModule';
 import { ProjectFinance } from './Origination/ProjectFinance';
 
 @NgModule({
@@ -24,9 +24,15 @@ import { ProjectFinance } from './Origination/ProjectFinance';
             GalleryModule,
             OriginationModule,
             RouterModule.forRoot([
-                { path: '', component: MyDeals },
-                { path: 'MyDeals', component: MyDeals },
-                { path: 'ProjectFinance', component: ProjectFinance },
+                { path: '', redirectTo: '/Origination/MyDeals', pathMatch: 'full'  },
+                {
+                    path: 'Origination',
+                    children:
+                        [
+                            { path: 'MyDeals', component: MyDeals },
+                            { path: 'ProjectFinance', component: ProjectFinance }
+                        ]
+                },
                 { path: 'Gallery', component: Gallery }
             ])
         ],
