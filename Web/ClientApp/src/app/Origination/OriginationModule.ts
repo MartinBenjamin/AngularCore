@@ -15,7 +15,7 @@ import { MyDeals } from './MyDeals';
         imports:
             [
                 RouterModule
-            ]
+            ],
         exports:
             [
                 Menu,
