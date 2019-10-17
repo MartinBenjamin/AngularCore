@@ -75,39 +75,5 @@
   </table>
   <div style="height: 2px; background-color: #b60000;"></div>
   <div style="height: 30px; background-color: #151515;"></div>
-  <div style="padding: 5px;">
-    <table class="GridLayout" style="padding-bottom: 5px;">
-      <tr>
-        <td class="RowHeading">Deal ID:</td>
-        <td><span class="Field DealID">000001</span></td>
-      </tr>
-      <tr>
-        <td class="RowHeading">Stage:</td>
-        <td>
-          <select>
-            <option></option>
-            <option>Prospect</option>
-            <option>Business Screened</option>
-            <option>Submitted to Credit</option>
-            <option>Approved</option>
-            <option>Mandated</option>
-            <option>Signed</option>
-            <option>Financial Close</option>
-            <option>On Hold</option>
-            <option>Lost</option>
-            <option>Declined</option>
-          </select>
-        </td>
-      </tr>
-      <tr>
-        <td class="RowHeading">Bid Status:</td>
-        <td><select></select></td>
-      </tr>
-      <tr>
-        <td class="RowHeading">Restricted:</td>
-        <td><input type="checkbox" /></td>
-      </tr>
-    </table>
-    <dt-tabbed-view [Tabs]="Tabs" class="FullWidth"></dt-tabbed-view>
-  </div>
+  <div style="padding: 5px;"><deal></deal></div>
 </div>

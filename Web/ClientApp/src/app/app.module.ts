@@ -10,59 +10,45 @@ import { DealTracker } from './DealTracker';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { Gallery } from './Gallery/Gallery';
 import { GalleryModule } from './Gallery/GalleryModule';
-import { TabbedViewModule } from './Gallery/TabbedView';
 import { HomeComponent } from './home/home.component';
-import { KeyDealData } from './KeyDealData';
-import { MoreTabs } from './MoreTabs';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { OriginationTab } from './OriginationTab';
 import { OriginationModule } from './Origination/OriginationModule';
-
-
+import { DealModule } from './Origination/DealModule';
 
 @NgModule({
     declarations:
-    [
-        AppComponent,
-        NavMenuComponent,
-        HomeComponent,
-        CounterComponent,
-        FetchDataComponent,
-        DealTracker,
-        KeyDealData,
-        OriginationTab,
-        MoreTabs
-    ],
+        [
+            AppComponent,
+            NavMenuComponent,
+            HomeComponent,
+            CounterComponent,
+            FetchDataComponent,
+            DealTracker
+        ],
     imports:
-    [
-        BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
-        HttpClientModule,
-        FormsModule,
-        TabbedViewModule,
-        GalleryModule,
-        OriginationModule,
-        RouterModule.forRoot([
-            { path: '', component: HomeComponent, pathMatch: 'full' },
-            { path: 'counter', component: CounterComponent },
-            { path: 'fetch-data', component: FetchDataComponent },
-            { path: 'gallery', component: Gallery }
-        ])
-    ],
-    entryComponents:
-    [
-        KeyDealData,
-        OriginationTab,
-        MoreTabs
-    ],
+        [
+            BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+            HttpClientModule,
+            FormsModule,
+            GalleryModule,
+            OriginationModule,
+            DealModule,
+            RouterModule.forRoot([
+                { path: '', component: HomeComponent, pathMatch: 'full' },
+                { path: 'counter', component: CounterComponent },
+                { path: 'fetch-data', component: FetchDataComponent },
+                { path: 'gallery', component: Gallery }
+            ])
+        ],
     providers:
-    [
-        {
-            provide: CurrencyServiceUrlToken,
-            useValue: '/api/currencies'
-        },
-        CurrencyServiceProvider,
-        CurrenciesProvider
-    ],
+        [
+            {
+                provide: CurrencyServiceUrlToken,
+                useValue: '/api/currencies'
+            },
+            CurrencyServiceProvider,
+            CurrenciesProvider
+        ],
     bootstrap: [DealTracker]
 })
 export class AppModule { }

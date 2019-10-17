@@ -4,13 +4,13 @@ import { Menu } from './Menu';
 @NgModule(
     {
         declarations:
-        [
-            Menu
-        ],
+            [
+                Menu
+            ],
         exports:
-        [
-            Menu
-        ]
+            [
+                Menu
+            ]
     })
 export class OriginationModule
 { }
