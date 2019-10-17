@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Menu } from './Menu';
+import { DealModule } from './DealModule';
 
 @NgModule(
     {
@@ -9,7 +10,8 @@ import { Menu } from './Menu';
             ],
         exports:
             [
-                Menu
+                Menu,
+                DealModule
             ]
     })
 export class OriginationModule

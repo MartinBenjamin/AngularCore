@@ -13,7 +13,6 @@ import { GalleryModule } from './Gallery/GalleryModule';
 import { HomeComponent } from './home/home.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { OriginationModule } from './Origination/OriginationModule';
-import { DealModule } from './Origination/DealModule';
 
 @NgModule({
     declarations:
@@ -32,7 +31,6 @@ import { DealModule } from './Origination/DealModule';
             FormsModule,
             GalleryModule,
             OriginationModule,
-            DealModule,
             RouterModule.forRoot([
                 { path: '', component: HomeComponent, pathMatch: 'full' },
                 { path: 'counter', component: CounterComponent },
