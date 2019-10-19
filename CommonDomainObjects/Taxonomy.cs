@@ -90,8 +90,8 @@ namespace CommonDomainObjects
             Func<TTaxonomyTerm, Task> exit = null
             )
         {
-            foreach(var term in Terms.Where(taxonomyTerm => taxonomyTerm.Broader == null))
-                await term.VisitAsync(
+            foreach(var currentTaxonomyterm in Terms.Where(taxonomyTerm => taxonomyTerm.Broader == null))
+                await currentTaxonomyterm.VisitAsync(
                     enter,
                     exit);
         }

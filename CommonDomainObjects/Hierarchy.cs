@@ -90,8 +90,8 @@ namespace CommonDomainObjects
             Func<THierarchyMember, Task> exit = null
             )
         {
-            foreach(var member in Members.Where(hierarchyMember => hierarchyMember.Parent == null))
-                await member.VisitAsync(
+            foreach(var currentHierarchyMember in Members.Where(hierarchyMember => hierarchyMember.Parent == null))
+                await currentHierarchyMember.VisitAsync(
                     enter,
                     exit);
         }
