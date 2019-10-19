@@ -9,7 +9,7 @@ import { Gallery } from './Gallery/Gallery';
 import { GalleryModule } from './Gallery/GalleryModule';
 import { MyDeals } from './Origination/MyDeals';
 import { OriginationModule } from './Origination/OriginationModule';
-import { ProjectFinance } from './Origination/ProjectFinance';
+import { ProjectFinance } from './Origination/ProjectFinance/ProjectFinance';
 
 @NgModule({
     declarations:

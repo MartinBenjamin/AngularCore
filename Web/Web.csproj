@@ -41,6 +41,7 @@
     <None Remove="ClientApp\src\app\Origination\MyDeals.ts" />
     <None Remove="ClientApp\src\app\Origination\OriginationModule.ts" />
     <None Remove="ClientApp\src\app\Origination\ProjectFinance.ts" />
+    <None Remove="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.Module.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,7 +61,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Menu.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\MyDeals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\OriginationModule.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\ProjectFinance.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.Module.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

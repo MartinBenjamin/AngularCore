@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { Tab } from '../Gallery/TabbedView';
-import { KeyDealData } from './KeyDealData';
-import { OriginationTab } from './OriginationTab';
-import { MoreTabs } from './MoreTabs';
+import { Tab } from '../../Gallery/TabbedView';
+import { KeyDealData } from '../KeyDealData';
+import { OriginationTab } from '../OriginationTab';
+import { MoreTabs } from '../MoreTabs';
 
 @Component(
     {
