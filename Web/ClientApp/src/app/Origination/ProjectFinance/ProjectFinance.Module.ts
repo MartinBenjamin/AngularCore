@@ -30,10 +30,6 @@ const routes: Routes =
                 RouterModule.forChild(routes),
                 TabbedViewModule
             ],
-        exports:
-            [
-                ProjectFinance
-            ],
         entryComponents:
             [
                 KeyDealData,

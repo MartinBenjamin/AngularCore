@@ -21,10 +21,6 @@ const routes: Routes =
             [
                 CommonModule,
                 RouterModule.forChild(routes)
-            ],
-        exports:
-            [
-                MyDeals
             ]
     })
 export class MyDealsModule
