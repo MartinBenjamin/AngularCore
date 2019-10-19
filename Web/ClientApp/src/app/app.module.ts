@@ -7,7 +7,6 @@ import { CurrenciesProvider, CurrencyServiceProvider, CurrencyServiceUrlToken } 
 import { DealTracker } from './DealTracker';
 import { Gallery } from './Gallery/Gallery';
 import { GalleryModule } from './Gallery/GalleryModule';
-import { MyDeals } from './Origination/MyDeals';
 import { OriginationModule } from './Origination/OriginationModule';
 
 @NgModule({
@@ -34,12 +33,13 @@ import { OriginationModule } from './Origination/OriginationModule';
                         [
                             {
                                 path: 'MyDeals',
-                                component: MyDeals
+                                loadChildren: () => import('./Origination/MyDeals/MyDeals.Module').then(
+                                    module => module.MyDealsModule)
                             },
                             {
                                 path: 'ProjectFinance',
                                 loadChildren: () => import('./Origination/ProjectFinance/ProjectFinance.Module').then(
-                                    mod => mod.ProjectFinanceModule)
+                                    module => module.ProjectFinanceModule)
                             }
                         ]
                 },
