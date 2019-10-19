@@ -40,7 +40,7 @@
     <None Remove="ClientApp\src\app\Origination\Menu.ts" />
     <None Remove="ClientApp\src\app\Origination\MyDeals.ts" />
     <None Remove="ClientApp\src\app\Origination\MyDeals\MyDeals.Module.ts" />
-    <None Remove="ClientApp\src\app\Origination\OriginationModule.ts" />
+    <None Remove="ClientApp\src\app\Origination\Origination.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\ProjectFinance.ts" />
     <None Remove="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.Module.ts" />
   </ItemGroup>
@@ -62,7 +62,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Menu.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\MyDeals\MyDeals.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\MyDeals\MyDeals.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\OriginationModule.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Origination.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.ts" />
   </ItemGroup>

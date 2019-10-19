@@ -7,7 +7,7 @@ import { CurrenciesProvider, CurrencyServiceProvider, CurrencyServiceUrlToken } 
 import { DealTracker } from './DealTracker';
 import { Gallery } from './Gallery/Gallery';
 import { GalleryModule } from './Gallery/GalleryModule';
-import { OriginationModule } from './Origination/OriginationModule';
+import { OriginationModule } from './Origination/Origination.Module';
 
 @NgModule({
     declarations:
