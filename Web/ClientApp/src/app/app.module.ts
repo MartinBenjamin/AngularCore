@@ -9,7 +9,7 @@ import { Gallery } from './Gallery/Gallery';
 import { GalleryModule } from './Gallery/GalleryModule';
 import { MyDeals } from './Origination/MyDeals';
 import { OriginationModule } from './Origination/OriginationModule';
-import { ProjectFinance } from './Origination/ProjectFinance/ProjectFinance';
+import { ProjectFinanceModule } from './Origination/ProjectFinance/ProjectFinance.Module';
 
 @NgModule({
     declarations:
@@ -24,16 +24,30 @@ import { ProjectFinance } from './Origination/ProjectFinance/ProjectFinance';
             GalleryModule,
             OriginationModule,
             RouterModule.forRoot([
-                { path: '', redirectTo: '/Origination/MyDeals', pathMatch: 'full'  },
+                {
+                    path: '',
+                    redirectTo: '/Origination/MyDeals',
+                    pathMatch: 'full'
+                },
                 {
                     path: 'Origination',
                     children:
                         [
-                            { path: 'MyDeals', component: MyDeals },
-                            { path: 'ProjectFinance', component: ProjectFinance }
+                            {
+                                path: 'MyDeals',
+                                component: MyDeals
+                            },
+                            {
+                                path: 'ProjectFinance',
+                                loadChildren: () => import('./Origination/ProjectFinance/ProjectFinance.Module').then(
+                                    mod => mod.ProjectFinanceModule)
+                            }
                         ]
                 },
-                { path: 'Gallery', component: Gallery }
+                {
+                    path: 'Gallery',
+                    component: Gallery
+                }
             ])
         ],
     providers:
