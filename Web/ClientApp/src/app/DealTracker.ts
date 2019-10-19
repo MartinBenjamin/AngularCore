@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouteConfigLoadStart, RouteConfigLoadEnd, Router } from '@angular/router';
+import { Component, TemplateRef } from '@angular/core';
+import { RouteConfigLoadEnd, RouteConfigLoadStart, Router } from '@angular/router';
 
 @Component(
     {
@@ -8,6 +8,8 @@ import { RouteConfigLoadStart, RouteConfigLoadEnd, Router } from '@angular/route
     })
 export class DealTracker
 {
+    private _title: TemplateRef<any>
+
     constructor(
         router: Router
         )
@@ -21,5 +23,17 @@ export class DealTracker
                 else if(event instanceof RouteConfigLoadEnd)
                     console.log('Loaded');
             });
+    }
+
+    set Title(
+        title: TemplateRef<any>
+        )
+    {
+        this._title = title;
+    }
+
+    get Title(): TemplateRef<any>
+    {
+        return this._title;
     }
 }

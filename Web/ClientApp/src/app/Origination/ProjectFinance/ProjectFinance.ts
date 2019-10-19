@@ -1,16 +1,26 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, TemplateRef, AfterViewInit } from '@angular/core';
 import { Tab } from '../../Gallery/TabbedView';
 import { KeyDealData } from '../KeyDealData';
 import { OriginationTab } from '../OriginationTab';
 import { MoreTabs } from '../MoreTabs';
+import { DealTracker } from '../../DealTracker';
 
 @Component(
     {
         selector: 'deal',
         templateUrl: './ProjectFinance.html'
     })
-export class ProjectFinance
+export class ProjectFinance implements AfterViewInit
 {
+    @ViewChild('title')
+    private _title: TemplateRef<any>;
+
+    constructor(
+        private _dealTracker: DealTracker
+        )
+    {
+    }
+
     public Tabs =
     [
         new Tab('Key Deal<br/>Data'     , KeyDealData   ),
@@ -23,4 +33,9 @@ export class ProjectFinance
         new Tab('Key Risks &<br/>Events', OriginationTab),
         new Tab('More'                  , MoreTabs      )
     ];
+
+    ngAfterViewInit()
+    {
+        setTimeout(() => this._dealTracker.Title = this._title);
+    }
 }
