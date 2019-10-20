@@ -1,9 +1,10 @@
-import { Component, ViewChild, TemplateRef, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, TemplateRef, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { DealTracker } from '../../DealTracker';
 import { Tab } from '../../Gallery/TabbedView';
 import { KeyDealData } from '../KeyDealData';
-import { OriginationTab } from '../OriginationTab';
 import { MoreTabs } from '../MoreTabs';
-import { DealTracker } from '../../DealTracker';
+import { OriginationTab } from '../OriginationTab';
 
 @Component(
     {
@@ -16,9 +17,18 @@ export class ProjectFinance implements AfterViewInit
     private _title: TemplateRef<any>;
 
     constructor(
-        private _dealTracker: DealTracker
+        private _dealTracker   : DealTracker,
+        private _activatedRoute: ActivatedRoute
         )
     {
+        if(typeof this._activatedRoute.snapshot.data.id == 'undefined')
+        {
+            // Create Project Finance Deal.
+        }
+        else
+        {
+        }
+
     }
 
     public Tabs =
