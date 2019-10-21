@@ -7,7 +7,6 @@ import { CurrenciesProvider, CurrencyServiceProvider, CurrencyServiceUrlToken } 
 import { DealTracker } from './DealTracker';
 import { Gallery } from './Gallery/Gallery';
 import { GalleryModule } from './Gallery/GalleryModule';
-import { OriginationModule } from './Origination/Origination.Module';
 
 @NgModule({
     declarations:
@@ -20,7 +19,6 @@ import { OriginationModule } from './Origination/Origination.Module';
             HttpClientModule,
             FormsModule,
             GalleryModule,
-            OriginationModule,
             RouterModule.forRoot([
                 {
                     path: '',
@@ -29,19 +27,8 @@ import { OriginationModule } from './Origination/Origination.Module';
                 },
                 {
                     path: 'Origination',
-                    children:
-                        [
-                            {
-                                path: 'MyDeals',
-                                loadChildren: () => import('./Origination/MyDeals/MyDeals.Module').then(
-                                    module => module.MyDealsModule)
-                            },
-                            {
-                                path: 'ProjectFinance',
-                                loadChildren: () => import('./Origination/ProjectFinance/ProjectFinance.Module').then(
-                                    module => module.ProjectFinanceModule)
-                            }
-                        ]
+                    loadChildren: () => import('./Origination/Origination.Module').then(
+                        module => module.OriginationModule)
                 },
                 {
                     path: 'Gallery',

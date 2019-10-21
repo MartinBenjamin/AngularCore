@@ -33,6 +33,7 @@
     <None Remove="ClientApp\src\app\CommonDomainObjects.ts" />
     <None Remove="ClientApp\src\app\CurrencyServiceProvider.ts" />
     <None Remove="ClientApp\src\app\DealTracker.ts" />
+    <None Remove="ClientApp\src\app\DealTrackerLayout.ts" />
     <None Remove="ClientApp\src\app\Gallery\TestTab.ts" />
     <None Remove="ClientApp\src\app\INamedService.ts" />
     <None Remove="ClientApp\src\app\Iso4217.ts" />
@@ -41,6 +42,7 @@
     <None Remove="ClientApp\src\app\Origination\MyDeals.ts" />
     <None Remove="ClientApp\src\app\Origination\MyDeals\MyDeals.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\Origination.Module.ts" />
+    <None Remove="ClientApp\src\app\Origination\Origination.ts" />
     <None Remove="ClientApp\src\app\Origination\ProjectFinance.ts" />
     <None Remove="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.Module.ts" />
   </ItemGroup>
@@ -55,6 +57,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\CurrencyServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\DealTracker.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\CommonDomainObjects.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\DealTrackerLayout.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Gallery\TestTab.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\INamedService.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Iso4217.ts" />
@@ -63,6 +66,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\MyDeals\MyDeals.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\MyDeals\MyDeals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Origination.Module.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Origination.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.ts" />
   </ItemGroup>

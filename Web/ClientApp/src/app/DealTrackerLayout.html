@@ -1,0 +1,85 @@
+<style type="text/css">
+  .ApplicationTitle
+  {
+    font-size: 20pt;
+    font-weight: bold;
+    color: #5a5a5a;
+    text-transform: uppercase;
+  }
+
+  .ApplicationSubTitle
+  {
+    font-size: 10pt;
+    letter-spacing: 10px;
+    color: #b60000;
+  }
+
+  svg.Logo circle.Red
+  {
+    fill: #b60000;
+  }
+
+  svg.Logo *.Background
+  {
+    fill: #000000;
+  }
+
+  table.Header
+  {
+    border-collapse: collapse;
+  }
+
+  table.Header td
+  {
+    padding: 0px;
+  }
+
+  td.FeatureTitle
+  {
+    height: 30px;
+    background-color: #151515;
+    font-size: 10pt;
+    font-weight: bold;
+  }
+
+  table.Header td.Mufg
+  {
+    font-size: 70px;
+    font-weight: bold;
+    letter-spacing: -4px;
+    color: #5a5a5a;
+  }
+</style>
+<div class="DealTracker">
+  <table class="Header">
+    <tr>
+      <td style="width: 100%; vertical-align: top;">
+        <span class="ApplicationTitle">Deal Tracker <span style="color: #2a2a2a;">Shadow Version</span></span><br />
+        <span class="ApplicationSubTitle">Azure Cloud Platform</span><br />
+      </td>
+      <td rowspan="2">
+        <svg width="118" height="100" class="Logo">
+          <g transform="translate(1, 50)">
+            <circle cx="40" cy="0" r="40" class="Red" />
+            <circle cx="76" cy="0" r="40" class="Red" />
+            <circle cx="58" cy="0" r="36" class="Background" />
+            <circle cx="58" cy="0" r="18" class="Red" />
+          </g>
+        </svg>
+      </td>
+      <td class="Mufg" style="padding-left: 15px;">
+        MUFG
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: bottom;"><nav></nav></td>
+    </tr>
+    <tr>
+      <td colspan="3" style="height: 2px; background-color: #b60000;"></td>
+    </tr>
+    <tr>
+      <td colspan="3" class="FeatureTitle"></td>
+    </tr>
+  </table>
+  <div style="padding: 5px;"><router-outlet name="feature"></router-outlet></div>
+</div>

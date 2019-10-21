@@ -11,7 +11,8 @@ const routes: Routes =
     [
         {
             path: '',
-            component: ProjectFinance
+            component: ProjectFinance,
+            outlet: 'feature'
         }
     ];
 
