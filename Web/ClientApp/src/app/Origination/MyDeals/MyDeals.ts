@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, TemplateRef, ViewChild } from '@angular/core';
-import { DealTracker } from '../../DealTracker';
+import { Origination } from '../Origination';
 
 @Component(
     {
@@ -12,13 +12,13 @@ export class MyDeals implements AfterViewInit
     private _title: TemplateRef<any>;
 
     constructor(
-        private _dealTracker: DealTracker
+        private _origination: Origination
         )
     {
     }
 
     ngAfterViewInit()
     {
-        setTimeout(()=>this._dealTracker.Title = this._title);
+        setTimeout(() => this._origination.Title = this._title);
     }
 }

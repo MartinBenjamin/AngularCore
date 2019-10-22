@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DealTracker } from '../../DealTracker';
 import { Tab } from '../../Gallery/TabbedView';
 import { KeyDealData } from '../KeyDealData';
 import { MoreTabs } from '../MoreTabs';
+import { Origination } from '../Origination';
 import { OriginationTab } from '../OriginationTab';
 
 @Component(
@@ -17,7 +17,7 @@ export class ProjectFinance implements AfterViewInit
     private _title: TemplateRef<any>;
 
     constructor(
-        private _dealTracker   : DealTracker,
+        private _origination   : Origination,
         private _activatedRoute: ActivatedRoute
         )
     {
@@ -46,6 +46,6 @@ export class ProjectFinance implements AfterViewInit
 
     ngAfterViewInit()
     {
-        setTimeout(() => this._dealTracker.Title = this._title);
+        setTimeout(() => this._origination.Title = this._title);
     }
 }

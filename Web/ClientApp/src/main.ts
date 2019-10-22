@@ -1,7 +1,7 @@
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
-import { AppModule } from './app/app.module';
+import { DealTrackerModule } from './app/DealTracker.Module';
 import { environment } from './environments/environment';
 
 export function getBaseUrl() {
@@ -16,5 +16,5 @@ if (environment.production) {
   enableProdMode();
 }
 
-platformBrowserDynamic(providers).bootstrapModule(AppModule)
+platformBrowserDynamic(providers).bootstrapModule(DealTrackerModule)
   .catch(err => console.log(err));

@@ -1,9 +1,19 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Directive } from '@angular/core';
 import { RouterOutlet, Router, ActivationStart } from '@angular/router';
+
+@Directive({ selector: 'area-title' })
+export class AreaTitle
+{
+}
+
+@Directive({ selector: 'feature-title' })
+export class FeatureTitle
+{
+}
 
 @Component(
     {
-        selector: 'DealTrackerLayout',
+        selector: 'deal-tracker-layout',
         templateUrl: './DealTrackerLayout.html'
     })
 export class DealTrackerLayout implements OnInit

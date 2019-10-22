@@ -1,6 +1,7 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DealTrackerLayout } from '../DealTrackerLayout';
+import { DealTrackerLayout, AreaTitle, FeatureTitle } from '../DealTrackerLayout';
 import { Menu } from './Menu';
 import { Origination } from './Origination';
 
@@ -30,11 +31,14 @@ const routes: Routes =
         declarations:
             [
                 DealTrackerLayout,
+                AreaTitle,
+                FeatureTitle,
                 Menu,
                 Origination
             ],
         imports:
             [
+                CommonModule,
                 RouterModule.forChild(routes)
             ]
     })
