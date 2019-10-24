@@ -31,6 +31,11 @@ import { GalleryModule } from './Gallery/GalleryModule';
                         module => module.OriginationModule)
                 },
                 {
+                    path: 'AssetManagement',
+                    loadChildren: () => import('./AssetManagement/AssetManagement.Module').then(
+                        module => module.AssetManagementModule)
+                },
+                {
                     path: 'Gallery',
                     component: Gallery
                 }

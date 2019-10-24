@@ -34,6 +34,7 @@
     <None Remove="ClientApp\src\app\CurrencyServiceProvider.ts" />
     <None Remove="ClientApp\src\app\DealTracker.Module.ts" />
     <None Remove="ClientApp\src\app\DealTracker.ts" />
+    <None Remove="ClientApp\src\app\DealTrackerLayout.Module.ts" />
     <None Remove="ClientApp\src\app\DealTrackerLayout.ts" />
     <None Remove="ClientApp\src\app\Gallery\TestTab.ts" />
     <None Remove="ClientApp\src\app\INamedService.ts" />
@@ -59,6 +60,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\DealTracker.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\DealTracker.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\CommonDomainObjects.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\DealTrackerLayout.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\DealTrackerLayout.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Gallery\TestTab.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\INamedService.ts" />

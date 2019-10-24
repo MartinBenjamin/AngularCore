@@ -2,24 +2,19 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DealTrackerLayoutModule } from '../DealTrackerLayout.Module';
-import { Origination } from './Origination';
+import { AssetManagement } from './AssetManagement';
 
 const routes: Routes =
     [
         {
             path: '',
-            component: Origination,
+            component: AssetManagement,
             children:
                 [
                     {
                         path: 'MyDeals',
                         loadChildren: () => import('./MyDeals/MyDeals.Module').then(
                             module => module.MyDealsModule)
-                    },
-                    {
-                        path: 'ProjectFinance',
-                        loadChildren: () => import('./ProjectFinance/ProjectFinance.Module').then(
-                            module => module.ProjectFinanceModule)
                     }
                 ]
         }
@@ -29,7 +24,7 @@ const routes: Routes =
     {
         declarations:
             [
-                Origination
+                AssetManagement
             ],
         imports:
             [
@@ -38,5 +33,5 @@ const routes: Routes =
                 RouterModule.forChild(routes)
             ]
     })
-export class OriginationModule
+export class AssetManagementModule
 { }

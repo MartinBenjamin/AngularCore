@@ -11,6 +11,11 @@ export class FeatureTitle
 {
 }
 
+@Directive({ selector: 'menu-container' })
+export class MenuContainer
+{
+}
+
 @Component(
     {
         selector: 'deal-tracker-layout',
