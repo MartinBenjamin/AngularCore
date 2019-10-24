@@ -39,12 +39,6 @@ export class NamedService<TId, TNamed extends Named<TId>, TNamedFilters extends 
   {
     var params = new HttpParams();
 
-    //if(typeof filters.NameFragment == 'string')
-    //  params.set(key, filters.NameFragment);
-
-    //if(typeof filters.MaxResult == 'number')
-    //  params.set(key, value.toString());
-
     for(var key in filters)
     {
       var value = filters[key];
