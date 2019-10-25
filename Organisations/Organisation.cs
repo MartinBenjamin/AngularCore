@@ -1,8 +1,9 @@
-﻿using System;
+﻿using CommonDomainObjects;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace CommonDomainObjects
+namespace Organisations
 {
     public abstract class Organisation: AutonomousAgent
     {
@@ -11,7 +12,7 @@ namespace CommonDomainObjects
         public virtual string     Acronym  { get; protected set; }
         public virtual Range<int> Interval { get; protected set; }
 
-        public virtual IReadOnlyList<OrganisationalSubUnit> SubAreas
+        public virtual IReadOnlyList<OrganisationalSubUnit> SubUnits
         {
             get
             {

@@ -6,8 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CommonDomainObjects\CommonDomainObjects.csproj" />
-    <ProjectReference Include="..\Iso3166\Iso3166.csproj" />
-    <ProjectReference Include="..\Organisations\Organisations.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,10 +1,12 @@
 ﻿using CommonDomainObjects;
+using Organisations;
 using Parties;
+using People;
 using System;
 
 namespace Agreements
 {
-    public class AgreementParty: Parties.PartyInRole
+    public class AgreementParty: PartyInRole
     {
         public virtual Agreement Agreement { get; protected set; }
 

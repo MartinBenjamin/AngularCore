@@ -1,4 +1,5 @@
 ﻿using CommonDomainObjects;
+using Organisations;
 using System;
 
 namespace Agreements

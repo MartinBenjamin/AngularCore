@@ -1,5 +1,5 @@
-﻿using CommonDomainObjects;
-using Iso3166._1;
+﻿using Iso3166._1;
+using Organisations;
 using System;
 
 namespace LegalEntities

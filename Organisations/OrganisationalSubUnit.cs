@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CommonDomainObjects
+namespace Organisations
 {
     public class OrganisationalSubUnit: Organisation
     {

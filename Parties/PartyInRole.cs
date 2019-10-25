@@ -1,4 +1,6 @@
 ﻿using CommonDomainObjects;
+using Organisations;
+using People;
 using System;
 
 namespace Parties
