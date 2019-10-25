@@ -124,7 +124,7 @@ namespace CommonDomainObjects
         {
         }
 
-        internal TaxonomyTerm(
+        protected TaxonomyTerm(
             TId           id,
             TTaxonomy     taxonomy,
             TTerm         term,
