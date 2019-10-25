@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CommonDomainObjects.Process.Definition
+namespace Process.Definition
 {
     public abstract class IO: Process
     {

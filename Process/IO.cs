@@ -1,6 +1,6 @@
-﻿using System.Linq;
+﻿using CommonDomainObjects;
 
-namespace CommonDomainObjects.Process
+namespace Process
 {
     public class IO: Process
     {

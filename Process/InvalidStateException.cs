@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CommonDomainObjects.Process
+namespace Process
 {
     public class InvalidStateException: ApplicationException
     {

@@ -1,4 +1,6 @@
-namespace CommonDomainObjects.Process
+using CommonDomainObjects;
+
+namespace Process
 {
     public class While: Process
     {

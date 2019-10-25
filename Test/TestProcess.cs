@@ -1,12 +1,12 @@
 ﻿using CommonDomainObjects;
-using CommonDomainObjects.Process;
+using Process;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using Definition = CommonDomainObjects.Process.Definition;
+using Definition = global::Process.Definition;
 
 namespace Test
 {
@@ -19,7 +19,7 @@ namespace Test
 
             public LabelledInput(
                 LabelledInputDefinition<TLabel> definition,
-                Process                         parent
+                Process.Process                 parent
                 )
                 : base(definition, parent)
             {
@@ -42,8 +42,8 @@ namespace Test
                 Label = label;
             }
 
-            public override Process New(
-                Process parent
+            public override Process.Process New(
+                Process.Process parent
                 )
             {
                 return new LabelledInput<TLabel>(
@@ -232,7 +232,7 @@ namespace Test
                         allowedTraces.Contains(trace)
                     });
 
-                var allowed = new Dictionary<char, Expression<Func<CommonDomainObjects.Process.Process, bool>>>
+                var allowed = new Dictionary<char, Expression<Func<global::Process.Process, bool>>>
                 {
                     {'A', p => true },
                     {'B', p => false},

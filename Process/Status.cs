@@ -1,4 +1,4 @@
-﻿namespace CommonDomainObjects.Process
+﻿namespace Process
 {
     public enum Status
     {

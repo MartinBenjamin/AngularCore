@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using CommonDomainObjects;
+using System.Collections.Generic;
 using System.Linq;
 
-namespace CommonDomainObjects.Process
+namespace Process
 {
     public class Choice: Alternative
     {

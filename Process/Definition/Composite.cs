@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CommonDomainObjects.Process.Definition
+namespace Process.Definition
 {
     public abstract class Composite: Process
     {
@@ -17,7 +17,7 @@ namespace CommonDomainObjects.Process.Definition
         {
         }
 
-        public abstract IEnumerable<CommonDomainObjects.Process.Process> NewChildren(
-            CommonDomainObjects.Process.Process parent);
+        public abstract IEnumerable<global::Process.Process> NewChildren(
+            global::Process.Process parent);
     }
 }

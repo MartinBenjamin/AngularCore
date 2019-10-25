@@ -2,16 +2,16 @@
 using System.Linq.Expressions;
 using System.Text;
 
-namespace CommonDomainObjects.Process.Definition
+namespace Process.Definition
 {
     public class GuardedProcess: Alternative
     {
-        public Func<CommonDomainObjects.Process.Process, bool>
+        public Func<global::Process.Process, bool>
                        GuardExpression { get; set; }
         public IO      Guard           { get; set; }
         public Process Guarded         { get; set; }
 
-        private Expression<Func<CommonDomainObjects.Process.Process, bool>> _guardExpression;
+        private Expression<Func<global::Process.Process, bool>> _guardExpression;
 
         public GuardedProcess()
             : base()
@@ -19,7 +19,7 @@ namespace CommonDomainObjects.Process.Definition
         }
 
         public GuardedProcess(
-            Func<CommonDomainObjects.Process.Process, bool>
+            Func<global::Process.Process, bool>
                     guardExpression,
             IO      guard,
             Process guarded
@@ -32,7 +32,7 @@ namespace CommonDomainObjects.Process.Definition
         }
 
         public GuardedProcess(
-            Expression<Func<CommonDomainObjects.Process.Process, bool>>
+            Expression<Func<global::Process.Process, bool>>
                     guardExpression,
             IO      guard,
             Process guarded
@@ -51,19 +51,19 @@ namespace CommonDomainObjects.Process.Definition
             Process guarded = null
             )
             : this(
-                (Func<CommonDomainObjects.Process.Process, bool>)null,
+                (Func<global::Process.Process, bool>)null,
                 guard,
                 guarded)
         {
         }
 
-        public override CommonDomainObjects.Process.Process New(
-            CommonDomainObjects.Process.Process parent
+        public override global::Process.Process New(
+            global::Process.Process parent
             )
         {
-            return new CommonDomainObjects.Process.GuardedProcess(
+            return new global::Process.GuardedProcess(
                 this,
-                (CommonDomainObjects.Process.Choice)parent);
+                (global::Process.Choice)parent);
         }
 
         public override void ToString(

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CommonDomainObjects.Process
+namespace Process
 {
     public class ExecutionService: IExecutionService
     {

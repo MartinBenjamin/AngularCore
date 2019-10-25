@@ -1,7 +1,8 @@
-﻿using System;
+﻿using CommonDomainObjects;
+using System;
 using System.Collections.Generic;
 
-namespace CommonDomainObjects.Process
+namespace Process
 {
     public abstract class Process:
         DomainObject<Guid>,

@@ -1,7 +1,8 @@
-﻿using System;
+﻿using CommonDomainObjects;
+using System;
 using System.Text;
 
-namespace CommonDomainObjects.Process.Definition
+namespace Process.Definition
 {
     public abstract class Process: DomainObject<Guid>
     {
@@ -17,8 +18,8 @@ namespace CommonDomainObjects.Process.Definition
         {
         }
 
-        public virtual CommonDomainObjects.Process.Process New(
-            CommonDomainObjects.Process.Process parent
+        public virtual global::Process.Process New(
+            global::Process.Process parent
             )
         {
             throw new NotImplementedException();

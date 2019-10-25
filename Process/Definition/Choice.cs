@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CommonDomainObjects.Process.Definition
+namespace Process.Definition
 {
     public abstract class ChoiceBase: Alternative
     {
@@ -19,17 +19,17 @@ namespace CommonDomainObjects.Process.Definition
         {
         }
 
-        public override CommonDomainObjects.Process.Process New(
-            CommonDomainObjects.Process.Process parent
+        public override global::Process.Process New(
+            global::Process.Process parent
             )
         {
-            return new CommonDomainObjects.Process.Choice(
+            return new global::Process.Choice(
                 this,
                 parent);
         }
 
-        public abstract IEnumerable<CommonDomainObjects.Process.Alternative> NewAlternatives(
-            CommonDomainObjects.Process.Process parent);
+        public abstract IEnumerable<global::Process.Alternative> NewAlternatives(
+            global::Process.Process parent);
     }
 
     public class Choice: ChoiceBase
@@ -51,13 +51,13 @@ namespace CommonDomainObjects.Process.Definition
         {
         }
 
-        public override IEnumerable<CommonDomainObjects.Process.Alternative> NewAlternatives(
-            CommonDomainObjects.Process.Process parent
+        public override IEnumerable<global::Process.Alternative> NewAlternatives(
+            global::Process.Process parent
             )
         {
             return Alternatives
                 .Select(alternative => alternative.New(parent))
-                .Cast<CommonDomainObjects.Process.Alternative>();
+                .Cast<global::Process.Alternative>();
         }
 
         public override void ToString(
@@ -75,8 +75,8 @@ namespace CommonDomainObjects.Process.Definition
 
     public class ChoiceForEach<TValue>: ChoiceBase
     {
-        public Func<CommonDomainObjects.Process.Process, IEnumerable<TValue>> Values     { get; set; }
-        public IReplicated<TValue>                                            Replicated { get; set; }
+        public Func<global::Process.Process, IEnumerable<TValue>> Values     { get; set; }
+        public IReplicated<TValue>                                Replicated { get; set; }
 
         public ChoiceForEach()
             : base()
@@ -90,15 +90,15 @@ namespace CommonDomainObjects.Process.Definition
         {
         }
 
-        public override IEnumerable<CommonDomainObjects.Process.Alternative> NewAlternatives(
-            CommonDomainObjects.Process.Process parent
+        public override IEnumerable<global::Process.Alternative> NewAlternatives(
+            global::Process.Process parent
             )
         {
             return Values(parent)
                 .Select(value => Replicated.Replicate(
                     parent,
                     value))
-                .Cast<CommonDomainObjects.Process.Alternative>();
+                .Cast<global::Process.Alternative>();
         }
     }
 }

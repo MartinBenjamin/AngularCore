@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CommonDomainObjects.Process.Definition
+namespace Process.Definition
 {
     public abstract class ParallelBase: Composite
     {
@@ -19,11 +19,11 @@ namespace CommonDomainObjects.Process.Definition
         {
         }
 
-        public override CommonDomainObjects.Process.Process New(
-            CommonDomainObjects.Process.Process parent
+        public override global::Process.Process New(
+            global::Process.Process parent
             )
         {
-            return new CommonDomainObjects.Process.Parallel(
+            return new global::Process.Parallel(
                 this,
                 parent);
         }
@@ -48,8 +48,8 @@ namespace CommonDomainObjects.Process.Definition
         {
         }
 
-        public override IEnumerable<CommonDomainObjects.Process.Process> NewChildren(
-            CommonDomainObjects.Process.Process parent
+        public override IEnumerable<global::Process.Process> NewChildren(
+            global::Process.Process parent
             )
         {
             return Children.Select(child => child.New(parent));
@@ -70,8 +70,8 @@ namespace CommonDomainObjects.Process.Definition
 
     public class ParallelForEach<TValue>: ParallelBase
     {
-        public Func<CommonDomainObjects.Process.Process, IEnumerable<TValue>> Values { get; set; }
-        public IReplicated<TValue>                                            Replicated { get; set; }
+        public Func<global::Process.Process, IEnumerable<TValue>> Values     { get; set; }
+        public IReplicated<TValue>                                Replicated { get; set; }
 
         public ParallelForEach()
             : base()
@@ -85,8 +85,8 @@ namespace CommonDomainObjects.Process.Definition
         {
         }
 
-        public override IEnumerable<CommonDomainObjects.Process.Process> NewChildren(
-            CommonDomainObjects.Process.Process parent
+        public override IEnumerable<global::Process.Process> NewChildren(
+            global::Process.Process parent
             )
         {
             return Values(parent).Select(

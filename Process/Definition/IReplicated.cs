@@ -1,9 +1,9 @@
-﻿namespace CommonDomainObjects.Process.Definition
+﻿namespace Process.Definition
 {
     public interface IReplicated<TValue>
     {
-        CommonDomainObjects.Process.Process Replicate(
-            CommonDomainObjects.Process.Process parent,
-            TValue                              value);
+        global::Process.Process Replicate(
+            global::Process.Process parent,
+            TValue                  value);
     }
 }
