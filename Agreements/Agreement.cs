@@ -6,10 +6,19 @@ namespace Agreements
 {
     public abstract class Agreement: DomainObject<Guid>
     {
-        public IList<AgreementParty> Parties { get; protected set; }
+        public virtual string                Title   { get; protected set; }
+        public virtual IList<AgreementParty> Parties { get; protected set; }
 
         protected Agreement() : base()
         {
+        }
+
+        protected Agreement(
+            Guid   id,
+            string title
+            ) : base(id)
+        {
+            Title = title;
         }
     }
 }
