@@ -4,12 +4,4 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="LegalEntity.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="LegalEntity.cs" />
-  </ItemGroup>
-
 </Project>

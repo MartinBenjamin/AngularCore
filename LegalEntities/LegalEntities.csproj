@@ -6,8 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CommonDomainObjects\CommonDomainObjects.csproj" />
-    <ProjectReference Include="..\LegalEntities\LegalEntities.csproj" />
-    <ProjectReference Include="..\Parties\Parties.csproj" />
+    <ProjectReference Include="..\Iso3166\Iso3166.csproj" />
   </ItemGroup>
 
 </Project>

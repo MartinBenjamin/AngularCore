@@ -1,6 +1,8 @@
-﻿using System;
+﻿using CommonDomainObjects;
+using Iso3166._1;
+using System;
 
-namespace CommonDomainObjects
+namespace LegalEntities
 {
     public class LegalEntity: Organisation
     {
