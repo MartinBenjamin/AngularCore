@@ -1,6 +1,7 @@
-﻿using System;
+﻿using CommonDomainObjects;
+using System;
 
-namespace CommonDomainObjects
+namespace Roles
 {
     public class Role: Named<Guid>
     {

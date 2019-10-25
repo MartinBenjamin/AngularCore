@@ -2,6 +2,7 @@
 using Organisations;
 using Parties;
 using People;
+using Roles;
 using System;
 
 namespace Agreements

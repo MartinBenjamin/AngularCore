@@ -1,5 +1,6 @@
 ﻿using CommonDomainObjects;
 using LegalEntities;
+using Roles;
 using System;
 
 namespace Agreements

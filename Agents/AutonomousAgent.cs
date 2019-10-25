@@ -1,6 +1,7 @@
-﻿using System;
+﻿using CommonDomainObjects;
+using System;
 
-namespace CommonDomainObjects
+namespace Agents
 {
     public abstract class AutonomousAgent: Named<Guid>
     {

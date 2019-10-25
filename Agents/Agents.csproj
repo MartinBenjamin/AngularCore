@@ -5,11 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Agents\Agents.csproj" />
     <ProjectReference Include="..\CommonDomainObjects\CommonDomainObjects.csproj" />
-    <ProjectReference Include="..\Organisations\Organisations.csproj" />
-    <ProjectReference Include="..\People\People.csproj" />
-    <ProjectReference Include="..\Roles\Roles.csproj" />
   </ItemGroup>
 
 </Project>

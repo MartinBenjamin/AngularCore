@@ -1,4 +1,5 @@
-﻿using CommonDomainObjects;
+﻿using Agents;
+using CommonDomainObjects;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

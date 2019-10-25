@@ -1,4 +1,4 @@
-﻿using CommonDomainObjects;
+﻿using Agents;
 using System;
 
 namespace People

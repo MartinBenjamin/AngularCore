@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Agents;
+using CommonDomainObjects;
+using System;
 
-namespace CommonDomainObjects
+namespace Roles
 {
     public abstract class AutonomousAgentInRole: DomainObject<Guid>
     {
