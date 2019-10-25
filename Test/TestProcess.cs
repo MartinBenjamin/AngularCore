@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using Definition = global::Process.Definition;
+using Definition = Process.Definition;
 
 namespace Test
 {
@@ -232,7 +232,7 @@ namespace Test
                         allowedTraces.Contains(trace)
                     });
 
-                var allowed = new Dictionary<char, Expression<Func<global::Process.Process, bool>>>
+                var allowed = new Dictionary<char, Expression<Func<Process.Process, bool>>>
                 {
                     {'A', p => true },
                     {'B', p => false},
