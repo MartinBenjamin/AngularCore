@@ -1,7 +1,8 @@
-﻿using System;
+﻿using CommonDomainObjects;
+using System;
 using System.Collections.Generic;
 
-namespace CommonDomainObjects
+namespace Agreements
 {
     public abstract class Agreement: DomainObject<Guid>
     {

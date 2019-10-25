@@ -1,14 +1,12 @@
-﻿using System;
+﻿using CommonDomainObjects;
+using Parties;
+using System;
 
-namespace CommonDomainObjects
+namespace Agreements
 {
-    public class AgreementParty: PartyInRole
+    public class AgreementParty: Parties.PartyInRole
     {
-        public virtual Agreement    Agreement    { get; protected set; }
-
-        // A Party is a Person or an Organisation but not both.
-        public virtual Person       Person       { get; protected set; }
-        public virtual Organisation Organisation { get; protected set; }
+        public virtual Agreement Agreement { get; protected set; }
 
         protected AgreementParty() : base()
         {
@@ -28,7 +26,6 @@ namespace CommonDomainObjects
         {
             Agreement = agreement;
             Agreement.Parties.Add(this);
-            Person = person;
         }
 
         public AgreementParty(
@@ -45,7 +42,6 @@ namespace CommonDomainObjects
         {
             Agreement = agreement;
             Agreement.Parties.Add(this);
-            Organisation = organisation;
         }
         
         public AgreementParty(
@@ -53,15 +49,13 @@ namespace CommonDomainObjects
             Person           person,
             Role             role,
             Range2<DateTime> period
-            ) : base(
+            ) : this(
                 Guid.NewGuid(),
+                agreement,
                 person,
                 role,
                 period)
         {
-            Agreement = agreement;
-            Agreement.Parties.Add(this);
-            Person = person;
         }
 
         public AgreementParty(
@@ -69,15 +63,13 @@ namespace CommonDomainObjects
             Organisation     organisation,
             Role             role,
             Range2<DateTime> period
-            ) : base(
+            ) : this(
                 Guid.NewGuid(),
+                agreement,
                 organisation,
                 role,
                 period)
         {
-            Agreement = agreement;
-            Agreement.Parties.Add(this);
-            Organisation = organisation;
         }
     }
 
