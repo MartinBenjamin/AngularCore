@@ -62,7 +62,8 @@ namespace Web
                     new SQLiteModule(
                         "Database",
                         Path.Combine(
-                            HostingEnvironment.ContentRootPath,
+                            HostingEnvironment.WebRootPath,
+                            "Data",
                             "Database.db")));
             builder
                 .RegisterModule<Service.Module>();
