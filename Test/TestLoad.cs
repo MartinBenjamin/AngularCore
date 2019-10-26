@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 namespace Test
 {
     [TestFixture]
-    public class TestLoadIso3166
+    public class TestLoad
     {
         protected IContainer _container;
 
