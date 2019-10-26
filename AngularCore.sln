@@ -47,7 +47,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agents", "Agents\Agents.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Roles", "Roles\Roles.csproj", "{7368B337-0862-4E92-BFDD-A515BA34C382}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geophysical", "Geophysical\Geophysical.csproj", "{E14C0AFD-8431-4E63-A59D-95BFDA47A2EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geophysical", "Geophysical\Geophysical.csproj", "{E14C0AFD-8431-4E63-A59D-95BFDA47A2EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "Contracts\Contracts.csproj", "{FEFBD30C-1F8A-4A0A-95F3-DB6D229745F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -147,6 +149,10 @@ Global
 		{E14C0AFD-8431-4E63-A59D-95BFDA47A2EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E14C0AFD-8431-4E63-A59D-95BFDA47A2EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E14C0AFD-8431-4E63-A59D-95BFDA47A2EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEFBD30C-1F8A-4A0A-95F3-DB6D229745F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEFBD30C-1F8A-4A0A-95F3-DB6D229745F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEFBD30C-1F8A-4A0A-95F3-DB6D229745F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEFBD30C-1F8A-4A0A-95F3-DB6D229745F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

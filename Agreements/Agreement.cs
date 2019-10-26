@@ -18,7 +18,8 @@ namespace Agreements
             string title
             ) : base(id)
         {
-            Title = title;
+            Title   = title;
+            Parties = new List<AgreementParty>();
         }
     }
 }
