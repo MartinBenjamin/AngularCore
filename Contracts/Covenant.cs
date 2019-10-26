@@ -4,6 +4,10 @@ namespace Contracts
 {
     public abstract class Covenant: ContractualCommitment
     {
+        protected Covenant(): base()
+        {
+        }
+
         protected Covenant(
             Guid     id,
             Contract contract
