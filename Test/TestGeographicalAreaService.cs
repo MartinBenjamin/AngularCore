@@ -1,5 +1,5 @@
 ﻿using Autofac;
-using CommonDomainObjects;
+using Geophysical;
 using Iso3166._1;
 using NHibernate;
 using NUnit.Framework;

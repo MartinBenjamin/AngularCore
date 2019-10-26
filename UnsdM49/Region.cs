@@ -1,4 +1,4 @@
-﻿using CommonDomainObjects;
+﻿using Geophysical;
 
 namespace UnsdM49
 {

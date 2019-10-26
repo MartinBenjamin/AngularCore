@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using CommonDomainObjects;
 using Data;
+using Geophysical;
 using Iso4217;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;

@@ -2,7 +2,7 @@
 
 namespace CommonDomainObjects.Mapping
 {
-    public class GeographicalSubArea: SubclassMapping<CommonDomainObjects.GeographicalSubArea>
+    public class GeographicalSubArea: SubclassMapping<Geophysical.GeographicalSubArea>
     {
         public GeographicalSubArea()
         {

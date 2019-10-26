@@ -2,7 +2,7 @@
 
 namespace CommonDomainObjects.Mapping
 {
-    public class GeographicalArea: ClassMapping<CommonDomainObjects.GeographicalArea>
+    public class GeographicalArea: ClassMapping<Geophysical.GeographicalArea>
     {
         public static readonly string IdSqlType = "NVARCHAR(6)";
 

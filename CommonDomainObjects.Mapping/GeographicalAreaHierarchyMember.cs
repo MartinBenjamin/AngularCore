@@ -2,7 +2,7 @@
 
 namespace CommonDomainObjects.Mapping
 {
-    public class GeographicalAreaHierarchyMember: ClassMapping<CommonDomainObjects.GeographicalAreaHierarchyMember>
+    public class GeographicalAreaHierarchyMember: ClassMapping<Geophysical.GeographicalAreaHierarchyMember>
     {
         public GeographicalAreaHierarchyMember()
         {

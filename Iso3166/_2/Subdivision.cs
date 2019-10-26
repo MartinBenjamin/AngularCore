@@ -1,4 +1,4 @@
-﻿using CommonDomainObjects;
+﻿using Geophysical;
 using System.Globalization;
 
 namespace Iso3166._2

@@ -1,4 +1,5 @@
 ﻿using CommonDomainObjects;
+using Geophysical;
 using Iso3166._1;
 using Iso3166._2;
 using NHibernate;
