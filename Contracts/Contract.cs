@@ -8,7 +8,7 @@ namespace Contracts
     {
         private IList<ContractualElement> _elements;
 
-        public virtual Jurisdiction              GoverningLaw  { get; protected set; }
+        public virtual LegalSystem               GoverningLaw  { get; protected set; }
         public virtual DateTime?                 ExecutionDate { get; protected set; }
         public virtual DateTime?                 EffectiveDate { get; protected set; }
         public virtual Contract                  Supersedes    { get; protected set; }
@@ -21,7 +21,7 @@ namespace Contracts
         protected Contract(
             Guid         id,
             string       title,
-            Jurisdiction governingLaw,
+            LegalSystem  governingLaw,
             DateTime?    executiondate,
             DateTime?    effectiveDate,
             Contract     supersedes
