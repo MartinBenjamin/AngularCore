@@ -3,7 +3,10 @@ using System;
 
 namespace Contracts
 {
-    // e.g. English Law or Laws of England and Wales. 
+    //English law/laws of England and Wales
+    //German law
+    //Indian law
+    //Japanese law/laws of Japan
     public class LegalSystem: Named<Guid>
     {
         protected LegalSystem() : base()
