@@ -9,9 +9,9 @@ namespace Parties
     public class PartyInRole: AutonomousAgentInRole
     {
          // A Party is a Person or an Organisation but not both.
-        public virtual Person           Person       { get; protected set; }
-        public virtual Organisation     Organisation { get; protected set; }
-        public virtual Range2<DateTime> Period       { get; protected set; }
+        public virtual Person           PersonParty       { get; protected set; }
+        public virtual Organisation     OrganisationParty { get; protected set; }
+        public virtual Range2<DateTime> Period            { get; protected set; }
 
         protected PartyInRole() : base()
         {
@@ -19,55 +19,30 @@ namespace Parties
 
         public PartyInRole(
             Guid             id,
-            Person           person,
+            Person           party,
             Role             role,
             Range2<DateTime> period
             ) : base(
                 id,
-                person,
+                party,
                 role)
         {
-            Person = person;
-            Period = period;
+            PersonParty = party;
+            Period      = period;
         }
 
         public PartyInRole(
             Guid             id,
-            Organisation     organisation,
+            Organisation     party,
             Role             role,
             Range2<DateTime> period
             ) : base(
                 id,
-                organisation,
+                party,
                 role)
         {
-            Organisation = organisation;
-            Period       = period;
-        }
-
-
-        public PartyInRole(
-            Person           person,
-            Role             role,
-            Range2<DateTime> period
-            ) : this(
-                Guid.NewGuid(),
-                person,
-                role,
-                period)
-        {
-        }
-
-        public PartyInRole(
-            Organisation     organisation,
-            Role             role,
-            Range2<DateTime> period
-            ) : this(
-                Guid.NewGuid(),
-                organisation,
-                role,
-                period)
-        {
+            OrganisationParty = party;
+            Period            = period;
         }
     }
 }
