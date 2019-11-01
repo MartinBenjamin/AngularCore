@@ -6,8 +6,6 @@ namespace Contracts
 {
     public class Contract: Agreement
     {
-        private IList<ContractualElement> _elements;
-
         public virtual LegalSystem               GoverningLaw  { get; protected set; }
         public virtual DateTime?                 ExecutionDate { get; protected set; }
         public virtual DateTime?                 EffectiveDate { get; protected set; }
@@ -33,7 +31,7 @@ namespace Contracts
             ExecutionDate = executiondate;
             EffectiveDate = effectiveDate;
             Supersedes    = supersedes;
-            _elements     = new List<ContractualElement>();
+            Elements      = new List<ContractualElement>();
         }
     }
 }
