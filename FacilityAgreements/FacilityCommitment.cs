@@ -3,15 +3,15 @@ using System;
 
 namespace FacilityAgreements
 {
-    public abstract class FacilityContractualCommitment: ContractualCommitment
+    public abstract class FacilityCommitment: ContractualCommitment
     {
         public Facility Facility { get; protected set; }
 
-        protected FacilityContractualCommitment() : base()
+        protected FacilityCommitment() : base()
         {
         }
 
-        protected FacilityContractualCommitment(
+        protected FacilityCommitment(
             Guid     id,
             Facility facility
             ) : base(

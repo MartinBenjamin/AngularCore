@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FacilityAgreements
 {
-    public class EstimatedMargin
+    public class ParticipationFee: FacilityCommitment
     {
     }
 }

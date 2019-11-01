@@ -2,9 +2,10 @@
 
 namespace FacilityAgreements
 {
-    public abstract class Interest: FacilityContractualCommitment
+    public abstract class Interest: FacilityCommitment
     {
-        public ReferenceRate ReferenceRate { get; protected set; }
+        public ReferenceRate ReferenceRate   { get; protected set; }
+        public decimal?      EstimatedMargin { get; protected set; }
 
         protected Interest() : base()
         {
@@ -13,12 +14,14 @@ namespace FacilityAgreements
         protected Interest(
             Guid          id,
             Facility      facility,
-            ReferenceRate referenceRate
+            ReferenceRate referenceRate,
+            decimal?      estimatedMargin
             ) : base(
                 id,
                 facility)
         {
-            ReferenceRate = referenceRate;
+            ReferenceRate   = referenceRate;
+            EstimatedMargin = estimatedMargin;
         }
     }
 }

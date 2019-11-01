@@ -6,6 +6,10 @@ namespace Contracts
     {
         public string Term { get; protected set; }
 
+        protected ContractualDefinition() : base()
+        {
+        }
+
         public ContractualDefinition(
             Guid     id,
             Contract contract,
