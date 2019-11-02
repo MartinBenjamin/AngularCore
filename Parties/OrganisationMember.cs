@@ -8,7 +8,7 @@ namespace Parties
 {
     public class OrganisationMember: PartyInRole
     {
-        public virtual Organisation Organisation { get; protected set; }
+        public virtual Organisation MemberOf { get; protected set; }
 
         protected OrganisationMember(): base()
         {
@@ -17,42 +17,42 @@ namespace Parties
         public OrganisationMember(
             Guid             id,
             Organisation     organisation,
-            Person           party,
+            Person           member,
             Role             role,
             Range2<DateTime> period
             ) : base(
                 id,
-                party,
+                member,
                 role,
                 period)
         {
-            Organisation = organisation;
+            MemberOf = organisation;
         }
 
         public OrganisationMember(
             Guid             id,
             Organisation     organisation,
-            Organisation     party,
+            Organisation     member,
             Role             role,
             Range2<DateTime> period
             ) : base(
                 id,
-                party,
+                member,
                 role,
                 period)
         {
-            Organisation = organisation;
+            MemberOf = organisation;
         }
 
         public OrganisationMember(
             Organisation     organisation,
-            Person           party,
+            Person           member,
             Role             role,
             Range2<DateTime> period
             ) : this(
                 Guid.NewGuid(),
                 organisation,
-                party,
+                member,
                 role,
                 period)
         {
@@ -60,13 +60,13 @@ namespace Parties
 
         public OrganisationMember(
             Organisation     organisation,
-            Organisation     party,
+            Organisation     member,
             Role             role,
             Range2<DateTime> period
             ) : this(
                 Guid.NewGuid(),
                 organisation,
-                party,
+                member,
                 role,
                 period)
         {

@@ -9,9 +9,9 @@ namespace Parties
     public class PartyInRole: AutonomousAgentInRole
     {
          // A Party is a Person or an Organisation but not both.
-        public virtual Person           PersonParty       { get; protected set; }
-        public virtual Organisation     OrganisationParty { get; protected set; }
-        public virtual Range2<DateTime> Period            { get; protected set; }
+        public virtual Person           Person       { get; protected set; }
+        public virtual Organisation     Organisation { get; protected set; }
+        public virtual Range2<DateTime> Period       { get; protected set; }
 
         protected PartyInRole() : base()
         {
@@ -27,8 +27,8 @@ namespace Parties
                 party,
                 role)
         {
-            PersonParty = party;
-            Period      = period;
+            Person = party;
+            Period = period;
         }
 
         public PartyInRole(
@@ -41,8 +41,8 @@ namespace Parties
                 party,
                 role)
         {
-            OrganisationParty = party;
-            Period            = period;
+            Organisation = party;
+            Period       = period;
         }
     }
 }
