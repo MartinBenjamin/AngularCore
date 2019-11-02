@@ -2,32 +2,38 @@
 
 namespace FacilityAgreements
 {
+    public enum CommitmentFeeType
+    {
+        Percentage,
+        PercentageOfMarginRate
+    }
+
     public abstract class CommitmentFee: FacilityCommitment
     {
-        public decimal? Estimated                   { get; protected set; }
-        public bool     EstimatedPercentageOfMargin { get; protected set; } 
-        public Ratchets Ratchets                    { get; protected set; }
-        public decimal? PercentageOfMargin          { get; protected set; }
+        public decimal?          Estimated              { get; protected set; }
+        public CommitmentFeeType EstimatedType          { get; protected set; } 
+        public Ratchets          Ratchets               { get; protected set; }
+        public decimal?          PercentageOfMarginRate { get; protected set; }
 
         protected CommitmentFee() : base()
         {
         }
 
         protected CommitmentFee(
-            Guid     id,
-            Facility facility,
-            decimal? estimated,
-            bool     estimatedPercentageOfMargin,
-            Ratchets ratchets,
-            decimal? percentageOfMargin
+            Guid              id,
+            Facility          facility,
+            decimal?          estimated,
+            CommitmentFeeType estimatedType,
+            Ratchets          ratchets,
+            decimal?          percentageOfMargin
             ) : base(
                 id,
                 facility)
         {
-            Estimated                   = estimated;
-            EstimatedPercentageOfMargin = estimatedPercentageOfMargin;
-            Ratchets                    = ratchets;
-            PercentageOfMargin          = percentageOfMargin;
+            Estimated              = estimated;
+            EstimatedType          = estimatedType;
+            Ratchets               = ratchets;
+            PercentageOfMarginRate = percentageOfMargin;
         }
     }
 }
