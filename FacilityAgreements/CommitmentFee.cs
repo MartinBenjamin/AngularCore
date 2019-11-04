@@ -4,18 +4,18 @@ namespace FacilityAgreements
 {
     public abstract class CommitmentFee: FacilityCommitment
     {
-        public NumericExpression            Estimated { get; protected set; }
-        public TimeVaryingNumericExpression Actual    { get; protected set; }
+        public Expression<decimal?>           Estimated { get; protected set; }
+        public Expression<DateTime, decimal?> Actual    { get; protected set; }
 
         protected CommitmentFee() : base()
         {
         }
 
         protected CommitmentFee(
-            Guid                         id,
-            Facility                     facility,
-            NumericExpression            estimated,
-            TimeVaryingNumericExpression actual
+            Guid                           id,
+            Facility                       facility,
+            Expression<decimal?>           estimated,
+            Expression<DateTime, decimal?> actual
             ) : base(
                 id,
                 facility)

@@ -4,20 +4,20 @@ namespace FacilityAgreements
 {
     public abstract class Interest: FacilityCommitment
     {
-        public ReferenceRate                ReferenceRate   { get; protected set; }
-        public NumericExpression            EstimatedMargin { get; protected set; }
-        public TimeVaryingNumericExpression Margin          { get; protected set; }
+        public ReferenceRate                  ReferenceRate   { get; protected set; }
+        public Expression<decimal?>           EstimatedMargin { get; protected set; }
+        public Expression<DateTime, decimal?> Margin          { get; protected set; }
 
         protected Interest() : base()
         {
         }
 
         protected Interest(
-            Guid                         id,
-            Facility                     facility,
-            ReferenceRate                referenceRate,
-            NumericExpression            estimatedMargin,
-            TimeVaryingNumericExpression margin
+            Guid                           id,
+            Facility                       facility,
+            ReferenceRate                  referenceRate,
+            Expression<decimal?>           estimatedMargin,
+            Expression<DateTime, decimal?> margin
             ) : base(
                 id,
                 facility)

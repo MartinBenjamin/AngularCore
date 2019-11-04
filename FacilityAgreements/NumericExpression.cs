@@ -4,22 +4,36 @@ using System.Linq;
 
 namespace FacilityAgreements
 {
-    public abstract class NumericExpression: DomainObject<Guid>
+    public abstract class Expression<TResult>: DomainObject<Guid>
     {
-        protected NumericExpression() : base()
+        protected Expression() : base()
         {
         }
 
-        protected NumericExpression(
+        protected Expression(
             Guid id
             ) : base(id)
         {
         }
 
-        public abstract decimal? Evaluate();
+        public abstract TResult Evaluate();
+    }
+    public abstract class Expression<T, TResult>: DomainObject<Guid>
+    {
+        protected Expression() : base()
+        {
+        }
+
+        protected Expression(
+            Guid id
+            ) : base(id)
+        {
+        }
+
+        public abstract TResult Evaluate(T t);
     }
 
-    public class NumericValue: NumericExpression
+    public class NumericValue: Expression<decimal?>
     {
         public decimal? Value { get; set; }
 
@@ -38,19 +52,19 @@ namespace FacilityAgreements
         public override decimal? Evaluate() => Value;
     }
 
-    public class RatioExpression: NumericExpression
+    public class RatioExpression: Expression<decimal?>
     {
-        public virtual NumericExpression Numerator   { get; protected set; }
-        public virtual NumericExpression Denominator { get; protected set; }
+        public virtual Expression<decimal?> Numerator   { get; protected set; }
+        public virtual Expression<decimal?> Denominator { get; protected set; }
 
         protected RatioExpression() : base()
         {
         }
 
         public RatioExpression(
-            Guid              id,
-            NumericExpression numerator,
-            NumericExpression denominator
+            Guid                 id,
+            Expression<decimal?> numerator,
+            Expression<decimal?> denominator
             ) : base(id)
         {
             Numerator   = numerator;
@@ -68,15 +82,15 @@ namespace FacilityAgreements
 
     public abstract class PercentageExpression: RatioExpression
     {
-        private static readonly NumericExpression _denominator = new NumericValue(Guid.Empty, 100m);
+        private static readonly Expression<decimal?> _denominator = new NumericValue(Guid.Empty, 100m);
 
         protected PercentageExpression() : base()
         {
         }
 
         protected PercentageExpression(
-            Guid              id,
-            NumericExpression value
+            Guid                 id,
+            Expression<decimal?> value
             ) : base(
                 id,
                 value,
@@ -109,10 +123,10 @@ namespace FacilityAgreements
         }
     }
 
-    public class PercentageOfExpression: NumericExpression
+    public class PercentageOfExpression: Expression<decimal?>
     {
         public PercentageExpression Percentage { get; protected set; }
-        public NumericExpression    Of         { get; protected set; }
+        public Expression<decimal?> Of         { get; protected set; }
 
         protected PercentageOfExpression() : base()
         {
@@ -121,7 +135,7 @@ namespace FacilityAgreements
         public PercentageOfExpression(
             Guid                 id,
             PercentageExpression percentage,
-            NumericExpression    of
+            Expression<decimal?> of
             ) : base(id)
         {
             Percentage = percentage;
@@ -137,41 +151,37 @@ namespace FacilityAgreements
         }
     }
 
-    public abstract class TimeVaryingNumericExpression: DomainObject<Guid>
+    public class PercentageOfTimeVaryingExpression: Expression<DateTime, decimal?>
     {
-        public abstract decimal? Evaluate(DateTime time);
+        public PercentageExpression           Percentage { get; protected set; }
+        public Expression<DateTime, decimal?> Of         { get; protected set; }
 
-        protected TimeVaryingNumericExpression() : base()
+        protected PercentageOfTimeVaryingExpression() : base()
         {
         }
 
-        protected TimeVaryingNumericExpression(
-            Guid id
+        public PercentageOfTimeVaryingExpression(
+            Guid                           id,
+            PercentageExpression           percentage,
+            Expression<DateTime, decimal?> of
             ) : base(id)
         {
+            Percentage = percentage;
+            Of         = of;
+        }
+
+        public override decimal? Evaluate(
+            DateTime time
+            )
+        {
+            var percentage = Percentage.Evaluate();
+            var of         = Of.Evaluate(time);
+
+            return percentage.HasValue && of.HasValue ? percentage * of : null;
         }
     }
-    
-    public class ConstantNumericValue: TimeVaryingNumericExpression
-    {
-        public decimal? Value { get; set; }
 
-        protected ConstantNumericValue() : base()
-        {
-        }
-
-        public ConstantNumericValue(
-            Guid     id,
-            decimal? value
-            ) : base(id)
-        {
-            Value = value;
-        }
-
-        public override decimal? Evaluate(DateTime time) => Value;
-    }
-
-    public class RatchetsExpression: TimeVaryingNumericExpression
+    public class RatchetsExpression: Expression<DateTime, decimal?>
     {
         public Ratchets Ratchets { get; protected set; }
 
@@ -188,14 +198,8 @@ namespace FacilityAgreements
                 .Where(ratchet => ratchet.Date <= time)
                 .Aggregate(
                     (Ratchet)null,
-                    (lhs, rhs) =>
-                    {
-                        if(rhs.Date <= time &&
-                           (lhs == null || rhs.Date > lhs.Date))
-                            return rhs;
-
-                        return lhs;
-                    });
+                    (selected, next) =>
+                        selected == null || next.Date > selected.Date ? next : selected);
 
             return applicableRatchet != null ? (decimal?)applicableRatchet.Rate : null;
         }
