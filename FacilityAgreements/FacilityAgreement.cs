@@ -6,9 +6,9 @@ namespace FacilityAgreements
 {
     public class FacilityAgreement: Contract
     {
-        public virtual DateTime?       SignedDate { get; protected set; }
-        public virtual DateTime?       ClosedDate { get; protected set; }
-        public virtual IList<Facility> Facilities { get; protected set; }
+        public virtual DateTime?       SigningDate { get; protected set; }
+        public virtual DateTime?       ClosingDate { get; protected set; }
+        public virtual IList<Facility> Facilities  { get; protected set; }
 
         protected FacilityAgreement() : base()
         {
@@ -18,21 +18,21 @@ namespace FacilityAgreements
             Guid        id,
             string      title,
             LegalSystem governingLaw,
-            DateTime?   signeddate,
-            DateTime?   closedDate,
+            DateTime?   signingdate,
+            DateTime?   closingDate,
             Contract    supersedes
 
             ) : base(
                 id,
                 title,
                 governingLaw,
-                signeddate,
-                closedDate,
+                signingdate,
+                closingDate,
                 supersedes)
         {
-            SignedDate = signeddate;
-            ClosedDate = closedDate;
-            Facilities = new List<Facility>();
+            SigningDate = signingdate;
+            ClosingDate = closingDate;
+            Facilities  = new List<Facility>();
         }
     }
 }
