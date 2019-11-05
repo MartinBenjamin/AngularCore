@@ -1,4 +1,5 @@
 ﻿using Expressions;
+using Iso4217;
 using System;
 
 namespace FacilityAgreements
@@ -10,10 +11,10 @@ namespace FacilityAgreements
         }
 
         protected ParticipationFee(
-            Guid                 id,
-            Facility             facility,
-            Expression<decimal?> amount,
-            Expression<DateTime> date
+            Guid                    id,
+            Facility                facility,
+            Expression<MoneyAmount> amount,
+            Expression<DateTime>    date
             ) : base(
                 id,
                 facility)
