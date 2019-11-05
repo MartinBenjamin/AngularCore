@@ -1,5 +1,6 @@
-﻿using CommonDomainObjects;
+﻿using Expressions;
 using System;
+using System.Linq;
 
 namespace FacilityAgreements
 {
@@ -25,14 +26,38 @@ namespace FacilityAgreements
         }
 
         public Ratchet(
-            Guid     id,
-            DateTime date,
-            decimal  rate
+            Guid                 id,
+            Expression<DateTime> date,
+            decimal              rate
             ) : base(
                 id,
                 date)
         {
             Rate = rate;
+        }
+    }
+
+    public class RatchetsExpression: Expression<DateTime, decimal?>
+    {
+        public Ratchets Ratchets { get; protected set; }
+
+        protected RatchetsExpression() : base()
+        {
+        }
+
+        public override decimal? Evaluate(
+            DateTime time
+            )
+        {
+            var applicableRatchet = Ratchets
+                .Entries
+                .Where(ratchet => ratchet.Date.Evaluate() <= time)
+                .Aggregate(
+                    (Ratchet)null,
+                    (selected, next) =>
+                        selected == null || next.Date.Evaluate() > selected.Date.Evaluate() ? next : selected);
+
+            return applicableRatchet != null ? (decimal?)applicableRatchet.Rate : null;
         }
     }
 }
