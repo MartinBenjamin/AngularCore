@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Agreements\Agreements.csproj" />
     <ProjectReference Include="..\CommonDomainObjects\CommonDomainObjects.csproj" />
+    <ProjectReference Include="..\Expressions\Expressions.csproj" />
   </ItemGroup>
 
 </Project>
