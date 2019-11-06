@@ -19,7 +19,7 @@ namespace FacilityAgreements
 
     public class Ratchet: AdHocScheduleEntry<Guid, Ratchets, Ratchet>
     {
-        public decimal Rate { get; protected set; }
+        public virtual decimal Rate { get; protected set; }
  
         protected Ratchet() : base()
         {
@@ -39,7 +39,7 @@ namespace FacilityAgreements
 
     public class RatchetsExpression: Expression<DateTime, decimal?>
     {
-        public Ratchets Ratchets { get; protected set; }
+        public virtual Ratchets Ratchets { get; protected set; }
 
         protected RatchetsExpression() : base()
         {
