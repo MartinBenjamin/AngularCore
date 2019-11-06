@@ -5,9 +5,9 @@ namespace FacilityAgreements
 {
     public abstract class Interest: FacilityCommitment
     {
-        public ReferenceRate                  ReferenceRate   { get; protected set; }
-        public Expression<decimal?>           EstimatedMargin { get; protected set; }
-        public Expression<DateTime, decimal?> Margin          { get; protected set; }
+        public virtual ReferenceRate                  ReferenceRate   { get; protected set; }
+        public virtual Expression<decimal?>           EstimatedMargin { get; protected set; }
+        public virtual Expression<DateTime, decimal?> Margin          { get; protected set; }
 
         protected Interest() : base()
         {

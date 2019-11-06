@@ -5,7 +5,7 @@ namespace FacilityAgreements
 {
     public abstract class FacilityCommitment: ContractualCommitment
     {
-        public Facility Facility { get; protected set; }
+        public virtual Facility Facility { get; protected set; }
 
         protected FacilityCommitment() : base()
         {

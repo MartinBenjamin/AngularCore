@@ -5,8 +5,8 @@ namespace FacilityAgreements
 {
     public abstract class CommitmentFee: FacilityCommitment
     {
-        public Expression<decimal?>           Estimated { get; protected set; }
-        public Expression<DateTime, decimal?> Actual    { get; protected set; }
+        public virtual Expression<decimal?>           Estimated { get; protected set; }
+        public virtual Expression<DateTime, decimal?> Actual    { get; protected set; }
 
         protected CommitmentFee() : base()
         {
