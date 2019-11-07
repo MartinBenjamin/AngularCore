@@ -3,13 +3,14 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TabbedViewModule } from '../../Gallery/TabbedView';
 import { DealModule } from '../Deal.Module';
-import { ProjectFinance } from './ProjectFinance';
+import { Advisory } from './Advisory';
+
 
 const routes: Routes =
     [
         {
             path: '',
-            component: ProjectFinance,
+            component: Advisory,
             outlet: 'feature'
         }
     ];
@@ -18,7 +19,7 @@ const routes: Routes =
     {
         declarations:
             [
-                ProjectFinance
+                Advisory
             ],
         imports:
             [
@@ -28,5 +29,5 @@ const routes: Routes =
                 TabbedViewModule
             ]
     })
-export class ProjectFinanceModule
+export class AdvisoryModule
 { }
