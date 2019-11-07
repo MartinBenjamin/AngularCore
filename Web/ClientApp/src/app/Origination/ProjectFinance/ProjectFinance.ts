@@ -38,6 +38,7 @@ export class ProjectFinance implements AfterViewInit
         new Tab('Security'              , OriginationTab),
         new Tab('Fees &<br/>Income'     , OriginationTab),
         new Tab('Key<br/>Dates'         , OriginationTab),
+        new Tab('Deal<br/>Team'         , OriginationTab),
         new Tab('Key<br/>Counterparties', OriginationTab),
         new Tab('Syndicate<br/>Info'    , OriginationTab),
         new Tab('Key Risks &<br/>Events', OriginationTab),
