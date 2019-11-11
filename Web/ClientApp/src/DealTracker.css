@@ -24,9 +24,26 @@ select
   box-sizing: content-box;
 }
 
+textarea
+{
+  border: 1px solid #bababa;
+  color: #bababa;
+  background-color: black;
+}
+
+input, select, textarea, button
+{
+  outline: none;
+}
+
 a:hover
 {
   text-decoration: underline;
+}
+
+fieldset
+{
+  border-color: #7a7a7a;
 }
 
 span.Field
