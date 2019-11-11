@@ -46,6 +46,11 @@ fieldset
   border-color: #7a7a7a;
 }
 
+legend
+{
+  font-weight: bold;
+}
+
 span.Field
 {
   display: inline-block;
