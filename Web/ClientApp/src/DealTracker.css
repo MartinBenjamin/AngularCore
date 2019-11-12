@@ -95,8 +95,10 @@ table.DataGrid
 table.DataGrid th
 {
   border: 1px solid #7a7a7a;
-  background-color: #151515;
+  background-color: #6a6a6a;
+  color: #000;
   padding: 0px 1px 0px 1px;
+  font-weight: bold;
 }
 
 table.DataGrid td
