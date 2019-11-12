@@ -4,7 +4,6 @@ import { OriginationTab } from './OriginationTab';
 
 @Component(
     {
-        selector: 'MoreTabs',
         templateUrl: './MoreTabs.html'
     })
 export class MoreTabs

@@ -5,7 +5,6 @@ import { Currency } from '../Iso4217';
 
 @Component(
     {
-        selector: 'KeyDealData',
         templateUrl: './KeyDealData.html'
     })
 export class KeyDealData

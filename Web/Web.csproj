@@ -42,6 +42,7 @@
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal.Module.ts" />
+    <None Remove="ClientApp\src\app\Origination\Facilities.ts" />
     <None Remove="ClientApp\src\app\Origination\Menu.ts" />
     <None Remove="ClientApp\src\app\Origination\MyDeals.ts" />
     <None Remove="ClientApp\src\app\Origination\MyDeals\MyDeals.Module.ts" />
@@ -49,6 +50,7 @@
     <None Remove="ClientApp\src\app\Origination\Origination.ts" />
     <None Remove="ClientApp\src\app\Origination\ProjectFinance.ts" />
     <None Remove="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.Module.ts" />
+    <None Remove="ClientApp\src\app\Origination\TransactionDetails.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -70,6 +72,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal.Module.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Facilities.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Menu.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\MyDeals\MyDeals.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\MyDeals\MyDeals.ts" />
@@ -77,6 +80,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Origination.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\TransactionDetails.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

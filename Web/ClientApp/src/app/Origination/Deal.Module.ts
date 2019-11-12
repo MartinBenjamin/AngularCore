@@ -1,18 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { KeyDealData } from './KeyDealData';
-import { OriginationTab } from './OriginationTab';
-import { MoreTabs } from './MoreTabs';
 import { TabbedViewModule } from '../Gallery/TabbedView';
+import { Facilities } from './Facilities';
+import { KeyDealData } from './KeyDealData';
+import { MoreTabs } from './MoreTabs';
+import { OriginationTab } from './OriginationTab';
+import { TransactionDetails } from './TransactionDetails';
 
 
 @NgModule(
     {
         declarations:
             [
+                Facilities,
                 KeyDealData,
                 MoreTabs,
-                OriginationTab
+                OriginationTab,
+                TransactionDetails
             ],
         imports:
             [
@@ -23,7 +27,8 @@ import { TabbedViewModule } from '../Gallery/TabbedView';
             [
                 KeyDealData,
                 MoreTabs,
-                OriginationTab
+                OriginationTab,
+                TransactionDetails
             ]
     })
 export class DealModule
