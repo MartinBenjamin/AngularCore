@@ -86,3 +86,21 @@ table.GridLayout td
   padding: 0px;
   border: none;
 }
+
+table.DataGrid
+{
+  border-collapse: collapse;
+}
+
+table.DataGrid th
+{
+  border: 1px solid #7a7a7a;
+  background-color: #151515;
+  padding: 0px 1px 0px 1px;
+}
+
+table.DataGrid td
+{
+  border: 1px solid #7a7a7a;
+  padding: 0px 1px 0px 1px;
+}
