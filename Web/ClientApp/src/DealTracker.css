@@ -92,6 +92,13 @@ table.DataGrid
   border-collapse: collapse;
 }
 
+table.DataGrid caption
+{
+  text-align: left;
+  font-size: 15px;
+  font-weight: bold;
+}
+
 table.DataGrid th
 {
   border: 1px solid #7a7a7a;
