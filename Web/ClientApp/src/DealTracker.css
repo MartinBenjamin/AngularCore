@@ -106,17 +106,13 @@ table.DataGrid caption
   font-weight: bold;
 }
 
-table.DataGrid th
+table.DataGrid th, table.DataGrid td
 {
   border: 1px solid #7a7a7a;
-  background-color: #555;
-  color: #000;
   padding: 0px 1px 0px 1px;
-  font-weight: bold;
 }
 
-table.DataGrid td
+table.DataGrid th
 {
-  border: 1px solid #7a7a7a;
-  padding: 0px 1px 0px 1px;
+  font-weight: bold;
 }
