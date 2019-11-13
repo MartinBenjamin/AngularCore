@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TabbedViewModule } from '../Gallery/TabbedView';
+import { Borrowers } from './Borrowers';
 import { Facilities } from './Facilities';
 import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
@@ -12,6 +13,7 @@ import { TransactionDetails } from './TransactionDetails';
     {
         declarations:
             [
+                Borrowers,
                 Facilities,
                 KeyDealData,
                 MoreTabs,
