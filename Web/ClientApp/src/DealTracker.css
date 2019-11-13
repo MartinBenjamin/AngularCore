@@ -109,7 +109,7 @@ table.DataGrid caption
 table.DataGrid th, table.DataGrid td
 {
   border: 1px solid #7a7a7a;
-  padding: 0px 1px 0px 1px;
+  padding: 0px 2px 0px 2px;
 }
 
 table.DataGrid th
