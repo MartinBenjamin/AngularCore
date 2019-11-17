@@ -19,22 +19,22 @@ export class Aircraft implements AfterViewInit
     {
         let div = <HTMLDivElement>this._el.nativeElement.firstChild;
 
-        var width = 960,
+        let width = 960,
             height = 500,
             margin = 20;
 
-        var square_length = d3.min([width, height]) - 2 * margin;
+        let square_length = d3.min([width, height]) - 2 * margin;
 
-        var x_scale = d3.scale.linear()
+        let x_scale = d3.scale.linear()
             .range([width / 2 - square_length / 2, width / 2 + square_length / 2]);
 
-        var y_scale = d3.scale.linear()
+        let y_scale = d3.scale.linear()
             .range([height / 2 + square_length / 2, height / 2 - square_length / 2]);
 
-        var z_scale = d3.scale.linear()
+        let z_scale = d3.scale.linear()
             .range([0, 1]);
 
-        var camera = { inclination: Math.PI / 2, azimuth: 0, center: { x: 0, y: 0, z: 0 } };
+        let camera = { inclination: Math.PI / 2, azimuth: 0, center: { x: 0, y: 0, z: 0 } };
 
         while(div.childNodes.length)
             div.removeChild(div.firstChild);
@@ -43,7 +43,7 @@ export class Aircraft implements AfterViewInit
             .attr("width", width)
             .attr("height", height);
 
-        var container = svg.append("g");
+        let container = svg.append("g");
 
 
         // Taken From
@@ -51,26 +51,26 @@ export class Aircraft implements AfterViewInit
         function parse_obj_text(obj_file_text)
         {
 
-            var obj_file_lines = obj_file_text.split("\n");
+            let obj_file_lines = obj_file_text.split("\n");
 
-            var vertices = [];
+            let vertices = [];
             obj_file_lines.forEach(function(line)
             {
                 if(line.startsWith("v "))
                 {
-                    var vs = line.split(/[ ]+/);
+                    let vs = line.split(/[ ]+/);
                     vertices.push({ x: +vs[1], y: +vs[2], z: +vs[3] });
                 }
             });
 
-            var faces = [];
+            let faces = [];
             obj_file_lines.forEach(function(line)
             {
                 if(line.startsWith("f "))
                 {
-                    var vs = line.split(/[ ]+/);
-                    var o = vs.shift();
-                    var f = [];
+                    let vs = line.split(/[ ]+/);
+                    let o = vs.shift();
+                    let f = [];
                     vs.forEach(function(v)
                     {
                         f.push(+v.split('/')[0]);
@@ -79,11 +79,11 @@ export class Aircraft implements AfterViewInit
                 }
             });
 
-            var surfaces = [];
-            var vertices_used = [];
+            let surfaces = [];
+            let vertices_used = [];
             faces.forEach(function(f)
             {
-                var surface = [];
+                let surface = [];
                 f.forEach(function(v)
                 {
                     surface.push(vertices[v - 1]);
@@ -92,15 +92,15 @@ export class Aircraft implements AfterViewInit
                 surfaces.push(surface);
             });
 
-            var vx = vertices_used.map(function(v) { return v.x; }),
+            let vx = vertices_used.map(function(v) { return v.x; }),
                 vy = vertices_used.map(function(v) { return v.y; }),
                 vz = vertices_used.map(function(v) { return v.z; });
 
-            var min = { x: d3.min(vx), y: d3.min(vy), z: d3.min(vz) };
-            var max = { x: d3.max(vx), y: d3.max(vy), z: d3.max(vz) };
+            let min = { x: d3.min(vx), y: d3.min(vy), z: d3.min(vz) };
+            let max = { x: d3.max(vx), y: d3.max(vy), z: d3.max(vz) };
 
-            var extents = [d3.min([min.x, min.y, min.z]), d3.max([max.x, max.y, max.z])];
-            var center = { x: (min.x + max.x) / 2, y: (min.y + max.y) / 2, z: (min.z + max.z) / 2 }
+            let extents = [d3.min([min.x, min.y, min.z]), d3.max([max.x, max.y, max.z])];
+            let center = { x: (min.x + max.x) / 2, y: (min.y + max.y) / 2, z: (min.z + max.z) / 2 }
 
             return {
                 vertices: vertices, faces: faces, surfaces: surfaces,
@@ -123,13 +123,13 @@ export class Aircraft implements AfterViewInit
         {
 
             // first rotate around y-axis to the azimuth angle
-            var xp2 = pt.x * Math.cos(camera.azimuth) - pt.z * Math.sin(camera.azimuth);
-            var zp2 = pt.x * Math.sin(camera.azimuth) + pt.z * Math.cos(camera.azimuth);
+            let xp2 = pt.x * Math.cos(camera.azimuth) - pt.z * Math.sin(camera.azimuth);
+            let zp2 = pt.x * Math.sin(camera.azimuth) + pt.z * Math.cos(camera.azimuth);
 
             // then around the x axis to pi/2 minus the inclination angle
-            var a = Math.PI / 2 - camera.inclination;
-            var zp3 = zp2 * Math.cos(a) - pt.y * Math.sin(a);
-            var yp3 = zp2 * Math.sin(a) + pt.y * Math.cos(a);
+            let a = Math.PI / 2 - camera.inclination;
+            let zp3 = zp2 * Math.cos(a) - pt.y * Math.sin(a);
+            let yp3 = zp2 * Math.sin(a) + pt.y * Math.cos(a);
 
             return { x: xp2, y: yp3, z: zp3 };
 
@@ -142,8 +142,8 @@ export class Aircraft implements AfterViewInit
                 points.forEach(function(point)
                 {
 
-                    var point_t = translate_pt(point, camera.center);
-                    var point_r = rotate_pt(point_t, camera);
+                    let point_t = translate_pt(point, camera.center);
+                    let point_r = rotate_pt(point_t, camera);
 
                     point.px = point_r.x;
                     point.py = point_r.y;
@@ -157,7 +157,7 @@ export class Aircraft implements AfterViewInit
         function draw(surfaces)
         {
 
-            var polygons = container.selectAll(".polygon")
+            let polygons = container.selectAll(".polygon")
                 .data(surfaces);
 
             polygons.enter().append("path")
@@ -166,7 +166,7 @@ export class Aircraft implements AfterViewInit
             polygons
                 .attr("d", function(datum)
                 {
-                    var d = datum.map(function(point)
+                    let d = datum.map(function(point)
                     {
                         return [x_scale(point.px), y_scale(point.py)];
                     });
@@ -180,15 +180,13 @@ export class Aircraft implements AfterViewInit
             draw(surfaces);
         }
 
-        var surfaces;
-        var obj;
         d3.text("cessna.obj", function(error, obj_file_text)
         {
             if(error) throw error;
 
-            obj = parse_obj_text(obj_file_text);
-            surfaces = obj.surfaces;
-            var extreme = d3.max([Math.abs(obj.extents[0]), Math.abs(obj.extents[1])]);
+            let obj = parse_obj_text(obj_file_text);
+            let surfaces = obj.surfaces;
+            let extreme = d3.max([Math.abs(obj.extents[0]), Math.abs(obj.extents[1])]);
 
             // set a custom starting position
             // by setting the properties of the camera object
