@@ -116,3 +116,9 @@ table.DataGrid th
 {
   font-weight: bold;
 }
+
+.polygon
+{
+  fill: none;
+  stroke: #b60000;
+}

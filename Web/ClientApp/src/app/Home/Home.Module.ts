@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DealTrackerLayoutModule } from '../DealTrackerLayout.Module';
+import { Aircraft } from './Aircraft';
 import { Home } from './Home';
 
 const routes: Routes =
@@ -16,6 +17,7 @@ const routes: Routes =
     {
         declarations:
             [
+                Aircraft,
                 Home
             ],
         imports:

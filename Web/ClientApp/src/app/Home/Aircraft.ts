@@ -1,20 +1,23 @@
-﻿<!DOCTYPE html>
-<meta charset="utf-8">
-<style>
-    .polygon {
-        fill: none;
-        stroke: #f00;
-    }
+import { Component, AfterViewInit, ElementRef } from '@angular/core';
 
-    body
+declare var d3: any;
+
+@Component(
     {
-        background-color: black;
+        selector: 'aircraft',
+        template: `<div></div>`
+    })
+export class Aircraft implements AfterViewInit
+{
+    constructor(
+        private _el: ElementRef
+        )
+    {
     }
-</style>
-<body>
 
-    <script src="https://d3js.org/d3.v3.min.js"></script>
-    <script>
+    ngAfterViewInit(): void
+    {
+        let div = <HTMLDivElement>this._el.nativeElement.firstChild;
 
         var width = 960,
             height = 500,
@@ -33,7 +36,10 @@
 
         var camera = { inclination: Math.PI / 2, azimuth: 0, center: { x: 0, y: 0, z: 0 } };
 
-        var svg = d3.select("body").append("svg")
+        while(div.childNodes.length)
+            div.removeChild(div.firstChild);
+
+        let svg = d3.select(div).append('svg')
             .attr("width", width)
             .attr("height", height);
 
@@ -207,5 +213,5 @@
 
         });
 
-    </script>
-</body>
+    }
+}
