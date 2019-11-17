@@ -48,36 +48,31 @@ export class Aircraft implements AfterViewInit
 
         // Taken From
         // https://bl.ocks.org/bricof/605a89923aaf6d529c1b6156f635877d
-        function parse_obj_text(obj_file_text)
+        function parse_obj_text(
+            obj_file_text: string
+            )
         {
 
             let obj_file_lines = obj_file_text.split("\n");
 
-            let vertices = [];
-            obj_file_lines.forEach(function(line)
-            {
-                if(line.startsWith("v "))
-                {
-                    let vs = line.split(/[ ]+/);
-                    vertices.push({ x: +vs[1], y: +vs[2], z: +vs[3] });
-                }
-            });
-
-            let faces = [];
-            obj_file_lines.forEach(function(line)
-            {
-                if(line.startsWith("f "))
-                {
-                    let vs = line.split(/[ ]+/);
-                    let o = vs.shift();
-                    let f = [];
-                    vs.forEach(function(v)
+            let vertices = obj_file_lines
+                .filter(line => line.startsWith("v "))
+                .map(
+                    line =>
                     {
-                        f.push(+v.split('/')[0]);
+                        let vs = line.split(/[ ]+/);
+                        return { x: +vs[1], y: +vs[2], z: +vs[3] };
                     });
-                    faces.push(f);
-                }
-            });
+
+            let faces = obj_file_lines
+                .filter(line => line.startsWith("f "))
+                .map(
+                    line =>
+                    {
+                        let vs = line.split(/[ ]+/);
+                        vs.shift();
+                        return vs.map(v => +v.split('/')[0]);
+                    });
 
             let surfaces = [];
             let vertices_used = [];
