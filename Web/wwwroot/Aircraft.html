@@ -4,7 +4,12 @@
 
     .polygon {
         fill: none;
-        stroke: #000;
+        stroke: #f00;
+    }
+
+    body
+    {
+        background-color: black;
     }
 </style>
 <body>
@@ -163,13 +168,7 @@
                         return [x_scale(point.px), y_scale(point.py)];
                     });
                     return "M" + d.join("L") + "Z";
-                })
-                .attr("opacity", function(datum)
-                {
-                    var d = datum.map(function(point) { return point.pz; });
-                    return z_scale(d3.max(d));
                 });
-
         }
 
         function update(surfaces, camera)
