@@ -5,7 +5,7 @@ declare var d3: any;
 @Component(
     {
         selector: 'aircraft',
-        template: `<div></div>`
+        template: `<div style="text-align: center"></div>`
     })
 export class Aircraft implements AfterViewInit
 {
