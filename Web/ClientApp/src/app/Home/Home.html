@@ -1,0 +1,54 @@
+<style type="text/css">
+  table.MenuItems td
+  {
+    padding: 2px 15px 2px 15px;
+    white-space: nowrap;
+  }
+
+  span.MenuTitle
+  {
+    display: block;
+    padding: 2px 10px 2px 10px;
+  }
+
+  div.SubMenu
+  {
+    position: absolute;
+    color: #bababa;
+    background-color: #000;
+    border: 1px solid #bababa;
+    display: none;
+  }
+
+  span.MenuContainer:hover span.MenuTitle
+  {
+    color: #000;
+    background-color: #bababa;
+  }
+
+  span.MenuContainer:hover div.SubMenu
+  {
+    display: block;
+  }
+
+  a[ng-reflect-router-link]
+  {
+    color: #bababa;
+    text-decoration: none;
+  }
+
+  a[ng-reflect-router-link]:hover
+  {
+    text-decoration: underline;
+  }
+</style>
+<deal-tracker-layout>
+  <area-title>Home</area-title>
+  <menu-container>
+    <span style="white-space: nowrap">
+      <span style="display: inline-block;"><span class="MenuTitle"><a [routerLink]="['/Origination']">Origination</a></span></span>
+      <span style="display: inline-block;"><span class="MenuTitle"><a [routerLink]="['/AssetManagement']">Asset Management</a></span></span>
+      <span style="display: inline-block;"><span class="MenuTitle"><a>Administration</a></span></span>
+    </span>
+  </menu-container>
+</deal-tracker-layout>

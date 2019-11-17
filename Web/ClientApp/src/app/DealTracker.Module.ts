@@ -22,8 +22,13 @@ import { GalleryModule } from './Gallery/GalleryModule';
             RouterModule.forRoot([
                 {
                     path: '',
-                    redirectTo: '/Origination/MyDeals',
+                    redirectTo: '/Home',
                     pathMatch: 'full'
+                },
+                {
+                    path: 'Home',
+                    loadChildren: () => import('./Home/Home.Module').then(
+                        module => module.HomeModule)
                 },
                 {
                     path: 'Origination',
