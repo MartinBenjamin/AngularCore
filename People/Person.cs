@@ -7,7 +7,7 @@ namespace People
     {
         new public virtual PersonName Name { get; protected set; }
 
-        public Person() : base()
+        protected Person() : base()
         {
         }
 
@@ -68,6 +68,10 @@ namespace People
                     Given,
                     Family);
             }
+        }
+
+        protected PersonName()
+        {
         }
 
         public PersonName(

@@ -30,6 +30,7 @@ namespace CommonDomainObjects.Mapping
             mapper.AddMapping<AutonomousAgent                >();
             mapper.AddMapping<Organisation                   >();
             mapper.AddMapping<OrganisationalSubUnit          >();
+            mapper.AddMapping<Person                         >();
         }
 
         private static bool IsDomainObject<TId>(
