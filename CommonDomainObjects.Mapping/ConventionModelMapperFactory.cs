@@ -16,11 +16,6 @@ namespace CommonDomainObjects.Mapping
                 bool declared
                 ) => IsDomainObject<Guid>(type) || IsDomainObject<string>(type));
 
-            mapper.Class<DomainObject<Guid>>(
-                classMapper => classMapper.Id(
-                    domainObject => domainObject.Id,
-                    idMapper => idMapper.Generator(Generators.Guid)));
-
             mapper.AddMapping<GeographicalArea               >();
             mapper.AddMapping<GeographicalSubArea            >();
             mapper.AddMapping<GeographicalAreaHierarchy      >();
@@ -32,6 +27,9 @@ namespace CommonDomainObjects.Mapping
             mapper.AddMapping<Region                         >();
             mapper.AddMapping<SubRegion                      >();
             mapper.AddMapping<IntermediateRegion             >();
+            mapper.AddMapping<AutonomousAgent                >();
+            mapper.AddMapping<Organisation                   >();
+            mapper.AddMapping<OrganisationalSubUnit          >();
         }
 
         private static bool IsDomainObject<TId>(
