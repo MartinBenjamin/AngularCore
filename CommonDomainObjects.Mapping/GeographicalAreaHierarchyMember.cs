@@ -1,18 +1,18 @@
-﻿using NHibernate.Mapping.ByCode.Conformist;
+﻿using System;
 
 namespace CommonDomainObjects.Mapping
 {
-    public class GeographicalAreaHierarchyMember: ClassMapping<Geophysical.GeographicalAreaHierarchyMember>
+    public class GeographicalAreaHierarchyMember: HierarchyMember<
+        Guid,
+        Geophysical.GeographicalAreaHierarchy,
+        Geophysical.GeographicalAreaHierarchyMember,
+        Geophysical.GeographicalArea>
     {
         public GeographicalAreaHierarchyMember()
         {
             ManyToOne(
                 geographicalAreaHierarchyMember => geographicalAreaHierarchyMember.Member,
                 manyToOneMapping => manyToOneMapping.Column(columnMapping => columnMapping.SqlType(GeographicalArea.IdSqlType)));
-
-            Bag(
-                geographicalAreaHierarchyMember => geographicalAreaHierarchyMember.Children,
-                collectionMapping => collectionMapping.Key(keyMapping => keyMapping.Column("ParentId")));
         }
     }
 }

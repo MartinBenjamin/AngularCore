@@ -2,9 +2,9 @@
 
 namespace CommonDomainObjects.Mapping
 {
-    public class Organisation: JoinedSubclassMapping<Organisations.Organisation>
+    public class Hierarchy: ClassMapping<Organisations.Hierarchy>
     {
-        public Organisation()
+        public Hierarchy()
         {
         }
     }

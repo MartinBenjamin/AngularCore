@@ -6,13 +6,6 @@ namespace CommonDomainObjects.Mapping
     {
         public Person()
         {
-            Key(
-                keyMapper =>
-                {
-                    keyMapper.Column(columnMapper => columnMapper.Name("Id"));
-
-                    keyMapper.ForeignKey("FK_" + nameof(Person) + "_" + nameof(AutonomousAgent));
-                });
         }
     }
 }

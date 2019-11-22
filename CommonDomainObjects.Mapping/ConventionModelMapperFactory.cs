@@ -1,4 +1,5 @@
 ﻿using NHibernate.Mapping.ByCode;
+using NHibernate.Mapping.ByCode.Impl;
 using System;
 
 namespace CommonDomainObjects.Mapping
@@ -16,6 +17,22 @@ namespace CommonDomainObjects.Mapping
                 bool declared
                 ) => IsDomainObject<Guid>(type) || IsDomainObject<string>(type));
 
+            mapper.BeforeMapJoinedSubclass += (
+                IModelInspector                 modelInspector,
+                Type                            type,
+                IJoinedSubclassAttributesMapper joinedSubclassMapper
+                ) =>
+            {
+                if(typeof(DomainObject<Guid>).IsAssignableFrom(type))
+                    joinedSubclassMapper.Key(
+                        keyMapper =>
+                        {
+                            keyMapper.Column(columnMapper => columnMapper.Name("Id"));
+
+                            keyMapper.ForeignKey("FK_" + type.Name + "_Id");
+                        });
+            };
+
             mapper.AddMapping<GeographicalArea               >();
             mapper.AddMapping<GeographicalSubArea            >();
             mapper.AddMapping<GeographicalAreaHierarchy      >();
@@ -30,6 +47,8 @@ namespace CommonDomainObjects.Mapping
             mapper.AddMapping<AutonomousAgent                >();
             mapper.AddMapping<Organisation                   >();
             mapper.AddMapping<OrganisationalSubUnit          >();
+            mapper.AddMapping<Hierarchy                      >();
+            mapper.AddMapping<HierarchyMember                >();
             mapper.AddMapping<Person                         >();
         }
 
