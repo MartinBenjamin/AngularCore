@@ -17,6 +17,7 @@
     <ProjectReference Include="..\LegalEntities\LegalEntities.csproj" />
     <ProjectReference Include="..\NHibernateIntegration\NHibernateIntegration.csproj" />
     <ProjectReference Include="..\Organisations\Organisations.csproj" />
+    <ProjectReference Include="..\Parties\Parties.csproj" />
     <ProjectReference Include="..\People\People.csproj" />
     <ProjectReference Include="..\Roles\Roles.csproj" />
     <ProjectReference Include="..\UnsdM49\UnsdM49.csproj" />
