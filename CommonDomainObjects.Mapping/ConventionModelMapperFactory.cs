@@ -1,5 +1,4 @@
 ﻿using NHibernate.Mapping.ByCode;
-using NHibernate.Mapping.ByCode.Impl;
 using System;
 
 namespace CommonDomainObjects.Mapping
