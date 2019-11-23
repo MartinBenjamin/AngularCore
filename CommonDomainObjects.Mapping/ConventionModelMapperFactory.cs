@@ -51,6 +51,8 @@ namespace CommonDomainObjects.Mapping
             mapper.AddMapping<HierarchyMember                >();
             mapper.AddMapping<Person                         >();
             mapper.AddMapping<LegalEntity                    >();
+            mapper.AddMapping<Role                           >();
+            mapper.AddMapping<AutonomousAgentInRole          >();
         }
 
         private static bool IsDomainObject<TId>(
