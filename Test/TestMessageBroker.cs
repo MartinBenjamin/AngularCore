@@ -113,8 +113,11 @@ namespace Test
             var handledMessages = new List<Message>();
 
             var mock = new Mock<IMessageHandler>();
-            mock.Setup(messageHandler => messageHandler.Type).Returns(typeof(Message));
-            mock.Setup(messageHandler => messageHandler.Handle(It.IsAny<IMessageBroker>(), It.IsAny<MessageBroker.Message>()))
+            mock.Setup(messageHandler => messageHandler.Type)
+                .Returns(typeof(Message));
+            mock.Setup(messageHandler => messageHandler.Handle(
+                    It.IsAny<IMessageBroker>(),
+                    It.IsAny<MessageBroker.Message>()))
                 .Callback<IMessageBroker, MessageBroker.Message>(
                     (broker, message) =>
                     {
