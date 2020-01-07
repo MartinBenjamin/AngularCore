@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using CommonDomainObjects;
 using MessageBroker;
+using Moq;
 using NHibernate;
 using NHibernate.Mapping.ByCode;
 using NHibernate.Tool.hbm2ddl;
@@ -36,33 +37,6 @@ namespace Test
             }
         }
 
-        public class MessageHandler: IMessageHandler
-        {
-            public static AutoResetEvent AutoResetEvent { get; } = new AutoResetEvent(false);
-
-            public IList<Message> Messages { get; } = new List<Message>();
-
-            public MessageHandler(): base()
-            {
-            }
-
-            Type IMessageHandler.Type => typeof(Message);
-
-            async Task IMessageHandler.Handle(
-                IMessageBroker        broker,
-                MessageBroker.Message message
-                )
-            {
-                lock(Messages)
-                {
-                    Messages.Add((Message)message);
-
-                    if(Messages.Count == _maxMessages)
-                        AutoResetEvent.Set();
-                }
-            }
-        }
-
         public class ModelMapperFactory: CommonDomainObjects.Mapping.ConventionModelMapperFactory
         {
             protected override void Populate(
@@ -87,8 +61,7 @@ namespace Test
             }
         }
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
+        private ContainerBuilder Builder()
         {
             var builder = new ContainerBuilder();
             builder
@@ -101,17 +74,13 @@ namespace Test
                 .SingleInstance();
             builder
                 .RegisterModule(new LocalDbModule("Test"));
-            builder
-                .RegisterModule<QuartzIntegration.Module>();
-            builder
-                .RegisterModule<MessageBroker.Module>();
-            builder
-                .RegisterType<MessageHandler>()
-                .AsSelf()
-                .As<IMessageHandler>()
-                .SingleInstance();
+            return builder;
+        }
 
-            _container = builder.Build();
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            _container = Builder().Build();
 
             var schemaExport = new SchemaExport(_container.Resolve<IConfigurationFactory>().Build());
             schemaExport.Create(
@@ -139,9 +108,37 @@ namespace Test
             var messageQueue = new MessageQueue(MessageQueueIdentifier.MessageBroker);
             var messages = Enumerable.Range(0, _maxMessages).Select(i => new Message(Guid.NewGuid())).ToList();
             messages.ForEach(message => message.Queue = messageQueue);
-            var messageHandler = _container.Resolve<MessageHandler>();
-            Assert.That(messageHandler.Messages.Count, Is.EqualTo(0));
-            using(var scope = _container.BeginLifetimeScope())
+
+            var autoResetEvent = new AutoResetEvent(false);
+            var handledMessages = new List<Message>();
+
+            var mock = new Mock<IMessageHandler>();
+            mock.Setup(messageHandler => messageHandler.Type).Returns(typeof(Message));
+            mock.Setup(messageHandler => messageHandler.Handle(It.IsAny<IMessageBroker>(), It.IsAny<MessageBroker.Message>()))
+                .Callback<IMessageBroker, MessageBroker.Message>(
+                    (broker, message) =>
+                    {
+                        lock(handledMessages)
+                        {
+                            handledMessages.Add((Message)message);
+
+                            if(handledMessages.Count == _maxMessages)
+                                autoResetEvent.Set();
+                        }
+                    });
+
+            var builder = Builder();
+            builder
+                .RegisterModule<QuartzIntegration.Module>();
+            builder
+                .RegisterModule<MessageBroker.Module>();
+            builder
+                .RegisterInstance(mock.Object)
+                .As<IMessageHandler>();
+
+            var container = builder.Build();
+
+            using(var scope = container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
                 await session.SaveAsync(messageQueue);
@@ -159,17 +156,17 @@ namespace Test
                 .StartNow()
                 .Build();
 
-            var scheduler = _container.Resolve<IScheduler>();
+            var scheduler = container.Resolve<IScheduler>();
             scheduler.ListenerManager.AddJobListener(
-                _container.Resolve<IJobListener>(),
+                container.Resolve<IJobListener>(),
                 GroupMatcher<JobKey>.AnyGroup());
             await scheduler.Start();
             await scheduler.ScheduleJob(jobDetail, trigger);
 
-            Assert.That(await Task.Run(() => MessageHandler.AutoResetEvent.WaitOne(1000)), Is.True);
+            Assert.That(await Task.Run(() => autoResetEvent.WaitOne(1000)), Is.True);
 
             Assert.That(
-                messageHandler.Messages.OrderBy(message => message.Id).SequenceEqual(
+                handledMessages.OrderBy(message => message.Id).SequenceEqual(
                     messages.OrderBy(message => message.Id)), Is.True);
 
             await scheduler.Shutdown();
