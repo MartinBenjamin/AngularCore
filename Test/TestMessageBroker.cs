@@ -11,6 +11,7 @@ using Quartz;
 using Quartz.Impl.Matchers;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -167,6 +168,16 @@ namespace Test
             await scheduler.ScheduleJob(jobDetail, trigger);
 
             Assert.That(await Task.Run(() => autoResetEvent.WaitOne(1000)), Is.True);
+
+            using(var scope = container.BeginLifetimeScope())
+            {
+                var session = container.Resolve<ISession>();
+                using(session.BeginTransaction(IsolationLevel.RepeatableRead))
+                    Assert.That(await session
+                        .CreateCriteria<Message>()
+                        .SetLockMode(LockMode.Upgrade)
+                        .ListAsync<Message>(), Is.Empty);
+            }
 
             Assert.That(
                 handledMessages.OrderBy(message => message.Id).SequenceEqual(
