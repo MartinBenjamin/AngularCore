@@ -4,7 +4,10 @@ namespace Organisations
 {
     public class Branch: OrganisationalSubUnit
     {
-        
+        protected Branch(): base()
+        {
+        }
+
         public Branch(
             Guid         id,
             string       name,
