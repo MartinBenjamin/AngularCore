@@ -33,7 +33,8 @@ namespace Organisations
                 id,
                 name)
         {
-            Acronym = acronym;
+            Acronym   = acronym;
+            _subUnits = new List<OrganisationalSubUnit>();
         }
 
         public virtual bool Contains(
