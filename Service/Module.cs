@@ -3,6 +3,8 @@ using Geophysical;
 using Iso3166._1;
 using Iso3166._2;
 using Iso4217;
+using Organisations;
+using System;
 using UnsdM49;
 
 namespace Service
@@ -37,7 +39,9 @@ namespace Service
             builder
                 .RegisterType<NamedService<string, IntermediateRegion, NamedFilters>>()
                 .As<INamedService<string, IntermediateRegion, NamedFilters>>();
-
+            builder
+                .RegisterType<NamedService<Guid, Branch, NamedFilters>>()
+                .As<INamedService<Guid, Branch, NamedFilters>>();
         }
     }
 }
