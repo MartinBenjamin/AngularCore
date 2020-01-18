@@ -10,8 +10,10 @@ using NUnit.Framework;
 using Service;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Test
 {
@@ -87,6 +89,34 @@ namespace Test
                 Assert.That(
                     loaded.OrderBy(currency => currency.Id).SequenceEqual(currencies.OrderBy(currency => currency.Id)), Is.True);
             }
+        }
+
+        [Test]
+        [Explicit]
+        public async Task Lei()
+        {
+            using(var zipFile = new FileStream(
+                @"C:\Users\Martin\Downloads\20200118-gleif-concatenated-file-lei2.xml.5e22c9ddd878a.zip",
+                FileMode.Open))
+                using(var archive = new ZipArchive(zipFile, ZipArchiveMode.Read))
+                {
+                    Assert.That(archive.Entries.Count, Is.EqualTo(1));
+                    using(var stream = archive.Entries[0].Open())
+                        using(var xmlReader = XmlReader.Create(
+                            stream,
+                            new XmlReaderSettings
+                            {
+                                Async = true
+                            }))
+                        {
+                            Assert.That(xmlReader, Is.Not.Null);
+                            xmlReader.MoveToContent();
+                            xmlReader.ReadToFollowing("LEIRecord", "http://www.gleif.org/data/schema/leidata/2016");
+                            var n = xmlReader.Name;
+                            xmlReader.ReadToDescendant("LegalName", "http://www.gleif.org/data/schema/leidata/2016");
+                            var legalName = xmlReader.ReadElementContentAsString();
+                        }
+                }
         }
 
         [Test]
