@@ -110,10 +110,12 @@ namespace Test
                             }))
                         {
                             Assert.That(xmlReader, Is.Not.Null);
+                            var leiNamespace = "http://www.gleif.org/data/schema/leidata/2016";
                             xmlReader.MoveToContent();
-                            xmlReader.ReadToFollowing("LEIRecord", "http://www.gleif.org/data/schema/leidata/2016");
-                            var n = xmlReader.Name;
-                            xmlReader.ReadToDescendant("LegalName", "http://www.gleif.org/data/schema/leidata/2016");
+                            xmlReader.ReadToDescendant("LEIRecord", leiNamespace);
+                            xmlReader.ReadToDescendant("LEI", leiNamespace);
+                            var lei = xmlReader.ReadElementContentAsString();
+                            xmlReader.ReadToFollowing("LegalName", leiNamespace);
                             var legalName = xmlReader.ReadElementContentAsString();
                         }
                 }
