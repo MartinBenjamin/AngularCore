@@ -11,8 +11,11 @@ namespace Test
     public class TestRfc4180Parser
     {
         [TestCase("ISO3166-1.csv"   )]
-        [TestCase("ISO3166-2.GB.csv")]
-        [TestCase("ISO3166-2.US.csv")]
+        [TestCase("ISO3166-2-AE.csv")]
+        [TestCase("ISO3166-2-CA.csv")]
+        [TestCase("ISO3166-2-GB.csv")]
+        [TestCase("ISO3166-2-PT.csv")]
+        [TestCase("ISO3166-2-US.csv")]
         [TestCase("ISO4217.csv"     )]
         public void LoadFile(
             string fileName
