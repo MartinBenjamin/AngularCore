@@ -91,8 +91,7 @@ namespace Test
             }
         }
 
-        [Test]
-        [Explicit]
+        //[Test]
         public async Task Lei()
         {
             using(var zipFile = new FileStream(
