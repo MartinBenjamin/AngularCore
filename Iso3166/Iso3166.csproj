@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Geophysical\Geophysical.csproj" />
     <ProjectReference Include="..\Locations\Locations.csproj" />
   </ItemGroup>
 
