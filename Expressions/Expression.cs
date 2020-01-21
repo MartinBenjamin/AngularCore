@@ -18,13 +18,13 @@ namespace Expressions
         public abstract TResult Evaluate();
     }
 
-    public abstract class Expression<T, TResult>: DomainObject<Guid>
+    public abstract class Function<T, TResult>: DomainObject<Guid>
     {
-        protected Expression() : base()
+        protected Function() : base()
         {
         }
 
-        protected Expression(
+        protected Function(
             Guid id
             ) : base(id)
         {

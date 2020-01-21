@@ -2,10 +2,10 @@
 
 namespace Expressions
 {
-    public class PercentageOfTimeVaryingExpression: Expression<DateTime, decimal?>
+    public class PercentageOfTimeVaryingExpression: Function<DateTime, decimal?>
     {
         public PercentageExpression           Percentage { get; protected set; }
-        public Expression<DateTime, decimal?> Of         { get; protected set; }
+        public Function<DateTime, decimal?> Of         { get; protected set; }
 
         protected PercentageOfTimeVaryingExpression() : base()
         {
@@ -14,7 +14,7 @@ namespace Expressions
         public PercentageOfTimeVaryingExpression(
             Guid                           id,
             PercentageExpression           percentage,
-            Expression<DateTime, decimal?> of
+            Function<DateTime, decimal?> of
             ) : base(id)
         {
             Percentage = percentage;

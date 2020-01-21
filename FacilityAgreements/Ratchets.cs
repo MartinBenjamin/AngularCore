@@ -37,11 +37,11 @@ namespace FacilityAgreements
         }
     }
 
-    public class RatchetsExpression: Expression<DateTime, decimal?>
+    public class RatchetFunction: Function<DateTime, decimal?>
     {
         public virtual Ratchets Ratchets { get; protected set; }
 
-        protected RatchetsExpression() : base()
+        protected RatchetFunction() : base()
         {
         }
 
