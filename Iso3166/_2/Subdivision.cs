@@ -1,11 +1,11 @@
-﻿using Geophysical;
+﻿using Locations;
 using System.Globalization;
 
 namespace Iso3166._2
 {
     using _1;
 
-    public class Subdivision: GeographicalSubArea
+    public class Subdivision: GeographicSubregion
     {
         public virtual string      Code              { get; protected set; }
         public virtual Country     Country           { get; protected set; }
@@ -25,7 +25,7 @@ namespace Iso3166._2
             ) : base(
                 code,
                 name,
-                (GeographicalArea)parentSubdivision ?? country)
+                (GeographicRegion)parentSubdivision ?? country)
         {
             Code              = code;
             Country           = country;

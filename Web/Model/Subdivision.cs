@@ -1,6 +1,6 @@
 ﻿namespace Web.Model
 {
-    public class Subdivision: GeographicalSubArea
+    public class Subdivision: GeographicalSubregion
     {
         public string Code              { get; set; }
         public string Country           { get; set; }

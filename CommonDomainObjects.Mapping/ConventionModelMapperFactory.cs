@@ -32,10 +32,10 @@ namespace CommonDomainObjects.Mapping
                         });
             };
 
-            mapper.AddMapping<GeographicalArea               >();
-            mapper.AddMapping<GeographicalSubArea            >();
-            mapper.AddMapping<GeographicalAreaHierarchy      >();
-            mapper.AddMapping<GeographicalAreaHierarchyMember>();
+            mapper.AddMapping<GeographicRegion               >();
+            mapper.AddMapping<GeographicSubregion            >();
+            mapper.AddMapping<GeographicRegionHierarchy      >();
+            mapper.AddMapping<GeographicRegionHierarchyMember>();
             mapper.AddMapping<CountryJoin                    >();
             mapper.AddMapping<SubdivisionJoin                >();
             mapper.AddMapping<Currency                       >();

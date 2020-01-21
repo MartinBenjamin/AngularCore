@@ -2,14 +2,14 @@
 
 namespace CommonDomainObjects.Mapping
 {
-    public class GeographicalArea: ClassMapping<Geophysical.GeographicalArea>
+    public class GeographicRegion: ClassMapping<Locations.GeographicRegion>
     {
         public static readonly string IdSqlType = "NVARCHAR(6)";
 
-        public GeographicalArea()
+        public GeographicRegion()
         {
             Id(
-                geographicalArea => geographicalArea.Id,
+                geographicRegion => geographicRegion.Id,
                 idMapper => idMapper.Column(columnMapper => columnMapper.SqlType(IdSqlType)));
 
             Discriminator(
@@ -20,8 +20,8 @@ namespace CommonDomainObjects.Mapping
                 });
 
             Bag(
-                geographicalArea => geographicalArea.SubAreas,
-                collectionMapper => collectionMapper.Key(keyMapper => keyMapper.Column("AreaId")));
+                geographicRegion => geographicRegion.Subregions,
+                collectionMapper => collectionMapper.Key(keyMapper => keyMapper.Column("RegionId")));
         }
     }
 }

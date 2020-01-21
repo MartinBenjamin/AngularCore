@@ -1,6 +1,6 @@
 ﻿using Autofac;
-using Geophysical;
 using Iso4217;
+using Locations;
 using System.Collections.Generic;
 
 namespace Data
@@ -22,8 +22,8 @@ namespace Data
                 .SingleInstance();
 
             builder
-                .RegisterType<GeographicalAreaHierarchyLoader>()
-                .As<IEtl<GeographicalAreaHierarchy>>();
+                .RegisterType<GeographicRegionHierarchyLoader>()
+                .As<IEtl<GeographicRegionHierarchy>>();
         }
     }
 }

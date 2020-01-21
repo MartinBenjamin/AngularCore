@@ -1,8 +1,8 @@
-﻿using Geophysical;
+﻿using Locations;
 
 namespace UnsdM49
 {
-    public class Global: GeographicalArea
+    public class Global: GeographicRegion
     {
         protected Global() : base()
         {

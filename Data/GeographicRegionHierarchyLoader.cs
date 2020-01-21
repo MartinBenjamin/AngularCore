@@ -1,7 +1,7 @@
 ﻿using CommonDomainObjects;
-using Geophysical;
 using Iso3166._1;
 using Iso3166._2;
+using Locations;
 using NHibernate;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    public class GeographicalAreaHierarchyLoader: IEtl<GeographicalAreaHierarchy>
+    public class GeographicRegionHierarchyLoader: IEtl<GeographicRegionHierarchy>
     {
         private readonly ICsvExtractor   _csvExtractor;
         private readonly ISessionFactory _sessionFactory;
 
-        public GeographicalAreaHierarchyLoader(
+        public GeographicRegionHierarchyLoader(
             ICsvExtractor   csvExtractor,
             ISessionFactory sessionFactory
             )
@@ -23,18 +23,18 @@ namespace Data
             _sessionFactory = sessionFactory;
         }
 
-        async Task<GeographicalAreaHierarchy> IEtl<GeographicalAreaHierarchy>.ExecuteAsync()
+        async Task<GeographicRegionHierarchy> IEtl<GeographicRegionHierarchy>.ExecuteAsync()
         {
-            var emptyGeographicalAreaArray = new GeographicalArea[] { };
-            IDictionary<string, GeographicalArea> areaMap = ExtractIso3166_1()
-                .Cast<GeographicalArea>()
+            var emptyGeographicRegionArray = new GeographicRegion[] { };
+            IDictionary<string, GeographicRegion> regionMap = ExtractIso3166_1()
+                .Cast<GeographicRegion>()
                 .ToDictionary(country => country.Id);
 
-            var areaHierarchy = areaMap
+            var regionHierarchy = regionMap
                 .Values
-                .ToDictionary<GeographicalArea, GeographicalArea, IList<GeographicalArea>>(
-                    area => area,
-                    area => emptyGeographicalAreaArray);
+                .ToDictionary<GeographicRegion, GeographicRegion, IList<GeographicRegion>>(
+                    region => region,
+                    region => emptyGeographicRegionArray);
 
             var recordMap = new[]
             {
@@ -69,9 +69,9 @@ namespace Data
 
                         Subdivision parent = null;
                         if(!string.IsNullOrEmpty(parentCode))
-                            parent = (Subdivision)areaMap[parentCode];
+                            parent = (Subdivision)regionMap[parentCode];
 
-                        var country = (Country)areaMap[countryCode];
+                        var country = (Country)regionMap[countryCode];
 
                         var subdivision = new Subdivision(
                             code,
@@ -80,13 +80,13 @@ namespace Data
                             parent,
                             record[0]);
 
-                        areaMap[subdivision.Id] = subdivision;
-                        areaHierarchy[subdivision] = new[] { subdivision.Area };
+                        regionMap[subdivision.Id] = subdivision;
+                        regionHierarchy[subdivision] = new[] { subdivision.Region };
                     });
 
-            var geographicalAreaHierarchy = new GeographicalAreaHierarchy(areaHierarchy);
-            await LoadAsync(geographicalAreaHierarchy);
-            return geographicalAreaHierarchy;
+            var geographicRegionHierarchy = new GeographicRegionHierarchy(regionHierarchy);
+            await LoadAsync(geographicRegionHierarchy);
+            return geographicRegionHierarchy;
         }
 
         private IList<Country> ExtractIso3166_1()
@@ -102,7 +102,7 @@ namespace Data
         }
 
         private async Task LoadAsync(
-            GeographicalAreaHierarchy hierarchy
+            GeographicRegionHierarchy hierarchy
             )
         {
             using(var session = _sessionFactory.OpenSession())

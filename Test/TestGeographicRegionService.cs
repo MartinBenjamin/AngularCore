@@ -1,6 +1,6 @@
 ﻿using Autofac;
-using Geophysical;
 using Iso3166._1;
+using Locations;
 using NHibernate;
 using NUnit.Framework;
 using Service;
@@ -8,7 +8,7 @@ using Service;
 namespace Test
 {
     [TestFixture]
-    public class TestGeographicalAreaService: TestNamedService<string, GeographicalArea, NamedFilters>
+    public class TestGeographicRegionService: TestNamedService<string, GeographicRegion, NamedFilters>
     {
         [SetUp]
         public void SetUp()
@@ -16,19 +16,19 @@ namespace Test
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
-                var geographicalArea = session.Get<Country>("AA");
-                if(geographicalArea != null)
-                    session.Delete(geographicalArea);
+                var geographicRegion = session.Get<Country>("AA");
+                if(geographicRegion != null)
+                    session.Delete(geographicRegion);
 
                 session.Flush();
             }
         }
 
-        public override GeographicalArea Create(
+        public override GeographicRegion Create(
             string name
             )
         {
-            var geographicalArea = new Country(
+            var geographicRegion = new Country(
                 "AA",
                 "AAA",
                 null,
@@ -38,11 +38,11 @@ namespace Test
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
-                session.Save(geographicalArea);
+                session.Save(geographicRegion);
                 session.Flush();
             }
 
-            return geographicalArea;
+            return geographicRegion;
         }
     }
 }

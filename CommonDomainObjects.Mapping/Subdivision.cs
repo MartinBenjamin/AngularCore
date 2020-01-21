@@ -13,10 +13,10 @@ namespace CommonDomainObjects.Mapping
                         columnMapper =>
                         {
                             columnMapper.Name("Code");
-                            columnMapper.SqlType(GeographicalArea.IdSqlType);
+                            columnMapper.SqlType(GeographicRegion.IdSqlType);
                         });
 
-                    keyMapper.ForeignKey("FK_" + nameof(Subdivision) + nameof(GeographicalArea));
+                    keyMapper.ForeignKey("FK_" + nameof(Subdivision) + nameof(GeographicRegion));
                 });
 
             Property(
@@ -29,11 +29,11 @@ namespace CommonDomainObjects.Mapping
 
             ManyToOne(
                 subdivision => subdivision.Country,
-                manyToOneMapper => manyToOneMapper.Column(columnMapper => columnMapper.SqlType(GeographicalArea.IdSqlType)));
+                manyToOneMapper => manyToOneMapper.Column(columnMapper => columnMapper.SqlType(GeographicRegion.IdSqlType)));
 
             ManyToOne(
                 subdivision => subdivision.ParentSubdivision,
-                manyToOneMapper => manyToOneMapper.Column(columnMapper => columnMapper.SqlType(GeographicalArea.IdSqlType)));
+                manyToOneMapper => manyToOneMapper.Column(columnMapper => columnMapper.SqlType(GeographicRegion.IdSqlType)));
 
         }
     }

@@ -8,7 +8,7 @@ namespace CommonDomainObjects.Mapping
         {
             ManyToOne(
                 legalEntity => legalEntity.DomiciledIn,
-                manyToOneMapping => manyToOneMapping.Column(columnMapping => columnMapping.SqlType(GeographicalArea.IdSqlType)));
+                manyToOneMapping => manyToOneMapping.Column(columnMapping => columnMapping.SqlType(GeographicRegion.IdSqlType)));
         }
     }
 }

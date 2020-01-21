@@ -13,10 +13,10 @@ namespace CommonDomainObjects.Mapping
                         columnMapper =>
                         {
                             columnMapper.Name("Alpha2Code");
-                            columnMapper.SqlType(GeographicalArea.IdSqlType);
+                            columnMapper.SqlType(GeographicRegion.IdSqlType);
                         });
 
-                    keyMapper.ForeignKey("FK_" + nameof(Country) + nameof(GeographicalArea));
+                    keyMapper.ForeignKey("FK_" + nameof(Country) + nameof(GeographicRegion));
                 });
 
             Property(

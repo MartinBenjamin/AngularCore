@@ -1,8 +1,8 @@
-﻿using Geophysical;
+﻿using Locations;
 
 namespace Iso3166._1
 {
-    public class Country: GeographicalArea
+    public class Country: GeographicRegion
     {
         public virtual string Alpha2Code  { get; protected set; }
         public virtual string Alpha3Code  { get; protected set; }

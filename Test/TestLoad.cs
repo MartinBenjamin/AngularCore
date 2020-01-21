@@ -1,8 +1,8 @@
 ﻿using Autofac;
 using CommonDomainObjects;
 using Data;
-using Geophysical;
 using Iso4217;
+using Locations;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
 using NHibernateIntegration;
@@ -55,13 +55,13 @@ namespace Test
         [Test]
         public async Task Iso3166()
         {
-            var hierarchy = await _container.Resolve<IEtl<GeographicalAreaHierarchy>>().ExecuteAsync();
+            var hierarchy = await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
             Assert.That(hierarchy.Members.Count, Is.GreaterThan(0));
             Validate(hierarchy);
 
             using(var scope = _container.BeginLifetimeScope())
             {
-                var loadedHierarchy = await scope.Resolve<ISession>().GetAsync<GeographicalAreaHierarchy>(hierarchy.Id);
+                var loadedHierarchy = await scope.Resolve<ISession>().GetAsync<GeographicRegionHierarchy>(hierarchy.Id);
                 Assert.That(loadedHierarchy, Is.Not.Null);
                 Validate(loadedHierarchy);
 
@@ -123,12 +123,12 @@ namespace Test
         [Test]
         public async Task Load()
         {
-            await _container.Resolve<IEtl<GeographicalAreaHierarchy>>().ExecuteAsync();
+            await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
             await _container.Resolve<IEtl<IEnumerable<Currency>>>().ExecuteAsync();
         }
 
         private void Validate(
-            GeographicalAreaHierarchy hierarchy
+            GeographicRegionHierarchy hierarchy
             )
         {
             hierarchy
@@ -139,18 +139,18 @@ namespace Test
                     {
                         if(member.Parent != null)
                         {
-                            Assert.That(member.Member.Is<GeographicalSubArea>());
+                            Assert.That(member.Member.Is<GeographicSubregion>());
                             Assert.That(member.Parent.Children.Contains(member));
-                            Assert.That(member.Parent.Member, Is.EqualTo(member.Member.As<GeographicalSubArea>().Area));
-                            Assert.That(member.Parent.Member.SubAreas.Contains(member.Member));
+                            Assert.That(member.Parent.Member, Is.EqualTo(member.Member.As<GeographicSubregion>().Region));
+                            Assert.That(member.Parent.Member.Subregions.Contains(member.Member));
                         }
 
                         foreach(var child in member.Children)
                         {
-                            Assert.That(child.Member.Is<GeographicalSubArea>());
+                            Assert.That(child.Member.Is<GeographicSubregion>());
                             Assert.That(child.Parent, Is.EqualTo(member));
-                            Assert.That(child.Member.As<GeographicalSubArea>().Area, Is.EqualTo(member.Member));
-                            Assert.That(member.Member.SubAreas.Contains(child.Member));
+                            Assert.That(child.Member.As<GeographicSubregion>().Region, Is.EqualTo(member.Member));
+                            Assert.That(member.Member.Subregions.Contains(child.Member));
                         }
                     });
         }

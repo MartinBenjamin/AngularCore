@@ -1,8 +1,8 @@
-﻿using Geophysical;
+﻿using Locations;
 
 namespace UnsdM49
 {
-    public class IntermediateRegion: GeographicalSubArea
+    public class IntermediateRegion: GeographicSubregion
     {
         protected IntermediateRegion() : base()
         {
@@ -11,11 +11,11 @@ namespace UnsdM49
         public IntermediateRegion(
             string           code,
             string           name,
-            GeographicalArea area
+            GeographicRegion region
             ) : base(
                 code,
                 name,
-                area)
+                region)
         {
         }
     }
