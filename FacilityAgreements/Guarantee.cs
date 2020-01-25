@@ -9,7 +9,9 @@ namespace FacilityAgreements
     public class Guarantee: FacilityCommitment
     {
         // A party that guarantees, endorses, or provides indemnity for some obligation on behalf of some other party.
-        public AgreementParty Guarantor { get; protected set; }
+        public virtual AgreementParty Guarantor       { get; protected set; }
+        public virtual decimal?       CommercialCover { get; protected set; }
+        public virtual decimal?       PoliticalCover  { get; protected set; }
 
         protected Guarantee() : base()
         {
@@ -18,13 +20,17 @@ namespace FacilityAgreements
         public Guarantee(
             Guid           id,
             Facility       facility,
-            AgreementParty guarantor
+            AgreementParty guarantor,
+            decimal?       commercialCover,
+            decimal?       politicalCover
             ) : base(
                 id,
                 facility,
                 new List<AgreementParty> { guarantor })
         {
-            Guarantor = guarantor;
+            Guarantor       = guarantor;
+            CommercialCover = commercialCover;
+            PoliticalCover  = politicalCover;
         }
     }
 }
