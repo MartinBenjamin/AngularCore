@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 namespace FacilityAgreements
 {
+    // ACommitment related to a Facility.
     public abstract class FacilityCommitment: ContractualCommitment
     {
         public virtual Facility Facility { get; protected set; }
