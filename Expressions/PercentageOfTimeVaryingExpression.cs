@@ -4,16 +4,16 @@ namespace Expressions
 {
     public class PercentageOfTimeVaryingExpression: Function<DateTime, decimal?>
     {
-        public PercentageExpression           Percentage { get; protected set; }
-        public Function<DateTime, decimal?> Of         { get; protected set; }
+        public virtual PercentageExpression         Percentage { get; protected set; }
+        public virtual Function<DateTime, decimal?> Of         { get; protected set; }
 
         protected PercentageOfTimeVaryingExpression() : base()
         {
         }
 
         public PercentageOfTimeVaryingExpression(
-            Guid                           id,
-            PercentageExpression           percentage,
+            Guid                         id,
+            PercentageExpression         percentage,
             Function<DateTime, decimal?> of
             ) : base(id)
         {
