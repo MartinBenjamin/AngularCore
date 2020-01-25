@@ -6,10 +6,10 @@ namespace Contracts
 {
     public class Contract: Agreement
     {
-        public virtual LegalSystem               GoverningLaw  { get; protected set; }
-        public virtual IList<ContractDate>       Dates         { get; protected set; }
-        public virtual Contract                  Supersedes    { get; protected set; }
-        public virtual IList<ContractualElement> Elements      { get; protected set; }
+        public virtual Jurisdiction              GovernedBy { get; protected set; }
+        public virtual IList<ContractDate>       Dates      { get; protected set; }
+        public virtual Contract                  Supersedes { get; protected set; }
+        public virtual IList<ContractualElement> Elements   { get; protected set; }
 
         protected Contract(): base()
         {
@@ -18,15 +18,15 @@ namespace Contracts
         protected Contract(
             Guid         id,
             string       title,
-            LegalSystem  governingLaw,
+            Jurisdiction governedBy,
             Contract     supersedes
             ): base(
                 id,
                 title)
         {
-            GoverningLaw  = governingLaw;
-            Supersedes    = supersedes;
-            Elements      = new List<ContractualElement>();
+            GovernedBy = governedBy;
+            Supersedes = supersedes;
+            Elements   = new List<ContractualElement>();
         }
     }
 }

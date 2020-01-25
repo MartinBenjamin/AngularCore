@@ -17,7 +17,8 @@ namespace FacilityAgreements
             Expression<DateTime>    date
             ) : base(
                 id,
-                facility)
+                facility,
+                null)
         {
         }
     }

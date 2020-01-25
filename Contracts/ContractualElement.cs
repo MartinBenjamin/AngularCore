@@ -5,7 +5,7 @@ namespace Contracts
 {
     public abstract class ContractualElement: DomainObject<Guid>
     {
-        public Contract Contract { get; protected set; }
+        public virtual Contract Contract { get; protected set; }
 
         protected ContractualElement() : base()
         {

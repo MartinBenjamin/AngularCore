@@ -13,15 +13,15 @@ namespace FacilityAgreements
         }
 
         public FacilityAgreement(
-            Guid        id,
-            string      title,
-            LegalSystem governingLaw,
-            Contract    supersedes
+            Guid         id,
+            string       title,
+            Jurisdiction governedBy,
+            Contract     supersedes
 
             ) : base(
                 id,
                 title,
-                governingLaw,
+                governedBy,
                 supersedes)
         {
             Facilities  = new List<Facility>();

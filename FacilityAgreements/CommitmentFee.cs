@@ -19,7 +19,8 @@ namespace FacilityAgreements
             Function<DateTime, decimal?> actual
             ) : base(
                 id,
-                facility)
+                facility,
+                null)
         {
             Estimated = estimated;
             Actual    = actual;

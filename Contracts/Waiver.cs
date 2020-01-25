@@ -5,7 +5,7 @@ namespace Contracts
 {
     public class Waiver: DomainObject<Guid>
     {
-        public Contract Contract { get; protected set; }
+        public virtual Contract Contract { get; protected set; }
 
         protected Waiver() : base()
         {

@@ -32,7 +32,9 @@ namespace FacilityAgreements
             Expression<DateTime?> maturityDate
             ) : base(
                 id,
-                agreement)
+                agreement,
+                null,
+                null)
         {
             Agreement                 = agreement;
             Name                      = name;
