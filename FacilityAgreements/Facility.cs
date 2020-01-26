@@ -1,4 +1,5 @@
-﻿using Contracts;
+﻿using Agreements;
+using Contracts;
 using Expressions;
 using Iso4217;
 using Organisations;
@@ -9,7 +10,6 @@ namespace FacilityAgreements
 {
     public class Facility: ContractualCommitment
     {
-        public virtual FacilityAgreement         Agreement                 { get; protected set; }
         public virtual string                    Name                      { get; protected set; }
         public virtual Organisation              BookingOffice             { get; protected set; }
         public virtual Variable<decimal?>        TotalCommitments          { get; protected set; }
@@ -24,7 +24,7 @@ namespace FacilityAgreements
 
         public Facility(
             Guid                  id,
-            FacilityAgreement     agreement,
+            Contract              facilityAgreement,
             string                name,
             Organisation          bookingOffice,
             MoneyAmount           totalCommitments,
@@ -32,11 +32,11 @@ namespace FacilityAgreements
             Expression<DateTime?> maturityDate
             ) : base(
                 id,
-                agreement,
-                null,
+                facilityAgreement,
+                new List<AgreementParty>(),
+                new List<AgreementParty>(),
                 null)
         {
-            Agreement                 = agreement;
             Name                      = name;
             BookingOffice             = bookingOffice;
             Commitments               = new List<FacilityCommitment>();
@@ -44,7 +44,6 @@ namespace FacilityAgreements
             Currency                  = totalCommitments.Currency;
             AvailabilityPeriodEndDate = availabilityPeriodEndDate;
             MaturityDate              = maturityDate;
-            Agreement.Facilities.Add(this);
         }
     }
 }

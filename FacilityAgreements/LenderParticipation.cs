@@ -27,7 +27,8 @@ namespace FacilityAgreements
             ): base(
                 id,
                 facility,
-                new List<AgreementParty> { lender })
+                new List<AgreementParty> { lender },
+                new List<AgreementParty>())
         {
             Lender                = lender;
             UnderwriteAmount      = underwriteAmount;

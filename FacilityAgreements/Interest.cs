@@ -21,8 +21,7 @@ namespace FacilityAgreements
             Function<DateTime, decimal?> margin
             ) : base(
                 id,
-                facility,
-                null)
+                facility)
         {
             ReferenceRate   = referenceRate;
             EstimatedMargin = estimatedMargin;

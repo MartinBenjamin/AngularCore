@@ -26,7 +26,8 @@ namespace FacilityAgreements
             ) : base(
                 id,
                 facility,
-                new List<AgreementParty> { guarantor })
+                new List<AgreementParty> { guarantor },
+                new List<AgreementParty>())
         {
             Guarantor       = guarantor;
             CommercialCover = commercialCover;

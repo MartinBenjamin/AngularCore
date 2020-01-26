@@ -1,5 +1,7 @@
-﻿using Expressions;
+﻿using Agreements;
+using Expressions;
 using System;
+using System.Collections.Generic;
 
 namespace FacilityAgreements
 {
@@ -19,8 +21,7 @@ namespace FacilityAgreements
             Expression<DateTime> date
             ) : base(
                 id,
-                facility,
-                null)
+                facility)
         {
             Amount = amount;
             Date   = date;

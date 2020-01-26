@@ -17,7 +17,7 @@ namespace Contracts
             ) : base(id)
         {
             Contract = contract;
-            Contract.Elements.Add(this);
+            //Contract.Elements.Add(this);
         }
     }
 }

@@ -17,8 +17,7 @@ namespace FacilityAgreements
             MoneyAmount totalCommitments
             ): base(
                 id,
-                facility,
-                null)
+                facility)
         {
             Value = totalCommitments;
         }

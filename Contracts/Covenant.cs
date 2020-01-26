@@ -19,8 +19,9 @@ namespace Contracts
             ) : base(
                 id,
                 contract,
-                null,
-                new List<AgreementParty> { covenantor })
+                new List<AgreementParty> { covenantor },
+                new List<AgreementParty>(),
+                null)
         {
             Covenantor = covenantor;
         }

@@ -5,6 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="FacilityAgreement.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="FacilityAgreement.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Contracts\Contracts.csproj" />
     <ProjectReference Include="..\Expressions\Expressions.csproj" />
     <ProjectReference Include="..\Iso4217\Iso4217.csproj" />

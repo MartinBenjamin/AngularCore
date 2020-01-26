@@ -17,15 +17,28 @@ namespace FacilityAgreements
         protected FacilityCommitment(
             Guid                  id,
             Facility              facility,
-            IList<AgreementParty> obligors
+            IList<AgreementParty> obligors,
+            IList<AgreementParty> obligees
             ) : base(
                 id,
                 facility.Contract,
-                facility,
-                obligors)
+                obligors,
+                obligees,
+                facility)
         {
             Facility = facility;
             Facility.Commitments.Add(this);
+        }
+
+        protected FacilityCommitment(
+            Guid     id,
+            Facility facility
+            ) : this(
+                id,
+                facility,
+                new List<AgreementParty>(),
+                new List<AgreementParty>())
+        {
         }
     }
 }
