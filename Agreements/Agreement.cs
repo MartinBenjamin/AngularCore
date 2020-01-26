@@ -15,15 +15,13 @@ namespace Agreements
         }
 
         protected Agreement(
-            Guid                  id,
-            string                title,
-            IList<AgreementParty> parties,
-            IList<Commitment>     confers
+            Guid   id,
+            string title
             ) : base(id)
         {
             Title   = title;
             Parties = new List<AgreementParty>();
-            Confers = confers;
+            Confers = new List<Commitment    >();
         }
     }
 }

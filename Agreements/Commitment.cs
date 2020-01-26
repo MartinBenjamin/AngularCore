@@ -24,6 +24,7 @@ namespace Agreements
             Agreement = agreement;
             Obligors  = obligors;
             Obligees  = obligees;
+            Agreement.Confers.Add(this);
         }
     }
 }
