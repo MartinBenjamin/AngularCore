@@ -10,7 +10,6 @@ namespace Contracts
     {
         public virtual Contract                     Contract { get; protected set; }
         public virtual ContractualCommitment        PartOf   { get; protected set; }
-        // Parties that are bound legally or by agreement to repay a debt, make a payment, do something, or refrain from doing something.
         public virtual IList<ContractualCommitment> Parts    { get; protected set; }
 
         protected ContractualCommitment() : base()
