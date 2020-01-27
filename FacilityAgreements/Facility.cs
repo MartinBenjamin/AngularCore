@@ -31,7 +31,6 @@ namespace FacilityAgreements
                 id,
                 facilityAgreement,
                 new List<AgreementParty>(),
-                new List<AgreementParty>(),
                 null)
         {
             Name                      = name;

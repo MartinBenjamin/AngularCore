@@ -20,12 +20,10 @@ namespace Contracts
             Guid                  id,
             Contract              contract,
             IList<AgreementParty> obligors,
-            IList<AgreementParty> obligees,
             ContractualCommitment partOf
             ) : base(
                 id,
                 contract,
-                obligees,
                 obligors)
         {
             Contract = contract;

@@ -20,7 +20,6 @@ namespace Contracts
                 id,
                 contract,
                 new List<AgreementParty> { covenantor },
-                new List<AgreementParty>(),
                 null)
         {
             Covenantor = covenantor;

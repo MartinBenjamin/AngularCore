@@ -17,13 +17,11 @@ namespace FacilityAgreements
         protected FacilityCommitment(
             Guid                  id,
             Facility              facility,
-            IList<AgreementParty> obligors,
-            IList<AgreementParty> obligees
+            IList<AgreementParty> obligors
             ) : base(
                 id,
                 facility.Contract,
                 obligors,
-                obligees,
                 facility)
         {
             Facility = facility;
@@ -36,7 +34,6 @@ namespace FacilityAgreements
             ) : this(
                 id,
                 facility,
-                new List<AgreementParty>(),
                 new List<AgreementParty>())
         {
         }
