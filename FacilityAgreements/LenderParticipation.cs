@@ -1,4 +1,5 @@
 ﻿using Agreements;
+using Expressions;
 using System;
 using System.Collections.Generic;
 
@@ -6,11 +7,12 @@ namespace FacilityAgreements
 {
     public class LenderParticipation: FacilityCommitment
     {
-        public virtual AgreementParty Lender                { get; protected set; }
-        public virtual decimal?       UnderwriteAmount      { get; protected set; }
-        public virtual decimal?       CreditSoughtLimit     { get; protected set; }
-        public virtual decimal?       AnticipatedHoldAmount { get; protected set; }
-        public virtual decimal?       ActualAllocation      { get; protected set; }
+        public virtual AgreementParty       Lender                { get; protected set; }
+        public virtual Expression<decimal?> Amount                { get; protected set; }
+        public virtual decimal?             UnderwriteAmount      { get; protected set; }
+        public virtual decimal?             CreditSoughtLimit     { get; protected set; }
+        public virtual decimal?             AnticipatedHoldAmount { get; protected set; }
+        public virtual decimal?             ActualAllocation      { get; protected set; }
 
         protected LenderParticipation() : base()
         {
@@ -34,6 +36,7 @@ namespace FacilityAgreements
             CreditSoughtLimit     = creditSoughtLimit;
             AnticipatedHoldAmount = anticipatedHoldAmount;
             ActualAllocation      = actualAllocation;
+            Amount                = new Variable<decimal?>(actualAllocation ?? anticipatedHoldAmount);
         }
     }
 }

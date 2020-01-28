@@ -5,9 +5,11 @@ namespace FacilityAgreements
 {
     public class FacilityFee: FacilityCommitment
     {
-        public virtual FeeType              Type   { get; protected set; }
-        public virtual Expression<decimal?> Amount { get; protected set; }
-        public virtual Expression<DateTime> Date   { get; protected set; }
+        public virtual FeeType              Type                 { get; protected set; }
+        public virtual Expression<decimal?> Amount               { get; protected set; }
+        public virtual Expression<DateTime> ExpectedReceivedDate { get; protected set; }
+        public virtual bool                 Received             { get; protected set; }
+        public virtual DateTime?            AccrualDate          { get; protected set; }
 
         protected FacilityFee() : base()
         {
@@ -18,14 +20,18 @@ namespace FacilityAgreements
             Facility             facility,
             FeeType              type,
             Expression<decimal?> amount,
-            Expression<DateTime> date
+            Expression<DateTime> expectedReceivedDate,
+            bool                 received,
+            DateTime?            accrualDate
             ) : base(
                 id,
                 facility)
         {
-            Type   = type;
-            Amount = amount;
-            Date   = date;
+            Type                 = type;
+            Amount               = amount;
+            ExpectedReceivedDate = expectedReceivedDate;
+            Received             = received;
+            AccrualDate          = accrualDate;
         }
     }
 }
