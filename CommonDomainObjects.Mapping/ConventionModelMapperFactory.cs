@@ -14,7 +14,9 @@ namespace CommonDomainObjects.Mapping
             mapper.IsEntity((
                 Type type,
                 bool declared
-                ) => IsDomainObject<Guid>(type) || IsDomainObject<string>(type));
+                ) => IsDomainObject<Guid>(type)
+                    || IsDomainObject<string>(type)
+                    || typeof(Agents.Identifier).IsAssignableFrom(type));
 
             mapper.BeforeMapJoinedSubclass += (
                 IModelInspector                 modelInspector,
@@ -44,6 +46,8 @@ namespace CommonDomainObjects.Mapping
             mapper.AddMapping<SubRegion                      >();
             mapper.AddMapping<IntermediateRegion             >();
             mapper.AddMapping<AutonomousAgent                >();
+            mapper.AddMapping<Identifier                     >();
+            mapper.AddMapping<IdentificationScheme           >();
             mapper.AddMapping<Organisation                   >();
             mapper.AddMapping<OrganisationalSubUnit          >();
             mapper.AddMapping<Branch                         >();

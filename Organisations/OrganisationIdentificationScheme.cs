@@ -1,9 +1,9 @@
-﻿using CommonDomainObjects;
+﻿using Agents;
 using System;
 
 namespace Organisations
 {
-    public class OrganisationIdentificationScheme: Named<Guid>
+    public class OrganisationIdentificationScheme: IdentificationScheme
     {
 
         protected OrganisationIdentificationScheme() : base()

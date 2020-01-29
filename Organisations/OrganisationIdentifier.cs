@@ -1,10 +1,11 @@
-﻿namespace Organisations
+﻿using Agents;
+
+namespace Organisations
 {
-    public class OrganisationIdentifier
+    public class OrganisationIdentifier: Identifier
     {
-        public OrganisationIdentificationScheme Scheme     { get; protected set; }
-        public string                           Value      { get; protected set; }
-        public Organisation                     Identifies { get; protected set; }
+        new public virtual OrganisationIdentificationScheme Scheme     { get; protected set; }
+        new public virtual Organisation                     Identifies { get; protected set; }
 
         protected OrganisationIdentifier()
         {
@@ -14,7 +15,10 @@
             OrganisationIdentificationScheme scheme,
             string                           value,
             Organisation                     identifies
-            )
+            ): base(
+                scheme,
+                value,
+                identifies)
         {
             Scheme     = scheme;
             Value      = value;
