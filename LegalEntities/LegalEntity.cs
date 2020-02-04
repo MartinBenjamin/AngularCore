@@ -6,7 +6,7 @@ namespace LegalEntities
 {
     public class LegalEntity: Organisation
     {
-        public virtual Country DomiciledIn { get; protected set; }
+        public virtual Country Country { get; protected set; }
 
         protected LegalEntity() : base()
         {
@@ -16,24 +16,24 @@ namespace LegalEntities
             Guid    id,
             string  name,
             string  acronym,
-            Country domiciledIn
+            Country country
             ) : base(
                 id,
                 name,
                 acronym)
         {
-            DomiciledIn = domiciledIn;
+            Country = country;
         }
 
         public LegalEntity(
             string  name,
             string  acronym,
-            Country domiciledIn
+            Country country
             ) : this(
                 Guid.NewGuid(),
                 name,
                 acronym,
-                domiciledIn)
+                country)
         {
         }
     }
