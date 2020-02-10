@@ -42,13 +42,15 @@ namespace CommonDomainObjects
         }
 
         internal protected ObjectVersion(
+            TId        id,
             TVersioned versioned,
             TObject    @object
-            )
+            ) : base(id)
         {
+            Versioned = versioned;
             Versioned._versions.Add((TVersion)this);
-            Number = Versioned._versions.Count;
-            Object = @object;
+            Number    = Versioned._versions.Count;
+            Object    = @object;
         }
     }
 }
