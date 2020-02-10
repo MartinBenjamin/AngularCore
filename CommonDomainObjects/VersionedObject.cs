@@ -33,9 +33,9 @@ namespace CommonDomainObjects
         where TVersioned: VersionedObject<TId, TVersioned, TVersion, TObject>
         where TVersion: ObjectVersion<TId, TVersioned, TVersion, TObject>
     {
-        public virtual TVersioned  Versioned { get; protected set; }
-        public virtual int         Number    { get; protected set; }
-        new public virtual TObject Object    { get; protected set; }
+        public virtual     TVersioned Versioned { get; protected set; }
+        public virtual     int        Number    { get; protected set; }
+        new public virtual TObject    Object    { get; protected set; }
 
         protected ObjectVersion() : base()
         {
