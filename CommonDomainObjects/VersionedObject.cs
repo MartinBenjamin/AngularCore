@@ -5,9 +5,34 @@ namespace CommonDomainObjects
 {
     public class VersionedObject<TId, TVersioned, TVersion, TObject>: DomainObject<TId>
         where TVersioned: VersionedObject<TId, TVersioned, TVersion, TObject>
-        where TVersion: ObjectVersion<TId, TVersioned, TVersion, TObject>
+        where TVersion: VersionedObject<TId, TVersioned, TVersion, TObject>.ObjectVersion
     {
-        internal protected IList<TVersion> _versions;
+        private IList<TVersion> _versions;
+
+        public class ObjectVersion: DomainObject<TId>
+        {
+            public virtual     TVersioned Versioned { get; protected set; }
+            public virtual     int        Number    { get; protected set; }
+            new public virtual TObject    Object    { get; protected set; }
+
+            protected ObjectVersion() : base()
+            {
+            }
+
+            public ObjectVersion(
+                TId        id,
+                TVersioned versioned,
+                TObject    @object
+                ) : base(id)
+            {
+                Versioned = versioned;
+                Versioned._versions.Add((TVersion)this);
+                Number    = Versioned.NextNumber();
+                Object    = @object;
+            }
+        }
+
+        public virtual int Number { get; protected set; }
 
         public virtual IReadOnlyList<TVersion> Versions
         {
@@ -27,30 +52,10 @@ namespace CommonDomainObjects
         {
             _versions = new List<TVersion>();
         }
-    }
 
-    public class ObjectVersion<TId, TVersioned, TVersion, TObject>: DomainObject<TId>
-        where TVersioned: VersionedObject<TId, TVersioned, TVersion, TObject>
-        where TVersion: ObjectVersion<TId, TVersioned, TVersion, TObject>
-    {
-        public virtual     TVersioned Versioned { get; protected set; }
-        public virtual     int        Number    { get; protected set; }
-        new public virtual TObject    Object    { get; protected set; }
-
-        protected ObjectVersion() : base()
+        protected virtual int NextNumber()
         {
-        }
-
-        internal protected ObjectVersion(
-            TId        id,
-            TVersioned versioned,
-            TObject    @object
-            ) : base(id)
-        {
-            Versioned = versioned;
-            Versioned._versions.Add((TVersion)this);
-            Number    = Versioned._versions.Count;
-            Object    = @object;
+            return ++Number;
         }
     }
 }
