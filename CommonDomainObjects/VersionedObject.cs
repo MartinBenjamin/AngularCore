@@ -3,42 +3,42 @@ using System.Collections.ObjectModel;
 
 namespace CommonDomainObjects
 {
-    public class VersionedObject<TId, TVersioned, TVersion, TObject>: DomainObject<TId>
-        where TVersioned: VersionedObject<TId, TVersioned, TVersion, TObject>
-        where TVersion: VersionedObject<TId, TVersioned, TVersion, TObject>.ObjectVersion
+    public class VersionedObject<TId, TVersioned, TVersionedVersion, TVersion>: DomainObject<TId>
+        where TVersioned: VersionedObject<TId, TVersioned, TVersionedVersion, TVersion>
+        where TVersionedVersion: VersionedObject<TId, TVersioned, TVersionedVersion, TVersion>.VersionedVersion
     {
-        private IList<TVersion> _versions;
+        private IList<TVersionedVersion> _versions;
 
-        public class ObjectVersion: DomainObject<TId>
+        public class VersionedVersion: DomainObject<TId>
         {
             public virtual     TVersioned Versioned { get; protected set; }
             public virtual     int        Number    { get; protected set; }
-            new public virtual TObject    Object    { get; protected set; }
+            new public virtual TVersion   Version   { get; protected set; }
 
-            protected ObjectVersion() : base()
+            protected VersionedVersion() : base()
             {
             }
 
-            public ObjectVersion(
+            public VersionedVersion(
                 TId        id,
                 TVersioned versioned,
-                TObject    @object
+                TVersion   version
                 ) : base(id)
             {
                 Versioned = versioned;
-                Versioned._versions.Add((TVersion)this);
+                Versioned._versions.Add((TVersionedVersion)this);
                 Number    = Versioned.NextNumber();
-                Object    = @object;
+                Version   = version;
             }
         }
 
         public virtual int Number { get; protected set; }
 
-        public virtual IReadOnlyList<TVersion> Versions
+        public virtual IReadOnlyList<TVersionedVersion> Versions
         {
             get
             {
-                return new ReadOnlyCollection<TVersion>(_versions);
+                return new ReadOnlyCollection<TVersionedVersion>(_versions);
             }
         }
 
@@ -50,7 +50,7 @@ namespace CommonDomainObjects
             TId id
             ) : base(id)
         {
-            _versions = new List<TVersion>();
+            _versions = new List<TVersionedVersion>();
         }
 
         protected virtual int NextNumber()
