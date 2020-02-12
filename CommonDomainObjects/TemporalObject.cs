@@ -4,17 +4,16 @@ using System.Collections.ObjectModel;
 
 namespace CommonDomainObjects
 {
-    public class TemporalObject<TId, TTemporalObject, TVersion, TObject>: DomainObject<TId>
-        where TTemporalObject: TemporalObject<TId, TTemporalObject, TVersion, TObject>
-        where TVersion: TemporalObject<TId, TTemporalObject, TVersion, TObject>.Version
+    public class TemporalObject<TId, TTemporalObject, TVersion>: DomainObject<TId>
+        where TTemporalObject: TemporalObject<TId, TTemporalObject, TVersion>
+        where TVersion: TemporalObject<TId, TTemporalObject, TVersion>.Version
     {
         private IList<TVersion> _versions;
 
         public class Version: DomainObject<TId>
         {
-            public virtual     TTemporalObject TemporalObject { get; protected set; }
-            public virtual     int             Number         { get; protected set; }
-            new public virtual TObject         Object         { get; protected set; }
+            public virtual TTemporalObject TemporalObject { get; protected set; }
+            public virtual int             Number         { get; protected set; }
 
             protected Version() : base()
             {
@@ -22,14 +21,12 @@ namespace CommonDomainObjects
 
             public Version(
                 TId             id,
-                TTemporalObject temporalObject,
-                TObject         @object
+                TTemporalObject temporalObject
                 ) : base(id)
             {
                 TemporalObject = temporalObject;
                 TemporalObject._versions.Add((TVersion)this);
                 Number         = TemporalObject.NextNumber();
-                Object         = @object;
             }
         }
 
@@ -57,6 +54,41 @@ namespace CommonDomainObjects
         protected virtual int NextNumber()
         {
             return ++Number;
+        }
+    }
+
+    public class TemporalObject<TId, TTemporalObject, TVersion, TObject>: TemporalObject<TId, TTemporalObject, TVersion>
+        where TTemporalObject: TemporalObject<TId, TTemporalObject, TVersion, TObject>
+        where TVersion: TemporalObject<TId, TTemporalObject, TVersion, TObject>.Version
+    {
+        new public class Version: TemporalObject<TId, TTemporalObject, TVersion>.Version
+        {
+            new public virtual TObject Object { get; protected set; }
+
+            protected Version() : base()
+            {
+            }
+
+            public Version(
+                TId             id,
+                TTemporalObject temporalObject,
+                TObject         @object
+                ) : base(
+                    id,
+                    temporalObject)
+            {
+                Object = @object;
+            }
+        }
+
+        protected TemporalObject() : base()
+        {
+        }
+
+        public TemporalObject(
+            TId id
+            ) : base(id)
+        {
         }
     }
 
