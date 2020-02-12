@@ -27,8 +27,8 @@ namespace Test
             {
                 base.Populate(mapper);
 
-                mapper.AddMapping(new CommonDomainObjects.Mapping.Taxonomy<char>("Char"));
-                mapper.AddMapping(new CommonDomainObjects.Mapping.TaxonomyTerm<char>("Char"));
+                mapper.AddMapping<CommonDomainObjects.Mapping.Taxonomy    <char>>();
+                mapper.AddMapping<CommonDomainObjects.Mapping.TaxonomyTerm<char>>();
             }
         }
 

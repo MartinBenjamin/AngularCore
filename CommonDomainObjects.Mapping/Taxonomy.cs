@@ -4,11 +4,15 @@ namespace CommonDomainObjects.Mapping
 {
     public class Taxonomy<TTerm>: ClassMapping<CommonDomainObjects.Taxonomy<TTerm>>
     {
+        public Taxonomy() : this(typeof(TTerm).Name)
+        {
+        }
+
         public Taxonomy(
-            string prefix
+            string typeName
             )
         {
-            Table(prefix + "Taxonomy");
+            Table((typeName ?? typeof(TTerm).Name) + "Taxonomy");
         }
     }
 }
