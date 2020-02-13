@@ -14,7 +14,7 @@ using System.Xml.Serialization;
 namespace Test
 {
     [TestFixture]
-    public class TestPersistence
+    public class TestPersistentTaxonomy
     {
         private const string _listenerName = "TestListener";
         private IContainer _container;
@@ -68,7 +68,7 @@ namespace Test
         }
 
         [Test]
-        public void Mapper()
+        public void GenerateMapping()
         {
             var mapper = (ConventionModelMapper)_container.Resolve<IModelMapperFactory>().Build();
             var mapping = mapper.CompileMappingForAllExplicitlyAddedEntities();

@@ -4,31 +4,41 @@ using System.Collections.ObjectModel;
 
 namespace CommonDomainObjects
 {
-    public class TemporalObject<TId, TTemporalObject, TVersion>: DomainObject<TId>
+    public interface ITemporalObject<TVersion>
+    {
+        IReadOnlyList<TVersion> Versions { get; }
+
+        int AddVersion(TVersion version);
+    }
+
+    public class TemporalObjectVersion<TId, TTemporalObject, TVersion>: DomainObject<TId>
+        where TTemporalObject : ITemporalObject<TVersion>
+        where TVersion : TemporalObjectVersion<TId, TTemporalObject, TVersion>
+    {
+        public virtual TTemporalObject TemporalObject { get; protected set; }
+        public virtual int             Number         { get; protected set; }
+
+        protected TemporalObjectVersion() : base()
+        {
+        }
+
+        public TemporalObjectVersion(
+            TId             id,
+            TTemporalObject temporalObject
+            ) : base(id)
+        {
+            TemporalObject = temporalObject;
+            Number         = TemporalObject.AddVersion((TVersion)this);
+        }
+    }
+
+    public class TemporalObject<TId, TTemporalObject, TVersion>:
+        DomainObject<TId>,
+        ITemporalObject<TVersion>
         where TTemporalObject: TemporalObject<TId, TTemporalObject, TVersion>
-        where TVersion: TemporalObject<TId, TTemporalObject, TVersion>.Version
+        where TVersion: TemporalObjectVersion<TId, TTemporalObject, TVersion>
     {
         private IList<TVersion> _versions;
-
-        public class Version: DomainObject<TId>
-        {
-            public virtual TTemporalObject TemporalObject { get; protected set; }
-            public virtual int             Number         { get; protected set; }
-
-            protected Version() : base()
-            {
-            }
-
-            public Version(
-                TId             id,
-                TTemporalObject temporalObject
-                ) : base(id)
-            {
-                TemporalObject = temporalObject;
-                TemporalObject._versions.Add((TVersion)this);
-                Number         = TemporalObject.NextNumber();
-            }
-        }
 
         public virtual int Number { get; protected set; }
 
@@ -51,66 +61,62 @@ namespace CommonDomainObjects
             _versions = new List<TVersion>();
         }
 
+        int ITemporalObject<TVersion>.AddVersion(
+            TVersion version
+            )
+        {
+            _versions.Add(version);
+            Number = NextNumber();
+            return Number;
+        }
+
         protected virtual int NextNumber()
         {
-            return ++Number;
+            return Number + 1;
         }
     }
 
-    public class TemporalObject<TId, TTemporalObject, TVersion, TObject>: TemporalObject<TId, TTemporalObject, TVersion>
-        where TTemporalObject: TemporalObject<TId, TTemporalObject, TVersion, TObject>
-        where TVersion: TemporalObject<TId, TTemporalObject, TVersion, TObject>.Version
+    public class TemporalObjectVersion<TId, TTemporalObject, TVersion, TObject>: TemporalObjectVersion<TId, TTemporalObject, TVersion>
+        where TTemporalObject : ITemporalObject<TVersion>
+        where TVersion : TemporalObjectVersion<TId, TTemporalObject, TVersion, TObject>
     {
-        new public class Version: TemporalObject<TId, TTemporalObject, TVersion>.Version
-        {
-            new public virtual TObject Object { get; protected set; }
+        new public virtual TObject Object { get; protected set; }
 
-            protected Version() : base()
-            {
-            }
-
-            public Version(
-                TId             id,
-                TTemporalObject temporalObject,
-                TObject         @object
-                ) : base(
-                    id,
-                    temporalObject)
-            {
-                Object = @object;
-            }
-        }
-
-        protected TemporalObject() : base()
+        protected TemporalObjectVersion() : base()
         {
         }
 
-        public TemporalObject(
-            TId id
-            ) : base(id)
+        public TemporalObjectVersion(
+            TId             id,
+            TTemporalObject temporalObject,
+            TObject         @object
+            ) : base(
+                id,
+                temporalObject)
+        {
+            Object = @object;
+        }
+    }
+
+    public class TemporalObjectVersion<TObject>: TemporalObjectVersion<Guid, TemporalObject<TObject>, TemporalObjectVersion<TObject>, TObject>
+    {
+        protected TemporalObjectVersion() : base()
+        {
+        }
+
+        public TemporalObjectVersion(
+            TemporalObject<TObject> versioned,
+            TObject                 @object
+            ) : base(
+                Guid.NewGuid(),
+                versioned,
+                @object)
         {
         }
     }
 
-    public class TemporalObject<TObject>: TemporalObject<Guid, TemporalObject<TObject>, TemporalObject<TObject>.Version, TObject>
+    public class TemporalObject<TObject>: TemporalObject<Guid, TemporalObject<TObject>, TemporalObjectVersion<TObject>>
     {
-        new public class Version: TemporalObject<Guid, TemporalObject<TObject>, Version, TObject>.Version
-        {
-            protected Version() : base()
-            {
-            }
-
-            public Version(
-                TemporalObject<TObject> versioned,
-                TObject                 @object
-                ) : base(
-                    Guid.NewGuid(),
-                    versioned,
-                    @object)
-            {
-            }
-        }
-
         protected TemporalObject() : base()
         {
         }
