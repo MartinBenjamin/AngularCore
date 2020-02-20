@@ -47,22 +47,19 @@ namespace CommonDomainObjects
                 select vertex;
         }
 
-        public static Graph<TVertex> ToGraph<TVertex>(
+        public static Graph2<TVertex> ToGraph<TVertex>(
             this IDictionary<TVertex, IList<TVertex>> adjacencyList
             )
         {
-            var graph = new Graph<TVertex>();
-            foreach(var vertex in adjacencyList.Keys)
-                graph.Vertices.Add(vertex);
-
-            foreach(var vertex in adjacencyList.Keys)
-                foreach(var adjacentVertex in adjacencyList[vertex])
-                    new Edge<TVertex>(
-                        graph,
-                        vertex,
-                        adjacentVertex);
-
-            return graph;
+            return new Graph2<TVertex>(
+                adjacencyList.Keys.ToList(),
+                (
+                    from @out in adjacencyList.Keys
+                    from @in in adjacencyList[@out]
+                    select new Edge2<TVertex>(
+                        @out,
+                        @in)
+                ).ToList());
         }
     }
 }
