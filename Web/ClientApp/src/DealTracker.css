@@ -9,7 +9,7 @@ input[type="text"], select
   box-sizing: border-box;
 }
 
-body, input[type="text"], input[type="button"], select
+body, input[type="text"], input[type="button"], select, textarea, legend > span
 {
   font-family: Arial;
   font-size: 11px;
@@ -51,7 +51,7 @@ fieldset
   border-color: #7a7a7a;
 }
 
-legend
+legend > span
 {
   font-weight: bold;
 }
