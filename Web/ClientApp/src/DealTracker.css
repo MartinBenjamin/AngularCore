@@ -24,6 +24,17 @@ input[type="text"], select
   padding: 0px;
 }
 
+html.Apple select
+{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  /* SVG background image. */
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='7' fill='%23bababa'><polygon points='0,0 6,0 3,6'/></svg>");
+  background-size: 10px 7px;
+  background-position: right center;
+  background-repeat: no-repeat;
+}
+
 input[type="button"]
 {
   border: 1px solid #bababa;

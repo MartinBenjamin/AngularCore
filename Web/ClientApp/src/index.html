@@ -606,7 +606,10 @@
 }
 </script>
 <script type="text/javascript">
-    var cldr = JSON.parse(document.getElementById('cldr').innerHTML);
+    if(navigator.vendor.startsWith('Apple'))
+        document.documentElement.classList.add('Apple');
+
+  var cldr = JSON.parse(document.getElementById('cldr').innerHTML);
     Date.calendar = cldr.main['en-GB'].dates.calendars.gregorian;
     cldr = JSON.parse(document.getElementById('cldrNumber').innerHTML);
     Number.symbols = cldr.main['en-GB'].numbers['symbols-numberSystem-latn'];
