@@ -11,6 +11,12 @@
     padding: 2px 10px 2px 10px;
   }
 
+  a.MenuTitle
+  {
+    display: block;
+    padding: 2px 10px 2px 10px;
+  }
+
   div.SubMenu
   {
     position: absolute;
@@ -24,6 +30,13 @@
   {
     color: #000;
     background-color: #bababa;
+  }
+  
+  span.MenuContainer:hover a.MenuTitle
+  {
+    color: #000;
+    background-color: #bababa;
+    text-decoration: none;
   }
 
   span.MenuContainer:hover div.SubMenu
@@ -52,7 +65,7 @@
       <span style="display: inline-block;"><span class="MenuTitle"><a>My Customers</a></span></span>
       <span style="display: inline-block;"><span class="MenuTitle"><a>Tree'd Deals</a></span></span>
       <span style="display: inline-block;" class="MenuContainer">
-        <span class="MenuTitle">Originate</span><div class="SubMenu">
+        <a class="MenuTitle">Originate</a><div class="SubMenu">
           <table class="MenuItems">
             <tr>
               <td><a [routerLink]="['Advisory']">Advisory</a></td>
