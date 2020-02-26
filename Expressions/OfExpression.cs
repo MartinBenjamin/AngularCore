@@ -4,8 +4,8 @@ namespace Expressions
 {
     public class OfExpression: Expression<decimal?>
     {
-        public Expression<decimal?> Lhs { get; protected set; }
-        public Expression<decimal?> Rhs { get; protected set; }
+        public virtual Expression<decimal?> Lhs { get; protected set; }
+        public virtual Expression<decimal?> Rhs { get; protected set; }
 
         protected OfExpression() : base()
         {
