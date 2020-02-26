@@ -4,20 +4,20 @@ using System.Linq;
 
 namespace FacilityAgreements
 {
-    public class Ratchets: AdHocSchedule<Guid, Ratchets, Ratchet>
+    public class RatchetSchedule: AdHocSchedule<Guid, RatchetSchedule, Ratchet>
     {
-        protected Ratchets() : base()
+        protected RatchetSchedule() : base()
         {
         }
 
-        public Ratchets(
+        public RatchetSchedule(
             Guid id
             ) : base(id)
         {
         }
     }
 
-    public class Ratchet: AdHocScheduleEntry<Guid, Ratchets, Ratchet>
+    public class Ratchet: AdHocScheduleEntry<Guid, RatchetSchedule, Ratchet>
     {
         public virtual decimal Rate { get; protected set; }
  
@@ -39,7 +39,7 @@ namespace FacilityAgreements
 
     public class RatchetFunction: Function<DateTime, decimal?>
     {
-        public virtual Ratchets Ratchets { get; protected set; }
+        public virtual RatchetSchedule Ratchets { get; protected set; }
 
         protected RatchetFunction() : base()
         {
