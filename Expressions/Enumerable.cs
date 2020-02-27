@@ -6,8 +6,8 @@ using System.Linq;
 
 namespace Expressions
 {
-    public abstract class Enumerable<TEnumerableId, T>:
-        DomainObject<TEnumerableId>,
+    public abstract class Enumerable<TId, T>:
+        DomainObject<TId>,
         IEnumerable<T>
     {
         protected Enumerable() : base()
@@ -15,7 +15,7 @@ namespace Expressions
         }
 
         protected Enumerable(
-            TEnumerableId id
+            TId id
             ) : base(id)
         {
         }
@@ -28,28 +28,28 @@ namespace Expressions
         }
     }
 
-    public abstract class Selection<TEnumerableId, T, U>: Enumerable<TEnumerableId, T>
+    public abstract class Selection<TId, TResult, TSource>: Enumerable<TId, TResult>
     {
-        private Enumerable<TEnumerableId, U> _source;
-        private Func<U, T>                   _selector;
+        private Enumerable<TId, TSource> _source;
+        private Func<TSource, TResult>   _selector;
 
         protected Selection() : base()
         {
         }
 
         protected Selection(
-            TEnumerableId                id,
-            Enumerable<TEnumerableId, U> source,
-            Func<U, T>                   selector
-            ) : base()
+            TId                      id,
+            Enumerable<TId, TSource> source,
+            Func<TSource, TResult>   selector
+            ) : base(id)
         {
             _source   = source;
             _selector = selector;
         }
 
-        public override IEnumerator<T> GetEnumerator()
+        public override IEnumerator<TResult> GetEnumerator()
         {
-            return (from u in _source select _selector(u)).GetEnumerator();
+            return _source.Select(_selector).GetEnumerator();
         }
     }
 }

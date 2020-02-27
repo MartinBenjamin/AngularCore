@@ -1,5 +1,7 @@
 ﻿using Expressions;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FacilityAgreements
 {
@@ -18,8 +20,9 @@ namespace FacilityAgreements
         }
     }
 
-    public class Ratchets: Selection<Guid, Ratchet, RatchetScheduleEntry>
+    public class Ratchets: Enumerable<Guid, Ratchet>
     {
+        public virtual RatchetSchedule Schedule { get; protected set; }
 
         protected Ratchets() : base()
         {
@@ -27,12 +30,42 @@ namespace FacilityAgreements
 
         public Ratchets(
             Guid            id,
-            RatchetSchedule ratchetSchedule
-            ): base(
-                id,
-                ratchetSchedule,
-                (RatchetScheduleEntry entry)=> new Ratchet(entry.Date.Evaluate(), entry.Rate))
+            RatchetSchedule schedule
+            ): base(id)
         {
+            Schedule = schedule;
+        }
+
+        public override IEnumerator<Ratchet> GetEnumerator()
+        {
+            return Schedule.Select(entry => new Ratchet(entry.Date.Evaluate(), entry.Rate)).GetEnumerator();
+        }
+    }
+
+    public class PercentageOfRatchets: Ratchets
+    {
+        public decimal? Percentage { get; protected set; }
+
+        protected PercentageOfRatchets() : base()
+        {
+        }
+
+        public PercentageOfRatchets(
+            Guid            id,
+            RatchetSchedule ratchetSchedule,
+            decimal?        percentage
+            ) : base(
+                id,
+                ratchetSchedule)
+        {
+            Percentage = percentage;
+        }
+
+        public override IEnumerator<Ratchet> GetEnumerator()
+        {
+            return (Percentage == null ?
+                Enumerable.Empty<Ratchet>() :
+                Schedule.Select(entry => new Ratchet(entry.Date.Evaluate(), entry.Rate * Percentage.Value / 100m))).GetEnumerator();
         }
     }
 }
