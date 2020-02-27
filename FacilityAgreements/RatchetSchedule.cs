@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace FacilityAgreements
 {
-    public class RatchetSchedule: AdHocSchedule<Guid, RatchetSchedule, Ratchet>
+    public class RatchetSchedule: AdHocSchedule<Guid, RatchetSchedule, RatchetScheduleEntry>
     {
         protected RatchetSchedule() : base()
         {
@@ -17,15 +17,15 @@ namespace FacilityAgreements
         }
     }
 
-    public class Ratchet: AdHocScheduleEntry<Guid, RatchetSchedule, Ratchet>
+    public class RatchetScheduleEntry: AdHocScheduleEntry<Guid, RatchetSchedule, RatchetScheduleEntry>
     {
         public virtual decimal Rate { get; protected set; }
  
-        protected Ratchet() : base()
+        protected RatchetScheduleEntry() : base()
         {
         }
 
-        public Ratchet(
+        public RatchetScheduleEntry(
             Guid                 id,
             Expression<DateTime> date,
             decimal              rate
@@ -34,30 +34,6 @@ namespace FacilityAgreements
                 date)
         {
             Rate = rate;
-        }
-    }
-
-    public class RatchetFunction: Function<DateTime, decimal?>
-    {
-        public virtual RatchetSchedule Ratchets { get; protected set; }
-
-        protected RatchetFunction() : base()
-        {
-        }
-
-        public override decimal? Evaluate(
-            DateTime time
-            )
-        {
-            var applicableRatchet = Ratchets
-                .Entries
-                .Where(ratchet => ratchet.Date.Evaluate() <= time)
-                .Aggregate(
-                    (Ratchet)null,
-                    (selected, next) =>
-                        selected == null || next.Date.Evaluate() > selected.Date.Evaluate() ? next : selected);
-
-            return applicableRatchet != null ? (decimal?)applicableRatchet.Rate : null;
         }
     }
 }

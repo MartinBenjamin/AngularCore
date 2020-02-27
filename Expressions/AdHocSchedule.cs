@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Expressions
 {
-    public abstract class AdHocSchedule<TId, TAdHocSchedule, TAdHocScheduleEntry>: DomainObject<TId>
+    public abstract class AdHocSchedule<TId, TAdHocSchedule, TAdHocScheduleEntry>: Enumerable<TId, TAdHocScheduleEntry>
         where TAdHocSchedule : AdHocSchedule<TId, TAdHocSchedule, TAdHocScheduleEntry>
         where TAdHocScheduleEntry : AdHocScheduleEntry<TId, TAdHocSchedule, TAdHocScheduleEntry>
     {
@@ -19,6 +19,11 @@ namespace Expressions
             ) : base(id)
         {
             Entries = new List<TAdHocScheduleEntry>();
+        }
+
+        public override IEnumerator<TAdHocScheduleEntry> GetEnumerator()
+        {
+            return Entries.GetEnumerator();
         }
     }
 
