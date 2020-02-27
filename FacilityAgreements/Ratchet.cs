@@ -26,7 +26,7 @@ namespace FacilityAgreements
         }
 
         public Ratchets(
-            Guid id,
+            Guid            id,
             RatchetSchedule ratchetSchedule
             ): base(
                 id,
