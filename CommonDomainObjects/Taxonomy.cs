@@ -101,7 +101,9 @@ namespace CommonDomainObjects
             TTaxonomyTerm broaderTaxonomyTerm);
     }
 
-    public abstract class TaxonomyTerm<TId, TTaxonomy, TTaxonomyTerm, TTerm>: DomainObject<TId>
+    public abstract class TaxonomyTerm<TId, TTaxonomy, TTaxonomyTerm, TTerm>:
+        DomainObject<TId>,
+        ITreeVertex<TTaxonomyTerm>
         where TTaxonomy : Taxonomy<TId, TTaxonomy, TTaxonomyTerm, TTerm>
         where TTaxonomyTerm : TaxonomyTerm<TId, TTaxonomy, TTaxonomyTerm, TTerm>
     {
@@ -161,37 +163,10 @@ namespace CommonDomainObjects
             return next;
         }
 
-        public virtual void Visit(
-            Action<TTaxonomyTerm> enter,
-            Action<TTaxonomyTerm> exit = null
-            )
-        {
-            enter?.Invoke((TTaxonomyTerm)this);
 
-            foreach(var narrower in Narrower)
-                narrower.Visit(
-                    enter,
-                    exit);
+        TTaxonomyTerm ITreeVertex<TTaxonomyTerm>.Parent => Broader;
 
-            exit?.Invoke((TTaxonomyTerm)this);
-        }
-
-        public virtual async Task VisitAsync(
-            Func<TTaxonomyTerm, Task> enter,
-            Func<TTaxonomyTerm, Task> exit = null
-            )
-        {
-            if(enter != null)
-                await enter((TTaxonomyTerm)this);
-
-            foreach(var narrower in Narrower)
-                await narrower.VisitAsync(
-                    enter,
-                    exit);
-
-            if(exit != null)
-                await exit((TTaxonomyTerm)this);
-        }
+        IReadOnlyList<TTaxonomyTerm> ITreeVertex<TTaxonomyTerm>.Children => Narrower;
     }
 
     public class Taxonomy<TTerm>: Taxonomy<Guid, Taxonomy<TTerm>, TaxonomyTerm<TTerm>, TTerm>
