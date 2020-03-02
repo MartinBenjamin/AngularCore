@@ -37,12 +37,10 @@ namespace CommonDomainObjects
             this IDictionary<TVertex, IList<TVertex>> graph
             )
         {
-            IDictionary<TVertex, int> longestPaths = new Dictionary<TVertex, int>();
-
             return
                 from vertex in graph.Keys
                 orderby graph.LongestPath(
-                    longestPaths,
+                    new Dictionary<TVertex, int>(),
                     vertex)
                 select vertex;
         }
