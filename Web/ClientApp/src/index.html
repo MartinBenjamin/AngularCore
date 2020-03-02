@@ -606,7 +606,7 @@
 }
 </script>
 <script type="text/javascript">
-    if(navigator.vendor.startsWith('Apple'))
+    if(navigator.vendor.indexOf('Apple') == 0)
         document.documentElement.classList.add('Apple');
 
   var cldr = JSON.parse(document.getElementById('cldr').innerHTML);
