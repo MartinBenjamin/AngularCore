@@ -8,7 +8,7 @@ namespace FacilityAgreements
     public struct Ratchet
     {
         public DateTime Date { get; }
-        public decimal  Rate  { get; }
+        public decimal  Rate { get; }
 
         public Ratchet(
             DateTime date,
