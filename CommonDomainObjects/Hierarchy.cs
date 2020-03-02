@@ -101,7 +101,9 @@ namespace CommonDomainObjects
             THierarchyMember parentHierarchyMember);
     }
 
-    public abstract class HierarchyMember<TId, THierarchy, THierarchyMember, TMember>: DomainObject<TId>
+    public abstract class HierarchyMember<TId, THierarchy, THierarchyMember, TMember>:
+        DomainObject<TId>,
+        ITreeVertex<THierarchyMember>
         where THierarchy : Hierarchy<TId, THierarchy, THierarchyMember, TMember>
         where THierarchyMember : HierarchyMember<TId, THierarchy, THierarchyMember, TMember>
     {
@@ -159,38 +161,6 @@ namespace CommonDomainObjects
                 next++);
 
             return next;
-        }
-
-        public virtual void Visit(
-            Action<THierarchyMember> enter,
-            Action<THierarchyMember> exit = null
-            )
-        {
-            enter?.Invoke((THierarchyMember)this);
-
-            foreach(var child in Children)
-                child.Visit(
-                    enter,
-                    exit);
-
-            exit?.Invoke((THierarchyMember)this);
-        }
-
-        public virtual async Task VisitAsync(
-            Func<THierarchyMember, Task> enter,
-            Func<THierarchyMember, Task> exit = null
-            )
-        {
-            if(enter != null)
-                await enter((THierarchyMember)this);
-
-            foreach(var child in Children)
-                await child.VisitAsync(
-                    enter,
-                    exit);
-
-            if(exit != null)
-                await exit((THierarchyMember)this);
         }
     }
 
