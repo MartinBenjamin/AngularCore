@@ -45,16 +45,16 @@ namespace CommonDomainObjects
                 select vertex;
         }
 
-        public static Graph2<TVertex> ToGraph<TVertex>(
+        public static Graph<TVertex> ToGraph<TVertex>(
             this IDictionary<TVertex, IList<TVertex>> adjacencyList
             )
         {
-            return new Graph2<TVertex>(
+            return new Graph<TVertex>(
                 adjacencyList.Keys.ToList(),
                 (
                     from @out in adjacencyList.Keys
                     from @in in adjacencyList[@out]
-                    select new Edge2<TVertex>(
+                    select new Edge<TVertex>(
                         @out,
                         @in)
                 ).ToList());
