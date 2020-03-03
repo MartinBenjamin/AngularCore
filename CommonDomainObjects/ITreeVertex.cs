@@ -22,9 +22,11 @@ namespace CommonDomainObjects
             ) where TTreeVertex: ITreeVertex<TTreeVertex>
         {
             enter?.Invoke(treeVertex);
+
             treeVertex.Children.ToList().ForEach(child => child.Visit(
                     enter,
                     exit));
+
             exit?.Invoke(treeVertex);
         }
 

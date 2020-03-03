@@ -7,47 +7,34 @@ namespace CommonDomainObjects
         public static T Cast<T>(
             this DomainObject domainObject
             ) where T: class
-        {
-            return (T)domainObject.Object;
-        }
+            => (T)domainObject.Object;
 
         public static T As<T>(
             this DomainObject domainObject
             ) where T: class
-        {
-            return domainObject.Object as T;
-        }
+            => domainObject.Object as T;
 
         public static bool Is<T>(
             this DomainObject domainObject
             ) where T: class
-        {
-            return domainObject.Object is T;
-        }
+            => domainObject.Object is T;
     }
 
     public abstract class DomainObject
     {
+        // Suppose type B is a subclass of type A which is a subclass of
+        // DomainObject. Suppose an object has a reference of type A to
+        // an instance of type B and wishes to cast the reference to a
+        // reference of type B. However, instead of an instance of type B,
+        // tne ORM component may generate a proxy for the reference to type A
+        // (which is a subclass of type A). This proxy is not castable to
+        // type B. This method allows the proxy to be bypassed so that down
+        // casts can be performed.
         public virtual object Object
-        {
-            get
-            {
-                // Suppose type B is a subclass of type A which is a subclass of
-                // DomainObject. Suppose an object has a reference of type A to
-                // an instance of type B and wishes to cast the reference to a
-                // reference of type B. However, instead of an instance of type B,
-                // tne ORM component may generate a proxy for the reference to type A
-                // (which is a subclass of type A). This proxy is not castable to
-                // type B. This method allows the proxy to be bypassed so that down
-                // casts can be performed.
-                return this;
-            }
-        }
+            => this;
 
         public virtual Type GetUnderlyingType()
-        {
-            return GetType();
-        }
+            => GetType();
     }
 
     public abstract class DomainObject<TId>: DomainObject
@@ -80,34 +67,24 @@ namespace CommonDomainObjects
         }
 
         public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
+            => Id.GetHashCode();
 
         public override string ToString()
-        {
-            return string.Format(
+            => string.Format(
                 "{0}({1})",
                 GetType().Name,
                 Id);
-        }
 
         public static bool operator ==(
             DomainObject<TId> lhs,
             DomainObject<TId> rhs
-            )
-        {
-            return Equals(
+            ) => Equals(
                 lhs,
                 rhs);
-        }
 
         public static bool operator !=(
             DomainObject<TId> lhs,
             DomainObject<TId> rhs
-            )
-        {
-            return !(lhs == rhs);
-        }
+            ) => !(lhs == rhs);
     }
 }
