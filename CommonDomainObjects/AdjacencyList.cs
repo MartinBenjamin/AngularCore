@@ -26,30 +26,21 @@ namespace CommonDomainObjects
         public static int LongestPath<TVertex>(
             this IDictionary<TVertex, IList<TVertex>> graph,
             TVertex                                   vertex
-            )
-        {
-            return graph.LongestPath(
+            ) => graph.LongestPath(
                 new Dictionary<TVertex, int>(),
                 vertex);
-        }
 
         public static IEnumerable<TVertex> TopologicalSort<TVertex>(
             this IDictionary<TVertex, IList<TVertex>> graph
-            )
-        {
-            return
-                from vertex in graph.Keys
+            ) => from vertex in graph.Keys
                 orderby graph.LongestPath(
                     new Dictionary<TVertex, int>(),
                     vertex)
                 select vertex;
-        }
-
+              
         public static Graph<TVertex> ToGraph<TVertex>(
             this IDictionary<TVertex, IList<TVertex>> adjacencyList
-            )
-        {
-            return new Graph<TVertex>(
+            ) => new Graph<TVertex>(
                 adjacencyList.Keys.ToList(),
                 (
                     from @out in adjacencyList.Keys
@@ -58,6 +49,5 @@ namespace CommonDomainObjects
                         @out,
                         @in)
                 ).ToList());
-        }
     }
 }
