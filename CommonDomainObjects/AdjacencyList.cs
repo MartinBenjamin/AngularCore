@@ -37,7 +37,7 @@ namespace CommonDomainObjects
                     new Dictionary<TVertex, int>(),
                     vertex)
                 select vertex;
-              
+
         public static Graph<TVertex> ToGraph<TVertex>(
             this IDictionary<TVertex, IList<TVertex>> adjacencyList
             ) => new Graph<TVertex>(
