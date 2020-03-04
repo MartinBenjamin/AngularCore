@@ -27,30 +27,21 @@ namespace CommonDomainObjects
 
         public bool Contains(
             T t
-            )
-        {
-            return
+            ) =>
                 t.CompareTo(Start) >= 0 &&
                 t.CompareTo(End  ) <= 0;
-        }
 
         public bool Contains(
             Range<T> range
-            )
-        {
-            return
+            ) =>
                 Start.CompareTo(range.Start) <= 0 &&
                 End.CompareTo(range.End) >= 0;
-        }
 
         public bool Overlaps(
             Range<T> range
-            )
-        {
-            return
+            ) =>
                 Start.CompareTo(range.End) <= 0 &&
                 End.CompareTo(range.Start) >= 0;
-        }
 
         public override bool Equals(
             object obj
@@ -64,35 +55,25 @@ namespace CommonDomainObjects
         }
 
         public override int GetHashCode()
-        {
-            return Start.GetHashCode();
-        }
+            => Start.GetHashCode();
 
         public override string ToString()
-        {
-            return string.Format(
+            => string.Format(
                 "[{0}, {1}]",
                 Start,
                 End);
-        }
 
         public static bool operator ==(
             Range<T> lhs,
             Range<T> rhs
-            )
-        {
-            return Equals(
+            ) => Equals(
                 lhs,
                 rhs);
-        }
 
         public static bool operator !=(
             Range<T> lhs,
             Range<T> rhs
-            )
-        {
-            return !(lhs == rhs);
-        }
+            ) => !(lhs == rhs);
     }
 
     // Supports left and right unbounded intervals.
@@ -122,31 +103,21 @@ namespace CommonDomainObjects
 
         public bool Contains(
             T t
-            )
-        {
-            return
+            ) =>
                 (!Start.HasValue || t.CompareTo(Start.Value) >= 0) &&
                 (!End.HasValue   || t.CompareTo(End.Value  ) <= 0);
-        }
 
         public bool Contains(
             Range2<T> range
-            )
-        {
-            return
+            ) =>
                 (!Start.HasValue || (range.Start.HasValue && Start.Value.CompareTo(range.Start.Value) <= 0)) &&
                 (!End.HasValue   || (range.End.HasValue   && End.Value.CompareTo(range.End.Value)     >= 0));
-        }
-
 
         public bool Overlaps(
             Range2<T> range
-            )
-        {
-            return
+            ) =>
                 (!Start.HasValue || !range.End.HasValue   || Start.Value.CompareTo(range.End.Value) <= 0) &&
                 (!End.HasValue   || !range.Start.HasValue || End.Value.CompareTo(range.Start.Value) >= 0);
-        }
 
         public override bool Equals(
             object obj
@@ -160,34 +131,24 @@ namespace CommonDomainObjects
         }
 
         public override int GetHashCode()
-        {
-            return Start.GetHashCode();
-        }
+            => Start.GetHashCode();
 
         public static bool operator ==(
             Range2<T> lhs,
             Range2<T> rhs
-            )
-        {
-            return Equals(
+            ) => Equals(
                 lhs,
                 rhs);
-        }
 
         public static bool operator !=(
             Range2<T> lhs,
             Range2<T> rhs
-            )
-        {
-            return !(lhs == rhs);
-        }
+            ) => !(lhs == rhs);
 
         public override string ToString()
-        {
-            return string.Format(
+            => string.Format(
                 "[{0}, {1}]",
                 Start.HasValue ? Start.Value.ToString() : string.Empty,
                 End.HasValue   ? End.Value.ToString()   : string.Empty);
-        }
     }
 }

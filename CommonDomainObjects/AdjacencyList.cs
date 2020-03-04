@@ -38,6 +38,28 @@ namespace CommonDomainObjects
                     vertex)
                 select vertex;
 
+
+        public static IDictionary<TVertex, IList<TVertex>> Transpose<TVertex>(
+            this IDictionary<TVertex, IList<TVertex>> graph
+            ) => (
+                from vertex in graph.Keys
+                join edge in
+                (
+                    from @out in graph.Keys
+                    from @in in graph[@out]
+                    select new Edge<TVertex>(
+                        @out,
+                        @in)
+                )
+                on vertex equals edge.In into edgesGroupedByIn
+                select new
+                {
+                    Out = vertex,
+                    Adjacent = (IList<TVertex>)edgesGroupedByIn.Select(edge => edge.Out).ToList()
+                }).ToDictionary(
+                    g => g.Out,
+                    g => g.Adjacent);
+
         public static Graph<TVertex> ToGraph<TVertex>(
             this IDictionary<TVertex, IList<TVertex>> adjacencyList
             ) => new Graph<TVertex>(
