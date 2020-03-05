@@ -13,12 +13,7 @@ namespace CommonDomainObjects
         private IList<TTaxonomyTerm> _terms;
 
         public virtual IReadOnlyList<TTaxonomyTerm> Terms
-        {
-            get
-            {
-                return new ReadOnlyCollection<TTaxonomyTerm>(_terms);
-            }
-        }
+            => new ReadOnlyCollection<TTaxonomyTerm>(_terms);
 
         protected Taxonomy() : base()
         {
@@ -26,41 +21,23 @@ namespace CommonDomainObjects
 
         public Taxonomy(
             TId                              id,
-            IDictionary<TTerm, IList<TTerm>> hierachy
+            IDictionary<TTerm, IList<TTerm>> adjacencyList
             ) : base(id)
         {
             _terms = new List<TTaxonomyTerm>();
 
-            foreach(var term in hierachy.TopologicalSort())
-            {
-                TTaxonomyTerm broaderTaxonomyTerm = null;
-
-                var adjacent = hierachy[term];
-
-                if(adjacent.Count > 0)
-                {
-                    var broaderTerm = adjacent.First();
-                    broaderTaxonomyTerm = _terms.FirstOrDefault(taxonomyTerm => taxonomyTerm.Term.Equals(broaderTerm));
-                }
-
-                _terms.Add(
-                    NewTaxonomyTerm(
-                        term,
-                        broaderTaxonomyTerm));
-            }
+            foreach(var term in adjacencyList.Keys.Where(key => adjacencyList[key].Count == 0))
+                CreateTaxonomyTerm(
+                    adjacencyList.Transpose(),
+                    term,
+                    null);
 
             AssignIntervals();
         }
 
         public virtual TTaxonomyTerm this[
             TTerm term
-            ]
-        {
-            get
-            {
-                return _terms.FirstOrDefault(taxonomyTerm => taxonomyTerm.Term.Equals(term));
-            }
-        }
+            ] => _terms.FirstOrDefault(taxonomyTerm => taxonomyTerm.Term.Equals(term));
 
         private void AssignIntervals()
         {
@@ -94,6 +71,25 @@ namespace CommonDomainObjects
                 await currentTaxonomyterm.VisitAsync(
                     enter,
                     exit);
+        }
+
+        private void CreateTaxonomyTerm(
+            IDictionary<TTerm, IList<TTerm>> adjacencyList,
+            TTerm                            term,
+            TTaxonomyTerm                    broaderTaxonomyTerm
+            )
+        {
+            var taxonomyTerm = NewTaxonomyTerm(
+                term,
+                broaderTaxonomyTerm);
+
+            _terms.Add(taxonomyTerm);
+
+            foreach(var narrower in adjacencyList[term])
+                CreateTaxonomyTerm(
+                    adjacencyList,
+                    narrower,
+                    taxonomyTerm);
         }
 
         protected abstract TTaxonomyTerm NewTaxonomyTerm(

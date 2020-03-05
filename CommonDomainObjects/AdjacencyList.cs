@@ -38,7 +38,6 @@ namespace CommonDomainObjects
                     vertex)
                 select vertex;
 
-
         public static IDictionary<TVertex, IList<TVertex>> Transpose<TVertex>(
             this IDictionary<TVertex, IList<TVertex>> graph
             ) => (
@@ -52,13 +51,12 @@ namespace CommonDomainObjects
                         @in)
                 )
                 on vertex equals edge.In into edgesGroupedByIn
-                select new
-                {
-                    Out = vertex,
-                    Adjacent = (IList<TVertex>)edgesGroupedByIn.Select(edge => edge.Out).ToList()
-                }).ToDictionary(
-                    g => g.Out,
-                    g => g.Adjacent);
+                select new KeyValuePair<TVertex, IList<TVertex>>(
+                    vertex,
+                    edgesGroupedByIn.Select(edge => edge.Out).ToList())
+                ).ToDictionary(
+                    pair => pair.Key,
+                    pair => pair.Value);
 
         public static Graph<TVertex> ToGraph<TVertex>(
             this IDictionary<TVertex, IList<TVertex>> adjacencyList
