@@ -50,7 +50,7 @@ namespace Test
             foreach(var member in _hierarchy.Keys)
             {
                 var hierarchyMember = hierarchy[member];
-                Assert.That(hierarchyMember       , Is.Not.Null  );
+                Assert.That(hierarchyMember       , Is.Not.Null       );
                 Assert.That(hierarchyMember.Member, Is.EqualTo(member));
 
                 var parentMember = _hierarchy[member].FirstOrDefault();
@@ -64,6 +64,9 @@ namespace Test
                     Assert.That(parentHierarchyMember.Interval.Contains(hierarchyMember.Interval));
                 }
             }
+
+            foreach(var hierarchyMember in hierarchy.Members)
+                Assert.That(_hierarchy.ContainsKey(hierarchyMember.Member), Is.True);
         }
     }
 }

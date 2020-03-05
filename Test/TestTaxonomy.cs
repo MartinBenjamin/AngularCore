@@ -50,7 +50,7 @@ namespace Test
             foreach(var term in _taxonomy.Keys)
             {
                 var taxonomyTerm = taxonomy[term];
-                Assert.That(taxonomyTerm, Is.Not.Null);
+                Assert.That(taxonomyTerm     , Is.Not.Null     );
                 Assert.That(taxonomyTerm.Term, Is.EqualTo(term));
 
                 var broaderTerm = _taxonomy[term].FirstOrDefault();
@@ -64,6 +64,9 @@ namespace Test
                     Assert.That(broaderTaxonomyTerm.Interval.Contains(taxonomyTerm.Interval));
                 }
             }
+
+            foreach(var taxonomyTerm in taxonomy.Terms)
+                Assert.That(_taxonomy.ContainsKey(taxonomyTerm.Term), Is.True);
         }
     }
 }
