@@ -132,7 +132,8 @@ namespace CommonDomainObjects
         {
             var start = next++;
 
-            _narrower.ForEach(narrower => next = narrower.AssignInterval(next));
+            foreach(var narrower in _narrower)
+                next = narrower.AssignInterval(next);
 
             Interval = new Range<int>(
                 start,
@@ -141,9 +142,11 @@ namespace CommonDomainObjects
             return next;
         }
 
-        TTaxonomyTerm ITreeVertex<TTaxonomyTerm>.Parent => Broader;
+        TTaxonomyTerm ITreeVertex<TTaxonomyTerm>.Parent
+            => Broader;
 
-        IReadOnlyList<TTaxonomyTerm> ITreeVertex<TTaxonomyTerm>.Children => Narrower;
+        IReadOnlyList<TTaxonomyTerm> ITreeVertex<TTaxonomyTerm>.Children
+            => Narrower;
     }
 
     public class Taxonomy<TTerm>: Taxonomy<Guid, Taxonomy<TTerm>, TaxonomyTerm<TTerm>, TTerm>

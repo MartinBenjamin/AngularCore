@@ -132,7 +132,8 @@ namespace CommonDomainObjects
         {
             var start = next++;
 
-            _children.ForEach(child => next = child.AssignInterval(next));
+            foreach(var child in _children)
+                next = child.AssignInterval(next);
 
             Interval = new Range<int>(
                 start,
