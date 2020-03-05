@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CommonDomainObjects
@@ -23,7 +22,7 @@ namespace CommonDomainObjects
         {
             enter?.Invoke(treeVertex);
 
-            treeVertex.Children.ToList().ForEach(child => child.Visit(
+            treeVertex.Children.ForEach(child => child.Visit(
                     enter,
                     exit));
 
@@ -39,10 +38,9 @@ namespace CommonDomainObjects
             if(enter != null)
                 await enter(treeVertex);
 
-            foreach(var child in treeVertex.Children)
-                await child.VisitAsync(
-                    enter,
-                    exit);
+            await treeVertex.Children.ForEachAsync(child => child.VisitAsync(
+                enter,
+                exit));
 
             if(exit != null)
                 await exit(treeVertex);

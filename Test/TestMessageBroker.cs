@@ -146,7 +146,7 @@ namespace Test
             {
                 var session = scope.Resolve<ISession>();
                 await session.SaveAsync(messageQueue);
-                await messages.Dispatch(message => session.SaveAsync(message), 10);
+                await messages.ForEachAsync(message => session.SaveAsync(message), 10);
                 await session.FlushAsync();
             }
 

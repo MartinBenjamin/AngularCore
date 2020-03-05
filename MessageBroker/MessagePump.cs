@@ -60,7 +60,7 @@ namespace MessageBroker
                             .ListAsync<MessageSummary>();
 
                 await messages
-                    .Dispatch(
+                    .ForEachAsync(
                         Consume,
                         maxConcurrent);
             }

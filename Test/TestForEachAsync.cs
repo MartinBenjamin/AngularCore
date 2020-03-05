@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 namespace Test
 {
     [TestFixture]
-    public class TestDispatch
+    public class TestForEachAsync
     {
-        [TestCaseSource("DispatchTestCases")]
-        public async Task Dispatch(
-            string workItems,
+        [TestCaseSource("ForEachAsyncTestCases")]
+        public async Task ForEachAsync(
+            string items,
             int    maxConcurrent,
             int    delay
             )
@@ -21,7 +21,7 @@ namespace Test
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            await workItems.Dispatch(
+            await items.ForEachAsync(
                 async c =>
                 {
                     if(delay > 0)
@@ -34,21 +34,21 @@ namespace Test
             stopwatch.Stop();
             TestContext.Out.Write(stopwatch.ElapsedMilliseconds);
 
-            Assert.That(trace.Count, Is.EqualTo(workItems.Length));
-            Assert.That(new string(trace.OrderBy(c => c).ToArray()), Is.EqualTo(workItems));
+            Assert.That(trace.Count, Is.EqualTo(items.Length));
+            Assert.That(new string(trace.OrderBy(c => c).ToArray()), Is.EqualTo(items));
         }
 
-        public static IEnumerable<object[]> DispatchTestCases
+        public static IEnumerable<object[]> ForEachAsyncTestCases
         {
             get
             {
-                var workItems = "ABCDEFGHIJ";
+                var items = "ABCDEFGHIJ";
                 return
-                    from maxConcurrent in Enumerable.Range(1, workItems.Length + 1)
+                    from maxConcurrent in Enumerable.Range(1, items.Length + 1)
                     from delay in new[] { 0, 30 }
                     select new object[]
                     {
-                        workItems,
+                        items,
                         maxConcurrent,
                         delay
                     };

@@ -7,6 +7,45 @@ namespace CommonDomainObjects
 {
     public static class EnumerableExtensions
     {
+        public static void ForEach<T>(
+            this IEnumerable<T> enumerable,
+            Action<T>           action
+            )
+        {
+            foreach(var t in enumerable)
+                action(t);
+        }
+
+        public static async Task ForEachAsync<T>(
+            this IEnumerable<T> enumerable,
+            Func<T, Task>       func
+            )
+        {
+            foreach(var t in enumerable)
+                await func(t);
+        }
+
+        public static async Task ForEachAsync<T>(
+            this IEnumerable<T> enumerable,
+            Func<T, Task>       func,
+            int                 maxConcurrent
+            )
+        {
+            if(maxConcurrent <= 0)
+                throw new ArgumentOutOfRangeException("maxConcurrent");
+
+            var pending = new Queue<T>(enumerable);
+            var tasks   = new List<Task>();
+
+            while(pending.Count + tasks.Count > 0)
+            {
+                while(tasks.Count < maxConcurrent && pending.Count > 0)
+                    tasks.Add(func(pending.Dequeue()));
+
+                tasks.Remove(await Task.WhenAny(tasks));
+            }
+        }
+
         public static IEnumerable<IList<T>> Permute<T>(
             this IEnumerable<T> enumerable
             )
@@ -46,27 +85,6 @@ namespace CommonDomainObjects
                     c[index] = 0;
                     index += 1;
                 }
-        }
-
-        public static async Task Dispatch<T>(
-            this IEnumerable<T> enumerable,
-            Func<T, Task>       func,
-            int                 maxConcurrent
-            )
-        {
-            if(maxConcurrent <= 0)
-                throw new ArgumentOutOfRangeException("maxConcurrent");
-
-            var pending = new Queue<T>(enumerable);
-            var tasks   = new List<Task>();
-
-            while(pending.Count + tasks.Count > 0)
-            {
-                while(tasks.Count < maxConcurrent && pending.Count > 0)
-                    tasks.Add(func(pending.Dequeue()));
-
-                tasks.Remove(await Task.WhenAny(tasks));
-            }
         }
     }
 }

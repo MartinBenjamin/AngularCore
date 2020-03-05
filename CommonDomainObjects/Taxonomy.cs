@@ -26,54 +26,41 @@ namespace CommonDomainObjects
         {
             _terms = new List<TTaxonomyTerm>();
 
+            var next = 0;
             foreach(var term in adjacencyList.Keys.Where(key => adjacencyList[key].Count == 0))
-                CreateTaxonomyTerm(
+            {
+                var taxonomyTerm = CreateTree(
                     adjacencyList.Transpose(),
                     term,
                     null);
 
-            AssignIntervals();
+                next = taxonomyTerm.AssignInterval(next);
+            }
         }
 
         public virtual TTaxonomyTerm this[
             TTerm term
             ] => _terms.FirstOrDefault(taxonomyTerm => taxonomyTerm.Term.Equals(term));
 
-        private void AssignIntervals()
-        {
-            var next = 0;
-
-            Terms
-                .Where(taxonomyTerm => taxonomyTerm.Broader == null)
-                .ToList()
-                .ForEach(taxonomyTerm => next = taxonomyTerm.AssignInterval(next));
-        }
-
         public virtual void Visit(
             Action<TTaxonomyTerm> enter,
             Action<TTaxonomyTerm> exit = null
-            )
-        {
-            Terms
+            ) => Terms
                 .Where(taxonomyTerm => taxonomyTerm.Broader == null)
-                .ToList()
                 .ForEach(taxonomyTerm => taxonomyTerm.Visit(
                     enter,
                     exit));
-        }
 
         public virtual async Task VisitAsync(
             Func<TTaxonomyTerm, Task> enter,
             Func<TTaxonomyTerm, Task> exit = null
-            )
-        {
-            foreach(var currentTaxonomyterm in Terms.Where(taxonomyTerm => taxonomyTerm.Broader == null))
-                await currentTaxonomyterm.VisitAsync(
+            ) => await Terms
+                .Where(taxonomyTerm => taxonomyTerm.Broader == null)
+                .ForEachAsync(taxonomyTerm => taxonomyTerm.VisitAsync(
                     enter,
-                    exit);
-        }
+                    exit));
 
-        private void CreateTaxonomyTerm(
+        private TTaxonomyTerm CreateTree(
             IDictionary<TTerm, IList<TTerm>> adjacencyList,
             TTerm                            term,
             TTaxonomyTerm                    broaderTaxonomyTerm
@@ -86,10 +73,12 @@ namespace CommonDomainObjects
             _terms.Add(taxonomyTerm);
 
             foreach(var narrower in adjacencyList[term])
-                CreateTaxonomyTerm(
+                CreateTree(
                     adjacencyList,
                     narrower,
                     taxonomyTerm);
+
+            return taxonomyTerm;
         }
 
         protected abstract TTaxonomyTerm NewTaxonomyTerm(
@@ -111,12 +100,7 @@ namespace CommonDomainObjects
         public virtual Range<int>    Interval { get; protected set; }
 
         public virtual IReadOnlyList<TTaxonomyTerm> Narrower
-        {
-            get
-            {
-                return new ReadOnlyCollection<TTaxonomyTerm>(_narrower);
-            }
-        }
+            => new ReadOnlyCollection<TTaxonomyTerm>(_narrower);
 
         protected TaxonomyTerm() : base()
         {
@@ -138,10 +122,9 @@ namespace CommonDomainObjects
 
         public virtual bool Contains(
             TTaxonomyTerm taxonomyTerm
-            )
-        {
-            return Interval.Contains(taxonomyTerm.Interval);
-        }
+            ) =>
+                Taxonomy == taxonomyTerm.Taxonomy &&
+                Interval.Contains(taxonomyTerm.Interval);
 
         protected internal virtual int AssignInterval(
             int next
@@ -149,8 +132,7 @@ namespace CommonDomainObjects
         {
             var start = next++;
 
-            foreach(var narrower in _narrower)
-                next = narrower.AssignInterval(next);
+            _narrower.ForEach(narrower => next = narrower.AssignInterval(next));
 
             Interval = new Range<int>(
                 start,
@@ -158,7 +140,6 @@ namespace CommonDomainObjects
 
             return next;
         }
-
 
         TTaxonomyTerm ITreeVertex<TTaxonomyTerm>.Parent => Broader;
 
@@ -191,13 +172,10 @@ namespace CommonDomainObjects
         protected override TaxonomyTerm<TTerm> NewTaxonomyTerm(
             TTerm               term,
             TaxonomyTerm<TTerm> broaderTaxonomyTerm
-            )
-        {
-            return new TaxonomyTerm<TTerm>(
+            ) => new TaxonomyTerm<TTerm>(
                 this,
                 term,
                 broaderTaxonomyTerm);
-        }
     }
 
     public class TaxonomyTerm<TTerm>: TaxonomyTerm<Guid, Taxonomy<TTerm>, TaxonomyTerm<TTerm>, TTerm>

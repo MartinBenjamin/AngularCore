@@ -13,12 +13,7 @@ namespace CommonDomainObjects
         private IList<THierarchyMember> _members;
 
         public virtual IReadOnlyList<THierarchyMember> Members
-        {
-            get
-            {
-                return new ReadOnlyCollection<THierarchyMember>(_members);
-            }
-        }
+            => new ReadOnlyCollection<THierarchyMember>(_members);
 
         protected Hierarchy() : base()
         {
@@ -26,74 +21,64 @@ namespace CommonDomainObjects
 
         public Hierarchy(
             TId                                  id,
-            IDictionary<TMember, IList<TMember>> hierachy
+            IDictionary<TMember, IList<TMember>> adjacencyList
             ) : base(id)
         {
             _members = new List<THierarchyMember>();
 
-            foreach(var member in hierachy.TopologicalSort())
+            var next = 0;
+            foreach(var member in adjacencyList.Keys.Where(key => adjacencyList[key].Count == 0))
             {
-                THierarchyMember parentHierarchyMember = null;
+                var hierarchyMember = CreateTree(
+                    adjacencyList.Transpose(),
+                    member,
+                    null);
 
-                var adjacent = hierachy[member];
-
-                if(adjacent.Count > 0)
-                {
-                    var parent = adjacent.First();
-                    parentHierarchyMember = _members.FirstOrDefault(hierarchyMember => hierarchyMember.Member.Equals(parent));
-                }
-
-                _members.Add(
-                    NewHierarchyMember(
-                        member,
-                        parentHierarchyMember));
+                next = hierarchyMember.AssignInterval(next);
             }
-
-            AssignIntervals();
         }
 
         public virtual THierarchyMember this[
             TMember member
-            ]
-        {
-            get
-            {
-                return _members.FirstOrDefault(hierarchyMember => hierarchyMember.Member.Equals(member));
-            }
-        }
-
-        private void AssignIntervals()
-        {
-            var next = 0;
-
-            Members
-                .Where(hierarchyMember => hierarchyMember.Parent == null)
-                .ToList()
-                .ForEach(hierarchyMember => next = hierarchyMember.AssignInterval(next));
-        }
+            ] => _members.FirstOrDefault(hierarchyMember => hierarchyMember.Member.Equals(member));
 
         public virtual void Visit(
             Action<THierarchyMember> enter,
             Action<THierarchyMember> exit = null
-            )
-        {
-            Members
+            ) => Members
                 .Where(hierarchyMember => hierarchyMember.Parent == null)
-                .ToList()
                 .ForEach(hierarchyMember => hierarchyMember.Visit(
                     enter,
                     exit));
-        }
 
         public virtual async Task VisitAsync(
             Func<THierarchyMember, Task> enter,
             Func<THierarchyMember, Task> exit = null
+            ) => await Members
+                .Where(hierarchyMember => hierarchyMember.Parent == null)
+                .ForEachAsync(hierarchyMember => hierarchyMember.VisitAsync(
+                    enter,
+                    exit));
+
+        private THierarchyMember CreateTree(
+            IDictionary<TMember, IList<TMember>> adjacencyList,
+            TMember                              member,
+            THierarchyMember                     parentHierarchyMember
             )
         {
-            foreach(var currentHierarchyMember in Members.Where(hierarchyMember => hierarchyMember.Parent == null))
-                await currentHierarchyMember.VisitAsync(
-                    enter,
-                    exit);
+            var hierarchyMember = NewHierarchyMember(
+                member,
+                parentHierarchyMember);
+
+            _members.Add(hierarchyMember);
+
+            foreach(var child in adjacencyList[member])
+                CreateTree(
+                    adjacencyList,
+                    child,
+                    hierarchyMember);
+
+            return hierarchyMember;
         }
 
         protected abstract THierarchyMember NewHierarchyMember(
@@ -115,12 +100,7 @@ namespace CommonDomainObjects
         public virtual Range<int>       Interval  { get; protected set; }
 
         public virtual IReadOnlyList<THierarchyMember> Children
-        {
-            get
-            {
-                return new ReadOnlyCollection<THierarchyMember>(_children);
-            }
-        }
+            => new ReadOnlyCollection<THierarchyMember>(_children);
 
         protected HierarchyMember() : base()
         {
@@ -142,10 +122,9 @@ namespace CommonDomainObjects
 
         public virtual bool Contains(
             THierarchyMember hierarchyMember
-            )
-        {
-            return Interval.Contains(hierarchyMember.Interval);
-        }
+            ) =>
+                Hierarchy == hierarchyMember.Hierarchy &&
+                Interval.Contains(hierarchyMember.Interval);
 
         protected internal virtual int AssignInterval(
             int next
@@ -153,8 +132,7 @@ namespace CommonDomainObjects
         {
             var start = next++;
 
-            foreach(var child in _children)
-                next = child.AssignInterval(next);
+            _children.ForEach(child => next = child.AssignInterval(next));
 
             Interval = new Range<int>(
                 start,
@@ -190,13 +168,10 @@ namespace CommonDomainObjects
         protected override HierarchyMember<TMember> NewHierarchyMember(
             TMember                  member,
             HierarchyMember<TMember> parentHierarchyMember
-            )
-        {
-            return new HierarchyMember<TMember>(
+            ) => new HierarchyMember<TMember>(
                 this,
                 member,
                 parentHierarchyMember);
-        }
     }
 
     public class HierarchyMember<TMember>: HierarchyMember<Guid, Hierarchy<TMember>, HierarchyMember<TMember>, TMember>
