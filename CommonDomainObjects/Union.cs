@@ -6,19 +6,8 @@ namespace CommonDomainObjects
     {
         private object _value;
 
-        public Union(
-            T1 t1
-            )
-        {
-            _value = t1;
-        }
-
-        public Union(
-            T2 t2
-            )
-        {
-            _value = t2;
-        }
+        public Union(T1 t1) => _value = t1;
+        public Union(T2 t2) => _value = t2;
 
         public void Switch(
             Action<T1> t1Case,
@@ -48,45 +37,17 @@ namespace CommonDomainObjects
             }
         }
 
-        public static implicit operator Union<T1, T2>(
-            T1 t1
-            )
-        {
-            return new Union<T1, T2>(t1);
-        }
-
-        public static implicit operator Union<T1, T2>(
-            T2 t2
-            )
-        {
-            return new Union<T1, T2>(t2);
-        }
+        public static implicit operator Union<T1, T2>(T1 t1) => new Union<T1, T2>(t1);
+        public static implicit operator Union<T1, T2>(T2 t2) => new Union<T1, T2>(t2);
     }
 
     public struct Union<T1, T2, T3>
     {
         private object _value;
 
-        public Union(
-            T1 t1
-            )
-        {
-            _value = t1;
-        }
-
-        public Union(
-            T2 t2
-            )
-        {
-            _value = t2;
-        }
-
-        public Union(
-            T3 t3
-            )
-        {
-            _value = t3;
-        }
+        public Union(T1 t1) => _value = t1;
+        public Union(T2 t2) => _value = t2;
+        public Union(T3 t3) => _value = t3;
 
         public void Switch(
             Action<T1> t1Case,
@@ -120,59 +81,19 @@ namespace CommonDomainObjects
             }
         }
 
-        public static implicit operator Union<T1, T2, T3>(
-            T1 t1
-            )
-        {
-            return new Union<T1, T2, T3>(t1);
-        }
-
-        public static implicit operator Union<T1, T2, T3>(
-            T2 t2
-            )
-        {
-            return new Union<T1, T2, T3>(t2);
-        }
-
-        public static implicit operator Union<T1, T2, T3>(
-            T3 t3
-            )
-        {
-            return new Union<T1, T2, T3>(t3);
-        }
+        public static implicit operator Union<T1, T2, T3>(T1 t1) => new Union<T1, T2, T3>(t1);
+        public static implicit operator Union<T1, T2, T3>(T2 t2) => new Union<T1, T2, T3>(t2);
+        public static implicit operator Union<T1, T2, T3>(T3 t3) => new Union<T1, T2, T3>(t3);
     }
 
     public struct Union<T1, T2, T3, T4>
     {
         private object _value;
 
-        public Union(
-            T1 t1
-            )
-        {
-            _value = t1;
-        }
-
-        public Union(
-            T2 t2
-            )
-        {
-            _value = t2;
-        }
-
-        public Union(
-            T3 t3
-            )
-        {
-            _value = t3;
-        }
-
-        public Union(
-            T4 t4
-            )
-        {
-            _value = t4;
-        }
+        public Union(T1 t1) => _value = t1;
+        public Union(T2 t2) => _value = t2;
+        public Union(T3 t3) => _value = t3;
+        public Union(T4 t4) => _value = t4;
 
         public void Switch(
             Action<T1> t1Case,
@@ -210,32 +131,9 @@ namespace CommonDomainObjects
             }
         }
 
-        public static implicit operator Union<T1, T2, T3, T4>(
-            T1 t1
-            )
-        {
-            return new Union<T1, T2, T3, T4>(t1);
-        }
-
-        public static implicit operator Union<T1, T2, T3, T4>(
-            T2 t2
-            )
-        {
-            return new Union<T1, T2, T3, T4>(t2);
-        }
-
-        public static implicit operator Union<T1, T2, T3, T4>(
-            T3 t3
-            )
-        {
-            return new Union<T1, T2, T3, T4>(t3);
-        }
-
-        public static implicit operator Union<T1, T2, T3, T4>(
-            T4 t4
-            )
-        {
-            return new Union<T1, T2, T3, T4>(t4);
-        }
+        public static implicit operator Union<T1, T2, T3, T4>(T1 t1) => new Union<T1, T2, T3, T4>(t1);
+        public static implicit operator Union<T1, T2, T3, T4>(T2 t2) => new Union<T1, T2, T3, T4>(t2);
+        public static implicit operator Union<T1, T2, T3, T4>(T3 t3) => new Union<T1, T2, T3, T4>(t3);
+        public static implicit operator Union<T1, T2, T3, T4>(T4 t4) => new Union<T1, T2, T3, T4>(t4);
     }
 }
