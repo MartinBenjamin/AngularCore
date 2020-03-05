@@ -209,7 +209,7 @@ namespace Test
             {
                 var session = scope.Resolve<ISession>();
                 session.Save(temporalObject);
-                temporalObject.Versions.Select(session.Save).ToList();
+                temporalObject.Versions.ForEach(version => session.Save(version));
                 session.Flush();
             }
 
@@ -242,7 +242,7 @@ namespace Test
             {
                 var session = scope.Resolve<ISession>();
                 session.Save(temporalTestObject);
-                temporalTestObject.Versions.Select(session.Save).ToList();
+                temporalTestObject.Versions.ForEach(version => session.Save(version));
                 session.Flush();
             }
 
