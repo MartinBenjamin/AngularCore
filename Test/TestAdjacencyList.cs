@@ -9,9 +9,9 @@ namespace Test
     {
         private static readonly IDictionary<char, IList<char>> _adjacencyList = new Dictionary<char, IList<char>>
         {
-            {'A', new char[]{} },
-            {'B', new char[]{ 'A' } },
-            {'C', new char[]{ 'A', 'B' } },
+            { 'A', new char[]{} },
+            { 'B', new char[]{ 'A' } },
+            { 'C', new char[]{ 'A', 'B' } },
         };
 
         [TestCase('A', 0)]

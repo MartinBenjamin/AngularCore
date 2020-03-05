@@ -10,10 +10,10 @@ namespace Test
     {
         private static readonly IDictionary<char, IList<char>> _taxonomy = new Dictionary<char, IList<char>>
         {
-            {'A', new char[]{} },
-            {'B', new char[]{} },
-            {'C', new char[]{ 'B' } },
-            {'D', new char[]{ 'B' } },
+            { 'A', new char[]{} },
+            { 'B', new char[]{} },
+            { 'C', new char[]{ 'B' } },
+            { 'D', new char[]{ 'B' } },
         };
 
         [TestCase('A', 'A', true )]
