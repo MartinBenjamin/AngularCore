@@ -46,17 +46,17 @@ namespace CommonDomainObjects
                 (
                     from @out in graph.Keys
                     from @in in graph[@out]
-                    select new Edge<TVertex>(
-                        @out,
-                        @in)
+                    select (
+                        Out: @out,
+                        In : @in)
                 )
                 on vertex equals edge.In into edgesGroupedByIn
-                select new KeyValuePair<TVertex, IList<TVertex>>(
-                    vertex,
-                    edgesGroupedByIn.Select(edge => edge.Out).ToList())
+                select (
+                    Out: vertex,
+                    In : (IList<TVertex>)edgesGroupedByIn.Select(edge => edge.Out).ToList())
                 ).ToDictionary(
-                    pair => pair.Key,
-                    pair => pair.Value);
+                    tuple => tuple.Out,
+                    tuple => tuple.In);
 
         public static Graph<TVertex> ToGraph<TVertex>(
             this IDictionary<TVertex, IList<TVertex>> adjacencyList
