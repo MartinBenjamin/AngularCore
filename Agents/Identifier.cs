@@ -25,34 +25,26 @@
             object obj
             )
         {
-            var rhs = obj as Identifier;
+            var identifier = obj as Identifier;
             return
-                rhs != null &&
-                Scheme == rhs.Scheme &&
-                Value  == rhs.Value;
+                identifier != null &&
+                Scheme     == identifier.Scheme &&
+                Value      == identifier.Value;
         }
 
         public override int GetHashCode()
-        {
-            return Value.GetHashCode();
-        }
+            => Value.GetHashCode();
 
         public static bool operator ==(
             Identifier lhs,
             Identifier rhs
-            )
-        {
-            return Equals(
+            ) => Equals(
                 lhs,
                 rhs);
-        }
 
         public static bool operator !=(
             Identifier lhs,
             Identifier rhs
-            )
-        {
-            return !(lhs == rhs);
-        }
+            ) => !(lhs == rhs);
     }
 }
