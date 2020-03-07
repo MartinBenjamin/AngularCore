@@ -46,6 +46,26 @@ namespace CommonDomainObjects
             }
         }
 
+        public static IEnumerable<IEnumerable<T>> Batch<T>(
+            this IEnumerable<T> source,
+            int                 size
+            )
+        {
+            List<T> nextbatch = new List<T>(size);
+            foreach(var t in source)
+            {
+                nextbatch.Add(t);
+                if(nextbatch.Count == size)
+                {
+                    yield return nextbatch;
+                    nextbatch = new List<T>(size);
+                }
+            }
+
+            if(nextbatch.Count > 0)
+                yield return nextbatch;
+        }
+
         public static IEnumerable<IList<T>> Permute<T>(
             this IEnumerable<T> enumerable
             )

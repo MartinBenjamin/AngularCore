@@ -23,7 +23,8 @@ namespace Data
 
             builder
                 .RegisterType<GeographicRegionHierarchyLoader>()
-                .As<IEtl<GeographicRegionHierarchy>>();
+                .As<IEtl<GeographicRegionHierarchy>>()
+                .SingleInstance();
         }
     }
 }

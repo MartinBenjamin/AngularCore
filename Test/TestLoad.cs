@@ -94,30 +94,10 @@ namespace Test
         //[Test]
         public async Task Lei()
         {
-            using(var zipFile = new FileStream(
-                @"C:\Users\Martin\Downloads\20200118-gleif-concatenated-file-lei2.xml.5e22c9ddd878a.zip",
-                FileMode.Open))
-                using(var archive = new ZipArchive(zipFile, ZipArchiveMode.Read))
-                {
-                    Assert.That(archive.Entries.Count, Is.EqualTo(1));
-                    using(var stream = archive.Entries[0].Open())
-                        using(var xmlReader = XmlReader.Create(
-                            stream,
-                            new XmlReaderSettings
-                            {
-                                Async = true
-                            }))
-                        {
-                            Assert.That(xmlReader, Is.Not.Null);
-                            var leiNamespace = "http://www.gleif.org/data/schema/leidata/2016";
-                            xmlReader.MoveToContent();
-                            xmlReader.ReadToDescendant("LEIRecord", leiNamespace);
-                            xmlReader.ReadToDescendant("LEI", leiNamespace);
-                            var lei = xmlReader.ReadElementContentAsString();
-                            xmlReader.ReadToFollowing("LegalName", leiNamespace);
-                            var legalName = xmlReader.ReadElementContentAsString();
-                        }
-                }
+            await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
+            await new LegalEntityLoader(
+                _container.Resolve<ISessionFactory>(),
+                100).LoadAsync();
         }
 
         [Test]
