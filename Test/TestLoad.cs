@@ -4,6 +4,7 @@ using Data;
 using Iso4217;
 using Locations;
 using NHibernate;
+using NHibernate.Criterion;
 using NHibernate.Tool.hbm2ddl;
 using NHibernateIntegration;
 using NUnit.Framework;
@@ -61,7 +62,20 @@ namespace Test
 
             using(var scope = _container.BeginLifetimeScope())
             {
-                var loadedHierarchy = await scope.Resolve<ISession>().GetAsync<GeographicRegionHierarchy>(hierarchy.Id);
+                var session = scope.Resolve<ISession>();
+                await session
+                    .CreateCriteria<GeographicRegion>()
+                    .Fetch("Subregions")
+                    .ListAsync<GeographicRegion>();
+                await session
+                    .CreateCriteria<GeographicRegionHierarchyMember>()
+                    .Fetch("Children")
+                    .ListAsync<GeographicRegionHierarchyMember>();
+                var loadedHierarchy = await session
+                    .CreateCriteria<GeographicRegionHierarchy>()
+                    .Add(Expression.Eq("Id", hierarchy.Id))
+                    .Fetch("Members")
+                    .UniqueResultAsync<GeographicRegionHierarchy>();
                 Assert.That(loadedHierarchy, Is.Not.Null);
                 Validate(loadedHierarchy);
 
@@ -91,7 +105,7 @@ namespace Test
             }
         }
 
-        //[Test]
+        [Test]
         public async Task Lei()
         {
             await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
@@ -113,7 +127,6 @@ namespace Test
         {
             hierarchy
                 .Members
-                .ToList()
                 .ForEach(
                     member =>
                     {
