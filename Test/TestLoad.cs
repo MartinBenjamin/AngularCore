@@ -11,10 +11,8 @@ using NUnit.Framework;
 using Service;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace Test
 {
@@ -105,7 +103,7 @@ namespace Test
             }
         }
 
-        [Test]
+        //[Test]
         public async Task Lei()
         {
             await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
