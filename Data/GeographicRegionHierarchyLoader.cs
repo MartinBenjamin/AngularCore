@@ -43,7 +43,7 @@ namespace Data
                 "ISO3166-2-GB.csv",
                 "ISO3166-2-PT.csv",
                 "ISO3166-2-US.csv"
-            }.SelectMany(fileName => _csvExtractor.Extract(fileName))
+            }.SelectMany(_csvExtractor.Extract)
             .ToDictionary(record => record[1]);
 
             var emptyRecordArray = new IList<string>[] { };
@@ -59,7 +59,6 @@ namespace Data
 
             recordHierarchy
                 .TopologicalSort()
-                .ToList()
                 .ForEach(
                     record =>
                     {
