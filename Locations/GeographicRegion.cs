@@ -64,8 +64,8 @@ namespace Locations
             enter?.Invoke(this);
 
             _subregions.ForEach(subregion => subregion.Visit(
-                    enter,
-                    exit));
+                enter,
+                exit));
 
             exit?.Invoke(this);
         }
