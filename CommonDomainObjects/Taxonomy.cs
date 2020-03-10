@@ -21,16 +21,18 @@ namespace CommonDomainObjects
 
         public Taxonomy(
             TId                              id,
-            IDictionary<TTerm, IList<TTerm>> adjacencyList
+            IDictionary<TTerm, IList<TTerm>> broader
             ) : base(id)
         {
             _terms = new List<TTaxonomyTerm>();
 
+            var narrower = broader.Transpose();
+
             var next = 0;
-            foreach(var term in adjacencyList.Keys.Where(key => adjacencyList[key].Count == 0))
+            foreach(var term in broader.Keys.Where(key => broader[key].Count == 0))
             {
                 var taxonomyTerm = CreateTree(
-                    adjacencyList.Transpose(),
+                    narrower,
                     term,
                     null);
 
@@ -61,7 +63,7 @@ namespace CommonDomainObjects
                     exit));
 
         private TTaxonomyTerm CreateTree(
-            IDictionary<TTerm, IList<TTerm>> adjacencyList,
+            IDictionary<TTerm, IList<TTerm>> narrower,
             TTerm                            term,
             TTaxonomyTerm                    broaderTaxonomyTerm
             )
@@ -72,10 +74,10 @@ namespace CommonDomainObjects
 
             _terms.Add(taxonomyTerm);
 
-            foreach(var narrower in adjacencyList[term])
+            foreach(var narrowerTerm in narrower[term])
                 CreateTree(
-                    adjacencyList,
                     narrower,
+                    narrowerTerm,
                     taxonomyTerm);
 
             return taxonomyTerm;

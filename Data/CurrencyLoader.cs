@@ -33,14 +33,6 @@ namespace Data
                 .Distinct()
                 .ToList();
 
-            await LoadAsync(currencies);
-            return currencies;
-        }
-
-        private async Task LoadAsync(
-            IEnumerable<Currency> currencies
-            )
-        {
             using(var session = _sessionFactory.OpenSession())
             using(var transaction = session.BeginTransaction())
             {
@@ -48,6 +40,8 @@ namespace Data
                     await session.SaveAsync(currency);
                 await transaction.CommitAsync();
             }
+
+            return currencies;
         }
     }
 }

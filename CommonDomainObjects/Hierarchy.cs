@@ -21,16 +21,18 @@ namespace CommonDomainObjects
 
         public Hierarchy(
             TId                                  id,
-            IDictionary<TMember, IList<TMember>> adjacencyList
+            IDictionary<TMember, IList<TMember>> parent
             ) : base(id)
         {
             _members = new List<THierarchyMember>();
 
+            var child = parent.Transpose();
+
             var next = 0;
-            foreach(var member in adjacencyList.Keys.Where(key => adjacencyList[key].Count == 0))
+            foreach(var member in parent.Keys.Where(key => parent[key].Count == 0))
             {
                 var hierarchyMember = CreateTree(
-                    adjacencyList.Transpose(),
+                    child,
                     member,
                     null);
 
@@ -61,7 +63,7 @@ namespace CommonDomainObjects
                     exit));
 
         private THierarchyMember CreateTree(
-            IDictionary<TMember, IList<TMember>> adjacencyList,
+            IDictionary<TMember, IList<TMember>> child,
             TMember                              member,
             THierarchyMember                     parentHierarchyMember
             )
@@ -72,10 +74,10 @@ namespace CommonDomainObjects
 
             _members.Add(hierarchyMember);
 
-            foreach(var child in adjacencyList[member])
+            foreach(var childMember in child[member])
                 CreateTree(
-                    adjacencyList,
                     child,
+                    childMember,
                     hierarchyMember);
 
             return hierarchyMember;

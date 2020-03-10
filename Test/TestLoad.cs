@@ -1,6 +1,8 @@
 ﻿using Autofac;
 using CommonDomainObjects;
 using Data;
+using Iso3166._1;
+using Iso3166._2;
 using Iso4217;
 using Locations;
 using NHibernate;
@@ -49,6 +51,37 @@ namespace Test
             schemaExport.Create(
                 scriptAction => { },
                 true);
+        }
+
+        [Test]
+        public async Task Iso3166_1()
+        {
+            var countries = await _container.Resolve<IEtl<IEnumerable<Country>>>().ExecuteAsync();
+            Assert.That(countries.Count, Is.GreaterThan(0));
+
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<INamedService<string, Country, NamedFilters>>();
+                var loaded = await service.FindAsync(new NamedFilters());
+                Assert.That(
+                    loaded.OrderBy(country => country.Id).SequenceEqual(countries.OrderBy(country => country.Id)), Is.True);
+            }
+        }
+
+        [Test]
+        public async Task Iso3166_2()
+        {
+            await _container.Resolve<IEtl<IEnumerable<Country>>>().ExecuteAsync();
+            var subdivisions = await _container.Resolve<IEtl<IEnumerable<Subdivision>>>().ExecuteAsync();
+            Assert.That(subdivisions.Count, Is.GreaterThan(0));
+
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<INamedService<string, Subdivision, NamedFilters>>();
+                var loaded = await service.FindAsync(new NamedFilters());
+                Assert.That(
+                    loaded.OrderBy(subdivision => subdivision.Id).SequenceEqual(subdivisions.OrderBy(subdivision => subdivision.Id)), Is.True);
+            }
         }
 
         [Test]

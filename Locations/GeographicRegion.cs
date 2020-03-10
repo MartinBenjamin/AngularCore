@@ -1,6 +1,8 @@
 ﻿using CommonDomainObjects;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace Locations
 {
@@ -11,12 +13,7 @@ namespace Locations
         public virtual Range<int> Interval { get; protected set; }
 
         public virtual IReadOnlyList<GeographicSubregion> Subregions
-        {
-            get
-            {
-                return new ReadOnlyCollection<GeographicSubregion>(_subregions);
-            }
-        }
+            => new ReadOnlyCollection<GeographicSubregion>(_subregions);
 
         protected GeographicRegion() : base()
         {
@@ -34,10 +31,7 @@ namespace Locations
 
         public virtual bool Contains(
             GeographicRegion geographicalRegion
-            )
-        {
-            return Interval.Contains(geographicalRegion.Interval);
-        }
+            ) => Interval.Contains(geographicalRegion.Interval);
 
         protected internal virtual int AssignInterval(
             int next
@@ -45,8 +39,8 @@ namespace Locations
         {
             var start = next++;
 
-            foreach(var child in _subregions)
-                next = child.AssignInterval(next);
+            foreach(var subregion in _subregions)
+                next = subregion.AssignInterval(next);
 
             Interval = new Range<int>(
                 start,
@@ -60,6 +54,36 @@ namespace Locations
             )
         {
             _subregions.Add(subregion);
+        }
+
+        public virtual void Visit(
+            Action<GeographicRegion> enter,
+            Action<GeographicRegion> exit = null
+            )
+        {
+            enter?.Invoke(this);
+
+            _subregions.ForEach(subregion => subregion.Visit(
+                    enter,
+                    exit));
+
+            exit?.Invoke(this);
+        }
+
+        public virtual async Task VisitAsync(
+            Func<GeographicRegion, Task> enter,
+            Func<GeographicRegion, Task> exit = null
+            )
+        {
+            if(enter != null)
+                await enter(this);
+
+            await _subregions.ForEachAsync(subregion => subregion.VisitAsync(
+                enter,
+                exit));
+
+            if(exit != null)
+                await exit(this);
         }
     }
 }

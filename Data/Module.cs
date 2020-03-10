@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using Iso3166._1;
+using Iso3166._2;
 using Iso4217;
 using Locations;
 using System.Collections.Generic;
@@ -19,6 +21,16 @@ namespace Data
             builder
                 .RegisterType<CurrencyLoader>()
                 .As<IEtl<IEnumerable<Currency>>>()
+                .SingleInstance();
+
+            builder
+                .RegisterType<CountryLoader>()
+                .As<IEtl<IEnumerable<Country>>>()
+                .SingleInstance();
+
+            builder
+                .RegisterType<SubdivisionLoader>()
+                .As<IEtl<IEnumerable<Subdivision>>>()
                 .SingleInstance();
 
             builder
