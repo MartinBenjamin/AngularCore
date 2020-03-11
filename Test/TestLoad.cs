@@ -181,6 +181,12 @@ namespace Test
                             Assert.That(child.Member.As<GeographicSubregion>().Region, Is.EqualTo(member.Member));
                             Assert.That(member.Member.Subregions.Contains(child.Member));
                         }
+
+                        foreach(var child in member.Member.Subregions)
+                        {
+                            var childHierachyMember = hierarchy[child];
+                            Assert.That(childHierachyMember.Parent, Is.EqualTo(member));
+                        }
                     });
         }
     }
