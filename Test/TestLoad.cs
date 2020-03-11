@@ -85,8 +85,11 @@ namespace Test
         }
 
         [Test]
-        public async Task Iso3166()
+        public async Task GeographicRegionHierarchy()
         {
+            await _container.Resolve<IEtl<IEnumerable<Country>>>().ExecuteAsync();
+            await _container.Resolve<IEtl<IEnumerable<Subdivision>>>().ExecuteAsync();
+
             var hierarchy = await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
             Assert.That(hierarchy.Members.Count, Is.GreaterThan(0));
             Validate(hierarchy);
@@ -148,6 +151,8 @@ namespace Test
         [Test]
         public async Task Load()
         {
+            await _container.Resolve<IEtl<IEnumerable<Country>>>().ExecuteAsync();
+            await _container.Resolve<IEtl<IEnumerable<Subdivision>>>().ExecuteAsync();
             await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
             await _container.Resolve<IEtl<IEnumerable<Currency>>>().ExecuteAsync();
         }
