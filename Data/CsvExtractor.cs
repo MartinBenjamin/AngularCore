@@ -4,21 +4,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Data
 {
     public class CsvExtractor: ICsvExtractor
     {
-        public IList<IList<string>> Extract(
+        public async Task<IList<IList<string>>> ExtractAsync(
             string fileName
             )
         {
-            return Extract(
+            return await ExtractAsync(
                 fileName,
                 record => (IList<string>)record.ToList());
         }
 
-        public IList<T> Extract<T>(
+        public async Task<IList<T>> ExtractAsync<T>(
             string                 fileName,
             Func<IList<string>, T> transform
             )
@@ -44,18 +45,18 @@ namespace Data
                     record.Clear();
                 });
 
-            parser.Parse(ReadAllText(fileName));
+            parser.Parse(await ReadAllTextAsync(fileName));
 
             return list;
         }
 
-        public static string ReadAllText(
+        public static async Task<string> ReadAllTextAsync(
             string fileName
             )
         {
             using(var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(ResourceName(fileName)))
             using(var reader = new StreamReader(stream))
-                return reader.ReadToEnd();
+                return await reader.ReadToEndAsync();
         }
 
         public static string ResourceName(

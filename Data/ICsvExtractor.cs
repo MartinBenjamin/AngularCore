@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Data
 {
     public interface ICsvExtractor
     {
-        IList<IList<string>> Extract(string fileName);
+        Task<IList<IList<string>>> ExtractAsync(string fileName);
 
-        IList<T> Extract<T>(
+        Task<IList<T>> ExtractAsync<T>(
            string                 fileName,
            Func<IList<string>, T> transform);
     }

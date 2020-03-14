@@ -17,11 +17,11 @@ namespace Test
         [TestCase("ISO3166-2-PT.csv")]
         [TestCase("ISO3166-2-US.csv")]
         [TestCase("ISO4217.csv"     )]
-        public void LoadFile(
+        public async void LoadFile(
             string fileName
             )
         {
-            var content = CsvExtractor.ReadAllText(fileName);
+            var content = await CsvExtractor.ReadAllTextAsync(fileName);
             int count = 0;
             var parser = new Rfc4180Parser(
                 field => { },

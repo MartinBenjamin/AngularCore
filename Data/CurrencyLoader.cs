@@ -22,14 +22,14 @@ namespace Data
 
         async Task<IEnumerable<Currency>> IEtl<IEnumerable<Currency>>.ExecuteAsync()
         {
-            var currencies = _csvExtractor.Extract(
+            var currencies = (await _csvExtractor.ExtractAsync(
                 "ISO4217.csv",
                 record => !string.IsNullOrEmpty(record[2]) ?
                     new Currency(
                         record[2],
                         int.Parse(record[3]),
                         record[1],
-                        record[4] == "N.A." ? (int?)null : int.Parse(record[4])) : null)
+                        record[4] == "N.A." ? (int?)null : int.Parse(record[4])) : null))
                 .Distinct()
                 .ToList();
 

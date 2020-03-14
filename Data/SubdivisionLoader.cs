@@ -30,14 +30,14 @@ namespace Data
                 var countries = session
                     .CreateCriteria<Country>()
                     .List<Country>();
-                var records = new[]
+                var records = (await Task.WhenAll(new[]
                 {
                     "ISO3166-2-AE.csv",
                     "ISO3166-2-CA.csv",
                     "ISO3166-2-GB.csv",
                     "ISO3166-2-PT.csv",
                     "ISO3166-2-US.csv"
-                }.SelectMany(_csvExtractor.Extract);
+                }.Select(_csvExtractor.ExtractAsync))).SelectMany(extractedRecords => extractedRecords);
 
                 var parentRecord = (
                     from child in records

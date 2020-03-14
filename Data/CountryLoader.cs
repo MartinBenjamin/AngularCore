@@ -21,7 +21,7 @@ namespace Data
 
         async Task<IEnumerable<Country>> IEtl<IEnumerable<Country>>.ExecuteAsync()
         {
-            var countries = _csvExtractor.Extract(
+            var countries = await _csvExtractor.ExtractAsync(
                 "ISO3166-1.csv",
                 record => new Country(
                     record[2],
