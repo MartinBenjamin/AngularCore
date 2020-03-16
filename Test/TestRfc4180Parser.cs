@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Peg;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Test
 {
@@ -17,7 +18,7 @@ namespace Test
         [TestCase("ISO3166-2-PT.csv")]
         [TestCase("ISO3166-2-US.csv")]
         [TestCase("ISO4217.csv"     )]
-        public async void LoadFile(
+        public async Task LoadFile(
             string fileName
             )
         {
