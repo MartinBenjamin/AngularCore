@@ -22,6 +22,9 @@ namespace Service
                 .RegisterType<NamedService<string, Country, NamedFilters>>()
                 .As<INamedService<string, Country, NamedFilters>>();
             builder
+                .RegisterType<NamedService2<string, Country, Model.Country, NamedFilters>>()
+                .As<INamedService2<string, Model.Country, NamedFilters>>();
+            builder
                 .RegisterType<NamedService<string, Subdivision, NamedFilters>>()
                 .As<INamedService<string, Subdivision, NamedFilters>>();
             builder
