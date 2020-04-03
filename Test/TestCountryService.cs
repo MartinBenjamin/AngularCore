@@ -7,7 +7,7 @@ using Service;
 namespace Test
 {
     [TestFixture]
-    public class TestCountryService: TestNamedService2<string, Country, Service.Model.Country, NamedFilters>
+    public class TestCountryService: TestNamedService<string, Country, NamedFilters>
     {
         [SetUp]
         public void SetUp()
