@@ -13,6 +13,7 @@ using NHibernateIntegration;
 using NUnit.Framework;
 using Organisations;
 using Service;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -144,7 +145,16 @@ namespace Test
         [Test]
         public async Task Branch()
         {
-            var loaded = await _container.Resolve<IEtl<IEnumerable<(Branch, Identifier)>>>().ExecuteAsync();
+            var branches = await _container.Resolve<IEtl<IEnumerable<(Branch, Identifier)>>>().ExecuteAsync();
+            Assert.That(branches.Count, Is.GreaterThan(0));
+
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<INamedService<Guid, Branch, NamedFilters>>();
+                var loaded = await service.FindAsync(new NamedFilters());
+                Assert.That(
+                    loaded.OrderBy(branch => branch.Id).SequenceEqual(branches.Select(t => t.Item1).OrderBy(branch => branch.Id)), Is.True);
+            }
         }
 
         //[Test]
