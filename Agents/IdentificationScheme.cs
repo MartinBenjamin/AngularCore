@@ -17,5 +17,13 @@ namespace Agents
                 name)
         {
         }
+
+        public IdentificationScheme(
+            string name
+            ) : this(
+                Guid.NewGuid(),
+                name)
+        {
+        }
     }
 }

@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Branch.csv" />
     <None Remove="ISO3166-1.csv" />
     <None Remove="ISO3166-2-AE.csv" />
     <None Remove="ISO3166-2-CA.csv" />
@@ -15,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Branch.csv" />
     <EmbeddedResource Include="ISO3166-1.csv" />
     <EmbeddedResource Include="ISO3166-2-AE.csv" />
     <EmbeddedResource Include="ISO3166-2-CA.csv" />
@@ -30,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Agents\Agents.csproj" />
     <ProjectReference Include="..\CommonDomainObjects\CommonDomainObjects.csproj" />
     <ProjectReference Include="..\Iso3166\Iso3166.csproj" />
     <ProjectReference Include="..\Iso4217\Iso4217.csproj" />

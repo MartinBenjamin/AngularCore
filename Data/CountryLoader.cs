@@ -30,7 +30,6 @@ namespace Data
                     int.Parse(record[4]),
                     record[0]));
 
-
             using(var session = _sessionFactory.OpenSession())
             using(var transaction = session.BeginTransaction())
             {

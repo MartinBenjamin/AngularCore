@@ -1,8 +1,10 @@
-﻿using Autofac;
+﻿using Agents;
+using Autofac;
 using Iso3166._1;
 using Iso3166._2;
 using Iso4217;
 using Locations;
+using Organisations;
 using System.Collections.Generic;
 
 namespace Data
@@ -36,6 +38,11 @@ namespace Data
             builder
                 .RegisterType<GeographicRegionHierarchyLoader>()
                 .As<IEtl<GeographicRegionHierarchy>>()
+                .SingleInstance();
+
+            builder
+                .RegisterType<BranchLoader>()
+                .As<IEtl<IEnumerable<(Branch, Identifier)>>>()
                 .SingleInstance();
         }
     }

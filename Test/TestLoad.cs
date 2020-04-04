@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using Agents;
+using Autofac;
 using CommonDomainObjects;
 using Data;
 using Iso3166._1;
@@ -10,6 +11,7 @@ using NHibernate.Criterion;
 using NHibernate.Tool.hbm2ddl;
 using NHibernateIntegration;
 using NUnit.Framework;
+using Organisations;
 using Service;
 using System.Collections.Generic;
 using System.IO;
@@ -137,6 +139,12 @@ namespace Test
                 Assert.That(
                     loaded.OrderBy(currency => currency.Id).SequenceEqual(currencies.OrderBy(currency => currency.Id)), Is.True);
             }
+        }
+
+        [Test]
+        public async Task Branch()
+        {
+            var loaded = await _container.Resolve<IEtl<IEnumerable<(Branch, Identifier)>>>().ExecuteAsync();
         }
 
         //[Test]
