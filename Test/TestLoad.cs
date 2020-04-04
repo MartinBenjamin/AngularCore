@@ -154,6 +154,11 @@ namespace Test
                 var loaded = await service.FindAsync(new NamedFilters());
                 Assert.That(
                     loaded.OrderBy(branch => branch.Id).SequenceEqual(branches.Select(t => t.Item1).OrderBy(branch => branch.Id)), Is.True);
+
+                var session = scope.Resolve<ISession>();
+
+                foreach(var (branch, identifier) in branches)
+                    Assert.That(session.Get<Identifier>(identifier).Identifies, Is.EqualTo(branch));
             }
         }
 
