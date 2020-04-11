@@ -14,10 +14,10 @@ type Callback<T> = (t: T) => void;
 var margin = { top: 20, right: 20, bottom: 20, left: 20 };
 
 function name(
-    d: OrganisationalUnit
+    d
     ): string
 {
-    return d.Acronym;
+    return d.data.Acronym;
 }
 
 function diagonal(
@@ -113,11 +113,13 @@ export class OrganisationalUnitContainerV2 implements OnInit
 {
     private static _duration = 750;
 
-    private _hierarchy: OrganisationalUnit;
-    private _callback : Callback<OrganisationalUnit>;
-    private _svg      : any;
-    private _g        : any;
-    private _tree     : any;
+    private _hierarchy : OrganisationalUnit;
+    private _callback  : Callback<OrganisationalUnit>;
+    private _svg       : any;
+    private _g         : any;
+    private _treeLayout: any;
+    private _root      : any;
+    private _nodeIndex = 0;
 
     @ViewChild('nameFragmentInput')
     private _nameFragmentInput: ElementRef;
@@ -215,46 +217,71 @@ export class OrganisationalUnitContainerV2 implements OnInit
 
     private Initialise(): void
     {
-        this._tree = d3.layout.tree()
-            .children(
-                function(
-                    d
-                    )
-                {
-                    return d.collapsed ? null : d.Children.filter(child => !child.hide);
-                })
-            .sort(
-                function(
-                    x,
-                    y
-                    )
-                {
-                    if(name(x) < name(y))
-                        return -1;
-                    if(name(x) > name(y))
-                        return 1;
-                    return 0;
-                })
-            .nodeSize([40, 40]);
+        let i = 0,
+            root;
 
-        Visit(
-            this._hierarchy,
-            organisationalUnit =>
-            {
-                let node = <any>organisationalUnit;
-                node.x0        = 0;
-                node.y0        = 0;
-                node.hide      = false;
-                node.collapsed = this._selector.Configuration.Collapsed(node);
-            });
+        this._treeLayout = d3.tree().nodeSize([40, 40]);
 
         let div = <HTMLDivElement>this._div.nativeElement;
         while(div.childNodes.length)
             div.removeChild(div.firstChild);
 
         this._svg = d3.select(div).append('svg');
-        this._g   = this._svg.append('g')
-            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+        this._g = this._svg.append('g')
+            .attr('transform', `translate(${ margin.left }, ${ margin.top })`);
+
+        this._root = d3.hierarchy(this._hierarchy, d => d.Children);
+        this._root.x0 = 0;
+        this._root.y0 = 0;
+
+        if(typeof this._root.__proto__.visit == 'undefined')
+            this._root.__proto__.visit = function(
+                enter,
+                exit = null
+                )
+            {
+                if(enter)
+                    enter(this);
+
+                if(this.children)
+                    this.children.forEach(
+                        child => child.visit(
+                            enter,
+                            exit));
+
+                if(exit)
+                    exit(this);
+            }
+
+        this._root.visit(
+            node =>
+            {
+                if(node.children)
+                    node.children.sort(
+                        (x, y) =>
+                        {
+                            if(name(x) < name(y))
+                                return -1;
+                            if(name(x) > name(y))
+                                return 1;
+                            return 0;
+                        }
+                    );
+            });
+
+        this._root.visit(
+            node =>
+            {
+                if(node.children)
+                    node._children = node.children;
+            });
+
+        this._root.visit(
+            node =>
+            {
+                if(this._selector.Configuration.Collapsed(node.data))
+                    node.children = null;
+            });
 
         this.Update();
     }
@@ -262,31 +289,48 @@ export class OrganisationalUnitContainerV2 implements OnInit
     private Update(): void
     {
         // Compute the new tree layout.
-        let nodes = this._tree.nodes(this._hierarchy).reverse(),
-            links = this._tree.links(nodes);
+        this._treeLayout(this._root);
+        let nodes = [];
+
+        this._root.visit(node => nodes.push(node));
+
+        nodes = nodes.reverse();
+
+        let links = [];
+
+        this._root.visit(
+            node =>
+            {
+                if(node.parent)
+                    links.push(
+                        {
+                            source: node.parent,
+                            target: node
+                        });
+            });
 
         // Normalize for fixed-depth.
         nodes.forEach(d => d.y = d.depth * 140);
 
         // Update the nodes.
         let node = this._g.selectAll('g.node')
-            .data(nodes, d => d.Id);
+            .data(nodes, d => d.id || (d.id = ++this._nodeIndex));
 
-        this.ComputeCoordinatesOfHidden(
-            this._hierarchy,
-            false);
+        //this.ComputeCoordinatesOfHidden(
+        //    this._hierarchy,
+        //    false);
 
         // Enter any new nodes at the parent's previous position.
         let nodeEnter = node.enter().append('g')
             .classed('node', true)
-            .attr('transform', d => 'translate(' + d.y0 + ',' + d.x0 + ') scale(1e-6)');
+            .attr('transform', d => `translate(${ d.y0 }, ${ d.x0 }) scale(1e-6)`);
 
         let group = nodeEnter.append('g');
 
         group.append('circle')
             .attr('r', 10);
 
-        let parent = group.filter(d => d.Children.length);
+        let parent = group.filter(d => d._children);
 
         parent.classed('parent', true)
             .on('click', d =>
@@ -308,7 +352,7 @@ export class OrganisationalUnitContainerV2 implements OnInit
             .attr('y2', '+5')
             .attr('class', 'vertical');
 
-        nodeEnter.filter(d => this._selector.Configuration.Selectable(d))
+        nodeEnter.filter(d => this._selector.Configuration.Selectable(d.data))
             .append('a')
             .append('text')
             .attr('y', 20)
@@ -318,26 +362,24 @@ export class OrganisationalUnitContainerV2 implements OnInit
             .text(name)
             .on('click', d =>
             {
-                this._callback(d);
+                this._callback(d.data);
                 this._selector.Close();
             });
 
-        nodeEnter.filter(d => !this._selector.Configuration.Selectable(d))
+        nodeEnter.filter(d => !this._selector.Configuration.Selectable(d.data))
             .append('text')
             .attr('y', 20)
             .attr('dy', '.35em')
             .attr('text-anchor', 'middle')
-            .style(
-            {
-                'fill-opacity': 1e-6,
-                cursor: 'default'
-            })
+            .style('fill-opacity', 1e-6)
+            .style('cursor', 'default')
+            .style('fill', '#999')
             .text(name);
 
         node.classed('expanded', d => !d.collapsed);
 
         // Transition nodes to their new position.
-        let gElement = <SVGGElement>this._g[0][0];
+        let gElement = <SVGGElement>this._g.node();
         this._svg.transition()
             .duration(OrganisationalUnitContainerV2._duration)
             .attrTween(
@@ -354,32 +396,35 @@ export class OrganisationalUnitContainerV2 implements OnInit
             () => () =>
             {
                 let bbox = gElement.getBBox();
-                return 'translate(' + (margin.left - bbox.x) + ',' + (margin.top - bbox.y) + ')';
+                return `translate(${ margin.left - bbox.x }, ${ margin.top - bbox.y })`;
             });
 
-        // Transition nodes to their new positions.
-        let nodeUpdate = node.transition()
-            .duration(OrganisationalUnitContainerV2._duration)
-            .attr('transform', d => 'translate(' + d.y + ',' + d.x + ') scale(1)');
+          let nodeUpdate = nodeEnter.merge(node);
 
-        nodeUpdate.select('text')
-            .style('fill-opacity', 1);
+          nodeUpdate.transition()
+              .duration(OrganisationalUnitContainerV2._duration)
+              .attr('transform', d => `translate(${ d.y }, ${ d.x }) scale(1)`);
 
-        // Transitlon exiting nodes to their new positions.
-        let nodeExit = node.exit().transition()
-            .duration(OrganisationalUnitContainerV2._duration)
-            .attr('transform', d => 'translate(' + d.y + ',' + d.x + ') scale(1e-6)')
-            .remove();
+          nodeUpdate.classed('expanded', d => d.children);
 
-        nodeExit.select('text')
-            .style('fill-opacity', 1e-6);
+          nodeUpdate.select('text')
+              .style('fill-opacity', 1);
+
+          // Transitlon exiting nodes to the parent's new position.
+          let nodeExit = node.exit().transition()
+              .duration(OrganisationalUnitContainerV2._duration)
+              .attr('transform', d => 'translate(' + d.y + ',' + d.x + ') scale(1e-6)')
+              .remove();
+
+          nodeExit.select('text')
+              .style('fill-opacity', 1e-6);
 
         // Update the links.
         let link = this._g.selectAll('path.link')
             .data(links, d => d.target.Id);
 
         // Enter any new links.
-        link.enter().insert('path', 'g')
+        let linkEnter = link.enter().insert('path', 'g')
             .attr('class', 'link')
             .attr(
             'd',
@@ -397,8 +442,10 @@ export class OrganisationalUnitContainerV2 implements OnInit
                     }
                 }));
 
+        let linkUpdate = linkEnter.merge(link);
+
         // Transition links to their new position.
-        link.transition()
+        linkUpdate.transition()
             .duration(OrganisationalUnitContainerV2._duration)
             .attr('d', diagonal);
 
@@ -409,13 +456,11 @@ export class OrganisationalUnitContainerV2 implements OnInit
             .remove();
 
         // Stash the old positions for transition.
-        Visit(
-            this._hierarchy,
-            (node: any) =>
-            {
-                node.x0 = node.x;
-                node.y0 = node.y;
-            });
+        nodes.forEach(d =>
+        {
+            d.x0 = d.x;
+            d.y0 = d.y;
+        });
     }
 
     private ComputeCoordinatesOfHidden(

@@ -148,7 +148,7 @@ export class OrganisationalUnitContainer
             duration = 750,
             root;
 
-        let tree = d3.tree().nodeSize([40, 40]);
+        let treeLayout = d3.tree().nodeSize([40, 40]);
 
         let div = <HTMLDivElement>this._el.nativeElement.firstChild;
         while(div.childNodes.length)
@@ -214,7 +214,7 @@ export class OrganisationalUnitContainer
             )
         {
             // Compute the new tree layout.
-            tree(root);
+            treeLayout(root);
             let nodes = [];
 
             root.visit(node => nodes.push(node));
