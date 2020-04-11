@@ -256,7 +256,11 @@ export class OrganisationalUnitContainerV2 implements OnInit
         this._root.visit(
             node =>
             {
+                node.x0 = 0;
+                node.y0 = 0;
+
                 if(node.children)
+                {
                     node.children.sort(
                         (x, y) =>
                         {
@@ -265,18 +269,8 @@ export class OrganisationalUnitContainerV2 implements OnInit
                             if(name(x) > name(y))
                                 return 1;
                             return 0;
-                        }
-                    );
-            });
+                        });
 
-        this._root.visit(
-            node =>
-            {
-                node.x0 = 0;
-                node.y0 = 0;
-
-                if(node.children)
-                {
                     node._children = node.children;
 
                     if(this._selector.Configuration.Collapsed(node.data))
