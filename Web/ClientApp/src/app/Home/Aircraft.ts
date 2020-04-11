@@ -1,4 +1,6 @@
-import { Component, AfterViewInit, ElementRef } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { AfterViewInit, Component, ElementRef } from '@angular/core';
+//import * as d3 from '../../assets/d3.min';
 
 declare var d3: any;
 
@@ -10,7 +12,8 @@ declare var d3: any;
 export class Aircraft implements AfterViewInit
 {
     constructor(
-        private _el: ElementRef
+        private _el  : ElementRef,
+        private _http: HttpClient,
         )
     {
     }
@@ -25,13 +28,13 @@ export class Aircraft implements AfterViewInit
 
         let square_length = d3.min([width, height]) - 2 * margin;
 
-        let x_scale = d3.scale.linear()
+        let x_scale = d3.scaleLinear()
             .range([width / 2 - square_length / 2, width / 2 + square_length / 2]);
 
-        let y_scale = d3.scale.linear()
+        let y_scale = d3.scaleLinear()
             .range([height / 2 + square_length / 2, height / 2 - square_length / 2]);
 
-        let z_scale = d3.scale.linear()
+        let z_scale = d3.scaleLinear()
             .range([0, 1]);
 
         let camera = { inclination: Math.PI / 2, azimuth: 0, center: { x: 0, y: 0, z: 0 } };
@@ -44,7 +47,6 @@ export class Aircraft implements AfterViewInit
             .attr("height", height);
 
         let container = svg.append("g");
-
 
         // Taken From
         // https://bl.ocks.org/bricof/605a89923aaf6d529c1b6156f635877d
@@ -98,12 +100,13 @@ export class Aircraft implements AfterViewInit
             let center = { x: (min.x + max.x) / 2, y: (min.y + max.y) / 2, z: (min.z + max.z) / 2 }
 
             return {
-                vertices: vertices, faces: faces, surfaces: surfaces,
-                extents: extents, center: center
+                vertices: vertices,
+                faces   : faces,
+                surfaces: surfaces,
+                extents : extents,
+                center  : center
             };
         }
-
-
 
         function translate_pt(pt, center)
         {
@@ -156,9 +159,7 @@ export class Aircraft implements AfterViewInit
                 .data(surfaces);
 
             polygons.enter().append("path")
-                .attr("class", "polygon");
-
-            polygons
+                .attr("class", "polygon")
                 .attr("d", function(datum)
                 {
                     let d = datum.map(function(point)
@@ -175,9 +176,10 @@ export class Aircraft implements AfterViewInit
             draw(surfaces);
         }
 
-        d3.text("cessna.obj", function(error, obj_file_text)
+        this._http.get("cessna.obj", { responseType: 'text' }).subscribe(
+            obj_file_text =>
         {
-            if(error) throw error;
+            //if(error) throw error;
 
             let obj = parse_obj_text(obj_file_text);
             let surfaces = obj.surfaces;
@@ -203,8 +205,6 @@ export class Aircraft implements AfterViewInit
             y_scale.range([704.9455602721671, -204.94556027216703]);
 
             update(surfaces, camera)
-
         });
-
     }
 }

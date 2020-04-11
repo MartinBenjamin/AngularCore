@@ -13,7 +13,7 @@ function name(
     d
     )
 {
-    return d.Acronym;
+    return d.data.Acronym;
 }
 
 function diagonal(
@@ -48,10 +48,10 @@ export interface OrganisationalUnitSelectorConfiguration
 export class OrganisationalUnitSelector
 {
     private static _defaultConfiguration = <OrganisationalUnitSelectorConfiguration>
-    {
-        Selectable: () => true,
-        Collapsed : () => false
-    };
+        {
+            Selectable: () => true,
+            Collapsed : () => false
+        };
 
     private _hierarchy: OrganisationalUnit;
     private _callback: Callback<OrganisationalUnit>;
@@ -144,30 +144,31 @@ export class OrganisationalUnitContainer
 
     private Initialise(): void
     {
-        let duration = 750,
+        let i = 0,
+            duration = 750,
             root;
 
-        let tree = d3.layout.tree()
-            .children(
-                function(
-                    d
-                    )
-                {
-                    return d.hideChildren ? null : d.Children;
-                })
-            .sort(
-                function(
-                    x,
-                    y
-                    )
-                {
-                    if(name(x) < name(y))
-                        return -1;
-                    if(name(x) > name(y))
-                        return 1;
-                    return 0;
-                })
-            .nodeSize([40, 40]);
+        function visit(
+            node,
+            enter,
+            exit = null
+            )
+        {
+            if(enter)
+                enter(node);
+
+            if(node.children)
+                for(let index = 0; index < node.children.length; ++index)
+                    visit(
+                        node.children[index],
+                        enter,
+                        exit);
+
+            if(exit)
+                exit(node);
+        }
+
+        let tree = d3.tree().nodeSize([40, 40]);
 
         let div = <HTMLDivElement>this._el.nativeElement.firstChild;
         while(div.childNodes.length)
@@ -175,13 +176,40 @@ export class OrganisationalUnitContainer
 
         let svg = d3.select(div).append('svg');
         let g = svg.append('g')
-            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+            .attr('transform', `translate(${ margin.left }, ${ margin.top })`);
 
-        root = this._hierarchy;
+        root = d3.hierarchy(this._hierarchy, d => d.Children);
         root.x0 = 0;
         root.y0 = 0;
 
-        tree.nodes(root).forEach(node => node.hideChildren = this._selector.Configuration.Collapsed(node));
+        visit(
+            root,
+            node =>
+            {
+                if(node.children)
+                    node.children.sort(
+                        (x, y) =>
+                        {
+                            if(name(x) < name(y))
+                                return -1;
+                            if(name(x) > name(y))
+                                return 1;
+                            return 0;
+                        }
+                    );
+            }
+        )
+
+        visit(
+            root,
+            node =>
+            {
+                if(this._selector.Configuration.Collapsed(node.data))
+                {
+                    node._children = node.children;
+                    node.children  = null;
+                }
+            });
 
         let component = this;
 
@@ -190,32 +218,62 @@ export class OrganisationalUnitContainer
             )
         {
             // Compute the new tree layout.
-            let nodes = tree.nodes(root).reverse(),
-                links = tree.links(nodes);
+            tree(root);
+            let nodes = [];
+
+            visit(
+              root,
+              node => nodes.push(node));
+
+            nodes = nodes.reverse();
+
+            let links = [];
+
+            visit(
+                root,
+                node =>
+                {
+                    if(node.parent)
+                        links.push(
+                            {
+                                source: node.parent,
+                                target: node
+                            });
+                });
 
             // Normalize for fixed-depth.
             nodes.forEach(d => d.y = d.depth * 140);
 
             // Update the nodes.
             let node = g.selectAll('g.node')
-                .data(nodes, d => d.Id);
+                .data(nodes, d => d.id || (d.id = ++i));
 
             // Enter any new nodes at the parent's previous position.
             let nodeEnter = node.enter().append('g')
                 .classed('node', true)
-                .attr('transform', d => 'translate(' + source.y0 + ',' + source.x0 + ') scale(1e-6)');
+                .attr('transform', d => `translate(${ source.y0 }, ${ source.x0 }) scale(1e-6)`);
 
             let group = nodeEnter.append('g');
 
             group.append('circle')
                 .attr('r', 10);
 
-            let parent = group.filter(d => d.Children.length);
+            let parent = group.filter(d => d.children || d._children);
 
             parent.classed('parent', true)
                 .on('click', d =>
                 {
-                    d.hideChildren = !d.hideChildren;
+                    if(d.children)
+                    {
+                        d._children = d.children;
+                        d.children = null;
+                    }
+                    else
+                    {
+                        d.children  = d._children;
+                        d._children = null;
+                    }
+
                     update(d);
                 });
 
@@ -232,7 +290,7 @@ export class OrganisationalUnitContainer
                 .attr('y2', '+5')
                 .attr('class', 'vertical');
 
-            nodeEnter.filter(d => component._selector.Configuration.Selectable(d))
+            nodeEnter.filter(d => component._selector.Configuration.Selectable(d.data))
                 .append('a')
                 .append('text')
                 .attr('y', 20)
@@ -242,49 +300,48 @@ export class OrganisationalUnitContainer
                 .text(name)
                 .on('click', d =>
                 {
-                    component._callback(d);
+                    component._callback(d.data);
                     component._selector.Close();
                 });
 
-            nodeEnter.filter(d => !component._selector.Configuration.Selectable(d))
+            nodeEnter.filter(d => !component._selector.Configuration.Selectable(d.data))
                 .append('text')
                 .attr('y', 20)
                 .attr('dy', '.35em')
                 .attr('text-anchor', 'middle')
-                .style(
-                {
-                    'fill-opacity': 1e-6,
-                    cursor: 'default',
-                    fill: '#999'
-                })
+                .style('fill-opacity', 1e-6)
+                .style('cursor', 'default')
+                .style('fill', '#999')
                 .text(name);
 
-            node.classed('expanded', d => !d.hideChildren);
-
             // Transition nodes to their new position.
-            let gElement = <SVGGElement>g[0][0];
+            let gElement = <SVGGElement>g.node();
             svg.transition()
                 .duration(duration)
                 .attrTween(
-                'height',
-                () => () => gElement.getBBox().height + margin.top + margin.bottom)
+                    'height',
+                    () => () => gElement.getBBox().height + margin.top + margin.bottom)
                 .attrTween(
-                'width',
-                () => () => gElement.getBBox().width + margin.left + margin.right);
+                    'width',
+                    () => () => gElement.getBBox().width + margin.left + margin.right);
 
             g.transition()
                 .duration(duration)
                 .attrTween(
-                'transform',
-                () => () =>
-                {
-                    let bbox = gElement.getBBox();
-                    return 'translate(' + (margin.left - bbox.x) + ',' + (margin.top - bbox.y) + ')';
-                });
+                    'transform',
+                    () => () =>
+                    {
+                        let bbox = gElement.getBBox();
+                        return `translate(${ margin.left - bbox.x }, ${ margin.top - bbox.y })`;
+                    });
 
-            let nodeUpdate = node.transition()
+            let nodeUpdate = nodeEnter.merge(node);
+
+            nodeUpdate.transition()
                 .duration(duration)
-                .attr('transform', d => 'translate(' + d.y + ',' + d.x + ') scale(1)');
+                .attr('transform', d => `translate(${ d.y }, ${ d.x }) scale(1)`);
+
+            nodeUpdate.classed('expanded', d => d.children);
 
             nodeUpdate.select('text')
                 .style('fill-opacity', 1);
@@ -292,7 +349,7 @@ export class OrganisationalUnitContainer
             // Transitlon exiting nodes to the parent's new position.
             let nodeExit = node.exit().transition()
                 .duration(duration)
-                .attr('transform', d => 'translate(' + source.y + ',' + source.x + ') scale(1e-6)')
+                .attr('transform', d => `translate(${ source.y }, ${ source.x }) scale(1e-6)`)
                 .remove();
 
             nodeExit.select('text')
@@ -300,10 +357,10 @@ export class OrganisationalUnitContainer
 
             // Update the links.
             let link = g.selectAll('path.link')
-                .data(links, d => d.target.Id);
+                .data(links, d => d.target.id);
 
             // Enter any new links at the parent's previous position.
-            link.enter().insert('path', 'g')
+            let linkEnter = link.enter().insert('path', 'g')
                 .attr('class', 'link')
                 .attr('d', d =>
                 {
@@ -311,8 +368,10 @@ export class OrganisationalUnitContainer
                     return diagonal({ source: o, target: o });
                 });
 
+            let linkUpdate = linkEnter.merge(link);
+
             // Transition links to their new position.
-            link.transition()
+            linkUpdate.transition()
                 .duration(duration)
                 .attr('d', diagonal);
 
