@@ -231,8 +231,6 @@ export class OrganisationalUnitContainerV2 implements OnInit
             .attr('transform', `translate(${ margin.left }, ${ margin.top })`);
 
         this._root = d3.hierarchy(this._hierarchy, d => d.Children);
-        this._root.x0 = 0;
-        this._root.y0 = 0;
 
         if(typeof this._root.__proto__.visit == 'undefined')
             this._root.__proto__.visit = function(
