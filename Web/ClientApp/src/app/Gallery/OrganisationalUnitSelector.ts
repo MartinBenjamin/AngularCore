@@ -172,10 +172,10 @@ export class OrganisationalUnitContainer
                     enter(this);
 
                 if(this.children)
-                    for(let index = 0; index < this.children.length; ++index)
-                        this.children[index].visit(
+                    this.children.forEach(
+                      child => child.visit(
                             enter,
-                            exit);
+                            exit));
 
                 if(exit)
                     exit(this);
