@@ -272,15 +272,16 @@ export class OrganisationalUnitContainerV2 implements OnInit
         this._root.visit(
             node =>
             {
-                if(node.children)
-                    node._children = node.children;
-            });
+                node.x0 = 0;
+                node.y0 = 0;
 
-        this._root.visit(
-            node =>
-            {
-                if(this._selector.Configuration.Collapsed(node.data))
-                    node.children = null;
+                if(node.children)
+                {
+                    node._children = node.children;
+
+                    if(this._selector.Configuration.Collapsed(node.data))
+                        node.children = null;
+                }
             });
 
         this.Update();
