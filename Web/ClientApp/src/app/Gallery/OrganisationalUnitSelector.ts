@@ -148,26 +148,6 @@ export class OrganisationalUnitContainer
             duration = 750,
             root;
 
-        function visit(
-            node,
-            enter,
-            exit = null
-            )
-        {
-            if(enter)
-                enter(node);
-
-            if(node.children)
-                for(let index = 0; index < node.children.length; ++index)
-                    visit(
-                        node.children[index],
-                        enter,
-                        exit);
-
-            if(exit)
-                exit(node);
-        }
-
         let tree = d3.tree().nodeSize([40, 40]);
 
         let div = <HTMLDivElement>this._el.nativeElement.firstChild;
@@ -182,8 +162,26 @@ export class OrganisationalUnitContainer
         root.x0 = 0;
         root.y0 = 0;
 
-        visit(
-            root,
+        if(typeof root.__proto__.visit == 'undefined')
+            root.__proto__.visit = function(
+                enter,
+                exit = null
+                )
+            {
+                if(enter)
+                    enter(this);
+
+                if(this.children)
+                    for(let index = 0; index < this.children.length; ++index)
+                        this.children[index].visit(
+                            enter,
+                            exit);
+
+                if(exit)
+                    exit(this);
+            }
+
+        root.visit(
             node =>
             {
                 if(node.children)
@@ -197,11 +195,9 @@ export class OrganisationalUnitContainer
                             return 0;
                         }
                     );
-            }
-        )
+            });
 
-        visit(
-            root,
+        root.visit(
             node =>
             {
                 if(this._selector.Configuration.Collapsed(node.data))
@@ -221,16 +217,13 @@ export class OrganisationalUnitContainer
             tree(root);
             let nodes = [];
 
-            visit(
-              root,
-              node => nodes.push(node));
+            root.visit(node => nodes.push(node));
 
             nodes = nodes.reverse();
 
             let links = [];
 
-            visit(
-                root,
+            root.visit(
                 node =>
                 {
                     if(node.parent)
