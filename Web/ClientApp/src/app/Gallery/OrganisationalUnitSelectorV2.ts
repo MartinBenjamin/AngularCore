@@ -297,6 +297,12 @@ export class OrganisationalUnitContainerV2 implements OnInit
         // Compute the new tree layout.
         this._treeLayout(this._root);
 
+        this._root.visit(node => node.y = node.depth * 140)
+
+        this.ComputeCoordinatesOfHidden(
+            this._root,
+            false);
+
         let nodes = [];
 
         this._root.visit(node => nodes.push(node));
@@ -315,13 +321,6 @@ export class OrganisationalUnitContainerV2 implements OnInit
                             target: node
                         });
             });
-
-        // Normalize for fixed-depth.
-        nodes.forEach(d => d.y = d.depth * 140);
-
-        this.ComputeCoordinatesOfHidden(
-            this._root,
-            false);
 
         // Update the nodes.
         let node = this._g.selectAll('g.node')
