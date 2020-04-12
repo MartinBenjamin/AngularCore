@@ -197,19 +197,19 @@ export class Gallery
         this.hierarchy =
             {
                 Id      : 1,
-                Acronym : 'A',
+                Acronym : '1A',
                 Parent  : null,
                 Children:
                     [
                         {
                             Id      : 11,
-                            Acronym : 'AA',
+                            Acronym : '2AA',
                             Parent  : this.hierarchy,
                             Children:
                             [
                                   {
                                       Id      : 111,
-                                      Acronym : 'AAA',
+                                      Acronym : '4AAA',
                                       Parent  : this.hierarchy,
                                       Children: []
                                   }
@@ -217,13 +217,13 @@ export class Gallery
                         },
                         {
                             Id      : 12,
-                            Acronym : 'AB',
+                            Acronym : '3AB',
                             Parent  : this.hierarchy,
                             Children:
                             [
                                   {
                                       Id      : 121,
-                                      Acronym : 'ABA',
+                                      Acronym : '5ABA',
                                       Parent  : this.hierarchy,
                                       Children: []
                                   }
