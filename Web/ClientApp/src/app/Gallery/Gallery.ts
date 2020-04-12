@@ -161,27 +161,33 @@ export class Gallery
     {
         this.hierarchy =
             {
-                Id      : 1,
-                Acronym : 'Root',
-                Parent  : null,
-                Children: null
-            };
-
-        this.hierarchy.Children =
-            [
-                {
-                    Id      : 2,
-                    Acronym : 'A',
-                    Parent  : this.hierarchy,
-                    Children: []
-                },
-                {
-                    Id      : 3,
-                    Acronym : 'B',
-                    Parent  : this.hierarchy,
-                    Children: []
-                }
-            ];
+                Id: 1,
+                Acronym: 'A',
+                Parent: null,
+                Children:
+                    [
+                        {
+                            Id: 11,
+                            Acronym: 'AA',
+                            Parent: this.hierarchy,
+                            Children:
+                            [
+                                  {
+                                      Id      : 111,
+                                      Acronym : 'AAA',
+                                      Parent  : this.hierarchy,
+                                      Children: []
+                                  }
+                            ]
+                        },
+                        {
+                            Id: 12,
+                            Acronym: 'AB',
+                            Parent: this.hierarchy,
+                            Children: []
+                        }
+                    ]
+            }
         this.organisationalUnitSelector.Select(organisationalUnit => this.organisationalUnit = organisationalUnit.Acronym);
     }
 
@@ -190,27 +196,41 @@ export class Gallery
     {
         this.hierarchy =
             {
-                Id: 1,
-                Acronym: 'Root',
-                Parent: null,
-                Children: null
-            };
-
-        this.hierarchy.Children =
-            [
-                {
-                    Id: 2,
-                    Acronym: 'AB',
-                    Parent: this.hierarchy,
-                    Children: []
-                },
-                {
-                    Id: 3,
-                    Acronym: 'BC',
-                    Parent: this.hierarchy,
-                    Children: []
-                }
-            ];
+                Id      : 1,
+                Acronym : 'A',
+                Parent  : null,
+                Children:
+                    [
+                        {
+                            Id      : 11,
+                            Acronym : 'AA',
+                            Parent  : this.hierarchy,
+                            Children:
+                            [
+                                  {
+                                      Id      : 111,
+                                      Acronym : 'AAA',
+                                      Parent  : this.hierarchy,
+                                      Children: []
+                                  }
+                            ]
+                        },
+                        {
+                            Id      : 12,
+                            Acronym : 'AB',
+                            Parent  : this.hierarchy,
+                            Children:
+                            [
+                                  {
+                                      Id      : 121,
+                                      Acronym : 'ABA',
+                                      Parent  : this.hierarchy,
+                                      Children: []
+                                  }
+                            ]
+                        }
+                    ]
+            }
         this.organisationalUnitSelectorV2.Select(organisationalUnit => this.organisationalUnit = organisationalUnit.Acronym);
     }
 

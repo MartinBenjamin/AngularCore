@@ -138,59 +138,43 @@ export class OrganisationalUnitContainerV2 implements OnInit
         fromEvent(
             this._nameFragmentInput.nativeElement,
             'keyup').pipe(
-                map(event => <string>this._nameFragmentInput.nativeElement.value),
+                map(() => <string>this._nameFragmentInput.nativeElement.value),
                 map((nameFragment: string) => nameFragment.toLowerCase()),
                 distinctUntilChanged(),
                 debounceTime(750),
                 filter(nameFragment => nameFragment != null))
                 .subscribe((nameFragment: string) =>
                 {
-                    if(!this._hierarchy)
+                    if(!this._root)
                         return;
 
                     if(nameFragment == '')
-                    {
-                        Visit(
-                            this._hierarchy,
-                            organisationalUnit =>
+                        this._root.visitOriginal(
+                            node =>
                             {
-                                let node = <any>organisationalUnit;
                                 node.hide      = false;
-                                node.collapsed = this._selector.Configuration.Collapsed(organisationalUnit);
+                                node.collapsed = this._selector.Configuration.Collapsed(node.data);
                             });
 
-                        this.Update();
-                        return;
-                    }
-
-                    Visit(
-                        this._hierarchy,
-                        (node: any) =>
-                        {
-                            node.hide      = true;
-                            node.collapsed = false;
-                        });
-
-                    let matched = Filter(
-                        this._hierarchy,
-                        organisationalUnit => name(organisationalUnit).toLowerCase().indexOf(nameFragment) != -1);
-
-                    matched.forEach(
-                        organisationalUnit =>
-                        {
-                            Visit(
-                                organisationalUnit,
-                                organisationalUnit => (<any>organisationalUnit).hide = false);
-
-                            (<any>organisationalUnit).collapsed = true;
-
-                            let parent = organisationalUnit.Parent;
-                            while(parent)
+                    else
+                        this._root.visitOriginal(
+                            node =>
                             {
-                                (<any>parent).hide = false;
-                                parent = parent.Parent;
-                            }
-                        });
+                                node.hide      = true;
+                                node.collapsed = false;
+
+                                if(name(node).toLowerCase().indexOf(nameFragment) != -1)
+                                {
+                                    node.hide = false;
+
+                                    var parent = node.parent;
+                                    while(parent)
+                                    {
+                                        parent.hide = false;
+                                        parent = parent.parent;
+                                    }
+                                }
+                            });
 
                     this.Update();
                 });
@@ -217,9 +201,6 @@ export class OrganisationalUnitContainerV2 implements OnInit
 
     private Initialise(): void
     {
-        let i = 0,
-            root;
-
         this._treeLayout = d3.tree().nodeSize([40, 40]);
 
         let div = <HTMLDivElement>this._div.nativeElement;
@@ -233,6 +214,7 @@ export class OrganisationalUnitContainerV2 implements OnInit
         this._root = d3.hierarchy(this._hierarchy, d => d.Children);
 
         if(typeof this._root.__proto__.visit == 'undefined')
+        {
             this._root.__proto__.visit = function(
                 enter,
                 exit = null
@@ -249,13 +231,32 @@ export class OrganisationalUnitContainerV2 implements OnInit
 
                 if(exit)
                     exit(this);
-            }
+            };
+
+            this._root.__proto__.visitOriginal = function(
+                enter,
+                exit = null
+                )
+            {
+                if(enter)
+                    enter(this);
+
+                if(this.originalChildren)
+                    this.originalChildren.forEach(
+                        child => child.visitOriginal(
+                            enter,
+                            exit));
+
+                if(exit)
+                    exit(this);
+            };
+        }
 
         this._root.visit(
             node =>
             {
-                node.x0 = 0;
-                node.y0 = 0;
+                node.x = 0;
+                node.y = 0;
 
                 if(node.children)
                 {
@@ -269,10 +270,13 @@ export class OrganisationalUnitContainerV2 implements OnInit
                             return 0;
                         });
 
-                    node._children = node.children;
+                    node.originalChildren = [].concat(node.children);
 
                     if(this._selector.Configuration.Collapsed(node.data))
+                    {
+                        node._children = node.children;
                         node.children = null;
+                    }
                 }
             });
 
@@ -281,8 +285,18 @@ export class OrganisationalUnitContainerV2 implements OnInit
 
     private Update(): void
     {
+        this._root.visitOriginal(
+            node =>
+            {
+                node.x0 = node.x;
+                node.y0 = node.y;
+            });
+
+        this.Rebuild();
+
         // Compute the new tree layout.
         this._treeLayout(this._root);
+
         let nodes = [];
 
         this._root.visit(node => nodes.push(node));
@@ -305,13 +319,13 @@ export class OrganisationalUnitContainerV2 implements OnInit
         // Normalize for fixed-depth.
         nodes.forEach(d => d.y = d.depth * 140);
 
+        this.ComputeCoordinatesOfHidden(
+            this._root,
+            false);
+
         // Update the nodes.
         let node = this._g.selectAll('g.node')
             .data(nodes, d => d.id || (d.id = ++this._nodeIndex));
-
-        //this.ComputeCoordinatesOfHidden(
-        //    this._hierarchy,
-        //    false);
 
         // Enter any new nodes at the parent's previous position.
         let nodeEnter = node.enter().append('g')
@@ -323,7 +337,7 @@ export class OrganisationalUnitContainerV2 implements OnInit
         group.append('circle')
             .attr('r', 10);
 
-        let parent = group.filter(d => d._children);
+        let parent = group.filter(d => d.originalChildren);
 
         parent.classed('parent', true)
             .on('click', d =>
@@ -447,13 +461,25 @@ export class OrganisationalUnitContainerV2 implements OnInit
             .duration(OrganisationalUnitContainerV2._duration)
             .attr('d', diagonal)
             .remove();
+    }
 
-        // Stash the old positions for transition.
-        nodes.forEach(d =>
-        {
-            d.x0 = d.x;
-            d.y0 = d.y;
-        });
+    private Rebuild(): void
+    {
+        this._root.visitOriginal(
+            node =>
+            {
+                if(node.originalChildren)
+                {
+                    var visible = node.originalChildren.filter(child => !child.hide);
+                    node.children = visible.length ? visible : null;
+
+                    if(node.collapsed)
+                    {
+                        node._children = node.children;
+                        node.children = null;
+                    }
+                }
+            });
     }
 
     private ComputeCoordinatesOfHidden(
@@ -461,16 +487,17 @@ export class OrganisationalUnitContainerV2 implements OnInit
         hidden: boolean
         )
     {
-        if(node.Parent && (hidden || node.hide))
+        if(node.parent && (hidden || node.hide))
         {
-            node.x = node.Parent.x;
-            node.y = node.Parent.y;
+            node.x = node.parent.x;
+            node.y = node.parent.y;
         }
 
-        for(let child of node.Children)
-            this.ComputeCoordinatesOfHidden(
-                child,
-                hidden || node.hide || node.collapsed);
+        if(node.originalChildren)
+            node.originalChildren.forEach(
+                child => this.ComputeCoordinatesOfHidden(
+                    child,
+                    hidden || node.hide || node.collapsed));
     }
 }
 
