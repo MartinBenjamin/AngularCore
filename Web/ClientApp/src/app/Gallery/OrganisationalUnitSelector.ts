@@ -144,21 +144,20 @@ export class OrganisationalUnitContainer
 
     private Initialise(): void
     {
-        let i = 0,
-            duration = 750,
-            root;
+        let i = 0;
+        const duration = 750;
 
-        let treeLayout = d3.tree().nodeSize([40, 40]);
+        const treeLayout = d3.tree().nodeSize([40, 40]);
 
-        let div = <HTMLDivElement>this._el.nativeElement.firstChild;
+        const div = <HTMLDivElement>this._el.nativeElement.firstChild;
         while(div.childNodes.length)
             div.removeChild(div.firstChild);
 
-        let svg = d3.select(div).append('svg');
-        let g = svg.append('g')
+        const svg = d3.select(div).append('svg');
+        const g = svg.append('g')
             .attr('transform', `translate(${ margin.left }, ${ margin.top })`);
 
-        root = d3.hierarchy(this._hierarchy, d => d.Children);
+        const root = d3.hierarchy(this._hierarchy, d => d.Children);
         root.x0 = 0;
         root.y0 = 0;
 
@@ -207,7 +206,7 @@ export class OrganisationalUnitContainer
                 }
             });
 
-        let component = this;
+        const component = this;
 
         function update(
             source: any
@@ -215,13 +214,13 @@ export class OrganisationalUnitContainer
         {
             // Compute the new tree layout.
             treeLayout(root);
-            let nodes = [];
+            const nodes = [];
 
-            root.visit(node => nodes.push(node));
+            root.visit(
+                null,
+                node => nodes.push(node));
 
-            nodes = nodes.reverse();
-
-            let links = [];
+            const links = [];
 
             root.visit(
                 node =>
@@ -238,20 +237,20 @@ export class OrganisationalUnitContainer
             nodes.forEach(d => d.y = d.depth * 140);
 
             // Update the nodes.
-            let node = g.selectAll('g.node')
+            const node = g.selectAll('g.node')
                 .data(nodes, d => d.id || (d.id = ++i));
 
             // Enter any new nodes at the parent's previous position.
-            let nodeEnter = node.enter().append('g')
+            const nodeEnter = node.enter().append('g')
                 .classed('node', true)
                 .attr('transform', d => `translate(${ source.y0 }, ${ source.x0 }) scale(1e-6)`);
 
-            let group = nodeEnter.append('g');
+            const group = nodeEnter.append('g');
 
             group.append('circle')
                 .attr('r', 10);
 
-            let parent = group.filter(d => d.children || d._children);
+            const parent = group.filter(d => d.children || d._children);
 
             parent.classed('parent', true)
                 .on('click', d =>
@@ -308,7 +307,7 @@ export class OrganisationalUnitContainer
                 .text(name);
 
             // Transition nodes to their new position.
-            let gElement = <SVGGElement>g.node();
+            const gElement = <SVGGElement>g.node();
             svg.transition()
                 .duration(duration)
                 .attrTween(
@@ -328,7 +327,7 @@ export class OrganisationalUnitContainer
                         return `translate(${ margin.left - bbox.x }, ${ margin.top - bbox.y })`;
                     });
 
-            let nodeUpdate = nodeEnter.merge(node);
+            const nodeUpdate = nodeEnter.merge(node);
 
             nodeUpdate.transition()
                 .duration(duration)
@@ -340,7 +339,7 @@ export class OrganisationalUnitContainer
                 .style('fill-opacity', 1);
 
             // Transitlon exiting nodes to the parent's new position.
-            let nodeExit = node.exit().transition()
+            const nodeExit = node.exit().transition()
                 .duration(duration)
                 .attr('transform', d => `translate(${ source.y }, ${ source.x }) scale(1e-6)`)
                 .remove();
@@ -349,11 +348,11 @@ export class OrganisationalUnitContainer
                 .style('fill-opacity', 1e-6);
 
             // Update the links.
-            let link = g.selectAll('path.link')
+            const link = g.selectAll('path.link')
                 .data(links, d => d.target.id);
 
             // Enter any new links at the parent's previous position.
-            let linkEnter = link.enter().insert('path', 'g')
+            const linkEnter = link.enter().insert('path', 'g')
                 .attr('class', 'link')
                 .attr('d', d =>
                 {
@@ -361,7 +360,7 @@ export class OrganisationalUnitContainer
                     return diagonal({ source: o, target: o });
                 });
 
-            let linkUpdate = linkEnter.merge(link);
+            const linkUpdate = linkEnter.merge(link);
 
             // Transition links to their new position.
             linkUpdate.transition()
