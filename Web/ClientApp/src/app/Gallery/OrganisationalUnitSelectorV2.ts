@@ -274,12 +274,7 @@ export class OrganisationalUnitContainerV2 implements OnInit
                         });
 
                     node.originalChildren = [].concat(node.children);
-
-                    if(this._selector.Configuration.Collapsed(node.data))
-                    {
-                        node._children = node.children;
-                        node.children = null;
-                    }
+                    node.collapsed = this._selector.Configuration.Collapsed(node.data);
                 }
             });
 
@@ -470,13 +465,12 @@ export class OrganisationalUnitContainerV2 implements OnInit
             {
                 if(node.originalChildren)
                 {
-                    const visible = node.originalChildren.filter(child => !child.hide);
-                    node.children = visible.length ? visible : null;
+                    node.children = null;
 
-                    if(node.collapsed)
+                    if(!node.collapsed)
                     {
-                        node._children = node.children;
-                        node.children = null;
+                        const visible = node.originalChildren.filter(child => !child.hide);
+                        node.children = visible.length ? visible : null;
                     }
                 }
             });
