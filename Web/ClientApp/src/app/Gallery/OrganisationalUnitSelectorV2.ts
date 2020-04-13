@@ -382,8 +382,6 @@ export class OrganisationalUnitContainerV2 implements OnInit
             .style('fill', '#999')
             .text(name);
 
-        node.classed('expanded', d => !d.collapsed);
-
         // Transition nodes to their new position.
         let gElement = <SVGGElement>this._g.node();
         this._svg.transition()
