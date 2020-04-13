@@ -19,7 +19,7 @@
 
 .node.expanded line.vertical
 {
-    stroke-opacity: 0;
+    display: none;
 }
 
 .node text
