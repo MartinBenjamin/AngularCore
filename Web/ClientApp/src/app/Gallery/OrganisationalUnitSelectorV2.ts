@@ -203,6 +203,9 @@ export class OrganisationalUnitContainerV2 implements OnInit
     {
         this._treeLayout = d3.tree().nodeSize([40, 40]);
 
+        const input = <HTMLInputElement>this._nameFragmentInput.nativeElement;
+        input.value = '';
+
         const div = <HTMLDivElement>this._div.nativeElement;
         while(div.childNodes.length)
             div.removeChild(div.firstChild);
