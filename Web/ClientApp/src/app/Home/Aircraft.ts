@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef } from '@angular/core';
-//import * as d3 from '../../assets/d3.min';
 
 declare var d3: any;
 
