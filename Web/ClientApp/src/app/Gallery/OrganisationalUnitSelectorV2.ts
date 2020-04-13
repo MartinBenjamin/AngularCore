@@ -203,7 +203,7 @@ export class OrganisationalUnitContainerV2 implements OnInit
     {
         this._treeLayout = d3.tree().nodeSize([40, 40]);
 
-        let div = <HTMLDivElement>this._div.nativeElement;
+        const div = <HTMLDivElement>this._div.nativeElement;
         while(div.childNodes.length)
             div.removeChild(div.firstChild);
 
@@ -303,13 +303,13 @@ export class OrganisationalUnitContainerV2 implements OnInit
             this._root,
             false);
 
-        let nodes = [];
+        const nodes = [];
 
-        this._root.visit(node => nodes.push(node));
+        this._root.visit(
+            null,
+            node => nodes.push(node));
 
-        nodes = nodes.reverse();
-
-        let links = [];
+        const links = [];
 
         this._root.visit(
             node =>
@@ -323,20 +323,20 @@ export class OrganisationalUnitContainerV2 implements OnInit
             });
 
         // Update the nodes.
-        let node = this._g.selectAll('g.node')
+        const node = this._g.selectAll('g.node')
             .data(nodes, d => d.id || (d.id = ++this._nodeIndex));
 
         // Enter any new nodes at the parent's previous position.
-        let nodeEnter = node.enter().append('g')
+        const nodeEnter = node.enter().append('g')
             .classed('node', true)
             .attr('transform', d => `translate(${ d.y0 }, ${ d.x0 }) scale(1e-6)`);
 
-        let group = nodeEnter.append('g');
+        const group = nodeEnter.append('g');
 
         group.append('circle')
             .attr('r', 10);
 
-        let parent = group.filter(d => d.originalChildren);
+        const parent = group.filter(d => d.originalChildren);
 
         parent.classed('parent', true)
             .on('click', d =>
@@ -383,7 +383,7 @@ export class OrganisationalUnitContainerV2 implements OnInit
             .text(name);
 
         // Transition nodes to their new position.
-        let gElement = <SVGGElement>this._g.node();
+        const gElement = <SVGGElement>this._g.node();
         this._svg.transition()
             .duration(OrganisationalUnitContainerV2._duration)
             .attrTween(
@@ -403,32 +403,32 @@ export class OrganisationalUnitContainerV2 implements OnInit
                 return `translate(${ margin.left - bbox.x }, ${ margin.top - bbox.y })`;
             });
 
-          let nodeUpdate = nodeEnter.merge(node);
+        const nodeUpdate = nodeEnter.merge(node);
 
-          nodeUpdate.transition()
-              .duration(OrganisationalUnitContainerV2._duration)
-              .attr('transform', d => `translate(${ d.y }, ${ d.x }) scale(1)`);
+        nodeUpdate.transition()
+            .duration(OrganisationalUnitContainerV2._duration)
+            .attr('transform', d => `translate(${ d.y }, ${ d.x }) scale(1)`);
 
-          nodeUpdate.classed('expanded', d => d.children);
+        nodeUpdate.classed('expanded', d => d.children);
 
-          nodeUpdate.select('text')
-              .style('fill-opacity', 1);
+        nodeUpdate.select('text')
+            .style('fill-opacity', 1);
 
-          // Transitlon exiting nodes to the parent's new position.
-          let nodeExit = node.exit().transition()
-              .duration(OrganisationalUnitContainerV2._duration)
-              .attr('transform', d => 'translate(' + d.y + ',' + d.x + ') scale(1e-6)')
-              .remove();
+        // Transitlon exiting nodes to the parent's new position.
+        const nodeExit = node.exit().transition()
+            .duration(OrganisationalUnitContainerV2._duration)
+            .attr('transform', d => 'translate(' + d.y + ',' + d.x + ') scale(1e-6)')
+            .remove();
 
-          nodeExit.select('text')
-              .style('fill-opacity', 1e-6);
+        nodeExit.select('text')
+            .style('fill-opacity', 1e-6);
 
         // Update the links.
-        let link = this._g.selectAll('path.link')
+        const link = this._g.selectAll('path.link')
             .data(links, d => d.target.Id);
 
         // Enter any new links.
-        let linkEnter = link.enter().insert('path', 'g')
+        const linkEnter = link.enter().insert('path', 'g')
             .attr('class', 'link')
             .attr(
             'd',
@@ -446,7 +446,7 @@ export class OrganisationalUnitContainerV2 implements OnInit
                     }
                 }));
 
-        let linkUpdate = linkEnter.merge(link);
+        const linkUpdate = linkEnter.merge(link);
 
         // Transition links to their new position.
         linkUpdate.transition()
@@ -467,7 +467,7 @@ export class OrganisationalUnitContainerV2 implements OnInit
             {
                 if(node.originalChildren)
                 {
-                    var visible = node.originalChildren.filter(child => !child.hide);
+                    const visible = node.originalChildren.filter(child => !child.hide);
                     node.children = visible.length ? visible : null;
 
                     if(node.collapsed)
