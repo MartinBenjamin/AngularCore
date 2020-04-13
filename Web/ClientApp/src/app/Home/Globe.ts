@@ -7,7 +7,7 @@ declare var topojson: any;
 @Component(
     {
         selector: 'globe',
-        template: `<div style="text-align: center"></div>`
+        template: `<div style="text-align: center; margin-top: 20px;"></div>`
     })
 export class Globe implements AfterViewInit
 {
