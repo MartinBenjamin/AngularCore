@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DealTrackerLayoutModule } from '../DealTrackerLayout.Module';
 import { Aircraft } from './Aircraft';
+import { Globe } from './Globe';
 import { Home } from './Home';
 
 const routes: Routes =
@@ -18,6 +19,7 @@ const routes: Routes =
         declarations:
             [
                 Aircraft,
+                Globe,
                 Home
             ],
         imports:

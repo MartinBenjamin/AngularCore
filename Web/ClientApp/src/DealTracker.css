@@ -133,3 +133,17 @@ table.DataGrid th
   fill: none;
   stroke: #b60000;
 }
+
+.graticule
+{
+  stroke: #b60000;
+  stroke-width: 0.25px;
+}
+
+.country
+{
+  stroke: #5a5a5a;
+  stroke-width: 1px;
+  fill: #b60000;
+  opacity: 0.6;
+}

@@ -28,7 +28,8 @@
       "scripts": [
         "./assets/Date.js",
         "./assets/Number.js",
-        "./assets/d3.min.js"
+        "./assets/d3.min.js",
+        "./assets/topojson.v1.min.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {
