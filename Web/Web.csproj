@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\src\app\Agents.ts" />
     <None Remove="ClientApp\src\app\CommonDomainObjects.ts" />
     <None Remove="ClientApp\src\app\CurrencyServiceProvider.ts" />
     <None Remove="ClientApp\src\app\DealTracker.Module.ts" />
@@ -40,7 +41,11 @@
     <None Remove="ClientApp\src\app\Home\Aircraft.ts" />
     <None Remove="ClientApp\src\app\Home\Globe.ts" />
     <None Remove="ClientApp\src\app\INamedService.ts" />
+    <None Remove="ClientApp\src\app\Iso3166.ts" />
     <None Remove="ClientApp\src\app\Iso4217.ts" />
+    <None Remove="ClientApp\src\app\LegalEntities.ts" />
+    <None Remove="ClientApp\src\app\Locations.ts" />
+    <None Remove="ClientApp\src\app\Organisations.ts" />
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.ts" />
     <None Remove="ClientApp\src\app\Origination\Borrowers.ts" />
@@ -65,6 +70,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\Agents.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\CurrencyServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\DealTracker.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\DealTracker.ts" />
@@ -75,7 +81,11 @@
     <TypeScriptCompile Include="ClientApp\src\app\Home\Aircraft.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Home\Globe.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\INamedService.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Iso3166.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Iso4217.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\LegalEntities.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Locations.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Organisations.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Borrowers.ts" />
