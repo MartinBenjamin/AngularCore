@@ -2,6 +2,7 @@
 using Iso3166._1;
 using Iso3166._2;
 using Iso4217;
+using LegalEntities;
 using Locations;
 using Organisations;
 
@@ -20,6 +21,7 @@ namespace Web
             CreateMap<Organisation          , Model.Organisation         >();
             CreateMap<OrganisationalSubUnit , Model.OrganisationalSubUnit>();
             CreateMap<Branch                , Model.Branch               >();
+            CreateMap<LegalEntity           , Model.LegalEntity          >();
         }
     }
 }
