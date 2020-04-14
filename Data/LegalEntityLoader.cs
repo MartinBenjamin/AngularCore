@@ -29,7 +29,7 @@ namespace Data
         public async Task LoadAsync()
         {
             using(var zipFile = new FileStream(
-                @"C:\Users\Martin\Downloads\20200118-gleif-concatenated-file-lei2.xml.5e22c9ddd878a.zip",
+                @"C:\Users\Martin\Downloads\20200414-gleif-concatenated-file-lei2.xml.5e957c5507700.zip",
                 FileMode.Open))
                 using(var archive = new ZipArchive(
                     zipFile,

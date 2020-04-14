@@ -12,16 +12,16 @@ namespace Web
     {
         public Profile()
         {
-            CreateMap<Currency              , Model.Currency             >();
-            CreateMap<GeographicRegion      , Model.GeographicRegion     >();
-            CreateMap<GeographicSubregion   , Model.GeographicalSubregion>();
-            CreateMap<Country               , Model.Country              >();
-            CreateMap<Subdivision           , Model.Subdivision          >();
-            CreateMap<AutonomousAgent       , Model.AutonomousAgent      >();
-            CreateMap<Organisation          , Model.Organisation         >();
-            CreateMap<OrganisationalSubUnit , Model.OrganisationalSubUnit>();
-            CreateMap<Branch                , Model.Branch               >();
-            CreateMap<LegalEntity           , Model.LegalEntity          >();
+            CreateMap<Currency              , Model.Currency             >().PreserveReferences();
+            CreateMap<GeographicRegion      , Model.GeographicRegion     >().PreserveReferences();
+            CreateMap<GeographicSubregion   , Model.GeographicalSubregion>().PreserveReferences();
+            CreateMap<Country               , Model.Country              >().PreserveReferences();
+            CreateMap<Subdivision           , Model.Subdivision          >().PreserveReferences();
+            CreateMap<AutonomousAgent       , Model.AutonomousAgent      >().PreserveReferences();
+            CreateMap<Organisation          , Model.Organisation         >().PreserveReferences();
+            CreateMap<OrganisationalSubUnit , Model.OrganisationalSubUnit>().PreserveReferences();
+            CreateMap<Branch                , Model.Branch               >().PreserveReferences();
+            CreateMap<LegalEntity           , Model.LegalEntity          >().PreserveReferences();
         }
     }
 }

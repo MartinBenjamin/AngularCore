@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using NHibernateIntegration;
 using System;
@@ -35,7 +36,12 @@ namespace Web
             // Add services to the collection.
             services
                 .AddMvc()
-                .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
+                .AddJsonOptions(options =>
+                {
+                    var serializerSettings = options.SerializerSettings;
+                    serializerSettings.ContractResolver           = new DefaultContractResolver();
+                    serializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
+                });
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(

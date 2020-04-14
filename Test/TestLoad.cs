@@ -165,7 +165,7 @@ namespace Test
         //[Test]
         public async Task Lei()
         {
-            await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
+            await _container.Resolve<IEtl<IEnumerable<Country>>>().ExecuteAsync();
             await new LegalEntityLoader(
                 _container.Resolve<ISessionFactory>(),
                 100).LoadAsync();
@@ -178,6 +178,10 @@ namespace Test
             await _container.Resolve<IEtl<IEnumerable<Subdivision>>>().ExecuteAsync();
             await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
             await _container.Resolve<IEtl<IEnumerable<Currency>>>().ExecuteAsync();
+            await _container.Resolve<IEtl<IEnumerable<(Branch, Identifier)>>>().ExecuteAsync();
+            //await new LegalEntityLoader(
+            //    _container.Resolve<ISessionFactory>(),
+            //    100).LoadAsync();
         }
 
         private void Validate(
