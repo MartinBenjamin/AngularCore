@@ -32,6 +32,7 @@ namespace Test
             )
         {
             var branch = new Branch(
+                _branchId,
                 name,
                 null,
                 null);

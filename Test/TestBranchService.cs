@@ -10,14 +10,17 @@ namespace Test
     [TestFixture]
     public class TestBranchService: TestNamedService<Guid, Branch, NamedFilters>
     {
+        private static Guid _branchId = new Guid("8C3C20D8-427C-4D10-AED5-9E304C0EA044");
+
         [SetUp]
         public void SetUp()
         {
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
-                foreach(var branch in session.CreateCriteria<Branch>().List<Branch>())
-                    session.Delete(branch);
+                var country = session.Get<Branch>(_branchId);
+                if(country != null)
+                    session.Delete(country);
 
                 session.Flush();
             }
@@ -28,6 +31,7 @@ namespace Test
             )
         {
             var branch = new Branch(
+                _branchId,
                 name,
                 null,
                 null);

@@ -2,6 +2,7 @@
 using Iso3166._1;
 using Iso3166._2;
 using Iso4217;
+using LegalEntities;
 using Locations;
 using Organisations;
 using System;
@@ -45,6 +46,9 @@ namespace Service
             builder
                 .RegisterType<NamedService<Guid, Branch, NamedFilters>>()
                 .As<INamedService<Guid, Branch, NamedFilters>>();
+            builder
+                .RegisterType<NamedService<Guid, LegalEntity, NamedFilters>>()
+                .As<INamedService<Guid, LegalEntity, NamedFilters>>();
         }
     }
 }
