@@ -23,6 +23,7 @@
     <ProjectReference Include="..\Log4NetIntegration\Log4NetIntegration.csproj" />
     <ProjectReference Include="..\MessageBroker\MessageBroker.csproj" />
     <ProjectReference Include="..\NHibernateIntegration\NHibernateIntegration.csproj" />
+    <ProjectReference Include="..\Organisations\Organisations.csproj" />
     <ProjectReference Include="..\Peg\Peg.csproj" />
     <ProjectReference Include="..\Process\Process.csproj" />
     <ProjectReference Include="..\QuartzIntegration\QuartzIntegration.csproj" />
