@@ -7,6 +7,7 @@ import { CurrenciesProvider, CurrencyServiceProvider, CurrencyServiceUrlToken } 
 import { DealTracker } from './DealTracker';
 import { Gallery } from './Gallery/Gallery';
 import { GalleryModule } from './Gallery/GalleryModule';
+import { LegalEntityServiceProvider, LegalEntityServiceUrlToken } from './LegalEntityServiceProvider';
 
 @NgModule({
     declarations:
@@ -53,7 +54,12 @@ import { GalleryModule } from './Gallery/GalleryModule';
                 useValue: '/api/currencies'
             },
             CurrencyServiceProvider,
-            CurrenciesProvider
+            CurrenciesProvider,
+            {
+                provide: LegalEntityServiceUrlToken,
+                useValue: '/api/legalentities'
+            },
+            LegalEntityServiceProvider
         ],
     bootstrap: [DealTracker]
 })

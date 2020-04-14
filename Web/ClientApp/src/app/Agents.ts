@@ -1,5 +1,5 @@
-import { DomainObject, Guid } from "./CommonDomainObjects";
+import { Guid, Named } from "./CommonDomainObjects";
 
-export interface AutonomousAgent extends DomainObject<Guid>
+export interface AutonomousAgent extends Named<Guid>
 {
 }
