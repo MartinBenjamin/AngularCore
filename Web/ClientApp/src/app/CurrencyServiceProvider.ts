@@ -26,7 +26,7 @@ export const CurrenciesProvider: Provider =
 {
     provide: CurrenciesToken,
     useFactory: (
-        currencyService: INamedService<string, Currency, NamedFilters>,
+        currencyService: INamedService<string, Currency, NamedFilters>
         ) =>
     {
         const currencies = new BehaviorSubject<Currency[]>(null);
