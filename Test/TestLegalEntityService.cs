@@ -57,5 +57,12 @@ namespace Test
 
             return legalEntity;
         }
+
+        public override void Validate(
+            LegalEntity legalEntity
+            )
+        {
+            Assert.That(NHibernateUtil.IsInitialized(legalEntity.Country));
+        }
     }
 }

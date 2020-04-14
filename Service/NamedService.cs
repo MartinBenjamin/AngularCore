@@ -49,10 +49,8 @@ namespace Service
             ISession session
             )
         {
-            var criteria = session
+            return session
                 .CreateCriteria<TNamed>();
-            AddOrder(criteria);
-            return criteria;
         }
 
         protected virtual ICriteria CreateCriteria(
@@ -81,6 +79,8 @@ namespace Service
 
             if(filters.MaxResults.HasValue)
                 criteria.SetMaxResults(filters.MaxResults.Value);
+
+            AddOrder(criteria);
 
             return criteria;
         }

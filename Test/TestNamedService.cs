@@ -19,6 +19,10 @@ namespace Test
 
         public abstract TNamed Create(string name);
 
+        public virtual void Validate(TNamed named)
+        {
+        }
+
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
@@ -54,6 +58,7 @@ namespace Test
                 var service = scope.Resolve<INamedService<TId, TNamed, TNamedFilters>>();
                 var retrieved = await service.GetAsync(named.Id);
                 Assert.That(retrieved, Is.EqualTo(named));
+                Validate(retrieved);
             }
         }
 
@@ -76,6 +81,7 @@ namespace Test
                         NameFragment = nameFragment
                     });
                 Assert.That(result.Contains(named), Is.EqualTo(contains));
+                result.ForEach(Validate);
             }
         }
 

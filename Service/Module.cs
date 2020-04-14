@@ -47,7 +47,7 @@ namespace Service
                 .RegisterType<NamedService<Guid, Branch, NamedFilters>>()
                 .As<INamedService<Guid, Branch, NamedFilters>>();
             builder
-                .RegisterType<NamedService<Guid, LegalEntity, NamedFilters>>()
+                .RegisterType<LegalEntityService>()
                 .As<INamedService<Guid, LegalEntity, NamedFilters>>();
         }
     }
