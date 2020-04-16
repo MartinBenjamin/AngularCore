@@ -3,7 +3,6 @@ import { Component, ElementRef, EventEmitter, Input, NgModule, OnInit, Output, V
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { DialogModule } from './Dialog';
-import { Filter, Visit } from './Hierarchical';
 import { OrganisationalUnit } from './OrganisationalUnit';
 import { OrganisationalUnitSelectorConfiguration } from './OrganisationalUnitSelector';
 
@@ -143,7 +142,7 @@ export class OrganisationalUnitContainerV2 implements OnInit
                 distinctUntilChanged(),
                 debounceTime(750),
                 filter(nameFragment => nameFragment != null))
-                .subscribe((nameFragment: string) =>
+                .subscribe(nameFragment =>
                 {
                     if(!this._root)
                         return;

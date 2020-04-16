@@ -44,6 +44,7 @@
     <None Remove="ClientApp\src\app\Iso3166.ts" />
     <None Remove="ClientApp\src\app\Iso4217.ts" />
     <None Remove="ClientApp\src\app\LegalEntities.ts" />
+    <None Remove="ClientApp\src\app\LegalEntityFinder.ts" />
     <None Remove="ClientApp\src\app\LegalEntityServiceProvider.ts" />
     <None Remove="ClientApp\src\app\Locations.ts" />
     <None Remove="ClientApp\src\app\Organisations.ts" />
@@ -88,6 +89,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\LegalEntities.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\LegalEntityServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Locations.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\LegalEntityFinder.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Organisations.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.ts" />

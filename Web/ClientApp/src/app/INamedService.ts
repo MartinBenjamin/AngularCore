@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Named } from './CommonDomainObjects';
 import { newReferenceDeserialiser } from './ReferenceSerialisation';
-import { map } from 'rxjs/operators';
 
 export class NamedFilters
 {
@@ -33,7 +32,7 @@ export class NamedService<TId, TNamed extends Named<TId>, TNamedFilters extends 
         ): Observable<TNamed>
     {
         return this._http.get<TNamed>(this._url + '/' + id.toString())
-            .pipe(newReferenceDeserialiser());
+            .map(newReferenceDeserialiser());
     }
 
     Find(
@@ -57,6 +56,6 @@ export class NamedService<TId, TNamed extends Named<TId>, TNamedFilters extends 
             this._url,
             {
                 params: params
-            }).pipe(map(result => result.map(newReferenceDeserialiser())));
+            }).map(result => result.map(newReferenceDeserialiser()));
     }
 }
