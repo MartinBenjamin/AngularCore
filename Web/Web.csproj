@@ -60,6 +60,7 @@
     <None Remove="ClientApp\src\app\Origination\ProjectFinance.ts" />
     <None Remove="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\TransactionDetails.ts" />
+    <None Remove="ClientApp\src\app\ReferenceSerialisation.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -101,6 +102,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\TransactionDetails.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\ReferenceSerialisation.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

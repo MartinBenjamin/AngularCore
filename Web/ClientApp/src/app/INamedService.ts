@@ -2,6 +2,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Named } from './CommonDomainObjects';
+import { newReferenceDeserialiser } from './ReferenceSerialisation';
+import { map } from 'rxjs/operators';
 
 export class NamedFilters
 {
@@ -11,49 +13,50 @@ export class NamedFilters
 
 export interface INamedService<TId, TNamed extends Named<TId>, TNamedFilters extends NamedFilters>
 {
-  Get(id: TId): Observable<TNamed>;
-  Find(filters: TNamedFilters): Observable<TNamed[]>;
+    Get(id: TId): Observable<TNamed>;
+    Find(filters: TNamedFilters): Observable<TNamed[]>;
 }
 
 @Injectable()
 export class NamedService<TId, TNamed extends Named<TId>, TNamedFilters extends NamedFilters> implements INamedService<TId, TNamed, TNamedFilters>
 {
-  constructor(
-    private _http: HttpClient,
-    private _url : string
-    )
-  {
-
-  }
-
-  Get(
-    id: TId
-    ): Observable<TNamed>
-  {
-    return this._http.get<TNamed>(this._url + '/' + id.toString());
-  }
-
-  Find(
-    filters: TNamedFilters
-    ): Observable<TNamed[]>
-  {
-    var params = new HttpParams();
-
-    for(var key in filters)
+    constructor(
+        private _http: HttpClient,
+        private _url: string
+        )
     {
-      var value = filters[key];
-      switch(typeof value)
-      {
-        case 'string': params.set(key, value                     ); break;
-        case 'number': params.set(key, (<number>value).toString()); break;
-        default: break;
-      }
+
     }
 
-    return this._http.get<TNamed[]>(
-      this._url,
-      {
-        params: new HttpParams()
-      });
-  }
+    Get(
+        id: TId
+        ): Observable<TNamed>
+    {
+        return this._http.get<TNamed>(this._url + '/' + id.toString())
+            .pipe(newReferenceDeserialiser());
+    }
+
+    Find(
+        filters: TNamedFilters
+        ): Observable<TNamed[]>
+    {
+        var params = new HttpParams();
+
+        for(var key in filters)
+        {
+            var value = filters[key];
+            switch(typeof value)
+            {
+                case 'string': params.set(key, value                     ); break;
+                case 'number': params.set(key, (<number>value).toString()); break;
+                default: break;
+            }
+        }
+
+        return this._http.get<TNamed[]>(
+            this._url,
+            {
+                params: params
+            }).pipe(map(result => result.map(newReferenceDeserialiser())));
+    }
 }
