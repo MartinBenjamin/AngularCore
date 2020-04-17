@@ -22,7 +22,7 @@ export class DialogButtons
 </style>
 <div style="position: absolute; left: 0px; top: 0px; width: 100%;" #div>
     <table class="Dialog" style="margin: 150px auto 0px auto;" #table>
-        <tr class="Heading"><td style="text-align: center;">{{Title}}</td></tr>
+        <tr><td class="Heading" style="text-align: center;">{{Title}}</td></tr>
         <tr><td class="Body"><ng-content select="dt-dialog-body"></ng-content></td></tr>
         <tr><td class="Buttons" style="text-align: right;"><ng-content select="dt-dialog-buttons"></ng-content></td></tr>
     </table>

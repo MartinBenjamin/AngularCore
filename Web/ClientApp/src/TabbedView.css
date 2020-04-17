@@ -18,7 +18,7 @@ table.TabbedView td.View
 }
 table.TabbedView th.Selected
 {
-    background-color: #000;
+  background-color: #000;
 }
 
 dt-tabbed-view.FullWidth table.TabbedView

@@ -29,7 +29,7 @@ export class LegalEntityFinderButtons
                 <td style="padding: 2px"
                     ><table class="GridLayout">
                         <tr>
-                            <td class="RowHeading"></td>
+                            <td class="RowHeading">Name:</td>
                             <td><input type="text" #nameFragmentInput /></td>
                             <td></td>
                         </tr>

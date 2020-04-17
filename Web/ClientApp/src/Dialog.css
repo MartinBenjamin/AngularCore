@@ -1,22 +1,22 @@
-﻿table.Dialog
+table.Dialog
 {
     border-collapse: separate;
     border-spacing: 2px;
-    border: 1px solid #ccf;
-    background-color: #fff;
+    border: 1px solid #7a7a7a;
+    background-color: #000000;
     transition: opacity 750ms ease-in-out;
 }
 
-table.Dialog tr.Heading
+table.Dialog td.Heading
 {
-    background-color: #54789e;
-    color: #fff;
+    border: 1px solid #7a7a7a;
+    color: #bababa;
     font-weight: bold;
 }
 
 table.Dialog td.Body
 {
-    border: 1px solid #ccf;
+    border: 1px solid #7a7a7a;
     text-align: left;
 }
 

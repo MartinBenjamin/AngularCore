@@ -50,25 +50,6 @@ a
     cursor: pointer;
 }
 
-table.DataGrid
-{
-    border-collapse: collapse;
-}
-
-table.DataGrid td
-{
-    border: 1px solid #ccf;
-    padding-left: 1px;
-    padding-right: 1px;
-}
-
-input[type=text]
-{
-    height: 20px;
-    border: 1px solid black;
-    padding: 0px 2px 0px 2px;
-}
-
 input[type=text].InputError
 {
     color: red;
