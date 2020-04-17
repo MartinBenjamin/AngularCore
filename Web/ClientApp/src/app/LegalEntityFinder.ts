@@ -32,20 +32,20 @@ export class LegalEntityFinderButtons
                         </tr>
                     </table></td>
             </tr>
-            <tr *ngIf="Results">
+            <tr *ngIf="(Results|async) as legalEntities">
                 <td>
                     <table class="DataGrid LegalEntities" style="empty-cells: show;">
                         <tr>
                             <th>Legal Entity</th>
                             <th>Country</th>
                         </tr>
-                        <tr *ngFor="let legalEntity of Results" class="Hover"
+                        <tr *ngFor="let legalEntity of legalEntities" class="Hover"
                             (click)="Select(legalEntity)"
                             style="cursor: pointer;">
                             <td>{{legalEntity.Name}}</td>
                             <td>{{legalEntity?.Country.Name}}</td>
                         </tr>
-                        <tr [hidden]="Results && Results.length">
+                        <tr [hidden]="legalEntities.length">
                             <td colspan="3" style="text-align: center;"> No Legal Entities Found.</td>
                         </tr>
                     </table>

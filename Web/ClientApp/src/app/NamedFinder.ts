@@ -1,5 +1,5 @@
-import { ElementRef, Input, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { merge } from 'rxjs/observable/merge';
 import { timer } from 'rxjs/observable/timer';
@@ -21,7 +21,7 @@ export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters 
     private   _cancel           : () => void;
     private   _reset            = new Subject<string>();
     private   _finding          : boolean;
-    Results                     : TNamed[];
+    Results                     = new BehaviorSubject<TNamed[]>(null);
 
     protected constructor(
         private _namedService: INamedService<TId, TNamed, TNamedFilters>
@@ -98,7 +98,7 @@ export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters 
     protected Close(): void
     {
         this._nameFragmentInput.nativeElement.value = '';
-        this.Results = null;
+        this.Results.next(null);
         this._select = null;
         this._cancel = null;
         this._reset.next(null);
@@ -112,7 +112,7 @@ export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters 
             ).subscribe(
                 results =>
                 {
-                    this.Results = results;
+                    this.Results.next(results);
                     this._finding = false;
                 });
     }
