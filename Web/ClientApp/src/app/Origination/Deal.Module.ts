@@ -7,6 +7,8 @@ import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
 import { OriginationTab } from './OriginationTab';
 import { TransactionDetails } from './TransactionDetails';
+import { LegalEntityFinder, LegalEntityFinderButtons } from '../LegalEntityFinder';
+import { DialogModule } from '../Gallery/Dialog';
 
 
 @NgModule(
@@ -16,6 +18,8 @@ import { TransactionDetails } from './TransactionDetails';
                 Borrowers,
                 Facilities,
                 KeyDealData,
+                LegalEntityFinder,
+                LegalEntityFinderButtons,
                 MoreTabs,
                 OriginationTab,
                 TransactionDetails
@@ -23,6 +27,7 @@ import { TransactionDetails } from './TransactionDetails';
         imports:
             [
                 CommonModule,
+                DialogModule,
                 TabbedViewModule
             ],
         entryComponents:

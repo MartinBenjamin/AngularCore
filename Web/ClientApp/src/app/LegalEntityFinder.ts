@@ -1,4 +1,4 @@
-import { Component, Directive, ElementRef, Inject, Input, OnInit } from '@angular/core';
+import { Component, Directive, ElementRef, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { merge } from 'rxjs/observable/merge';
 import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
@@ -13,7 +13,7 @@ import { LegalEntityServiceToken } from './LegalEntityServiceProvider';
     {
         selector: 'legal-entity-finder-buttons'
     })
-export class LegalEntityButtons
+export class LegalEntityFinderButtons
 {
 }
 
@@ -37,12 +37,14 @@ export class LegalEntityButtons
             </tr>
             <tr *ngIf="Results">
                 <td>
-                    <table class="DataGrid LegalEntities">
+                    <table class="DataGrid LegalEntities" style="empty-cells: show;">
                         <tr>
                             <th>Legal Entity</th>
                             <th>Country</th>
                         </tr>
-                        <tr *ngFor="let legalEntity of Results" class="Hover" style="cursor: pointer;">
+                        <tr *ngFor="let legalEntity of Results" class="Hover"
+                            (click)="Select(legalEntity)"
+                            style="cursor: pointer;">
                             <td>{{legalEntity.Name}}</td>
                             <td>{{legalEntity?.Country.Name}}</td>
                         </tr>
@@ -60,6 +62,7 @@ export class LegalEntityButtons
     })
 export class LegalEntityFinder implements OnInit
 {
+    @ViewChild('nameFragmentInput')
     private _nameFragmentInput: ElementRef;
     private _select           : (legalEntity: LegalEntity) => void;
     private _cancel           : () => void;
@@ -96,7 +99,7 @@ export class LegalEntityFinder implements OnInit
                 this._legalEntityService.Find(
                     {
                         NameFragment: nameFragment,
-                        MaxResult   : 20
+                        MaxResults  : 20
                     }).subscribe(
                         results =>
                         {
@@ -126,7 +129,7 @@ export class LegalEntityFinder implements OnInit
 
     Find(
         select: (legalEntity: LegalEntity) => void,
-        cancel: () => void
+        cancel?: () => void
         ): void
     {
         this._select = select;

@@ -1,7 +1,9 @@
+<legal-entity-finder
+  Title="Find Borrower"
+  #legalEntityFinder></legal-entity-finder>
 <table class="DataGrid">
   <caption>Borrowers</caption>
   <tr>
-    <th>Agreement</th>
     <th>Name</th>
     <th>Rating</th>
     <th>Rating<br />Expiry&nbsp;Date</th>
@@ -10,5 +12,5 @@
   <tr><td colspan="6" style="text-align: center;">No Borrowers</td></tr>
 </table>
 <div style="margin-top: 5px;">
-  <input type="button" value="Add" />
+  <input type="button" value="Add" (click)="Add()" />
 </div>

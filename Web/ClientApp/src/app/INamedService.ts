@@ -7,7 +7,7 @@ import { newReferenceDeserialiser } from './ReferenceSerialisation';
 export class NamedFilters
 {
   NameFragment: string;
-  MaxResult?  : number;
+  MaxResults? : number;
 }
 
 export interface INamedService<TId, TNamed extends Named<TId>, TNamedFilters extends NamedFilters>
@@ -46,8 +46,8 @@ export class NamedService<TId, TNamed extends Named<TId>, TNamedFilters extends 
             var value = filters[key];
             switch(typeof value)
             {
-                case 'string': params.set(key, value                     ); break;
-                case 'number': params.set(key, (<number>value).toString()); break;
+                case 'string': params = params.set(key, value                     ); break;
+                case 'number': params = params.set(key, (<number>value).toString()); break;
                 default: break;
             }
         }
