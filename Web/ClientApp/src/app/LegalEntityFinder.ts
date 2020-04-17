@@ -79,16 +79,16 @@ export class LegalEntityFinder implements OnInit
 
     ngOnInit(): void
     {
+        let component = this;
         merge(
             merge(
-                [
-                    'keyup',
-                    'click'
-                ].map(
-                    event => fromEvent(
-                        this._nameFragmentInput.nativeElement,
-                        event)))
-                .map(() => (<HTMLInputElement>this._nameFragmentInput.nativeElement).value.toLowerCase()),
+                fromEvent(
+                    this._nameFragmentInput.nativeElement,
+                    'keyup'),
+                fromEvent(
+                    this._nameFragmentInput.nativeElement,
+                    'click'))
+                .map(() => (<HTMLInputElement>component._nameFragmentInput.nativeElement).value.toLowerCase()),
             this._reset).pipe(
                 distinctUntilChanged(),
                 debounceTime(750),
