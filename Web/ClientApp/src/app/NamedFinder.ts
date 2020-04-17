@@ -1,7 +1,8 @@
 import { ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { merge } from 'rxjs/observable/merge';
-import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
+import { timer } from 'rxjs/observable/timer';
+import { debounce, distinctUntilChanged, filter } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
 import { Named } from './CommonDomainObjects';
 import { INamedService, NamedFilters } from './INamedService';
@@ -40,7 +41,7 @@ export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters 
                 .map(() => (<HTMLInputElement>component._nameFragmentInput.nativeElement).value.toLowerCase()),
             this._reset).pipe(
                 distinctUntilChanged(),
-                debounceTime(750),
+                debounce(nameFragment => timer(nameFragment == null ? 0 : 750)),
                 filter(nameFragment => nameFragment != null))
             .subscribe(nameFragment =>
             {
