@@ -1,4 +1,5 @@
-import { ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { ElementRef, Input, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { merge } from 'rxjs/observable/merge';
 import { timer } from 'rxjs/observable/timer';
@@ -7,10 +8,11 @@ import { Subject } from 'rxjs/Subject';
 import { Named } from './CommonDomainObjects';
 import { INamedService, NamedFilters } from './INamedService';
 
-export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters extends NamedFilters> implements OnInit
+export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters extends NamedFilters> implements OnInit, OnDestroy
 {
     @ViewChild('nameFragmentInput')
     private   _nameFragmentInput: ElementRef;
+    private   _subscription     : Subscription;
     protected _filters = <TNamedFilters>{
         NameFragment: '',
         MaxResults  : 20
@@ -30,7 +32,7 @@ export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters 
     ngOnInit(): void
     {
         let component = this;
-        merge(
+        this._subscription = merge(
             merge(
                 fromEvent(
                     this._nameFragmentInput.nativeElement,
@@ -48,6 +50,11 @@ export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters 
                 this._filters.NameFragment = nameFragment;
                 this.ExecuteFind();
             });
+    }
+
+    ngOnDestroy(): void
+    {
+        this._subscription.unsubscribe();
     }
 
     get Open(): boolean
