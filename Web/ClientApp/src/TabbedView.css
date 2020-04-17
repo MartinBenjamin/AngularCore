@@ -2,26 +2,30 @@ table.TabbedView th.Spacer
 {
     border-color: #7a7a7a;
 }
+
 table.TabbedView th.Spacer1
 {
     border-color: #7a7a7a;
 }
+
 table.TabbedView th.Tab
 {
     border-color: #7a7a7a;
     background-color: #151515;
     width: 110px;
 }
+
 table.TabbedView td.View
 {
     border-color: #7a7a7a;
 }
+
 table.TabbedView th.Selected
 {
-  background-color: #000;
+    background-color: #000;
 }
 
 dt-tabbed-view.FullWidth table.TabbedView
 {
-  width: 100%;
+    width: 100%;
 }

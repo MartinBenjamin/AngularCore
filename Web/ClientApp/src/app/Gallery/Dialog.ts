@@ -62,7 +62,7 @@ export class DialogContainer implements OnInit
 @Component(
     {
         selector: 'dt-dialog-background',
-        template: `<div style="position: absolute; left: 0px; top: 0px; width: 100%; height: 1000px; background-color: #fff; opacity: 0.4;"></div>`
+        template: `<div class="DialogBackground" style="position: absolute; left: 0px; top: 0px; width: 100%; height: 1000px;"></div>`
     })
 export class DialogBackground implements OnInit, OnDestroy
 {
