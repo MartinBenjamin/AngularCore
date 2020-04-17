@@ -28,7 +28,7 @@ export class LegalEntityFinderButtons
                         <tr>
                             <td class="RowHeading">Name:</td>
                             <td><input type="text" #nameFragmentInput /></td>
-                            <td></td>
+                            <td [hidden]="!Finding"><i class="fa fa-circle-o-notch fa-spin fa-2x"></i></td>
                         </tr>
                     </table></td>
             </tr>
