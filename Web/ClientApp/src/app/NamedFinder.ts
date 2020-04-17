@@ -20,7 +20,7 @@ export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters 
     private   _select           : (named: TNamed) => void;
     private   _cancel           : () => void;
     private   _reset            = new Subject<string>();
-    private   _finding          : boolean;
+    Finding                     = new BehaviorSubject<boolean>(false);
     Results                     = new BehaviorSubject<TNamed[]>(null);
 
     protected constructor(
@@ -62,11 +62,6 @@ export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters 
         return this._select != null;
     }
 
-    get Finding(): boolean
-    {
-        return this._finding;
-    }
-
     @Input()
     Title: string;
 
@@ -106,14 +101,14 @@ export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters 
 
     protected ExecuteFind()
     {
-        this._finding = true;
+        this.Finding.next(true);
         this._namedService.Find(
             this._filters
             ).subscribe(
                 results =>
                 {
                     this.Results.next(results);
-                    this._finding = false;
+                    this.Finding.next(false);
                 });
     }
 }
