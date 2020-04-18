@@ -52,7 +52,7 @@
           </tr>
           <tr>
             <td class="RowHeading">Base Currency:</td>
-            <td *ngIf="(Currencies|async) as currencies; else Loading">
+            <td *ngIf="Currencies|async as currencies; else Loading">
               <select>
                 <option [value]="null"></option>
                 <option *ngFor="let currency of currencies" [value]="currency.Id">{{currency.Name}}</option>

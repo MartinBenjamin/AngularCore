@@ -32,7 +32,7 @@ export class LegalEntityFinderButtons
                         </tr>
                     </table></td>
             </tr>
-            <tr *ngIf="(Results|async) as legalEntities">
+            <tr *ngIf="Results|async as legalEntities">
                 <td>
                     <table class="DataGrid LegalEntities" style="empty-cells: show;">
                         <tr>

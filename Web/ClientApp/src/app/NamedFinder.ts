@@ -1,5 +1,5 @@
 import { ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription, Observable } from 'rxjs';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import { merge } from 'rxjs/observable/merge';
 import { timer } from 'rxjs/observable/timer';
@@ -20,8 +20,8 @@ export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters 
     private   _select           : (named: TNamed) => void;
     private   _cancel           : () => void;
     private   _reset            = new Subject<string>();
-    Finding                     = new BehaviorSubject<boolean>(false);
-    Results                     = new BehaviorSubject<TNamed[]>(null);
+    private   _finding          = new BehaviorSubject<boolean>(false);
+    private   _results          = new BehaviorSubject<TNamed[]>(null);
 
     protected constructor(
         private _namedService: INamedService<TId, TNamed, TNamedFilters>
@@ -62,6 +62,16 @@ export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters 
         return this._select != null;
     }
 
+    get Results(): Observable<TNamed[]>
+    {
+        return this._results;
+    }
+
+    get Finding(): Observable<boolean>
+    {
+        return this._finding;
+    }
+
     @Input()
     Title: string;
 
@@ -93,7 +103,7 @@ export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters 
     protected Close(): void
     {
         this._nameFragmentInput.nativeElement.value = '';
-        this.Results.next(null);
+        this._results.next(null);
         this._select = null;
         this._cancel = null;
         this._reset.next(null);
@@ -101,14 +111,14 @@ export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters 
 
     protected ExecuteFind()
     {
-        this.Finding.next(true);
+        this._finding.next(true);
         this._namedService.Find(
             this._filters
             ).subscribe(
                 results =>
                 {
-                    this.Results.next(results);
-                    this.Finding.next(false);
+                    this._results.next(results);
+                    this._finding.next(false);
                 });
     }
 }
