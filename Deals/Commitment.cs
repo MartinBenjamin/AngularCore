@@ -1,5 +1,4 @@
-﻿using Agreements;
-using CommonDomainObjects;
+﻿using CommonDomainObjects;
 using System;
 using System.Collections.Generic;
 
@@ -21,8 +20,8 @@ namespace Deals
             IList<DealParty> obligors
             ) : base(id)
         {
-            Deal      = deal;
-            Obligors  = obligors;
+            Deal     = deal;
+            Obligors = obligors;
             Deal.Commitments.Add(this);
         }
     }
