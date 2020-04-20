@@ -48,6 +48,7 @@
     <None Remove="ClientApp\src\app\LegalEntityServiceProvider.ts" />
     <None Remove="ClientApp\src\app\Locations.ts" />
     <None Remove="ClientApp\src\app\NamedFinder.ts" />
+    <None Remove="ClientApp\src\app\ObservableNamedStore.ts" />
     <None Remove="ClientApp\src\app\Organisations.ts" />
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.ts" />
@@ -92,6 +93,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Locations.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\LegalEntityFinder.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\NamedFinder.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\ObservableNamedStore.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Organisations.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.ts" />

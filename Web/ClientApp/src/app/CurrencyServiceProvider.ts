@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { InjectionToken, Provider } from "@angular/core";
 import 'rxjs/add/operator/map';
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { Observable } from "rxjs/Observable";
+import { Guid } from './CommonDomainObjects';
 import { INamedService, NamedFilters, NamedService } from "./INamedService";
 import { Currency } from "./Iso4217";
+import { ObservableNamedStore } from './ObservableNamedStore';
 
 export const CurrencyServiceToken = new InjectionToken<INamedService<string, Currency, NamedFilters>>('CurrencyService');
 export const CurrencyServiceUrlToken = new InjectionToken<string>('CurrencyServiceUrl');
@@ -27,11 +28,6 @@ export const CurrenciesProvider: Provider =
     provide: CurrenciesToken,
     useFactory: (
         currencyService: INamedService<string, Currency, NamedFilters>
-        ) =>
-    {
-        const currencies = new BehaviorSubject<Currency[]>(null);
-        currencyService.Find(new NamedFilters()).subscribe(result => currencies.next(result));
-        return currencies;
-    },
+    ) => new ObservableNamedStore<Guid, Currency>(currencyService),
     deps: [CurrencyServiceToken]
 }
