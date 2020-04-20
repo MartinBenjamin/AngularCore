@@ -4,7 +4,7 @@ import { INamedService, NamedFilters } from "./INamedService";
 
 export class ObservableNamedStore<TId, TNamed extends Named<TId>> extends Observable<TNamed[]>
 {
-    private _dataStore: BehaviorSubject<TNamed[]>;
+    private _namedStore: BehaviorSubject<TNamed[]>;
 
     constructor(
         namedService: INamedService<TId, TNamed, NamedFilters>
@@ -13,13 +13,13 @@ export class ObservableNamedStore<TId, TNamed extends Named<TId>> extends Observ
         super(
             subscriber =>
             {
-                if(!this._dataStore)
+                if(!this._namedStore)
                 {
-                    this._dataStore = new BehaviorSubject<TNamed[]>(null);
-                    namedService.Find(new NamedFilters()).subscribe(result => this._dataStore.next(result));
+                    this._namedStore = new BehaviorSubject<TNamed[]>(null);
+                    namedService.Find(new NamedFilters()).subscribe(result => this._namedStore.next(result));
                 }
 
-                const subscription = this._dataStore.subscribe(
+                const subscription = this._namedStore.subscribe(
                     value => subscriber.next(value),
                     error => subscriber.error(error),
                     ()    => subscriber.complete());
