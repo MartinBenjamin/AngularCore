@@ -28,6 +28,6 @@ export const CurrenciesProvider: Provider =
     provide: CurrenciesToken,
     useFactory: (
         currencyService: INamedService<string, Currency, NamedFilters>
-    ) => new ObservableNamedStore<Guid, Currency>(currencyService),
+        ) => new ObservableNamedStore<Guid, Currency>(currencyService),
     deps: [CurrencyServiceToken]
 }
