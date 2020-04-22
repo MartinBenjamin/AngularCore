@@ -10,8 +10,17 @@ namespace Roles
         }
 
         public Role(
+            Guid   id,
             string name
-            ): base(
+            ) : base(
+                id,
+                name)
+        {
+        }
+
+        public Role(
+            string name
+            ): this(
                 Guid.NewGuid(),
                 name)
         {
