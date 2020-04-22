@@ -26,10 +26,11 @@ export class Borrowers
             roles =>
             {
                 this._borrowerRole = roles.find(role => role.Id == DealRoleIdentifier.Borrower);
+                this._borrowerRole = <Role>{};
             });
     }
 
-    get Initialising(): boolean
+    get Initialised(): boolean
     {
         return this._borrowerRole != null;
     }
