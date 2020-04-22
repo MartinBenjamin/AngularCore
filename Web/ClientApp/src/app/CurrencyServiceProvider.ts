@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { InjectionToken, Provider } from "@angular/core";
-import 'rxjs/add/operator/map';
-import { Observable } from "rxjs/Observable";
+import { Observable } from 'rxjs';
 import { Guid } from './CommonDomainObjects';
 import { INamedService, NamedFilters, NamedService } from "./INamedService";
 import { Currency } from "./Iso4217";

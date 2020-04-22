@@ -33,6 +33,7 @@
     <None Remove="ClientApp\src\app\Agents.ts" />
     <None Remove="ClientApp\src\app\CommonDomainObjects.ts" />
     <None Remove="ClientApp\src\app\CurrencyServiceProvider.ts" />
+    <None Remove="ClientApp\src\app\Deals.ts" />
     <None Remove="ClientApp\src\app\DealTracker.Module.ts" />
     <None Remove="ClientApp\src\app\DealTracker.ts" />
     <None Remove="ClientApp\src\app\DealTrackerLayout.Module.ts" />
@@ -64,6 +65,8 @@
     <None Remove="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\TransactionDetails.ts" />
     <None Remove="ClientApp\src\app\ReferenceSerialisation.ts" />
+    <None Remove="ClientApp\src\app\Roles.ts" />
+    <None Remove="ClientApp\src\app\RoleServiceProvider.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -77,6 +80,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\Agents.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\CurrencyServiceProvider.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Deals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\DealTracker.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\DealTracker.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\CommonDomainObjects.ts" />
@@ -109,6 +113,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\TransactionDetails.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\ReferenceSerialisation.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Roles.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\RoleServiceProvider.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

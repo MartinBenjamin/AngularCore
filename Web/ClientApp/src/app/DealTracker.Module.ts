@@ -8,6 +8,7 @@ import { DealTracker } from './DealTracker';
 import { Gallery } from './Gallery/Gallery';
 import { GalleryModule } from './Gallery/GalleryModule';
 import { LegalEntityServiceProvider, LegalEntityServiceUrlToken } from './LegalEntityServiceProvider';
+import { RoleServiceUrlToken, RoleServiceProvider, RolesProvider } from './RoleServiceProvider';
 
 @NgModule({
     declarations:
@@ -55,6 +56,12 @@ import { LegalEntityServiceProvider, LegalEntityServiceUrlToken } from './LegalE
             },
             CurrencyServiceProvider,
             CurrenciesProvider,
+            {
+                provide: RoleServiceUrlToken,
+                useValue: '/api/roles'
+            },
+            RoleServiceProvider,
+            RolesProvider,
             {
                 provide: LegalEntityServiceUrlToken,
                 useValue: '/api/legalentities'
