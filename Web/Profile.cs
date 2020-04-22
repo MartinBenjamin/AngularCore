@@ -5,6 +5,7 @@ using Iso4217;
 using LegalEntities;
 using Locations;
 using Organisations;
+using Roles;
 
 namespace Web
 {
@@ -22,6 +23,7 @@ namespace Web
             CreateMap<OrganisationalSubUnit , Model.OrganisationalSubUnit>().PreserveReferences();
             CreateMap<Branch                , Model.Branch               >().PreserveReferences();
             CreateMap<LegalEntity           , Model.LegalEntity          >().PreserveReferences();
+            CreateMap<Role                  , Model.Role                 >().PreserveReferences();
         }
     }
 }
