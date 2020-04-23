@@ -56,35 +56,31 @@ namespace Test
                 true);
         }
 
-        [Test]
-        public async Task Iso3166_1()
+        private async void Etl<TId, TNamed>() where TNamed: Named<TId>
         {
-            var countries = await _container.Resolve<IEtl<IEnumerable<Country>>>().ExecuteAsync();
-            Assert.That(countries.Count, Is.GreaterThan(0));
+            var transformed = await _container.Resolve<IEtl<IEnumerable<TNamed>>>().ExecuteAsync();
+            Assert.That(transformed.Count, Is.GreaterThan(0));
 
             using(var scope = _container.BeginLifetimeScope())
             {
-                var service = scope.Resolve<INamedService<string, Country, NamedFilters>>();
+                var service = scope.Resolve<INamedService<TId, TNamed, NamedFilters>>();
                 var loaded = await service.FindAsync(new NamedFilters());
                 Assert.That(
-                    loaded.OrderBy(country => country.Id).SequenceEqual(countries.OrderBy(country => country.Id)), Is.True);
+                    loaded.OrderBy(named => named.Id).SequenceEqual(transformed.OrderBy(named => named.Id)), Is.True);
             }
+        }
+
+        [Test]
+        public async Task Iso3166_1()
+        {
+            Etl<string, Country>();
         }
 
         [Test]
         public async Task Iso3166_2()
         {
             await _container.Resolve<IEtl<IEnumerable<Country>>>().ExecuteAsync();
-            var subdivisions = await _container.Resolve<IEtl<IEnumerable<Subdivision>>>().ExecuteAsync();
-            Assert.That(subdivisions.Count, Is.GreaterThan(0));
-
-            using(var scope = _container.BeginLifetimeScope())
-            {
-                var service = scope.Resolve<INamedService<string, Subdivision, NamedFilters>>();
-                var loaded = await service.FindAsync(new NamedFilters());
-                Assert.That(
-                    loaded.OrderBy(subdivision => subdivision.Id).SequenceEqual(subdivisions.OrderBy(subdivision => subdivision.Id)), Is.True);
-            }
+            Etl<string, Subdivision>();
         }
 
         [Test]
@@ -130,16 +126,7 @@ namespace Test
         [Test]
         public async Task Iso4217()
         {
-            var currencies = await _container.Resolve<IEtl<IEnumerable<Currency>>>().ExecuteAsync();
-            Assert.That(currencies.Count, Is.GreaterThan(0));
-
-            using(var scope = _container.BeginLifetimeScope())
-            {
-                var service = scope.Resolve<INamedService<string, Currency, NamedFilters>>();
-                var loaded = await service.FindAsync(new NamedFilters());
-                Assert.That(
-                    loaded.OrderBy(currency => currency.Id).SequenceEqual(currencies.OrderBy(currency => currency.Id)), Is.True);
-            }
+            Etl<string, Currency>();
         }
 
         [Test]

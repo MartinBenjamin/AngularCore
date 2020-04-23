@@ -10,8 +10,14 @@ namespace Deals
         public static readonly Guid Advisor     = new Guid("32076CE7-7219-48C9-8BE1-9E6754B034A6");
         public static readonly Guid Sponsor     = new Guid("00119E8C-E136-4AA8-A554-DB0FCC09850A");
 
-        //public static readonly Guid TeamLeader    =
-        //public static readonly Guid TeamMember    =
-        //public static readonly Guid WallStraddler =
+
+    }
+
+    public static class DealTeamRoleIdentifier
+    {
+        public static readonly Guid Leader         = new Guid("1394234B-8153-410D-B775-07BADA9536C5");
+        public static readonly Guid Member         = new Guid("55DF9BD2-C0C1-4690-BE63-0DFF1F887E81");
+        public static readonly Guid WallStraddler  = new Guid("99DCE2CC-4722-4606-B4A6-61210A6648FE");
+        public static readonly Guid AccountOfficer = new Guid("430B921B-387D-42ED-A63B-410D923722ED");
     }
 }
