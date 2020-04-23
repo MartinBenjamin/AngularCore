@@ -13,6 +13,7 @@
     <None Remove="ISO3166-2-PT.csv" />
     <None Remove="ISO3166-2-US.csv" />
     <None Remove="ISO4217.csv" />
+    <None Remove="Role.csv" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +25,7 @@
     <EmbeddedResource Include="ISO3166-2-PT.csv" />
     <EmbeddedResource Include="ISO3166-2-US.csv" />
     <EmbeddedResource Include="ISO4217.csv" />
+    <EmbeddedResource Include="Role.csv" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +40,7 @@
     <ProjectReference Include="..\Iso4217\Iso4217.csproj" />
     <ProjectReference Include="..\LegalEntities\LegalEntities.csproj" />
     <ProjectReference Include="..\Peg\Peg.csproj" />
+    <ProjectReference Include="..\Roles\Roles.csproj" />
   </ItemGroup>
 
 </Project>

@@ -12,6 +12,7 @@ using NHibernate.Tool.hbm2ddl;
 using NHibernateIntegration;
 using NUnit.Framework;
 using Organisations;
+using Roles;
 using Service;
 using System;
 using System.Collections.Generic;
@@ -56,7 +57,7 @@ namespace Test
                 true);
         }
 
-        private async void Etl<TId, TNamed>() where TNamed: Named<TId>
+        private async Task Etl<TId, TNamed>() where TNamed: Named<TId>
         {
             var transformed = await _container.Resolve<IEtl<IEnumerable<TNamed>>>().ExecuteAsync();
             Assert.That(transformed.Count, Is.GreaterThan(0));
@@ -71,16 +72,22 @@ namespace Test
         }
 
         [Test]
+        public async Task Role()
+        {
+            await Etl<Guid, Role>();
+        }
+
+        [Test]
         public async Task Iso3166_1()
         {
-            Etl<string, Country>();
+            await Etl<string, Country>();
         }
 
         [Test]
         public async Task Iso3166_2()
         {
             await _container.Resolve<IEtl<IEnumerable<Country>>>().ExecuteAsync();
-            Etl<string, Subdivision>();
+            await Etl<string, Subdivision>();
         }
 
         [Test]
@@ -126,7 +133,7 @@ namespace Test
         [Test]
         public async Task Iso4217()
         {
-            Etl<string, Currency>();
+            await Etl<string, Currency>();
         }
 
         [Test]

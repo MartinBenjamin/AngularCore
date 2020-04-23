@@ -5,6 +5,7 @@ using Iso3166._2;
 using Iso4217;
 using Locations;
 using Organisations;
+using Roles;
 using System.Collections.Generic;
 
 namespace Data
@@ -18,6 +19,11 @@ namespace Data
             builder
                 .RegisterType<CsvExtractor>()
                 .As<ICsvExtractor>()
+                .SingleInstance();
+
+            builder
+                .RegisterType<RoleLoader>()
+                .As<IEtl<IEnumerable<Role>>>()
                 .SingleInstance();
 
             builder
