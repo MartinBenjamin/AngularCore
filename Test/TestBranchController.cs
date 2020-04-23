@@ -11,7 +11,7 @@ namespace Test
     [TestFixture]
     public class TestBranchController: TestNamedController<Guid, Branch, NamedFilters, Web.Model.Branch, NamedFilters, BranchController>
     {
-        private static Guid _branchId = new Guid("8C3C20D8-427C-4D10-AED5-9E304C0EA044");
+        private static Guid _branchId = new Guid("8c3c20d8-427c-4d10-aed5-9e304c0ea044");
 
         [SetUp]
         public void SetUp()

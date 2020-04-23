@@ -11,7 +11,7 @@ namespace Test
     [TestFixture]
     public class TestRoleController: TestNamedController<Guid, Role, NamedFilters, Web.Model.Role, NamedFilters, RoleController>
     {
-        private static Guid _roleId = new Guid("4310CCFF-B26C-4789-80DC-AE15E6E2DF67");
+        private static Guid _roleId = new Guid("4310ccff-b26c-4789-80dc-ae15e6e2df67");
 
         [SetUp]
         public void SetUp()

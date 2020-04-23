@@ -18,6 +18,6 @@ namespace MessageBroker
 
     public static class MessageQueueIdentifier
     {
-        public static readonly Guid MessageBroker = new Guid("91D858EF-B754-4376-972F-366E6BFC82FE");
+        public static readonly Guid MessageBroker = new Guid("91d858ef-b754-4376-972f-366e6bfc82fe");
     }
 }

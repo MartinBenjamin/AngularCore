@@ -11,7 +11,7 @@ namespace Test
     [TestFixture]
     public class TestLegalEntityService: TestNamedService<Guid, LegalEntity, NamedFilters>
     {
-        private static Guid _legalEntityId = new Guid("FAB879AA-05FC-4881-9576-42FE0150D12D");
+        private static Guid _legalEntityId = new Guid("fab879aa-05fc-4881-9576-42fe0150d12d");
 
         [SetUp]
         public void SetUp()
