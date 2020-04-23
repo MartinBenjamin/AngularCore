@@ -168,6 +168,7 @@ namespace Test
         [Test]
         public async Task Load()
         {
+            await _container.Resolve<IEtl<IEnumerable<Role>>>().ExecuteAsync();
             await _container.Resolve<IEtl<IEnumerable<Country>>>().ExecuteAsync();
             await _container.Resolve<IEtl<IEnumerable<Subdivision>>>().ExecuteAsync();
             await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
