@@ -10,7 +10,9 @@ table.Dialog
 table.Dialog td.Heading
 {
     border: 1px solid #7a7a7a;
+    padding: 4px;
     color: #bababa;
+    font-size: larger;
     font-weight: bold;
 }
 
