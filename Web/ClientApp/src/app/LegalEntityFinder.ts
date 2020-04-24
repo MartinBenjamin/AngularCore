@@ -28,7 +28,7 @@ export class LegalEntityFinderButtons
                         <tr>
                             <td class="RowHeading">Name:</td>
                             <td><input type="text" #nameFragmentInput /></td>
-                            <td [hidden]="!(Finding|async)"><i class="fa fa-circle-o-notch fa-spin fa-2x"></i></td>
+                            <td><img [hidden]="!(Finding|async)" src="assets/Indicator20.svg" style="vertical-align: middle;"/></td>
                         </tr>
                     </table></td>
             </tr>
