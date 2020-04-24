@@ -39,8 +39,9 @@ export class LegalEntityFinderButtons
                             <th>Legal Entity</th>
                             <th>Country</th>
                         </tr>
-                        <tr *ngFor="let legalEntity of legalEntities" class="Hover"
+                        <tr *ngFor="let legalEntity of legalEntities"
                             (click)="Select(legalEntity)"
+                            class="Hover"
                             style="cursor: pointer;">
                             <td>{{legalEntity.Name}}</td>
                             <td>{{legalEntity?.Country.Name}}</td>
