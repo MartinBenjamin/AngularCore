@@ -64,6 +64,7 @@
     <None Remove="ClientApp\src\app\Origination\ProjectFinance.ts" />
     <None Remove="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\TransactionDetails.ts" />
+    <None Remove="ClientApp\src\app\People.ts" />
     <None Remove="ClientApp\src\app\ReferenceSerialisation.ts" />
     <None Remove="ClientApp\src\app\Roles.ts" />
     <None Remove="ClientApp\src\app\RoleServiceProvider.ts" />
@@ -112,6 +113,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\TransactionDetails.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\People.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\ReferenceSerialisation.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Roles.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\RoleServiceProvider.ts" />

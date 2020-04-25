@@ -5,24 +5,24 @@ namespace People
 {
     public class Person: AutonomousAgent
     {
-        new public virtual PersonName Name { get; protected set; }
+        new public virtual PersonNameComponents NameComponents { get; protected set; }
 
         protected Person() : base()
         {
         }
 
         public Person(
-            Guid       id,
-            PersonName name
+            Guid                 id,
+            PersonNameComponents nameComponents
             ) : base(
                 id,
-                name.Full)
+                nameComponents.Full)
         {
-            Name = name;
+            NameComponents = nameComponents;
         }
 
         public Person(
-            PersonName name
+            PersonNameComponents name
             ) : this(
                 Guid.NewGuid(),
                 name)
@@ -30,7 +30,7 @@ namespace People
         }
     }
 
-    public class PersonName
+    public class PersonNameComponents
     {
         public virtual string Given  { get; protected set; }
         public virtual string Family { get; protected set; }
@@ -70,11 +70,11 @@ namespace People
             }
         }
 
-        protected PersonName()
+        protected PersonNameComponents()
         {
         }
 
-        public PersonName(
+        public PersonNameComponents(
             string givenName,
             string familyName
             )

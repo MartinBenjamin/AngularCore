@@ -7,5 +7,5 @@ export interface DomainObject<TId>
 
 export interface Named<TId> extends DomainObject<TId>
 {
-    Named: string;
+    Name: string;
 }

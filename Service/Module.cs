@@ -5,6 +5,7 @@ using Iso4217;
 using LegalEntities;
 using Locations;
 using Organisations;
+using People;
 using Roles;
 using System;
 using UnsdM49;
@@ -50,6 +51,9 @@ namespace Service
             builder
                 .RegisterType<LegalEntityService>()
                 .As<INamedService<Guid, LegalEntity, NamedFilters>>();
+            builder
+                .RegisterType<NamedService<Guid, Person, NamedFilters>>()
+                .As<INamedService<Guid, Person, NamedFilters>>();
             builder
                 .RegisterType<NamedService<Guid, Role, NamedFilters>>()
                 .As<INamedService<Guid, Role, NamedFilters>>();
