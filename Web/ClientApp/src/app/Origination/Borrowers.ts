@@ -15,40 +15,43 @@ import { DealProvider } from '../DealProvider';
 export class Borrowers
 {
     private _borrowerRole: Role;
+    private _deal        : Deal;
 
     @ViewChild('legalEntityFinder')
     private _legalEntityFinder: LegalEntityFinder;
 
     constructor(
         @Inject(RolesToken)
-        private _roles: Observable<Role[]>,
-        private _dealProvider: DealProvider
+        roles: Observable<Role[]>,
+        dealProvider: DealProvider
         )
     {
-        _roles.subscribe(
+        roles.subscribe(
             roles =>
             {
                 this._borrowerRole = roles.find(role => role.Id == DealRoleIdentifier.Borrower);
             });
+
+        dealProvider.subscribe(deal => this._deal = deal);
     }
 
     get Initialised(): boolean
     {
-        return this._borrowerRole != null;
+        return this._borrowerRole != null && this._deal != null;
     }
 
     get Deal(): Deal
     {
-        return this._dealProvider.Deal;
+        return this._deal;
     }
 
     Add(): void
     {
         this._legalEntityFinder.Find(
-            legalEntity => this._dealProvider.Deal.Parties.push(
+            legalEntity => this._deal.Parties.push(
                 <DealParty>{
                     Id             : EmptyGuid,
-                    Deal           : this._dealProvider.Deal,
+                    Deal           : this._deal,
                     AutonomousAgent: legalEntity,
                     Organisation   : legalEntity,
                     Person         : null,
@@ -56,7 +59,7 @@ export class Borrowers
                     Period:
                     {
                         Start: new Date(Date.now()),
-                        End: null
+                        End  : null
                     }
                 }));
     }

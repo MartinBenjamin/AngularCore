@@ -9,6 +9,7 @@ import { TransactionDetails } from '../TransactionDetails';
 import { Deal } from '../../Deals';
 import { EmptyGuid } from '../../CommonDomainObjects';
 import { DealProvider } from '../../DealProvider';
+import { Subscription } from 'rxjs';
 
 @Component(
     {
@@ -23,6 +24,8 @@ import { DealProvider } from '../../DealProvider';
     })
 export class ProjectFinance extends DealProvider implements AfterViewInit
 {
+    private _subscription: Subscription;
+
     @ViewChild('title')
     private _title: TemplateRef<any>;
 
@@ -34,13 +37,14 @@ export class ProjectFinance extends DealProvider implements AfterViewInit
         )
     {
         super();
+        //this._subscription = this._behaviourSubject.subscribe(deal => this._deal = deal)
 
         if(typeof this._activatedRoute.snapshot.data.id == 'undefined')
         {
             // Create Project Finance Deal.
             // Need to get stages.
             // Need to set up MUFG Bank, Ltd. as Lender.
-            this._deal = <Deal>{
+            this._behaviourSubject.next(< Deal > {
                 Id         : EmptyGuid,
                 Name       : null,
                 Agreements : [],
@@ -48,16 +52,11 @@ export class ProjectFinance extends DealProvider implements AfterViewInit
                 Parties    : [],
                 Restricted : false,
                 ProjectName: null
-            };
+            });
         }
         else
         {
         }
-    }
-
-    get Deal(): Deal
-    {
-        return this._deal;
     }
 
     public Tabs =
