@@ -1,5 +1,5 @@
-import { Component, Inject, ViewChild, Input } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, Inject, ViewChild, Input, OnDestroy } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
 import { EmptyGuid } from '../CommonDomainObjects';
 import { Deal, DealParty, DealRoleIdentifier } from '../Deals';
 import { LegalEntityFinder } from '../LegalEntityFinder';
@@ -12,10 +12,11 @@ import { DealProvider } from '../DealProvider';
         selector: 'borrowers',
         templateUrl: './Borrowers.html'
     })
-export class Borrowers
+export class Borrowers implements OnDestroy
 {
-    private _borrowerRole: Role;
-    private _deal        : Deal;
+    private _subscriptions = new Array<Subscription>();
+    private _borrowerRole  : Role;
+    private _deal          : Deal;
 
     @ViewChild('legalEntityFinder')
     private _legalEntityFinder: LegalEntityFinder;
@@ -26,13 +27,18 @@ export class Borrowers
         dealProvider: DealProvider
         )
     {
-        roles.subscribe(
-            roles =>
-            {
-                this._borrowerRole = roles.find(role => role.Id == DealRoleIdentifier.Borrower);
-            });
+        this._subscriptions.push(
+            roles.subscribe(
+                roles =>
+                {
+                    this._borrowerRole = roles.find(role => role.Id == DealRoleIdentifier.Borrower);
+                }),
+            dealProvider.subscribe(deal => this._deal = deal));
+    }
 
-        dealProvider.subscribe(deal => this._deal = deal);
+    ngOnDestroy(): void
+    {
+        this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
     get Initialised(): boolean
