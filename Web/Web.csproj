@@ -33,6 +33,7 @@
     <None Remove="ClientApp\src\app\Agents.ts" />
     <None Remove="ClientApp\src\app\CommonDomainObjects.ts" />
     <None Remove="ClientApp\src\app\CurrencyServiceProvider.ts" />
+    <None Remove="ClientApp\src\app\DealProvider.ts" />
     <None Remove="ClientApp\src\app\Deals.ts" />
     <None Remove="ClientApp\src\app\DealTracker.Module.ts" />
     <None Remove="ClientApp\src\app\DealTracker.ts" />
@@ -82,6 +83,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\Agents.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\CurrencyServiceProvider.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\DealProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Deals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\DealTracker.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\DealTracker.ts" />

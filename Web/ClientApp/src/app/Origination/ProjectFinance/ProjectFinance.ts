@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, TemplateRef, ViewChild, forwardRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Tab } from '../../Gallery/TabbedView';
 import { KeyDealData } from '../KeyDealData';
@@ -8,12 +8,20 @@ import { OriginationTab } from '../OriginationTab';
 import { TransactionDetails } from '../TransactionDetails';
 import { Deal } from '../../Deals';
 import { EmptyGuid } from '../../CommonDomainObjects';
+import { DealProvider } from '../../DealProvider';
 
 @Component(
     {
-        templateUrl: './ProjectFinance.html'
+        templateUrl: './ProjectFinance.html',
+        providers:
+            [
+                {
+                    provide: DealProvider,
+                    useExisting: forwardRef(() => ProjectFinance)
+                }
+            ]
     })
-export class ProjectFinance implements AfterViewInit
+export class ProjectFinance extends DealProvider implements AfterViewInit
 {
     @ViewChild('title')
     private _title: TemplateRef<any>;
@@ -25,6 +33,8 @@ export class ProjectFinance implements AfterViewInit
         private _activatedRoute: ActivatedRoute
         )
     {
+        super();
+
         if(typeof this._activatedRoute.snapshot.data.id == 'undefined')
         {
             // Create Project Finance Deal.
