@@ -6,6 +6,8 @@ import { MoreTabs } from '../MoreTabs';
 import { Origination } from '../Origination';
 import { OriginationTab } from '../OriginationTab';
 import { TransactionDetails } from '../TransactionDetails';
+import { Deal } from '../../Deals';
+import { EmptyGuid } from '../../CommonDomainObjects';
 
 @Component(
     {
@@ -16,6 +18,8 @@ export class ProjectFinance implements AfterViewInit
     @ViewChild('title')
     private _title: TemplateRef<any>;
 
+    private _deal: Deal;
+
     constructor(
         private _origination   : Origination,
         private _activatedRoute: ActivatedRoute
@@ -24,11 +28,26 @@ export class ProjectFinance implements AfterViewInit
         if(typeof this._activatedRoute.snapshot.data.id == 'undefined')
         {
             // Create Project Finance Deal.
+            // Need to get stages.
+            // Need to set up MUFG Bank, Ltd. as Lender.
+            this._deal = <Deal>{
+                Id         : EmptyGuid,
+                Name       : null,
+                Agreements : [],
+                Commitments: [],
+                Parties    : [],
+                Restricted : false,
+                ProjectName: null
+            };
         }
         else
         {
         }
+    }
 
+    get Deal(): Deal
+    {
+        return this._deal;
     }
 
     public Tabs =
