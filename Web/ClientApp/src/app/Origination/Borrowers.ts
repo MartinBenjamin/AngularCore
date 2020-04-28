@@ -63,6 +63,15 @@ export class Borrowers implements OnDestroy
         this._legalEntityFinder.Find(
             legalEntity =>
             {
+                if(this._deal.Parties.find(
+                    party =>
+                        party.Role.Id == DealRoleIdentifier.Borrower &&
+                        party.Organisation.Id == legalEntity.Id))
+                {
+                    alert(`${legalEntity.Name} is already a ${this._borrowerRole.Name}.`);
+                    return;
+                }
+
                 let today = new Date();
                 today.setUTCHours(0, 0, 0, 0);
                 this._deal.Parties.push(
