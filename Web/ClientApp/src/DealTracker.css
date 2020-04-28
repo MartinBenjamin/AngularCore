@@ -123,6 +123,16 @@ table.DataGrid th, table.DataGrid td
   padding: 0px 2px 0px 2px;
 }
 
+table.DataGrid th
+{
+  font-weight: bold;
+}
+
+table.DataGrid td
+{
+  color: #7a7a7a;
+}
+
 tr.Hover:hover
 {
     background-color: #2a2a2a;
