@@ -6,6 +6,7 @@ import { LegalEntityFinder } from '../LegalEntityFinder';
 import { Role } from '../Roles';
 import { RolesToken } from '../RoleServiceProvider';
 import { DealProvider } from '../DealProvider';
+import { Sort } from '../Parties';
 
 @Component(
     {
@@ -14,9 +15,10 @@ import { DealProvider } from '../DealProvider';
     })
 export class Borrowers implements OnDestroy
 {
-    private _subscriptions = new Array<Subscription>();
+    private _subscriptions : Subscription[] = [];
     private _borrowerRole  : Role;
     private _deal          : Deal;
+    private _borrowers     : DealParty[];
 
     @ViewChild('legalEntityFinder')
     private _legalEntityFinder: LegalEntityFinder;
@@ -33,7 +35,12 @@ export class Borrowers implements OnDestroy
                 {
                     this._borrowerRole = roles.find(role => role.Id == DealRoleIdentifier.Borrower);
                 }),
-            dealProvider.subscribe(deal => this._deal = deal));
+            dealProvider.subscribe(
+                deal =>
+                {
+                    this._deal = deal;
+                    this.ComputeBorrowers();
+                }));
     }
 
     ngOnDestroy(): void
@@ -43,30 +50,50 @@ export class Borrowers implements OnDestroy
 
     get Initialised(): boolean
     {
-        return this._borrowerRole != null && this._deal != null;
+        return this._borrowerRole != null;
     }
 
-    get Deal(): Deal
+    get Borrowers(): DealParty[]
     {
-        return this._deal;
+        return this._borrowers;
     }
 
     Add(): void
     {
         this._legalEntityFinder.Find(
-            legalEntity => this._deal.Parties.push(
-                <DealParty>{
-                    Id             : EmptyGuid,
-                    Deal           : this._deal,
-                    AutonomousAgent: legalEntity,
-                    Organisation   : legalEntity,
-                    Person         : null,
-                    Role           : this._borrowerRole,
-                    Period:
-                    {
-                        Start: new Date(Date.now()),
-                        End  : null
-                    }
-                }));
+            legalEntity =>
+            {
+                let today = new Date();
+                today.setUTCHours(0, 0, 0, 0);
+                this._deal.Parties.push(
+                    <DealParty>{
+                        Id             : EmptyGuid,
+                        Deal           : this._deal,
+                        AutonomousAgent: legalEntity,
+                        Organisation   : legalEntity,
+                        Person         : null,
+                        Role           : this._borrowerRole,
+                        Period:
+                        {
+                            Start: today,
+                            End  : null
+                        }
+                    });
+
+                this.ComputeBorrowers();
+            });
+    }
+
+    ComputeBorrowers(): void
+    {
+        if(!this._deal)
+        {
+            this._borrowers = null;
+            return;
+        }
+
+        this._borrowers = this._deal.Parties
+            .filter(party => party.Role.Id == DealRoleIdentifier.Borrower)
+            .sort(Sort);
     }
 }

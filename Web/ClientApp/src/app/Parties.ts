@@ -10,3 +10,18 @@ export interface PartyInRole extends AutonomousAgentInRole
     Organisation: Organisation;
     Period      : Range<Date>;
 }
+
+export function Sort<TPartyInRole extends PartyInRole>(
+    x: TPartyInRole,
+    y: TPartyInRole
+    ): number
+{
+    const xName = x.Organisation.Name;
+    const yName = y.Organisation.Name;
+
+    if(xName == yName)
+        return 0;
+
+    return xName < yName ? -1 : 1;
+
+}
