@@ -148,6 +148,11 @@ div.OriginationTab
   min-height: 500px;
 }
 
+*.Amount, *.Percentage
+{
+    text-align: right;
+}
+
 .polygon
 {
   fill: none;
