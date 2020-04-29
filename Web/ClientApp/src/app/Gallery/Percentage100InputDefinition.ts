@@ -1,6 +1,7 @@
 import { InjectionToken, Provider } from '@angular/core';
 import { NumberInputDefinition } from './NumberInputDefinition';
 import { NumberConversionService } from './NumberConversionService';
+import { IConversionService } from './IConversionService';
 
 export const Percentage100ConversionServiceToken = new InjectionToken<IConversionService<number>>('Percentage100ConversionService');
 const percentage100InputDefinition: NumberInputDefinition =

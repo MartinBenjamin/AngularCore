@@ -1,5 +1,6 @@
-import { Directive, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
-import { AmountConversionService } from './AmountConversionService';
+import { Directive, ElementRef, EventEmitter, HostListener, Input, Output, Inject } from '@angular/core';
+import { AmountConversionServiceToken } from './AmountInputDefinition';
+import { IConversionService } from './IConversionService';
 import { NumberModel } from './NumberModel';
 
 @Directive(
@@ -10,7 +11,8 @@ export class AmountModel extends NumberModel
 {
     constructor(
         el: ElementRef,
-        amountConversionService: AmountConversionService
+        @Inject(AmountConversionServiceToken)
+        amountConversionService: IConversionService<number>
         )
     {
         super(

@@ -1,5 +1,6 @@
-import { Pipe } from '@angular/core';
-import { AmountConversionService } from './AmountConversionService';
+import { Inject, Pipe } from '@angular/core';
+import { AmountConversionServiceToken } from './AmountInputDefinition';
+import { IConversionService } from './IConversionService';
 import { NumberPipe } from './NumberPipe';
 
 @Pipe(
@@ -9,7 +10,8 @@ import { NumberPipe } from './NumberPipe';
 export class AmountPipe extends NumberPipe
 {
     constructor(
-        amountConversionService: AmountConversionService
+        @Inject(AmountConversionServiceToken)
+        amountConversionService: IConversionService<number>
         )
     {
         super(amountConversionService);

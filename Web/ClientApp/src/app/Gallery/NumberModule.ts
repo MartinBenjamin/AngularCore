@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { AmountConversionService } from './AmountConversionService';
-import { AmountInputDefinition, AmountInputDefinitionToken } from './AmountInputDefinition';
+import { AmountConversionServiceProvider } from './AmountInputDefinition';
 import { AmountModel } from './AmountModel';
 import { AmountPipe } from './AmountPipe';
 import { Percentage100ConversionServiceProvider } from './Percentage100InputDefinition';
@@ -34,13 +33,9 @@ import { PercentagePipe } from './PercentagePipe';
             ],
         providers:
             [
-                {
-                    provide: AmountInputDefinitionToken,
-                    useValue: AmountInputDefinition
-                },
+                AmountConversionServiceProvider,
                 PercentageConversionServiceProvider,
-                Percentage100ConversionServiceProvider,
-                AmountConversionService,
+                Percentage100ConversionServiceProvider
             ]
     })
 export class NumberModule
