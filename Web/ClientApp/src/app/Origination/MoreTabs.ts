@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Tab } from '../Gallery/TabbedView';
+import { Tab } from '../Components/TabbedView';
 import { OriginationTab } from './OriginationTab';
 
 @Component(

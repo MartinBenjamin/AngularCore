@@ -5,8 +5,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { CurrenciesProvider, CurrencyServiceProvider, CurrencyServiceUrlToken } from './CurrencyServiceProvider';
 import { DealTracker } from './DealTracker';
-import { Gallery } from './Gallery/Gallery';
-import { GalleryModule } from './Gallery/GalleryModule';
+import { Gallery } from './Components/Gallery';
+import { GalleryModule } from './Components/GalleryModule';
 import { LegalEntityServiceProvider, LegalEntityServiceUrlToken } from './LegalEntityServiceProvider';
 import { RoleServiceUrlToken, RoleServiceProvider, RolesProvider } from './RoleServiceProvider';
 
@@ -43,7 +43,7 @@ import { RoleServiceUrlToken, RoleServiceProvider, RolesProvider } from './RoleS
                         module => module.AssetManagementModule)
                 },
                 {
-                    path: 'Gallery',
+                    path: 'Components',
                     component: Gallery
                 }
             ])

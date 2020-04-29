@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { EmptyGuid } from '../../CommonDomainObjects';
 import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
-import { Tab } from '../../Gallery/TabbedView';
+import { Tab } from '../../Components/TabbedView';
 import { KeyCounterparties } from '../KeyCounterparties';
 import { KeyDealData } from '../KeyDealData';
 import { MoreTabs } from '../MoreTabs';

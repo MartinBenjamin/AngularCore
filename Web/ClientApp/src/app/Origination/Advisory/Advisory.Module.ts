@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { TabbedViewModule } from '../../Gallery/TabbedView';
+import { TabbedViewModule } from '../../Components/TabbedView';
 import { DealModule } from '../Deal.Module';
 import { Advisory } from './Advisory';
 

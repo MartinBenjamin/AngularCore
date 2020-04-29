@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Tab } from '../../Gallery/TabbedView';
+import { Tab } from '../../Components/TabbedView';
 import { KeyDealData } from '../KeyDealData';
 import { Origination } from '../Origination';
 import { OriginationTab } from '../OriginationTab';
