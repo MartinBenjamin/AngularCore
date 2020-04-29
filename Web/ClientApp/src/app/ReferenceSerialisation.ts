@@ -1,4 +1,4 @@
-/// <reference path="Gallery/Date.d.ts"/>
+/// <reference path="Components/Date.d.ts"/>
 
 let dateParser = parseUTCDate('yyyy-MM-ddTHH:mm:ss.SSSZ');
 
