@@ -143,6 +143,11 @@ table.DataGrid th
   font-weight: bold;
 }
 
+div.OriginationTab
+{
+  min-height: 500px;
+}
+
 .polygon
 {
   fill: none;

@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { DialogModule } from '../Gallery/Dialog';
 import { TabbedViewModule } from '../Gallery/TabbedView';
+import { LegalEntityFinder, LegalEntityFinderButtons } from '../LegalEntityFinder';
 import { Borrowers } from './Borrowers';
 import { Facilities } from './Facilities';
+import { KeyCounterparties } from './KeyCounterparties';
 import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
 import { OriginationTab } from './OriginationTab';
 import { TransactionDetails } from './TransactionDetails';
-import { LegalEntityFinder, LegalEntityFinderButtons } from '../LegalEntityFinder';
-import { DialogModule } from '../Gallery/Dialog';
 
 
 @NgModule(
@@ -17,6 +18,7 @@ import { DialogModule } from '../Gallery/Dialog';
             [
                 Borrowers,
                 Facilities,
+                KeyCounterparties,
                 KeyDealData,
                 LegalEntityFinder,
                 LegalEntityFinderButtons,
@@ -32,6 +34,7 @@ import { DialogModule } from '../Gallery/Dialog';
             ],
         entryComponents:
             [
+                KeyCounterparties,
                 KeyDealData,
                 MoreTabs,
                 OriginationTab,

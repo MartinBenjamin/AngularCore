@@ -1,15 +1,16 @@
-import { AfterViewInit, Component, TemplateRef, ViewChild, forwardRef } from '@angular/core';
+import { AfterViewInit, Component, forwardRef, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { EmptyGuid } from '../../CommonDomainObjects';
+import { DealProvider } from '../../DealProvider';
+import { Deal } from '../../Deals';
 import { Tab } from '../../Gallery/TabbedView';
+import { KeyCounterparties } from '../KeyCounterparties';
 import { KeyDealData } from '../KeyDealData';
 import { MoreTabs } from '../MoreTabs';
 import { Origination } from '../Origination';
 import { OriginationTab } from '../OriginationTab';
 import { TransactionDetails } from '../TransactionDetails';
-import { Deal } from '../../Deals';
-import { EmptyGuid } from '../../CommonDomainObjects';
-import { DealProvider } from '../../DealProvider';
-import { Subscription } from 'rxjs';
 
 @Component(
     {
@@ -67,7 +68,7 @@ export class ProjectFinance extends DealProvider implements AfterViewInit
         new Tab('Fees &<br/>Income'     , OriginationTab    ),
         new Tab('Key<br/>Dates'         , OriginationTab    ),
         new Tab('Deal<br/>Team'         , OriginationTab    ),
-        new Tab('Key<br/>Counterparties', OriginationTab    ),
+        new Tab('Key<br/>Counterparties', KeyCounterparties ),
         new Tab('Syndicate<br/>Info'    , OriginationTab    ),
         new Tab('Key Risks &<br/>Events', OriginationTab    ),
         new Tab('More'                  , MoreTabs          )
