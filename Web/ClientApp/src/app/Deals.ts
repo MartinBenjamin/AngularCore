@@ -10,6 +10,8 @@ export class DealRoleIdentifier
     static readonly Sponsor     = '00119e8c-e136-4aa8-a554-db0fcc09850a';
 }
 
+export type percentage = number;
+
 export interface Stage extends Named<Guid>
 {
 }
@@ -37,4 +39,9 @@ export interface Agreement
 export interface Commitment
 {
     Deal: Deal;
+}
+
+export interface Sponsor extends DealParty
+{
+    Equity: percentage;
 }

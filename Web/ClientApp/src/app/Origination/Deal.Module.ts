@@ -9,6 +9,7 @@ import { KeyCounterparties } from './KeyCounterparties';
 import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
 import { OriginationTab } from './OriginationTab';
+import { Sponsors } from './Sponsors';
 import { TransactionDetails } from './TransactionDetails';
 
 
@@ -24,6 +25,7 @@ import { TransactionDetails } from './TransactionDetails';
                 LegalEntityFinderButtons,
                 MoreTabs,
                 OriginationTab,
+                Sponsors,
                 TransactionDetails
             ],
         imports:

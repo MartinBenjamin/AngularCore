@@ -1,10 +1,23 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title></title>
-</head>
-<body>
-
-</body>
-</html>
+<legal-entity-finder Title="Find Sponsor"
+                     #legalEntityFinder></legal-entity-finder>
+<table *ngIf="Sponsors as sponsors" class="DataGrid">
+  <caption style="white-space: nowrap;">Sponsors<span *ngIf="!Initialised"> [Initialising]</span></caption>
+  <tr>
+    <th>Name</th>
+    <th>Country</th>
+    <th>Region</th>
+    <th>Equity <span style="font-size: smaller;">(%)</span></th>
+    <th></th>
+  </tr>
+  <tr *ngFor="let sponsor of sponsors">
+    <td style="max-width: 300px;">{{sponsor.Organisation.Name}}</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr *ngIf="!sponsors.length"><td colspan="5" style="text-align: center;">No Sponsors</td></tr>
+</table>
+<div *ngIf="Initialised" style="margin-top: 5px;">
+  <input type="button" value="Add" (click)="Add()" />
+</div>
