@@ -21,10 +21,8 @@ const percentageInputDefinition: NumberInputDefinition =
     }
 };
 
-const conversionService = new NumberConversionService(percentageInputDefinition);
-
 export const PercentageConversionServiceProvider: Provider =
 {
     provide: PercentageConversionServiceToken,
-    useValue: conversionService
+    useValue: new NumberConversionService(percentageInputDefinition)
 };
