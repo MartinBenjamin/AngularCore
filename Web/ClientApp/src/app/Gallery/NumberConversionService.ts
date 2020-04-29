@@ -2,7 +2,7 @@
 import { IConversionService } from './IConversionService';
 import { NumberInputDefinition } from './NumberInputDefinition';
 
-export abstract class NumberConversionService implements IConversionService<number>
+export class NumberConversionService implements IConversionService<number>
 {
     private _parsers: ((value: string) => number)[];
     private _formatter: (number: number) => string;

@@ -1,6 +1,7 @@
-﻿import { Pipe } from '@angular/core';
+import { Inject, Pipe } from '@angular/core';
+import { IConversionService } from './IConversionService';
 import { NumberPipe } from './NumberPipe';
-import { PercentageConversionService } from './PercentageConversionService';
+import { PercentageConversionServiceToken } from './PercentageInputDefinition';
 
 @Pipe(
     {
@@ -9,7 +10,8 @@ import { PercentageConversionService } from './PercentageConversionService';
 export class PercentagePipe extends NumberPipe
 {
     constructor(
-        percentageConversionService: PercentageConversionService
+        @Inject(PercentageConversionServiceToken)
+        percentageConversionService: IConversionService<number>
         )
     {
         super(percentageConversionService);

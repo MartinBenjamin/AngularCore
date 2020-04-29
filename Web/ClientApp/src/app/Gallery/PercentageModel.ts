@@ -1,6 +1,7 @@
-﻿import { Directive, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, HostListener, Inject, Input, Output } from '@angular/core';
+import { IConversionService } from './IConversionService';
 import { NumberModel } from './NumberModel';
-import { PercentageConversionService } from './PercentageConversionService';
+import { PercentageConversionServiceToken } from './PercentageInputDefinition';
 
 @Directive(
 {
@@ -10,7 +11,8 @@ export class PercentageModel extends NumberModel
 {
     constructor(
         el: ElementRef,
-        percentageConversionService: PercentageConversionService
+        @Inject(PercentageConversionServiceToken)
+        percentageConversionService: IConversionService<number>
         )
     {
         super(

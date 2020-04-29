@@ -1,20 +1,30 @@
-﻿import { InjectionToken } from '@angular/core';
+import { InjectionToken, Provider } from '@angular/core';
 import { NumberInputDefinition } from './NumberInputDefinition';
+import { IConversionService } from './IConversionService';
+import { NumberConversionService } from './NumberConversionService';
 
-export let PercentageInputDefinitionToken = new InjectionToken<NumberInputDefinition>("PercentageInputDefinition");
-export let PercentageInputDefinition: NumberInputDefinition =
+export const PercentageConversionServiceToken = new InjectionToken<IConversionService<number>>('PercentageConversionService');
+const percentageInputDefinition: NumberInputDefinition =
+{
+    Patterns:
     {
-        Patterns:
-        {
-            Input:
+        Input:
             [
                 '0.##'
             ],
-            Output: '0.00'
-        },
-        Range:
-        {
-            Min: 0,
-            Max: 999.99
-        }
-    };
+        Output: '0.00'
+    },
+    Range:
+    {
+        Min: 0,
+        Max: 999.99
+    }
+};
+
+const conversionService = new NumberConversionService(percentageInputDefinition);
+
+export const PercentageConversionServiceProvider: Provider =
+{
+    provide: PercentageConversionServiceToken,
+    useValue: conversionService
+};
