@@ -1,15 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { Borrowers } from '../Deal/Borrowers';
+import { Sponsors } from '../Deal/Sponsors';
 import { DialogModule } from '../Gallery/Dialog';
 import { TabbedViewModule } from '../Gallery/TabbedView';
 import { LegalEntityFinder, LegalEntityFinderButtons } from '../LegalEntityFinder';
-import { Borrowers } from './Borrowers';
 import { Facilities } from './Facilities';
 import { KeyCounterparties } from './KeyCounterparties';
 import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
 import { OriginationTab } from './OriginationTab';
-import { Sponsors } from './Sponsors';
 import { TransactionDetails } from './TransactionDetails';
 
 

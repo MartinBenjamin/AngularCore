@@ -54,10 +54,8 @@
     <None Remove="ClientApp\src\app\Organisations.ts" />
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.ts" />
-    <None Remove="ClientApp\src\app\Origination\Borrowers.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\Facilities.ts" />
-    <None Remove="ClientApp\src\app\Origination\KeyCounterparties.ts" />
     <None Remove="ClientApp\src\app\Origination\Menu.ts" />
     <None Remove="ClientApp\src\app\Origination\MyDeals.ts" />
     <None Remove="ClientApp\src\app\Origination\MyDeals\MyDeals.Module.ts" />
@@ -107,7 +105,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\Organisations.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Borrowers.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Facilities.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\KeyCounterparties.ts" />
@@ -118,7 +115,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Origination.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\ProjectFinance\ProjectFinance.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Sponsors.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Deal\Sponsors.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\TransactionDetails.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Parties.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\People.ts" />
