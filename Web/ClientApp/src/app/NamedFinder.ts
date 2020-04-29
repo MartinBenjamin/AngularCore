@@ -104,6 +104,7 @@ export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters 
     {
         this._nameFragmentInput.nativeElement.value = '';
         this._results.next(null);
+        this._finding.next(false);
         this._select = null;
         this._cancel = null;
         this._reset.next(null);
