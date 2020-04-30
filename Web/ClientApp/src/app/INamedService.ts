@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
-import { Named } from './CommonDomainObjects';
+import { DomainObject, Named } from './CommonDomainObjects';
 import { newReferenceDeserialiser } from './ReferenceSerialisation';
 
 export class NamedFilters
@@ -11,18 +11,23 @@ export class NamedFilters
     MaxResults?: number;
 }
 
-export interface INamedService<TId, TNamed extends Named<TId>, TNamedFilters extends NamedFilters>
+export interface IDomainObjectService<TId, TDomainObject extends DomainObject<TId>>
 {
-    Get(id: TId): Observable<TNamed>;
+    Get(id: TId): Observable<TDomainObject>;
+}
+
+export interface INamedService<TId, TNamed extends Named<TId>, TNamedFilters extends NamedFilters>
+    extends IDomainObjectService<TId, TNamed>
+{
     Find(filters: TNamedFilters): Observable<TNamed[]>;
 }
 
 @Injectable()
-export class NamedService<TId, TNamed extends Named<TId>, TNamedFilters extends NamedFilters> implements INamedService<TId, TNamed, TNamedFilters>
+export class DomainObjectService<TId, TDomainObject extends DomainObject<TId>> implements IDomainObjectService<TId, TDomainObject>
 {
     constructor(
-        private _http: HttpClient,
-        private _url: string
+        protected _http: HttpClient,
+        protected _url: string
         )
     {
 
@@ -30,10 +35,26 @@ export class NamedService<TId, TNamed extends Named<TId>, TNamedFilters extends 
 
     Get(
         id: TId
-        ): Observable<TNamed>
+        ): Observable<TDomainObject>
     {
-        return this._http.get<TNamed>(this._url + '/' + id.toString())
+        return this._http.get<TDomainObject>(this._url + '/' + id.toString())
             .map(newReferenceDeserialiser());
+    }
+}
+
+@Injectable()
+export class NamedService<TId, TNamed extends Named<TId>, TNamedFilters extends NamedFilters>
+    extends DomainObjectService<TId, TNamed>
+    implements INamedService<TId, TNamed, TNamedFilters>
+{
+    constructor(
+        http: HttpClient,
+        url: string
+        )
+    {
+        super(
+            http,
+            url)
     }
 
     Find(
