@@ -128,8 +128,7 @@ export class Sponsors implements OnDestroy
             .reduce(
                 (previousValue, currentValue) =>
                 {
-                    if(currentValue == null ||
-                       typeof currentValue != 'number' ||
+                    if(typeof currentValue != 'number' ||
                        !isFinite(currentValue))
                         return Number.NaN;
 
