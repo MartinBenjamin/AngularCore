@@ -90,7 +90,7 @@ export class Borrowers implements OnDestroy
             });
     }
 
-    ComputeBorrowers(): void
+    private ComputeBorrowers(): void
     {
         if(!this._deal)
         {

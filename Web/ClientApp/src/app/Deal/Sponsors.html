@@ -19,15 +19,21 @@
     <td style="max-width: 300px;">{{sponsor.Organisation.Name}}</td>
     <td>{{sponsor.Organisation.Country.Name}}</td>
     <td></td>
-    <td><input type="text" [(dtPercentageModel)]="sponsor.Equity" class="Percentage Equity"/></td>
+    <td><input
+      type="text"
+      [dtPercentageModel]="sponsor.Equity"
+      (dtPercentageModelChange)="UpdateEquity(sponsor, $event)"
+      class="Percentage Equity"/></td>
     <td></td>
   </tr>
-  <tr *ngIf="sponsors.length">
+  <tr *ngIf="sponsors.length; else NoSponsors">
     <td colspan="3">Total:</td>
-    <td></td>
+    <td class="Percentage">{{TotalEquity|percentage}}</td>
     <td></td>
   </tr>
-  <tr *ngIf="!sponsors.length"><td colspan="5" style="text-align: center;">No Sponsors</td></tr>
+  <ng-template #NoSponsors>
+    <tr *ngIf="!sponsors.length"><td colspan="5" style="text-align: center;">No Sponsors</td></tr>
+  </ng-template>
 </table>
 <div *ngIf="Initialised" style="margin-top: 5px;">
   <input type="button" value="Add" (click)="Add()" />

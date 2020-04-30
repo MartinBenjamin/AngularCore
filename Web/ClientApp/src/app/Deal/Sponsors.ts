@@ -1,7 +1,7 @@
 import { Component, Inject, ViewChild, Input, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { EmptyGuid } from '../CommonDomainObjects';
-import { Deal, DealParty, DealRoleIdentifier, Sponsor } from '../Deals';
+import { Deal, DealParty, DealRoleIdentifier, Sponsor, percentage } from '../Deals';
 import { LegalEntityFinder } from '../LegalEntityFinder';
 import { Role } from '../Roles';
 import { RolesToken } from '../RoleServiceProvider';
@@ -19,6 +19,7 @@ export class Sponsors implements OnDestroy
     private _sponsorRole  : Role;
     private _deal         : Deal;
     private _sponsors     : Sponsor[];
+    private _totalEquity  : number;
 
     @ViewChild('legalEntityFinder')
     private _legalEntityFinder: LegalEntityFinder;
@@ -58,6 +59,11 @@ export class Sponsors implements OnDestroy
         return this._sponsors;
     }
 
+    get TotalEquity(): number
+    {
+        return this._totalEquity;
+    }
+
     Add(): void
     {
         this._legalEntityFinder.Find(
@@ -91,7 +97,16 @@ export class Sponsors implements OnDestroy
             });
     }
 
-    ComputeSponsors(): void
+    UpdateEquity(
+        sponsor: Sponsor,
+        equity : percentage
+        ): void
+    {
+        sponsor.Equity = equity;
+        this.ComputeTotalEquity();
+    }
+
+    private ComputeSponsors(): void
     {
         if(!this._deal)
         {
@@ -102,5 +117,24 @@ export class Sponsors implements OnDestroy
         this._sponsors = <Sponsor[]>this._deal.Parties
             .filter(party => party.Role.Id == DealRoleIdentifier.Sponsor)
             .sort(Sort);
+
+        this.ComputeTotalEquity();
+    }
+
+    private ComputeTotalEquity()
+    {
+        this._totalEquity = this._sponsors
+            .map(sponsor => sponsor.Equity)
+            .reduce(
+                (previousValue, currentValue) =>
+                {
+                    if(currentValue == null ||
+                       typeof currentValue != 'number' ||
+                       !isFinite(currentValue))
+                        return Number.NaN;
+
+                    return previousValue + currentValue;
+                },
+                0);
     }
 }
