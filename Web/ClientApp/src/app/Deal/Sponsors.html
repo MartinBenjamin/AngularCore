@@ -19,7 +19,7 @@
     <td style="max-width: 300px;">{{sponsor.Organisation.Name}}</td>
     <td>{{sponsor.Organisation.Country.Name}}</td>
     <td></td>
-    <td><input
+    <td class="Percentage"><input
       type="text"
       [dtPercentageModel]="sponsor.Equity"
       (dtPercentageModelChange)="UpdateEquity(sponsor, $event)"
