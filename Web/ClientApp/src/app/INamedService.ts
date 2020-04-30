@@ -7,8 +7,8 @@ import { newReferenceDeserialiser } from './ReferenceSerialisation';
 
 export class NamedFilters
 {
-  NameFragment: string;
-  MaxResults? : number;
+    NameFragment: string;
+    MaxResults?: number;
 }
 
 export interface INamedService<TId, TNamed extends Named<TId>, TNamedFilters extends NamedFilters>
