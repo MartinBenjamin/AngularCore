@@ -101,6 +101,9 @@ export class Sponsors implements OnDestroy
         sponsor: Sponsor
         ): void
     {
+        if(!confirm(`Delete ${this._sponsorRole.Name} ${sponsor.Organisation.Name}?`))
+            return;
+
         this._deal.Parties.splice(
             this._deal.Parties.indexOf(sponsor),
             1);

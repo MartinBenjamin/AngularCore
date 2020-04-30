@@ -5,6 +5,11 @@
   {
     width: 50px;
   }
+
+  table.Sponsors td.EquityError
+  {
+    color: red;
+  }
 </style>
 <table *ngIf="Sponsors as sponsors" class="DataGrid Sponsors">
   <caption style="white-space: nowrap;">Sponsors<span *ngIf="!Initialised"> [Initialising]</span></caption>
@@ -28,7 +33,9 @@
   </tr>
   <tr *ngIf="sponsors.length; else NoSponsors">
     <td colspan="3">Total Equity:</td>
-    <td class="Percentage">{{TotalEquity|percentage}}</td>
+    <td
+      [ngClass]="{ 'EquityError': TotalEquity != 100 }"
+      class="Percentage">{{TotalEquity|percentage}}</td>
     <td></td>
   </tr>
   <ng-template #NoSponsors>
