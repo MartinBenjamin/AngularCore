@@ -1,4 +1,4 @@
-import { Directive, ElementRef, EventEmitter, HostListener, Inject, Input, Output } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, Inject, Input, Output } from '@angular/core';
 import { IConversionService } from './IConversionService';
 import { NumberModel } from './NumberModel';
 import { PercentageConversionServiceToken } from './PercentageInputDefinition';
@@ -22,20 +22,17 @@ export class PercentageModel extends NumberModel
 
     @Input('dtPercentageModel')
     set Model(
-        model: string
+        model: string | number
         )
     {
-        this._el.nativeElement.value = model;
-        this.Validate();
+        this.SetModel(model);
     }
 
     @Output('dtPercentageModelChange')
-    ModelChange = new EventEmitter<string>();
+    ModelChange = new EventEmitter<string | number>();
 
-    @HostListener('change')
-    onchange(): void
+    Emit(model: number | string): void
     {
-        this.Validate();
-        this.ModelChange.emit(this._el.nativeElement.value);
+        this.ModelChange.emit(model);
     }
 }

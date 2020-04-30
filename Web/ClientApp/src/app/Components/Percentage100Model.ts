@@ -22,20 +22,17 @@ export class Percentage100Model extends NumberModel
 
     @Input('dtPercentage100Model')
     set Model(
-        model: string
+        model: string | number
         )
     {
-        this._el.nativeElement.value = model;
-        this.Validate();
+        this.SetModel(model);
     }
 
     @Output('dtPercentage100ModelChange')
-    ModelChange = new EventEmitter<string>();
+    ModelChange = new EventEmitter<number | string>();
 
-    @HostListener('change')
-    onchange(): void
+    Emit(model: number | string): void
     {
-        this.Validate();
-        this.ModelChange.emit(this._el.nativeElement.value);
+        this.ModelChange.emit(model);
     }
 }

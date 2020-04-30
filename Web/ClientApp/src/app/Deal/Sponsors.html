@@ -1,6 +1,12 @@
 <legal-entity-finder Title="Find Sponsor"
                      #legalEntityFinder></legal-entity-finder>
-<table *ngIf="Sponsors as sponsors" class="DataGrid">
+<style type="text/css">
+  table.Sponsors *.Equity
+  {
+    width: 50px;
+  }
+</style>
+<table *ngIf="Sponsors as sponsors" class="DataGrid Sponsors">
   <caption style="white-space: nowrap;">Sponsors<span *ngIf="!Initialised"> [Initialising]</span></caption>
   <tr>
     <th>Name</th>
@@ -13,7 +19,12 @@
     <td style="max-width: 300px;">{{sponsor.Organisation.Name}}</td>
     <td>{{sponsor.Organisation.Country.Name}}</td>
     <td></td>
-    <td><input type="text" class="Percentage"/></td>
+    <td><input type="text" [(dtPercentageModel)]="sponsor.Equity" class="Percentage Equity"/></td>
+    <td></td>
+  </tr>
+  <tr *ngIf="sponsors.length">
+    <td colspan="3">Total:</td>
+    <td></td>
     <td></td>
   </tr>
   <tr *ngIf="!sponsors.length"><td colspan="5" style="text-align: center;">No Sponsors</td></tr>

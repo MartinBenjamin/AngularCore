@@ -43,7 +43,7 @@ import { RoleServiceUrlToken, RoleServiceProvider, RolesProvider } from './RoleS
                         module => module.AssetManagementModule)
                 },
                 {
-                    path: 'Components',
+                    path: 'Gallery',
                     component: Gallery
                 }
             ])

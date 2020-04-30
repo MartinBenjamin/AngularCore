@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { DialogModule } from '../Components/Dialog';
+import { NumberModule } from '../Components/NumberModule';
+import { TabbedViewModule } from '../Components/TabbedView';
 import { Borrowers } from '../Deal/Borrowers';
 import { Sponsors } from '../Deal/Sponsors';
-import { DialogModule } from '../Components/Dialog';
-import { TabbedViewModule } from '../Components/TabbedView';
 import { LegalEntityFinder, LegalEntityFinderButtons } from '../LegalEntityFinder';
 import { Facilities } from './Facilities';
 import { KeyCounterparties } from './KeyCounterparties';
@@ -32,6 +33,7 @@ import { TransactionDetails } from './TransactionDetails';
             [
                 CommonModule,
                 DialogModule,
+                NumberModule,
                 TabbedViewModule
             ],
         entryComponents:

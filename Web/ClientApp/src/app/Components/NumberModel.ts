@@ -1,4 +1,4 @@
-﻿import { ElementRef } from '@angular/core';
+import { ElementRef, HostListener } from '@angular/core';
 import { IConversionService } from './IConversionService';
 
 export abstract class NumberModel
@@ -19,23 +19,52 @@ export abstract class NumberModel
         force ? classList.add(token) : classList.remove(token);
     }
 
-    protected Validate(): void
+    SetModel(
+        model: number | string
+        ): void
     {
-        let valid: boolean = true;
-        let value: string = this._el.nativeElement.value.replace(/(^ +)|( +$)/g, '');
+        let valid = true;
 
-        if(value != '')
+        if(model == null)
+            this._el.nativeElement.value = '';
+
+        else if(typeof model == 'number')
+            this._el.nativeElement.value = this._numberConversionService.Format(model);
+
+        else
         {
-            let number = this._numberConversionService.Parse(value);
-            if(isNaN(number))
-                valid = false;
-
-            else
-                this._el.nativeElement.value = this._numberConversionService.Format(number);
+            this._el.nativeElement.value = model;
+            valid = false;
         }
 
         this.Toggle(
             'InputError',
             !valid);
     }
+
+    @HostListener('change')
+    onchange(): void
+    {
+        let valid = true;
+        const value: string = this._el.nativeElement.value.replace(/(^ +)|( +$)/g, '');
+        let model: number = null;
+
+        if(value != '')
+        {
+            model = this._numberConversionService.Parse(value);
+            if(isNaN(model))
+                valid = false;
+
+            else
+                this._el.nativeElement.value = this._numberConversionService.Format(model);
+        }
+
+        this.Toggle(
+            'InputError',
+            !valid);
+
+        this.Emit(valid ? model : value);
+    }
+
+    abstract Emit(model: number | string): void;
 }
