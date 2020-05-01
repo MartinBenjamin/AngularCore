@@ -2,7 +2,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
-import { DomainObject, Named } from './CommonDomainObjects';
+import { Named } from './CommonDomainObjects';
+import { DomainObjectService, IDomainObjectService } from './IDomainObjectService';
 import { newReferenceDeserialiser } from './ReferenceSerialisation';
 
 export class NamedFilters
@@ -11,35 +12,10 @@ export class NamedFilters
     MaxResults?: number;
 }
 
-export interface IDomainObjectService<TId, TDomainObject extends DomainObject<TId>>
-{
-    Get(id: TId): Observable<TDomainObject>;
-}
-
 export interface INamedService<TId, TNamed extends Named<TId>, TNamedFilters extends NamedFilters>
     extends IDomainObjectService<TId, TNamed>
 {
     Find(filters: TNamedFilters): Observable<TNamed[]>;
-}
-
-@Injectable()
-export class DomainObjectService<TId, TDomainObject extends DomainObject<TId>> implements IDomainObjectService<TId, TDomainObject>
-{
-    constructor(
-        protected _http: HttpClient,
-        protected _url: string
-        )
-    {
-
-    }
-
-    Get(
-        id: TId
-        ): Observable<TDomainObject>
-    {
-        return this._http.get<TDomainObject>(this._url + '/' + id.toString())
-            .map(newReferenceDeserialiser());
-    }
 }
 
 @Injectable()

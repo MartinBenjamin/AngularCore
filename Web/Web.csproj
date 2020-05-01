@@ -42,6 +42,7 @@
     <None Remove="ClientApp\src\app\Components\TestTab.ts" />
     <None Remove="ClientApp\src\app\Home\Aircraft.ts" />
     <None Remove="ClientApp\src\app\Home\Globe.ts" />
+    <None Remove="ClientApp\src\app\IDomainObjectService.ts" />
     <None Remove="ClientApp\src\app\INamedService.ts" />
     <None Remove="ClientApp\src\app\Iso3166.ts" />
     <None Remove="ClientApp\src\app\Iso4217.ts" />
@@ -93,6 +94,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Components\TestTab.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Home\Aircraft.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Home\Globe.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\IDomainObjectService.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\INamedService.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Iso3166.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Iso4217.ts" />
