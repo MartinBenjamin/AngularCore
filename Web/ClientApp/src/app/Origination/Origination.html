@@ -67,17 +67,8 @@
       <span style="display: inline-block;" class="MenuContainer">
         <a class="MenuTitle">Originate</a><div class="SubMenu">
           <table class="MenuItems">
-            <tr>
-              <td><a [routerLink]="['Advisory']">Advisory</a></td>
-            </tr>
-            <tr>
-              <td><a>Aviation Finance</a></td>
-            </tr>
-            <tr>
-              <td><a>Leveraged Finance</a></td>
-            </tr>
-            <tr>
-              <td><a [routerLink]="['ProjectFinance']">Project Finance</a></td>
+            <tr *ngFor="let dealType of DealTypes">
+              <td><a [routerLink]="[dealType.Advisory ? 'Advisory' : 'ProjectFinance']">{{dealType.Name}}</a></td>
             </tr>
           </table>
         </div>

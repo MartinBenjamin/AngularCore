@@ -6,6 +6,7 @@ namespace Deals
 {
     public abstract class Deal: Named<Guid>
     {
+        public virtual DealType          Type        { get; protected set; }
         public virtual IList<Agreement>  Agreements  { get; protected set; }
         public virtual IList<DealParty>  Parties     { get; protected set; }
         public virtual IList<Commitment> Commitments { get; protected set; }

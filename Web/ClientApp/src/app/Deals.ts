@@ -16,8 +16,14 @@ export interface Stage extends Named<Guid>
 {
 }
 
+export interface DealType extends Named<Guid>
+{
+    Advisory?: boolean;
+}
+
 export interface Deal extends Named<Guid>
 {
+    Type       : DealType;
     Agreements : Agreement[];
     Parties    : DealParty[];
     Commitments: Commitment[];

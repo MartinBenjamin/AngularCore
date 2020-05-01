@@ -45,7 +45,7 @@ export class ProjectFinance extends DealProvider implements AfterViewInit
             // Create Project Finance Deal.
             // Need to get stages.
             // Need to set up MUFG Bank, Ltd. as Lender.
-            this._behaviourSubject.next(< Deal > {
+            this._behaviourSubject.next(<Deal>{
                 Id         : EmptyGuid,
                 Name       : null,
                 Agreements : [],
