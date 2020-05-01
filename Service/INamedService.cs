@@ -10,12 +10,11 @@ namespace Service
         public int?   MaxResults   { get; set; }
     }
 
-    public interface INamedService<TId, TNamed, TNamedFilters> 
+    public interface INamedService<TId, TNamed, TNamedFilters>:
+        IDomainObjectService<TId, TNamed>
         where TNamed: Named<TId>
         where TNamedFilters: NamedFilters
     {
-        Task<TNamed> GetAsync(TId id);
-
         Task<IEnumerable<TNamed>> FindAsync(TNamedFilters filters);
     }
 }

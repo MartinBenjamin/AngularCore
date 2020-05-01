@@ -58,6 +58,13 @@ namespace CommonDomainObjects
                     tuple => tuple.Out,
                     tuple => tuple.In);
 
+        public static IDictionary<V, IList<V>> Select<U, V>(
+            this IDictionary<U, IList<U>> graph,
+            Func<U, V>                    selector
+            ) => graph.ToDictionary(
+                    pair => selector(pair.Key),
+                    pair => (IList<V>)pair.Value.Select(selector).ToList());
+
         public static Graph<TVertex> ToGraph<TVertex>(
             this IDictionary<TVertex, IList<TVertex>> adjacencyList
             ) => new Graph<TVertex>(

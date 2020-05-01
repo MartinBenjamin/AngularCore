@@ -103,19 +103,19 @@ namespace Test
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
-                await session
+                session
                     .CreateCriteria<GeographicRegion>()
                     .Fetch("Subregions")
-                    .ListAsync<GeographicRegion>();
-                await session
+                    .Future<GeographicRegion>();
+                session
                     .CreateCriteria<GeographicRegionHierarchyMember>()
                     .Fetch("Children")
-                    .ListAsync<GeographicRegionHierarchyMember>();
+                    .Future<GeographicRegionHierarchyMember>();
                 var loadedHierarchy = await session
                     .CreateCriteria<GeographicRegionHierarchy>()
                     .Add(Expression.Eq("Id", hierarchy.Id))
                     .Fetch("Members")
-                    .UniqueResultAsync<GeographicRegionHierarchy>();
+                    .FutureValue<GeographicRegionHierarchy>().GetValueAsync();
                 Assert.That(loadedHierarchy, Is.Not.Null);
                 Validate(loadedHierarchy);
 
