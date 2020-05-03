@@ -3,6 +3,47 @@ using System.Linq;
 
 namespace CommonDomainObjects
 {
+    public interface IEdge<TVertex>
+    {
+        TVertex Out { get; }
+        TVertex In  { get; }
+    }
+
+    public static class IEdgeExtensions
+    {    
+        public static int LongestPath<TVertex>(
+            this IEnumerable<IEdge<TVertex>> edges,
+            IDictionary<TVertex, int>        longestPaths,
+            TVertex                          vertex
+            )
+        {
+            if(!longestPaths.ContainsKey(vertex))
+                longestPaths[vertex] = (
+                    from edge in edges
+                    where edge.Out.Equals(vertex)
+                    select edges.LongestPath(
+                        longestPaths,
+                        edge.In) + 1)
+                    .Append(0)
+                    .Max();
+
+            return longestPaths[vertex];
+        }
+
+        public static IEnumerable<TVertex> TopologicalSort<TVertex>(
+            this IEnumerable<IEdge<TVertex>> edges,
+            IList<TVertex>                   vertices
+            )
+        {
+            return
+                from vertex in vertices
+                orderby edges.LongestPath(
+                    new Dictionary<TVertex, int>(),
+                    vertex)
+                select vertex;
+        }
+    }
+
     public abstract class Graph<TGraph, TVertex, TEdge>
         where TGraph : Graph<TGraph, TVertex, TEdge>
         where TEdge  : Edge <TVertex, TEdge>
@@ -25,46 +66,23 @@ namespace CommonDomainObjects
             Edges    = edges;
         }
 
-        protected virtual int LongestPath(
-            IDictionary<TVertex, int> longestPaths,
-            TVertex                   vertex
-            )
-        {
-            if(!longestPaths.ContainsKey(vertex))
-                longestPaths[vertex] = (
-                    from edge in Edges
-                    where edge.Out.Equals(vertex)
-                    select LongestPath(
-                        longestPaths,
-                        edge.In) + 1)
-                    .Append(0)
-                    .Max();
-
-            return longestPaths[vertex];
-        }
-
         public virtual int LongestPath(
             TVertex vertex
             )
         {
-            return LongestPath(
+            return Edges.LongestPath(
                 new Dictionary<TVertex, int>(),
                 vertex);
         }
 
         public virtual IEnumerable<TVertex> TopologicalSort()
         {
-            return
-                from vertex in Vertices
-                orderby LongestPath(
-                    new Dictionary<TVertex, int>(),
-                    vertex)
-                select vertex;
+            return Edges.TopologicalSort(Vertices);
         }
     }
 
-    public abstract class Edge<TVertex, TEdge>
-        where TEdge : Edge<TVertex, TEdge>
+    public abstract class Edge<TVertex, TEdge>: IEdge<TVertex>
+        where TEdge : Edge<TVertex, TEdge>, IEdge<TVertex>
     {
         public virtual TVertex Out { get; protected set; }
         public virtual TVertex In  { get; protected set; }
