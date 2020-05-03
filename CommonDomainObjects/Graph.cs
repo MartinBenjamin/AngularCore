@@ -167,6 +167,27 @@ namespace CommonDomainObjects
                     visited,
                     action));
         }
+
+        public IDictionary<Type, IList<object>> Flatten(
+            IList<object> vertices
+            )
+        {
+            var visited = new HashSet<object>();
+            vertices.ForEach(vertex => Visit(
+                vertex,
+                visited,
+                o => { }));
+
+            return (
+                from o in visited
+                from type in o.GetTypes()
+                where type != typeof(object)
+                group o by type into verticesGroupedByType
+                select verticesGroupedByType
+                ).ToDictionary(
+                    group => group.Key,
+                    group => (IList<object>)group.ToList());
+        }
     }
 
     public abstract class Edge: Edge<Type, Edge>
@@ -222,7 +243,9 @@ namespace CommonDomainObjects
             object @out
             )
         {
-            yield return _selectIncoming((TOut)@out);
+            var @in = _selectIncoming((TOut)@out);
+            if(@in != null)
+                yield return @in;
         }
     }
 }

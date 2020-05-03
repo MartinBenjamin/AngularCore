@@ -75,11 +75,11 @@ namespace Deals
 
     }
 
-    public abstract class PropertyRestriction: ClassExpression
+    public abstract class PropertyExpression: ClassExpression
     {
         public string Name { get; protected set; }
 
-        protected PropertyRestriction(
+        protected PropertyExpression(
             string name
             )
         {
@@ -87,7 +87,7 @@ namespace Deals
         }
     }
 
-    public class PropertySomeValuesFrom: PropertyRestriction
+    public class PropertySomeValuesFrom: PropertyExpression
     {
         public ClassExpression ClassExpression { get; protected set; }
 
@@ -100,7 +100,7 @@ namespace Deals
         }
     }
 
-    public class PropertyAllValuesFrom: PropertyRestriction
+    public class PropertyAllValuesFrom: PropertyExpression
     {
         public ClassExpression ClassExpression { get; protected set; }
 
@@ -113,7 +113,7 @@ namespace Deals
         }
     }
 
-    public class PropertyHasValue: PropertyRestriction
+    public class PropertyHasValue: PropertyExpression
     {
         public object Individual { get; protected set; }
 
@@ -126,7 +126,7 @@ namespace Deals
         }
     }
 
-    public class PropertyCardinalityExpression: PropertyRestriction
+    public class PropertyCardinalityExpression: PropertyExpression
     {
         public int             Cardinality     { get; protected set; }
         public ClassExpression ClassExpression { get; protected set; }
@@ -238,5 +238,27 @@ namespace Deals
             SponsorsMaxCardinality,
             KeyCounterpartyMinCardinality,
             KeyCounterpartyMaxCardinality);
+    }
+
+    public class SubGraph
+    {
+        public SubGraph Super { get; protected set; }
+        public Graph    Graph { get; protected set; }
+    }
+
+    public abstract class EdgeRestriction
+    {
+        public Edge Edge { get; protected set; }
+    }
+
+    public abstract class VertexRestriction
+    {
+        public Type Vertex { get; protected set; }
+    }
+
+    public class PropertyRestriction: VertexRestriction
+    {
+        
+
     }
 }
