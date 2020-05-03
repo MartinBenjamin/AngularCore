@@ -201,11 +201,11 @@ namespace Deals
         public static ClassExpression Sponsor = new PropertyHasValue(
             "Role",
             SponsorRole);
-        public static ClassExpression SponsorMinCardinality = new PropertyMinCardinality(
+        public static ClassExpression SponsorsMinCardinality = new PropertyMinCardinality(
             "DealParty",
             1,
             Sponsor);
-        public static ClassExpression SponsorMaxCardinality = new PropertyMaxCardinality(
+        public static ClassExpression SponsorsMaxCardinality = new PropertyMaxCardinality(
             "DealParty",
             int.MaxValue,
             Sponsor);
@@ -216,8 +216,8 @@ namespace Deals
                     "Equity",
                     0)));
         public static ClassExpression Sponsors = new IntersectionOf(
-            SponsorMinCardinality,
-            SponsorMaxCardinality,
+            SponsorsMinCardinality,
+            SponsorsMaxCardinality,
             SponsorEquity);
 
         public static OneOf KeyCounterpartyRole = new OneOf();
@@ -234,109 +234,9 @@ namespace Deals
             KeyCounterparty);
 
         public static ClassExpression Dt = new UnionOf(
-            SponsorMinCardinality,
-            SponsorMaxCardinality,
+            SponsorsMinCardinality,
+            SponsorsMaxCardinality,
             KeyCounterpartyMinCardinality,
             KeyCounterpartyMaxCardinality);
-    }
-
-    public static class TypeExtensions
-    {
-        public static IEnumerable<Type> GetTypes(
-            this object obj
-            )
-        {
-            var type = obj.GetType();
-            while(type != null)
-            {
-                yield return type;
-                type = type.BaseType;
-            }
-        }
-    }
-
-    public class Graph: Graph<Graph, Type, Edge>
-    {
-        public void Visit(
-            object          vertex,
-            HashSet<object> visited,
-            Action<object>  action
-            )
-        {
-            if(vertex == null || visited.Contains(vertex))
-                return;
-
-            action(vertex);
-
-            visited.Add(vertex);
-
-            (
-                from type in vertex.GetTypes()
-                join edge in Edges on type equals edge.Out
-                from @in in edge.SelectIncoming(vertex)
-                select @in
-            ).ForEach(
-                @in => Visit(
-                    @in,
-                    visited,
-                    action));
-        }
-    }
-
-    public abstract class Edge: Edge<Type, Edge>
-    {
-        public Edge(
-            Type @out,
-            Type @in
-            ): base(
-                @out,
-                @in)
-        {
-        }
-
-        public abstract IEnumerable<object> SelectIncoming(object @out);
-    }
-
-    public class OneToManyEdge<TOut, TIn>: Edge
-        where TIn: class
-    {
-        private Func<TOut, IEnumerable<TIn>> _selectIncoming;
-
-        public OneToManyEdge(
-            Func<TOut, IEnumerable<TIn>> selectIncoming
-            ): base(
-                typeof(TOut),
-                typeof(TIn))
-        {
-            _selectIncoming = selectIncoming;
-        }
-
-        public override IEnumerable<object> SelectIncoming(
-            object @out
-            )
-        {
-            return _selectIncoming((TOut)@out);
-        }
-    }
-
-    public class ManyToOneEdge<TOut, TIn>: Edge
-    {
-        private Func<TOut, TIn> _selectIncoming;
-
-        public ManyToOneEdge(
-            Func<TOut, TIn> selectIncoming
-            ) : base(
-                typeof(TOut),
-                typeof(TIn))
-        {
-            _selectIncoming = selectIncoming;
-        }
-
-        public override IEnumerable<object> SelectIncoming(
-            object @out
-            )
-        {
-            yield return _selectIncoming((TOut)@out);
-        }
     }
 }
