@@ -247,7 +247,7 @@ namespace Deals
         public IList<VertexExpression> VertexExpressions { get; protected set; }
 
         public void Validate(
-            IDictionary<Type, IList<object>>             graph,
+            ILookup<Type, IList<object>>                 vertexLookup,
             IDictionary<object, IList<VertexExpression>> errors
             )
         {
@@ -259,11 +259,11 @@ namespace Deals
             // Validate data properties.
             // If property fails less restrictive do we want to apply more restrictions.
             (
-                from pair in graph
-                from vertex in pair.Value
+                from @group in vertexLookup
+                from vertex in @group
                 from subGraph in GetSubGraphs()
                 from dpe in subGraph.VertexExpressions
-                where dpe is DataPropertyExpression && pair.Key == dpe.Vertex && !dpe.Validate(vertex)
+                where dpe is DataPropertyExpression && @group.Key == dpe.Vertex && !dpe.Validate(vertex)
                 group dpe by vertex into dpesGroupedByVertex
                 select dpesGroupedByVertex
             ).ForEach(
@@ -301,9 +301,11 @@ namespace Deals
         public abstract bool Validate(object vertex);
     }
 
-    public abstract class EdgeExpression: VertexExpression
+    public abstract class EdgeExpression
     {
-        public Type In { get; protected set; }
+        public Edge Edge { get; protected set; }
+
+        public abstract bool Validate(object @out);
     }
 
     public abstract class DataPropertyExpression: VertexExpression

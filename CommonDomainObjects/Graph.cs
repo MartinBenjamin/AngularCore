@@ -144,10 +144,10 @@ namespace CommonDomainObjects
     public class Graph: Graph<Graph, Type, Edge>
     {
         public void Visit(
-            object                       vertex,
-            HashSet<object>              visited,
-            Action<Type, object>         vertexAction,
-            Action<Edge, object, object> edgeAction = null
+            object                                    vertex,
+            HashSet<object>                           visited,
+            Action<Type, object>                      vertexAction,
+            Action<Edge, object, IEnumerable<object>> edgeAction
             )
         {
             if(vertex == null || visited.Contains(vertex))
@@ -163,32 +163,33 @@ namespace CommonDomainObjects
                         vertex);
 
                     Edges.Where(edge => edge.Out == type).ForEach(
-                        edge => edge.SelectIn(vertex).ForEach(
-                            @in =>
-                            {
-                                edgeAction?.Invoke(
-                                    edge,
-                                    vertex,
-                                    @in);
+                        edge =>
+                        {
+                            var ins = edge.SelectIn(vertex);
+                            edgeAction.Invoke(
+                                edge,
+                                vertex,
+                                ins);
 
-                                Visit(
+                            ins.ForEach(
+                                @in => Visit(
                                     @in,
                                     visited,
                                     vertexAction,
-                                    edgeAction);
-                            }));
+                                    edgeAction));
+                        });
                 });
         }
 
         public void Flatten(
-            object                          root,
-            out ILookup<Type, object>       vertexLookup,
-            out ILookup<Edge, Edge<object>> edgeLookup
+            object                                     root,
+            out ILookup<Type, object>                  vertexLookup,
+            out ILookup<Edge, (object, IList<object>)> edgeLookup
             )
         {
             var visited  = new HashSet<object>();
             var vertices = new List<(Type type, object vertex)>();
-            var edges    = new List<(Edge edge, object @out, object @in)>();
+            var edges    = new List<(Edge edge, object @out, IEnumerable<object> ins)>();
 
             Visit(
                 root,
@@ -202,9 +203,7 @@ namespace CommonDomainObjects
 
             edgeLookup = edges.ToLookup(
                 tuple => tuple.edge,
-                tuple => new Edge<object>(
-                    tuple.@out,
-                    tuple.@in));
+                tuple => (tuple.@out, (IList<object>)tuple.ins.ToList()));
         }
     }
 
