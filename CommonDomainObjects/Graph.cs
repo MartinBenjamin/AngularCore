@@ -182,28 +182,28 @@ namespace CommonDomainObjects
         }
 
         public void Flatten(
-            object                                     root,
-            out ILookup<Type, object>                  vertexLookup,
-            out ILookup<Edge, (object, IList<object>)> edgeLookup
+            object                    root,
+            out ILookup<Type, object> vertexLookup,
+            out ILookup<Edge, object> edgeOutLookup
             )
         {
             var visited  = new HashSet<object>();
             var vertices = new List<(Type type, object vertex)>();
-            var edges    = new List<(Edge edge, object @out, IEnumerable<object> ins)>();
+            var edges    = new List<(Edge edge, object @out  )>();
 
             Visit(
                 root,
                 visited,
                 (type, vertex) => vertices.Add((type, vertex)),
-                (edge, @out, @in) => edges.Add((edge, @out, @in)));
+                (edge, @out, ins) => edges.Add((edge, @out)));
 
             vertexLookup = vertices.ToLookup(
                 tuple => tuple.type,
                 tuple => tuple.vertex);
 
-            edgeLookup = edges.ToLookup(
+            edgeOutLookup = edges.ToLookup(
                 tuple => tuple.edge,
-                tuple => (tuple.@out, (IList<object>)tuple.ins.ToList()));
+                tuple => tuple.@out);
         }
     }
 
