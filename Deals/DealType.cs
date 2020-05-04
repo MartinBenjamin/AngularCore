@@ -57,8 +57,6 @@ namespace Deals
 
     public class ComplementOf: ClassExpression
     {
-        //public IList<ClassExpression> ClassExpressions { get; protected set; }
-
         public ComplementOf(ClassExpression classExpression)
         {
         }
@@ -198,27 +196,26 @@ namespace Deals
             "Id",
             DealRoleIdentifier.Sponsor);
 
-        public static ClassExpression Sponsor = new PropertyHasValue(
+        public static ClassExpression HasSponsorRole = new PropertyHasValue(
             "Role",
             SponsorRole);
         public static ClassExpression SponsorsMinCardinality = new PropertyMinCardinality(
             "DealParty",
             1,
-            Sponsor);
+            HasSponsorRole);
         public static ClassExpression SponsorsMaxCardinality = new PropertyMaxCardinality(
             "DealParty",
             int.MaxValue,
-            Sponsor);
+            HasSponsorRole);
         public static ClassExpression SponsorEquity = new ComplementOf(
             new IntersectionOf(
-                Sponsor,
+                HasSponsorRole,
                 new PropertyExactCardinality(
                     "Equity",
                     0)));
         public static ClassExpression Sponsors = new IntersectionOf(
             SponsorsMinCardinality,
-            SponsorsMaxCardinality,
-            SponsorEquity);
+            SponsorsMaxCardinality);
 
         public static OneOf KeyCounterpartyRole = new OneOf();
         public static ClassExpression KeyCounterparty = new PropertySomeValuesFrom(
@@ -398,9 +395,8 @@ namespace Deals
 
         public override bool Classifies(
             object vertex
-            ) => Edge
-                .SelectIn(Vertex)
-                .Where(v => VertexExpression != null ? VertexExpression.Classifies(v) : true)
-                .Count() == 0;
+            ) => (VertexExpression != null ?
+                Edge.SelectIn(Vertex).Count(VertexExpression.Classifies) :
+                Edge.SelectIn(Vertex).Count()) == Cardinality;
     }
 }
