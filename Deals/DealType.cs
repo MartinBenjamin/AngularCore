@@ -242,23 +242,72 @@ namespace Deals
 
     public class SubGraph
     {
-        public SubGraph Super { get; protected set; }
-        public Graph    Graph { get; protected set; }
+        public SubGraph                Super             { get; protected set; }
+        public Graph                   Graph             { get; protected set; }
+        public IList<VertexExpression> VertexExpressions { get; protected set; }
+
+        public void Validate(
+            IDictionary<Type, IList<object>>             graph,
+            IDictionary<object, IList<VertexExpression>> errors
+            )
+        {
+            //if(Super != null)
+            //    Super.Validate(
+            //        graph,
+            //        errors);
+
+            // Validate data properties.
+            // If property fails less restrictive do we want to apply more restrictions.
+            (
+                from pair in graph
+                from vertex in pair.Value
+                from subGraph in GetSubGraphs()
+                from dpe in subGraph.VertexExpressions
+                where dpe is DataPropertyExpression && pair.Key == dpe.Vertex && !dpe.Validate(vertex)
+                group dpe by vertex into dpesGroupedByVertex
+                select dpesGroupedByVertex
+            ).ForEach(
+                group =>
+                {
+                    if(!errors.TryGetValue(
+                        group.Key,
+                        out IList<VertexExpression> vertices
+                        ))
+                    {
+                        var vertexExprsssions = vertices.ToList();
+                        vertexExprsssions.AddRange(group);
+                        errors[group.Key] = vertexExprsssions;
+                    }
+                    else
+                        errors[group.Key] = group.ToList();
+                });
+        }
+
+        IEnumerable<SubGraph> GetSubGraphs()
+        {
+            var subGraph = this;
+            while(subGraph != null)
+            {
+                yield return subGraph;
+                subGraph = subGraph.Super;
+            }
+        }
     }
 
-    public abstract class EdgeRestriction
-    {
-        public Edge Edge { get; protected set; }
-    }
-
-    public abstract class VertexRestriction
+    public abstract class VertexExpression
     {
         public Type Vertex { get; protected set; }
+
+        public abstract bool Validate(object vertex);
     }
 
-    public class PropertyRestriction: VertexRestriction
+    public abstract class EdgeExpression: VertexExpression
     {
-        
+        public Type In { get; protected set; }
+    }
+
+    public abstract class DataPropertyExpression: VertexExpression
+    {
 
     }
 }

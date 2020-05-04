@@ -11,7 +11,7 @@ namespace CommonDomainObjects
     }
 
     public static class IEdgeExtensions
-    {    
+    {
         public static int LongestPath<TVertex>(
             this IEnumerable<IEdge<TVertex>> edges,
             IDictionary<TVertex, int>        longestPaths,
@@ -47,7 +47,7 @@ namespace CommonDomainObjects
 
     public abstract class Graph<TGraph, TVertex, TEdge>
         where TGraph : Graph<TGraph, TVertex, TEdge>
-        where TEdge  : Edge <TVertex, TEdge>
+        where TEdge : Edge<TVertex, TEdge>
     {
         public virtual IList<TVertex> Vertices { get; protected set; }
         public virtual IList<TEdge>   Edges    { get; protected set; }
@@ -86,7 +86,7 @@ namespace CommonDomainObjects
         where TEdge : Edge<TVertex, TEdge>, IEdge<TVertex>
     {
         public virtual TVertex Out { get; protected set; }
-        public virtual TVertex In  { get; protected set; }
+        public virtual TVertex In { get; protected set; }
 
         protected Edge(
             TVertex @out,
@@ -94,7 +94,7 @@ namespace CommonDomainObjects
             )
         {
             Out = @out;
-            In  = @in;
+            In = @in;
         }
     }
 
@@ -103,9 +103,9 @@ namespace CommonDomainObjects
         public Graph() : base()
         {
         }
-        
+
         public Graph(
-            IList<TVertex>       vertices,
+            IList<TVertex> vertices,
             IList<Edge<TVertex>> edges
             ) : base(
                 vertices,
@@ -144,49 +144,67 @@ namespace CommonDomainObjects
     public class Graph: Graph<Graph, Type, Edge>
     {
         public void Visit(
-            object          vertex,
-            HashSet<object> visited,
-            Action<object>  action
+            object                       vertex,
+            HashSet<object>              visited,
+            Action<Type, object>         vertexAction,
+            Action<Edge, object, object> edgeAction = null
             )
         {
             if(vertex == null || visited.Contains(vertex))
                 return;
 
-            action(vertex);
-
             visited.Add(vertex);
 
-            (
-                from type in vertex.GetTypes()
-                join edge in Edges on type equals edge.Out
-                from @in in edge.SelectIncoming(vertex)
-                select @in
-            ).ForEach(
-                @in => Visit(
-                    @in,
-                    visited,
-                    action));
+            vertex.GetTypes().ForEach(
+                type =>
+                {
+                    vertexAction(
+                        type,
+                        vertex);
+
+                    Edges.Where(edge => edge.Out == type).ForEach(
+                        edge => edge.SelectIn(vertex).ForEach(
+                            @in =>
+                            {
+                                edgeAction?.Invoke(
+                                    edge,
+                                    vertex,
+                                    @in);
+
+                                Visit(
+                                    @in,
+                                    visited,
+                                    vertexAction,
+                                    edgeAction);
+                            }));
+                });
         }
 
-        public IDictionary<Type, IList<object>> Flatten(
-            IList<object> vertices
+        public void Flatten(
+            object                          root,
+            out ILookup<Type, object>       vertexLookup,
+            out ILookup<Edge, Edge<object>> edgeLookup
             )
         {
-            var visited = new HashSet<object>();
-            vertices.ForEach(vertex => Visit(
-                vertex,
-                visited,
-                o => { }));
+            var visited  = new HashSet<object>();
+            var vertices = new List<(Type type, object vertex)>();
+            var edges    = new List<(Edge edge, object @out, object @in)>();
 
-            return (
-                from o in visited
-                from type in o.GetTypes()
-                where type != typeof(object)
-                group o by type into verticesGroupedByType
-                select verticesGroupedByType
-                ).ToDictionary(
-                    group => group.Key,
-                    group => (IList<object>)group.ToList());
+            Visit(
+                root,
+                visited,
+                (type, vertex) => vertices.Add((type, vertex)),
+                (edge, @out, @in) => edges.Add((edge, @out, @in)));
+
+            vertexLookup = vertices.ToLookup(
+                tuple => tuple.type,
+                tuple => tuple.vertex);
+
+            edgeLookup = edges.ToLookup(
+                tuple => tuple.edge,
+                tuple => new Edge<object>(
+                    tuple.@out,
+                    tuple.@in));
         }
     }
 
@@ -201,7 +219,7 @@ namespace CommonDomainObjects
         {
         }
 
-        public abstract IEnumerable<object> SelectIncoming(object @out);
+        public abstract IEnumerable<object> SelectIn(object @out);
     }
 
     public class OneToManyEdge<TOut, TIn>: Edge
@@ -218,7 +236,7 @@ namespace CommonDomainObjects
             _selectIncoming = selectIncoming;
         }
 
-        public override IEnumerable<object> SelectIncoming(
+        public override IEnumerable<object> SelectIn(
             object @out
             )
         {
@@ -239,7 +257,7 @@ namespace CommonDomainObjects
             _selectIncoming = selectIncoming;
         }
 
-        public override IEnumerable<object> SelectIncoming(
+        public override IEnumerable<object> SelectIn(
             object @out
             )
         {
