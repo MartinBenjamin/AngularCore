@@ -243,29 +243,21 @@ namespace Deals
     public class SubGraph
     {
         public SubGraph                Super             { get; protected set; }
-        public Graph                   Graph             { get; protected set; }
         public IList<VertexExpression> VertexExpressions { get; protected set; }
 
         public void Validate(
-            ILookup<Type, IList<object>>                 vertexLookup,
+            ILookup<Type, object>                        vertexLookup,
             IDictionary<object, IList<VertexExpression>> errors
             )
         {
-            //if(Super != null)
-            //    Super.Validate(
-            //        graph,
-            //        errors);
-
-            // Validate data properties.
-            // If property fails less restrictive do we want to apply more restrictions.
             (
                 from @group in vertexLookup
                 from vertex in @group
                 from subGraph in GetSubGraphs()
-                from dpe in subGraph.VertexExpressions
-                where dpe is DataPropertyExpression && @group.Key == dpe.Vertex && !dpe.InstanceOf(vertex)
-                group dpe by vertex into dpesGroupedByVertex
-                select dpesGroupedByVertex
+                from ve in subGraph.VertexExpressions
+                where @group.Key == ve.Vertex && !ve.Classifies(vertex)
+                group ve by vertex into vesGroupedByVertex
+                select vesGroupedByVertex
             ).ForEach(
                 group =>
                 {
@@ -274,9 +266,9 @@ namespace Deals
                         out IList<VertexExpression> vertices
                         ))
                     {
-                        var vertexExprsssions = vertices.ToList();
-                        vertexExprsssions.AddRange(group);
-                        errors[group.Key] = vertexExprsssions;
+                        var vertexExpressions = vertices.ToList();
+                        vertexExpressions.AddRange(group);
+                        errors[group.Key] = vertexExpressions;
                     }
                     else
                         errors[group.Key] = group.ToList();
@@ -305,7 +297,7 @@ namespace Deals
             Vertex = vertex;
         }
 
-        public abstract bool InstanceOf(object vertex);
+        public abstract bool Classifies(object vertex);
     }
 
     public abstract class EdgeExpression: VertexExpression
@@ -339,10 +331,10 @@ namespace Deals
             Edge             edge,
             int              cardinality,
             VertexExpression vertexExpression
-
             ) : base(edge)
         {
-            Cardinality = cardinality;
+            Cardinality      = cardinality;
+            VertexExpression = vertexExpression;
         }
     }
 
@@ -360,11 +352,11 @@ namespace Deals
             VertexExpression = vertexExpression;
         }
 
-        public override bool InstanceOf(
+        public override bool Classifies(
             object vertex
             ) => Edge
                 .SelectIn(Vertex)
-                .Where(v => VertexExpression != null ? VertexExpression.InstanceOf(v) : true)
+                .Where(v => VertexExpression != null ? VertexExpression.Classifies(v) : true)
                 .Count() >= 0;
     }
  
@@ -382,11 +374,11 @@ namespace Deals
             VertexExpression = vertexExpression;
         }
 
-        public override bool InstanceOf(
+        public override bool Classifies(
             object vertex
             ) => Edge
                 .SelectIn(Vertex)
-                .Where(v => VertexExpression != null ? VertexExpression.InstanceOf(v) : true)
+                .Where(v => VertexExpression != null ? VertexExpression.Classifies(v) : true)
                 .Count() <= 0;
     }
 
@@ -404,11 +396,11 @@ namespace Deals
             VertexExpression = vertexExpression;
         }
 
-        public override bool InstanceOf(
+        public override bool Classifies(
             object vertex
             ) => Edge
                 .SelectIn(Vertex)
-                .Where(v => VertexExpression != null ? VertexExpression.InstanceOf(v) : true)
+                .Where(v => VertexExpression != null ? VertexExpression.Classifies(v) : true)
                 .Count() == 0;
     }
 }
