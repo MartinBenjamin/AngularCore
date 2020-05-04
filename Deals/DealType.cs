@@ -263,7 +263,7 @@ namespace Deals
                 from vertex in @group
                 from subGraph in GetSubGraphs()
                 from dpe in subGraph.VertexExpressions
-                where dpe is DataPropertyExpression && @group.Key == dpe.Vertex && !dpe.Validate(vertex)
+                where dpe is DataPropertyExpression && @group.Key == dpe.Vertex && !dpe.InstanceOf(vertex)
                 group dpe by vertex into dpesGroupedByVertex
                 select dpesGroupedByVertex
             ).ForEach(
@@ -298,16 +298,117 @@ namespace Deals
     {
         public Type Vertex { get; protected set; }
 
-        public abstract bool Validate(object vertex);
+        protected VertexExpression(
+            Type vertex
+            )
+        {
+            Vertex = vertex;
+        }
+
+        public abstract bool InstanceOf(object vertex);
     }
 
     public abstract class EdgeExpression: VertexExpression
     {
         public Edge Edge { get; protected set; }
+
+        protected EdgeExpression(
+            Edge edge
+            ) : base(edge.Out)
+        {
+            Edge = edge;
+        }
     }
 
     public abstract class DataPropertyExpression: VertexExpression
     {
+        protected DataPropertyExpression(
+            Type vertex
+            ) : base(vertex)
+        {
 
+        }
+    }
+
+    public abstract class EdgeCardinalityExpression: EdgeExpression
+    {
+        public int              Cardinality      { get; protected set; }
+        public VertexExpression VertexExpression { get; protected set; }
+
+        protected EdgeCardinalityExpression(
+            Edge             edge,
+            int              cardinality,
+            VertexExpression vertexExpression
+
+            ) : base(edge)
+        {
+            Cardinality = cardinality;
+        }
+    }
+
+    public class EdgeMinCardinailityExpression: EdgeCardinalityExpression
+    {
+        protected EdgeMinCardinailityExpression(
+            Edge             edge,
+            int              cardinality,
+            VertexExpression vertexExpression
+            ) : base(
+                edge,
+                cardinality,
+                vertexExpression)
+        {
+            VertexExpression = vertexExpression;
+        }
+
+        public override bool InstanceOf(
+            object vertex
+            ) => Edge
+                .SelectIn(Vertex)
+                .Where(v => VertexExpression != null ? VertexExpression.InstanceOf(v) : true)
+                .Count() >= 0;
+    }
+ 
+    public class EdgeMaxCardinailityExpression: EdgeCardinalityExpression
+    {
+        protected EdgeMaxCardinailityExpression(
+            Edge             edge,
+            int              cardinality,
+            VertexExpression vertexExpression
+            ) : base(
+                edge,
+                cardinality,
+                vertexExpression)
+        {
+            VertexExpression = vertexExpression;
+        }
+
+        public override bool InstanceOf(
+            object vertex
+            ) => Edge
+                .SelectIn(Vertex)
+                .Where(v => VertexExpression != null ? VertexExpression.InstanceOf(v) : true)
+                .Count() <= 0;
+    }
+
+    public class EdgeExactCardinailityExpression: EdgeCardinalityExpression
+    {
+        protected EdgeExactCardinailityExpression(
+            Edge             edge,
+            int              cardinality,
+            VertexExpression vertexExpression
+            ) : base(
+                edge,
+                cardinality,
+                vertexExpression)
+        {
+            VertexExpression = vertexExpression;
+        }
+
+        public override bool InstanceOf(
+            object vertex
+            ) => Edge
+                .SelectIn(Vertex)
+                .Where(v => VertexExpression != null ? VertexExpression.InstanceOf(v) : true)
+                .Count() == 0;
     }
 }
