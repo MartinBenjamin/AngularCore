@@ -301,11 +301,9 @@ namespace Deals
         public abstract bool Validate(object vertex);
     }
 
-    public abstract class EdgeExpression
+    public abstract class EdgeExpression: VertexExpression
     {
         public Edge Edge { get; protected set; }
-
-        public abstract bool Validate(object @out);
     }
 
     public abstract class DataPropertyExpression: VertexExpression
