@@ -12,14 +12,16 @@ namespace CommonDomainObjects
 
             private struct ValueEnumerator<T>: IEnumerator<T>
             {
-                private readonly T _t;
-                private int        _index;
+                private readonly T   _t;
+                private readonly int _count;
+                private int          _index;
 
                 public ValueEnumerator(
                     T t
                     )
                 {
                     _t       = t;
+                    _count   = t == null ? 0 : 1;
                     _index   = -1;
                 }
 
@@ -33,23 +35,10 @@ namespace CommonDomainObjects
 
                 bool IEnumerator.MoveNext()
                 {
-                    switch(_index)
-                    {
-                        case -1:
-                            if(_t == null)
-                            {
-                                _index = 1;
-                                return false;
-                            }
-                            _index = 0;
-                            return true;
-                        case 0:
-                            _index = 1;
-                            return false;
-                        default:
-                        case 1:
-                            return false;
-                    }
+                    if(_index < _count)
+                        ++_index;
+
+                    return _index < _count;
                 }
 
                 void IEnumerator.Reset() => _index = -1;
