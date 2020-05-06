@@ -52,7 +52,6 @@ namespace CommonDomainObjects
             ) => true;
     }
 
-
     public class Intersection<T>: ClassExpression<T>
     {
         public IList<ClassExpression<T>> ClassExpressions { get; protected set; }
@@ -67,6 +66,14 @@ namespace CommonDomainObjects
         public override bool HasMember(
             T t
             ) => ClassExpressions.All(ce => ce.HasMember(t));
+
+        public Intersection<T> Append(
+            ClassExpression<T> classExpression
+            )
+        {
+            ClassExpressions.Add(classExpression);
+            return this;
+        }
     }
 
     public class Union<T>: ClassExpression<T>
@@ -83,6 +90,14 @@ namespace CommonDomainObjects
         public override bool HasMember(
             T t
             ) => ClassExpressions.Any(ce => ce.HasMember(t));
+
+        public Union<T> Append(
+            ClassExpression<T> classExpression
+            )
+        {
+            ClassExpressions.Add(classExpression);
+            return this;
+        }
     }
 
     public class Complement<T>: ClassExpression<T>

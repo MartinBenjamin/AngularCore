@@ -15,9 +15,39 @@ namespace Deals
         }
     }
 
+    public class Qualifier<T>: ClassExpressionDecorator<T>
+    {
+        private Func<bool> _predicate;
+
+        public Qualifier(
+            ClassExpression<T> decorated,
+            Func<bool>         predicate
+            ): base(decorated)
+        {
+            _predicate = predicate;
+        }
+
+        public override bool HasMember(
+            T t
+            )
+        {
+            return !_predicate() || _decorated.HasMember(t);
+        }
+    }
+
+    public static class ClassExpressionExtensions
+    {
+        public static ClassExpression<T> After<T>(
+            this ClassExpression<T> classExpression
+            )
+        {
+            return classExpression;
+        }
+    }
+
     public static class PF
     {
-       public static ClassExpression<Role> SponsorRole = new PropertyHasValue<Role, Guid>(
+        public static ClassExpression<Role> SponsorRole = new PropertyHasValue<Role, Guid>(
             role => role.Id,
             DealRoleIdentifier.Sponsor);
 
@@ -26,7 +56,11 @@ namespace Deals
             1,
             new PropertyAllValues<DealParty, Role>(
                 dealParty => dealParty.Role,
-                SponsorRole));
+                SponsorRole)).After();
+
+        public static ClassExpression<Deal> Deal = new Intersection<Deal>()
+            .Append(
+                SponsorsMinCardinality);
     }
 
     public class SubGraph
