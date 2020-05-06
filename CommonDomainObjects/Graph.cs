@@ -235,8 +235,7 @@ namespace CommonDomainObjects
                 typeof(TOut),
                 typeof(TIn))
         {
-            var memberExpression = selectIncoming.Body as MemberExpression;
-            Name = memberExpression != null ? memberExpression.Member.Name : typeof(TIn).Name;
+            Name = selectIncoming.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TIn).Name;
             _selectIncoming = selectIncoming.Compile();
         }
 
@@ -258,8 +257,7 @@ namespace CommonDomainObjects
                 typeof(TOut),
                 typeof(TIn))
         {
-            var memberExpression = selectIncoming.Body as MemberExpression;
-            Name = memberExpression != null ? memberExpression.Member.Name : typeof(TIn).Name;
+            Name = selectIncoming.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TIn).Name;
             _selectIncoming = selectIncoming.Compile();
         }
 
