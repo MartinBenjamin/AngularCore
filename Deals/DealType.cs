@@ -17,21 +17,22 @@ namespace Deals
 
     public class Qualifier<T>: ClassExpressionDecorator<T>
     {
-        private Func<bool> _predicate;
+        private Func<T, object, bool> _predicate;
 
         public Qualifier(
-            ClassExpression<T> decorated,
-            Func<bool>         predicate
+            ClassExpression<T>    decorated,
+            Func<T, object, bool> predicate
             ): base(decorated)
         {
             _predicate = predicate;
         }
 
         public override bool HasMember(
-            T t
+            T      t,
+            object context
             )
         {
-            return !_predicate() || _decorated.HasMember(t);
+            return !_predicate(t, context) || _decorated.HasMember(t, context);
         }
     }
 
