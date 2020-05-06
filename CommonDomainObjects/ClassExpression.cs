@@ -7,24 +7,17 @@ using System.Text;
 
 namespace CommonDomainObjects
 {
-    public struct InstanceEnumerable<T>: IEnumerable<T>
+    public struct EnumerableValue<T>: IEnumerable<T>
     {
         private T _t;
 
-        private struct Enumerator<T>: IEnumerator<T>
+        private struct ValueEnumerator<T>: IEnumerator<T>
         {
-            private enum State
-            {
-                NotIterated,
-                Iterating,
-                Iterated
-            };
-
             private readonly T _t;
             private T          _current;
             private int        _index;
 
-            public Enumerator(
+            public ValueEnumerator(
                 T t
                 )
             {
@@ -66,7 +59,7 @@ namespace CommonDomainObjects
             }
         }
 
-        public InstanceEnumerable(
+        public EnumerableValue(
             T t
             )
         {
@@ -75,7 +68,7 @@ namespace CommonDomainObjects
 
         public IEnumerator<T> GetEnumerator()
         {
-            return new Enumerator<T>(_t);
+            return new ValueEnumerator<T>(_t);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -105,7 +98,7 @@ namespace CommonDomainObjects
             Func<T, TProperty> property
             )
         {
-            return t => new InstanceEnumerable<TProperty>(property(t));
+            return t => new EnumerableValue<TProperty>(property(t));
         }
     }
 
