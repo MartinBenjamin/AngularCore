@@ -19,10 +19,7 @@ namespace CommonDomainObjects
 
         bool IClassExpression.HasMember(
             object o
-            )
-        {
-            return o is T t ? HasMember(t) : false;
-        }
+            ) => o is T t ? HasMember(t) : false;
 
         public abstract bool HasMember(T t);
     }
