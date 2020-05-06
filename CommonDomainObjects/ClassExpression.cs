@@ -22,7 +22,7 @@ namespace CommonDomainObjects
 
             private readonly T _t;
             private T          _current;
-            private State      _state;
+            private int        _index;
 
             public Enumerator(
                 T t
@@ -30,7 +30,7 @@ namespace CommonDomainObjects
             {
                 _t       = t;
                 _current = default(T);
-                _state   = State.NotIterated;
+                _index   = -1;
             }
 
             T IEnumerator<T>.Current => _current;
@@ -43,26 +43,26 @@ namespace CommonDomainObjects
 
             bool IEnumerator.MoveNext()
             {
-                switch(_state)
+                switch(_index)
                 {
-                    case State.NotIterated:
+                    case -1:
                         _current = _t;
-                        _state = State.Iterating;
+                        ++_index;
                         return true;
-                    case State.Iterating:
+                    case 0:
                         _current = default(T);
-                        _state = State.Iterated;
+                        ++_index;
                         return false;
                     default:
-                    case State.Iterated:
-                    return false;
+                    case 1:
+                        return false;
                 }
             }
 
             void IEnumerator.Reset()
             {
                 _current = default(T);
-                _state   = State.NotIterated;
+                _index   = -1;
             }
         }
 
