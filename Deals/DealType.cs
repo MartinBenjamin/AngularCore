@@ -8,23 +8,24 @@ namespace Deals
 {
     public class DealType: Named<Guid>
     {
-        public virtual IList<Role> KeyCounterparties { get; protected set; }
+        public virtual IList<Role>  KeyCounterparties { get; protected set; }
+        //public virtual IList<Stage> Stages            { get; protected set; }
 
         protected DealType() : base()
         {
         }
     }
 
-    public class Qualifier<T>: ClassExpressionDecorator<T>
+    public class ActiveFromStage<T>: ClassExpressionDecorator<T>
     {
-        private Func<T, object, bool> _predicate;
+        private int _stageIndex;
 
-        public Qualifier(
-            ClassExpression<T>    decorated,
-            Func<T, object, bool> predicate
+        public ActiveFromStage(
+            ClassExpression<T> decorated,
+            int                stageIndex
             ): base(decorated)
         {
-            _predicate = predicate;
+            _stageIndex = stageIndex;
         }
 
         public override bool HasMember(
@@ -32,15 +33,17 @@ namespace Deals
             object context
             )
         {
-            return !_predicate(t, context) || _decorated.HasMember(t, context);
+            var stageIndex = (int)context;
+
+            return stageIndex < _stageIndex || _decorated.HasMember(t, context);
         }
     }
 
     public static class ClassExpressionExtensions
     {
-        public static ClassExpression<T> After<T>(
+        public static ClassExpression<T> ActiveFromStage<T>(
             this ClassExpression<T> classExpression,
-            int                     stageId
+            int                     stageIndex
             )
         {
             return classExpression;
@@ -58,7 +61,7 @@ namespace Deals
             1,
             new PropertyAllValues<DealParty, Role>(
                 dealParty => dealParty.Role,
-                SponsorRole)).After(3);
+                SponsorRole)).ActiveFromStage(3);
 
         public static ClassExpression<Deal> Deal = new Intersection<Deal>()
             .Append(
