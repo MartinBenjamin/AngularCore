@@ -20,176 +20,6 @@ namespace Deals
 
     }
 
-    public abstract class ClassExpression
-    {
-        public virtual void Validate(object obj, IDictionary<object, IList<ClassExpression>> errors)
-        {
-
-        }
-
-        protected virtual bool Evaluate(
-            object obj
-            )
-        {
-            return false;
-        }
-    }
-
-    public class IntersectionOf: ClassExpression
-    {
-        public IList<ClassExpression> ClassExpressions { get; protected set; }
-
-        public IntersectionOf(params ClassExpression[] classExpressions)
-        {
-            ClassExpressions = classExpressions;
-        }
-    }
-
-    public class UnionOf: ClassExpression
-    {
-        public IList<ClassExpression> ClassExpressions { get; protected set; }
-
-        public UnionOf(params ClassExpression[] classExpressions)
-        {
-            ClassExpressions = classExpressions;
-        }
-    }
-
-    public class ComplementOf: ClassExpression
-    {
-        public ComplementOf(ClassExpression classExpression)
-        {
-        }
-    }
-
-    public class OneOf: ClassExpression
-    {
-        public IList<object> Individuals { get; protected set; }
-
-        public OneOf(params object[] individuals)
-        {
-
-        }
-
-    }
-
-    public abstract class PropertyExpression: ClassExpression
-    {
-        public string Name { get; protected set; }
-
-        protected PropertyExpression(
-            string name
-            )
-        {
-            Name = name;
-        }
-    }
-
-    public class PropertySomeValuesFrom: PropertyExpression
-    {
-        public ClassExpression ClassExpression { get; protected set; }
-
-        public PropertySomeValuesFrom(
-            string          name,
-            ClassExpression classExpression
-            ) : base(name)
-        {
-            ClassExpression = classExpression;
-        }
-    }
-
-    public class PropertyAllValuesFrom: PropertyExpression
-    {
-        public ClassExpression ClassExpression { get; protected set; }
-
-        public PropertyAllValuesFrom(
-            string          name,
-            ClassExpression classExpression
-            ) : base(name)
-        {
-            ClassExpression = classExpression;
-        }
-    }
-
-    public class PropertyHasValue: PropertyExpression
-    {
-        public object Individual { get; protected set; }
-
-        public PropertyHasValue(
-            string name,
-            object value
-            ) : base(name)
-        {
-
-        }
-    }
-
-    public class PropertyCardinalityExpression: PropertyExpression
-    {
-        public int             Cardinality     { get; protected set; }
-        public ClassExpression ClassExpression { get; protected set; }
-
-        protected PropertyCardinalityExpression(
-            string name,
-            int    cardinality
-            ) : base(name)
-        {
-            Cardinality = cardinality;
-        }
-    }
-
-    public class PropertyMinCardinality: PropertyCardinalityExpression
-    {
-        public PropertyMinCardinality(
-            string          name,
-            int             cardinality,
-            ClassExpression classExpression = null
-            ) : base(
-                name,
-                cardinality)
-        {
-        }
-    }
-
-    public class PropertyMaxCardinality: PropertyCardinalityExpression
-    {
-        public PropertyMaxCardinality(
-            string          name,
-            int             cardinality,
-            ClassExpression classExpression = null
-            ) : base(
-                name,
-                cardinality)
-        {
-        }
-    }
-
-    public class PropertyExactCardinality: PropertyCardinalityExpression
-    {
-        public PropertyExactCardinality(
-            string          name,
-            int             cardinality,
-            ClassExpression classExpression = null
-            ) : base(
-                name,
-                cardinality)
-        {
-        }
-    }
-
-    public class CustomClassExpression<T>: ClassExpression
-    {
-        private Func<T, bool> Expression { get; set; }
-
-        protected override bool Evaluate(object obj)
-            => Expression((T)obj);
-
-        public CustomClassExpression(Func<T, bool> expression)
-        {
-
-        }
-    }
-
     public interface IOutEdge<in TOut>
     {
         void Visit(TOut tout);
@@ -204,45 +34,16 @@ namespace Deals
             d = dobj;
         }
 
-        public static ClassExpression SponsorRole = new PropertyHasValue(
-            "Id",
+       public static ClassExpression<Role> SponsorRole = new PropertyHasValue<Role, Guid>(
+            role => new Guid[] { role.Id },
             DealRoleIdentifier.Sponsor);
 
-        public static ClassExpression HasSponsorRole = new PropertyHasValue(
-            "Role",
-            SponsorRole);
-        public static ClassExpression SponsorsMinCardinality = new PropertyMinCardinality(
-            "DealParty",
+        public static ClassExpression<Deal> SponsorsMinCardinality = new PropertyMinCardinality<Deal, DealParty>(
+            deal => deal.Parties,
             1,
-            HasSponsorRole);
-        public static ClassExpression SponsorsMaxCardinality = new PropertyMaxCardinality(
-            "DealParty",
-            int.MaxValue,
-            HasSponsorRole);
-
-        public static ClassExpression Sponsor = new IntersectionOf(
-            new PropertyExactCardinality(
-                "Equity",
-                1));
-
-        public static OneOf KeyCounterpartyRole = new OneOf();
-        public static ClassExpression KeyCounterparty = new PropertySomeValuesFrom(
-            "Role",
-            KeyCounterpartyRole);
-        public static ClassExpression KeyCounterpartyMinCardinality = new PropertyMinCardinality(
-            "DealParty",
-            1,
-            KeyCounterparty);
-        public static ClassExpression KeyCounterpartyMaxCardinality = new PropertyMaxCardinality(
-            "DealParty",
-            int.MaxValue,
-            KeyCounterparty);
-
-        public static ClassExpression Deal = new IntersectionOf(
-            SponsorsMinCardinality,
-            SponsorsMaxCardinality,
-            KeyCounterpartyMinCardinality,
-            KeyCounterpartyMaxCardinality);
+            new PropertyAllValues<DealParty, Role>(
+                dealParty => new Role[] { dealParty.Role },
+                SponsorRole));
     }
 
     public class SubGraph
