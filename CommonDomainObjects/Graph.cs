@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace CommonDomainObjects
 {
@@ -166,7 +167,7 @@ namespace CommonDomainObjects
                         edge =>
                         {
                             var ins = edge.SelectIn(vertex);
-                            edgeAction.Invoke(
+                            edgeAction?.Invoke(
                                 edge,
                                 vertex,
                                 ins);
@@ -209,6 +210,8 @@ namespace CommonDomainObjects
 
     public abstract class Edge: Edge<Type, Edge>
     {
+        public string Name { get; protected set; }
+
         public Edge(
             Type @out,
             Type @in
@@ -227,12 +230,15 @@ namespace CommonDomainObjects
         private Func<TOut, IEnumerable<TIn>> _selectIncoming;
 
         public OneToManyEdge(
-            Func<TOut, IEnumerable<TIn>> selectIncoming
+            Expression<Func<TOut, IEnumerable<TIn>>> selectIncoming,
+            string name = null
             ) : base(
                 typeof(TOut),
                 typeof(TIn))
         {
-            _selectIncoming = selectIncoming;
+            var memberExpression = selectIncoming.Body as MemberExpression;
+            Name = memberExpression != null ? memberExpression.Member.Name : typeof(TIn).Name;
+            _selectIncoming = selectIncoming.Compile();
         }
 
         public override IEnumerable<object> SelectIn(
@@ -248,12 +254,15 @@ namespace CommonDomainObjects
         private Func<TOut, TIn> _selectIncoming;
 
         public ManyToOneEdge(
-            Func<TOut, TIn> selectIncoming
+            Expression<Func<TOut, TIn>> selectIncoming,
+            string                      name = null
             ) : base(
                 typeof(TOut),
                 typeof(TIn))
         {
-            _selectIncoming = selectIncoming;
+            var memberExpression = selectIncoming.Body as MemberExpression;
+            Name = memberExpression != null ? memberExpression.Member.Name : typeof(TIn).Name;
+            _selectIncoming = selectIncoming.Compile();
         }
 
         public override IEnumerable<object> SelectIn(

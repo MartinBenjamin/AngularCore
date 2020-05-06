@@ -190,8 +190,20 @@ namespace Deals
         }
     }
 
+    public interface IOutEdge<in TOut>
+    {
+        void Visit(TOut tout);
+    }
+
     public static class PF
     {
+        public static void Test()
+        {
+            IOutEdge<Deal> d = null;
+            IOutEdge<DomainObject<Guid>> dobj = null;
+            d = dobj;
+        }
+
         public static ClassExpression SponsorRole = new PropertyHasValue(
             "Id",
             DealRoleIdentifier.Sponsor);
@@ -207,15 +219,11 @@ namespace Deals
             "DealParty",
             int.MaxValue,
             HasSponsorRole);
-        public static ClassExpression SponsorEquity = new ComplementOf(
-            new IntersectionOf(
-                HasSponsorRole,
-                new PropertyExactCardinality(
-                    "Equity",
-                    0)));
-        public static ClassExpression Sponsors = new IntersectionOf(
-            SponsorsMinCardinality,
-            SponsorsMaxCardinality);
+
+        public static ClassExpression Sponsor = new IntersectionOf(
+            new PropertyExactCardinality(
+                "Equity",
+                1));
 
         public static OneOf KeyCounterpartyRole = new OneOf();
         public static ClassExpression KeyCounterparty = new PropertySomeValuesFrom(
@@ -230,7 +238,7 @@ namespace Deals
             int.MaxValue,
             KeyCounterparty);
 
-        public static ClassExpression Dt = new UnionOf(
+        public static ClassExpression Deal = new IntersectionOf(
             SponsorsMinCardinality,
             SponsorsMaxCardinality,
             KeyCounterpartyMinCardinality,
