@@ -15,34 +15,17 @@ namespace Deals
         }
     }
 
-    public class DealTypeConstraint: DomainObject<int>
-    {
-
-    }
-
-    public interface IOutEdge<in TOut>
-    {
-        void Visit(TOut tout);
-    }
-
     public static class PF
     {
-        public static void Test()
-        {
-            IOutEdge<Deal> d = null;
-            IOutEdge<DomainObject<Guid>> dobj = null;
-            d = dobj;
-        }
-
        public static ClassExpression<Role> SponsorRole = new PropertyHasValue<Role, Guid>(
-            role => new Guid[] { role.Id },
+            role => role.Id,
             DealRoleIdentifier.Sponsor);
 
         public static ClassExpression<Deal> SponsorsMinCardinality = new PropertyMinCardinality<Deal, DealParty>(
             deal => deal.Parties,
             1,
             new PropertyAllValues<DealParty, Role>(
-                dealParty => new Role[] { dealParty.Role },
+                dealParty => dealParty.Role,
                 SponsorRole));
     }
 

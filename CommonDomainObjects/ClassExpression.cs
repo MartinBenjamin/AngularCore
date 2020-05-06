@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -6,6 +7,83 @@ using System.Text;
 
 namespace CommonDomainObjects
 {
+    public struct InstanceEnumerable<T>: IEnumerable<T>
+    {
+        private T _t;
+
+        private struct Enumerator<T>: IEnumerator<T>
+        {
+            private enum State
+            {
+                NotIterated,
+                Iterating,
+                Iterated
+            };
+
+            private readonly T _t;
+            private T          _current;
+            private State      _state;
+
+            public Enumerator(
+                T t
+                )
+            {
+                _t       = t;
+                _current = default(T);
+                _state   = State.NotIterated;
+            }
+
+            T IEnumerator<T>.Current => _current;
+
+            object IEnumerator.Current => _current;
+
+            void IDisposable.Dispose()
+            {
+            }
+
+            bool IEnumerator.MoveNext()
+            {
+                switch(_state)
+                {
+                    case State.NotIterated:
+                        _current = _t;
+                        _state = State.Iterating;
+                        return true;
+                    case State.Iterating:
+                        _current = default(T);
+                        _state = State.Iterated;
+                        return false;
+                    default:
+                    case State.Iterated:
+                    return false;
+                }
+            }
+
+            void IEnumerator.Reset()
+            {
+                _current = default(T);
+                _state   = State.NotIterated;
+            }
+        }
+
+        public InstanceEnumerable(
+            T t
+            )
+        {
+            _t = t;
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return new Enumerator<T>(_t);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
+
     public interface IClassExpression
     {
         Type Type { get; }
@@ -22,6 +100,13 @@ namespace CommonDomainObjects
             ) => o is T t ? HasMember(t) : false;
 
         public abstract bool HasMember(T t);
+
+        protected static Func<T, IEnumerable<TProperty>> AsEnumerable<T, TProperty>(
+            Func<T, TProperty> property
+            )
+        {
+            return t => new InstanceEnumerable<TProperty>(property(t));
+        }
     }
 
     public class Class<T>: ClassExpression<T>
@@ -124,6 +209,15 @@ namespace CommonDomainObjects
             ClassExpression = classExpression;
         }
 
+        public PropertySomeValues(
+            Func<T, TProperty>         property,
+            ClassExpression<TProperty> classExpression
+            ) : this(
+                AsEnumerable(property),
+                classExpression)
+        {
+        }
+
         public override bool HasMember(
             T t
             ) => Property(t).Any(ClassExpression.HasMember);
@@ -141,6 +235,15 @@ namespace CommonDomainObjects
             ClassExpression = classExpression;
         }
 
+        public PropertyAllValues(
+            Func<T, TProperty>         property,
+            ClassExpression<TProperty> classExpression
+            ) : this(
+                AsEnumerable(property),
+                classExpression)
+        {
+        }
+
         public override bool HasMember(
             T t
             ) => Property(t).All(ClassExpression.HasMember);
@@ -156,6 +259,15 @@ namespace CommonDomainObjects
             ) : base(property)
         {
             Individual = individual;
+        }
+
+        public PropertyHasValue(
+            Func<T, TProperty> property,
+            TProperty          individual
+            ) : this(
+                AsEnumerable(property),
+                individual)
+        {
         }
 
         public override bool HasMember(
