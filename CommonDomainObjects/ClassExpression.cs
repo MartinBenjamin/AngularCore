@@ -29,6 +29,18 @@ namespace CommonDomainObjects
         }
     }
 
+    public abstract class ClassExpressionDecorator<T>: ClassExpression<T>
+    {
+        protected ClassExpression<T> _decorated;
+
+        protected ClassExpressionDecorator(
+            ClassExpression<T> decorated
+            )
+        {
+            _decorated = decorated;
+        }
+    }
+
     public class Class<T>: ClassExpression<T>
     {
         public Class() : base()
