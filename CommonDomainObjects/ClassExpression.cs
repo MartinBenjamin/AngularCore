@@ -1,82 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 
 namespace CommonDomainObjects
 {
-    public struct EnumerableValue<T>: IEnumerable<T>
-    {
-        private T _t;
-
-        private struct ValueEnumerator<T>: IEnumerator<T>
-        {
-            private readonly T _t;
-            private T          _current;
-            private int        _index;
-
-            public ValueEnumerator(
-                T t
-                )
-            {
-                _t       = t;
-                _current = default(T);
-                _index   = -1;
-            }
-
-            T IEnumerator<T>.Current => _current;
-
-            object IEnumerator.Current => _current;
-
-            void IDisposable.Dispose()
-            {
-            }
-
-            bool IEnumerator.MoveNext()
-            {
-                switch(_index)
-                {
-                    case -1:
-                        _current = _t;
-                        ++_index;
-                        return true;
-                    case 0:
-                        _current = default(T);
-                        ++_index;
-                        return false;
-                    default:
-                    case 1:
-                        return false;
-                }
-            }
-
-            void IEnumerator.Reset()
-            {
-                _current = default(T);
-                _index   = -1;
-            }
-        }
-
-        public EnumerableValue(
-            T t
-            )
-        {
-            _t = t;
-        }
-
-        public IEnumerator<T> GetEnumerator()
-        {
-            return new ValueEnumerator<T>(_t);
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-    }
-
     public interface IClassExpression
     {
         Type Type { get; }
@@ -98,7 +25,7 @@ namespace CommonDomainObjects
             Func<T, TProperty> property
             )
         {
-            return t => new EnumerableValue<TProperty>(property(t));
+            return t => property(t).ToEnumerable();
         }
     }
 
