@@ -15,23 +15,6 @@ namespace CommonDomainObjects
 
     public abstract class ClassExpression<T>: IClassExpression
     {
-        private class Boolean<T>: ClassExpression<T>
-        {
-            private bool _value;
-
-            public override bool HasMember(T t) => true;
-
-            public Boolean(
-                bool value
-                )
-            {
-                _value = value;
-            }
-        }
-
-        public static readonly ClassExpression<T> True  = new Boolean<T>(true);
-        public static readonly ClassExpression<T> False = new Boolean<T>(true);
-
         Type IClassExpression.Type => typeof(T);
 
         bool IClassExpression.HasMember(
@@ -43,6 +26,18 @@ namespace CommonDomainObjects
 
         public abstract bool HasMember(T t);
     }
+
+    public class Class<T>: ClassExpression<T>
+    {
+        public Class() : base()
+        {
+        }
+
+        public override bool HasMember(
+            T t
+            ) => true;
+    }
+
 
     public class Intersection<T>: ClassExpression<T>
     {
@@ -183,15 +178,12 @@ namespace CommonDomainObjects
             ) : base(property)
         {
             Cardinality     = cardinality;
-            ClassExpression = classExpression ?? ClassExpression<TProperty>.True;
+            ClassExpression = classExpression ?? new Class<TProperty>();
         }
     }
     
     public class PropertyMinCardinality<T, TProperty>: PropertyCardinalityExpression<T, TProperty>
     {
-        public int                        Cardinality     { get; protected set; }
-        public ClassExpression<TProperty> ClassExpression { get; protected set; }
-
         public PropertyMinCardinality(
             Func<T, IEnumerable<TProperty>> property,
             int                             cardinality,
@@ -210,9 +202,6 @@ namespace CommonDomainObjects
 
     public class PropertyMaxCardinality<T, TProperty>: PropertyCardinalityExpression<T, TProperty>
     {
-        public int                        Cardinality     { get; protected set; }
-        public ClassExpression<TProperty> ClassExpression { get; protected set; }
-
         public PropertyMaxCardinality(
             Func<T, IEnumerable<TProperty>> property,
             int                             cardinality,
@@ -231,9 +220,6 @@ namespace CommonDomainObjects
 
     public class PropertyExactCardinality<T, TProperty>: PropertyCardinalityExpression<T, TProperty>
     {
-        public int                        Cardinality     { get; protected set; }
-        public ClassExpression<TProperty> ClassExpression { get; protected set; }
-
         public PropertyExactCardinality(
             Func<T, IEnumerable<TProperty>> property,
             int                             cardinality,
