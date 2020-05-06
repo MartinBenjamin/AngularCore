@@ -13,7 +13,6 @@ namespace CommonDomainObjects
             private struct ValueEnumerator<T>: IEnumerator<T>
             {
                 private readonly T _t;
-                private T          _current;
                 private int        _index;
 
                 public ValueEnumerator(
@@ -21,13 +20,12 @@ namespace CommonDomainObjects
                     )
                 {
                     _t       = t;
-                    _current = default(T);
                     _index   = -1;
                 }
 
-                T IEnumerator<T>.Current => _current;
+                T IEnumerator<T>.Current => _t;
 
-                object IEnumerator.Current => _current;
+                object IEnumerator.Current => _t;
 
                 void IDisposable.Dispose()
                 {
@@ -38,12 +36,15 @@ namespace CommonDomainObjects
                     switch(_index)
                     {
                         case -1:
-                            _current = _t;
-                            ++_index;
+                            if(_t == null)
+                            {
+                                _index = 1;
+                                return false;
+                            }
+                            _index = 0;
                             return true;
                         case 0:
-                            _current = default(T);
-                            ++_index;
+                            _index = 1;
                             return false;
                         default:
                         case 1:
@@ -51,11 +52,7 @@ namespace CommonDomainObjects
                     }
                 }
 
-                void IEnumerator.Reset()
-                {
-                    _current = default(T);
-                    _index   = -1;
-                }
+                void IEnumerator.Reset() => _index = -1;
             }
 
             public EnumerableValue(

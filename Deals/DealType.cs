@@ -39,7 +39,8 @@ namespace Deals
     public static class ClassExpressionExtensions
     {
         public static ClassExpression<T> After<T>(
-            this ClassExpression<T> classExpression
+            this ClassExpression<T> classExpression,
+            int                     stageId
             )
         {
             return classExpression;
@@ -57,7 +58,7 @@ namespace Deals
             1,
             new PropertyAllValues<DealParty, Role>(
                 dealParty => dealParty.Role,
-                SponsorRole)).After();
+                SponsorRole)).After(3);
 
         public static ClassExpression<Deal> Deal = new Intersection<Deal>()
             .Append(

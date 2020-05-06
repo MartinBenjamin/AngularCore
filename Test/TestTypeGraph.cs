@@ -19,5 +19,19 @@ namespace Test
             var edge2 = new ManyToOneEdge<DealParty, Deal>(dealParty => dealParty.Deal);
             Assert.That(edge2.Name, Is.EqualTo("Deal"));
         }
+
+        [Test]
+        public void ToEnumerable()
+        {
+            Assert.That(((int?)null).ToEnumerable().Count(), Is.EqualTo(0));
+            Assert.That(((int?)0).ToEnumerable().Count(), Is.EqualTo(1));
+            Assert.That(0.ToEnumerable().Count(), Is.EqualTo(1));
+            int? x = null;
+            Assert.That(x, Is.Null);
+            foreach(var y in ((int?)0).ToEnumerable())
+                x = y;
+            Assert.That(x, Is.Not.Null);
+            Assert.That(x, Is.EqualTo(0));
+        }
     }
 }
