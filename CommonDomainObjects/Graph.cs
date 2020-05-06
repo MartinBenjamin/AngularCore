@@ -230,8 +230,7 @@ namespace CommonDomainObjects
         private Func<TOut, IEnumerable<TIn>> _selectIncoming;
 
         public OneToManyEdge(
-            Expression<Func<TOut, IEnumerable<TIn>>> selectIncoming,
-            string name = null
+            Expression<Func<TOut, IEnumerable<TIn>>> selectIncoming
             ) : base(
                 typeof(TOut),
                 typeof(TIn))
@@ -254,8 +253,7 @@ namespace CommonDomainObjects
         private Func<TOut, TIn> _selectIncoming;
 
         public ManyToOneEdge(
-            Expression<Func<TOut, TIn>> selectIncoming,
-            string                      name = null
+            Expression<Func<TOut, TIn>> selectIncoming
             ) : base(
                 typeof(TOut),
                 typeof(TIn))
