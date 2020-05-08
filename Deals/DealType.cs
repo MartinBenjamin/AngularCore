@@ -57,12 +57,14 @@ namespace Deals
             role => role.Id,
             DealRoleIdentifier.Sponsor);
 
+        public static ClassExpression<DealParty> SponsorParty = new PropertyAllValues<DealParty, Role>(
+                dealParty => dealParty.Role,
+                SponsorRole);
+
         public static ClassExpression<Deal> SponsorsMinCardinality = new PropertyMinCardinality<Deal, DealParty>(
             deal => deal.Parties,
             1,
-            new PropertyAllValues<DealParty, Role>(
-                dealParty => dealParty.Role,
-                SponsorRole)).ActiveFromStage(3);
+            SponsorParty).ActiveFromStage(3);
 
         public static ClassExpression<Deal> Deal = new Intersection<Deal>()
             .Append(
