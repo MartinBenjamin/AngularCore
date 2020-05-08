@@ -69,6 +69,12 @@ namespace Deals
         public static ClassExpression<Deal> Deal = new Intersection<Deal>()
             .Append(
                 SponsorsMinCardinality);
+
+        public static ClassExpression<Sponsor> Sponsor = new Intersection<Sponsor>()
+            .Append(
+                new PropertyMinCardinality<Sponsor, decimal?>(
+                    sponsor => sponsor.Equity,
+                    1));
     }
 
     public class SubGraph

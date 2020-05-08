@@ -52,6 +52,10 @@ namespace CommonDomainObjects
     {
         public ClassExpression<T> ClassExpression { get; protected set; }
 
+        public Class()
+        {
+        }
+
         public Class(
             ClassExpression<T> classExpression
             ) : base()
@@ -62,7 +66,7 @@ namespace CommonDomainObjects
         public override bool HasMember(
             T      t,
             object context
-            ) => ClassExpression.HasMember(
+            ) => ClassExpression == null || ClassExpression.HasMember(
                 t,
                 context);
     }
@@ -270,7 +274,7 @@ namespace CommonDomainObjects
             ) : base(property)
         {
             Cardinality     = cardinality;
-            ClassExpression = classExpression;
+            ClassExpression = classExpression ?? new Class<TProperty>();
         }
     }
     
@@ -287,11 +291,22 @@ namespace CommonDomainObjects
         {
         }
 
+        public PropertyMinCardinality(
+            Func<T, TProperty>         property,
+            int                        cardinality,
+            ClassExpression<TProperty> classExpression = null
+            ) : this(
+                AsEnumerable(property),
+                cardinality,
+                classExpression)
+        {
+        }
+
         public override bool HasMember(
             T      t,
             object context
             ) => Property(t).Count(
-                individual => ClassExpression == null || ClassExpression.HasMember(
+                individual => ClassExpression.HasMember(
                     individual,
                     context)) >= Cardinality;
     }
@@ -309,11 +324,22 @@ namespace CommonDomainObjects
         {
         }
 
+        public PropertyMaxCardinality(
+            Func<T, TProperty>         property,
+            int                        cardinality,
+            ClassExpression<TProperty> classExpression = null
+            ) : this(
+                AsEnumerable(property),
+                cardinality,
+                classExpression)
+        {
+        }
+
         public override bool HasMember(
             T      t,
             object context
             ) => Property(t).Count(
-                individual => ClassExpression == null || ClassExpression.HasMember(
+                individual => ClassExpression.HasMember(
                     individual,
                     context)) <= Cardinality;
     }
@@ -330,12 +356,22 @@ namespace CommonDomainObjects
                 classExpression)
         {
         }
+        public PropertyExactCardinality(
+            Func<T, TProperty>         property,
+            int                        cardinality,
+            ClassExpression<TProperty> classExpression = null
+            ) : base(
+                AsEnumerable(property),
+                cardinality,
+                classExpression)
+        {
+        }
 
         public override bool HasMember(
             T      t,
             object context
             ) => Property(t).Count(
-                individual => ClassExpression == null || ClassExpression.HasMember(
+                individual => ClassExpression.HasMember(
                     individual,
                     context)) == Cardinality;
     }
