@@ -10,6 +10,7 @@ namespace Deals
     {
         public virtual IList<Role>  KeyCounterparties { get; protected set; }
         //public virtual IList<Stage> Stages            { get; protected set; }
+        //public virtual IDictionary<Type, Class<Type>> Classes { get; protected set; }
 
         protected DealType() : base()
         {

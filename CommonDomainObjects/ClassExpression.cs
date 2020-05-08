@@ -50,14 +50,21 @@ namespace CommonDomainObjects
 
     public class Class<T>: ClassExpression<T>
     {
-        public Class() : base()
+        public ClassExpression<T> ClassExpression { get; protected set; }
+
+        public Class(
+            ClassExpression<T> classExpression
+            ) : base()
         {
+            ClassExpression = classExpression;
         }
 
         public override bool HasMember(
             T      t,
             object context
-            ) => true;
+            ) => ClassExpression.HasMember(
+                t,
+                context);
     }
 
     public class Intersection<T>: ClassExpression<T>
@@ -263,7 +270,7 @@ namespace CommonDomainObjects
             ) : base(property)
         {
             Cardinality     = cardinality;
-            ClassExpression = classExpression ?? new Class<TProperty>();
+            ClassExpression = classExpression;
         }
     }
     
@@ -284,7 +291,7 @@ namespace CommonDomainObjects
             T      t,
             object context
             ) => Property(t).Count(
-                individual => ClassExpression.HasMember(
+                individual => ClassExpression == null || ClassExpression.HasMember(
                     individual,
                     context)) >= Cardinality;
     }
@@ -306,7 +313,7 @@ namespace CommonDomainObjects
             T      t,
             object context
             ) => Property(t).Count(
-                individual => ClassExpression.HasMember(
+                individual => ClassExpression == null || ClassExpression.HasMember(
                     individual,
                     context)) <= Cardinality;
     }
@@ -328,7 +335,7 @@ namespace CommonDomainObjects
             T      t,
             object context
             ) => Property(t).Count(
-                individual => ClassExpression.HasMember(
+                individual => ClassExpression == null || ClassExpression.HasMember(
                     individual,
                     context)) == Cardinality;
     }
