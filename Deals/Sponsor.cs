@@ -25,5 +25,21 @@ namespace Deals
         {
             Equity = equity;
         }
+              
+        public Sponsor(
+            Deal             deal,
+            Organisation     organisation,
+            Role             role,
+            Range2<DateTime> period,
+            decimal?         equity
+            ) : this(
+                Guid.NewGuid(),
+                deal,
+                organisation,
+                role,
+                period,
+                equity)
+        {
+        }
     }
 }
