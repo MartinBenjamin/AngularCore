@@ -375,4 +375,34 @@ namespace CommonDomainObjects
                     individual,
                     context)) == Cardinality;
     }
+
+    public class ClassAxiom<T>
+    {
+
+    }
+
+    public class EquivalentClasses<T>: ClassAxiom<T>
+    {
+        public ClassExpression<T> SubClassExpression   { get; protected set; }
+        public ClassExpression<T> SuperClassExpression { get; protected set; }
+
+        public EquivalentClasses(
+            ClassExpression<T> subClassExpression,
+            ClassExpression<T> superClassExpression
+            )
+        {
+            SubClassExpression   = subClassExpression;
+            SuperClassExpression = superClassExpression;
+        }
+
+        public bool Validate(
+            T      t,
+            object context
+            )
+        {
+            return
+                !SubClassExpression.HasMember(t, context) ||
+                SuperClassExpression.HasMember(t, context);
+        }
+    }
 }
