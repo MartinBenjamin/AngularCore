@@ -8,9 +8,7 @@ namespace CommonDomainObjects
     {
         Type Type { get; }
 
-        bool HasMember(
-            object o,
-            object context);
+        bool HasMember(object o);
     }
 
     public abstract class ClassExpression<T>: IClassExpression
@@ -18,15 +16,10 @@ namespace CommonDomainObjects
         Type IClassExpression.Type => typeof(T);
 
         bool IClassExpression.HasMember(
-            object o,
-            object context
-            ) => o is T t ? HasMember(
-                t,
-                context) : false;
+            object o
+            ) => o is T t ? HasMember(t) : false;
 
-        public abstract bool HasMember(
-            T      t,
-            object context);
+        public abstract bool HasMember(T t);
 
         protected static Func<T, IEnumerable<TProperty>> AsEnumerable<T, TProperty>(
             Func<T, TProperty> property
@@ -64,11 +57,8 @@ namespace CommonDomainObjects
         }
 
         public override bool HasMember(
-            T      t,
-            object context
-            ) => ClassExpression == null || ClassExpression.HasMember(
-                t,
-                context);
+            T t
+            ) => ClassExpression == null || ClassExpression.HasMember(t);
     }
 
     public class Intersection<T>: ClassExpression<T>
@@ -83,12 +73,8 @@ namespace CommonDomainObjects
         }
 
         public override bool HasMember(
-            T      t,
-            object context
-            ) => ClassExpressions.All(
-                ce => ce.HasMember(
-                    t,
-                    context));
+            T t
+            ) => ClassExpressions.All(ce => ce.HasMember(t));
 
         public Intersection<T> Append(
             ClassExpression<T> classExpression
@@ -111,12 +97,8 @@ namespace CommonDomainObjects
         }
 
         public override bool HasMember(
-            T      t,
-            object context
-            ) => ClassExpressions.Any(
-                ce => ce.HasMember(
-                    t,
-                    context));
+            T t
+            ) => ClassExpressions.Any(ce => ce.HasMember(t));
 
         public Union<T> Append(
             ClassExpression<T> classExpression
@@ -139,11 +121,8 @@ namespace CommonDomainObjects
         }
 
         public override bool HasMember(
-            T      t,
-            object context
-            ) => !ClassExpression.HasMember(
-                t,
-                context);
+            T t
+            ) => !ClassExpression.HasMember(t);
     }
 
     public class OneOf<T>: ClassExpression<T>
@@ -158,8 +137,7 @@ namespace CommonDomainObjects
         }
 
         public override bool HasMember(
-            T      t,
-            object context
+            T t
             ) => Individuals.Contains(t);
     }
 
@@ -197,12 +175,8 @@ namespace CommonDomainObjects
         }
 
         public override bool HasMember(
-            T      t,
-            object context
-            ) => Property(t).Any(
-                individual => ClassExpression.HasMember(
-                    individual,
-                    context));
+            T t
+            ) => Property(t).Any(ClassExpression.HasMember);
     }
 
     public class PropertyAllValues<T, TProperty>: PropertyExpression<T, TProperty>
@@ -227,12 +201,8 @@ namespace CommonDomainObjects
         }
 
         public override bool HasMember(
-            T      t,
-            object context
-            ) => Property(t).All(
-                individual => ClassExpression.HasMember(
-                    individual,
-                    context));
+            T t
+            ) => Property(t).All(ClassExpression.HasMember);
     }
 
     public class PropertyHasValue<T, TProperty>: PropertyExpression<T, TProperty>
@@ -257,8 +227,7 @@ namespace CommonDomainObjects
         }
 
         public override bool HasMember(
-            T      t,
-            object context
+            T t
             ) => Property(t).Contains(Individual);
     }
 
@@ -303,12 +272,8 @@ namespace CommonDomainObjects
         }
 
         public override bool HasMember(
-            T      t,
-            object context
-            ) => Property(t).Count(
-                individual => ClassExpression.HasMember(
-                    individual,
-                    context)) >= Cardinality;
+            T t
+            ) => Property(t).Count(ClassExpression.HasMember) >= Cardinality;
     }
 
     public class PropertyMaxCardinality<T, TProperty>: PropertyCardinalityExpression<T, TProperty>
@@ -336,12 +301,8 @@ namespace CommonDomainObjects
         }
 
         public override bool HasMember(
-            T      t,
-            object context
-            ) => Property(t).Count(
-                individual => ClassExpression.HasMember(
-                    individual,
-                    context)) <= Cardinality;
+            T t
+            ) => Property(t).Count(ClassExpression.HasMember) <= Cardinality;
     }
 
     public class PropertyExactCardinality<T, TProperty>: PropertyCardinalityExpression<T, TProperty>
@@ -368,12 +329,8 @@ namespace CommonDomainObjects
         }
 
         public override bool HasMember(
-            T      t,
-            object context
-            ) => Property(t).Count(
-                individual => ClassExpression.HasMember(
-                    individual,
-                    context)) == Cardinality;
+            T t
+            ) => Property(t).Count(ClassExpression.HasMember) == Cardinality;
     }
 
     public class ClassAxiom<T>
@@ -401,8 +358,8 @@ namespace CommonDomainObjects
             )
         {
             return
-                !SubClassExpression.HasMember(t, context) ||
-                SuperClassExpression.HasMember(t, context);
+                !SubClassExpression.HasMember(t) ||
+                SuperClassExpression.HasMember(t);
         }
     }
 }

@@ -17,28 +17,28 @@ namespace Deals
         }
     }
 
-    public class ActiveFromStage<T>: ClassExpressionDecorator<T>
-    {
-        private int _stageIndex;
+    //public class ActiveFromStage<T>: ClassAxiom<T>
+    //{
+    //    private int _stageIndex;
 
-        public ActiveFromStage(
-            ClassExpression<T> decorated,
-            int                stageIndex
-            ): base(decorated)
-        {
-            _stageIndex = stageIndex;
-        }
+    //    public ActiveFromStage(
+    //        ClassExpression<T> decorated,
+    //        int                stageIndex
+    //        ): base(decorated)
+    //    {
+    //        _stageIndex = stageIndex;
+    //    }
 
-        public override bool HasMember(
-            T      t,
-            object context
-            )
-        {
-            var stageIndex = (int)context;
+    //    public override bool HasMember(
+    //        T      t,
+    //        object context
+    //        )
+    //    {
+    //        var stageIndex = (int)context;
 
-            return stageIndex < _stageIndex || _decorated.HasMember(t, context);
-        }
-    }
+    //        return stageIndex < _stageIndex || _decorated.HasMember(t, context);
+    //    }
+    //}
 
     public static class ClassExpressionExtensions
     {
