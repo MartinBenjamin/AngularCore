@@ -64,20 +64,17 @@ namespace Deals
         public static ClassExpression<Deal> SponsorsMinCardinality = new PropertyMinCardinality<Deal, DealParty>(
             deal => deal.Parties,
             1,
-            SponsorParty).ActiveFromStage(3);
+            SponsorParty);
 
-        public static ClassExpression<Deal> Deal = new Intersection<Deal>()
-            .Append(
-                SponsorsMinCardinality);
+        public static ClassAxiom<Deal> x = new SubClass<Deal>(
+            new Class<Deal>(),
+            SponsorsMinCardinality);
 
-        public static ClassExpression<Sponsor> Sponsor = new Intersection<Sponsor>()
-            .Append(
-                new PropertyExactCardinality<Sponsor, decimal?>(
+        public static ClassAxiom<Sponsor> y = new SubClass<Sponsor>(
+            new Class<Sponsor>(),
+            new PropertyExactCardinality<Sponsor, decimal?>(
                     sponsor => sponsor.Equity,
                     1));
-        public static ClassAxiom<Deal> x = new EquivalentClasses<Deal>(
-            SponsorsMinCardinality,
-            new Class<Deal>());
     }
 
     public class SubGraph

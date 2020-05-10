@@ -333,17 +333,17 @@ namespace CommonDomainObjects
             ) => Property(t).Count(ClassExpression.HasMember) == Cardinality;
     }
 
-    public class ClassAxiom<T>
+    public abstract class ClassAxiom<T>
     {
-
+        public abstract bool Validate(T t);
     }
 
-    public class EquivalentClasses<T>: ClassAxiom<T>
+    public class SubClass<T>: ClassAxiom<T>
     {
         public ClassExpression<T> SubClassExpression   { get; protected set; }
         public ClassExpression<T> SuperClassExpression { get; protected set; }
 
-        public EquivalentClasses(
+        public SubClass(
             ClassExpression<T> subClassExpression,
             ClassExpression<T> superClassExpression
             )
@@ -352,9 +352,8 @@ namespace CommonDomainObjects
             SuperClassExpression = superClassExpression;
         }
 
-        public bool Validate(
-            T      t,
-            object context
+        public override bool Validate(
+            T t
             )
         {
             return
