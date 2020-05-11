@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace CommonDomainObjects
 {
@@ -143,13 +144,23 @@ namespace CommonDomainObjects
 
     public abstract class PropertyExpression<T, TProperty>: ClassExpression<T>
     {
+        public string Name { get; protected set; }
+
         public Func<T, IEnumerable<TProperty>> Property { get; protected set; }
 
         protected PropertyExpression(
-            Func<T, IEnumerable<TProperty>> property
+            Expression<Func<T, IEnumerable<TProperty>>> property
             )
         {
-            Property = property;
+            Name = property.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TProperty).Name;
+            Property = property.Compile();
+        }
+        protected PropertyExpression(
+            Expression<Func<T, TProperty>> property
+            )
+        {
+            Name = property.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TProperty).Name;
+            Property = AsEnumerable(property.Compile());
         }
     }
 
@@ -158,20 +169,19 @@ namespace CommonDomainObjects
         public ClassExpression<TProperty> ClassExpression { get; protected set; }
 
         public PropertySomeValues(
-            Func<T, IEnumerable<TProperty>> property,
-            ClassExpression<TProperty>      classExpression
+            Expression<Func<T, IEnumerable<TProperty>>> property,
+            ClassExpression<TProperty>                  classExpression
             ) : base(property)
         {
             ClassExpression = classExpression;
         }
 
         public PropertySomeValues(
-            Func<T, TProperty>         property,
-            ClassExpression<TProperty> classExpression
-            ) : this(
-                AsEnumerable(property),
-                classExpression)
+            Expression<Func<T, TProperty>> property,
+            ClassExpression<TProperty>     classExpression
+            ) : base(property)
         {
+            ClassExpression = classExpression;
         }
 
         public override bool HasMember(
@@ -184,7 +194,7 @@ namespace CommonDomainObjects
         public ClassExpression<TProperty> ClassExpression { get; protected set; }
 
         public PropertyAllValues(
-            Func<T, IEnumerable<TProperty>> property,
+            Expression<Func<T, IEnumerable<TProperty>>> property,
             ClassExpression<TProperty>      classExpression
             ) : base(property)
         {
@@ -192,12 +202,11 @@ namespace CommonDomainObjects
         }
 
         public PropertyAllValues(
-            Func<T, TProperty>         property,
-            ClassExpression<TProperty> classExpression
-            ) : this(
-                AsEnumerable(property),
-                classExpression)
+            Expression<Func<T, TProperty>> property,
+            ClassExpression<TProperty>     classExpression
+            ) : base(property)
         {
+            ClassExpression = classExpression;
         }
 
         public override bool HasMember(
@@ -210,7 +219,7 @@ namespace CommonDomainObjects
         public TProperty Individual { get; protected set; }
 
         public PropertyHasValue(
-            Func<T, IEnumerable<TProperty>> property,
+            Expression<Func<T, IEnumerable<TProperty>>> property,
             TProperty                       individual
             ) : base(property)
         {
@@ -218,12 +227,11 @@ namespace CommonDomainObjects
         }
 
         public PropertyHasValue(
-            Func<T, TProperty> property,
-            TProperty          individual
-            ) : this(
-                AsEnumerable(property),
-                individual)
+            Expression<Func<T, TProperty>> property,
+            TProperty                      individual
+            ) : base(property)
         {
+            Individual = individual;
         }
 
         public override bool HasMember(
@@ -237,9 +245,19 @@ namespace CommonDomainObjects
         public ClassExpression<TProperty> ClassExpression { get; protected set; }
 
         public PropertyCardinalityExpression(
-            Func<T, IEnumerable<TProperty>> property,
+            Expression<Func<T, IEnumerable<TProperty>>> property,
             int                             cardinality,
             ClassExpression<TProperty>      classExpression
+            ) : base(property)
+        {
+            Cardinality     = cardinality;
+            ClassExpression = classExpression ?? new Class<TProperty>();
+        }
+
+        public PropertyCardinalityExpression(
+            Expression<Func<T, TProperty>> property,
+            int                            cardinality,
+            ClassExpression<TProperty>     classExpression
             ) : base(property)
         {
             Cardinality     = cardinality;
@@ -250,7 +268,7 @@ namespace CommonDomainObjects
     public class PropertyMinCardinality<T, TProperty>: PropertyCardinalityExpression<T, TProperty>
     {
         public PropertyMinCardinality(
-            Func<T, IEnumerable<TProperty>> property,
+            Expression<Func<T, IEnumerable<TProperty>>> property,
             int                             cardinality,
             ClassExpression<TProperty>      classExpression = null
             ) : base(
@@ -261,11 +279,11 @@ namespace CommonDomainObjects
         }
 
         public PropertyMinCardinality(
-            Func<T, TProperty>         property,
-            int                        cardinality,
-            ClassExpression<TProperty> classExpression = null
-            ) : this(
-                AsEnumerable(property),
+            Expression<Func<T, TProperty>> property,
+            int                            cardinality,
+            ClassExpression<TProperty>     classExpression = null
+            ) : base(
+                property,
                 cardinality,
                 classExpression)
         {
@@ -279,7 +297,7 @@ namespace CommonDomainObjects
     public class PropertyMaxCardinality<T, TProperty>: PropertyCardinalityExpression<T, TProperty>
     {
         public PropertyMaxCardinality(
-            Func<T, IEnumerable<TProperty>> property,
+            Expression<Func<T, IEnumerable<TProperty>>> property,
             int                             cardinality,
             ClassExpression<TProperty>      classExpression = null
             ) : base(
@@ -290,11 +308,11 @@ namespace CommonDomainObjects
         }
 
         public PropertyMaxCardinality(
-            Func<T, TProperty>         property,
-            int                        cardinality,
-            ClassExpression<TProperty> classExpression = null
-            ) : this(
-                AsEnumerable(property),
+            Expression<Func<T, TProperty>> property,
+            int                            cardinality,
+            ClassExpression<TProperty>     classExpression = null
+            ) : base(
+                property,
                 cardinality,
                 classExpression)
         {
@@ -308,7 +326,7 @@ namespace CommonDomainObjects
     public class PropertyExactCardinality<T, TProperty>: PropertyCardinalityExpression<T, TProperty>
     {
         public PropertyExactCardinality(
-            Func<T, IEnumerable<TProperty>> property,
+            Expression<Func<T, IEnumerable<TProperty>>> property,
             int                             cardinality,
             ClassExpression<TProperty>      classExpression = null
             ) : base(
@@ -318,11 +336,11 @@ namespace CommonDomainObjects
         {
         }
         public PropertyExactCardinality(
-            Func<T, TProperty>         property,
-            int                        cardinality,
-            ClassExpression<TProperty> classExpression = null
+            Expression<Func<T, TProperty>> property,
+            int                            cardinality,
+            ClassExpression<TProperty>     classExpression = null
             ) : base(
-                AsEnumerable(property),
+                property,
                 cardinality,
                 classExpression)
         {

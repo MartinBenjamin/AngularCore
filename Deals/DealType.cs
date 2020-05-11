@@ -73,8 +73,8 @@ namespace Deals
         public static ClassAxiom<Sponsor> y = new SubClass<Sponsor>(
             new Class<Sponsor>(),
             new PropertyExactCardinality<Sponsor, decimal?>(
-                    sponsor => sponsor.Equity,
-                    1));
+                sponsor => sponsor.Equity,
+                1));
     }
 
     public class SubGraph
