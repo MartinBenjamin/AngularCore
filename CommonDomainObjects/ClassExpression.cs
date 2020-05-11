@@ -333,8 +333,21 @@ namespace CommonDomainObjects
             ) => Property(t).Count(ClassExpression.HasMember) == Cardinality;
     }
 
-    public abstract class ClassAxiom<T>
+    public interface IClassAxiom
     {
+        Type Type { get; }
+
+        bool Validate(object o);
+    }
+
+    public abstract class ClassAxiom<T>: IClassAxiom
+    {
+        Type IClassAxiom.Type => typeof(T);
+
+        bool IClassAxiom.Validate(
+            object o
+            ) => o is T t ? Validate(t) : false;
+
         public abstract bool Validate(T t);
     }
 
