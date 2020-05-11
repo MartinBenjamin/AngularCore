@@ -19,12 +19,16 @@ namespace Deals
         }
 
         protected Deal(
-            Guid   id,
-            string name
+            Guid     id,
+            string   name,
+            DealType type,
+            Stage    stage
             ) : base(
                 id,
                 name)
         {
+            Type        = type;
+            Stage       = stage;
             Agreements  = new List<Agreement >();
             Parties     = new List<DealParty >();
             Commitments = new List<Commitment>();
