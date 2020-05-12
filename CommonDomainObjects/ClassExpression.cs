@@ -186,7 +186,7 @@ namespace CommonDomainObjects
 
         public PropertyAllValues(
             Expression<Func<T, IEnumerable<TProperty>>> property,
-            ClassExpression<TProperty>      classExpression
+            ClassExpression<TProperty>                  classExpression
             ) : base(property)
         {
             ClassExpression = classExpression;
@@ -211,7 +211,7 @@ namespace CommonDomainObjects
 
         public PropertyHasValue(
             Expression<Func<T, IEnumerable<TProperty>>> property,
-            TProperty                       individual
+            TProperty                                   individual
             ) : base(property)
         {
             Individual = individual;
