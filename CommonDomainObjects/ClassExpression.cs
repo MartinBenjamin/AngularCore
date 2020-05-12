@@ -242,7 +242,7 @@ namespace CommonDomainObjects
             ) : base(property)
         {
             Cardinality     = cardinality;
-            ClassExpression = classExpression ?? new Class<TProperty>();
+            ClassExpression = classExpression;
         }
 
         public PropertyCardinalityExpression(
@@ -252,8 +252,12 @@ namespace CommonDomainObjects
             ) : base(property)
         {
             Cardinality     = cardinality;
-            ClassExpression = classExpression ?? new Class<TProperty>();
+            ClassExpression = classExpression;
         }
+
+        protected int Count(
+            T t
+            ) => ClassExpression != null ? Property(t).Count(ClassExpression.HasMember) : Property(t).Count(); 
     }
     
     public class PropertyMinCardinality<T, TProperty>: PropertyCardinalityExpression<T, TProperty>
@@ -282,7 +286,7 @@ namespace CommonDomainObjects
 
         public override bool HasMember(
             T t
-            ) => Property(t).Count(ClassExpression.HasMember) >= Cardinality;
+            ) => Count(t) >= Cardinality;
     }
 
     public class PropertyMaxCardinality<T, TProperty>: PropertyCardinalityExpression<T, TProperty>
@@ -311,7 +315,7 @@ namespace CommonDomainObjects
 
         public override bool HasMember(
             T t
-            ) => Property(t).Count(ClassExpression.HasMember) <= Cardinality;
+            ) => Count(t) <= Cardinality;
     }
 
     public class PropertyExactCardinality<T, TProperty>: PropertyCardinalityExpression<T, TProperty>
@@ -339,7 +343,7 @@ namespace CommonDomainObjects
 
         public override bool HasMember(
             T t
-            ) => Property(t).Count(ClassExpression.HasMember) == Cardinality;
+            ) => Count(t) == Cardinality;
     }
 
     public interface IClassAxiom

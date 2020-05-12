@@ -58,8 +58,8 @@ namespace Deals
             DealRoleIdentifier.Sponsor);
 
         public static ClassExpression<DealParty> SponsorParty = new PropertyAllValues<DealParty, Role>(
-                dealParty => dealParty.Role,
-                SponsorRole);
+            dealParty => dealParty.Role,
+            SponsorRole);
 
         public static ClassExpression<Deal> SponsorsMinCardinality = new PropertyMinCardinality<Deal, DealParty>(
             deal => deal.Parties,
