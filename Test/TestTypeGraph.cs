@@ -33,5 +33,24 @@ namespace Test
             Assert.That(x, Is.Not.Null);
             Assert.That(x, Is.EqualTo(0));
         }
+
+        [TestCase(null , false)]
+        [TestCase(""   , false)]
+        [TestCase("a"  , true )]
+        [TestCase("ab" , true )]
+        [TestCase("abc", true )]
+        public void TestX(
+            string value,
+            bool   result
+            )
+        {
+            var d = new Deal(
+                Guid.NewGuid(),
+                value,
+                null,
+                null);
+
+            Assert.That(PF.DealNameMandatory.Validate(d), Is.EqualTo(result));
+        }
     }
 }

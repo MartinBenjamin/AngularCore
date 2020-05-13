@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Deals
 {
-    public abstract class Deal: Named<Guid>
+    public class Deal: Named<Guid>
     {
         public virtual string            Class       { get; protected set; }
         public virtual DealType          Type        { get; protected set; }
@@ -19,7 +19,7 @@ namespace Deals
         {
         }
 
-        protected Deal(
+        public Deal(
             Guid     id,
             string   name,
             DealType type,

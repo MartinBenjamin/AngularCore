@@ -78,6 +78,12 @@ namespace Deals
 
         public static Class<Deal> Deal = new Class<Deal>();
 
+        public static ClassAxiom<Deal> DealNameMandatory = new SubClass<Deal>(
+            Deal,
+            new PropertySomeValues<Deal, string>(
+                deal => deal.Name,
+                new Complement<string>(new OneOf<string>(string.Empty))));
+
         public static Class<Deal> Debt = new Class<Deal>(
             new PropertyExactCardinality<Deal, DealParty>(
                 deal => deal.Parties,
