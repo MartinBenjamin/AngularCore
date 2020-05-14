@@ -44,22 +44,18 @@ namespace CommonDomainObjects
 
     public class Class<T>: ClassExpression<T>
     {
-        public ClassExpression<T> ClassExpression { get; protected set; }
-
-        public Class()
-        {
-        }
+        public IList<ClassExpression<T>> ClassExpressions { get; protected set; }
 
         public Class(
-            ClassExpression<T> classExpression
+            params ClassExpression<T>[] classExpressions
             ) : base()
         {
-            ClassExpression = classExpression;
+            ClassExpressions = classExpressions;
         }
 
         public override bool HasMember(
             T t
-            ) => ClassExpression == null || ClassExpression.HasMember(t);
+            ) => ClassExpressions.All(classExpression => classExpression.HasMember(t));
     }
 
     public class IntersectionOf<T>: ClassExpression<T>
