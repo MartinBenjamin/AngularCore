@@ -63,18 +63,25 @@ namespace Deals
         public static ClassExpression<Role> LenderRole = new PropertyValue<Role, Guid>(
             role => role.Id,
             DealRoleIdentifier.Lender);
-
+        public static ClassExpression<Role> AdvisorRole = new PropertyValue<Role, Guid>(
+            role => role.Id,
+            DealRoleIdentifier.Advisor);
         public static ClassExpression<Organisation> Mufg = new PropertyValue<Organisation, Guid>(
             legalEntity => legalEntity.Id,
             LegalEntityIdentifier.Mufg);
-
-        public static ClassExpression<DealParty> MufgAsLender = new IntersectionOf<DealParty>(
+        public static ClassExpression<DealParty> MufgParty = new PropertySomeValuesFrom<DealParty, Organisation>(
+            dealParty => dealParty.Organisation,
+            Mufg);
+        public static ClassExpression<DealParty> MufgLenderParty = new IntersectionOf<DealParty>(
             new PropertySomeValuesFrom<DealParty, Role>(
                 dealParty => dealParty.Role,
                 LenderRole),
-            new PropertySomeValuesFrom<DealParty, Organisation>(
-                dealParty => dealParty.Organisation,
-                Mufg));
+            MufgParty);
+        public static ClassExpression<DealParty> MufgAdvisorParty = new IntersectionOf<DealParty>(
+            new PropertySomeValuesFrom<DealParty, Role>(
+                dealParty => dealParty.Role,
+                AdvisorRole),
+            MufgParty);
 
         public static Class<Deal> Deal = new Class<Deal>();
 
@@ -88,7 +95,12 @@ namespace Deals
             new PropertyExactCardinality<Deal, DealParty>(
                 deal => deal.Parties,
                 1,
-                MufgAsLender));
+                MufgLenderParty));
+        public static Class<Deal> Advisory = new Class<Deal>(
+            new PropertyExactCardinality<Deal, DealParty>(
+                deal => deal.Parties,
+                1,
+                MufgAdvisorParty));
 
         public static ClassAxiom<Deal> DebtInheritsFromDeal = new SubClass<Deal>(
             Debt,
