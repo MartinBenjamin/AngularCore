@@ -62,11 +62,11 @@ namespace CommonDomainObjects
             ) => ClassExpression == null || ClassExpression.HasMember(t);
     }
 
-    public class Intersection<T>: ClassExpression<T>
+    public class IntersectionOf<T>: ClassExpression<T>
     {
         public IList<ClassExpression<T>> ClassExpressions { get; protected set; }
 
-        public Intersection(
+        public IntersectionOf(
             params ClassExpression<T>[] classExpressions
             )
         {
@@ -77,7 +77,7 @@ namespace CommonDomainObjects
             T t
             ) => ClassExpressions.All(ce => ce.HasMember(t));
 
-        public Intersection<T> Append(
+        public IntersectionOf<T> Append(
             ClassExpression<T> classExpression
             )
         {
@@ -86,11 +86,11 @@ namespace CommonDomainObjects
         }
     }
 
-    public class Union<T>: ClassExpression<T>
+    public class UnionOf<T>: ClassExpression<T>
     {
         public IList<ClassExpression<T>> ClassExpressions { get; protected set; }
 
-        public Union(
+        public UnionOf(
             params ClassExpression<T>[] classExpressions
             )
         {
@@ -101,7 +101,7 @@ namespace CommonDomainObjects
             T t
             ) => ClassExpressions.Any(ce => ce.HasMember(t));
 
-        public Union<T> Append(
+        public UnionOf<T> Append(
             ClassExpression<T> classExpression
             )
         {
@@ -110,11 +110,11 @@ namespace CommonDomainObjects
         }
     }
 
-    public class Complement<T>: ClassExpression<T>
+    public class ComplementOf<T>: ClassExpression<T>
     {
         public ClassExpression<T> ClassExpression { get; protected set; }
 
-        public Complement(
+        public ComplementOf(
             ClassExpression<T> classExpression
             )
         {
@@ -164,11 +164,11 @@ namespace CommonDomainObjects
         }
     }
 
-    public class PropertySomeValues<T, TProperty>: PropertyExpression<T, TProperty>
+    public class PropertySomeValuesFrom<T, TProperty>: PropertyExpression<T, TProperty>
     {
         public ClassExpression<TProperty> ClassExpression { get; protected set; }
 
-        public PropertySomeValues(
+        public PropertySomeValuesFrom(
             Expression<Func<T, IEnumerable<TProperty>>> property,
             ClassExpression<TProperty>                  classExpression
             ) : base(property)
@@ -176,7 +176,7 @@ namespace CommonDomainObjects
             ClassExpression = classExpression;
         }
 
-        public PropertySomeValues(
+        public PropertySomeValuesFrom(
             Expression<Func<T, TProperty>> property,
             ClassExpression<TProperty>     classExpression
             ) : base(property)
@@ -189,11 +189,11 @@ namespace CommonDomainObjects
             ) => Property(t).Any(ClassExpression.HasMember);
     }
 
-    public class PropertyAllValues<T, TProperty>: PropertyExpression<T, TProperty>
+    public class PropertyAllValuesFrom<T, TProperty>: PropertyExpression<T, TProperty>
     {
         public ClassExpression<TProperty> ClassExpression { get; protected set; }
 
-        public PropertyAllValues(
+        public PropertyAllValuesFrom(
             Expression<Func<T, IEnumerable<TProperty>>> property,
             ClassExpression<TProperty>                  classExpression
             ) : base(property)
@@ -201,7 +201,7 @@ namespace CommonDomainObjects
             ClassExpression = classExpression;
         }
 
-        public PropertyAllValues(
+        public PropertyAllValuesFrom(
             Expression<Func<T, TProperty>> property,
             ClassExpression<TProperty>     classExpression
             ) : base(property)
@@ -214,11 +214,11 @@ namespace CommonDomainObjects
             ) => Property(t).All(ClassExpression.HasMember);
     }
 
-    public class PropertyHasValue<T, TProperty>: PropertyExpression<T, TProperty>
+    public class PropertyValue<T, TProperty>: PropertyExpression<T, TProperty>
     {
         public TProperty Individual { get; protected set; }
 
-        public PropertyHasValue(
+        public PropertyValue(
             Expression<Func<T, IEnumerable<TProperty>>> property,
             TProperty                                   individual
             ) : base(property)
@@ -226,7 +226,7 @@ namespace CommonDomainObjects
             Individual = individual;
         }
 
-        public PropertyHasValue(
+        public PropertyValue(
             Expression<Func<T, TProperty>> property,
             TProperty                      individual
             ) : base(property)

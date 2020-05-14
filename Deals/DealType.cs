@@ -60,19 +60,19 @@ namespace Deals
 
     public static class PF
     {
-        public static ClassExpression<Role> LenderRole = new PropertyHasValue<Role, Guid>(
+        public static ClassExpression<Role> LenderRole = new PropertyValue<Role, Guid>(
             role => role.Id,
             DealRoleIdentifier.Lender);
 
-        public static ClassExpression<Organisation> Mufg = new PropertyHasValue<Organisation, Guid>(
+        public static ClassExpression<Organisation> Mufg = new PropertyValue<Organisation, Guid>(
             legalEntity => legalEntity.Id,
             LegalEntityIdentifier.Mufg);
 
-        public static ClassExpression<DealParty> MufgAsLender = new Intersection<DealParty>(
-            new PropertySomeValues<DealParty, Role>(
+        public static ClassExpression<DealParty> MufgAsLender = new IntersectionOf<DealParty>(
+            new PropertySomeValuesFrom<DealParty, Role>(
                 dealParty => dealParty.Role,
                 LenderRole),
-            new PropertySomeValues<DealParty, Organisation>(
+            new PropertySomeValuesFrom<DealParty, Organisation>(
                 dealParty => dealParty.Organisation,
                 Mufg));
 
@@ -80,9 +80,9 @@ namespace Deals
 
         public static ClassAxiom<Deal> DealNameMandatory = new SubClass<Deal>(
             Deal,
-            new PropertySomeValues<Deal, string>(
+            new PropertySomeValuesFrom<Deal, string>(
                 deal => deal.Name,
-                new Complement<string>(new OneOf<string>(string.Empty))));
+                new ComplementOf<string>(new OneOf<string>(string.Empty))));
 
         public static Class<Deal> Debt = new Class<Deal>(
             new PropertyExactCardinality<Deal, DealParty>(
@@ -94,11 +94,11 @@ namespace Deals
             Debt,
             Deal);
 
-        public static ClassExpression<Role> SponsorRole = new PropertyHasValue<Role, Guid>(
+        public static ClassExpression<Role> SponsorRole = new PropertyValue<Role, Guid>(
             role => role.Id,
             DealRoleIdentifier.Sponsor);
 
-        public static ClassExpression<DealParty> SponsorParty = new PropertySomeValues<DealParty, Role>(
+        public static ClassExpression<DealParty> SponsorParty = new PropertySomeValuesFrom<DealParty, Role>(
             dealParty => dealParty.Role,
             SponsorRole);
 
@@ -112,7 +112,7 @@ namespace Deals
         //    "ProjectFinance");
 
         public static Class<Deal> ProjectFinance = new Class<Deal>(
-            new PropertyHasValue<Deal, string>(
+            new PropertyValue<Deal, string>(
                 deal => deal.Class,
                 "ProjectFinance"));
         // Use for configuration.
