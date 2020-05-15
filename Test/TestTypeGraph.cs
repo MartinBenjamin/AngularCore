@@ -47,10 +47,25 @@ namespace Test
             var d = new Deal(
                 Guid.NewGuid(),
                 value,
+                "ProjectFinance",
                 null,
                 null);
 
+            Assert.That(PF.Classify(d).Contains(PF.ProjectFinance));
             Assert.That(PF.NameMandatory.Validate(d), Is.EqualTo(result));
+
+            var failed = (
+                from @class in PF.Classify(d)
+                from axiom in @class.Axioms
+                where !axiom.Validate(d)
+                select axiom
+            );
+
+            if(!result)
+                Assert.That(failed, Does.Contain(PF.NameMandatory));
+
+            else
+                Assert.That(failed, Does.Not.Contain(PF.NameMandatory));
         }
     }
 }

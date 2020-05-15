@@ -58,8 +58,10 @@ namespace Deals
         public static readonly Guid Mufg = Guid.Empty;
     }
 
-    public static class PF
+    public class PF
     {
+        public static IList<IClassExpression> Classes = new List<IClassExpression>();
+
         // Abstract Syntax does not support annotation of SubClass Axioms.
         // Functional Syntax does not support Class Axioms with nested descriptions.
         public static ClassExpression<Role> LenderRole = new PropertyValue<Role, Guid>(
@@ -123,7 +125,7 @@ namespace Deals
 
         public static Class<Deal> ProjectFinance = new Class<Deal>(
             new PropertyValue<Deal, string>(
-                deal => deal.Class,
+                deal => deal.ClassName,
                 "ProjectFinance"));
         public static ClassAxiom<Deal> ProjectFinanceSubClassOfDebt = new SubClass<Deal>(
             ProjectFinance,
@@ -132,11 +134,29 @@ namespace Deals
             ProjectFinance,
             SponsorsMinCardinality);
 
-        public static ClassAxiom<Sponsor> y = new SubClass<Sponsor>(
-            new Class<Sponsor>(),
+        public static Class<Sponsor> Sponsor = new Class<Sponsor>();
+        public static ClassAxiom<Sponsor> SponsorEquityMandatory = new SubClass<Sponsor>(
+            Sponsor,
             new PropertyExactCardinality<Sponsor, decimal?>(
                 sponsor => sponsor.Equity,
                 1));
+
+        static PF()
+        {
+            Classes = new List<IClassExpression>
+            {
+                Deal,
+                ProjectFinance,
+                Sponsor
+            };
+        }
+
+        public static IEnumerable<IClassExpression> Classify(
+            object o
+            )
+        {
+            return from ce in Classes where ce.Type == o.GetType() && ce.HasMember(o) select ce;
+        }
     }
 
     public class SubGraph

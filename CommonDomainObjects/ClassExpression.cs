@@ -10,15 +10,21 @@ namespace CommonDomainObjects
         Type Type { get; }
 
         bool HasMember(object o);
+
+        IEnumerable<IClassAxiom> Axioms { get; }
     }
 
     public abstract class ClassExpression<T>: IClassExpression
     {
+        public IList<ClassAxiom<T>> Axioms { get; protected set; } = new List<ClassAxiom<T>>();
+
         Type IClassExpression.Type => typeof(T);
 
         bool IClassExpression.HasMember(
             object o
             ) => o is T t ? HasMember(t) : false;
+
+        IEnumerable<IClassAxiom> IClassExpression.Axioms => Axioms;
 
         public abstract bool HasMember(T t);
 
@@ -335,6 +341,7 @@ namespace CommonDomainObjects
                 classExpression)
         {
         }
+
         public PropertyExactCardinality(
             Expression<Func<T, TProperty>> property,
             int                            cardinality,
@@ -381,6 +388,8 @@ namespace CommonDomainObjects
         {
             SubClassExpression   = subClassExpression;
             SuperClassExpression = superClassExpression;
+
+            SubClassExpression.Axioms.Add(this);
         }
 
         public override bool Validate(

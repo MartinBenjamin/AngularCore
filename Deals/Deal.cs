@@ -6,7 +6,7 @@ namespace Deals
 {
     public class Deal: Named<Guid>
     {
-        public virtual string            Class       { get; protected set; }
+        public virtual string            ClassName   { get; protected set; }
         public virtual DealType          Type        { get; protected set; }
         public virtual IList<Agreement>  Agreements  { get; protected set; }
         public virtual IList<DealParty>  Parties     { get; protected set; }
@@ -22,12 +22,14 @@ namespace Deals
         public Deal(
             Guid     id,
             string   name,
+            string   className,
             DealType type,
             Stage    stage
             ) : base(
                 id,
                 name)
         {
+            ClassName   = className;
             Type        = type;
             Stage       = stage;
             Agreements  = new List<Agreement >();
