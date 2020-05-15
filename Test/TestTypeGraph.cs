@@ -52,6 +52,7 @@ namespace Test
                 null);
 
             Assert.That(PF.Classify(d).Contains(PF.ProjectFinance));
+            Assert.That(PF.ProjectFinance.Axioms, Does.Contain(PF.x));
             Assert.That(PF.NameMandatory.Validate(d), Is.EqualTo(result));
 
             var failed = (
@@ -66,6 +67,8 @@ namespace Test
 
             else
                 Assert.That(failed, Does.Not.Contain(PF.NameMandatory));
+
+            Assert.That(failed, Does.Contain(PF.x));
         }
     }
 }
