@@ -50,7 +50,7 @@ namespace Test
                 null,
                 null);
 
-            Assert.That(PF.DealNameMandatory.Validate(d), Is.EqualTo(result));
+            Assert.That(PF.NameMandatory.Validate(d), Is.EqualTo(result));
         }
     }
 }

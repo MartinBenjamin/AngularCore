@@ -60,6 +60,8 @@ namespace Deals
 
     public static class PF
     {
+        // Abstract Syntax does not support annotation of SubClass Axioms.
+        // Functional Syntax does not support Class Axioms with nested descriptions.
         public static ClassExpression<Role> LenderRole = new PropertyValue<Role, Guid>(
             role => role.Id,
             DealRoleIdentifier.Lender);
@@ -85,7 +87,7 @@ namespace Deals
 
         public static Class<Deal> Deal = new Class<Deal>();
 
-        public static ClassAxiom<Deal> DealNameMandatory = new SubClass<Deal>(
+        public static ClassAxiom<Deal> NameMandatory = new SubClass<Deal>(
             Deal,
             new PropertySomeValuesFrom<Deal, string>(
                 deal => deal.Name,
@@ -119,22 +121,17 @@ namespace Deals
             1,
             SponsorParty);
 
-        //public static ClassExpression<Deal> ProjectFinance = new PropertyHasValue<Deal, string>(
-        //    deal => deal.Class,
-        //    "ProjectFinance");
-
         public static Class<Deal> ProjectFinance = new Class<Deal>(
             new PropertyValue<Deal, string>(
                 deal => deal.Class,
                 "ProjectFinance"));
-        // Use for configuration.
         public static ClassAxiom<Deal> ProjectFinanceSubClassOfDebt = new SubClass<Deal>(
             ProjectFinance,
             Debt);
-        // Use for validation.
         public static ClassAxiom<Deal> x = new SubClass<Deal>(
             ProjectFinance,
             SponsorsMinCardinality);
+
         public static ClassAxiom<Sponsor> y = new SubClass<Sponsor>(
             new Class<Sponsor>(),
             new PropertyExactCardinality<Sponsor, decimal?>(
