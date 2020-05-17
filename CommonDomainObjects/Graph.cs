@@ -245,6 +245,7 @@ namespace CommonDomainObjects
     }
 
     public class ManyToOneEdge<TOut, TIn>: Edge
+        where TIn: class
     {
         private Func<TOut, TIn> _selectIncoming;
 
@@ -260,6 +261,6 @@ namespace CommonDomainObjects
 
         public override IEnumerable<object> SelectIn(
             object @out
-            ) => _selectIncoming((TOut)@out).ToEnumerable().Cast<object>();
+            ) => _selectIncoming((TOut)@out).ToEnumerable();
     }
 }

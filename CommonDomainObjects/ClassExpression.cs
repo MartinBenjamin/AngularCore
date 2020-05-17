@@ -28,6 +28,16 @@ namespace CommonDomainObjects
 
         public abstract bool HasMember(T t);
 
+        public IEnumerable<ClassExpression<T>> GetSuperClasses()
+        {
+            foreach(var subClassAxiom in Axioms.OfType<SubClass<T>>())
+            {
+                yield return subClassAxiom.SuperClassExpression;
+                foreach(var superClass in subClassAxiom.SuperClassExpression.GetSuperClasses())
+                    yield return superClass;
+            }
+        }
+
         protected static Func<T, IEnumerable<TProperty>> AsEnumerable<T, TProperty>(
             Func<T, TProperty> property
             )
