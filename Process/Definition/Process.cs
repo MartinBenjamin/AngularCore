@@ -18,12 +18,7 @@ namespace Process.Definition
         {
         }
 
-        public virtual global::Process.Process New(
-            global::Process.Process parent
-            )
-        {
-            throw new NotImplementedException();
-        }
+        public abstract global::Process.Process New(global::Process.Process parent);
 
         public override string ToString()
         {
