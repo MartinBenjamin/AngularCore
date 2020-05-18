@@ -15,5 +15,9 @@ namespace Process.Definition
             : base(id)
         {
         }
+
+        public override bool Accept(
+            IVisitor visitor
+            ) => visitor.Enter(this);
     }
 }

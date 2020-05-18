@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace Process.Definition
 {
@@ -11,7 +10,7 @@ namespace Process.Definition
         public IO      Guard           { get; set; }
         public Process Guarded         { get; set; }
 
-        private Expression<Func<global::Process.Process, bool>> _guardExpression;
+        internal Expression<Func<global::Process.Process, bool>> _guardExpression;
 
         public GuardedProcess()
             : base()
@@ -59,30 +58,16 @@ namespace Process.Definition
 
         public override global::Process.Process New(
             global::Process.Process parent
-            )
-        {
-            return new global::Process.GuardedProcess(
+            ) => new global::Process.GuardedProcess(
                 this,
                 (global::Process.Choice)parent);
-        }
 
-        public override void ToString(
-            StringBuilder builder
-            )
-        {
-            var guardExpression = (object)_guardExpression ?? GuardExpression;
-            if(guardExpression != null)
-                builder.AppendFormat(
-                    "({0})&",
-                    guardExpression);
-
-            Guard.ToString(builder);
-
-            if(Guarded != null)
-            {
-                builder.Append("->");
-                Guarded.ToString(builder);
-            }
-        }
+        public override bool Accept(
+            IVisitor visitor
+            ) =>
+                visitor.Enter(this) &&
+                Guard.Accept(visitor) &&
+                (Guarded == null || Guarded.Accept(visitor)) &&
+                visitor.Exit(this);
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Process.Definition
 {
@@ -51,26 +50,25 @@ namespace Process.Definition
         {
         }
 
-        public override IEnumerable<global::Process.Alternative> NewAlternatives(
-            global::Process.Process parent
+        public override bool Accept(
+            IVisitor visitor
             )
         {
-            return Alternatives
-                .Select(alternative => alternative.New(parent))
-                .Cast<global::Process.Alternative>();
+            if(!visitor.Enter(this))
+                return false;
+
+            foreach(var alternative in Alternatives)
+                if(!alternative.Accept(visitor))
+                    return false;
+
+            return visitor.Exit(this);
         }
 
-        public override void ToString(
-            StringBuilder builder
-            )
-        {
-            builder
-                .Append('(')
-                .AppendJoin(
-                    '|',
-                    Alternatives)
-                .Append(')');
-        }
+        public override IEnumerable<global::Process.Alternative> NewAlternatives(
+            global::Process.Process parent
+            ) => Alternatives
+                .Select(alternative => alternative.New(parent))
+                .Cast<global::Process.Alternative>();
     }
 
     public class ChoiceForEach<TValue>: ChoiceBase
@@ -90,15 +88,16 @@ namespace Process.Definition
         {
         }
 
+        public override bool Accept(
+            IVisitor visitor
+            ) => visitor.Enter(this);
+
         public override IEnumerable<global::Process.Alternative> NewAlternatives(
             global::Process.Process parent
-            )
-        {
-            return Values(parent)
+            ) => Values(parent)
                 .Select(value => Replicated.Replicate(
                     parent,
                     value))
                 .Cast<global::Process.Alternative>();
-        }
     }
 }

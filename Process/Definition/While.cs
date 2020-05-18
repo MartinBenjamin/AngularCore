@@ -14,7 +14,7 @@ namespace Process.Definition
 
         public While(
             Func<global::Process.Process, bool> booleanExpression,
-            Process                                         embedded
+            Process                             embedded
             )
             : base()
         {
@@ -24,11 +24,12 @@ namespace Process.Definition
 
         public override global::Process.Process New(
             global::Process.Process parent
-            )
-        {
-            return new global::Process.While(
+            ) => new global::Process.While(
                 this,
                 parent);
-        }
+
+        public override bool Accept(
+            IVisitor visitor
+            ) => visitor.Enter(this);
     }
 }

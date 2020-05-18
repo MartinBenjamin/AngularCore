@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Process.Definition
 {
@@ -48,24 +47,23 @@ namespace Process.Definition
         {
         }
 
-        public override IEnumerable<global::Process.Process> NewChildren(
-            global::Process.Process parent
+        public override bool Accept(
+            IVisitor visitor
             )
         {
-            return Children.Select(child => child.New(parent));
+            if(!visitor.Enter(this))
+                return false;
+
+            foreach(var child in Children)
+                if(!child.Accept(visitor))
+                    return false;
+
+            return visitor.Exit(this);
         }
 
-        public override void ToString(
-            StringBuilder builder
-            )
-        {
-            builder
-                .Append('(')
-                .AppendJoin(
-                    "||",
-                    Children)
-                .Append(')');
-        }
+        public override IEnumerable<global::Process.Process> NewChildren(
+            global::Process.Process parent
+            ) => Children.Select(child => child.New(parent));
     }
 
     public class ParallelForEach<TValue>: ParallelBase
@@ -85,14 +83,15 @@ namespace Process.Definition
         {
         }
 
+        public override bool Accept(
+            IVisitor visitor
+            ) => visitor.Enter(this);
+
         public override IEnumerable<global::Process.Process> NewChildren(
             global::Process.Process parent
-            )
-        {
-            return Values(parent).Select(
+            ) => Values(parent).Select(
                 value => Replicated.Replicate(
                     parent,
                     value));
-        }
     }
 }

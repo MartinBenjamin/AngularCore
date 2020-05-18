@@ -20,10 +20,12 @@ namespace Process.Definition
 
         public abstract global::Process.Process New(global::Process.Process parent);
 
+        public abstract bool Accept(IVisitor visitor);
+
         public override string ToString()
         {
             var builder = new StringBuilder();
-            ToString(builder);
+            Accept(new ProcessWriter(builder));
             return builder.ToString();
         }
 
