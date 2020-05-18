@@ -14,9 +14,16 @@ namespace CommonDomainObjects
         IEnumerable<IClassAxiom> Axioms { get; }
     }
 
-    public abstract class ClassExpression<T>: IClassExpression
+    public interface IClassExpression<in T>: IClassExpression
     {
-        public IList<ClassAxiom<T>> Axioms { get; protected set; } = new List<ClassAxiom<T>>();
+        bool HasMember(T t);
+
+        IEnumerable<IClassAxiom<T>> Axioms { get; }
+    }
+
+    public abstract class ClassExpression<T>: IClassExpression<T>
+    {
+        public IList<IClassAxiom<T>> Axioms { get; protected set; } = new List<IClassAxiom<T>>();
 
         Type IClassExpression.Type => typeof(T);
 
@@ -28,15 +35,7 @@ namespace CommonDomainObjects
 
         public abstract bool HasMember(T t);
 
-        public IEnumerable<ClassExpression<T>> GetSuperClasses()
-        {
-            foreach(var subClassAxiom in Axioms.OfType<SubClass<T>>())
-            {
-                yield return subClassAxiom.SuperClassExpression;
-                foreach(var superClass in subClassAxiom.SuperClassExpression.GetSuperClasses())
-                    yield return superClass;
-            }
-        }
+        IEnumerable<IClassAxiom<T>> IClassExpression<T>.Axioms => Axioms;
 
         protected static Func<T, IEnumerable<TProperty>> AsEnumerable<T, TProperty>(
             Func<T, TProperty> property
@@ -48,10 +47,10 @@ namespace CommonDomainObjects
 
     public abstract class ClassExpressionDecorator<T>: ClassExpression<T>
     {
-        protected ClassExpression<T> _decorated;
+        protected IClassExpression<T> _decorated;
 
         protected ClassExpressionDecorator(
-            ClassExpression<T> decorated
+            IClassExpression<T> decorated
             )
         {
             _decorated = decorated;
@@ -60,10 +59,10 @@ namespace CommonDomainObjects
 
     public class Class<T>: ClassExpression<T>
     {
-        public IList<ClassExpression<T>> ClassExpressions { get; protected set; }
+        public IList<IClassExpression<T>> ClassExpressions { get; protected set; }
 
         public Class(
-            params ClassExpression<T>[] classExpressions
+            params IClassExpression<T>[] classExpressions
             ) : base()
         {
             ClassExpressions = classExpressions;
@@ -76,10 +75,10 @@ namespace CommonDomainObjects
 
     public class IntersectionOf<T>: ClassExpression<T>
     {
-        public IList<ClassExpression<T>> ClassExpressions { get; protected set; }
+        public IList<IClassExpression<T>> ClassExpressions { get; protected set; }
 
         public IntersectionOf(
-            params ClassExpression<T>[] classExpressions
+            params IClassExpression<T>[] classExpressions
             )
         {
             ClassExpressions = classExpressions.ToList();
@@ -90,7 +89,7 @@ namespace CommonDomainObjects
             ) => ClassExpressions.All(ce => ce.HasMember(t));
 
         public IntersectionOf<T> Append(
-            ClassExpression<T> classExpression
+            IClassExpression<T> classExpression
             )
         {
             ClassExpressions.Add(classExpression);
@@ -100,10 +99,10 @@ namespace CommonDomainObjects
 
     public class UnionOf<T>: ClassExpression<T>
     {
-        public IList<ClassExpression<T>> ClassExpressions { get; protected set; }
+        public IList<IClassExpression<T>> ClassExpressions { get; protected set; }
 
         public UnionOf(
-            params ClassExpression<T>[] classExpressions
+            params IClassExpression<T>[] classExpressions
             )
         {
             ClassExpressions = classExpressions.ToList();
@@ -114,7 +113,7 @@ namespace CommonDomainObjects
             ) => ClassExpressions.Any(ce => ce.HasMember(t));
 
         public UnionOf<T> Append(
-            ClassExpression<T> classExpression
+            IClassExpression<T> classExpression
             )
         {
             ClassExpressions.Add(classExpression);
@@ -124,10 +123,10 @@ namespace CommonDomainObjects
 
     public class ComplementOf<T>: ClassExpression<T>
     {
-        public ClassExpression<T> ClassExpression { get; protected set; }
+        public IClassExpression<T> ClassExpression { get; protected set; }
 
         public ComplementOf(
-            ClassExpression<T> classExpression
+            IClassExpression<T> classExpression
             )
         {
             ClassExpression = classExpression;
@@ -178,11 +177,11 @@ namespace CommonDomainObjects
 
     public class PropertySomeValuesFrom<T, TProperty>: PropertyExpression<T, TProperty>
     {
-        public ClassExpression<TProperty> ClassExpression { get; protected set; }
+        public IClassExpression<TProperty> ClassExpression { get; protected set; }
 
         public PropertySomeValuesFrom(
             Expression<Func<T, IEnumerable<TProperty>>> property,
-            ClassExpression<TProperty>                  classExpression
+            IClassExpression<TProperty>                 classExpression
             ) : base(property)
         {
             ClassExpression = classExpression;
@@ -190,7 +189,7 @@ namespace CommonDomainObjects
 
         public PropertySomeValuesFrom(
             Expression<Func<T, TProperty>> property,
-            ClassExpression<TProperty>     classExpression
+            IClassExpression<TProperty>    classExpression
             ) : base(property)
         {
             ClassExpression = classExpression;
@@ -203,11 +202,11 @@ namespace CommonDomainObjects
 
     public class PropertyAllValuesFrom<T, TProperty>: PropertyExpression<T, TProperty>
     {
-        public ClassExpression<TProperty> ClassExpression { get; protected set; }
+        public IClassExpression<TProperty> ClassExpression { get; protected set; }
 
         public PropertyAllValuesFrom(
             Expression<Func<T, IEnumerable<TProperty>>> property,
-            ClassExpression<TProperty>                  classExpression
+            IClassExpression<TProperty>                 classExpression
             ) : base(property)
         {
             ClassExpression = classExpression;
@@ -215,7 +214,7 @@ namespace CommonDomainObjects
 
         public PropertyAllValuesFrom(
             Expression<Func<T, TProperty>> property,
-            ClassExpression<TProperty>     classExpression
+            IClassExpression<TProperty>    classExpression
             ) : base(property)
         {
             ClassExpression = classExpression;
@@ -253,13 +252,13 @@ namespace CommonDomainObjects
 
     public abstract class PropertyCardinalityExpression<T, TProperty>: PropertyExpression<T, TProperty>
     {
-        public int                        Cardinality     { get; protected set; }
-        public ClassExpression<TProperty> ClassExpression { get; protected set; }
+        public int                         Cardinality     { get; protected set; }
+        public IClassExpression<TProperty> ClassExpression { get; protected set; }
 
         public PropertyCardinalityExpression(
             Expression<Func<T, IEnumerable<TProperty>>> property,
-            int                             cardinality,
-            ClassExpression<TProperty>      classExpression
+            int                                         cardinality,
+            IClassExpression<TProperty>                 classExpression
             ) : base(property)
         {
             Cardinality     = cardinality;
@@ -269,7 +268,7 @@ namespace CommonDomainObjects
         public PropertyCardinalityExpression(
             Expression<Func<T, TProperty>> property,
             int                            cardinality,
-            ClassExpression<TProperty>     classExpression
+            IClassExpression<TProperty>    classExpression
             ) : base(property)
         {
             Cardinality     = cardinality;
@@ -285,8 +284,8 @@ namespace CommonDomainObjects
     {
         public PropertyMinCardinality(
             Expression<Func<T, IEnumerable<TProperty>>> property,
-            int                             cardinality,
-            ClassExpression<TProperty>      classExpression = null
+            int                                         cardinality,
+            IClassExpression<TProperty>                 classExpression = null
             ) : base(
                 property,
                 cardinality,
@@ -297,7 +296,7 @@ namespace CommonDomainObjects
         public PropertyMinCardinality(
             Expression<Func<T, TProperty>> property,
             int                            cardinality,
-            ClassExpression<TProperty>     classExpression = null
+            IClassExpression<TProperty>    classExpression = null
             ) : base(
                 property,
                 cardinality,
@@ -314,8 +313,8 @@ namespace CommonDomainObjects
     {
         public PropertyMaxCardinality(
             Expression<Func<T, IEnumerable<TProperty>>> property,
-            int                             cardinality,
-            ClassExpression<TProperty>      classExpression = null
+            int                                         cardinality,
+            IClassExpression<TProperty>                 classExpression = null
             ) : base(
                 property,
                 cardinality,
@@ -326,7 +325,7 @@ namespace CommonDomainObjects
         public PropertyMaxCardinality(
             Expression<Func<T, TProperty>> property,
             int                            cardinality,
-            ClassExpression<TProperty>     classExpression = null
+            IClassExpression<TProperty>    classExpression = null
             ) : base(
                 property,
                 cardinality,
@@ -343,8 +342,8 @@ namespace CommonDomainObjects
     {
         public PropertyExactCardinality(
             Expression<Func<T, IEnumerable<TProperty>>> property,
-            int                             cardinality,
-            ClassExpression<TProperty>      classExpression = null
+            int                                         cardinality,
+            IClassExpression<TProperty>                 classExpression = null
             ) : base(
                 property,
                 cardinality,
@@ -355,7 +354,7 @@ namespace CommonDomainObjects
         public PropertyExactCardinality(
             Expression<Func<T, TProperty>> property,
             int                            cardinality,
-            ClassExpression<TProperty>     classExpression = null
+            IClassExpression<TProperty>    classExpression = null
             ) : base(
                 property,
                 cardinality,
@@ -375,7 +374,12 @@ namespace CommonDomainObjects
         bool Validate(object o);
     }
 
-    public abstract class ClassAxiom<T>: IClassAxiom
+    public interface IClassAxiom<in T>: IClassAxiom
+    {
+        bool Validate(T t);
+    }
+
+    public abstract class ClassAxiom<T>: IClassAxiom<T>
     {
         Type IClassAxiom.Type => typeof(T);
 
@@ -388,12 +392,12 @@ namespace CommonDomainObjects
 
     public class SubClass<T>: ClassAxiom<T>
     {
-        public ClassExpression<T> SubClassExpression   { get; protected set; }
-        public ClassExpression<T> SuperClassExpression { get; protected set; }
+        public ClassExpression<T>  SubClassExpression   { get; protected set; }
+        public IClassExpression<T> SuperClassExpression { get; protected set; }
 
         public SubClass(
-            ClassExpression<T> subClassExpression,
-            ClassExpression<T> superClassExpression
+            ClassExpression<T>  subClassExpression,
+            IClassExpression<T> superClassExpression
             )
         {
             SubClassExpression   = subClassExpression;
@@ -410,5 +414,27 @@ namespace CommonDomainObjects
                 !SubClassExpression.HasMember(t) ||
                 SuperClassExpression.HasMember(t);
         }
+    }
+
+    public interface IHasKey<in T>
+    {
+        bool AreEqual(T lhs, T rhs);
+    }
+
+    public class HasKey<T, TKey>: IHasKey<T>
+    {
+        private Func<T, TKey> _keyAccessor;
+
+        public HasKey(
+            Func<T, TKey> keyAccessor 
+            )
+        {
+            _keyAccessor = keyAccessor;
+        }
+
+        bool IHasKey<T>.AreEqual(
+            T lhs,
+            T rhs
+            ) => _keyAccessor(lhs).Equals(_keyAccessor(rhs));
     }
 }
