@@ -70,7 +70,7 @@ namespace Process.Definition
             GuardedProcess guardedProcess
             )
         {
-            var guardExpression = (object)guardedProcess._guardExpression ?? guardedProcess.GuardExpression;
+            var guardExpression = (object)guardedProcess.GuardExpressionExpression ?? guardedProcess.GuardExpression;
             if(guardExpression != null)
                 _builder.AppendFormat(
                     "({0})&",

@@ -10,7 +10,7 @@ namespace Process.Definition
         public IO      Guard           { get; set; }
         public Process Guarded         { get; set; }
 
-        internal Expression<Func<global::Process.Process, bool>> _guardExpression;
+        private Expression<Func<global::Process.Process, bool>> _guardExpressionExpression;
 
         public GuardedProcess()
             : base()
@@ -42,7 +42,15 @@ namespace Process.Definition
                 guarded
             )
         {
-            _guardExpression = guardExpression;
+            _guardExpressionExpression = guardExpression;
+        }
+
+        public Expression<Func<global::Process.Process, bool>> GuardExpressionExpression
+        {
+            get
+            {
+                return _guardExpressionExpression;
+            }
         }
 
         public GuardedProcess(
