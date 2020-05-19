@@ -64,25 +64,32 @@ namespace Deals
 
         // Abstract Syntax does not support annotation of SubClass Axioms.
         // Functional Syntax does not support Class Axioms with nested descriptions.
-        public static ClassExpression<Role> LenderRole = new PropertyValue<Role, Guid>(
-            role => role.Id,
-            DealRoleIdentifier.Lender);
-        public static Role Lender = null;
-        public static Role Advisor = null;
-        public static LegalEntity Mufg = null;
-        public static ClassExpression<DealParty> LenderParty = new PropertyValue<DealParty, Role>(
+        //public static ClassExpression<Role> LenderRole = new PropertyValue<Role, Guid>(
+        //    role => role.Id,
+        //    DealRoleIdentifier.Lender);
+        public static Class<DomainObject<Guid>> DomainObject = new Class<DomainObject<Guid>>();
+        public static HasKey<DomainObject<Guid>, Guid> DomainObjectKey = new HasKey<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
+        public static Class<Named<Guid>> Named = new Class<Named<Guid>>();
+        public static SubClass<Named<Guid>> NamedSubClassOfDomainObject = new SubClass<Named<Guid>>(Named, DomainObject);
+        public static Class<Role> Role = new Class<Role>();
+        public static SubClass<Role> RoleSubClassOfNamed = new SubClass<Role>(Role, Named);
+        public static Class<LegalEntity> LegalEntity = new Class<LegalEntity>();
+        public static Individual<Role> Lender = new Individual<Role>(Role, null);
+        public static Individual<Role> Advisor = new Individual<Role>(Role, null);
+        public static Individual<LegalEntity> Mufg = new Individual<LegalEntity>(LegalEntity, null);
+        public static ClassExpression<DealParty> LenderParty = new ObjectHasValue<DealParty, Role>(
             dealParty => dealParty.Role,
             Lender);
-        public static ClassExpression<DealParty> AdvisorParty = new PropertyValue<DealParty, Role>(
+        public static ClassExpression<DealParty> AdvisorParty = new ObjectHasValue<DealParty, Role>(
             dealParty => dealParty.Role,
             Advisor);
-        public static ClassExpression<DealParty> MufgParty = new PropertyValue<DealParty, Organisation>(
+        public static ClassExpression<DealParty> MufgParty = new ObjectHasValue<DealParty, Organisation>(
             dealParty => dealParty.Organisation,
             Mufg);
-        public static ClassExpression<DealParty> MufgLenderParty = new IntersectionOf<DealParty>(
+        public static ClassExpression<DealParty> MufgLenderParty = new ObjectIntersectionOf<DealParty>(
             LenderParty,
             MufgParty);
-        public static ClassExpression<DealParty> MufgAdvisorParty = new IntersectionOf<DealParty>(
+        public static ClassExpression<DealParty> MufgAdvisorParty = new ObjectIntersectionOf<DealParty>(
             AdvisorParty,
             MufgParty);
 
@@ -90,17 +97,17 @@ namespace Deals
 
         public static ClassAxiom<Deal> NameMandatory = new SubClass<Deal>(
             Deal,
-            new PropertySomeValuesFrom<Named<Guid>, string>(
-                deal => deal.Name,
-                new ComplementOf<string>(new OneOf<string>(string.Empty))));
+            new DataSomeValuesFrom<Named<Guid>, string>(
+                named => named.Name,
+                new DataComplementOf<string>(new DataOneOf<string>(string.Empty))));
 
         public static Class<Deal> Debt = new Class<Deal>(
-            new PropertyExactCardinality<Deal, DealParty>(
+            new ObjectExactCardinality<Deal, DealParty>(
                 deal => deal.Parties,
                 1,
                 MufgLenderParty));
         public static Class<Deal> Advisory = new Class<Deal>(
-            new PropertyExactCardinality<Deal, DealParty>(
+            new ObjectExactCardinality<Deal, DealParty>(
                 deal => deal.Parties,
                 1,
                 MufgAdvisorParty));
@@ -109,19 +116,19 @@ namespace Deals
             Debt,
             Deal);
 
-        public static Role SponsorRole = null;
+        public static Individual<Role> SponsorRole = new Individual<Role>(Role, null);
 
-        public static ClassExpression<DealParty> SponsorParty = new PropertyValue<DealParty, Role>(
+        public static ClassExpression<DealParty> SponsorParty = new ObjectHasValue<DealParty, Role>(
             dealParty => dealParty.Role,
             SponsorRole);
 
-        public static ClassExpression<Deal> SponsorsMinCardinality = new PropertyMinCardinality<Deal, DealParty>(
+        public static ClassExpression<Deal> SponsorsMinCardinality = new ObjectMinCardinality<Deal, DealParty>(
             deal => deal.Parties,
             1,
             SponsorParty);
 
         public static Class<Deal> ProjectFinance = new Class<Deal>(
-            new PropertyValue<Deal, string>(
+            new DataHasValue<Deal, string>(
                 deal => deal.ClassName,
                 "ProjectFinance"));
         public static ClassAxiom<Deal> ProjectFinanceSubClassOfDebt = new SubClass<Deal>(
@@ -137,7 +144,7 @@ namespace Deals
             SponsorParty);
         public static ClassAxiom<Sponsor> SponsorEquityMandatory = new SubClass<Sponsor>(
             Sponsor,
-            new PropertyExactCardinality<Sponsor, decimal?>(
+            new ObjectExactCardinality<Sponsor, decimal?>(
                 sponsor => sponsor.Equity,
                 1));
 
@@ -149,6 +156,11 @@ namespace Deals
                 ProjectFinance,
                 Sponsor
             };
+
+            IIndividual<Organisation> a = null;
+            IIndividual<LegalEntity> b = null;
+            a = b;
+            //b = a;
         }
 
         public static IEnumerable<IClassExpression> Classify(

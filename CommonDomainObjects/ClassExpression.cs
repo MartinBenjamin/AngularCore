@@ -73,11 +73,11 @@ namespace CommonDomainObjects
             ) => ClassExpressions.All(classExpression => classExpression.HasMember(t));
     }
 
-    public class IntersectionOf<T>: ClassExpression<T>
+    public class ObjectIntersectionOf<T>: ClassExpression<T>
     {
         public IList<IClassExpression<T>> ClassExpressions { get; protected set; }
 
-        public IntersectionOf(
+        public ObjectIntersectionOf(
             params IClassExpression<T>[] classExpressions
             )
         {
@@ -88,7 +88,7 @@ namespace CommonDomainObjects
             T t
             ) => ClassExpressions.All(ce => ce.HasMember(t));
 
-        public IntersectionOf<T> Append(
+        public ObjectIntersectionOf<T> Append(
             IClassExpression<T> classExpression
             )
         {
@@ -97,11 +97,11 @@ namespace CommonDomainObjects
         }
     }
 
-    public class UnionOf<T>: ClassExpression<T>
+    public class ObjectUnionOf<T>: ClassExpression<T>
     {
         public IList<IClassExpression<T>> ClassExpressions { get; protected set; }
 
-        public UnionOf(
+        public ObjectUnionOf(
             params IClassExpression<T>[] classExpressions
             )
         {
@@ -112,7 +112,7 @@ namespace CommonDomainObjects
             T t
             ) => ClassExpressions.Any(ce => ce.HasMember(t));
 
-        public UnionOf<T> Append(
+        public ObjectUnionOf<T> Append(
             IClassExpression<T> classExpression
             )
         {
@@ -121,11 +121,11 @@ namespace CommonDomainObjects
         }
     }
 
-    public class ComplementOf<T>: ClassExpression<T>
+    public class ObjectComplementOf<T>: ClassExpression<T>
     {
         public IClassExpression<T> ClassExpression { get; protected set; }
 
-        public ComplementOf(
+        public ObjectComplementOf(
             IClassExpression<T> classExpression
             )
         {
@@ -137,12 +137,12 @@ namespace CommonDomainObjects
             ) => !ClassExpression.HasMember(t);
     }
 
-    public class OneOf<T>: ClassExpression<T>
+    public class ObjectOneOf<T>: ClassExpression<T>
     {
-        public IList<T> Individuals { get; protected set; }
+        public IList<IIndividual<T>> Individuals { get; protected set; }
 
-        public OneOf(
-            params T[] individuals
+        public ObjectOneOf(
+            params IIndividual<T>[] individuals
             )
         {
             Individuals = individuals.ToList();
@@ -150,12 +150,12 @@ namespace CommonDomainObjects
 
         public override bool HasMember(
             T t
-            ) => Individuals.Contains(t);
+            ) => Individuals.Any(individual => individual.IsEqual(t));
     }
 
     public abstract class PropertyExpression<T, TProperty>: ClassExpression<T>
     {
-        public string Name { get; protected set; }
+        public string                          Name     { get; protected set; }
 
         public Func<T, IEnumerable<TProperty>> Property { get; protected set; }
 
@@ -175,11 +175,11 @@ namespace CommonDomainObjects
         }
     }
 
-    public class PropertySomeValuesFrom<T, TProperty>: PropertyExpression<T, TProperty>
+    public class ObjectSomeValuesFrom<T, TProperty>: PropertyExpression<T, TProperty>
     {
         public IClassExpression<TProperty> ClassExpression { get; protected set; }
 
-        public PropertySomeValuesFrom(
+        public ObjectSomeValuesFrom(
             Expression<Func<T, IEnumerable<TProperty>>> property,
             IClassExpression<TProperty>                 classExpression
             ) : base(property)
@@ -187,7 +187,7 @@ namespace CommonDomainObjects
             ClassExpression = classExpression;
         }
 
-        public PropertySomeValuesFrom(
+        public ObjectSomeValuesFrom(
             Expression<Func<T, TProperty>> property,
             IClassExpression<TProperty>    classExpression
             ) : base(property)
@@ -200,11 +200,11 @@ namespace CommonDomainObjects
             ) => Property(t).Any(ClassExpression.HasMember);
     }
 
-    public class PropertyAllValuesFrom<T, TProperty>: PropertyExpression<T, TProperty>
+    public class ObjectAllValuesFrom<T, TProperty>: PropertyExpression<T, TProperty>
     {
         public IClassExpression<TProperty> ClassExpression { get; protected set; }
 
-        public PropertyAllValuesFrom(
+        public ObjectAllValuesFrom(
             Expression<Func<T, IEnumerable<TProperty>>> property,
             IClassExpression<TProperty>                 classExpression
             ) : base(property)
@@ -212,7 +212,7 @@ namespace CommonDomainObjects
             ClassExpression = classExpression;
         }
 
-        public PropertyAllValuesFrom(
+        public ObjectAllValuesFrom(
             Expression<Func<T, TProperty>> property,
             IClassExpression<TProperty>    classExpression
             ) : base(property)
@@ -225,21 +225,21 @@ namespace CommonDomainObjects
             ) => Property(t).All(ClassExpression.HasMember);
     }
 
-    public class PropertyValue<T, TProperty>: PropertyExpression<T, TProperty>
+    public class ObjectHasValue<T, TProperty>: PropertyExpression<T, TProperty>
     {
-        public TProperty Individual { get; protected set; }
+        public IIndividual<TProperty> Individual { get; protected set; }
 
-        public PropertyValue(
+        public ObjectHasValue(
             Expression<Func<T, IEnumerable<TProperty>>> property,
-            TProperty                                   individual
+            IIndividual<TProperty>                      individual
             ) : base(property)
         {
             Individual = individual;
         }
 
-        public PropertyValue(
+        public ObjectHasValue(
             Expression<Func<T, TProperty>> property,
-            TProperty                      individual
+            IIndividual<TProperty>         individual
             ) : base(property)
         {
             Individual = individual;
@@ -247,15 +247,15 @@ namespace CommonDomainObjects
 
         public override bool HasMember(
             T t
-            ) => Property(t).Contains(Individual);
+            ) => Property(t).Any(v => Individual.IsEqual(v));
     }
 
-    public abstract class PropertyCardinalityExpression<T, TProperty>: PropertyExpression<T, TProperty>
+    public abstract class ObjectCardinalityExpression<T, TProperty>: PropertyExpression<T, TProperty>
     {
         public int                         Cardinality     { get; protected set; }
         public IClassExpression<TProperty> ClassExpression { get; protected set; }
 
-        public PropertyCardinalityExpression(
+        public ObjectCardinalityExpression(
             Expression<Func<T, IEnumerable<TProperty>>> property,
             int                                         cardinality,
             IClassExpression<TProperty>                 classExpression
@@ -265,7 +265,7 @@ namespace CommonDomainObjects
             ClassExpression = classExpression;
         }
 
-        public PropertyCardinalityExpression(
+        public ObjectCardinalityExpression(
             Expression<Func<T, TProperty>> property,
             int                            cardinality,
             IClassExpression<TProperty>    classExpression
@@ -280,9 +280,9 @@ namespace CommonDomainObjects
             ) => ClassExpression != null ? Property(t).Count(ClassExpression.HasMember) : Property(t).Count(); 
     }
     
-    public class PropertyMinCardinality<T, TProperty>: PropertyCardinalityExpression<T, TProperty>
+    public class ObjectMinCardinality<T, TProperty>: ObjectCardinalityExpression<T, TProperty>
     {
-        public PropertyMinCardinality(
+        public ObjectMinCardinality(
             Expression<Func<T, IEnumerable<TProperty>>> property,
             int                                         cardinality,
             IClassExpression<TProperty>                 classExpression = null
@@ -293,7 +293,7 @@ namespace CommonDomainObjects
         {
         }
 
-        public PropertyMinCardinality(
+        public ObjectMinCardinality(
             Expression<Func<T, TProperty>> property,
             int                            cardinality,
             IClassExpression<TProperty>    classExpression = null
@@ -309,9 +309,9 @@ namespace CommonDomainObjects
             ) => Count(t) >= Cardinality;
     }
 
-    public class PropertyMaxCardinality<T, TProperty>: PropertyCardinalityExpression<T, TProperty>
+    public class ObjectMaxCardinality<T, TProperty>: ObjectCardinalityExpression<T, TProperty>
     {
-        public PropertyMaxCardinality(
+        public ObjectMaxCardinality(
             Expression<Func<T, IEnumerable<TProperty>>> property,
             int                                         cardinality,
             IClassExpression<TProperty>                 classExpression = null
@@ -322,7 +322,7 @@ namespace CommonDomainObjects
         {
         }
 
-        public PropertyMaxCardinality(
+        public ObjectMaxCardinality(
             Expression<Func<T, TProperty>> property,
             int                            cardinality,
             IClassExpression<TProperty>    classExpression = null
@@ -338,9 +338,9 @@ namespace CommonDomainObjects
             ) => Count(t) <= Cardinality;
     }
 
-    public class PropertyExactCardinality<T, TProperty>: PropertyCardinalityExpression<T, TProperty>
+    public class ObjectExactCardinality<T, TProperty>: ObjectCardinalityExpression<T, TProperty>
     {
-        public PropertyExactCardinality(
+        public ObjectExactCardinality(
             Expression<Func<T, IEnumerable<TProperty>>> property,
             int                                         cardinality,
             IClassExpression<TProperty>                 classExpression = null
@@ -351,7 +351,7 @@ namespace CommonDomainObjects
         {
         }
 
-        public PropertyExactCardinality(
+        public ObjectExactCardinality(
             Expression<Func<T, TProperty>> property,
             int                            cardinality,
             IClassExpression<TProperty>    classExpression = null
@@ -365,6 +365,93 @@ namespace CommonDomainObjects
         public override bool HasMember(
             T t
             ) => Count(t) == Cardinality;
+    }
+
+    public interface IDataRange<T>
+    {
+        bool HasValue(T value);
+    }
+
+    public class DataComplementOf<T>: IDataRange<T>
+    {
+        public IDataRange<T> DataRange { get; protected set; }
+
+        public DataComplementOf(
+            IDataRange<T> dataRange
+            )
+        {
+            DataRange = dataRange;
+        }
+
+        bool IDataRange<T>.HasValue(
+            T value
+            ) => !DataRange.HasValue(value);
+    }
+
+    public class DataOneOf<T>: IDataRange<T>
+    {
+        public IList<T> Values { get; protected set; }
+
+        public DataOneOf(
+            params T[] values
+            )
+        {
+            Values = values;
+        }
+
+        bool IDataRange<T>.HasValue(
+            T value
+            ) => Values.Contains(value);
+    }
+
+    public class DataSomeValuesFrom<T, TValue>: PropertyExpression<T, TValue>
+    {
+        public IDataRange<TValue> DataRange { get; protected set; }
+
+        public DataSomeValuesFrom(
+            Expression<Func<T, IEnumerable<TValue>>> property,
+            IDataRange<TValue>                       dataRange
+            ) : base(property)
+        {
+            DataRange = dataRange;
+        }
+
+        public DataSomeValuesFrom(
+            Expression<Func<T, TValue>> property,
+            IDataRange<TValue>          dataRange
+            ) : base(property)
+        {
+            DataRange = dataRange;
+        }
+
+        public override bool HasMember(
+            T t
+            ) => Property(t).Any(DataRange.HasValue);
+    }
+
+    public class DataHasValue<T, TValue>: PropertyExpression<T, TValue>
+    {
+        public TValue Value { get; protected set; }
+
+        public DataHasValue(
+            Expression<Func<T, IEnumerable<TValue>>> property,
+            TValue                                   value
+            ) : base(property)
+        {
+            Value = value;
+        }
+
+        public DataHasValue(
+            Expression<Func<T, TValue>> property,
+            TValue                      value
+            ) : base(property)
+        {
+            Value = value;
+        }
+
+        public override bool HasMember(
+            T t
+            ) => Property(t).Contains(Value);
     }
 
     public interface IClassAxiom
@@ -423,18 +510,49 @@ namespace CommonDomainObjects
 
     public class HasKey<T, TKey>: IHasKey<T>
     {
-        private Func<T, TKey> _keyAccessor;
+        private IList<Func<T, TKey>> _keyAccessors;
 
         public HasKey(
-            Func<T, TKey> keyAccessor 
+            params Func<T, TKey>[] keyAccessors 
             )
         {
-            _keyAccessor = keyAccessor;
+            _keyAccessors = keyAccessors;
         }
 
         bool IHasKey<T>.AreEqual(
             T lhs,
             T rhs
-            ) => _keyAccessor(lhs).Equals(_keyAccessor(rhs));
+            ) => _keyAccessors.All(keyAccessor => keyAccessor(lhs).Equals(keyAccessor(rhs)));
+    }
+
+    public interface IIndividual<out T>
+    {
+        //IClassExpression<T> Class { get; }
+
+        bool IsEqual(object o);
+    }
+
+    public class Individual<T>: IIndividual<T>
+    {
+        public IClassExpression<T> Class    { get; protected set; }
+
+        public T                   Instance { get; protected set; }
+
+        public Individual(
+            IClassExpression<T> classExpression,
+            T                   instance
+            )
+        {
+            Class    = classExpression;
+            Instance = instance;
+        }
+
+        bool IIndividual<T>.IsEqual(
+            object o
+            )
+        {
+            // Find HasKey Axiom.
+            return false;
+        }
     }
 }
