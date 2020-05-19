@@ -52,12 +52,12 @@ namespace Test
                 null);
 
             Assert.That(PF.Classify(d).Contains(PF.ProjectFinance));
-            Assert.That(PF.ProjectFinance.Axioms, Does.Contain(PF.SponsorCardinality));
+            Assert.That(PF.ProjectFinance.ClassAxioms, Does.Contain(PF.SponsorCardinality));
             Assert.That(PF.NameMandatory.Validate(d), Is.EqualTo(result));
 
             var failed = (
                 from @class in PF.Classify(d)
-                from axiom in @class.Axioms
+                from axiom in @class.ClassAxioms
                 where !axiom.Validate(d)
                 select axiom
             );

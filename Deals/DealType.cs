@@ -73,7 +73,7 @@ namespace Deals
         static PF()
         {
             var DomainObject = new Class<DomainObject<Guid>>();
-            var DomainObjectKey = new HasKey<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
+            var DomainObjectKey = new HasKey<DomainObject<Guid>, Guid>(DomainObject, domainObject => domainObject.Id);
             var Named       = new Class<Named<Guid>>();
             var Role        = new Class<Role>();
             var LegalEntity = new Class<LegalEntity>();

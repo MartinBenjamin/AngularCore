@@ -11,19 +11,20 @@ namespace CommonDomainObjects
 
         bool HasMember(object o);
 
-        IEnumerable<IClassAxiom> Axioms { get; }
+        IEnumerable<IClassAxiom> ClassAxioms { get; }
     }
 
     public interface IClassExpression<in T>: IClassExpression
     {
-        bool HasMember(T t);
+        IEnumerable<IClassAxiom<T>> ClassAxioms { get; }
 
-        IEnumerable<IClassAxiom<T>> Axioms { get; }
+        bool HasMember(T t);
     }
 
     public abstract class ClassExpression<T>: IClassExpression<T>
     {
-        public IList<IClassAxiom<T>> Axioms { get; protected set; } = new List<IClassAxiom<T>>();
+        public IList<IClassAxiom<T>> ClassAxioms { get; protected set; } = new List<IClassAxiom<T>>();
+        public IHasKey<T>            HasKey      { get; internal set; }
 
         Type IClassExpression.Type => typeof(T);
 
@@ -31,11 +32,11 @@ namespace CommonDomainObjects
             object o
             ) => o is T t ? HasMember(t) : false;
 
-        IEnumerable<IClassAxiom> IClassExpression.Axioms => Axioms;
+        IEnumerable<IClassAxiom> IClassExpression.ClassAxioms => ClassAxioms;
 
         public abstract bool HasMember(T t);
 
-        IEnumerable<IClassAxiom<T>> IClassExpression<T>.Axioms => Axioms;
+        IEnumerable<IClassAxiom<T>> IClassExpression<T>.ClassAxioms => ClassAxioms;
 
         protected static Func<T, IEnumerable<TProperty>> AsEnumerable<T, TProperty>(
             Func<T, TProperty> property
@@ -515,7 +516,7 @@ namespace CommonDomainObjects
             SubClassExpression   = subClassExpression;
             SuperClassExpression = superClassExpression;
 
-            SubClassExpression.Axioms.Add(this);
+            SubClassExpression.ClassAxioms.Add(this);
         }
 
         public override bool Validate(
@@ -538,9 +539,11 @@ namespace CommonDomainObjects
         private IList<Func<T, TKey>> _keyAccessors;
 
         public HasKey(
+            ClassExpression<T>     classExpression,
             params Func<T, TKey>[] keyAccessors 
             )
         {
+            classExpression.HasKey = this;
             _keyAccessors = keyAccessors;
         }
 
@@ -552,8 +555,6 @@ namespace CommonDomainObjects
 
     public interface IIndividual<out T>
     {
-        //IClassExpression<T> Class { get; }
-
         bool IsEqual(object o);
     }
 
