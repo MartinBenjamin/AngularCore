@@ -64,92 +64,81 @@ namespace Deals
 
         // Abstract Syntax does not support annotation of SubClass Axioms.
         // Functional Syntax does not support Class Axioms with nested descriptions.
-        //public static ClassExpression<Role> LenderRole = new PropertyValue<Role, Guid>(
-        //    role => role.Id,
-        //    DealRoleIdentifier.Lender);
-        public static Class<DomainObject<Guid>> DomainObject = new Class<DomainObject<Guid>>();
-        public static HasKey<DomainObject<Guid>, Guid> DomainObjectKey = new HasKey<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
-        public static Class<Named<Guid>> Named = new Class<Named<Guid>>();
-        public static SubClass<Named<Guid>> NamedSubClassOfDomainObject = new SubClass<Named<Guid>>(Named, DomainObject);
-        public static Class<Role> Role = new Class<Role>();
-        public static SubClass<Role> RoleSubClassOfNamed = new SubClass<Role>(Role, Named);
-        public static Class<LegalEntity> LegalEntity = new Class<LegalEntity>();
-        public static Individual<Role> Lender = new Individual<Role>(Role, null);
-        public static Individual<Role> Advisor = new Individual<Role>(Role, null);
-        public static Individual<LegalEntity> Mufg = new Individual<LegalEntity>(LegalEntity, null);
-        public static ClassExpression<DealParty> LenderParty = new ObjectHasValue<DealParty, Role>(
-            dealParty => dealParty.Role,
-            Lender);
-        public static ClassExpression<DealParty> AdvisorParty = new ObjectHasValue<DealParty, Role>(
-            dealParty => dealParty.Role,
-            Advisor);
-        public static ClassExpression<DealParty> MufgParty = new ObjectHasValue<DealParty, Organisation>(
-            dealParty => dealParty.Organisation,
-            Mufg);
-        public static ClassExpression<DealParty> MufgLenderParty = new ObjectIntersectionOf<DealParty>(
-            LenderParty,
-            MufgParty);
-        public static ClassExpression<DealParty> MufgAdvisorParty = new ObjectIntersectionOf<DealParty>(
-            AdvisorParty,
-            MufgParty);
 
-        public static Class<Deal> Deal = new Class<Deal>();
-
-        public static ClassAxiom<Deal> NameMandatory = new SubClass<Deal>(
-            Deal,
-            new DataSomeValuesFrom<Named<Guid>, string>(
-                named => named.Name,
-                new DataComplementOf<string>(new DataOneOf<string>(string.Empty))));
-
-        public static Class<Deal> Debt = new Class<Deal>(
-            new ObjectExactCardinality<Deal, DealParty>(
-                deal => deal.Parties,
-                1,
-                MufgLenderParty));
-        public static Class<Deal> Advisory = new Class<Deal>(
-            new ObjectExactCardinality<Deal, DealParty>(
-                deal => deal.Parties,
-                1,
-                MufgAdvisorParty));
-
-        public static ClassAxiom<Deal> DebtInheritsFromDeal = new SubClass<Deal>(
-            Debt,
-            Deal);
-
-        public static Individual<Role> SponsorRole = new Individual<Role>(Role, null);
-
-        public static ClassExpression<DealParty> SponsorParty = new ObjectHasValue<DealParty, Role>(
-            dealParty => dealParty.Role,
-            SponsorRole);
-
-        public static ClassExpression<Deal> SponsorsMinCardinality = new ObjectMinCardinality<Deal, DealParty>(
-            deal => deal.Parties,
-            1,
-            SponsorParty);
-
-        public static Class<Deal> ProjectFinance = new Class<Deal>(
-            new DataHasValue<Deal, string>(
-                deal => deal.ClassName,
-                "ProjectFinance"));
-        public static ClassAxiom<Deal> ProjectFinanceSubClassOfDebt = new SubClass<Deal>(
-            ProjectFinance,
-            Debt);
-        public static ClassAxiom<Deal> x = new SubClass<Deal>(
-            ProjectFinance,
-            SponsorsMinCardinality);
-
-        public static Class<Sponsor> Sponsor = new Class<Sponsor>();
-        public static ClassAxiom<Sponsor> SponsorInheritsFromSponsorParty = new SubClass<Sponsor>(
-            Sponsor,
-            SponsorParty);
-        public static ClassAxiom<Sponsor> SponsorEquityMandatory = new SubClass<Sponsor>(
-            Sponsor,
-            new ObjectExactCardinality<Sponsor, decimal?>(
-                sponsor => sponsor.Equity,
-                1));
+        public static Class<Deal> Deal;
+        public static Class<Deal> ProjectFinance;
+        public static SubClass<Deal> NameMandatory;
+        public static SubClass<Deal> SponsorCardinality;
 
         static PF()
         {
+            var DomainObject = new Class<DomainObject<Guid>>();
+            var DomainObjectKey = new HasKey<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
+            var Named       = new Class<Named<Guid>>();
+            var Role        = new Class<Role>();
+            var LegalEntity = new Class<LegalEntity>();
+            var LenderRole  = new Individual<Role>(Role, null);
+            var AdvisorRole = new Individual<Role>(Role, null);
+            var SponsorRole = new Individual<Role>(Role, null);
+            var Mufg        = new Individual<LegalEntity>(LegalEntity, null);
+            new SubClass<Named<Guid>>(Named, DomainObject);
+            new SubClass<Role>(Role, Named);
+            var KeyCounterpartyRole  = new ObjectOneOf<Role>();
+            var LenderParty          = new ObjectHasValue<DealParty, Role>(dealParty => dealParty.Role, LenderRole);
+            var AdvisorParty         = new ObjectHasValue<DealParty, Role>(dealParty => dealParty.Role, AdvisorRole);
+            var SponsorParty         = new ObjectHasValue<DealParty, Role>(dealParty => dealParty.Role, SponsorRole);
+            var MufgParty            = new ObjectHasValue<DealParty, Organisation>(dealParty => dealParty.Organisation, Mufg);
+            var MufgLenderParty      = new ObjectIntersectionOf<DealParty>(LenderParty, MufgParty);
+            var MufgAdvisorParty     = new ObjectIntersectionOf<DealParty>(AdvisorParty, MufgParty);
+            var KeyCounterpartyParty = new ObjectAllValuesFrom<DealParty, Role>(dealParty => dealParty.Role, KeyCounterpartyRole);
+
+            Deal = new Class<Deal>();
+
+            NameMandatory = new SubClass<Deal>(
+                Deal,
+                new DataSomeValuesFrom<Named<Guid>, string>(
+                    named => named.Name,
+                    new DataComplementOf<string>(new DataOneOf<string>(string.Empty))));
+
+            var Debt = new Class<Deal>(
+                new ObjectExactCardinality<Deal, DealParty>(
+                    deal => deal.Parties,
+                    1,
+                    MufgLenderParty));
+            var Advisory = new Class<Deal>(
+                new ObjectExactCardinality<Deal, DealParty>(
+                    deal => deal.Parties,
+                    1,
+                    MufgAdvisorParty));
+
+            new SubClass<Deal>(Debt, Deal);
+            new SubClass<Deal>(Advisory, Deal);
+
+
+            ObjectCardinalityExpression<Deal, DealParty> SponsorsCardinality = new ObjectMinCardinality<Deal, DealParty>(
+                deal => deal.Parties,
+                1,
+                SponsorParty);
+
+            ProjectFinance = new Class<Deal>(
+                new DataHasValue<Deal, string>(
+                    deal => deal.ClassName,
+                    "ProjectFinance"));
+            new SubClass<Deal>(
+                ProjectFinance,
+                Debt);
+            SponsorCardinality = new SubClass<Deal>(
+                ProjectFinance,
+                SponsorsCardinality);
+
+            var Sponsor = new Class<Sponsor>();
+            new SubClass<Sponsor>(Sponsor, SponsorParty);
+            new SubClass<Sponsor>(
+                Sponsor,
+                new ObjectExactCardinality<Sponsor, decimal?>(
+                    sponsor => sponsor.Equity,
+                    1));
+
             Classes = new List<IClassExpression>
             {
                 Deal,
