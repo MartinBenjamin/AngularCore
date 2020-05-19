@@ -429,6 +429,31 @@ namespace CommonDomainObjects
             ) => Property(t).Any(DataRange.HasMember);
     }
 
+    public class DataAllValuesFrom<T, TProperty>: PropertyExpression<T, TProperty>
+    {
+        public IDataRange<TProperty> DataRange { get; protected set; }
+
+        public DataAllValuesFrom(
+            Expression<Func<T, IEnumerable<TProperty>>> property,
+            IDataRange<TProperty>                       dataRange
+            ) : base(property)
+        {
+            DataRange = dataRange;
+        }
+
+        public DataAllValuesFrom(
+            Expression<Func<T, TProperty>> property,
+            IDataRange<TProperty>          dataRange
+            ) : base(property)
+        {
+            DataRange = dataRange;
+        }
+
+        public override bool HasMember(
+            T t
+            ) => Property(t).All(DataRange.HasMember);
+    }
+
     public class DataHasValue<T, TProperty>: PropertyExpression<T, TProperty>
     {
         public TProperty Value { get; protected set; }
