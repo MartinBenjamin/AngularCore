@@ -369,7 +369,7 @@ namespace CommonDomainObjects
 
     public interface IDataRange<T>
     {
-        bool HasValue(T value);
+        bool HasMember(T value);
     }
 
     public class DataComplementOf<T>: IDataRange<T>
@@ -383,9 +383,9 @@ namespace CommonDomainObjects
             DataRange = dataRange;
         }
 
-        bool IDataRange<T>.HasValue(
+        bool IDataRange<T>.HasMember(
             T value
-            ) => !DataRange.HasValue(value);
+            ) => !DataRange.HasMember(value);
     }
 
     public class DataOneOf<T>: IDataRange<T>
@@ -399,7 +399,7 @@ namespace CommonDomainObjects
             Values = values;
         }
 
-        bool IDataRange<T>.HasValue(
+        bool IDataRange<T>.HasMember(
             T value
             ) => Values.Contains(value);
     }
@@ -426,7 +426,7 @@ namespace CommonDomainObjects
 
         public override bool HasMember(
             T t
-            ) => Property(t).Any(DataRange.HasValue);
+            ) => Property(t).Any(DataRange.HasMember);
     }
 
     public class DataHasValue<T, TValue>: PropertyExpression<T, TValue>
