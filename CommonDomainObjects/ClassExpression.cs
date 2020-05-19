@@ -404,21 +404,21 @@ namespace CommonDomainObjects
             ) => Values.Contains(value);
     }
 
-    public class DataSomeValuesFrom<T, TValue>: PropertyExpression<T, TValue>
+    public class DataSomeValuesFrom<T, TProperty>: PropertyExpression<T, TProperty>
     {
-        public IDataRange<TValue> DataRange { get; protected set; }
+        public IDataRange<TProperty> DataRange { get; protected set; }
 
         public DataSomeValuesFrom(
-            Expression<Func<T, IEnumerable<TValue>>> property,
-            IDataRange<TValue>                       dataRange
+            Expression<Func<T, IEnumerable<TProperty>>> property,
+            IDataRange<TProperty>                       dataRange
             ) : base(property)
         {
             DataRange = dataRange;
         }
 
         public DataSomeValuesFrom(
-            Expression<Func<T, TValue>> property,
-            IDataRange<TValue>          dataRange
+            Expression<Func<T, TProperty>> property,
+            IDataRange<TProperty>          dataRange
             ) : base(property)
         {
             DataRange = dataRange;
@@ -429,21 +429,21 @@ namespace CommonDomainObjects
             ) => Property(t).Any(DataRange.HasMember);
     }
 
-    public class DataHasValue<T, TValue>: PropertyExpression<T, TValue>
+    public class DataHasValue<T, TProperty>: PropertyExpression<T, TProperty>
     {
-        public TValue Value { get; protected set; }
+        public TProperty Value { get; protected set; }
 
         public DataHasValue(
-            Expression<Func<T, IEnumerable<TValue>>> property,
-            TValue                                   value
+            Expression<Func<T, IEnumerable<TProperty>>> property,
+            TProperty                                   value
             ) : base(property)
         {
             Value = value;
         }
 
         public DataHasValue(
-            Expression<Func<T, TValue>> property,
-            TValue                      value
+            Expression<Func<T, TProperty>> property,
+            TProperty                      value
             ) : base(property)
         {
             Value = value;
