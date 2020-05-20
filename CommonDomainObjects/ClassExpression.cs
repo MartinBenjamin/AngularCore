@@ -5,20 +5,37 @@ using System.Linq.Expressions;
 
 namespace CommonDomainObjects
 {
+    public interface IExpressionVisitor<out T>
+    {
+        bool Enter(IClassExpression<T> classExpression);
+        bool Enter(IObjectIntersectionOf<T> objectIntersectionOf);
+        bool Exit(IClassExpression<T> classExpression);
+        bool Exit(IObjectIntersectionOf<T> objectIntersectionOf);
+    }
+
     public interface IClassExpression
     {
         Type Type { get; }
 
-        bool HasMember(object o);
-
         IEnumerable<IClassAxiom> ClassAxioms { get; }
+
+        bool HasMember(object o);
     }
 
     public interface IClassExpression<in T>: IClassExpression
     {
         IEnumerable<IClassAxiom<T>> ClassAxioms { get; }
 
+        IHasKey<T> HasKey { get; }
+
         bool HasMember(T t);
+
+        bool Accept(IExpressionVisitor<T> visitor);
+    }
+
+    public interface IObjectIntersectionOf<in T>: IClassExpression<T>
+    {
+        IEnumerable<IClassExpression<T>> ClassExpressions { get; }
     }
 
     public abstract class ClassExpression<T>: IClassExpression<T>
@@ -34,9 +51,23 @@ namespace CommonDomainObjects
 
         IEnumerable<IClassAxiom> IClassExpression.ClassAxioms => ClassAxioms;
 
+        IEnumerable<IClassAxiom<T>> IClassExpression<T>.ClassAxioms => ClassAxioms;
+
         public abstract bool HasMember(T t);
 
-        IEnumerable<IClassAxiom<T>> IClassExpression<T>.ClassAxioms => ClassAxioms;
+        public virtual bool Accept(
+            IExpressionVisitor<T> visitor
+            )
+        {
+            if(!visitor.Enter(this))
+                return false;
+
+            foreach(var subClass in ClassAxioms.OfType<SubClass<T>>())
+                if(!subClass.SuperClassExpression.Accept(visitor))
+                    return false;
+
+            return visitor.Exit(this);
+        }
 
         protected static Func<T, IEnumerable<TProperty>> AsEnumerable<T, TProperty>(
             Func<T, TProperty> property
@@ -74,9 +105,13 @@ namespace CommonDomainObjects
             ) => ClassExpressions.All(classExpression => classExpression.HasMember(t));
     }
 
-    public class ObjectIntersectionOf<T>: ClassExpression<T>
+    public class ObjectIntersectionOf<T>:
+        ClassExpression<T>,
+        IObjectIntersectionOf<T>
     {
         public IList<IClassExpression<T>> ClassExpressions { get; protected set; }
+
+        IEnumerable<IClassExpression<T>> IObjectIntersectionOf<T>.ClassExpressions => ClassExpressions;
 
         public ObjectIntersectionOf(
             params IClassExpression<T>[] classExpressions
@@ -88,6 +123,24 @@ namespace CommonDomainObjects
         public override bool HasMember(
             T t
             ) => ClassExpressions.All(ce => ce.HasMember(t));
+
+        public override bool Accept(
+            IExpressionVisitor<T> visitor
+            )
+        {
+            if(!visitor.Enter(this))
+                return false;
+
+            foreach(var subClass in ClassAxioms.OfType<SubClass<T>>())
+                if(!subClass.SuperClassExpression.Accept(visitor))
+                    return false;
+
+            foreach(var classExpression in ClassExpressions)
+                if(!classExpression.Accept(visitor))
+                    return false;
+
+            return visitor.Exit(this);
+        }
 
         public ObjectIntersectionOf<T> Append(
             IClassExpression<T> classExpression
@@ -248,7 +301,7 @@ namespace CommonDomainObjects
 
         public override bool HasMember(
             T t
-            ) => Property(t).Any(v => Individual.IsEqual(v));
+            ) => Property(t).Any(value => Individual.IsEqual(value));
     }
 
     public abstract class ObjectCardinalityExpression<T, TProperty>: PropertyExpression<T, TProperty>
@@ -543,6 +596,10 @@ namespace CommonDomainObjects
             params Func<T, TKey>[] keyAccessors 
             )
         {
+            if(classExpression.HasKey != null)
+                throw new ArgumentException(
+                    "Class Expression already has a Has Key Axiom.",
+                    nameof(classExpression));
             classExpression.HasKey = this;
             _keyAccessors = keyAccessors;
         }
