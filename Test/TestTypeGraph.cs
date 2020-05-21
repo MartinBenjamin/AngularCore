@@ -56,8 +56,7 @@ namespace Test
 
             var failed = (
                 from axiom in PF.ClassAxioms
-                //from axiom in @class.ClassAxioms
-                where !axiom.Validate(d)
+                where axiom.Type == d.GetType() && !axiom.Validate(d)
                 select axiom
             );
 
