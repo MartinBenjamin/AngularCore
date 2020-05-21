@@ -551,7 +551,7 @@ namespace CommonDomainObjects
 
         bool IClassAxiom.Validate(
             object o
-            ) => o is T t ? Validate(t) : false;
+            ) => o is T t ? Validate(t) : true;
 
         public abstract bool Validate(T t);
     }

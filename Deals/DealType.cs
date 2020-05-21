@@ -61,6 +61,7 @@ namespace Deals
     public class PF
     {
         public static IList<IClassExpression> Classes = new List<IClassExpression>();
+        public static IList<IClassAxiom> ClassAxioms = new List<IClassAxiom>();
 
         // Abstract Syntax does not support annotation of SubClass Axioms.
         // Functional Syntax does not support Class Axioms with nested descriptions.
@@ -81,8 +82,8 @@ namespace Deals
             var AdvisorRole = new Individual<Role>(Role, null);
             var SponsorRole = new Individual<Role>(Role, null);
             var Mufg        = new Individual<LegalEntity>(LegalEntity, null);
-            new SubClass<Named<Guid>>(Named, DomainObject);
-            new SubClass<Role>(Role, Named);
+            ClassAxioms.Add(new SubClass<Named<Guid>>(Named, DomainObject));
+            ClassAxioms.Add(new SubClass<Role>(Role, Named));
             var KeyCounterpartyRole  = new ObjectOneOf<Role>();
             var LenderParty          = new ObjectHasValue<DealParty, Role>(dealParty => dealParty.Role, LenderRole);
             var AdvisorParty         = new ObjectHasValue<DealParty, Role>(dealParty => dealParty.Role, AdvisorRole);
@@ -99,7 +100,7 @@ namespace Deals
                 new DataSomeValuesFrom<Named<Guid>, string>(
                     named => named.Name,
                     new DataComplementOf<string>(new DataOneOf<string>(string.Empty))));
-
+            ClassAxioms.Add(NameMandatory);
             var Debt = new Class<Deal>(
                 new ObjectExactCardinality<Deal, DealParty>(
                     deal => deal.Parties,
@@ -111,8 +112,8 @@ namespace Deals
                     1,
                     MufgAdvisorParty));
 
-            new SubClass<Deal>(Debt, Deal);
-            new SubClass<Deal>(Advisory, Deal);
+            ClassAxioms.Add(new SubClass<Deal>(Debt, Deal));
+            ClassAxioms.Add(new SubClass<Deal>(Advisory, Deal));
 
 
             ObjectCardinalityExpression<Deal, DealParty> SponsorsCardinality = new ObjectMinCardinality<Deal, DealParty>(
@@ -124,27 +125,20 @@ namespace Deals
                 new DataHasValue<Deal, string>(
                     deal => deal.ClassName,
                     "ProjectFinance"));
-            new SubClass<Deal>(
+            ClassAxioms.Add(new SubClass<Deal>(
                 ProjectFinance,
-                Debt);
-            SponsorCardinality = new SubClass<Deal>(
+                Debt));
+            ClassAxioms.Add(SponsorCardinality = new SubClass<Deal>(
                 ProjectFinance,
-                SponsorsCardinality);
+                SponsorsCardinality));
 
             var Sponsor = new Class<Sponsor>();
             new SubClass<Sponsor>(Sponsor, SponsorParty);
-            new SubClass<Sponsor>(
+            ClassAxioms.Add(new SubClass<Sponsor>(
                 Sponsor,
                 new ObjectExactCardinality<Sponsor, decimal?>(
                     sponsor => sponsor.Equity,
-                    1));
-
-            Classes = new List<IClassExpression>
-            {
-                Deal,
-                ProjectFinance,
-                Sponsor
-            };
+                    1)));
 
             IIndividual<Organisation> a = null;
             IIndividual<LegalEntity> b = null;
