@@ -635,7 +635,11 @@ namespace CommonDomainObjects
             )
         {
             // Find HasKey Axiom.
-            return false;
+            var hasKey = Class.HasKey;
+            return
+                o is T rhs &&
+                hasKey != null &&
+                hasKey.AreEqual(Instance, rhs);
         }
     }
 }
