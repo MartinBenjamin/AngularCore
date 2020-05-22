@@ -58,30 +58,35 @@ namespace Deals
         public static readonly Guid Mufg = Guid.Empty;
     }
 
-    public class PF
+    public class DealOntology: DomainObject<Guid>
     {
+        public Role        LenderRole   { get; protected set; }
+        public Role        AdvisorRole  { get; protected set; }
+        public Role        SponsoleRole { get; protected set; }
+        public LegalEntity Mufg         { get; protected set; }
+        public SubClass<Deal> NameMandatory      { get; protected set; }
+        public SubClass<Deal> SponsorCardinality { get; protected set; }
+
         public static IList<IClassExpression> Classes = new List<IClassExpression>();
-        public static IList<IClassAxiom> ClassAxioms = new List<IClassAxiom>();
+        public IList<IClassAxiom> ClassAxioms { get; protected set; } = new List<IClassAxiom>();
 
         // Abstract Syntax does not support annotation of SubClass Axioms.
         // Functional Syntax does not support Class Axioms with nested descriptions.
 
         public static Class<Deal> Deal;
         public static Class<Deal> ProjectFinance;
-        public static SubClass<Deal> NameMandatory;
-        public static SubClass<Deal> SponsorCardinality;
 
-        static PF()
+        public DealOntology()
         {
             var DomainObject = new Class<DomainObject<Guid>>();
             new HasKey<DomainObject<Guid>, Guid>(DomainObject, domainObject => domainObject.Id);
             var Named       = new Class<Named<Guid>>();
             var Role        = new Class<Role>();
             var LegalEntity = new Class<LegalEntity>();
-            var LenderRole  = new Individual<Role>(Role, null);
-            var AdvisorRole = new Individual<Role>(Role, null);
-            var SponsorRole = new Individual<Role>(Role, null);
-            var Mufg        = new Individual<LegalEntity>(LegalEntity, null);
+            var LenderRole  = new Individual<Role       >(Role       , this.LenderRole  );
+            var AdvisorRole = new Individual<Role       >(Role       , this.AdvisorRole );
+            var SponsorRole = new Individual<Role       >(Role       , this.SponsoleRole);
+            var Mufg        = new Individual<LegalEntity>(LegalEntity, this.Mufg        );
             new HasKey<Role, Guid>(Role, role => role.Id);
             new HasKey<LegalEntity, Guid>(LegalEntity, legalEntity => legalEntity.Id);
             ClassAxioms.Add(new SubClass<Named<Guid>>(Named, DomainObject));

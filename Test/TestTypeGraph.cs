@@ -51,22 +51,23 @@ namespace Test
                 null,
                 null);
 
-            Assert.That(PF.ProjectFinance.ClassAxioms, Does.Contain(PF.SponsorCardinality));
-            Assert.That(PF.NameMandatory.Validate(d), Is.EqualTo(result));
+            var ontology = new DealOntology();
+            //Assert.That(PF.ProjectFinance.ClassAxioms, Does.Contain(PF.SponsorCardinality));
+            //Assert.That(PF.NameMandatory.Validate(d), Is.EqualTo(result));
 
             var failed = (
-                from axiom in PF.ClassAxioms
+                from axiom in ontology.ClassAxioms
                 where axiom.Type == d.GetType() && !axiom.Validate(d)
                 select axiom
             );
 
             if(!result)
-                Assert.That(failed, Does.Contain(PF.NameMandatory));
+                Assert.That(failed, Does.Contain(ontology.NameMandatory));
 
             else
-                Assert.That(failed, Does.Not.Contain(PF.NameMandatory));
+                Assert.That(failed, Does.Not.Contain(ontology.NameMandatory));
 
-            Assert.That(failed, Does.Contain(PF.SponsorCardinality));
+            Assert.That(failed, Does.Contain(ontology.SponsorCardinality));
         }
     }
 }
