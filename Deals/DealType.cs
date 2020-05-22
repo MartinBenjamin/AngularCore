@@ -60,10 +60,12 @@ namespace Deals
 
     public class DealOntology: DomainObject<Guid>
     {
-        public Role        LenderRole  { get; protected set; }
-        public Role        AdvisorRole { get; protected set; }
-        public Role        SponsorRole { get; protected set; }
-        public LegalEntity Mufg        { get; protected set; }
+        public Role        LenderRole           { get; protected set; }
+        public Role        AdvisorRole          { get; protected set; }
+        public Role        SponsorRole          { get; protected set; }
+        public IList<Role> KeyCounterpartyRoles { get; protected set; } = new List<Role>();
+        public LegalEntity Mufg                 { get; protected set; }
+
         public SubClass<Deal> NameMandatory      { get; protected set; }
         public SubClass<Deal> SponsorCardinality { get; protected set; }
 
@@ -91,7 +93,7 @@ namespace Deals
             new HasKey<LegalEntity, Guid>(LegalEntity, legalEntity => legalEntity.Id);
             ClassAxioms.Add(new SubClass<Named<Guid>>(Named, DomainObject));
             ClassAxioms.Add(new SubClass<Role>(Role, Named));
-            var KeyCounterpartyRole  = new ObjectOneOf<Role>();
+            var KeyCounterpartyRole  = new ObjectOneOf<Role>(KeyCounterpartyRoles.Select(role => new Individual<Role>(Role, role)).ToArray());
             var LenderParty          = new ObjectHasValue<DealParty, Role>(dealParty => dealParty.Role, LenderRole);
             var AdvisorParty         = new ObjectHasValue<DealParty, Role>(dealParty => dealParty.Role, AdvisorRole);
             var SponsorParty         = new ObjectHasValue<DealParty, Role>(dealParty => dealParty.Role, SponsorRole);
@@ -145,11 +147,6 @@ namespace Deals
                 new ObjectExactCardinality<Sponsor, decimal?>(
                     sponsor => sponsor.Equity,
                     1)));
-
-            IIndividual<Organisation> a = null;
-            IIndividual<LegalEntity> b = null;
-            a = b;
-            //b = a;
         }
 
         public static IEnumerable<IClassExpression> Classify(
