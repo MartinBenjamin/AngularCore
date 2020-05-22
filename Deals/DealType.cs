@@ -82,6 +82,8 @@ namespace Deals
             var AdvisorRole = new Individual<Role>(Role, null);
             var SponsorRole = new Individual<Role>(Role, null);
             var Mufg        = new Individual<LegalEntity>(LegalEntity, null);
+            new HasKey<Role, Guid>(Role, role => role.Id);
+            new HasKey<LegalEntity, Guid>(LegalEntity, legalEntity => legalEntity.Id);
             ClassAxioms.Add(new SubClass<Named<Guid>>(Named, DomainObject));
             ClassAxioms.Add(new SubClass<Role>(Role, Named));
             var KeyCounterpartyRole  = new ObjectOneOf<Role>();
@@ -91,7 +93,7 @@ namespace Deals
             var MufgParty            = new ObjectHasValue<DealParty, Organisation>(dealParty => dealParty.Organisation, Mufg);
             var MufgLenderParty      = new ObjectIntersectionOf<DealParty>(LenderParty, MufgParty);
             var MufgAdvisorParty     = new ObjectIntersectionOf<DealParty>(AdvisorParty, MufgParty);
-            var KeyCounterpartyParty = new ObjectAllValuesFrom<DealParty, Role>(dealParty => dealParty.Role, KeyCounterpartyRole);
+            var KeyCounterpartyParty = new ObjectSomeValuesFrom<DealParty, Role>(dealParty => dealParty.Role, KeyCounterpartyRole);
 
             Deal = new Class<Deal>();
 
@@ -114,7 +116,6 @@ namespace Deals
 
             ClassAxioms.Add(new SubClass<Deal>(Debt, Deal));
             ClassAxioms.Add(new SubClass<Deal>(Advisory, Deal));
-
 
             ObjectCardinalityExpression<Deal, DealParty> SponsorsCardinality = new ObjectMinCardinality<Deal, DealParty>(
                 deal => deal.Parties,
