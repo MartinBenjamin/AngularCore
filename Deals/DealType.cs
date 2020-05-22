@@ -60,10 +60,10 @@ namespace Deals
 
     public class DealOntology: DomainObject<Guid>
     {
-        public Role        LenderRole   { get; protected set; }
-        public Role        AdvisorRole  { get; protected set; }
-        public Role        SponsoleRole { get; protected set; }
-        public LegalEntity Mufg         { get; protected set; }
+        public Role        LenderRole  { get; protected set; }
+        public Role        AdvisorRole { get; protected set; }
+        public Role        SponsorRole { get; protected set; }
+        public LegalEntity Mufg        { get; protected set; }
         public SubClass<Deal> NameMandatory      { get; protected set; }
         public SubClass<Deal> SponsorCardinality { get; protected set; }
 
@@ -83,10 +83,10 @@ namespace Deals
             var Named       = new Class<Named<Guid>>();
             var Role        = new Class<Role>();
             var LegalEntity = new Class<LegalEntity>();
-            var LenderRole  = new Individual<Role       >(Role       , this.LenderRole  );
-            var AdvisorRole = new Individual<Role       >(Role       , this.AdvisorRole );
-            var SponsorRole = new Individual<Role       >(Role       , this.SponsoleRole);
-            var Mufg        = new Individual<LegalEntity>(LegalEntity, this.Mufg        );
+            var LenderRole  = new Individual<Role       >(Role       , this.LenderRole );
+            var AdvisorRole = new Individual<Role       >(Role       , this.AdvisorRole);
+            var SponsorRole = new Individual<Role       >(Role       , this.SponsorRole);
+            var Mufg        = new Individual<LegalEntity>(LegalEntity, this.Mufg       );
             new HasKey<Role, Guid>(Role, role => role.Id);
             new HasKey<LegalEntity, Guid>(LegalEntity, legalEntity => legalEntity.Id);
             ClassAxioms.Add(new SubClass<Named<Guid>>(Named, DomainObject));
