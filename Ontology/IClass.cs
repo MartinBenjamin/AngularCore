@@ -4,5 +4,8 @@
         IEntity,
         IClassExpression
     {
+        bool AreEqual(
+            object lhs,
+            object rhs);
     }
 }

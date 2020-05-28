@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Ontology
+﻿namespace Ontology
 {
-    public class Nothing:
-        Entity,
-        IClass
+    public class Nothing: Class
     {
         internal Nothing(
             IOntology ontology
@@ -13,12 +8,9 @@ namespace Ontology
                 ontology,
                 "Nothing")
         {
-            ontology.Classes[_name] = this;
         }
 
-        IList<IHasKey> IClassExpression.Keys => throw new NotImplementedException();
-
-        bool IClassExpression.HasMember(
+        public override bool HasMember(
             object individual
             )
         {
