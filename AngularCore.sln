@@ -55,7 +55,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Expressions", "Expressions\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Locations", "Locations\Locations.csproj", "{65B30DBE-DEE2-4EE4-8A9C-C86DE422414B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deals", "Deals\Deals.csproj", "{7A01ACA6-6CC5-4EE4-8E0D-2CB3736375BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Deals", "Deals\Deals.csproj", "{7A01ACA6-6CC5-4EE4-8E0D-2CB3736375BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ontology", "Ontology\Ontology.csproj", "{659331C8-3F42-40A3-BFBC-D989DDC0055C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -171,6 +173,10 @@ Global
 		{7A01ACA6-6CC5-4EE4-8E0D-2CB3736375BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A01ACA6-6CC5-4EE4-8E0D-2CB3736375BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A01ACA6-6CC5-4EE4-8E0D-2CB3736375BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{659331C8-3F42-40A3-BFBC-D989DDC0055C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{659331C8-3F42-40A3-BFBC-D989DDC0055C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{659331C8-3F42-40A3-BFBC-D989DDC0055C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{659331C8-3F42-40A3-BFBC-D989DDC0055C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
