@@ -109,4 +109,23 @@ namespace Ontology
         {
         }
     }
+
+    public static class IClassExtensions
+    {
+        public static IDataPropertyExpression DataProperty<T, TProperty>(
+            this IClass                                 @class,
+            Expression<Func<T, IEnumerable<TProperty>>> property
+            ) => new DataProperty<T, TProperty>(
+                @class.Ontology,
+                @class,
+                property);
+
+        public static IDataPropertyExpression DataProperty<T, TProperty>(
+            this IClass                    @class,
+            Expression<Func<T, TProperty>> property
+            ) => new DataProperty<T, TProperty>(
+                @class.Ontology,
+                @class,
+                property);
+    }
 }

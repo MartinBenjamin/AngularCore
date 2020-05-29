@@ -90,8 +90,8 @@ namespace Deals
             var Organisation = new Class<Organisation>(this);
             var LegalEntity  = new Class<LegalEntity>(this);
             var DealParty    = new Class<DealParty>(this);
-            var DomainObjectId = new DataProperty<DomainObject<Guid>, Guid>(this, DomainObject, domainObject => domainObject.Id);
-            var NamedName      = new DataProperty<Named<Guid>, string>(this, Named, named => named.Name);
+            var DomainObjectId = DomainObject.DataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
+            var NamedName      = Named.DataProperty<Named<Guid>, string>(named => named.Name);
 
             Id = DomainObjectId;
             new HasKey(DomainObject, DomainObjectId);
