@@ -92,6 +92,7 @@ namespace Deals
             var DealParty    = new Class<DealParty>(this);
             var DomainObjectId = DomainObject.DataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
             var NamedName      = Named.DataProperty<Named<Guid>, string>(named => named.Name);
+            Deal               = new Class<Deal>(this);
 
             Id = DomainObjectId;
             new HasKey(DomainObject, DomainObjectId);
@@ -99,19 +100,18 @@ namespace Deals
             new HasKey(LegalEntity , DomainObjectId);
             ClassAxioms.Add(new SubClassOf(Named, DomainObject));
             ClassAxioms.Add(new SubClassOf(Role, Named));
-            var RoleProperty         = new ObjectProperty<DealParty, Role>(this, DealParty, Role, dealParty => dealParty.Role);
-            var OrganisationProperty = new ObjectProperty<DealParty, Organisation>(this, DealParty, Organisation, dealParty => dealParty.Organisation);
-            var KeyCounterpartyRole  = new ObjectOneOf(this, KeyCounterpartyRoles);
-            var LenderParty          = new ObjectHasValue(RoleProperty, LenderRole );
-            var AdvisorParty         = new ObjectHasValue(RoleProperty, AdvisorRole);
-            var SponsorParty         = new ObjectHasValue(RoleProperty, SponsorRole);
-            var MufgParty            = new ObjectHasValue(OrganisationProperty, Mufg);
-            var MufgLenderParty      = new ObjectIntersectionOf(LenderParty, MufgParty);
-            var MufgAdvisorParty     = new ObjectIntersectionOf(AdvisorParty, MufgParty);
-            var KeyCounterpartyParty = new ObjectSomeValuesFrom(RoleProperty, KeyCounterpartyRole);
+            var DealPartyRole         = DealParty.ObjectProperty<DealParty, Role>(Role, dealParty => dealParty.Role);
+            var DealPartyOrganisation = DealParty.ObjectProperty<DealParty, Organisation>(Organisation, dealParty => dealParty.Organisation);
+            var KeyCounterpartyRole   = new ObjectOneOf(this, KeyCounterpartyRoles);
+            var LenderParty           = new ObjectHasValue(DealPartyRole, LenderRole );
+            var AdvisorParty          = new ObjectHasValue(DealPartyRole, AdvisorRole);
+            var SponsorParty          = new ObjectHasValue(DealPartyRole, SponsorRole);
+            var MufgParty             = new ObjectHasValue(DealPartyOrganisation, Mufg);
+            var MufgLenderParty       = new ObjectIntersectionOf(LenderParty, MufgParty);
+            var MufgAdvisorParty      = new ObjectIntersectionOf(AdvisorParty, MufgParty);
+            var KeyCounterpartyParty  = new ObjectSomeValuesFrom(DealPartyRole, KeyCounterpartyRole);
 
-            Deal = new Class<Deal>(this);
-            var PartiesProperty = new ObjectProperty<Deal, DealParty>(this, Deal, DealParty, deal => deal.Parties);
+            var DealParties = Deal.ObjectProperty<Deal, DealParty>(DealParty, deal => deal.Parties);
 
             NameMandatory = new SubClassOf(
                 Deal,
@@ -120,11 +120,11 @@ namespace Deals
                     new DataComplementOf(new DataOneOf(string.Empty))));
             ClassAxioms.Add(NameMandatory);
             var Debt = new ObjectExactCardinality(
-                PartiesProperty,
+                DealParties,
                 1,
                 MufgLenderParty);
             var Advisory = new ObjectExactCardinality(
-                PartiesProperty,
+                DealParties,
                 1,
                 MufgAdvisorParty);
 
@@ -132,7 +132,7 @@ namespace Deals
             ClassAxioms.Add(new SubClassOf(Advisory, Deal));
 
             var SponsorsCardinality = new ObjectMinCardinality(
-                PartiesProperty,
+                DealParties,
                 1,
                 SponsorParty);
 

@@ -112,12 +112,32 @@ namespace Ontology
 
     public static class IClassExtensions
     {
+        public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
+            this IClass                                 domain,
+            IClassExpression                            range,
+            Expression<Func<T, IEnumerable<TProperty>>> property
+            ) => new ObjectProperty<T, TProperty>(
+                domain.Ontology,
+                domain,
+                range,
+                property);
+
+        public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
+            this IClass                    domain,
+            IClassExpression               range,
+            Expression<Func<T, TProperty>> property
+            ) => new ObjectProperty<T, TProperty>(
+                domain.Ontology,
+                domain,
+                range,
+                property);
+
         public static IDataPropertyExpression DataProperty<T, TProperty>(
-            this IClass                                 @class,
+            this IClass                                 domain,
             Expression<Func<T, IEnumerable<TProperty>>> property
             ) => new DataProperty<T, TProperty>(
-                @class.Ontology,
-                @class,
+                domain.Ontology,
+                domain,
                 property);
 
         public static IDataPropertyExpression DataProperty<T, TProperty>(
