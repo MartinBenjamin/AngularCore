@@ -78,19 +78,18 @@ namespace Deals
         // Abstract Syntax does not support annotation of SubClass Axioms.
         // Functional Syntax does not support Class Axioms with nested descriptions.
 
-        public static Class<Deal>      Deal;
         public static IClassExpression ProjectFinance;
 
         public DealOntology()
         {
-            var DomainObject = new Class<DomainObject<Guid>>(this);
+            var DomainObject = this.Class<DomainObject<Guid>>();
             //new HasKey<DomainObject<Guid>, Guid>(DomainObject, domainObject => domainObject.Id);
-            var Named        = new Class<Named<Guid>>(this);
-            var Role         = new Class<Role>(this);
-            var Organisation = new Class<Organisation>(this);
-            var LegalEntity  = new Class<LegalEntity>(this);
-            var DealParty    = new Class<DealParty>(this);
-            Deal             = new Class<Deal>(this);
+            var Named        = this.Class<Named<Guid>>();
+            var Role         = this.Class<Role>();
+            var Organisation = this.Class<Organisation>();
+            var LegalEntity  = this.Class<LegalEntity>();
+            var DealParty    = this.Class<DealParty>();
+            var Deal         = this.Class<Deal>();
             var DomainObjectId = DomainObject.DataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
             var NamedName      = Named.DataProperty<Named<Guid>, string>(named => named.Name);
             var DealParties    = Deal.ObjectProperty<Deal, DealParty>(DealParty, deal => deal.Parties);
