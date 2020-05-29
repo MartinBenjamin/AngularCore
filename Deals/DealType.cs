@@ -94,15 +94,11 @@ namespace Deals
             var NameProperty = new DataProperty<Named<Guid>, string>(this, Named, named => named.Name);
 
             Id = IdProperty;
-            //var LenderRole  = new Individual<Role       >(Role       , this.LenderRole );
-            //var AdvisorRole = new Individual<Role       >(Role       , this.AdvisorRole);
-            //var SponsorRole = new Individual<Role       >(Role       , this.SponsorRole);
-            //var Mufg        = new Individual<LegalEntity>(LegalEntity, this.Mufg       );
             new HasKey(DomainObject, IdProperty);
             new HasKey(Role        , IdProperty);
             new HasKey(LegalEntity , IdProperty);
-            //ClassAxioms.Add(new SubClass<Named<Guid>>(Named, DomainObject));
-            //ClassAxioms.Add(new SubClass<Role>(Role, Named));
+            ClassAxioms.Add(new SubClassOf(Named, DomainObject));
+            ClassAxioms.Add(new SubClassOf(Role, Named));
             var RoleProperty         = new ObjectProperty<DealParty, Role>(this, DealParty, Role, dealParty => dealParty.Role);
             var OrganisationProperty = new ObjectProperty<DealParty, Organisation>(this, DealParty, Organisation, dealParty => dealParty.Organisation);
             var KeyCounterpartyRole  = new ObjectOneOf(this, KeyCounterpartyRoles);
