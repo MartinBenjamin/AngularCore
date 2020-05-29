@@ -90,9 +90,10 @@ namespace Deals
             var Organisation = new Class<Organisation>(this);
             var LegalEntity  = new Class<LegalEntity>(this);
             var DealParty    = new Class<DealParty>(this);
+            Deal             = new Class<Deal>(this);
             var DomainObjectId = DomainObject.DataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
             var NamedName      = Named.DataProperty<Named<Guid>, string>(named => named.Name);
-            Deal               = new Class<Deal>(this);
+            var DealParties    = Deal.ObjectProperty<Deal, DealParty>(DealParty, deal => deal.Parties);
 
             Id = DomainObjectId;
             new HasKey(DomainObject, DomainObjectId);
@@ -110,8 +111,6 @@ namespace Deals
             var MufgLenderParty       = new ObjectIntersectionOf(LenderParty, MufgParty);
             var MufgAdvisorParty      = new ObjectIntersectionOf(AdvisorParty, MufgParty);
             var KeyCounterpartyParty  = new ObjectSomeValuesFrom(DealPartyRole, KeyCounterpartyRole);
-
-            var DealParties = Deal.ObjectProperty<Deal, DealParty>(DealParty, deal => deal.Parties);
 
             NameMandatory = new SubClassOf(
                 Deal,
@@ -150,7 +149,7 @@ namespace Deals
 
             var Sponsor = new Class<Sponsor>(this);
             new SubClassOf(Sponsor, SponsorParty);
-            var EquityProperty = new DataProperty<Sponsor, decimal?>(this, Sponsor, sponsor => sponsor.Equity);
+            var EquityProperty = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
 
             ClassAxioms.Add(new SubClassOf(
                 Sponsor,
