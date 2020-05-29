@@ -129,12 +129,11 @@ namespace Deals
             ClassAxioms.Add(new SubClassOf(Debt, Deal));
             ClassAxioms.Add(new SubClassOf(Advisory, Deal));
 
-            var SponsorsCardinality = new ObjectMinCardinality(
-                DealParties,
+            var SponsorsCardinality = DealParties.MinCardinality(
                 1,
                 SponsorParty);
 
-            var DealClassName = new DataProperty<Deal, string>(this, Deal, deal => deal.ClassName);
+            var DealClassName = Deal.DataProperty<Deal, string>(deal => deal.ClassName);
 
             ProjectFinance = new DataHasValue(
                 DealClassName,

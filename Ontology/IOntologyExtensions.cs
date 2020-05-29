@@ -52,5 +52,32 @@ namespace Ontology
             ) => new HasKey(
                 classExpression,
                 dataPropertyExpressions);
+
+        public static IObjectMinCardinality MinCardinality(
+            this IObjectPropertyExpression objectPropertyExpression,
+            int                            cardinality,
+            IClassExpression               classExpression = null
+            ) => new ObjectMinCardinality(
+                objectPropertyExpression,
+                cardinality,
+                classExpression);
+
+        public static IObjectMaxCardinality MaxCardinality(
+            this IObjectPropertyExpression objectPropertyExpression,
+            int                            cardinality,
+            IClassExpression               classExpression = null
+            ) => new ObjectMaxCardinality(
+                objectPropertyExpression,
+                cardinality,
+                classExpression);
+
+        public static IObjectExactCardinality ExactCardinality(
+            this IObjectPropertyExpression objectPropertyExpression,
+            int                            cardinality,
+            IClassExpression               classExpression = null
+            ) => new ObjectExactCardinality(
+                objectPropertyExpression,
+                cardinality,
+                classExpression);
     }
 }
