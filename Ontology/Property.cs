@@ -44,7 +44,7 @@ namespace Ontology
             object individual
             )
         {
-            return _property((T)individual);
+            return individual is T t ? _property(t) : ((TProperty)null).ToEnumerable();
         }
     }
 
