@@ -6,11 +6,22 @@ namespace Ontology
 {
     public class HasKey: IHasKey
     {
+        private IClassExpression               _classExpression;
         private IList<IDataPropertyExpression> _properties;
 
-        IClassExpression IHasKey.ClassExpression => throw new NotImplementedException();
+        public HasKey(
+            IClassExpression                 classExpression,
+            params IDataPropertyExpression[] properties
+            )
+        {
+            _classExpression = classExpression;
+            _properties      = properties;
+            _classExpression.Keys.Add(this);
+        }
 
-        IList<IDataPropertyExpression> IHasKey.Properties => throw new NotImplementedException();
+        IClassExpression IHasKey.ClassExpression => _classExpression;
+
+        IList<IDataPropertyExpression> IHasKey.Properties => _properties;
 
         bool IHasKey.AreEqual(
             object lhs,

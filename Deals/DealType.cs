@@ -1,6 +1,7 @@
 ﻿using CommonDomainObjects;
 using LegalEntities;
 using Organisations;
+using Ontology;
 using Roles;
 using System;
 using System.Collections.Generic;
@@ -42,23 +43,23 @@ namespace Deals
     //    }
     //}
 
-    public static class ClassExpressionExtensions
-    {
-        public static ClassExpression<T> ActiveFromStage<T>(
-            this ClassExpression<T> classExpression,
-            int                     stageIndex
-            )
-        {
-            return classExpression;
-        }
-    }
+    //public static class ClassExpressionExtensions
+    //{
+    //    public static ClassExpression<T> ActiveFromStage<T>(
+    //        this ClassExpression<T> classExpression,
+    //        int                     stageIndex
+    //        )
+    //    {
+    //        return classExpression;
+    //    }
+    //}
 
     public static class LegalEntityIdentifier
     {
         public static readonly Guid Mufg = Guid.Empty;
     }
 
-    public class DealOntology: DomainObject<Guid>
+    public class DealOntology: Ontology.Ontology
     {
         public Role        LenderRole           { get; protected set; }
         public Role        AdvisorRole          { get; protected set; }
@@ -66,94 +67,100 @@ namespace Deals
         public IList<Role> KeyCounterpartyRoles { get; protected set; } = new List<Role>();
         public LegalEntity Mufg                 { get; protected set; }
 
-        public SubClass<Deal> NameMandatory      { get; protected set; }
-        public SubClass<Deal> SponsorCardinality { get; protected set; }
+        public ISubClassOf NameMandatory        { get; protected set; }
+        public ISubClassOf SponsorCardinality   { get; protected set; }
+
+        public IDataPropertyExpression Id { get; protected set; }
 
         public static IList<IClassExpression> Classes = new List<IClassExpression>();
-        public IList<IClassAxiom> ClassAxioms { get; protected set; } = new List<IClassAxiom>();
+        public IList<ISubClassOf> ClassAxioms { get; protected set; } = new List<ISubClassOf>();
 
         // Abstract Syntax does not support annotation of SubClass Axioms.
         // Functional Syntax does not support Class Axioms with nested descriptions.
 
-        public static Class<Deal> Deal;
-        public static Class<Deal> ProjectFinance;
+        public static Class<Deal>      Deal;
+        public static IClassExpression ProjectFinance;
 
         public DealOntology()
         {
-            var DomainObject = new Class<DomainObject<Guid>>();
-            new HasKey<DomainObject<Guid>, Guid>(DomainObject, domainObject => domainObject.Id);
-            var Named       = new Class<Named<Guid>>();
-            var Role        = new Class<Role>();
-            var LegalEntity = new Class<LegalEntity>();
-            var LenderRole  = new Individual<Role       >(Role       , this.LenderRole );
-            var AdvisorRole = new Individual<Role       >(Role       , this.AdvisorRole);
-            var SponsorRole = new Individual<Role       >(Role       , this.SponsorRole);
-            var Mufg        = new Individual<LegalEntity>(LegalEntity, this.Mufg       );
-            new HasKey<Role, Guid>(Role, role => role.Id);
-            new HasKey<LegalEntity, Guid>(LegalEntity, legalEntity => legalEntity.Id);
-            ClassAxioms.Add(new SubClass<Named<Guid>>(Named, DomainObject));
-            ClassAxioms.Add(new SubClass<Role>(Role, Named));
-            var KeyCounterpartyRole  = new ObjectOneOf<Role>(KeyCounterpartyRoles.Select(role => new Individual<Role>(Role, role)).ToArray());
-            var LenderParty          = new ObjectHasValue<DealParty, Role>(dealParty => dealParty.Role, LenderRole);
-            var AdvisorParty         = new ObjectHasValue<DealParty, Role>(dealParty => dealParty.Role, AdvisorRole);
-            var SponsorParty         = new ObjectHasValue<DealParty, Role>(dealParty => dealParty.Role, SponsorRole);
-            var MufgParty            = new ObjectHasValue<DealParty, Organisation>(dealParty => dealParty.Organisation, Mufg);
-            var MufgLenderParty      = new ObjectIntersectionOf<DealParty>(LenderParty, MufgParty);
-            var MufgAdvisorParty     = new ObjectIntersectionOf<DealParty>(AdvisorParty, MufgParty);
-            var KeyCounterpartyParty = new ObjectSomeValuesFrom<DealParty, Role>(dealParty => dealParty.Role, KeyCounterpartyRole);
+            var DomainObject = new Class<DomainObject<Guid>>(this);
+            //new HasKey<DomainObject<Guid>, Guid>(DomainObject, domainObject => domainObject.Id);
+            var Named        = new Class<Named<Guid>>(this);
+            var Role         = new Class<Role>(this);
+            var Organisation = new Class<Organisation>(this);
+            var LegalEntity  = new Class<LegalEntity>(this);
+            var DealParty    = new Class<DealParty>(this);
+            var IdProperty   = new DataProperty<DomainObject<Guid>, Guid>(this, DomainObject, domainObject => domainObject.Id);
+            var NameProperty = new DataProperty<Named<Guid>, string>(this, Named, named => named.Name);
 
-            Deal = new Class<Deal>();
+            Id = IdProperty;
+            //var LenderRole  = new Individual<Role       >(Role       , this.LenderRole );
+            //var AdvisorRole = new Individual<Role       >(Role       , this.AdvisorRole);
+            //var SponsorRole = new Individual<Role       >(Role       , this.SponsorRole);
+            //var Mufg        = new Individual<LegalEntity>(LegalEntity, this.Mufg       );
+            new HasKey(DomainObject, IdProperty);
+            new HasKey(Role        , IdProperty);
+            new HasKey(LegalEntity , IdProperty);
+            //ClassAxioms.Add(new SubClass<Named<Guid>>(Named, DomainObject));
+            //ClassAxioms.Add(new SubClass<Role>(Role, Named));
+            var RoleProperty         = new ObjectProperty<DealParty, Role>(this, DealParty, Role, dealParty => dealParty.Role);
+            var OrganisationProperty = new ObjectProperty<DealParty, Organisation>(this, DealParty, Organisation, dealParty => dealParty.Organisation);
+            var KeyCounterpartyRole  = new ObjectOneOf(this, KeyCounterpartyRoles);
+            var LenderParty          = new ObjectHasValue(RoleProperty, LenderRole );
+            var AdvisorParty         = new ObjectHasValue(RoleProperty, AdvisorRole);
+            var SponsorParty         = new ObjectHasValue(RoleProperty, SponsorRole);
+            var MufgParty            = new ObjectHasValue(OrganisationProperty, Mufg);
+            var MufgLenderParty      = new ObjectIntersectionOf(LenderParty, MufgParty);
+            var MufgAdvisorParty     = new ObjectIntersectionOf(AdvisorParty, MufgParty);
+            var KeyCounterpartyParty = new ObjectSomeValuesFrom(RoleProperty, KeyCounterpartyRole);
 
-            NameMandatory = new SubClass<Deal>(
+            Deal = new Class<Deal>(this);
+            var PartiesProperty = new ObjectProperty<Deal, DealParty>(this, Deal, DealParty, deal => deal.Parties);
+
+            NameMandatory = new SubClassOf(
                 Deal,
-                new DataSomeValuesFrom<Named<Guid>, string>(
-                    named => named.Name,
-                    new DataComplementOf<string>(new DataOneOf<string>(string.Empty))));
+                new DataSomeValuesFrom(
+                    NameProperty,
+                    new DataComplementOf(new DataOneOf(string.Empty))));
             ClassAxioms.Add(NameMandatory);
-            var Debt = new Class<Deal>(
-                new ObjectExactCardinality<Deal, DealParty>(
-                    deal => deal.Parties,
-                    1,
-                    MufgLenderParty));
-            var Advisory = new Class<Deal>(
-                new ObjectExactCardinality<Deal, DealParty>(
-                    deal => deal.Parties,
-                    1,
-                    MufgAdvisorParty));
+            var Debt = new ObjectExactCardinality(
+                PartiesProperty,
+                1,
+                MufgLenderParty);
+            var Advisory = new ObjectExactCardinality(
+                PartiesProperty,
+                1,
+                MufgAdvisorParty);
 
-            ClassAxioms.Add(new SubClass<Deal>(Debt, Deal));
-            ClassAxioms.Add(new SubClass<Deal>(Advisory, Deal));
+            ClassAxioms.Add(new SubClassOf(Debt, Deal));
+            ClassAxioms.Add(new SubClassOf(Advisory, Deal));
 
-            ObjectCardinalityExpression<Deal, DealParty> SponsorsCardinality = new ObjectMinCardinality<Deal, DealParty>(
-                deal => deal.Parties,
+            var SponsorsCardinality = new ObjectMinCardinality(
+                PartiesProperty,
                 1,
                 SponsorParty);
 
-            ProjectFinance = new Class<Deal>(
-                new DataHasValue<Deal, string>(
-                    deal => deal.ClassName,
-                    "ProjectFinance"));
-            ClassAxioms.Add(new SubClass<Deal>(
+            var DealClassName = new DataProperty<Deal, string>(this, Deal, deal => deal.ClassName);
+
+            ProjectFinance = new DataHasValue(
+                DealClassName,
+                "ProjectFinance");
+            ClassAxioms.Add(new SubClassOf(
                 ProjectFinance,
                 Debt));
-            ClassAxioms.Add(SponsorCardinality = new SubClass<Deal>(
+            ClassAxioms.Add(SponsorCardinality = new SubClassOf(
                 ProjectFinance,
                 SponsorsCardinality));
 
-            var Sponsor = new Class<Sponsor>();
-            new SubClass<Sponsor>(Sponsor, SponsorParty);
-            ClassAxioms.Add(new SubClass<Sponsor>(
-                Sponsor,
-                new ObjectExactCardinality<Sponsor, decimal?>(
-                    sponsor => sponsor.Equity,
-                    1)));
-        }
+            var Sponsor = new Class<Sponsor>(this);
+            new SubClassOf(Sponsor, SponsorParty);
+            var EquityProperty = new DataProperty<Sponsor, decimal?>(this, Sponsor, sponsor => sponsor.Equity);
 
-        public static IEnumerable<IClassExpression> Classify(
-            object o
-            )
-        {
-            return from ce in Classes where ce.Type == o.GetType() && ce.HasMember(o) select ce;
+            ClassAxioms.Add(new SubClassOf(
+                Sponsor,
+                new DataExactCardinality(
+                    EquityProperty,
+                    1)));
         }
     }
 

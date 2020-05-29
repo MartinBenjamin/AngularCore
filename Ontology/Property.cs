@@ -1,6 +1,7 @@
 ﻿using CommonDomainObjects;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace Ontology
@@ -8,7 +9,6 @@ namespace Ontology
     public abstract class Property<T, TProperty>:
         Entity,
         IPropertyExpression
-        where TProperty : class
     {
         private IClassExpression                _domain;
         private Func<T, IEnumerable<TProperty>> _property;
@@ -44,14 +44,13 @@ namespace Ontology
             object individual
             )
         {
-            return individual is T t ? _property(t) : ((TProperty)null).ToEnumerable();
+            return individual is T t ? _property(t).Cast<object>() : Enumerable.Empty<object>();
         }
     }
 
     public class ObjectProperty<T, TProperty>:
         Property<T, TProperty>,
         IObjectPropertyExpression
-        where TProperty : class
     {
         private IClassExpression _range;
 
@@ -82,5 +81,32 @@ namespace Ontology
         }
 
         IClassExpression IObjectPropertyExpression.Range => _range;
+    }
+    
+    public class DataProperty<T, TProperty>:
+        Property<T, TProperty>,
+        IDataPropertyExpression
+    {
+        public DataProperty(
+            IOntology                                   ontology,
+            IClassExpression                            domain,
+            Expression<Func<T, IEnumerable<TProperty>>> property
+            ) : base(
+                ontology,
+                domain,
+                property)
+        {
+        }
+
+        public DataProperty(
+            IOntology                      ontology,
+            IClassExpression               domain,
+            Expression<Func<T, TProperty>> property
+            ) : base(
+                ontology,
+                domain,
+                property)
+        {
+        }
     }
 }

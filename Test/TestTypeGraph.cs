@@ -52,12 +52,20 @@ namespace Test
                 null);
 
             var ontology = new DealOntology();
+
+            var ids = ontology.Id.Values(d).ToList();
+            Assert.That(ids.Count, Is.EqualTo(1));
+            Assert.That(ids[0], Is.EqualTo(d.Id));
+            Assert.That(ids[0], Is.Not.EqualTo(Guid.Empty));
+            ids = ontology.Id.Values(new object()).ToList();
+            Assert.That(ids, Is.Empty);
+            //return;
             //Assert.That(PF.ProjectFinance.ClassAxioms, Does.Contain(PF.SponsorCardinality));
             //Assert.That(PF.NameMandatory.Validate(d), Is.EqualTo(result));
 
             var failed = (
                 from axiom in ontology.ClassAxioms
-                where axiom.Type == d.GetType() && !axiom.Validate(d)
+                where !axiom.Validate(d)
                 select axiom
             );
 
