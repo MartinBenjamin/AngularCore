@@ -90,13 +90,13 @@ namespace Deals
             var Organisation = new Class<Organisation>(this);
             var LegalEntity  = new Class<LegalEntity>(this);
             var DealParty    = new Class<DealParty>(this);
-            var IdProperty   = new DataProperty<DomainObject<Guid>, Guid>(this, DomainObject, domainObject => domainObject.Id);
-            var NameProperty = new DataProperty<Named<Guid>, string>(this, Named, named => named.Name);
+            var DomainObjectId = new DataProperty<DomainObject<Guid>, Guid>(this, DomainObject, domainObject => domainObject.Id);
+            var NamedName      = new DataProperty<Named<Guid>, string>(this, Named, named => named.Name);
 
-            Id = IdProperty;
-            new HasKey(DomainObject, IdProperty);
-            new HasKey(Role        , IdProperty);
-            new HasKey(LegalEntity , IdProperty);
+            Id = DomainObjectId;
+            new HasKey(DomainObject, DomainObjectId);
+            new HasKey(Role        , DomainObjectId);
+            new HasKey(LegalEntity , DomainObjectId);
             ClassAxioms.Add(new SubClassOf(Named, DomainObject));
             ClassAxioms.Add(new SubClassOf(Role, Named));
             var RoleProperty         = new ObjectProperty<DealParty, Role>(this, DealParty, Role, dealParty => dealParty.Role);
@@ -116,7 +116,7 @@ namespace Deals
             NameMandatory = new SubClassOf(
                 Deal,
                 new DataSomeValuesFrom(
-                    NameProperty,
+                    NamedName,
                     new DataComplementOf(new DataOneOf(string.Empty))));
             ClassAxioms.Add(NameMandatory);
             var Debt = new ObjectExactCardinality(
