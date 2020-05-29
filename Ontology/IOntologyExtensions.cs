@@ -45,5 +45,12 @@ namespace Ontology
                 @class.Ontology,
                 @class,
                 property);
+
+        public static IHasKey HasKey(
+            this IClassExpression            classExpression,
+            params IDataPropertyExpression[] dataPropertyExpressions
+            ) => new HasKey(
+                classExpression,
+                dataPropertyExpressions);
     }
 }

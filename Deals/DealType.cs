@@ -95,9 +95,9 @@ namespace Deals
             var DealParties    = Deal.ObjectProperty<Deal, DealParty>(DealParty, deal => deal.Parties);
 
             Id = DomainObjectId;
-            new HasKey(DomainObject, DomainObjectId);
-            new HasKey(Role        , DomainObjectId);
-            new HasKey(LegalEntity , DomainObjectId);
+            DomainObject.HasKey(DomainObjectId);
+            Role.HasKey(DomainObjectId);
+            LegalEntity.HasKey(DomainObjectId);
             ClassAxioms.Add(new SubClassOf(Named, DomainObject));
             ClassAxioms.Add(new SubClassOf(Role, Named));
             var DealPartyRole         = DealParty.ObjectProperty<DealParty, Role>(Role, dealParty => dealParty.Role);
