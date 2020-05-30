@@ -79,5 +79,32 @@ namespace Ontology
                 objectPropertyExpression,
                 cardinality,
                 classExpression);
+
+        public static IDataMinCardinality MinCardinality(
+            this IDataPropertyExpression dataPropertyExpression,
+            int                          cardinality,
+            IDataRange                   dataRange = null
+            ) => new DataMinCardinality(
+                dataPropertyExpression,
+                cardinality,
+                dataRange);
+
+        public static IDataMaxCardinality MaxCardinality(
+            this IDataPropertyExpression dataPropertyExpression,
+            int                          cardinality,
+            IDataRange                   dataRange = null
+            ) => new DataMaxCardinality(
+                dataPropertyExpression,
+                cardinality,
+                dataRange);
+
+        public static IDataExactCardinality ExactCardinality(
+            this IDataPropertyExpression dataPropertyExpression,
+            int                          cardinality,
+            IDataRange                   dataRange = null
+            ) => new DataExactCardinality(
+                dataPropertyExpression,
+                cardinality,
+                dataRange);
     }
 }

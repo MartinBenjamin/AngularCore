@@ -117,12 +117,10 @@ namespace Deals
                     NamedName,
                     new DataComplementOf(new DataOneOf(string.Empty))));
             ClassAxioms.Add(NameMandatory);
-            var Debt = new ObjectExactCardinality(
-                DealParties,
+            var Debt = DealParties.ExactCardinality(
                 1,
                 MufgLenderParty);
-            var Advisory = new ObjectExactCardinality(
-                DealParties,
+            var Advisory = DealParties.ExactCardinality(
                 1,
                 MufgAdvisorParty);
 
@@ -147,13 +145,11 @@ namespace Deals
 
             var Sponsor = new Class<Sponsor>(this);
             new SubClassOf(Sponsor, SponsorParty);
-            var EquityProperty = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
+            var SponsorEquity = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
 
             ClassAxioms.Add(new SubClassOf(
                 Sponsor,
-                new DataExactCardinality(
-                    EquityProperty,
-                    1)));
+                SponsorEquity.ExactCardinality(1)));
         }
     }
 

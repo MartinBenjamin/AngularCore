@@ -74,7 +74,7 @@ namespace Ontology
 
     public class DataExactCardinality:
         DataCardinality,
-        IDataMaxCardinality
+        IDataExactCardinality
     {
         public DataExactCardinality(
             IDataPropertyExpression dataPropertyExpression,
