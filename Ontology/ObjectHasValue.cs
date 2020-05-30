@@ -3,24 +3,19 @@
 namespace Ontology
 {
     public class ObjectHasValue:
-        ClassExpression,
+        ObjectPropertyRestriction,
         IObjectHasValue
     {
-        private IObjectPropertyExpression _objectPropertyExpression;
-        private object                    _individual;
-
-        IObjectPropertyExpression IObjectHasValue.ObjectPropertyExpression => _objectPropertyExpression;
-
-        object IObjectHasValue.Individual => _individual;
-
+        private object _individual;
         public ObjectHasValue(
             IObjectPropertyExpression objectPropertyExpression,
             object                    individual
-            )
+            ) : base(objectPropertyExpression)
         {
-            _objectPropertyExpression = objectPropertyExpression;
-            _individual               = individual;
+            _individual = individual;
         }
+
+        object IObjectHasValue.Individual => _individual;
 
         public override bool HasMember(
             object individual

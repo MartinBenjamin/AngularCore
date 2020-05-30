@@ -19,8 +19,6 @@ namespace Ontology
             _classExpression = classExpression ?? _objectPropertyExpression.Ontology.Thing;
         }
 
-        IObjectPropertyExpression IObjectPropertyRestriction.ObjectPropertyExpression => _objectPropertyExpression;
-
         int IObjectCardinality.Cardinality => _cardinality;
 
         IClassExpression IObjectCardinality.ClassExpression => _classExpression;

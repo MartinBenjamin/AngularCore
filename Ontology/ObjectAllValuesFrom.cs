@@ -3,22 +3,18 @@
 namespace Ontology
 {
     class ObjectAllValuesFrom:
-        ClassExpression,
+        ObjectPropertyRestriction,
         IObjectAllValuesFrom
     {
-        private IObjectPropertyExpression _objectPropertyExpression;
-        private IClassExpression          _classExpression;
+        private IClassExpression _classExpression;
 
         public ObjectAllValuesFrom(
             IObjectPropertyExpression objectPropertyExpression,
             IClassExpression          classExpression
-            )
+            ) : base(objectPropertyExpression)
         {
-            _objectPropertyExpression  = objectPropertyExpression;
-            _classExpression           = classExpression;
+            _classExpression = classExpression;
         }
-
-        IObjectPropertyExpression IObjectAllValuesFrom.ObjectPropertyExpression => _objectPropertyExpression;
 
         IClassExpression IObjectAllValuesFrom.ClassExpression => _classExpression;
 

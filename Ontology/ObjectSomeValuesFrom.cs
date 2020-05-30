@@ -16,8 +16,6 @@ namespace Ontology
             _classExpression = classExpression;
         }
 
-        IObjectPropertyExpression IObjectPropertyRestriction.ObjectPropertyExpression => _objectPropertyExpression;
-
         IClassExpression IObjectSomeValuesFrom.ClassExpression => _classExpression;
 
         public override bool HasMember(

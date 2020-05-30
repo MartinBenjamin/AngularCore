@@ -1,8 +1,7 @@
 ﻿namespace Ontology
 {
-    public interface IObjectHasValue: IClassExpression
+    public interface IObjectHasValue: IObjectPropertyRestriction
     {
-        IObjectPropertyExpression ObjectPropertyExpression { get; }
-        object                    Individual               { get; }
+        object Individual { get; }
     }
 }
