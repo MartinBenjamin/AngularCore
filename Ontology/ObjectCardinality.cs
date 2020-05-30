@@ -3,25 +3,23 @@
 namespace Ontology
 {
     public abstract class ObjectCardinality:
-        ClassExpression,
+        ObjectPropertyRestriction,
         IObjectCardinality
     {
-        protected IObjectPropertyExpression _objectPropertyExpression;
-        protected int                       _cardinality;
-        protected IClassExpression          _classExpression;
+        protected int              _cardinality;
+        protected IClassExpression _classExpression;
 
         protected ObjectCardinality(
             IObjectPropertyExpression  objectPropertyExpression,
             int                        cardinality,
             IClassExpression           classExpression
-            )
+            ) : base(objectPropertyExpression)
         {
-            _objectPropertyExpression  = objectPropertyExpression;
-            _cardinality               = cardinality;
-            _classExpression           = classExpression ?? _objectPropertyExpression.Ontology.Thing;
+            _cardinality     = cardinality;
+            _classExpression = classExpression ?? _objectPropertyExpression.Ontology.Thing;
         }
 
-        IObjectPropertyExpression IObjectCardinality.ObjectPropertyExpression => _objectPropertyExpression;
+        IObjectPropertyExpression IObjectPropertyRestriction.ObjectPropertyExpression => _objectPropertyExpression;
 
         int IObjectCardinality.Cardinality => _cardinality;
 
