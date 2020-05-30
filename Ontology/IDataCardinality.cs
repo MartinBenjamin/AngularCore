@@ -1,10 +1,9 @@
 ﻿namespace Ontology
 {
-    public interface IDataCardinality: IClassExpression
+    public interface IDataCardinality: IDataPropertyRestriction
     {
-        IDataPropertyExpression  DataPropertyExpression { get; }
-        int                      Cardinality            { get; }
-        IDataRange               DataRange              { get; }
+        int        Cardinality { get; }
+        IDataRange DataRange   { get; }
     }
 
     public interface IDataMinCardinality: IDataCardinality

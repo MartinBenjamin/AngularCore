@@ -3,10 +3,9 @@
 namespace Ontology
 {
     public abstract class DataCardinality:
-        ClassExpression,
+        DataPropertyRestriction,
         IDataCardinality
     {
-        protected IDataPropertyExpression _dataPropertyExpression;
         protected int                     _cardinality;
         protected IDataRange              _dataRange;
 
@@ -14,14 +13,11 @@ namespace Ontology
             IDataPropertyExpression dataPropertyExpression,
             int                     cardinality,
             IDataRange              dataRange
-            )
+            ) : base(dataPropertyExpression)
         {
-            _dataPropertyExpression = dataPropertyExpression;
             _cardinality            = cardinality;
             _dataRange              = dataRange;
         }
-
-        IDataPropertyExpression IDataCardinality.DataPropertyExpression => _dataPropertyExpression;
 
         int IDataCardinality.Cardinality => _cardinality;
 

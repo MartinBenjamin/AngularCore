@@ -3,22 +3,18 @@
 namespace Ontology
 {
     public class DataAllValuesFrom:
-        ClassExpression,
+        DataPropertyRestriction,
         IDataAllValuesFrom
     {
-        private IDataPropertyExpression _dataPropertyExpression;
-        private IDataRange              _dataRange;
+        private IDataRange _dataRange;
 
         public DataAllValuesFrom(
             IDataPropertyExpression dataPropertyExpression,
             IDataRange              dataRange
-            )
+            ) : base(dataPropertyExpression)
         {
-            _dataPropertyExpression = dataPropertyExpression;
             _dataRange              = dataRange;
         }
-
-        IDataPropertyExpression IDataAllValuesFrom.DataPropertyExpression => _dataPropertyExpression;
 
         IDataRange IDataAllValuesFrom.DataRange => _dataRange;
 

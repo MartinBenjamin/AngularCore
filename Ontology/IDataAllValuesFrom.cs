@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Ontology
+﻿namespace Ontology
 {
-    public interface IDataAllValuesFrom: IClassExpression
+    public interface IDataAllValuesFrom: IDataPropertyRestriction
     {
-        IDataPropertyExpression DataPropertyExpression { get; }
-        IDataRange              DataRange              { get; }
+        IDataRange DataRange { get; }
     }
 }

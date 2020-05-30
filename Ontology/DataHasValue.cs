@@ -4,22 +4,18 @@ using System.Linq;
 namespace Ontology
 {
     public class DataHasValue:
-        ClassExpression,
+        DataPropertyRestriction,
         IDataHasValue
     {
-        private IDataPropertyExpression _dataPropertyExpression;
         private object                  _value;
 
         public DataHasValue(
             IDataPropertyExpression dataPropertyExpression,
             object                  value
-            )
+            ) : base(dataPropertyExpression)
         {
-            _dataPropertyExpression = dataPropertyExpression;
-            _value                  = value;
+            _value = value;
         }
-
-        IDataPropertyExpression IDataHasValue.DataPropertyExpression => _dataPropertyExpression;
 
         object IDataHasValue.Value => _value;
 

@@ -1,8 +1,7 @@
 ﻿namespace Ontology
 {
-    interface IDataSomeValuesFrom: IClassExpression
+    interface IDataSomeValuesFrom: IDataPropertyRestriction
     {
-        IDataPropertyExpression DataPropertyExpression { get; }
-        IDataRange              DataRange              { get; }
+        IDataRange DataRange { get; }
     }
 }
