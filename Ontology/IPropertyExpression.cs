@@ -4,7 +4,8 @@ namespace Ontology
 {
     public interface IPropertyExpression: IEntity
     {
-        IClassExpression    Domain { get; }
+        IClassExpression Domain { get; }
+
         IEnumerable<object> Values(object individual);
     }
 
