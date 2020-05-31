@@ -17,4 +17,21 @@ namespace Ontology
     public interface IDataPropertyExpression: IPropertyExpression
     {
     }
+
+    public interface IFunctionalPropertyExpression: IPropertyExpression
+    {
+        object Value(object individual);
+    }
+
+    public interface IFunctionalObjectPropertyExpression:
+        IObjectPropertyExpression,
+        IFunctionalPropertyExpression
+    {
+    }
+
+    public interface IFunctionalDataPropertyExpression:
+        IDataPropertyExpression,
+        IFunctionalPropertyExpression
+    {
+    }
 }

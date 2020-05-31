@@ -4,12 +4,4 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="ClassExpression.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="ClassExpression.cs" />
-  </ItemGroup>
-
 </Project>

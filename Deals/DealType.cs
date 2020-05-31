@@ -98,6 +98,7 @@ namespace Deals
             DomainObject.HasKey(DomainObjectId);
             Role.HasKey(DomainObjectId);
             LegalEntity.HasKey(DomainObjectId);
+            Deal.HasKey(DomainObjectId);
             ClassAxioms.Add(new SubClassOf(Named, DomainObject));
             ClassAxioms.Add(new SubClassOf(Role, Named));
             var DealPartyRole         = DealParty.ObjectProperty<DealParty, Role>(Role, dealParty => dealParty.Role);

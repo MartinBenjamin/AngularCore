@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using CommonDomainObjects;
 using Deals;
+using Ontology;
 
 namespace Test
 {
@@ -51,7 +52,19 @@ namespace Test
                 null,
                 null);
 
+            var copy = new Deal(
+                d.Id,
+                null,
+                null,
+                null,
+                null);
             var ontology = new DealOntology();
+
+            var dealClass = ((IOntology)ontology).Classes["Deals.Deal"];
+            Assert.That(dealClass.Keys, Is.Not.Empty);
+            Assert.That(dealClass.Keys[0].AreEqual(d, d), Is.True);
+            Assert.That(dealClass.AreEqual(d, d), Is.True);
+            Assert.That(dealClass.AreEqual(d, copy), Is.True);
 
             var ids = ontology.Id.Values(d).ToList();
             Assert.That(ids.Count, Is.EqualTo(1));

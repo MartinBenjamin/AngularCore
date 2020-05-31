@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Ontology
 {
     public class HasKey: IHasKey
     {
-        private IClassExpression               _classExpression;
-        private IList<IDataPropertyExpression> _properties;
+        private IClassExpression                         _classExpression;
+        private IList<IFunctionalDataPropertyExpression> _properties;
 
         public HasKey(
-            IClassExpression                 classExpression,
-            params IDataPropertyExpression[] properties
+            IClassExpression                           classExpression,
+            params IFunctionalDataPropertyExpression[] properties
             )
         {
             _classExpression = classExpression;
@@ -21,20 +20,11 @@ namespace Ontology
 
         IClassExpression IHasKey.ClassExpression => _classExpression;
 
-        IList<IDataPropertyExpression> IHasKey.Properties => _properties;
+        IList<IFunctionalDataPropertyExpression> IHasKey.Properties => _properties;
 
         bool IHasKey.AreEqual(
             object lhs,
             object rhs
-            )
-        {
-            // Assume max cardinality of 1.
-            return (
-                from property in _properties
-                let lhsKeyValue = property.Values(lhs).FirstOrDefault()
-                let rhsKeyValue = property.Values(rhs).FirstOrDefault()
-                where object.Equals(lhsKeyValue, rhsKeyValue)
-                select property).Count() == _properties.Count;
-        }
+            ) => _properties.All(property => Equals(property.Value(lhs), property.Value(rhs)));
     }
 }

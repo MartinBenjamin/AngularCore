@@ -20,11 +20,11 @@ namespace Ontology
                 range,
                 property);
 
-        public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
+        public static IFunctionalObjectPropertyExpression ObjectProperty<T, TProperty>(
             this IClass                    domain,
             IClassExpression               range,
             Expression<Func<T, TProperty>> property
-            ) => new ObjectProperty<T, TProperty>(
+            ) => new FunctionalObjectProperty<T, TProperty>(
                 domain.Ontology,
                 domain,
                 range,
@@ -38,17 +38,17 @@ namespace Ontology
                 domain,
                 property);
 
-        public static IDataPropertyExpression DataProperty<T, TProperty>(
+        public static IFunctionalDataPropertyExpression DataProperty<T, TProperty>(
             this IClass                    @class,
             Expression<Func<T, TProperty>> property
-            ) => new DataProperty<T, TProperty>(
+            ) => new FunctionalDataProperty<T, TProperty>(
                 @class.Ontology,
                 @class,
                 property);
 
         public static IHasKey HasKey(
-            this IClassExpression            classExpression,
-            params IDataPropertyExpression[] dataPropertyExpressions
+            this IClassExpression                      classExpression,
+            params IFunctionalDataPropertyExpression[] dataPropertyExpressions
             ) => new HasKey(
                 classExpression,
                 dataPropertyExpressions);
