@@ -5,6 +5,7 @@
         IObjectPropertyRestriction
     {
         protected IObjectPropertyExpression _objectPropertyExpression;
+
         protected ObjectPropertyRestriction(
             IObjectPropertyExpression objectPropertyExpression
             )

@@ -12,9 +12,6 @@
 
         public override bool HasMember(
             object individual
-            )
-        {
-            return false;
-        }
+            ) => false;
     }
 }

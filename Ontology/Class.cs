@@ -36,10 +36,7 @@ namespace Ontology
 
         public virtual bool HasMember(
             object individual
-            )
-        {
-            return false;
-        }
+            ) => false;
     }
 
     public class Class<T>: Class

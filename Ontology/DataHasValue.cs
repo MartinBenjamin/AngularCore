@@ -7,7 +7,7 @@ namespace Ontology
         DataPropertyRestriction,
         IDataHasValue
     {
-        private object                  _value;
+        private object _value;
 
         public DataHasValue(
             IDataPropertyExpression dataPropertyExpression,

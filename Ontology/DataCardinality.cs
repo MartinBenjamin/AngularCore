@@ -6,8 +6,8 @@ namespace Ontology
         DataPropertyRestriction,
         IDataCardinality
     {
-        protected int                     _cardinality;
-        protected IDataRange              _dataRange;
+        protected int        _cardinality;
+        protected IDataRange _dataRange;
 
         protected DataCardinality(
             IDataPropertyExpression dataPropertyExpression,
@@ -15,8 +15,8 @@ namespace Ontology
             IDataRange              dataRange
             ) : base(dataPropertyExpression)
         {
-            _cardinality            = cardinality;
-            _dataRange              = dataRange;
+            _cardinality = cardinality;
+            _dataRange   = dataRange;
         }
 
         int IDataCardinality.Cardinality => _cardinality;
