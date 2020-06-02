@@ -119,12 +119,18 @@ namespace Deals
                     NamedName,
                     new DataComplementOf(new DataOneOf(string.Empty))));
             ClassAxioms.Add(NameMandatory);
-            var Debt = DealParties.ExactCardinality(
-                1,
-                MufgLenderParty);
-            var Advisory = DealParties.ExactCardinality(
-                1,
-                MufgAdvisorParty);
+            var Debt = this.Class("Debt");
+            new SubClassOf(
+                Debt,
+                DealParties.ExactCardinality(
+                    1,
+                    MufgLenderParty));
+            var Advisory = this.Class("Advisory");
+            new SubClassOf(
+                Advisory,
+                DealParties.ExactCardinality(
+                    1,
+                    MufgAdvisorParty));
 
             ClassAxioms.Add(new SubClassOf(Debt, Deal));
             ClassAxioms.Add(new SubClassOf(Advisory, Deal));

@@ -7,7 +7,14 @@ using System.Linq.Expressions;
 namespace Ontology
 {
     public static class IOntologyExtensions
-    {
+    {  
+        public static IClass Class(
+            this IOntology ontology,
+            string         className
+            ) => new Class(
+                ontology,
+                className);
+
         public static IClass DomainObjectClass(
             this IOntology ontology,
             string         className
