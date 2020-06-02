@@ -7,7 +7,9 @@ namespace Ontology
         Entity,
         IClass
     {
-        private IList<IHasKey> _keys = new List<IHasKey>();
+        private IList<ISubClassOf>               _superClasses     = new List<ISubClassOf>();
+        private IList<IHasKey>                   _keys             = new List<IHasKey>();
+        private IList<IObjectPropertyExpression> _objectProperties = new List<IObjectPropertyExpression>();
 
         public Class(
             IOntology ontology,
@@ -19,7 +21,11 @@ namespace Ontology
             ontology.Classes[_name] = this;
         }
 
+        IList<ISubClassOf> IClassExpression.SuperClasses => _superClasses;
+
         IList<IHasKey> IClassExpression.Keys => _keys;
+
+        IList<IObjectPropertyExpression> IClassExpression.ObjectProperties => _objectProperties;
 
         bool IClass.AreEqual(
             object lhs,

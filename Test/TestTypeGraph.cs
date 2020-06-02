@@ -6,12 +6,25 @@ using System.Text;
 using CommonDomainObjects;
 using Deals;
 using Ontology;
+using System.Diagnostics;
 
 namespace Test
 {
     [TestFixture]
     public class TestTypeGraph
     {
+        private const string _listenerName = "TestListener";
+
+        [SetUp]
+        public void SetUp()
+        {
+            if(!Trace.Listeners.Cast<TraceListener>().Any(traceListener => traceListener.Name == _listenerName))
+                Trace.Listeners.Add(
+                    new TextWriterTraceListener(
+                        TestContext.Out,
+                        _listenerName));
+        }
+
         [Test]
         public void Test()
         {
@@ -61,10 +74,15 @@ namespace Test
             var ontology = new DealOntology();
 
             var dealClass = ((IOntology)ontology).Classes["Deals.Deal"];
+
             Assert.That(dealClass.Keys, Is.Not.Empty);
             Assert.That(dealClass.Keys[0].AreEqual(d, d), Is.True);
             Assert.That(dealClass.AreEqual(d, d), Is.True);
             Assert.That(dealClass.AreEqual(d, copy), Is.True);
+
+            var classes = ontology.Classify(d);
+            Assert.That(classes.ContainsKey(d));
+            classes[d].ForEach(c => TestContext.WriteLine(c.Name));
 
             var ids = ontology.Id.Values(d).ToList();
             Assert.That(ids.Count, Is.EqualTo(1));

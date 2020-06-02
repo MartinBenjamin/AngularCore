@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace Ontology
@@ -106,5 +107,57 @@ namespace Ontology
                 dataPropertyExpression,
                 cardinality,
                 dataRange);
+
+        public static IDictionary<object, IList<IClass>> Classify(
+            this IOntology ontology,
+            object         individual
+            )
+        {
+            IDictionary<object, IList<IClass>> classes = new Dictionary<object, IList<IClass>>();
+            ontology.Classify(
+                classes,
+                individual);
+            return classes;
+        }
+
+        public static void Classify(
+            this IOntology                     ontology,
+            IDictionary<object, IList<IClass>> classes,
+            object                             individual
+            )
+        {
+            if(classes.ContainsKey(individual))
+                return;
+
+            classes[individual] = new List<IClass>();
+
+            foreach(var @class in ontology.Classes.Values.Where(c => c.HasMember(individual)))
+                ontology.Classify(
+                    classes,
+                    individual,
+                    @class);
+        }
+
+        public static void Classify(
+            this IOntology                     ontology,
+            IDictionary<object, IList<IClass>> classes,
+            object                             individual,
+            IClass                             @class
+            )
+        {
+            classes[individual].Add(@class);
+
+            foreach(var superClass in @class.SuperClasses.Select(superClass => superClass.SuperClassExpression).OfType<IClass>())
+                ontology.Classify(
+                    classes,
+                    individual,
+                    superClass);
+
+            foreach(var objectPropertyExpression in @class.ObjectProperties)
+                foreach(object o in objectPropertyExpression.Values(individual))
+                    ontology.Classify(
+                        classes,
+                        o);
+        }
     }
 }
