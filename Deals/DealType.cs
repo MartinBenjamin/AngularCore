@@ -72,24 +72,18 @@ namespace Deals
 
         public IDataPropertyExpression Id { get; protected set; }
 
-        public static IList<IClassExpression> Classes = new List<IClassExpression>();
-        public IList<ISubClassOf> ClassAxioms { get; protected set; } = new List<ISubClassOf>();
-
         // Abstract Syntax does not support annotation of SubClass Axioms.
         // Functional Syntax does not support Class Axioms with nested descriptions.
 
-        public static IClassExpression ProjectFinance;
-
         public DealOntology()
         {
-            var DomainObject = this.DomainObjectClass<DomainObject<Guid>>();
-            //new HasKey<DomainObject<Guid>, Guid>(DomainObject, domainObject => domainObject.Id);
-            var Named        = this.DomainObjectClass<Named<Guid>>();
-            var Role         = this.DomainObjectClass<Role>();
-            var Organisation = this.DomainObjectClass<Organisation>();
-            var LegalEntity  = this.DomainObjectClass<LegalEntity>();
-            var DealParty    = this.DomainObjectClass<DealParty>();
-            var Deal         = this.DomainObjectClass<Deal>();
+            var DomainObject = this.Class("DomainObject");
+            var Named        = this.Class("Named");
+            var Role         = this.Class("Role");
+            var Organisation = this.Class("Organisation");
+            var LegalEntity  = this.Class("LegalEntity");
+            var DealParty    = this.Class("DealParty");
+            var Deal         = this.Class("Deal");
             var DomainObjectId = DomainObject.DataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
             var NamedName      = Named.DataProperty<Named<Guid>, string>(named => named.Name);
             var DealParties    = Deal.ObjectProperty<Deal, DealParty>(DealParty, deal => deal.Parties);
@@ -137,7 +131,7 @@ namespace Deals
 
             var DealClassName = Deal.DataProperty<Deal, string>(deal => deal.ClassName);
 
-            ProjectFinance = this.DomainObjectClass("ProjectFinance");
+            var ProjectFinance = this.DomainObjectClass("ProjectFinance");
             ProjectFinance.SubClassOf(Debt);
             SponsorCardinality = ProjectFinance.SubClassOf(SponsorsCardinality);
 
@@ -146,168 +140,5 @@ namespace Deals
             var SponsorEquity = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
             Sponsor.SubClassOf(SponsorEquity.ExactCardinality(1));
         }
-    }
-
-    public class SubGraph
-    {
-        public SubGraph                Super             { get; protected set; }
-        public IList<VertexExpression> VertexExpressions { get; protected set; }
-
-        public void Validate(
-            ILookup<Type, object>                        vertexLookup,
-            IDictionary<object, IList<VertexExpression>> errors
-            )
-        {
-            (
-                from @group in vertexLookup
-                from vertex in @group
-                from subGraph in GetSubGraphs()
-                from ve in subGraph.VertexExpressions
-                where @group.Key == ve.Vertex && !ve.Classifies(vertex)
-                group ve by vertex into vesGroupedByVertex
-                select vesGroupedByVertex
-            ).ForEach(
-                group =>
-                {
-                    if(!errors.TryGetValue(
-                        group.Key,
-                        out IList<VertexExpression> vertices
-                        ))
-                    {
-                        var vertexExpressions = vertices.ToList();
-                        vertexExpressions.AddRange(group);
-                        errors[group.Key] = vertexExpressions;
-                    }
-                    else
-                        errors[group.Key] = group.ToList();
-                });
-        }
-
-        IEnumerable<SubGraph> GetSubGraphs()
-        {
-            var subGraph = this;
-            while(subGraph != null)
-            {
-                yield return subGraph;
-                subGraph = subGraph.Super;
-            }
-        }
-    }
-
-    public abstract class VertexExpression
-    {
-        public Type Vertex { get; protected set; }
-
-        protected VertexExpression(
-            Type vertex
-            )
-        {
-            Vertex = vertex;
-        }
-
-        public abstract bool Classifies(object vertex);
-    }
-
-    public abstract class EdgeExpression: VertexExpression
-    {
-        public Edge Edge { get; protected set; }
-
-        protected EdgeExpression(
-            Edge edge
-            ) : base(edge.Out)
-        {
-            Edge = edge;
-        }
-    }
-
-    public abstract class DataPropertyExpression: VertexExpression
-    {
-        protected DataPropertyExpression(
-            Type vertex
-            ) : base(vertex)
-        {
-
-        }
-    }
-
-    public abstract class EdgeCardinalityExpression: EdgeExpression
-    {
-        public int              Cardinality      { get; protected set; }
-        public VertexExpression VertexExpression { get; protected set; }
-
-        protected EdgeCardinalityExpression(
-            Edge             edge,
-            int              cardinality,
-            VertexExpression vertexExpression
-            ) : base(edge)
-        {
-            Cardinality      = cardinality;
-            VertexExpression = vertexExpression;
-        }
-    }
-
-    public class EdgeMinCardinailityExpression: EdgeCardinalityExpression
-    {
-        protected EdgeMinCardinailityExpression(
-            Edge             edge,
-            int              cardinality,
-            VertexExpression vertexExpression
-            ) : base(
-                edge,
-                cardinality,
-                vertexExpression)
-        {
-            VertexExpression = vertexExpression;
-        }
-
-        public override bool Classifies(
-            object vertex
-            ) => Edge
-                .SelectIn(Vertex)
-                .Where(v => VertexExpression != null ? VertexExpression.Classifies(v) : true)
-                .Count() >= 0;
-    }
- 
-    public class EdgeMaxCardinailityExpression: EdgeCardinalityExpression
-    {
-        protected EdgeMaxCardinailityExpression(
-            Edge             edge,
-            int              cardinality,
-            VertexExpression vertexExpression
-            ) : base(
-                edge,
-                cardinality,
-                vertexExpression)
-        {
-            VertexExpression = vertexExpression;
-        }
-
-        public override bool Classifies(
-            object vertex
-            ) => Edge
-                .SelectIn(Vertex)
-                .Where(v => VertexExpression != null ? VertexExpression.Classifies(v) : true)
-                .Count() <= 0;
-    }
-
-    public class EdgeExactCardinailityExpression: EdgeCardinalityExpression
-    {
-        protected EdgeExactCardinailityExpression(
-            Edge             edge,
-            int              cardinality,
-            VertexExpression vertexExpression
-            ) : base(
-                edge,
-                cardinality,
-                vertexExpression)
-        {
-            VertexExpression = vertexExpression;
-        }
-
-        public override bool Classifies(
-            object vertex
-            ) => (VertexExpression != null ?
-                Edge.SelectIn(Vertex).Count(VertexExpression.Classifies) :
-                Edge.SelectIn(Vertex).Count()) == Cardinality;
     }
 }

@@ -73,7 +73,7 @@ namespace Test
                 null);
             var ontology = new DealOntology();
 
-            var dealClass = ((IOntology)ontology).Classes["Deals.Deal"];
+            var dealClass = ((IOntology)ontology).Classes["Deal"];
 
             Assert.That(dealClass.Keys, Is.Not.Empty);
             Assert.That(dealClass.Keys[0].AreEqual(d, d), Is.True);
