@@ -162,10 +162,10 @@ namespace Ontology
                     superClassExpression);
 
             foreach(var objectPropertyExpression in classExpression.ObjectProperties)
-                foreach(object o in objectPropertyExpression.Values(individual))
+                foreach(object value in objectPropertyExpression.Values(individual))
                     ontology.Classify(
                         classes,
-                        o);
+                        value);
         }
     }
 }
