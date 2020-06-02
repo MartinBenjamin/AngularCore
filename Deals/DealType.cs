@@ -82,14 +82,14 @@ namespace Deals
 
         public DealOntology()
         {
-            var DomainObject = this.Class<DomainObject<Guid>>();
+            var DomainObject = this.DomainObjectClass<DomainObject<Guid>>();
             //new HasKey<DomainObject<Guid>, Guid>(DomainObject, domainObject => domainObject.Id);
-            var Named        = this.Class<Named<Guid>>();
-            var Role         = this.Class<Role>();
-            var Organisation = this.Class<Organisation>();
-            var LegalEntity  = this.Class<LegalEntity>();
-            var DealParty    = this.Class<DealParty>();
-            var Deal         = this.Class<Deal>();
+            var Named        = this.DomainObjectClass<Named<Guid>>();
+            var Role         = this.DomainObjectClass<Role>();
+            var Organisation = this.DomainObjectClass<Organisation>();
+            var LegalEntity  = this.DomainObjectClass<LegalEntity>();
+            var DealParty    = this.DomainObjectClass<DealParty>();
+            var Deal         = this.DomainObjectClass<Deal>();
             var DomainObjectId = DomainObject.DataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
             var NamedName      = Named.DataProperty<Named<Guid>, string>(named => named.Name);
             var DealParties    = Deal.ObjectProperty<Deal, DealParty>(DealParty, deal => deal.Parties);
@@ -135,9 +135,7 @@ namespace Deals
 
             var DealClassName = Deal.DataProperty<Deal, string>(deal => deal.ClassName);
 
-            ProjectFinance = new DataHasValue(
-                DealClassName,
-                "ProjectFinance");
+            ProjectFinance = this.DomainObjectClass("ProjectFinance");
             ClassAxioms.Add(new SubClassOf(
                 ProjectFinance,
                 Debt));
@@ -145,7 +143,7 @@ namespace Deals
                 ProjectFinance,
                 SponsorsCardinality));
 
-            var Sponsor = new Class<Sponsor>(this);
+            var Sponsor = this.DomainObjectClass<Sponsor>();
             new SubClassOf(Sponsor, SponsorParty);
             var SponsorEquity = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
 

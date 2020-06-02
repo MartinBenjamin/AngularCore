@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CommonDomainObjects;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Ontology
@@ -48,13 +49,14 @@ namespace Ontology
             ) => false;
     }
 
-    public class Class<T>: Class
+    public class DomainObjectClass: Class
     {
-        public Class(
-            IOntology ontology
+        public DomainObjectClass(
+            IOntology ontology,
+            string    className
             ) : base(
                 ontology,
-                typeof(T).FullName)
+                className)
         {
         }
 
@@ -62,7 +64,7 @@ namespace Ontology
             object individual
             )
         {
-            return individual.GetType() == typeof(T);
+            return ((DomainObject)individual).ClassName == _name;
         }
     }
 }

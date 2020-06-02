@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonDomainObjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -7,9 +8,16 @@ namespace Ontology
 {
     public static class IOntologyExtensions
     {
-        public static IClass Class<T>(
+        public static IClass DomainObjectClass(
+            this IOntology ontology,
+            string         className
+            ) => new DomainObjectClass(
+                ontology,
+                className);
+
+        public static IClass DomainObjectClass<T>(
             this IOntology ontology
-            ) => new Class<T>(ontology);
+            ) where T: DomainObject => ontology.DomainObjectClass(typeof(T).FullName);
 
         public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
             this IClass                                 domain,
@@ -108,52 +116,52 @@ namespace Ontology
                 cardinality,
                 dataRange);
 
-        public static IDictionary<object, IList<IClass>> Classify(
+        public static IDictionary<object, IList<IClassExpression>> Classify(
             this IOntology ontology,
             object         individual
             )
         {
-            IDictionary<object, IList<IClass>> classes = new Dictionary<object, IList<IClass>>();
+            IDictionary<object, IList<IClassExpression>> classExpressions = new Dictionary<object, IList<IClassExpression>>();
             ontology.Classify(
-                classes,
+                classExpressions,
                 individual);
-            return classes;
+            return classExpressions;
         }
 
         public static void Classify(
-            this IOntology                     ontology,
-            IDictionary<object, IList<IClass>> classes,
-            object                             individual
+            this IOntology                               ontology,
+            IDictionary<object, IList<IClassExpression>> classExpressions,
+            object                                       individual
             )
         {
-            if(classes.ContainsKey(individual))
+            if(classExpressions.ContainsKey(individual))
                 return;
 
-            classes[individual] = new List<IClass>();
+            classExpressions[individual] = new List<IClassExpression>();
 
             foreach(var @class in ontology.Classes.Values.Where(c => c.HasMember(individual)))
                 ontology.Classify(
-                    classes,
+                    classExpressions,
                     individual,
                     @class);
         }
 
         public static void Classify(
-            this IOntology                     ontology,
-            IDictionary<object, IList<IClass>> classes,
-            object                             individual,
-            IClass                             @class
+            this IOntology                               ontology,
+            IDictionary<object, IList<IClassExpression>> classes,
+            object                                       individual,
+            IClassExpression                             classExpression
             )
         {
-            classes[individual].Add(@class);
+            classes[individual].Add(classExpression);
 
-            foreach(var superClass in @class.SuperClasses.Select(superClass => superClass.SuperClassExpression).OfType<IClass>())
+            foreach(var superClassExpression in classExpression.SuperClasses.Select(superClass => superClass.SuperClassExpression))
                 ontology.Classify(
                     classes,
                     individual,
-                    superClass);
+                    superClassExpression);
 
-            foreach(var objectPropertyExpression in @class.ObjectProperties)
+            foreach(var objectPropertyExpression in classExpression.ObjectProperties)
                 foreach(object o in objectPropertyExpression.Values(individual))
                     ontology.Classify(
                         classes,

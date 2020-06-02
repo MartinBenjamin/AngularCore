@@ -79,10 +79,11 @@ namespace Test
             Assert.That(dealClass.Keys[0].AreEqual(d, d), Is.True);
             Assert.That(dealClass.AreEqual(d, d), Is.True);
             Assert.That(dealClass.AreEqual(d, copy), Is.True);
+            Assert.That(dealClass.SuperClasses.Contains(ontology.NameMandatory));
 
-            var classes = ontology.Classify(d);
-            Assert.That(classes.ContainsKey(d));
-            classes[d].ForEach(c => TestContext.WriteLine(c.Name));
+            var classExpressions = ontology.Classify(d);
+            Assert.That(classExpressions.ContainsKey(d));
+            classExpressions[d].OfType<IClass>().ForEach(c => TestContext.WriteLine(c.Name));
 
             var ids = ontology.Id.Values(d).ToList();
             Assert.That(ids.Count, Is.EqualTo(1));
@@ -94,9 +95,11 @@ namespace Test
             //Assert.That(PF.ProjectFinance.ClassAxioms, Does.Contain(PF.SponsorCardinality));
             //Assert.That(PF.NameMandatory.Validate(d), Is.EqualTo(result));
 
-            var failed = (
-                from axiom in ontology.ClassAxioms
-                where !axiom.Validate(d)
+            var failed = 
+            (
+                from classExpression in classExpressions[d]
+                from axiom in classExpression.SuperClasses
+                where !axiom.SuperClassExpression.HasMember(d)
                 select axiom
             );
 
