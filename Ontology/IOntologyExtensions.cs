@@ -69,6 +69,13 @@ namespace Ontology
                 classExpression,
                 dataPropertyExpressions);
 
+        public static ISubClassOf SubClassOf(
+            this IClassExpression subClassExpression,
+            IClassExpression      superClassExpression
+            ) => new SubClassOf(
+                subClassExpression,
+                superClassExpression);
+
         public static IObjectMinCardinality MinCardinality(
             this IObjectPropertyExpression objectPropertyExpression,
             int                            cardinality,

@@ -99,9 +99,9 @@ namespace Deals
             Role.HasKey(DomainObjectId);
             LegalEntity.HasKey(DomainObjectId);
             Deal.HasKey(DomainObjectId);
-            ClassAxioms.Add(new SubClassOf(Named, DomainObject));
-            ClassAxioms.Add(new SubClassOf(Role, Named));
-            new SubClassOf(Deal, Named);
+            Named.SubClassOf(DomainObject);
+            Role.SubClassOf(Named);
+            Deal.SubClassOf(Named);
             var DealPartyRole         = DealParty.ObjectProperty<DealParty, Role>(Role, dealParty => dealParty.Role);
             var DealPartyOrganisation = DealParty.ObjectProperty<DealParty, Organisation>(Organisation, dealParty => dealParty.Organisation);
             var KeyCounterpartyRole   = new ObjectOneOf(this, KeyCounterpartyRoles);
@@ -113,27 +113,23 @@ namespace Deals
             var MufgAdvisorParty      = new ObjectIntersectionOf(AdvisorParty, MufgParty);
             var KeyCounterpartyParty  = new ObjectSomeValuesFrom(DealPartyRole, KeyCounterpartyRole);
 
-            NameMandatory = new SubClassOf(
-                Deal,
+            NameMandatory = Deal.SubClassOf(
                 new DataSomeValuesFrom(
                     NamedName,
                     new DataComplementOf(new DataOneOf(string.Empty))));
-            ClassAxioms.Add(NameMandatory);
             var Debt = this.Class("Debt");
-            new SubClassOf(
-                Debt,
+            Debt.SubClassOf(
                 DealParties.ExactCardinality(
                     1,
                     MufgLenderParty));
             var Advisory = this.Class("Advisory");
-            new SubClassOf(
-                Advisory,
+            Advisory.SubClassOf(
                 DealParties.ExactCardinality(
                     1,
                     MufgAdvisorParty));
 
-            ClassAxioms.Add(new SubClassOf(Debt, Deal));
-            ClassAxioms.Add(new SubClassOf(Advisory, Deal));
+            Debt.SubClassOf(Deal);
+            Advisory.SubClassOf(Deal);
 
             var SponsorsCardinality = DealParties.MinCardinality(
                 1,
@@ -142,20 +138,13 @@ namespace Deals
             var DealClassName = Deal.DataProperty<Deal, string>(deal => deal.ClassName);
 
             ProjectFinance = this.DomainObjectClass("ProjectFinance");
-            ClassAxioms.Add(new SubClassOf(
-                ProjectFinance,
-                Debt));
-            ClassAxioms.Add(SponsorCardinality = new SubClassOf(
-                ProjectFinance,
-                SponsorsCardinality));
+            ProjectFinance.SubClassOf(Debt);
+            SponsorCardinality = ProjectFinance.SubClassOf(SponsorsCardinality);
 
             var Sponsor = this.DomainObjectClass<Sponsor>();
-            new SubClassOf(Sponsor, SponsorParty);
+            Sponsor.SubClassOf(SponsorParty);
             var SponsorEquity = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
-
-            ClassAxioms.Add(new SubClassOf(
-                Sponsor,
-                SponsorEquity.ExactCardinality(1)));
+            Sponsor.SubClassOf(SponsorEquity.ExactCardinality(1));
         }
     }
 
