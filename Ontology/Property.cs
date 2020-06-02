@@ -120,6 +120,7 @@ namespace Ontology
                 domain,
                 property)
         {
+            domain.DataProperties.Add(this);
         }
     }
     
