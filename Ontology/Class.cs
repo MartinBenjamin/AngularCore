@@ -47,6 +47,9 @@ namespace Ontology
         public virtual bool HasMember(
             object individual
             ) => false;
+
+        public override string ToString()
+            => _name;
     }
 
     public class DomainObjectClass: Class

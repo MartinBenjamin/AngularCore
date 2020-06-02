@@ -83,7 +83,7 @@ namespace Test
 
             var classExpressions = ontology.Classify(d);
             Assert.That(classExpressions.ContainsKey(d));
-            classExpressions[d].OfType<IClass>().ForEach(c => TestContext.WriteLine(c.Name));
+            classExpressions[d].ForEach(TestContext.WriteLine);
 
             var ids = ontology.Id.Values(d).ToList();
             Assert.That(ids.Count, Is.EqualTo(1));
