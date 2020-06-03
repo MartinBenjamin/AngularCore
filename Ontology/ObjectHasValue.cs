@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using CommonDomainObjects;
+using System.Linq;
 
 namespace Ontology
 {
@@ -21,10 +22,20 @@ namespace Ontology
             object individual
             )
         {
-            var hasKey = _objectPropertyExpression.Ontology.Classes[individual.GetType().FullName].Keys.FirstOrDefault();
-            return
-                hasKey != null &&
-                _objectPropertyExpression.Values(individual).Any(i => _individual.GetType() == i.GetType() && hasKey.AreEqual(_individual, i));
+            // Equality only defined for instances of DomainObject.
+            if(individual is DomainObject domainObject)
+            {
+                var hasKey = _objectPropertyExpression.Ontology.Classes[domainObject.ClassName].Keys.FirstOrDefault();
+
+                return
+                    hasKey != null &&
+                    _objectPropertyExpression
+                        .Values(individual)
+                        .OfType<DomainObject>()
+                        .Any(value => value.ClassName == domainObject.ClassName && hasKey.AreEqual(domainObject, value));
+            }
+
+            return false;
         }
     }
 }
