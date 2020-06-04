@@ -1,10 +1,8 @@
 ﻿namespace Ontology
 {
-    public interface ISubClassOf
+    public interface ISubClassOf: IClassAxiom
     {
         IClassExpression SubClassExpression   { get; }
         IClassExpression SuperClassExpression { get; }
-
-        bool Validate(object individual);
     }
 }
