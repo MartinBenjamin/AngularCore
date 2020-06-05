@@ -102,6 +102,7 @@ namespace Ontology
                 property)
         {
             _range = range;
+            domain.ObjectProperties.Add(this);
         }
 
         IClassExpression IObjectPropertyExpression.Range => _range;
@@ -137,6 +138,7 @@ namespace Ontology
                 domain,
                 property)
         {
+            domain.DataProperties.Add(this);
         }
     }
 }

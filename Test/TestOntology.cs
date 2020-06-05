@@ -87,6 +87,11 @@ namespace Test
                 var propertyRestriction = (IPropertyRestriction)dealOntology.NameMandatory.SuperClassExpression;
                 Assert.That(propertyRestriction.PropertyExpression, Is.Not.Null);
                 Assert.That(propertyRestriction.PropertyExpression.Name, Is.EqualTo("Name"));
+
+                var named = ontology.Classes["Named"];
+                var namedName = named.DataProperties.FirstOrDefault(dataProperty => dataProperty.Name == "Name");
+                Assert.That(namedName, Is.Not.Null);
+                Assert.That(propertyRestriction.PropertyExpression, Is.EqualTo(namedName));
             }
             else
                 Assert.That(failed, Does.Not.Contain(dealOntology.NameMandatory));
