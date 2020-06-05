@@ -11,7 +11,7 @@ using System.Diagnostics;
 namespace Test
 {
     [TestFixture]
-    public class TestTypeGraph
+    public class TestOntology
     {
         private const string _listenerName = "TestListener";
 
@@ -46,6 +46,50 @@ namespace Test
                 x = y;
             Assert.That(x, Is.Not.Null);
             Assert.That(x, Is.EqualTo(0));
+        }
+
+        [TestCase(null , false)]
+        [TestCase(""   , false)]
+        [TestCase("a"  , true )]
+        [TestCase("ab" , true )]
+        [TestCase("abc", true )]
+        public void TestDealNameMandatory(
+            string value,
+            bool   result
+            )
+        {
+            var deal = new Deal(
+                Guid.NewGuid(),
+                value,
+                "ProjectFinance",
+                null,
+                null);
+
+            var dealOntology = new DealOntology();
+            IOntology ontology = dealOntology;
+
+            var classification = ontology.Classify(deal);
+            Assert.That(classification.ContainsKey(deal));
+            classification[deal].ForEach(TestContext.WriteLine);
+
+            var failed = 
+            (
+                from classExpression in classification[deal]
+                from axiom in classExpression.SuperClasses
+                where !axiom.SuperClassExpression.HasMember(deal)
+                select axiom
+            );
+
+            if(!result)
+            {
+                Assert.That(failed, Does.Contain(dealOntology.NameMandatory));
+                Assert.That(dealOntology.NameMandatory.SuperClassExpression, Is.InstanceOf<IPropertyRestriction>());
+                var propertyRestriction = (IPropertyRestriction)dealOntology.NameMandatory.SuperClassExpression;
+                Assert.That(propertyRestriction.PropertyExpression, Is.Not.Null);
+                Assert.That(propertyRestriction.PropertyExpression.Name, Is.EqualTo("Name"));
+            }
+            else
+                Assert.That(failed, Does.Not.Contain(dealOntology.NameMandatory));
         }
 
         [TestCase(null , false)]

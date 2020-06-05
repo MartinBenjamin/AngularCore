@@ -1,14 +1,14 @@
 ﻿namespace Ontology
 {
     public abstract class DataPropertyRestriction:
-        ClassExpression,
+        PropertyRestriction,
         IDataPropertyRestriction
     {
         protected IDataPropertyExpression _dataPropertyExpression;
 
         protected DataPropertyRestriction(
             IDataPropertyExpression dataPropertyExpression
-            )
+            ) : base(dataPropertyExpression)
         {
             _dataPropertyExpression = dataPropertyExpression;
         }
