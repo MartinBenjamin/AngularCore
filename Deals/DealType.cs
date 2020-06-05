@@ -107,10 +107,17 @@ namespace Deals
             var MufgAdvisorParty      = new ObjectIntersectionOf(AdvisorParty, MufgParty);
             var KeyCounterpartyParty  = new ObjectSomeValuesFrom(DealPartyRole, KeyCounterpartyRole);
 
+            var mandatory = new AnnotationProperty(
+                this,
+                "Mandatory");
+
             NameMandatory = Deal.SubClassOf(
                 new DataSomeValuesFrom(
                     NamedName,
-                    new DataComplementOf(new DataOneOf(string.Empty))));
+                    new DataComplementOf(new DataOneOf(string.Empty))))
+                .Annotate(
+                    mandatory,
+                    0);
             var Debt = this.Class("Debt");
             Debt.SubClassOf(
                 DealParties.ExactCardinality(
