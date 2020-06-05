@@ -196,5 +196,26 @@ namespace Ontology
                         classExpressions,
                         value);
         }
+
+        public static HashSet<IClassExpression> SuperClasses(
+            this IClassExpression classExpression
+            )
+        {
+            var superClassExpressions = new HashSet<IClassExpression>();
+            classExpression.SuperClasses(superClassExpressions);
+            return superClassExpressions;
+        }
+
+        public static void SuperClasses(
+            this IClassExpression     classExpression,
+            HashSet<IClassExpression> superClassExpressions
+            )
+        {
+            if(!superClassExpressions.Add(classExpression))
+                return;
+
+            foreach(var superClassExpression in classExpression.SuperClasses.Select(superClass => superClass.SuperClassExpression))
+                superClassExpression.SuperClasses(superClassExpressions);
+        }
     }
 }
