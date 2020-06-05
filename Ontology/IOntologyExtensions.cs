@@ -143,12 +143,12 @@ namespace Ontology
             return axiom;
         }
 
-        public static IDictionary<object, IList<IClassExpression>> Classify(
+        public static IDictionary<object, HashSet<IClassExpression>> Classify(
             this IOntology ontology,
             object         individual
             )
         {
-            IDictionary<object, IList<IClassExpression>> classExpressions = new Dictionary<object, IList<IClassExpression>>();
+            IDictionary<object, HashSet<IClassExpression>> classExpressions = new Dictionary<object, HashSet<IClassExpression>>();
             ontology.Classify(
                 classExpressions,
                 individual);
@@ -156,15 +156,15 @@ namespace Ontology
         }
 
         public static void Classify(
-            this IOntology                               ontology,
-            IDictionary<object, IList<IClassExpression>> classExpressions,
-            object                                       individual
+            this IOntology                                 ontology,
+            IDictionary<object, HashSet<IClassExpression>> classExpressions,
+            object                                         individual
             )
         {
             if(classExpressions.ContainsKey(individual))
                 return;
 
-            classExpressions[individual] = new List<IClassExpression>();
+            classExpressions[individual] = new HashSet<IClassExpression>();
 
             foreach(var @class in ontology.Classes.Values.Where(c => c.HasMember(individual)))
                 ontology.Classify(
@@ -174,24 +174,26 @@ namespace Ontology
         }
 
         public static void Classify(
-            this IOntology                               ontology,
-            IDictionary<object, IList<IClassExpression>> classes,
-            object                                       individual,
-            IClassExpression                             classExpression
+            this IOntology                                 ontology,
+            IDictionary<object, HashSet<IClassExpression>> classExpressions,
+            object                                         individual,
+            IClassExpression                               classExpression
             )
         {
-            classes[individual].Add(classExpression);
+            if(!classExpressions[individual].Add(classExpression))
+                // Class Expression already processed.
+                return;
 
             foreach(var superClassExpression in classExpression.SuperClasses.Select(superClass => superClass.SuperClassExpression))
                 ontology.Classify(
-                    classes,
+                    classExpressions,
                     individual,
                     superClassExpression);
 
             foreach(var objectPropertyExpression in classExpression.ObjectProperties)
                 foreach(object value in objectPropertyExpression.Values(individual))
                     ontology.Classify(
-                        classes,
+                        classExpressions,
                         value);
         }
     }
