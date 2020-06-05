@@ -7,6 +7,7 @@ using CommonDomainObjects;
 using Deals;
 using Ontology;
 using System.Diagnostics;
+using Roles;
 
 namespace Test
 {
@@ -95,6 +96,89 @@ namespace Test
             }
             else
                 Assert.That(failed, Does.Not.Contain(dealOntology.NameMandatory));
+        }
+
+        
+        [TestCase(null, false)]
+        [TestCase(0   ,  true)]
+        [TestCase(1   ,  true)]
+        [TestCase(2   ,  true)]
+        [TestCase(3   ,  true)]
+        public void TestSponsorEquityMandatory(
+            decimal? equity,
+            bool     result
+            )
+        {
+            var deal = new Deal(
+                Guid.NewGuid(),
+                "Test",
+                "ProjectFinance",
+                null,
+                null);
+
+            var sponsor = new Sponsor(
+                deal,
+                null,
+                new Role(
+                    DealRoleIdentifier.Sponsor,
+                    "Sponsor"),
+                null,
+                equity);
+            var dealOntology = new DealOntology();
+            IOntology ontology = dealOntology;
+
+            var classification = ontology.Classify(deal);
+            Assert.That(classification.ContainsKey(deal));
+            Assert.That(classification.ContainsKey(sponsor));
+            classification[sponsor].ForEach(TestContext.WriteLine);
+
+            var failed = 
+            (
+                from classExpression in classification[sponsor]
+                from axiom in classExpression.SuperClasses
+                where axiom.Annotations.Any(annotation => annotation.Property.Name=="Mandatory")
+                where !axiom.SuperClassExpression.HasMember(sponsor)
+                select axiom
+            );
+
+            Assert.That(failed.Count(), Is.EqualTo(result ? 0 : 1));
+
+            if(!result)
+            {
+                Assert.That(failed.First().SuperClassExpression, Is.InstanceOf<IPropertyRestriction>());
+                var propertyRestriction = (IPropertyRestriction)failed.First().SuperClassExpression;
+                Assert.That(propertyRestriction.PropertyExpression, Is.Not.Null);
+                Assert.That(propertyRestriction.PropertyExpression.Name, Is.EqualTo("Equity"));
+            }
+        }
+
+
+        [TestCase]
+        public void SponsorsMandatory()
+        {
+            var deal = new Deal(
+                Guid.NewGuid(),
+                "Test",
+                "ProjectFinance",
+                null,
+                null);
+
+            var dealOntology = new DealOntology();
+            IOntology ontology = dealOntology;
+
+            var classification = ontology.Classify(deal);
+            Assert.That(classification.ContainsKey(deal));
+            classification[deal].ForEach(TestContext.WriteLine);
+
+            var failed =
+            (
+                from classExpression in classification[deal]
+                from axiom in classExpression.SuperClasses
+                where !axiom.SuperClassExpression.HasMember(deal)
+                select axiom
+            );
+
+            Assert.That(failed, Does.Contain(dealOntology.SponsorCardinality));
         }
 
         [TestCase(null , false)]

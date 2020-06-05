@@ -145,7 +145,11 @@ namespace Deals
             var Sponsor = this.DomainObjectClass<Sponsor>();
             Sponsor.SubClassOf(SponsorParty);
             var SponsorEquity = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
-            Sponsor.SubClassOf(SponsorEquity.ExactCardinality(1));
+            Sponsor
+                .SubClassOf(SponsorEquity.ExactCardinality(1))
+                .Annotate(
+                    mandatory,
+                    0);
         }
     }
 }
