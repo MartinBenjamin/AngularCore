@@ -61,13 +61,13 @@ namespace Deals
 
     public class DealOntology: Ontology.Ontology
     {
-        public Role        LenderRole           { get; protected set; }
-        public Role        AdvisorRole          { get; protected set; }
-        public Role        SponsorRole          { get; protected set; }
-        public IList<Role> KeyCounterpartyRoles { get; protected set; } = new List<Role>();
-        public LegalEntity Mufg                 { get; protected set; }
+        public Role                LenderRole           { get; protected set; }
+        public Role                AdvisorRole          { get; protected set; }
+        public Role                SponsorRole          { get; protected set; }
+        public IList<Role>         KeyCounterpartyRoles { get; protected set; } = new List<Role>();
+        public LegalEntity         Mufg                 { get; protected set; }
+        public IAnnotationProperty Mandatory            { get; protected set; }
 
-        public ISubClassOf NameMandatory        { get; protected set; }
         public ISubClassOf SponsorCardinality   { get; protected set; }
 
         public IDataPropertyExpression Id { get; protected set; }
@@ -107,16 +107,16 @@ namespace Deals
             var MufgAdvisorParty      = new ObjectIntersectionOf(AdvisorParty, MufgParty);
             var KeyCounterpartyParty  = new ObjectSomeValuesFrom(DealPartyRole, KeyCounterpartyRole);
 
-            var mandatory = new AnnotationProperty(
+            Mandatory = new AnnotationProperty(
                 this,
                 "Mandatory");
 
-            NameMandatory = Deal.SubClassOf(
+            Deal.SubClassOf(
                 new DataSomeValuesFrom(
                     NamedName,
                     new DataComplementOf(new DataOneOf(string.Empty))))
                 .Annotate(
-                    mandatory,
+                    Mandatory,
                     0);
             var Debt = this.Class("Debt");
             Debt.SubClassOf(
@@ -148,7 +148,7 @@ namespace Deals
             Sponsor
                 .SubClassOf(SponsorEquity.ExactCardinality(1))
                 .Annotate(
-                    mandatory,
+                    Mandatory,
                     0);
         }
     }
