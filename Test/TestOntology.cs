@@ -122,24 +122,19 @@ namespace Test
             Assert.That(classification.ContainsKey(sponsor));
             classification[sponsor].ForEach(TestContext.WriteLine);
 
-            var failed = 
+            var subClassOf =
             (
                 from classExpression in classification[sponsor]
                 from axiom in classExpression.SuperClasses
-                where axiom.Annotations.Any(annotation => annotation.Property.Name=="Mandatory")
-                where !axiom.SuperClassExpression.HasMember(sponsor)
+                where
+                    axiom.Annotations.Any(annotation => annotation.Property == dealOntology.Mandatory) &&
+                    axiom.SuperClassExpression is IPropertyRestriction propertyRestriction &&
+                    propertyRestriction.PropertyExpression.Name == "Equity"
                 select axiom
-            );
+            ).FirstOrDefault();
 
-            Assert.That(failed.Count(), Is.EqualTo(result ? 0 : 1));
-
-            if(!result)
-            {
-                Assert.That(failed.First().SuperClassExpression, Is.InstanceOf<IPropertyRestriction>());
-                var propertyRestriction = (IPropertyRestriction)failed.First().SuperClassExpression;
-                Assert.That(propertyRestriction.PropertyExpression, Is.Not.Null);
-                Assert.That(propertyRestriction.PropertyExpression.Name, Is.EqualTo("Equity"));
-            }
+            Assert.That(subClassOf, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(sponsor)));
         }
 
 
