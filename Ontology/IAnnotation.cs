@@ -1,6 +1,6 @@
 ﻿namespace Ontology
 {
-    public interface IAnnotation
+    public interface IAnnotation: IAnnotated
     {
         IAnnotationProperty Property { get; }
 

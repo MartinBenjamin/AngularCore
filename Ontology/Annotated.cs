@@ -2,14 +2,14 @@
 
 namespace Ontology
 {
-    public abstract class Axiom: IAxiom
+    public abstract class Annotated: IAnnotated
     {
         private IList<IAnnotation> _annotations = new List<IAnnotation>();
 
-        protected Axiom()
+        protected Annotated()
         {
         }
 
-        IList<IAnnotation> IAxiom.Annotations => _annotations;
+        IList<IAnnotation> IAnnotated.Annotations => _annotations;
     }
 }

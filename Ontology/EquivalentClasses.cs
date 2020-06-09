@@ -3,7 +3,7 @@
 namespace Ontology
 {
     public class EquivalentClasses:
-        Axiom,
+        Annotated,
         IEquivalentClasses
     {
         private IList<IClassExpression> _classExpressions;

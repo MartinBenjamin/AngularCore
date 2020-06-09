@@ -138,8 +138,12 @@ namespace Test
         }
 
 
-        [TestCase]
-        public void SponsorsMandatory()
+        [TestCase(0, false)]
+        [TestCase(1, true )]
+        public void SponsorsMandatory(
+            int  sponsorCount,
+            bool result
+            )
         {
             var deal = new Deal(
                 Guid.NewGuid(),
@@ -148,6 +152,18 @@ namespace Test
                 null,
                 null);
 
+            var role = new Role(
+                DealRoleIdentifier.Sponsor,
+                null);
+            Enumerable
+                .Range(0, sponsorCount)
+                .ForEach(i => new Sponsor(
+                    Guid.NewGuid(),
+                    deal,
+                    null,
+                    role,
+                    null,
+                    null));
             var dealOntology = new DealOntology();
             IOntology ontology = dealOntology;
 
@@ -155,15 +171,23 @@ namespace Test
             Assert.That(classification.ContainsKey(deal));
             classification[deal].ForEach(TestContext.WriteLine);
 
-            var failed =
+            var subClassOf =
             (
                 from classExpression in classification[deal]
                 from axiom in classExpression.SuperClasses
-                where !axiom.SuperClassExpression.HasMember(deal)
+                from annotation in axiom.Annotations
+                from annotationAnnotation in annotation.Annotations
+                where
+                    annotation.Property == dealOntology.Mandatory &&
+                    annotationAnnotation.Property == dealOntology.SubPropertyName &&
+                    annotationAnnotation.Value.Equals("Sponsors") &&
+                    axiom.SuperClassExpression is IPropertyRestriction propertyRestriction &&
+                    propertyRestriction.PropertyExpression.Name == "Parties"
                 select axiom
-            );
+            ).FirstOrDefault();
 
-            Assert.That(failed, Does.Contain(dealOntology.SponsorCardinality));
+            Assert.That(subClassOf, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(deal)));
         }
 
         [TestCase(null , false)]

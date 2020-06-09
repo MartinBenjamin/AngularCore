@@ -67,8 +67,8 @@ namespace Deals
         public IList<Role>         KeyCounterpartyRoles { get; protected set; } = new List<Role>();
         public LegalEntity         Mufg                 { get; protected set; }
         public IAnnotationProperty Mandatory            { get; protected set; }
+        public IAnnotationProperty SubPropertyName      { get; protected set; }
 
-        public ISubClassOf SponsorCardinality   { get; protected set; }
 
         public IDataPropertyExpression Id { get; protected set; }
 
@@ -77,9 +77,10 @@ namespace Deals
 
         public DealOntology()
         {
+            SponsorRole = new Role(DealRoleIdentifier.Sponsor, "Sponsor");
             var DomainObject = this.Class("DomainObject");
             var Named        = this.Class("Named");
-            var Role         = this.Class("Role");
+            var Role         = this.DomainObjectClass<Role>();
             var Organisation = this.Class("Organisation");
             var LegalEntity  = this.Class("LegalEntity");
             var DealParty    = this.Class("DealParty");
@@ -110,6 +111,9 @@ namespace Deals
             Mandatory = new AnnotationProperty(
                 this,
                 "Mandatory");
+            SubPropertyName = new AnnotationProperty(
+                this,
+                "SubPropertyName");
 
             Deal.SubClassOf(
                 new DataSomeValuesFrom(
@@ -140,7 +144,14 @@ namespace Deals
 
             var ProjectFinance = this.DomainObjectClass("ProjectFinance");
             ProjectFinance.SubClassOf(Debt);
-            SponsorCardinality = ProjectFinance.SubClassOf(SponsorsCardinality);
+            ProjectFinance
+                .SubClassOf(SponsorsCardinality)
+                .Annotate(
+                    Mandatory,
+                    0)
+                .Annotate(
+                    SubPropertyName,
+                    "Sponsors"); ;
 
             var Sponsor = this.DomainObjectClass<Sponsor>();
             Sponsor.SubClassOf(SponsorParty);

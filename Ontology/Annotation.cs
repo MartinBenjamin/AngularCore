@@ -1,6 +1,8 @@
 ﻿namespace Ontology
 {
-    public class Annotation: IAnnotation
+    public class Annotation:
+        Annotated,
+        IAnnotation
     {
         private IAnnotationProperty _property;
         private object              _value;
@@ -8,7 +10,7 @@
         public Annotation(
             IAnnotationProperty property,
             object              value
-            )
+            ) : base()
         {
             _property = property;
             _value    = value;

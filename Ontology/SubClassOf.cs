@@ -1,7 +1,7 @@
 ﻿namespace Ontology
 {
     public class SubClassOf:
-        Axiom,
+        Annotated,
         ISubClassOf
     {
         private IClassExpression _subClassExpression;

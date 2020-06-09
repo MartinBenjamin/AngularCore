@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-
-namespace Ontology
+﻿namespace Ontology
 {
-    public interface IAxiom
+    public interface IAxiom: IAnnotated
     {
-        IList<IAnnotation> Annotations { get; }
     }
 }

@@ -8,6 +8,7 @@ namespace Ontology
         IObjectHasValue
     {
         private object _individual;
+
         public ObjectHasValue(
             IObjectPropertyExpression objectPropertyExpression,
             object                    individual
@@ -23,7 +24,7 @@ namespace Ontology
             )
         {
             // Equality only defined for instances of DomainObject.
-            if(individual is DomainObject domainObject)
+            if(_individual is DomainObject domainObject)
             {
                 var hasKey = _objectPropertyExpression.Ontology.Classes[domainObject.ClassName].Keys.FirstOrDefault();
 

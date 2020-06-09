@@ -130,16 +130,16 @@ namespace Ontology
                 cardinality,
                 dataRange);
 
-        public static Annotation Annotate<TAxiom>(
-            this TAxiom         axiom,
+        public static IAnnotation Annotate<TAnnotated>(
+            this TAnnotated     annotated,
             IAnnotationProperty property,
             object              value
-            ) where TAxiom: IAxiom
+            ) where TAnnotated: IAnnotated
         {
             var annotation = new Annotation(
                 property,
                 value);
-            axiom.Annotations.Add(annotation);
+            annotated.Annotations.Add(annotation);
             return annotation;
         }
 
