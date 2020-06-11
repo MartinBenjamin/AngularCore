@@ -190,6 +190,13 @@ namespace Ontology
                     individual,
                     superClassExpression);
 
+            if(classExpression is IObjectIntersectionOf objectIntersectionOf)
+                foreach(var componentClassExpression in objectIntersectionOf.ClassExpressions)
+                    ontology.Classify(
+                        classExpressions,
+                        individual,
+                        componentClassExpression);
+
             foreach(var objectPropertyExpression in classExpression.ObjectProperties)
                 foreach(object value in objectPropertyExpression.Values(individual))
                     ontology.Classify(
@@ -212,10 +219,15 @@ namespace Ontology
             )
         {
             if(!superClassExpressions.Add(classExpression))
+                // Class Expression already processed.
                 return;
 
             foreach(var superClassExpression in classExpression.SuperClasses.Select(superClass => superClass.SuperClassExpression))
                 superClassExpression.SuperClasses(superClassExpressions);
+
+            if(classExpression is IObjectIntersectionOf objectIntersectionOf)
+                foreach(var componentClassExpression in objectIntersectionOf.ClassExpressions)
+                    componentClassExpression.SuperClasses(superClassExpressions);
         }
     }
 }
