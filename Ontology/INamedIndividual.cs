@@ -44,47 +44,100 @@ namespace Ontology
         object                  TargetValue            { get; }
     }
 
-    public class ObjectHasValue1:
-        ObjectPropertyRestriction,
-        IObjectHasValue
+    public class NamedIndividual:
+        Entity,
+        INamedIndividual
     {
-        private INamedIndividual _individual;
+        private IList<IObjectPropertyAssertion> _objectProperties = new List<IObjectPropertyAssertion>();
+        private IList<IDataPropertyAssertion>   _dataProperties   = new List<IDataPropertyAssertion>();
+        private IList<IClassAssertion>          _classes          = new List<IClassAssertion>();
 
-        public ObjectHasValue1(
-            IObjectPropertyExpression objectPropertyExpression,
-            INamedIndividual          individual
-            ) : base(objectPropertyExpression)
+        public NamedIndividual(
+            IOntology ontology,
+            string    name
+            ) : base(
+                ontology,
+                name)
         {
-            _individual = individual;
         }
 
-        object IObjectHasValue.Individual => _individual;
+        public IEnumerable<object> this[
+            IObjectPropertyExpression objectPropertyExpression
+            ] => _objectProperties
+                .Where(objectPropertyAssertion => objectPropertyAssertion.ObjectPropertyExpression == objectPropertyAssertion)
+                .Select(objectPropertyAssertion => objectPropertyAssertion.TargetIndividual);
 
-        public override bool HasMember(
-            object individual
+        public IEnumerable<object> this[
+            IDataPropertyExpression dataPropertyExpression
+            ] => _dataProperties
+                .Where(dataPropertyAssertion => dataPropertyAssertion.DataPropertyExpression == dataPropertyExpression)
+                .Select(dataPropertyAssertion => dataPropertyAssertion.TargetValue);
+
+        IList<IObjectPropertyAssertion> INamedIndividual.ObjectProperties => _objectProperties;
+
+        IList<IDataPropertyAssertion> INamedIndividual.DataProperties => _dataProperties;
+
+        IList<IClassAssertion> INamedIndividual.Classes => _classes;
+
+        public override bool Equals(
+            object obj
             )
         {
+            var domainObject = obj as DomainObject;
+
+            if(domainObject == null)
+                return false;
+
             var classExpressions = new HashSet<IClassExpression>();
-            _individual
-                .Classes
+            _classes
                 .Select(classAssertion => classAssertion.ClassExpression)
                 .ForEach(classExpression => classExpression.SuperClasses(classExpressions));
 
             var keyedClassExpressions = classExpressions
                 .Where(classExpression => classExpression.Keys.Count > 0).ToList();
 
-            return _objectPropertyExpression
-                .Values(individual)
-                .OfType<DomainObject>()
-                .Any(domainObject => 
-                    {
-                        var commonKeyedClassExpressions = _objectPropertyExpression.Ontology.Classes[domainObject.ClassName].SuperClasses();
-                        commonKeyedClassExpressions.IntersectWith(keyedClassExpressions);
-                        return
-                            commonKeyedClassExpressions.Count > 0 &&
-                            commonKeyedClassExpressions.All(
-                                ce => ce.Keys.All(hasKey => hasKey.Properties.All(dpe => dpe.Value(domainObject) == _individual[dpe].FirstOrDefault())));
-                    });
+            var commonKeyedClassExpressions = _ontology.Classes[domainObject.ClassName].SuperClasses();
+            commonKeyedClassExpressions.IntersectWith(keyedClassExpressions);
+            return
+                commonKeyedClassExpressions.Count > 0 &&
+                commonKeyedClassExpressions.All(
+                    ce => ce.Keys.All(hasKey => hasKey.Properties.All(dpe => dpe.Value(domainObject) == this[dpe].FirstOrDefault())));
         }
+    }
+
+    public class ClassAssertion:
+        Annotated,
+        IClassAssertion
+    {
+        IClassExpression IClassAssertion.ClassExpression => throw new NotImplementedException();
+
+        INamedIndividual IClassAssertion.NamedIndividual => throw new NotImplementedException();
+    }
+
+    public class PropertyAssertion:
+        Annotated,
+        IPropertyAssertion
+    {
+        IPropertyExpression IPropertyAssertion.PropertyExpression => throw new NotImplementedException();
+
+        INamedIndividual IPropertyAssertion.SourceIndividual => throw new NotImplementedException();
+    }
+
+    public class ObjectPropertyAssertion:
+        PropertyAssertion,
+        IObjectPropertyAssertion
+    {
+        IObjectPropertyExpression IObjectPropertyAssertion.ObjectPropertyExpression => throw new NotImplementedException();
+
+        INamedIndividual IObjectPropertyAssertion.TargetIndividual => throw new NotImplementedException();
+    }
+
+    public class DataPropertyAssertion:
+        PropertyAssertion,
+        IDataPropertyAssertion
+    {
+        IDataPropertyExpression IDataPropertyAssertion.DataPropertyExpression => throw new NotImplementedException();
+
+        object IDataPropertyAssertion.TargetValue => throw new NotImplementedException();
     }
 }
