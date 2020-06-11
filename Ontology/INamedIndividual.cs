@@ -13,6 +13,7 @@ namespace Ontology
         IList<IClassAssertion>          Classes          { get; }
 
         IEnumerable<object> this[IObjectPropertyExpression objectPropertyExpression] { get; }
+        IEnumerable<object> this[IDataPropertyExpression   dataPropertyExpression  ] { get; }
     }
 
     public interface IAssertion: IAxiom
@@ -72,17 +73,18 @@ namespace Ontology
             var keyedClassExpressions = classExpressions
                 .Where(classExpression => classExpression.Keys.Count > 0).ToList();
 
-            var matching = (
-                from domainObject in _objectPropertyExpression.Values(individual).OfType<DomainObject>()
-                from domainObjectClass in _objectPropertyExpression.Ontology.Classes.Values
-                where domainObjectClass.Name == domainObject.ClassName
-                from classExpression in domainObjectClass.SuperClasses().Intersect(keyedClassExpressions)
-                where classExpression.Keys[0].Properties.All(dpe => dpe.Value(domainObject) == _individual.DataProperties.Where(
-                    dataPropertyAssertion => dataPropertyAssertion.DataPropertyExpression == dpe).Select(dpa => dpa.TargetValue).FirstOrDefault())
-                select domainObject
-            );
-
-            return matching.FirstOrDefault() != null;
+            return _objectPropertyExpression
+                .Values(individual)
+                .OfType<DomainObject>()
+                .Any(domainObject => 
+                    {
+                        var commonKeyedClassExpressions = _objectPropertyExpression.Ontology.Classes[domainObject.ClassName].SuperClasses();
+                        commonKeyedClassExpressions.IntersectWith(keyedClassExpressions);
+                        return
+                            commonKeyedClassExpressions.Count > 0 &&
+                            commonKeyedClassExpressions.All(
+                                ce => ce.Keys.All(hasKey => hasKey.Properties.All(dpe => dpe.Value(domainObject) == _individual[dpe].FirstOrDefault())));
+                    });
         }
     }
 }
