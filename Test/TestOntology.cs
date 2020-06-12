@@ -8,6 +8,7 @@ using Deals;
 using Ontology;
 using System.Diagnostics;
 using Roles;
+using Organisations;
 
 namespace Test
 {
@@ -139,7 +140,6 @@ namespace Test
             Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(sponsor)));
         }
 
-
         [TestCase(0, false)]
         [TestCase(1, true )]
         public void SponsorsMandatory(
@@ -183,6 +183,58 @@ namespace Test
                     annotation.Property == dealOntology.Mandatory &&
                     annotationAnnotation.Property == dealOntology.SubPropertyName &&
                     annotationAnnotation.Value.Equals("Sponsors") &&
+                    axiom.SuperClassExpression is IPropertyRestriction propertyRestriction &&
+                    propertyRestriction.PropertyExpression.Name == "Parties"
+                select axiom
+            ).FirstOrDefault();
+
+            Assert.That(subClassOf, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(deal)));
+        }
+
+        
+        [TestCase(0, false)]
+        [TestCase(1, true )]
+        public void BorrowersMandatory(
+            int  borrowerCount,
+            bool result
+            )
+        {
+            var deal = new Deal(
+                Guid.NewGuid(),
+                "Test",
+                "ProjectFinance",
+                null,
+                null);
+
+            var role = new Role(
+                DealRoleIdentifier.Borrower,
+                null);
+            Enumerable
+                .Range(0, borrowerCount)
+                .ForEach(i => new DealParty(
+                    Guid.NewGuid(),
+                    deal,
+                    (Organisation)null,
+                    role,
+                    null));
+            var dealOntology = new DealOntology();
+            IOntology ontology = dealOntology;
+
+            var classification = ontology.Classify(deal);
+            Assert.That(classification.ContainsKey(deal));
+            classification[deal].ForEach(TestContext.WriteLine);
+
+            var subClassOf =
+            (
+                from classExpression in classification[deal]
+                from axiom in classExpression.SuperClasses
+                from annotation in axiom.Annotations
+                from annotationAnnotation in annotation.Annotations
+                where
+                    annotation.Property == dealOntology.Mandatory &&
+                    annotationAnnotation.Property == dealOntology.SubPropertyName &&
+                    annotationAnnotation.Value.Equals("Borrowers") &&
                     axiom.SuperClassExpression is IPropertyRestriction propertyRestriction &&
                     propertyRestriction.PropertyExpression.Name == "Parties"
                 select axiom

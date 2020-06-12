@@ -137,6 +137,15 @@ namespace Ontology
                 ontology,
                 name);
 
+        public static INamedIndividual NamedIndividual(
+            this IClass @class,
+            string      name
+            ) => ((IClassAssertion)new ClassAssertion(
+                @class,
+                new NamedIndividual(
+                    @class.Ontology,
+                    name))).NamedIndividual;
+
         public static IClassAssertion Assert(
             this INamedIndividual namedIndividual,
             IClassExpression      classExpression

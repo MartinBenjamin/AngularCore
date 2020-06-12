@@ -65,7 +65,7 @@ namespace Deals
         public Role                AdvisorRole          { get; protected set; }
         public INamedIndividual    SponsorRole          { get; protected set; }
         public IList<Role>         KeyCounterpartyRoles { get; protected set; } = new List<Role>();
-        public LegalEntity         Mufg                 { get; protected set; }
+        public INamedIndividual    Mufg                 { get; protected set; }
         public IAnnotationProperty Mandatory            { get; protected set; }
         public IAnnotationProperty SubPropertyName      { get; protected set; }
 
@@ -77,13 +77,12 @@ namespace Deals
 
         public DealOntology()
         {
-            SponsorRole      = this.NamedIndividual("Sponsor");
             var DomainObject = this.Class("DomainObject");
             var Named        = this.Class("Named");
             var Role         = this.DomainObjectClass<Role>();
-            var Organisation = this.Class("Organisation");
-            var LegalEntity  = this.Class("LegalEntity");
-            var DealParty    = this.Class("DealParty");
+            var Organisation = this.DomainObjectClass<Organisation>();
+            var LegalEntity  = this.DomainObjectClass<LegalEntity>();
+            var DealParty    = this.DomainObjectClass<DealParty>();
             var Deal         = this.Class("Deal");
             var DomainObjectId = DomainObject.DataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
             var NamedName      = Named.DataProperty<Named<Guid>, string>(named => named.Name);
@@ -95,8 +94,12 @@ namespace Deals
             Role.SubClassOf(Named);
             Deal.SubClassOf(Named);
 
-            SponsorRole.Assert(Role);
+            SponsorRole = Role.NamedIndividual("Sponsor");
+            Mufg        = LegalEntity.NamedIndividual("MUFG");
             SponsorRole.Assert(DomainObjectId, DealRoleIdentifier.Sponsor);
+
+            var borrowerRole = Role.NamedIndividual("Borrower");
+            borrowerRole.Assert(DomainObjectId, DealRoleIdentifier.Borrower);
 
             var DealPartyRole         = DealParty.ObjectProperty<DealParty, Role>(Role, dealParty => dealParty.Role);
             var DealPartyOrganisation = DealParty.ObjectProperty<DealParty, Organisation>(Organisation, dealParty => dealParty.Organisation);
@@ -108,6 +111,7 @@ namespace Deals
             var MufgLenderParty       = new ObjectIntersectionOf(LenderParty, MufgParty);
             var MufgAdvisorParty      = new ObjectIntersectionOf(AdvisorParty, MufgParty);
             var KeyCounterpartyParty  = new ObjectSomeValuesFrom(DealPartyRole, KeyCounterpartyRole);
+            var BorrrowerParty        = new ObjectHasValue(DealPartyRole, borrowerRole);
 
             Mandatory = new AnnotationProperty(
                 this,
@@ -152,8 +156,16 @@ namespace Deals
                     0)
                 .Annotate(
                     SubPropertyName,
-                    "Sponsors"); ;
+                    "Sponsors");
 
+            ProjectFinance
+                .SubClassOf(DealParties.MinCardinality(1, BorrrowerParty))
+                .Annotate(
+                    Mandatory,
+                    0)
+                .Annotate(
+                    SubPropertyName,
+                    "Borrowers");
             var Sponsor = this.DomainObjectClass<Sponsor>();
             Sponsor.SubClassOf(SponsorParty);
             var SponsorEquity = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
