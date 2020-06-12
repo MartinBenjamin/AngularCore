@@ -1,8 +1,6 @@
 ﻿using CommonDomainObjects;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Ontology
 {
@@ -35,7 +33,7 @@ namespace Ontology
     public interface IObjectPropertyAssertion: IPropertyAssertion
     {
         IObjectPropertyExpression ObjectPropertyExpression { get; }
-        INamedIndividual          TargetIndividual         { get; }
+        object                    TargetIndividual         { get; }
     }
 
     public interface IDataPropertyAssertion: IPropertyAssertion
@@ -78,66 +76,98 @@ namespace Ontology
         IList<IDataPropertyAssertion> INamedIndividual.DataProperties => _dataProperties;
 
         IList<IClassAssertion> INamedIndividual.Classes => _classes;
-
-        public override bool Equals(
-            object obj
-            )
-        {
-            var domainObject = obj as DomainObject;
-
-            if(domainObject == null)
-                return false;
-
-            var classExpressions = new HashSet<IClassExpression>();
-            _classes
-                .Select(classAssertion => classAssertion.ClassExpression)
-                .ForEach(classExpression => classExpression.SuperClasses(classExpressions));
-
-            var keyedClassExpressions = classExpressions
-                .Where(classExpression => classExpression.Keys.Count > 0).ToList();
-
-            var commonKeyedClassExpressions = _ontology.Classes[domainObject.ClassName].SuperClasses();
-            commonKeyedClassExpressions.IntersectWith(keyedClassExpressions);
-            return
-                commonKeyedClassExpressions.Count > 0 &&
-                commonKeyedClassExpressions.All(
-                    ce => ce.Keys.All(hasKey => hasKey.AreEqual(domainObject, this)));
-        }
     }
 
     public class ClassAssertion:
         Annotated,
         IClassAssertion
     {
-        IClassExpression IClassAssertion.ClassExpression => throw new NotImplementedException();
+        private IClassExpression _classExpression;
+        private INamedIndividual _namedIndividual;
 
-        INamedIndividual IClassAssertion.NamedIndividual => throw new NotImplementedException();
+        public ClassAssertion(
+            IClassExpression classExpression,
+            INamedIndividual namedIndividual
+            )
+        {
+            _classExpression = classExpression;
+            _namedIndividual = namedIndividual;
+            _namedIndividual.Classes.Add(this);
+        }
+
+        IClassExpression IClassAssertion.ClassExpression => _classExpression;
+
+        INamedIndividual IClassAssertion.NamedIndividual => _namedIndividual;
     }
 
-    public class PropertyAssertion:
+    public abstract class PropertyAssertion:
         Annotated,
         IPropertyAssertion
     {
-        IPropertyExpression IPropertyAssertion.PropertyExpression => throw new NotImplementedException();
+        protected IPropertyExpression _propertyExpression;
+        protected INamedIndividual    _sourceIndividual;
 
-        INamedIndividual IPropertyAssertion.SourceIndividual => throw new NotImplementedException();
+        protected PropertyAssertion(
+            IPropertyExpression propertyExpression,
+            INamedIndividual    sourceIndividual
+            )
+        {
+            _propertyExpression = propertyExpression;
+            _sourceIndividual   = sourceIndividual;
+        }
+
+        IPropertyExpression IPropertyAssertion.PropertyExpression => _propertyExpression;
+
+        INamedIndividual IPropertyAssertion.SourceIndividual => _sourceIndividual;
     }
 
     public class ObjectPropertyAssertion:
         PropertyAssertion,
         IObjectPropertyAssertion
     {
-        IObjectPropertyExpression IObjectPropertyAssertion.ObjectPropertyExpression => throw new NotImplementedException();
+        private IObjectPropertyExpression _objectPropertyExpression;
+        private object                    _targetIndividual;
 
-        INamedIndividual IObjectPropertyAssertion.TargetIndividual => throw new NotImplementedException();
+        public ObjectPropertyAssertion(
+            IObjectPropertyExpression objectPropertyExpression,
+            INamedIndividual          sourceIndividual,
+            object                    targetIndividual
+            ) : base(
+                objectPropertyExpression,
+                sourceIndividual)
+        {
+            _objectPropertyExpression = objectPropertyExpression;
+            _targetIndividual         = targetIndividual;
+            _sourceIndividual.ObjectProperties.Add(this);
+        }
+
+        IObjectPropertyExpression IObjectPropertyAssertion.ObjectPropertyExpression => _objectPropertyExpression;
+
+        object IObjectPropertyAssertion.TargetIndividual => _targetIndividual;
     }
 
     public class DataPropertyAssertion:
         PropertyAssertion,
         IDataPropertyAssertion
     {
-        IDataPropertyExpression IDataPropertyAssertion.DataPropertyExpression => throw new NotImplementedException();
+        private IDataPropertyExpression _dataPropertyExpression;
+        private object                  _targetValue;
 
-        object IDataPropertyAssertion.TargetValue => throw new NotImplementedException();
+        public DataPropertyAssertion(
+            IDataPropertyExpression dataPropertyExpression,
+            INamedIndividual        sourceIndividual,
+            object                  target
+            ) : base(
+                dataPropertyExpression,
+                sourceIndividual)
+        {
+            _dataPropertyExpression = dataPropertyExpression;
+            _targetValue            = target;
+            _sourceIndividual.DataProperties.Add(this);
+        }
+
+        IDataPropertyExpression IDataPropertyAssertion.DataPropertyExpression => _dataPropertyExpression;
+
+        object IDataPropertyAssertion.TargetValue => _targetValue;
     }
 }
