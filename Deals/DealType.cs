@@ -91,9 +91,6 @@ namespace Deals
 
             Id = DomainObjectId;
             DomainObject.HasKey(DomainObjectId);
-            Role.HasKey(DomainObjectId);
-            LegalEntity.HasKey(DomainObjectId);
-            Deal.HasKey(DomainObjectId);
             Named.SubClassOf(DomainObject);
             Role.SubClassOf(Named);
             Deal.SubClassOf(Named);
