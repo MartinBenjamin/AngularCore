@@ -29,7 +29,17 @@ namespace Ontology
 
         IEnumerable<object> IPropertyExpression.Values(
             object individual
-            ) => individual is T t ? _property(t).Cast<object>() : Enumerable.Empty<object>();
+            )
+        {
+            switch(individual)
+            {
+                case T t                             : return _property(t).Cast<object>();
+                case INamedIndividual namedIndividual: return Values(namedIndividual);
+                default                              : return Enumerable.Empty<object>();
+            }
+        }
+
+        protected abstract IEnumerable<object> Values(INamedIndividual namedIndividual);
     }
 
     public abstract class FunctionalProperty<T, TProperty>:
@@ -59,7 +69,17 @@ namespace Ontology
 
         public object Value(
             object individual
-            ) => individual is T t ? (object)_property(t) : null;
+            )
+        {
+            switch(individual)
+            {
+                case T t                             : return _property(t);
+                case INamedIndividual namedIndividual: return Value(namedIndividual);
+                default                              : return null;
+            }
+        }
+
+        protected abstract object Value(INamedIndividual namedIndividual);
     }
 
     public class ObjectProperty<T, TProperty>:
@@ -83,6 +103,10 @@ namespace Ontology
         }
 
         IClassExpression IObjectPropertyExpression.Range => _range;
+
+        protected override IEnumerable<object> Values(
+            INamedIndividual namedIndividual
+            ) => namedIndividual[this];
     }
 
     public class FunctionalObjectProperty<T, TProperty>:
@@ -106,6 +130,10 @@ namespace Ontology
         }
 
         IClassExpression IObjectPropertyExpression.Range => _range;
+
+        protected override object Value(
+            INamedIndividual namedIndividual
+            ) => namedIndividual[this].FirstOrDefault();
     }
 
     public class DataProperty<T, TProperty>:
@@ -123,6 +151,10 @@ namespace Ontology
         {
             domain.DataProperties.Add(this);
         }
+
+        protected override IEnumerable<object> Values(
+            INamedIndividual namedIndividual
+            ) => namedIndividual[this];
     }
     
     public class FunctionalDataProperty<T, TProperty>:
@@ -140,5 +172,9 @@ namespace Ontology
         {
             domain.DataProperties.Add(this);
         }
+
+        protected override object Value(
+            INamedIndividual namedIndividual
+            ) => namedIndividual[this].FirstOrDefault();
     }
 }

@@ -101,7 +101,7 @@ namespace Ontology
             return
                 commonKeyedClassExpressions.Count > 0 &&
                 commonKeyedClassExpressions.All(
-                    ce => ce.Keys.All(hasKey => hasKey.Properties.All(dpe => dpe.Value(domainObject) == this[dpe].FirstOrDefault())));
+                    ce => ce.Keys.All(hasKey => hasKey.AreEqual(domainObject, this)));
         }
     }
 

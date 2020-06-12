@@ -36,12 +36,11 @@ namespace Ontology
             object rhs
             )
         {
-            var hasKey = _keys.FirstOrDefault();
             return
-                hasKey != null &&
-                hasKey.AreEqual(
-                    lhs,
-                    rhs);
+                _keys.Count > 0 &&
+                _keys.All(key => key.AreEqual(
+                        lhs,
+                        rhs));
         }
 
         public virtual bool HasMember(
