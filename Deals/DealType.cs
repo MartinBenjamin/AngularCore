@@ -63,7 +63,7 @@ namespace Deals
     {
         public Role                LenderRole           { get; protected set; }
         public Role                AdvisorRole          { get; protected set; }
-        public Role                SponsorRole          { get; protected set; }
+        public INamedIndividual   SponsorRole          { get; protected set; }
         public IList<Role>         KeyCounterpartyRoles { get; protected set; } = new List<Role>();
         public LegalEntity         Mufg                 { get; protected set; }
         public IAnnotationProperty Mandatory            { get; protected set; }
@@ -77,7 +77,7 @@ namespace Deals
 
         public DealOntology()
         {
-            SponsorRole = new Role(DealRoleIdentifier.Sponsor, "Sponsor");
+            SponsorRole      = this.NamedIndividual("Sponsor");
             var DomainObject = this.Class("DomainObject");
             var Named        = this.Class("Named");
             var Role         = this.DomainObjectClass<Role>();
@@ -97,6 +97,10 @@ namespace Deals
             Named.SubClassOf(DomainObject);
             Role.SubClassOf(Named);
             Deal.SubClassOf(Named);
+
+            SponsorRole.Assert(Role);
+            SponsorRole.Assert(DomainObjectId, DealRoleIdentifier.Sponsor);
+
             var DealPartyRole         = DealParty.ObjectProperty<DealParty, Role>(Role, dealParty => dealParty.Role);
             var DealPartyOrganisation = DealParty.ObjectProperty<DealParty, Organisation>(Organisation, dealParty => dealParty.Organisation);
             var KeyCounterpartyRole   = new ObjectOneOf(this, KeyCounterpartyRoles);

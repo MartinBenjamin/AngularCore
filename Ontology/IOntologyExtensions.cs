@@ -130,6 +130,38 @@ namespace Ontology
                 cardinality,
                 dataRange);
 
+        public static INamedIndividual NamedIndividual(
+            this IOntology ontology,
+            string         name
+            ) => new NamedIndividual(
+                ontology,
+                name);
+
+        public static IClassAssertion Assert(
+            this INamedIndividual namedIndividual,
+            IClassExpression      classExpression
+            ) => new ClassAssertion(
+                classExpression,
+                namedIndividual);
+
+        public static IObjectPropertyAssertion Assert(
+            this INamedIndividual     sourceIndividual,
+            IObjectPropertyExpression objectPropertyExpression,
+            object                    targetIndividual
+            ) => new ObjectPropertyAssertion(
+                objectPropertyExpression,
+                sourceIndividual,
+                targetIndividual);
+
+        public static IDataPropertyAssertion Assert(
+            this INamedIndividual   sourceIndividual,
+            IDataPropertyExpression dataPropertyExpression,
+            object                  targetValue
+            ) => new DataPropertyAssertion(
+                dataPropertyExpression,
+                sourceIndividual,
+                targetValue);
+
         public static IAnnotation Annotate<TAnnotated>(
             this TAnnotated     annotated,
             IAnnotationProperty property,
