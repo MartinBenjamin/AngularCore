@@ -63,7 +63,7 @@ namespace Deals
     {
         public Role                LenderRole           { get; protected set; }
         public Role                AdvisorRole          { get; protected set; }
-        public INamedIndividual   SponsorRole          { get; protected set; }
+        public INamedIndividual    SponsorRole          { get; protected set; }
         public IList<Role>         KeyCounterpartyRoles { get; protected set; } = new List<Role>();
         public LegalEntity         Mufg                 { get; protected set; }
         public IAnnotationProperty Mandatory            { get; protected set; }
