@@ -1,5 +1,4 @@
-﻿using CommonDomainObjects;
-using System.Linq;
+﻿using System.Linq;
 
 namespace Ontology
 {
@@ -21,22 +20,8 @@ namespace Ontology
 
         public override bool HasMember(
             object individual
-            )
-        {
-            // Equality only defined for instances of DomainObject.
-            if(_individual is DomainObject domainObject)
-            {
-                var hasKey = _objectPropertyExpression.Ontology.Classes[domainObject.ClassName].Keys.FirstOrDefault();
-
-                return
-                    hasKey != null &&
-                    _objectPropertyExpression
-                        .Values(individual)
-                        .OfType<DomainObject>()
-                        .Any(value => value.ClassName == domainObject.ClassName && hasKey.AreEqual(domainObject, value));
-            }
-
-            return false;
-        }
+            ) => _objectPropertyExpression
+                .Values(individual)
+                .Any(value => _objectPropertyExpression.Ontology.AreEqual(individual, value));
     }
 }

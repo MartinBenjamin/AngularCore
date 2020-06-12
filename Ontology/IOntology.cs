@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Ontology
 {
@@ -10,5 +8,9 @@ namespace Ontology
         IClassExpression Nothing { get; }
 
         IDictionary<string, IClass> Classes { get; }
+
+        bool AreEqual(
+            object lhs,
+            object rhs);
     }
 }

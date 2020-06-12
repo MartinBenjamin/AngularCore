@@ -61,13 +61,13 @@ namespace Ontology
         {
         }
 
-        public IEnumerable<object> this[
+        IEnumerable<object> INamedIndividual.this[
             IObjectPropertyExpression objectPropertyExpression
             ] => _objectProperties
                 .Where(objectPropertyAssertion => objectPropertyAssertion.ObjectPropertyExpression == objectPropertyAssertion)
                 .Select(objectPropertyAssertion => objectPropertyAssertion.TargetIndividual);
 
-        public IEnumerable<object> this[
+        IEnumerable<object> INamedIndividual.this[
             IDataPropertyExpression dataPropertyExpression
             ] => _dataProperties
                 .Where(dataPropertyAssertion => dataPropertyAssertion.DataPropertyExpression == dataPropertyExpression)

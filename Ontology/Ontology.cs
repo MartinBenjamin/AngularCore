@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using CommonDomainObjects;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Ontology
 {
@@ -19,5 +21,38 @@ namespace Ontology
         IClassExpression IOntology.Nothing => _nothing;
 
         IDictionary<string, IClass> IOntology.Classes => _classes;
+
+        bool IOntology.AreEqual(
+            object lhs,
+            object rhs
+            )
+        {
+            var keyedClassExpressions = Classes(lhs)
+                .Where(classExpression => classExpression.Keys.Count > 0).ToList();
+            var commonKeyedClassExpressions = Classes(rhs);
+            commonKeyedClassExpressions.IntersectWith(keyedClassExpressions);
+            return commonKeyedClassExpressions.All(
+                classExpression => classExpression.Keys.All(hasKey => hasKey.AreEqual(lhs, rhs)));
+        }
+
+        protected HashSet<IClassExpression> Classes(
+            object individual
+            )
+        {
+            switch(individual)
+            {
+                case INamedIndividual namedIndividual:
+                    var classExpressions = new HashSet<IClassExpression>();
+                    namedIndividual
+                        .Classes
+                        .Select(classAssertion => classAssertion.ClassExpression)
+                        .ForEach(classExpression => classExpression.SuperClasses(classExpressions));
+                    return classExpressions;
+                case DomainObject domainObject:
+                    return _classes[domainObject.ClassName].SuperClasses();
+                default:
+                    return new HashSet<IClassExpression>();
+            }
+        }
     }
 }

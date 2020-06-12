@@ -1,6 +1,5 @@
 ﻿using CommonDomainObjects;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Ontology
 {
@@ -30,18 +29,6 @@ namespace Ontology
         IList<IObjectPropertyExpression> IClassExpression.ObjectProperties => _objectProperties;
 
         IList<IDataPropertyExpression> IClassExpression.DataProperties => _dataProperties;
-
-        bool IClass.AreEqual(
-            object lhs,
-            object rhs
-            )
-        {
-            return
-                _keys.Count > 0 &&
-                _keys.All(key => key.AreEqual(
-                        lhs,
-                        rhs));
-        }
 
         public virtual bool HasMember(
             object individual
