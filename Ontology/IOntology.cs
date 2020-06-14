@@ -6,6 +6,7 @@ namespace Ontology
     {
         IClassExpression Thing   { get; }
         IClassExpression Nothing { get; }
+        IList<IAxiom>    Axioms  { get; }
 
         IDictionary<string, IClass> Classes { get; }
 

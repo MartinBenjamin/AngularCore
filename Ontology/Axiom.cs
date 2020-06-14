@@ -14,6 +14,7 @@ namespace Ontology
             )
         {
             _ontology = ontology;
+            _ontology.Axioms.Add(this);
         }
 
         IOntology IAxiom.Ontology => _ontology;

@@ -6,6 +6,7 @@ namespace Ontology
 {
     public class Ontology: IOntology
     {
+        private IList<IAxiom>               _axioms  = new List<IAxiom>();
         private IDictionary<string, IClass> _classes = new Dictionary<string, IClass>();
         private IClass _thing;
         private IClass _nothing;
@@ -20,7 +21,10 @@ namespace Ontology
 
         IClassExpression IOntology.Nothing => _nothing;
 
+        IList<IAxiom> IOntology.Axioms => _axioms;
+
         IDictionary<string, IClass> IOntology.Classes => _classes;
+
 
         bool IOntology.AreEqual(
             object lhs,
