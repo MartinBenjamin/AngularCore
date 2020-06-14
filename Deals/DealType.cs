@@ -104,10 +104,10 @@ namespace Deals
             var DealPartyRole         = DealParty.ObjectProperty<DealParty, Role>(Role, dealParty => dealParty.Role);
             var DealPartyOrganisation = DealParty.ObjectProperty<DealParty, Organisation>(Organisation, dealParty => dealParty.Organisation);
             var KeyCounterpartyRole   = new ObjectOneOf(this, KeyCounterpartyRoles);
-            var LenderParty           = new ObjectHasValue(DealPartyRole, LenderRole );
-            var AdvisorParty          = new ObjectHasValue(DealPartyRole, AdvisorRole);
-            var SponsorParty          = new ObjectHasValue(DealPartyRole, SponsorRole);
-            var MufgParty             = new ObjectHasValue(DealPartyOrganisation, Mufg);
+            var LenderParty           = DealPartyRole.HasValue(LenderRole);
+            var AdvisorParty          = DealPartyRole.HasValue(AdvisorRole);
+            var SponsorParty          = DealPartyRole.HasValue(SponsorRole);
+            var MufgParty             = DealPartyOrganisation.HasValue(Mufg);
             var MufgLenderParty       = new ObjectIntersectionOf(LenderParty, MufgParty);
             var MufgAdvisorParty      = new ObjectIntersectionOf(AdvisorParty, MufgParty);
             var KeyCounterpartyParty  = new ObjectSomeValuesFrom(DealPartyRole, KeyCounterpartyRole);

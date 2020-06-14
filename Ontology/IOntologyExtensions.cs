@@ -76,6 +76,13 @@ namespace Ontology
                 subClassExpression,
                 superClassExpression);
 
+        public static IObjectHasValue HasValue(
+            this IObjectPropertyExpression objectPropertyExpression,
+            object                         individual
+            ) => new ObjectHasValue(
+                objectPropertyExpression,
+                individual);
+
         public static IObjectMinCardinality MinCardinality(
             this IObjectPropertyExpression objectPropertyExpression,
             int                            cardinality,
