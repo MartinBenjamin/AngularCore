@@ -1,16 +1,17 @@
 ﻿namespace Ontology
 {
     public class SubClassOf:
-        Annotated,
+        Axiom,
         ISubClassOf
     {
         private IClassExpression _subClassExpression;
         private IClassExpression _superClassExpression;
 
         public SubClassOf(
+            IOntology        ontology,
             IClassExpression subClassExpression,
             IClassExpression superClassExpression
-            ): base()
+            ): base(ontology)
         {
             _subClassExpression   = subClassExpression;
             _superClassExpression = superClassExpression;

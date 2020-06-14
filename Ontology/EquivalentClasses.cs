@@ -3,14 +3,15 @@
 namespace Ontology
 {
     public class EquivalentClasses:
-        Annotated,
+        Axiom,
         IEquivalentClasses
     {
         private IList<IClassExpression> _classExpressions;
 
         public EquivalentClasses(
+            IOntology                 ontology,
             params IClassExpression[] classExpressions
-            ) : base()
+            ) : base(ontology)
         {
             _classExpressions = classExpressions;
         }

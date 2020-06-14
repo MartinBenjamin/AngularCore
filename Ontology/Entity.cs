@@ -1,20 +1,18 @@
 ﻿namespace Ontology
 {
-    public abstract class Entity: IEntity
+    public abstract class Entity:
+        Axiom,
+        IEntity
     {
-        protected IOntology _ontology;
-        protected string    _name;
+        protected string _name;
 
         protected Entity(
             IOntology ontology,
             string    name
-            )
+            ) : base(ontology)
         {
-            _ontology = ontology;
-            _name     = name;
+            _name = name;
         }
-
-        IOntology IEntity.Ontology => _ontology;
 
         string IEntity.Name => _name;
     }

@@ -79,16 +79,17 @@ namespace Ontology
     }
 
     public class ClassAssertion:
-        Annotated,
+        Axiom,
         IClassAssertion
     {
         private IClassExpression _classExpression;
         private INamedIndividual _namedIndividual;
 
         public ClassAssertion(
+            IOntology        ontology,
             IClassExpression classExpression,
             INamedIndividual namedIndividual
-            )
+            ) : base(ontology)
         {
             _classExpression = classExpression;
             _namedIndividual = namedIndividual;
@@ -101,16 +102,17 @@ namespace Ontology
     }
 
     public abstract class PropertyAssertion:
-        Annotated,
+        Axiom,
         IPropertyAssertion
     {
         protected IPropertyExpression _propertyExpression;
         protected INamedIndividual    _sourceIndividual;
 
         protected PropertyAssertion(
+            IOntology           ontology,
             IPropertyExpression propertyExpression,
             INamedIndividual    sourceIndividual
-            )
+            ) : base(ontology)
         {
             _propertyExpression = propertyExpression;
             _sourceIndividual   = sourceIndividual;
@@ -129,10 +131,12 @@ namespace Ontology
         private object                    _targetIndividual;
 
         public ObjectPropertyAssertion(
+            IOntology                 ontology,
             IObjectPropertyExpression objectPropertyExpression,
             INamedIndividual          sourceIndividual,
             object                    targetIndividual
             ) : base(
+                ontology,
                 objectPropertyExpression,
                 sourceIndividual)
         {
@@ -154,10 +158,12 @@ namespace Ontology
         private object                  _targetValue;
 
         public DataPropertyAssertion(
+            IOntology               ontology,
             IDataPropertyExpression dataPropertyExpression,
             INamedIndividual        sourceIndividual,
             object                  target
             ) : base(
+                ontology,
                 dataPropertyExpression,
                 sourceIndividual)
         {

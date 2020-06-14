@@ -2,5 +2,6 @@
 {
     public interface IAxiom: IAnnotated
     {
+        IOntology Ontology { get; }
     }
 }

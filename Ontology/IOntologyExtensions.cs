@@ -55,11 +55,11 @@ namespace Ontology
                 property);
 
         public static IFunctionalDataPropertyExpression DataProperty<T, TProperty>(
-            this IClass                    @class,
+            this IClass                    classExpression,
             Expression<Func<T, TProperty>> property
             ) => new FunctionalDataProperty<T, TProperty>(
-                @class.Ontology,
-                @class,
+                classExpression.Ontology,
+                classExpression,
                 property);
 
         public static IHasKey HasKey(
@@ -70,9 +70,10 @@ namespace Ontology
                 dataPropertyExpressions);
 
         public static ISubClassOf SubClassOf(
-            this IClassExpression subClassExpression,
-            IClassExpression      superClassExpression
+            this IClass      subClassExpression,
+            IClassExpression superClassExpression
             ) => new SubClassOf(
+                subClassExpression.Ontology,
                 subClassExpression,
                 superClassExpression);
 
@@ -145,26 +146,21 @@ namespace Ontology
                 name);
 
         public static INamedIndividual NamedIndividual(
-            this IClass @class,
+            this IClass classExpression,
             string      name
             ) => ((IClassAssertion)new ClassAssertion(
-                @class,
-                new NamedIndividual(
-                    @class.Ontology,
-                    name))).NamedIndividual;
-
-        public static IClassAssertion Assert(
-            this INamedIndividual namedIndividual,
-            IClassExpression      classExpression
-            ) => new ClassAssertion(
+                classExpression.Ontology,
                 classExpression,
-                namedIndividual);
+                new NamedIndividual(
+                    classExpression.Ontology,
+                    name))).NamedIndividual;
 
         public static IObjectPropertyAssertion Value(
             this INamedIndividual     sourceIndividual,
             IObjectPropertyExpression objectPropertyExpression,
             object                    targetIndividual
             ) => new ObjectPropertyAssertion(
+                sourceIndividual.Ontology,
                 objectPropertyExpression,
                 sourceIndividual,
                 targetIndividual);
@@ -174,6 +170,7 @@ namespace Ontology
             IDataPropertyExpression dataPropertyExpression,
             object                  targetValue
             ) => new DataPropertyAssertion(
+                sourceIndividual.Ontology,
                 dataPropertyExpression,
                 sourceIndividual,
                 targetValue);

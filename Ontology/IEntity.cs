@@ -1,9 +1,7 @@
 ﻿namespace Ontology
 {
-    public interface IEntity
+    public interface IEntity: IAxiom
     {
-        IOntology Ontology { get; }
-
-        string    Name     { get; }
+        string Name { get; }
     }
 }
