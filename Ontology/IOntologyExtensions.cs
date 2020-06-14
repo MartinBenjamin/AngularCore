@@ -153,7 +153,7 @@ namespace Ontology
                 classExpression,
                 namedIndividual);
 
-        public static IObjectPropertyAssertion Assert(
+        public static IObjectPropertyAssertion Value(
             this INamedIndividual     sourceIndividual,
             IObjectPropertyExpression objectPropertyExpression,
             object                    targetIndividual
@@ -162,7 +162,7 @@ namespace Ontology
                 sourceIndividual,
                 targetIndividual);
 
-        public static IDataPropertyAssertion Assert(
+        public static IDataPropertyAssertion Value(
             this INamedIndividual   sourceIndividual,
             IDataPropertyExpression dataPropertyExpression,
             object                  targetValue

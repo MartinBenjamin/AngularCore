@@ -96,10 +96,10 @@ namespace Deals
 
             SponsorRole = Role.NamedIndividual("Sponsor");
             Mufg        = LegalEntity.NamedIndividual("MUFG");
-            SponsorRole.Assert(DomainObjectId, DealRoleIdentifier.Sponsor);
+            SponsorRole.Value(DomainObjectId, DealRoleIdentifier.Sponsor);
 
             var borrowerRole = Role.NamedIndividual("Borrower");
-            borrowerRole.Assert(DomainObjectId, DealRoleIdentifier.Borrower);
+            borrowerRole.Value(DomainObjectId, DealRoleIdentifier.Borrower);
 
             var DealPartyRole         = DealParty.ObjectProperty<DealParty, Role>(Role, dealParty => dealParty.Role);
             var DealPartyOrganisation = DealParty.ObjectProperty<DealParty, Organisation>(Organisation, dealParty => dealParty.Organisation);
