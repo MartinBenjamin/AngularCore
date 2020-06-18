@@ -57,7 +57,7 @@ namespace Ontology
             object individual
             ) => Value(individual).ToEnumerable();
 
-        public object Value(
+        protected object Value(
             object individual
             )
         {
