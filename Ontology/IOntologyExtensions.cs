@@ -55,21 +55,21 @@ namespace Ontology
             return objectPropertyExpression;
         }
 
-        public static IFunctionalObjectPropertyExpression ObjectProperty<T, TProperty>(
+        public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
             this IClass                    domain,
             Expression<Func<T, TProperty>> property
             )
         {
-            var functionalObjectPropertyExpression = new FunctionalObjectProperty<T, TProperty>(
+            var objectPropertyExpression = new FunctionalObjectProperty<T, TProperty>(
                 domain.Ontology,
                 property);
 
             new ObjectPropertyDomain(
                 domain.Ontology,
-                functionalObjectPropertyExpression,
+                objectPropertyExpression,
                 domain);
 
-            return functionalObjectPropertyExpression;
+            return objectPropertyExpression;
         }
 
         public static IDataPropertyExpression DataProperty<T, TProperty>(
@@ -88,27 +88,27 @@ namespace Ontology
             return dataPropertyExpression;
         }
 
-        public static IFunctionalDataPropertyExpression DataProperty<T, TProperty>(
+        public static IDataPropertyExpression DataProperty<T, TProperty>(
             this IClass                    domain,
             Expression<Func<T, TProperty>> property
             )
         {
 
-            var functionalDataPropertyExpression = new FunctionalDataProperty<T, TProperty>(
+            var dataPropertyExpression = new FunctionalDataProperty<T, TProperty>(
                 domain.Ontology,
                 property);
 
             new DataPropertyDomain(
                 domain.Ontology,
-                functionalDataPropertyExpression,
+                dataPropertyExpression,
                 domain);
 
-            return functionalDataPropertyExpression;
+            return dataPropertyExpression;
         }
 
         public static IHasKey HasKey(
-            this IClassExpression                      classExpression,
-            params IFunctionalDataPropertyExpression[] dataPropertyExpressions
+            this IClassExpression            classExpression,
+            params IDataPropertyExpression[] dataPropertyExpressions
             ) => new HasKey(
                 classExpression,
                 dataPropertyExpressions);

@@ -5,12 +5,12 @@ namespace Ontology
 {
     public class HasKey: IHasKey
     {
-        private IClassExpression                         _classExpression;
-        private IList<IFunctionalDataPropertyExpression> _properties;
+        private IClassExpression               _classExpression;
+        private IList<IDataPropertyExpression> _properties;
 
         public HasKey(
-            IClassExpression                           classExpression,
-            params IFunctionalDataPropertyExpression[] properties
+            IClassExpression                 classExpression,
+            params IDataPropertyExpression[] properties
             )
         {
             _classExpression = classExpression;
@@ -20,11 +20,12 @@ namespace Ontology
 
         IClassExpression IHasKey.ClassExpression => _classExpression;
 
-        IList<IFunctionalDataPropertyExpression> IHasKey.Properties => _properties;
+        IList<IDataPropertyExpression> IHasKey.Properties => _properties;
 
         bool IHasKey.AreEqual(
             object lhs,
             object rhs
-            ) => _properties.All(property => Equals(property.Value(lhs), property.Value(rhs)));
+            ) => _properties.All(
+                property => property.Values(lhs).ToHashSet().SetEquals(property.Values(rhs).ToHashSet()));
     }
 }

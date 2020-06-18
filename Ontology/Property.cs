@@ -39,7 +39,7 @@ namespace Ontology
 
     public abstract class FunctionalProperty<T, TProperty>:
         Entity,
-        IFunctionalPropertyExpression
+        IPropertyExpression
     {
         private Func<T, TProperty> _property;
 
@@ -92,7 +92,7 @@ namespace Ontology
 
     public class FunctionalObjectProperty<T, TProperty>:
         FunctionalProperty<T, TProperty>,
-        IFunctionalObjectPropertyExpression
+        IObjectPropertyExpression
     {
         public FunctionalObjectProperty(
             IOntology                      ontology,
@@ -128,7 +128,7 @@ namespace Ontology
     
     public class FunctionalDataProperty<T, TProperty>:
         FunctionalProperty<T, TProperty>,
-        IFunctionalDataPropertyExpression
+        IDataPropertyExpression
     {
         public FunctionalDataProperty(
             IOntology                      ontology,
