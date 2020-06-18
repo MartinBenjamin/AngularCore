@@ -86,7 +86,7 @@ namespace Deals
             var Deal         = this.Class("Deal");
             var DomainObjectId = DomainObject.DataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
             var NamedName      = Named.DataProperty<Named<Guid>, string>(named => named.Name);
-            var DealParties    = Deal.ObjectProperty<Deal, DealParty>(DealParty, deal => deal.Parties);
+            var DealParties    = Deal.ObjectProperty<Deal, DealParty>(deal => deal.Parties);
 
             Id = DomainObjectId;
             DomainObject.HasKey(DomainObjectId);
@@ -101,8 +101,8 @@ namespace Deals
             var borrowerRole = Role.NamedIndividual("Borrower");
             borrowerRole.Value(DomainObjectId, DealRoleIdentifier.Borrower);
 
-            var DealPartyRole         = DealParty.ObjectProperty<DealParty, Role>(Role, dealParty => dealParty.Role);
-            var DealPartyOrganisation = DealParty.ObjectProperty<DealParty, Organisation>(Organisation, dealParty => dealParty.Organisation);
+            var DealPartyRole         = DealParty.ObjectProperty<DealParty, Role>(dealParty => dealParty.Role);
+            var DealPartyOrganisation = DealParty.ObjectProperty<DealParty, Organisation>(dealParty => dealParty.Organisation);
             var KeyCounterpartyRole   = new ObjectOneOf(this, KeyCounterpartyRoles);
             var LenderParty           = DealPartyRole.HasValue(LenderRole);
             var AdvisorParty          = DealPartyRole.HasValue(AdvisorRole);

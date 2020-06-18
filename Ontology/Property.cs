@@ -10,22 +10,17 @@ namespace Ontology
         Entity,
         IPropertyExpression
     {
-        private IClassExpression                _domain;
         private Func<T, IEnumerable<TProperty>> _property;
 
         protected Property(
             IOntology                                   ontology,
-            IClassExpression                            domain,
             Expression<Func<T, IEnumerable<TProperty>>> property
             ) : base(
                 ontology,
                 property.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TProperty).Name)
         {
-            _domain   = domain;
             _property = property.Compile();
         }
-
-        IClassExpression IPropertyExpression.Domain => _domain;
 
         IEnumerable<object> IPropertyExpression.Values(
             object individual
@@ -46,22 +41,17 @@ namespace Ontology
         Entity,
         IFunctionalPropertyExpression
     {
-        private IClassExpression   _domain;
         private Func<T, TProperty> _property;
 
         protected FunctionalProperty(
             IOntology                      ontology,
-            IClassExpression               domain,
             Expression<Func<T, TProperty>> property
             ) : base(
                 ontology,
                 property.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TProperty).Name)
         {
-            _domain   = domain;
             _property = property.Compile();
         }
-
-        IClassExpression IPropertyExpression.Domain => _domain;
 
         IEnumerable<object> IPropertyExpression.Values(
             object individual
@@ -86,23 +76,14 @@ namespace Ontology
         Property<T, TProperty>,
         IObjectPropertyExpression
     {
-        private IClassExpression _range;
-
         public ObjectProperty(
             IOntology                                   ontology,
-            IClassExpression                            domain,
-            IClassExpression                            range,
             Expression<Func<T, IEnumerable<TProperty>>> property
             ) : base(
                 ontology,
-                domain,
                 property)
         {
-            _range = range;
-            domain.ObjectProperties.Add(this);
         }
-
-        IClassExpression IObjectPropertyExpression.Range => _range;
 
         protected override IEnumerable<object> Values(
             INamedIndividual namedIndividual
@@ -113,23 +94,14 @@ namespace Ontology
         FunctionalProperty<T, TProperty>,
         IFunctionalObjectPropertyExpression
     {
-        private IClassExpression _range;
-
         public FunctionalObjectProperty(
             IOntology                      ontology,
-            IClassExpression               domain,
-            IClassExpression               range,
             Expression<Func<T, TProperty>> property
             ) : base(
                 ontology,
-                domain,
                 property)
         {
-            _range = range;
-            domain.ObjectProperties.Add(this);
         }
-
-        IClassExpression IObjectPropertyExpression.Range => _range;
 
         protected override object Value(
             INamedIndividual namedIndividual
@@ -142,14 +114,11 @@ namespace Ontology
     {
         public DataProperty(
             IOntology                                   ontology,
-            IClassExpression                            domain,
             Expression<Func<T, IEnumerable<TProperty>>> property
             ) : base(
                 ontology,
-                domain,
                 property)
         {
-            domain.DataProperties.Add(this);
         }
 
         protected override IEnumerable<object> Values(
@@ -163,14 +132,11 @@ namespace Ontology
     {
         public FunctionalDataProperty(
             IOntology                      ontology,
-            IClassExpression               domain,
             Expression<Func<T, TProperty>> property
             ) : base(
                 ontology,
-                domain,
                 property)
         {
-            domain.DataProperties.Add(this);
         }
 
         protected override object Value(

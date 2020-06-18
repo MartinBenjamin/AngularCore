@@ -28,39 +28,73 @@ namespace Ontology
 
         public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
             this IClass                                 domain,
-            IClassExpression                            range,
             Expression<Func<T, IEnumerable<TProperty>>> property
-            ) => new ObjectProperty<T, TProperty>(
+            )
+        {
+            var objectPropertyExpression = new ObjectProperty<T, TProperty>(
                 domain.Ontology,
-                domain,
-                range,
                 property);
+
+            new ObjectPropertyDomain(
+                domain.Ontology,
+                objectPropertyExpression,
+                domain);
+
+            return objectPropertyExpression;
+        }
 
         public static IFunctionalObjectPropertyExpression ObjectProperty<T, TProperty>(
             this IClass                    domain,
-            IClassExpression               range,
             Expression<Func<T, TProperty>> property
-            ) => new FunctionalObjectProperty<T, TProperty>(
+            )
+        {
+            var functionalObjectPropertyExpression = new FunctionalObjectProperty<T, TProperty>(
                 domain.Ontology,
-                domain,
-                range,
                 property);
+
+            new ObjectPropertyDomain(
+                domain.Ontology,
+                functionalObjectPropertyExpression,
+                domain);
+
+            return functionalObjectPropertyExpression;
+        }
 
         public static IDataPropertyExpression DataProperty<T, TProperty>(
             this IClass                                 domain,
             Expression<Func<T, IEnumerable<TProperty>>> property
-            ) => new DataProperty<T, TProperty>(
+            )
+        {
+
+            var dataPropertyExpression =  new DataProperty<T, TProperty>(
                 domain.Ontology,
-                domain,
                 property);
 
+            new DataPropertyDomain(
+                domain.Ontology,
+                dataPropertyExpression,
+                domain);
+
+            return dataPropertyExpression;
+        }
+
         public static IFunctionalDataPropertyExpression DataProperty<T, TProperty>(
-            this IClass                    classExpression,
+            this IClass                    domain,
             Expression<Func<T, TProperty>> property
-            ) => new FunctionalDataProperty<T, TProperty>(
-                classExpression.Ontology,
-                classExpression,
+            )
+        {
+
+            var functionalDataPropertyExpression = new FunctionalDataProperty<T, TProperty>(
+                domain.Ontology,
                 property);
+
+            new DataPropertyDomain(
+                domain.Ontology,
+                functionalDataPropertyExpression,
+                domain);
+
+            return functionalDataPropertyExpression;
+        }
 
         public static IHasKey HasKey(
             this IClassExpression                      classExpression,
