@@ -20,9 +20,8 @@ namespace Ontology
 
         public override bool HasMember(
             object individual
-            ) => individual is INamedIndividual namdedIndividual &&
-                _objectPropertyExpression
-                    .Values(individual)
-                    .Any(value => namdedIndividual.Ontology.AreEqual(individual, value));
+            ) => _objectPropertyExpression
+                .Values(individual)
+                .Any(value => _objectPropertyExpression.Ontology.AreEqual(individual, value));
     }
 }
