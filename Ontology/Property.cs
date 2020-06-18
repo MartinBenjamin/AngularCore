@@ -8,7 +8,7 @@ namespace Ontology
 {
     public abstract class Property<T, TProperty>:
         Entity,
-        IPropertyExpression
+        IProperty
     {
         private Func<T, IEnumerable<TProperty>> _property;
 

@@ -2,7 +2,7 @@
 
 namespace Ontology
 {
-    public interface IPropertyExpression: IEntity
+    public interface IPropertyExpression
     {
         IEnumerable<object> Values(object individual);
     }
@@ -12,6 +12,24 @@ namespace Ontology
     }
 
     public interface IDataPropertyExpression: IPropertyExpression
+    {
+    }
+
+    public interface IProperty:
+        IPropertyExpression,
+        IEntity
+    {
+    }
+
+    public interface IObjectProperty:
+        IProperty,
+        IObjectPropertyExpression
+    {
+    }
+
+    public interface IDataProperty:
+        IProperty,
+        IDataPropertyExpression
     {
     }
 

@@ -16,7 +16,7 @@ namespace Ontology
             ) : base(objectPropertyExpression)
         {
             _cardinality     = cardinality;
-            _classExpression = classExpression ?? _objectPropertyExpression.Ontology.Thing;
+            _classExpression = classExpression;
         }
 
         int IObjectCardinality.Cardinality => _cardinality;
@@ -41,7 +41,9 @@ namespace Ontology
 
         public override bool HasMember(
             object individual
-            ) => _objectPropertyExpression.Values(individual).Count(_classExpression.HasMember) >= _cardinality;
+            ) => _objectPropertyExpression
+                .Values(individual)
+                .Count(value => _classExpression == null || _classExpression.HasMember(value)) >= _cardinality;
     }
 
     public class ObjectMaxCardinality:
@@ -61,7 +63,9 @@ namespace Ontology
 
         public override bool HasMember(
             object individual
-            ) => _objectPropertyExpression.Values(individual).Count(_classExpression.HasMember) <= _cardinality;
+            ) => _objectPropertyExpression
+                .Values(individual)
+                .Count(value => _classExpression == null || _classExpression.HasMember(value)) <= _cardinality;
     }
     
     public class ObjectExactCardinality:
@@ -81,6 +85,8 @@ namespace Ontology
 
         public override bool HasMember(
             object individual
-            ) => _objectPropertyExpression.Values(individual).Count(_classExpression.HasMember) == _cardinality;
+            ) => _objectPropertyExpression
+                .Values(individual)
+                .Count(value => _classExpression == null || _classExpression.HasMember(value)) == _cardinality;
     }
 }
