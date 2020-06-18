@@ -27,13 +27,25 @@ namespace Ontology
             ) where T: DomainObject => ontology.DomainObjectClass(typeof(T).FullName);
 
         public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
+            this IOntology                              ontology,
+            Expression<Func<T, IEnumerable<TProperty>>> property
+            ) => new ObjectProperty<T, TProperty>(
+                ontology,
+                property);
+
+        public static IDataPropertyExpression DataProperty<T, TProperty>(
+            this IOntology                              ontology,
+            Expression<Func<T, IEnumerable<TProperty>>> property
+            ) => new DataProperty<T, TProperty>(
+                ontology,
+                property);
+
+        public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
             this IClass                                 domain,
             Expression<Func<T, IEnumerable<TProperty>>> property
             )
         {
-            var objectPropertyExpression = new ObjectProperty<T, TProperty>(
-                domain.Ontology,
-                property);
+            var objectPropertyExpression = domain.Ontology.ObjectProperty(property);
 
             new ObjectPropertyDomain(
                 domain.Ontology,
@@ -66,9 +78,7 @@ namespace Ontology
             )
         {
 
-            var dataPropertyExpression =  new DataProperty<T, TProperty>(
-                domain.Ontology,
-                property);
+            var dataPropertyExpression = domain.Ontology.DataProperty(property);
 
             new DataPropertyDomain(
                 domain.Ontology,
