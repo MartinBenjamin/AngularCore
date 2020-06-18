@@ -159,28 +159,28 @@ namespace CommonDomainObjects
 
         public Taxonomy(
             Guid                             id,
-            IDictionary<TTerm, IList<TTerm>> hierachy
+            IDictionary<TTerm, IList<TTerm>> broader
             ) : base(
                 id,
-                hierachy)
+                broader)
         {
         }
 
         public Taxonomy(
-            IDictionary<TTerm, IList<TTerm>> hierachy
+            IDictionary<TTerm, IList<TTerm>> broader
             ) : this(
                 Guid.NewGuid(),
-                hierachy)
+                broader)
         {
         }
 
         protected override TaxonomyTerm<TTerm> NewTaxonomyTerm(
             TTerm               term,
-            TaxonomyTerm<TTerm> broaderTaxonomyTerm
+            TaxonomyTerm<TTerm> broader
             ) => new TaxonomyTerm<TTerm>(
                 this,
                 term,
-                broaderTaxonomyTerm);
+                broader);
     }
 
     public class TaxonomyTerm<TTerm>: TaxonomyTerm<Guid, Taxonomy<TTerm>, TaxonomyTerm<TTerm>, TTerm>

@@ -153,28 +153,28 @@ namespace CommonDomainObjects
 
         public Hierarchy(
             Guid                                 id,
-            IDictionary<TMember, IList<TMember>> hierachy
+            IDictionary<TMember, IList<TMember>> parent
             ) : base(
                 id,
-                hierachy)
+                parent)
         {
         }
 
         public Hierarchy(
-            IDictionary<TMember, IList<TMember>> hierachy
+            IDictionary<TMember, IList<TMember>> parent
             ) : this(
                 Guid.NewGuid(),
-                hierachy)
+                parent)
         {
         }
 
         protected override HierarchyMember<TMember> NewHierarchyMember(
             TMember                  member,
-            HierarchyMember<TMember> parentHierarchyMember
+            HierarchyMember<TMember> parent
             ) => new HierarchyMember<TMember>(
                 this,
                 member,
-                parentHierarchyMember);
+                parent);
     }
 
     public class HierarchyMember<TMember>: HierarchyMember<Guid, Hierarchy<TMember>, HierarchyMember<TMember>, TMember>
