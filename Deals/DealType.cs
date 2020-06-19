@@ -142,17 +142,11 @@ namespace Deals
                     Mandatory,
                     0);
             var Debt = this.Class("Debt");
-            Debt.SubClassOf(
-                _Parties.ExactCardinality(
-                    1,
-                    MufgLenderParty));
-            var Advisory = this.Class("Advisory");
-            Advisory.SubClassOf(
-                _Parties.ExactCardinality(
-                    1,
-                    MufgAdvisorParty));
-
+            Debt.SubClassOf(_Parties.ExactCardinality(1, MufgLenderParty));
             Debt.SubClassOf(Deal);
+
+            var Advisory = this.Class("Advisory");
+            Advisory.SubClassOf(_Parties.ExactCardinality(1, MufgAdvisorParty));
             Advisory.SubClassOf(Deal);
 
             var ProjectFinance = this.DomainObjectClass("ProjectFinance");
