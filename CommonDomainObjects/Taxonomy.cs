@@ -85,7 +85,7 @@ namespace CommonDomainObjects
 
         protected abstract TTaxonomyTerm NewTaxonomyTerm(
             TTerm         term,
-            TTaxonomyTerm broaderTaxonomyTerm);
+            TTaxonomyTerm broader);
     }
 
     public abstract class TaxonomyTerm<TId, TTaxonomy, TTaxonomyTerm, TTerm>:

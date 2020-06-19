@@ -85,7 +85,7 @@ namespace CommonDomainObjects
 
         protected abstract THierarchyMember NewHierarchyMember(
             TMember          member,
-            THierarchyMember parentHierarchyMember);
+            THierarchyMember parent);
     }
 
     public abstract class HierarchyMember<TId, THierarchy, THierarchyMember, TMember>:

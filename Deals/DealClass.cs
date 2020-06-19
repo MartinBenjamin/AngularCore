@@ -3,52 +3,52 @@ using System;
 
 namespace Deals
 {
-    public class DealClassifier: DomainObject
+    public class DealClass: DomainObject
     {
         public Deal                 Deal                 { get; protected set; }
         public ClassificationScheme ClassificationScheme { get; protected set; }
-        public Classifier           Classifier           { get; protected set; }
+        public Class                Class                { get; protected set; }
 
-        protected DealClassifier() : base()
+        protected DealClass() : base()
         {
         }
 
-        public DealClassifier(
+        public DealClass(
             Deal                 deal,
             ClassificationScheme classificationScheme,
-            Classifier           classifier
+            Class                @class
             ) : base()
         {
             Deal                 = deal;
             ClassificationScheme = classificationScheme;
-            Classifier           = classifier;
-            Deal.Classifiers.Add(this);
+            Class                = @class;
+            Deal.Classes.Add(this);
         }
 
         public override bool Equals(
             object obj
-            ) => obj is DealClassifier dealClassifier &&
-                Deal                 == dealClassifier.Deal &&
-                ClassificationScheme == dealClassifier.ClassificationScheme &&
-                Classifier           == dealClassifier.Classifier;
+            ) => obj is DealClass dealClass &&
+                Deal                 == dealClass.Deal &&
+                ClassificationScheme == dealClass.ClassificationScheme &&
+                Class                == dealClass.Class;
 
         public override int GetHashCode()
         {
             return HashCode.Combine(
                 ClassificationScheme,
-                Classifier);
+                Class);
         }
 
         public static bool operator ==(
-            DealClassifier lhs,
-            DealClassifier rhs
+            DealClass lhs,
+            DealClass rhs
             ) => Equals(
                 lhs,
                 rhs);
 
         public static bool operator !=(
-            DealClassifier lhs,
-            DealClassifier rhs
+            DealClass lhs,
+            DealClass rhs
             ) => !(lhs == rhs);
     }
 }

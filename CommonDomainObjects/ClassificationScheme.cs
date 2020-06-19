@@ -6,127 +6,127 @@ using System.Threading.Tasks;
 
 namespace CommonDomainObjects
 {
-    public abstract class ClassificationScheme<TId, TClassificationScheme, TClassificationSchemeClassifier, TClassifier>: DomainObject<TId>
-        where TClassificationScheme : ClassificationScheme<TId, TClassificationScheme, TClassificationSchemeClassifier, TClassifier>
-        where TClassificationSchemeClassifier : ClassificationSchemeClassifier<TId, TClassificationScheme, TClassificationSchemeClassifier, TClassifier>
+    public abstract class ClassificationScheme<TId, TClassificationScheme, TClassificationSchemeClass, TClass>: DomainObject<TId>
+        where TClassificationScheme : ClassificationScheme<TId, TClassificationScheme, TClassificationSchemeClass, TClass>
+        where TClassificationSchemeClass : ClassificationSchemeClass<TId, TClassificationScheme, TClassificationSchemeClass, TClass>
     {
-        private IList<TClassificationSchemeClassifier> _classifiers;
+        private IList<TClassificationSchemeClass> _classes;
 
-        public virtual IReadOnlyList<TClassificationSchemeClassifier> Classifiers
-            => new ReadOnlyCollection<TClassificationSchemeClassifier>(_classifiers);
+        public virtual IReadOnlyList<TClassificationSchemeClass> Classes
+            => new ReadOnlyCollection<TClassificationSchemeClass>(_classes);
 
         protected ClassificationScheme() : base()
         {
         }
 
         public ClassificationScheme(
-            TId                                          id,
-            IDictionary<TClassifier, IList<TClassifier>> super
+            TId                                id,
+            IDictionary<TClass, IList<TClass>> super
             ) : base(id)
         {
-            _classifiers = new List<TClassificationSchemeClassifier>();
+            _classes = new List<TClassificationSchemeClass>();
 
             var sub = super.Transpose();
 
             var next = 0;
             foreach(var classifier in super.Keys.Where(key => super[key].Count == 0))
             {
-                var classificationSchemeClassifier = CreateTree(
+                var classificationSchemeClass = CreateTree(
                     sub,
                     classifier,
                     null);
 
-                next = classificationSchemeClassifier.AssignInterval(next);
+                next = classificationSchemeClass.AssignInterval(next);
             }
         }
 
-        public virtual TClassificationSchemeClassifier this[
-            TClassifier classifier
-            ] => _classifiers.FirstOrDefault(classificationSchemeClassifier => classificationSchemeClassifier.Classifier.Equals(classifier));
+        public virtual TClassificationSchemeClass this[
+            TClass classifier
+            ] => _classes.FirstOrDefault(classificationSchemeClass => classificationSchemeClass.Class.Equals(classifier));
 
         public virtual void Visit(
-            Action<TClassificationSchemeClassifier> enter,
-            Action<TClassificationSchemeClassifier> exit = null
-            ) => Classifiers
-                .Where(classificationSchemeClassifier => classificationSchemeClassifier.Super == null)
-                .ForEach(classificationSchemeClassifier => classificationSchemeClassifier.Visit(
+            Action<TClassificationSchemeClass> enter,
+            Action<TClassificationSchemeClass> exit = null
+            ) => Classes
+                .Where(classificationSchemeClass => classificationSchemeClass.Super == null)
+                .ForEach(classificationSchemeClass => classificationSchemeClass.Visit(
                     enter,
                     exit));
 
         public virtual async Task VisitAsync(
-            Func<TClassificationSchemeClassifier, Task> enter,
-            Func<TClassificationSchemeClassifier, Task> exit = null
-            ) => await Classifiers
-                .Where(classificationSchemeClassifier => classificationSchemeClassifier.Super == null)
-                .ForEachAsync(classificationSchemeClassifier => classificationSchemeClassifier.VisitAsync(
+            Func<TClassificationSchemeClass, Task> enter,
+            Func<TClassificationSchemeClass, Task> exit = null
+            ) => await Classes
+                .Where(classificationSchemeClass => classificationSchemeClass.Super == null)
+                .ForEachAsync(classificationSchemeClass => classificationSchemeClass.VisitAsync(
                     enter,
                     exit));
 
-        private TClassificationSchemeClassifier CreateTree(
-            IDictionary<TClassifier, IList<TClassifier>> sub,
-            TClassifier                                  classifier,
-            TClassificationSchemeClassifier              superClassificationSchemeClassifier
+        private TClassificationSchemeClass CreateTree(
+            IDictionary<TClass, IList<TClass>> sub,
+            TClass                             @class,
+            TClassificationSchemeClass         superClassificationSchemeClass
             )
         {
-            var classificationSchemeClassifier = NewClassificationSchemeClassifier(
-                classifier,
-                superClassificationSchemeClassifier);
+            var classificationSchemeClassifier = NewClassificationSchemeClass(
+                @class,
+                superClassificationSchemeClass);
 
-            _classifiers.Add(classificationSchemeClassifier);
+            _classes.Add(classificationSchemeClassifier);
 
-            foreach(var subClassifier in sub[classifier])
+            foreach(var subclass in sub[@class])
                 CreateTree(
                     sub,
-                    subClassifier,
+                    subclass,
                     classificationSchemeClassifier);
 
             return classificationSchemeClassifier;
         }
 
-        protected abstract TClassificationSchemeClassifier NewClassificationSchemeClassifier(
-            TClassifier                     classifier,
-            TClassificationSchemeClassifier superClassificationSchemeClassifier);
+        protected abstract TClassificationSchemeClass NewClassificationSchemeClass(
+            TClass                     @class,
+            TClassificationSchemeClass superClassificationSchemeClass);
     }
 
-    public abstract class ClassificationSchemeClassifier<TId, TClassificationScheme, TClassificationSchemeClassifier, TClassifier>:
+    public abstract class ClassificationSchemeClass<TId, TClassificationScheme, TClassificationSchemeClass, TClass>:
         DomainObject<TId>,
-        ITreeVertex<TClassificationSchemeClassifier>
-        where TClassificationScheme : ClassificationScheme<TId, TClassificationScheme, TClassificationSchemeClassifier, TClassifier>
-        where TClassificationSchemeClassifier : ClassificationSchemeClassifier<TId, TClassificationScheme, TClassificationSchemeClassifier, TClassifier>
+        ITreeVertex<TClassificationSchemeClass>
+        where TClassificationScheme : ClassificationScheme<TId, TClassificationScheme, TClassificationSchemeClass, TClass>
+        where TClassificationSchemeClass : ClassificationSchemeClass<TId, TClassificationScheme, TClassificationSchemeClass, TClass>
     {
-        private IList<TClassificationSchemeClassifier> _sub;
+        private IList<TClassificationSchemeClass> _sub;
 
-        public virtual TClassificationScheme           ClassificationScheme { get; protected set; }
-        public virtual TClassifier                     Classifier           { get; protected set; }
-        public virtual TClassificationSchemeClassifier Super                { get; protected set; }
-        public virtual Range<int>                      Interval             { get; protected set; }
+        public virtual TClassificationScheme      ClassificationScheme { get; protected set; }
+        public virtual TClass                     Class                { get; protected set; }
+        public virtual TClassificationSchemeClass Super                { get; protected set; }
+        public virtual Range<int>                 Interval             { get; protected set; }
 
-        public virtual IReadOnlyList<TClassificationSchemeClassifier> Sub
-            => new ReadOnlyCollection<TClassificationSchemeClassifier>(_sub);
+        public virtual IReadOnlyList<TClassificationSchemeClass> Sub
+            => new ReadOnlyCollection<TClassificationSchemeClass>(_sub);
 
-        protected ClassificationSchemeClassifier() : base()
+        protected ClassificationSchemeClass() : base()
         {
         }
 
-        protected ClassificationSchemeClassifier(
-            TId                             id,
-            TClassificationScheme           classificationScheme,
-            TClassifier                     classifier,
-            TClassificationSchemeClassifier super
+        protected ClassificationSchemeClass(
+            TId                        id,
+            TClassificationScheme      classificationScheme,
+            TClass                     @class,
+            TClassificationSchemeClass super
             ) : base(id)
         {
-            _sub = new List<TClassificationSchemeClassifier>();
-            ClassificationScheme  = classificationScheme;
-            Classifier            = classifier;
-            Super                 = super;
-            Super?._sub.Add((TClassificationSchemeClassifier)this);
+            _sub = new List<TClassificationSchemeClass>();
+            ClassificationScheme = classificationScheme;
+            Class                = @class;
+            Super                = super;
+            Super?._sub.Add((TClassificationSchemeClass)this);
         }
 
         public virtual bool Contains(
-            TClassificationSchemeClassifier classificationSchemeClassifier
+            TClassificationSchemeClass classificationSchemeClass
             ) =>
-                ClassificationScheme == classificationSchemeClassifier.ClassificationScheme &&
-                Interval.Contains(classificationSchemeClassifier.Interval);
+                ClassificationScheme == classificationSchemeClass.ClassificationScheme &&
+                Interval.Contains(classificationSchemeClass.Interval);
 
         protected internal virtual int AssignInterval(
             int next
@@ -144,20 +144,20 @@ namespace CommonDomainObjects
             return next;
         }
 
-        TClassificationSchemeClassifier ITreeVertex<TClassificationSchemeClassifier>.Parent
+        TClassificationSchemeClass ITreeVertex<TClassificationSchemeClass>.Parent
             => Super;
 
-        IReadOnlyList<TClassificationSchemeClassifier> ITreeVertex<TClassificationSchemeClassifier>.Children
+        IReadOnlyList<TClassificationSchemeClass> ITreeVertex<TClassificationSchemeClass>.Children
             => Sub;
     }
 
-    public class Classifier: Named<Guid>
+    public class Class: Named<Guid>
     {
-        protected Classifier() : base()
+        protected Class() : base()
         {
         }
 
-        public Classifier(
+        public Class(
             Guid   id,
             string name
             ) : base(
@@ -167,15 +167,15 @@ namespace CommonDomainObjects
         }
     }
 
-    public class ClassificationScheme: ClassificationScheme<Guid, ClassificationScheme, ClassificationSchemeClassifier, Classifier>
+    public class ClassificationScheme: ClassificationScheme<Guid, ClassificationScheme, ClassificationSchemeClass, Class>
     {
         protected ClassificationScheme() : base()
         {
         }
 
         public ClassificationScheme(
-            Guid                                       id,
-            IDictionary<Classifier, IList<Classifier>> super
+            Guid                             id,
+            IDictionary<Class, IList<Class>> super
             ) : base(
                 id,
                 super)
@@ -183,37 +183,37 @@ namespace CommonDomainObjects
         }
 
         public ClassificationScheme(
-            IDictionary<Classifier, IList<Classifier>> super
+            IDictionary<Class, IList<Class>> super
             ) : this(
                 Guid.NewGuid(),
                 super)
         {
         }
 
-        protected override ClassificationSchemeClassifier NewClassificationSchemeClassifier(
-            Classifier                     classifier,
-            ClassificationSchemeClassifier superClassificationSchemeClassifier
-            ) => new ClassificationSchemeClassifier(
+        protected override ClassificationSchemeClass NewClassificationSchemeClass(
+            Class                     @class,
+            ClassificationSchemeClass superClassificationSchemeClass
+            ) => new ClassificationSchemeClass(
                 this,
-                classifier,
-                superClassificationSchemeClassifier);
+                @class,
+                superClassificationSchemeClass);
     }
 
-    public class ClassificationSchemeClassifier: ClassificationSchemeClassifier<Guid, ClassificationScheme, ClassificationSchemeClassifier, Classifier>
+    public class ClassificationSchemeClass: ClassificationSchemeClass<Guid, ClassificationScheme, ClassificationSchemeClass, Class>
     {
-        protected ClassificationSchemeClassifier() : base()
+        protected ClassificationSchemeClass() : base()
         {
         }
 
-        internal ClassificationSchemeClassifier(
-            ClassificationScheme           classificationScheme,
-            Classifier                     classifier,
-            ClassificationSchemeClassifier superClassificationSchemeClassifier
+        internal ClassificationSchemeClass(
+            ClassificationScheme      classificationScheme,
+            Class                     @class,
+            ClassificationSchemeClass super
             ) : base(
                 Guid.NewGuid(),
                 classificationScheme,
-                classifier,
-                superClassificationSchemeClassifier)
+                @class,
+                super)
         {
         }
     }
