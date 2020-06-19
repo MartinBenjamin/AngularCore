@@ -13,46 +13,11 @@ namespace Deals
     {
         public virtual IList<Role>  KeyCounterparties { get; protected set; }
         //public virtual IList<Stage> Stages            { get; protected set; }
-        //public virtual IDictionary<Type, Class<Type>> Classes { get; protected set; }
 
         protected DealType() : base()
         {
         }
     }
-
-    //public class ActiveFromStage<T>: ClassAxiom<T>
-    //{
-    //    private int _stageIndex;
-
-    //    public ActiveFromStage(
-    //        ClassExpression<T> decorated,
-    //        int                stageIndex
-    //        ): base(decorated)
-    //    {
-    //        _stageIndex = stageIndex;
-    //    }
-
-    //    public override bool HasMember(
-    //        T      t,
-    //        object context
-    //        )
-    //    {
-    //        var stageIndex = (int)context;
-
-    //        return stageIndex < _stageIndex || _decorated.HasMember(t, context);
-    //    }
-    //}
-
-    //public static class ClassExpressionExtensions
-    //{
-    //    public static ClassExpression<T> ActiveFromStage<T>(
-    //        this ClassExpression<T> classExpression,
-    //        int                     stageIndex
-    //        )
-    //    {
-    //        return classExpression;
-    //    }
-    //}
 
     public static class LegalEntityIdentifier
     {
