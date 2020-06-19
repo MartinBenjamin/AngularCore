@@ -117,7 +117,7 @@ namespace Deals
 
             var Sponsor               = this.DomainObjectClass<Sponsor>();
             Sponsor.SubClassOf(SponsorParty);
-            var _equity               = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
+            var _Equity               = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
 
             var DealClass             = this.DomainObjectClass<DealClass>();
             var _ClassificationScheme = DealClass.ObjectProperty<DealClass, ClassificationScheme>(dealClass => dealClass.ClassificationScheme);
@@ -178,7 +178,7 @@ namespace Deals
                     SubPropertyName,
                     "Exclusivity");
             Sponsor
-                .SubClassOf(_equity.ExactCardinality(1))
+                .SubClassOf(_Equity.ExactCardinality(1))
                 .Annotate(
                     Mandatory,
                     0);
