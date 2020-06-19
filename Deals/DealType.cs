@@ -77,22 +77,27 @@ namespace Deals
 
         public DealOntology()
         {
-            var DomainObject = this.Class("DomainObject");
-            var Named        = this.Class("Named");
-            var Role         = this.DomainObjectClass<Role>();
-            var Organisation = this.DomainObjectClass<Organisation>();
-            var LegalEntity  = this.DomainObjectClass<LegalEntity>();
-            var DealParty    = this.DomainObjectClass<DealParty>();
-            var Deal         = this.Class("Deal");
-            var DomainObjectId = DomainObject.DataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
-            var NamedName      = Named.DataProperty<Named<Guid>, string>(named => named.Name);
-            var DealParties    = Deal.ObjectProperty<Deal, DealParty>(deal => deal.Parties);
+            var ClassificationScheme = this.DomainObjectClass<ClassificationScheme>();
+            var DomainObject         = this.Class("DomainObject");
+            var Named                = this.Class("Named");
+            var Role                 = this.DomainObjectClass<Role>();
+            var Organisation         = this.DomainObjectClass<Organisation>();
+            var LegalEntity          = this.DomainObjectClass<LegalEntity>();
+            var Deal                 = this.Class("Deal");
+            var DealParty            = this.DomainObjectClass<DealParty>();
+            var DealClass            = this.DomainObjectClass<DealClass>();
+            var DomainObjectId       = DomainObject.DataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
+            var NamedName            = Named.DataProperty<Named<Guid>, string>(named => named.Name);
+            var DealParties          = Deal.ObjectProperty<Deal, DealParty>(deal => deal.Parties);
+            var DealClasses          = Deal.ObjectProperty<Deal, DealClass>(deal => deal.Classes);
+            var DealClassClassificationScheme = DealClass.ObjectProperty<DealClass, ClassificationScheme>(dealClass => dealClass.ClassificationScheme);
 
             Id = DomainObjectId;
             DomainObject.HasKey(DomainObjectId);
             Named.SubClassOf(DomainObject);
             Role.SubClassOf(Named);
             Deal.SubClassOf(Named);
+            ClassificationScheme.SubClassOf(DomainObject);
 
             SponsorRole = Role.NamedIndividual("Sponsor");
             Mufg        = LegalEntity.NamedIndividual("MUFG");
@@ -100,6 +105,10 @@ namespace Deals
 
             var borrowerRole = Role.NamedIndividual("Borrower");
             borrowerRole.Value(DomainObjectId, DealRoleIdentifier.Borrower);
+
+            var exclusivity = ClassificationScheme.NamedIndividual("Exclusivity");
+            exclusivity.Value(DomainObjectId, ClassificationSchemeIdentifier.Exclusivity);
+            var exclusivityDealClass = DealClassClassificationScheme.HasValue(exclusivity);
 
             var DealPartyRole         = DealParty.ObjectProperty<DealParty, Role>(dealParty => dealParty.Role);
             var DealPartyOrganisation = DealParty.ObjectProperty<DealParty, Organisation>(dealParty => dealParty.Organisation);
@@ -166,6 +175,25 @@ namespace Deals
                 .Annotate(
                     SubPropertyName,
                     "Borrowers");
+
+            ProjectFinance
+                .SubClassOf(DealClasses.ExactCardinality(1, exclusivityDealClass))
+                .Annotate(
+                    Mandatory,
+                    0)
+                .Annotate(
+                    SubPropertyName,
+                    "Exclusivity");
+
+            //ProjectFinance
+            //    .SubClassOf(DealClasses.ExactCardinality(0, exclusivityDealClass))
+            //    .Annotate(
+            //        Mandatory,
+            //        0)
+            //    .Annotate(
+            //        SubPropertyName,
+            //        "Exclusivity");
+
             var Sponsor = this.DomainObjectClass<Sponsor>();
             Sponsor.SubClassOf(SponsorParty);
             var SponsorEquity = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
