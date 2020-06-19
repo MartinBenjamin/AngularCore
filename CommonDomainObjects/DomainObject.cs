@@ -64,18 +64,12 @@ namespace CommonDomainObjects
         }
 
         public override bool Equals(
-            object o
-            )
-        {
-            var domainObject = o as DomainObject<TId>;
-
-            return
-                ReferenceEquals(this, domainObject) ||
-                (domainObject != null &&
+            object obj
+            ) => ReferenceEquals(this, obj) ||
+                (obj is DomainObject<TId> domainObject &&
                  GetType() == domainObject.GetUnderlyingType() &&
                  Id.Equals(domainObject.Id) &&
                  !Id.Equals(default(TId)));
-        }
 
         public override int GetHashCode()
             => Id.GetHashCode();

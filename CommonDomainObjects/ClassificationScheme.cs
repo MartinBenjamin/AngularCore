@@ -151,15 +151,31 @@ namespace CommonDomainObjects
             => Sub;
     }
 
-    public class ClassificationScheme<TClassifier>: ClassificationScheme<Guid, ClassificationScheme<TClassifier>, ClassificationSchemeClassifier<TClassifier>, TClassifier>
+    public class Classifier: Named<Guid>
+    {
+        protected Classifier() : base()
+        {
+        }
+
+        public Classifier(
+            Guid   id,
+            string name
+            ) : base(
+                id,
+                name)
+        {
+        }
+    }
+
+    public class ClassificationScheme: ClassificationScheme<Guid, ClassificationScheme, ClassificationSchemeClassifier, Classifier>
     {
         protected ClassificationScheme() : base()
         {
         }
 
         public ClassificationScheme(
-            Guid                                         id,
-            IDictionary<TClassifier, IList<TClassifier>> super
+            Guid                                       id,
+            IDictionary<Classifier, IList<Classifier>> super
             ) : base(
                 id,
                 super)
@@ -167,32 +183,32 @@ namespace CommonDomainObjects
         }
 
         public ClassificationScheme(
-            IDictionary<TClassifier, IList<TClassifier>> super
+            IDictionary<Classifier, IList<Classifier>> super
             ) : this(
                 Guid.NewGuid(),
                 super)
         {
         }
 
-        protected override ClassificationSchemeClassifier<TClassifier> NewClassificationSchemeClassifier(
-            TClassifier                                 classifier,
-            ClassificationSchemeClassifier<TClassifier> superClassificationSchemeClassifier
-            ) => new ClassificationSchemeClassifier<TClassifier>(
+        protected override ClassificationSchemeClassifier NewClassificationSchemeClassifier(
+            Classifier                     classifier,
+            ClassificationSchemeClassifier superClassificationSchemeClassifier
+            ) => new ClassificationSchemeClassifier(
                 this,
                 classifier,
                 superClassificationSchemeClassifier);
     }
 
-    public class ClassificationSchemeClassifier<TClassifier>: ClassificationSchemeClassifier<Guid, ClassificationScheme<TClassifier>, ClassificationSchemeClassifier<TClassifier>, TClassifier>
+    public class ClassificationSchemeClassifier: ClassificationSchemeClassifier<Guid, ClassificationScheme, ClassificationSchemeClassifier, Classifier>
     {
         protected ClassificationSchemeClassifier() : base()
         {
         }
 
         internal ClassificationSchemeClassifier(
-            ClassificationScheme<TClassifier>           classificationScheme,
-            TClassifier                                 classifier,
-            ClassificationSchemeClassifier<TClassifier> superClassificationSchemeClassifier
+            ClassificationScheme           classificationScheme,
+            Classifier                     classifier,
+            ClassificationSchemeClassifier superClassificationSchemeClassifier
             ) : base(
                 Guid.NewGuid(),
                 classificationScheme,
