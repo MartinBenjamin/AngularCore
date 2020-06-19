@@ -61,7 +61,6 @@ namespace Deals
 
     public class DealOntology: Ontology.Ontology
     {
-        public Role                LenderRole           { get; protected set; }
         public Role                AdvisorRole          { get; protected set; }
         public IList<Role>         KeyCounterpartyRoles { get; protected set; } = new List<Role>();
         public INamedIndividual    Mufg                 { get; protected set; }
@@ -95,6 +94,8 @@ namespace Deals
             SponsorRole.Value(_Id, DealRoleIdentifier.Sponsor);
             var BorrowerRole = Role.NamedIndividual("Borrower");
             BorrowerRole.Value(_Id, DealRoleIdentifier.Borrower);
+            var LenderRole = Role.NamedIndividual("Lender");
+            LenderRole.Value(_Id, DealRoleIdentifier.Lender);
 
             var Organisation          = this.DomainObjectClass<Organisation>();
             var LegalEntity           = this.DomainObjectClass<LegalEntity>();
@@ -110,6 +111,9 @@ namespace Deals
             var LenderParty           = _Role.HasValue(LenderRole);
             var AdvisorParty          = _Role.HasValue(AdvisorRole);
             var SponsorParty          = _Role.HasValue(SponsorRole);
+            var BorrrowerParty        = _Role.HasValue(BorrowerRole);
+            var _Organisation         = DealParty.ObjectProperty<DealParty, Organisation>(dealParty => dealParty.Organisation);
+            var MufgParty             = _Organisation.HasValue(Mufg);
 
             var Sponsor               = this.DomainObjectClass<Sponsor>();
             Sponsor.SubClassOf(SponsorParty);
@@ -118,13 +122,10 @@ namespace Deals
             var DealClass             = this.DomainObjectClass<DealClass>();
             var _ClassificationScheme = DealClass.ObjectProperty<DealClass, ClassificationScheme>(dealClass => dealClass.ClassificationScheme);
 
-            var DealPartyOrganisation = DealParty.ObjectProperty<DealParty, Organisation>(dealParty => dealParty.Organisation);
             var KeyCounterpartyRole   = new ObjectOneOf(this, KeyCounterpartyRoles);
-            var MufgParty             = DealPartyOrganisation.HasValue(Mufg);
             var MufgLenderParty       = new ObjectIntersectionOf(LenderParty, MufgParty);
             var MufgAdvisorParty      = new ObjectIntersectionOf(AdvisorParty, MufgParty);
             var KeyCounterpartyParty  = new ObjectSomeValuesFrom(_Role, KeyCounterpartyRole);
-            var BorrrowerParty        = new ObjectHasValue(_Role, BorrowerRole);
 
             Mandatory = new AnnotationProperty(
                 this,
