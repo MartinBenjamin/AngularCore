@@ -64,7 +64,7 @@ namespace Deals
         public Role                AdvisorRole          { get; protected set; }
         public IList<Role>         KeyCounterpartyRoles { get; protected set; } = new List<Role>();
         public INamedIndividual    Mufg                 { get; protected set; }
-        public IAnnotationProperty Mandatory            { get; protected set; }
+        public IAnnotationProperty Restriction          { get; protected set; }
         public IAnnotationProperty SubPropertyName      { get; protected set; }
 
 
@@ -127,9 +127,9 @@ namespace Deals
             var MufgAdvisorParty      = new ObjectIntersectionOf(AdvisorParty, MufgParty);
             var KeyCounterpartyParty  = new ObjectSomeValuesFrom(_Role, KeyCounterpartyRole);
 
-            Mandatory = new AnnotationProperty(
+            Restriction = new AnnotationProperty(
                 this,
-                "Mandatory");
+                "Restriction");
             SubPropertyName = new AnnotationProperty(
                 this,
                 "SubPropertyName");
@@ -139,7 +139,7 @@ namespace Deals
                     _Name,
                     new DataComplementOf(new DataOneOf(string.Empty))))
                 .Annotate(
-                    Mandatory,
+                    Restriction,
                     0);
             var Debt = this.Class("Debt");
             Debt.SubClassOf(_Parties.ExactCardinality(1, MufgLenderParty));
@@ -154,7 +154,7 @@ namespace Deals
             ProjectFinance
                 .SubClassOf(_Parties.MinCardinality(1, SponsorParty))
                 .Annotate(
-                    Mandatory,
+                    Restriction,
                     0)
                 .Annotate(
                     SubPropertyName,
@@ -163,7 +163,7 @@ namespace Deals
             ProjectFinance
                 .SubClassOf(_Parties.MinCardinality(1, BorrrowerParty))
                 .Annotate(
-                    Mandatory,
+                    Restriction,
                     0)
                 .Annotate(
                     SubPropertyName,
@@ -172,7 +172,7 @@ namespace Deals
             ProjectFinance
                 .SubClassOf(_Classes.ExactCardinality(1, _ClassificationScheme.HasValue(Exclusivity)))
                 .Annotate(
-                    Mandatory,
+                    Restriction,
                     0)
                 .Annotate(
                     SubPropertyName,
@@ -180,7 +180,7 @@ namespace Deals
             Sponsor
                 .SubClassOf(_Equity.ExactCardinality(1))
                 .Annotate(
-                    Mandatory,
+                    Restriction,
                     0);
         }
     }

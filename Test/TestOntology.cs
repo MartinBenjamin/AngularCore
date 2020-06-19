@@ -80,7 +80,7 @@ namespace Test
                 from axiom in classExpression.SuperClasses
                 from annotation in axiom.Annotations
                 where
-                    annotation.Property == dealOntology.Mandatory &&
+                    annotation.Property == dealOntology.Restriction &&
                     axiom.SuperClassExpression is IPropertyRestriction propertyRestriction &&
                     propertyRestriction.PropertyExpression.Name == "Name"
                 select axiom
@@ -130,7 +130,7 @@ namespace Test
                 from axiom in classExpression.SuperClasses
                 from annotation in axiom.Annotations
                 where
-                    annotation.Property == dealOntology.Mandatory &&
+                    annotation.Property == dealOntology.Restriction &&
                     axiom.SuperClassExpression is IPropertyRestriction propertyRestriction &&
                     propertyRestriction.PropertyExpression.Name == "Equity"
                 select axiom
@@ -142,6 +142,7 @@ namespace Test
 
         [TestCase(0, false)]
         [TestCase(1, true )]
+        [TestCase(2, true )]
         public void SponsorsMandatory(
             int  sponsorCount,
             bool result
@@ -180,7 +181,7 @@ namespace Test
                 from annotation in axiom.Annotations
                 from annotationAnnotation in annotation.Annotations
                 where
-                    annotation.Property == dealOntology.Mandatory &&
+                    annotation.Property == dealOntology.Restriction &&
                     annotationAnnotation.Property == dealOntology.SubPropertyName &&
                     annotationAnnotation.Value.Equals("Sponsors") &&
                     axiom.SuperClassExpression is IPropertyRestriction propertyRestriction &&
@@ -232,7 +233,7 @@ namespace Test
                 from annotation in axiom.Annotations
                 from annotationAnnotation in annotation.Annotations
                 where
-                    annotation.Property == dealOntology.Mandatory &&
+                    annotation.Property == dealOntology.Restriction &&
                     annotationAnnotation.Property == dealOntology.SubPropertyName &&
                     annotationAnnotation.Value.Equals("Borrowers") &&
                     axiom.SuperClassExpression is IPropertyRestriction propertyRestriction &&
@@ -283,7 +284,7 @@ namespace Test
                 from annotation in axiom.Annotations
                 from annotationAnnotation in annotation.Annotations
                 where
-                    annotation.Property == dealOntology.Mandatory &&
+                    annotation.Property == dealOntology.Restriction &&
                     annotationAnnotation.Property == dealOntology.SubPropertyName &&
                     annotationAnnotation.Value.Equals("Exclusivity") &&
                     axiom.SuperClassExpression is IPropertyRestriction propertyRestriction &&
