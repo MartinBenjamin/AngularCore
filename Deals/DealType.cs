@@ -63,64 +63,68 @@ namespace Deals
     {
         public Role                LenderRole           { get; protected set; }
         public Role                AdvisorRole          { get; protected set; }
-        public INamedIndividual    SponsorRole          { get; protected set; }
         public IList<Role>         KeyCounterpartyRoles { get; protected set; } = new List<Role>();
         public INamedIndividual    Mufg                 { get; protected set; }
         public IAnnotationProperty Mandatory            { get; protected set; }
         public IAnnotationProperty SubPropertyName      { get; protected set; }
 
 
-        public IDataPropertyExpression Id { get; protected set; }
+        //public IDataPropertyExpression Id { get; protected set; }
 
         // Abstract Syntax does not support annotation of SubClass Axioms.
         // Functional Syntax does not support Class Axioms with nested descriptions.
 
         public DealOntology()
         {
-            var ClassificationScheme = this.DomainObjectClass<ClassificationScheme>();
-            var DomainObject         = this.Class("DomainObject");
-            var Named                = this.Class("Named");
-            var Role                 = this.DomainObjectClass<Role>();
-            var Organisation         = this.DomainObjectClass<Organisation>();
-            var LegalEntity          = this.DomainObjectClass<LegalEntity>();
-            var Deal                 = this.Class("Deal");
-            var DealParty            = this.DomainObjectClass<DealParty>();
-            var DealClass            = this.DomainObjectClass<DealClass>();
-            var DomainObjectId       = DomainObject.DataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
-            var NamedName            = Named.DataProperty<Named<Guid>, string>(named => named.Name);
-            var DealParties          = Deal.ObjectProperty<Deal, DealParty>(deal => deal.Parties);
-            var DealClasses          = Deal.ObjectProperty<Deal, DealClass>(deal => deal.Classes);
-            var DealClassClassificationScheme = DealClass.ObjectProperty<DealClass, ClassificationScheme>(dealClass => dealClass.ClassificationScheme);
+            var DomainObject          = this.Class("DomainObject");
+            var _Id                   = DomainObject.DataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
+            DomainObject.HasKey(_Id);
 
-            Id = DomainObjectId;
-            DomainObject.HasKey(DomainObjectId);
+            var Named                 = this.Class("Named");
+            var _Name                 = Named.DataProperty<Named<Guid>, string>(named => named.Name);
             Named.SubClassOf(DomainObject);
-            Role.SubClassOf(Named);
-            Deal.SubClassOf(Named);
+
+            var ClassificationScheme  = this.DomainObjectClass<ClassificationScheme>();
             ClassificationScheme.SubClassOf(DomainObject);
+            var Exclusivity = ClassificationScheme.NamedIndividual("Exclusivity");
+            Exclusivity.Value(_Id, ClassificationSchemeIdentifier.Exclusivity);
 
-            SponsorRole = Role.NamedIndividual("Sponsor");
-            Mufg        = LegalEntity.NamedIndividual("MUFG");
-            SponsorRole.Value(DomainObjectId, DealRoleIdentifier.Sponsor);
+            var Role                  = this.DomainObjectClass<Role>();
+            Role.SubClassOf(Named);
+            var SponsorRole = Role.NamedIndividual("Sponsor");
+            SponsorRole.Value(_Id, DealRoleIdentifier.Sponsor);
+            var BorrowerRole = Role.NamedIndividual("Borrower");
+            BorrowerRole.Value(_Id, DealRoleIdentifier.Borrower);
 
-            var borrowerRole = Role.NamedIndividual("Borrower");
-            borrowerRole.Value(DomainObjectId, DealRoleIdentifier.Borrower);
+            var Organisation          = this.DomainObjectClass<Organisation>();
+            var LegalEntity           = this.DomainObjectClass<LegalEntity>();
+            Mufg                      = LegalEntity.NamedIndividual("MUFG");
 
-            var exclusivity = ClassificationScheme.NamedIndividual("Exclusivity");
-            exclusivity.Value(DomainObjectId, ClassificationSchemeIdentifier.Exclusivity);
-            var exclusivityDealClass = DealClassClassificationScheme.HasValue(exclusivity);
+            var Deal                  = this.Class("Deal");
+            var _Parties              = Deal.ObjectProperty<Deal, DealParty>(deal => deal.Parties);
+            var _Classes              = Deal.ObjectProperty<Deal, DealClass>(deal => deal.Classes);
+            Deal.SubClassOf(Named);
 
-            var DealPartyRole         = DealParty.ObjectProperty<DealParty, Role>(dealParty => dealParty.Role);
+            var DealParty             = this.DomainObjectClass<DealParty>();
+            var _Role                 = DealParty.ObjectProperty<DealParty, Role>(dealParty => dealParty.Role);
+            var LenderParty           = _Role.HasValue(LenderRole);
+            var AdvisorParty          = _Role.HasValue(AdvisorRole);
+            var SponsorParty          = _Role.HasValue(SponsorRole);
+
+            var Sponsor               = this.DomainObjectClass<Sponsor>();
+            Sponsor.SubClassOf(SponsorParty);
+            var _equity               = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
+
+            var DealClass             = this.DomainObjectClass<DealClass>();
+            var _ClassificationScheme = DealClass.ObjectProperty<DealClass, ClassificationScheme>(dealClass => dealClass.ClassificationScheme);
+
             var DealPartyOrganisation = DealParty.ObjectProperty<DealParty, Organisation>(dealParty => dealParty.Organisation);
             var KeyCounterpartyRole   = new ObjectOneOf(this, KeyCounterpartyRoles);
-            var LenderParty           = DealPartyRole.HasValue(LenderRole);
-            var AdvisorParty          = DealPartyRole.HasValue(AdvisorRole);
-            var SponsorParty          = DealPartyRole.HasValue(SponsorRole);
             var MufgParty             = DealPartyOrganisation.HasValue(Mufg);
             var MufgLenderParty       = new ObjectIntersectionOf(LenderParty, MufgParty);
             var MufgAdvisorParty      = new ObjectIntersectionOf(AdvisorParty, MufgParty);
-            var KeyCounterpartyParty  = new ObjectSomeValuesFrom(DealPartyRole, KeyCounterpartyRole);
-            var BorrrowerParty        = new ObjectHasValue(DealPartyRole, borrowerRole);
+            var KeyCounterpartyParty  = new ObjectSomeValuesFrom(_Role, KeyCounterpartyRole);
+            var BorrrowerParty        = new ObjectHasValue(_Role, BorrowerRole);
 
             Mandatory = new AnnotationProperty(
                 this,
@@ -131,35 +135,29 @@ namespace Deals
 
             Deal.SubClassOf(
                 new DataSomeValuesFrom(
-                    NamedName,
+                    _Name,
                     new DataComplementOf(new DataOneOf(string.Empty))))
                 .Annotate(
                     Mandatory,
                     0);
             var Debt = this.Class("Debt");
             Debt.SubClassOf(
-                DealParties.ExactCardinality(
+                _Parties.ExactCardinality(
                     1,
                     MufgLenderParty));
             var Advisory = this.Class("Advisory");
             Advisory.SubClassOf(
-                DealParties.ExactCardinality(
+                _Parties.ExactCardinality(
                     1,
                     MufgAdvisorParty));
 
             Debt.SubClassOf(Deal);
             Advisory.SubClassOf(Deal);
 
-            var SponsorsCardinality = DealParties.MinCardinality(
-                1,
-                SponsorParty);
-
-            var DealClassName = Deal.DataProperty<Deal, string>(deal => deal.ClassName);
-
             var ProjectFinance = this.DomainObjectClass("ProjectFinance");
             ProjectFinance.SubClassOf(Debt);
             ProjectFinance
-                .SubClassOf(SponsorsCardinality)
+                .SubClassOf(_Parties.MinCardinality(1, SponsorParty))
                 .Annotate(
                     Mandatory,
                     0)
@@ -168,7 +166,7 @@ namespace Deals
                     "Sponsors");
 
             ProjectFinance
-                .SubClassOf(DealParties.MinCardinality(1, BorrrowerParty))
+                .SubClassOf(_Parties.MinCardinality(1, BorrrowerParty))
                 .Annotate(
                     Mandatory,
                     0)
@@ -177,28 +175,15 @@ namespace Deals
                     "Borrowers");
 
             ProjectFinance
-                .SubClassOf(DealClasses.ExactCardinality(1, exclusivityDealClass))
+                .SubClassOf(_Classes.ExactCardinality(1, _ClassificationScheme.HasValue(Exclusivity)))
                 .Annotate(
                     Mandatory,
                     0)
                 .Annotate(
                     SubPropertyName,
                     "Exclusivity");
-
-            //ProjectFinance
-            //    .SubClassOf(DealClasses.ExactCardinality(0, exclusivityDealClass))
-            //    .Annotate(
-            //        Mandatory,
-            //        0)
-            //    .Annotate(
-            //        SubPropertyName,
-            //        "Exclusivity");
-
-            var Sponsor = this.DomainObjectClass<Sponsor>();
-            Sponsor.SubClassOf(SponsorParty);
-            var SponsorEquity = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
             Sponsor
-                .SubClassOf(SponsorEquity.ExactCardinality(1))
+                .SubClassOf(_equity.ExactCardinality(1))
                 .Annotate(
                     Mandatory,
                     0);
