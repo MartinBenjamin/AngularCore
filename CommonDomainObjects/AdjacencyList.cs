@@ -61,9 +61,16 @@ namespace CommonDomainObjects
         public static IDictionary<V, IList<V>> Select<U, V>(
             this IDictionary<U, IList<U>> graph,
             Func<U, V>                    selector
-            ) => graph.ToDictionary(
-                    pair => selector(pair.Key),
-                    pair => (IList<V>)pair.Value.Select(selector).ToList());
+            )
+        {
+            var map = graph.Keys.ToDictionary(
+                vertex => vertex,
+                vertex => selector(vertex));
+
+            return graph.ToDictionary(
+                    pair => map[pair.Key],
+                    pair => (IList<V>)pair.Value.Select(adjacentVertex => map[adjacentVertex]).ToList());
+        }
 
         public static Graph<TVertex> ToGraph<TVertex>(
             this IDictionary<TVertex, IList<TVertex>> adjacencyList
