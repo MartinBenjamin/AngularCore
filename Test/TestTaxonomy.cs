@@ -8,7 +8,7 @@ namespace Test
     [TestFixture]
     public class TestTaxonomy
     {
-        private static readonly IDictionary<char, IList<char>> _taxonomy = new Dictionary<char, IList<char>>
+        private static readonly IDictionary<char, IList<char>> _broader = new Dictionary<char, IList<char>>
         {
             { 'A', new char[]{} },
             { 'B', new char[]{} },
@@ -38,22 +38,22 @@ namespace Test
             bool contains
             )
         {
-            var taxonomy = new Taxonomy<char>(_taxonomy);
+            var taxonomy = new Taxonomy<char>(_broader);
             Assert.That(taxonomy[lhs].Contains(taxonomy[rhs]), Is.EqualTo(contains));
         }
 
         [Test]
         public void NewTaxonomy()
         {
-            var taxonomy = new Taxonomy<char>(_taxonomy);
-            Assert.That(taxonomy.Terms.Count, Is.EqualTo(_taxonomy.Count));
-            foreach(var term in _taxonomy.Keys)
+            var taxonomy = new Taxonomy<char>(_broader);
+            Assert.That(taxonomy.Terms.Count, Is.EqualTo(_broader.Count));
+            foreach(var term in _broader.Keys)
             {
                 var taxonomyTerm = taxonomy[term];
                 Assert.That(taxonomyTerm     , Is.Not.Null     );
                 Assert.That(taxonomyTerm.Term, Is.EqualTo(term));
 
-                var broaderTerm = _taxonomy[term].FirstOrDefault();
+                var broaderTerm = _broader[term].FirstOrDefault();
                 var broaderTaxonomyTerm = taxonomy[broaderTerm];
 
                 Assert.That(taxonomyTerm.Broader, Is.EqualTo(broaderTaxonomyTerm));
@@ -66,7 +66,7 @@ namespace Test
             }
 
             foreach(var taxonomyTerm in taxonomy.Terms)
-                Assert.That(_taxonomy.ContainsKey(taxonomyTerm.Term), Is.True);
+                Assert.That(_broader.ContainsKey(taxonomyTerm.Term), Is.True);
         }
     }
 }

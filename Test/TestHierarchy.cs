@@ -8,7 +8,7 @@ namespace Test
     [TestFixture]
     public class TestHierarchy
     {
-        private static readonly IDictionary<char, IList<char>> _hierarchy = new Dictionary<char, IList<char>>
+        private static readonly IDictionary<char, IList<char>> _parent = new Dictionary<char, IList<char>>
         {
             {'A', new char[]{} },
             {'B', new char[]{} },
@@ -38,22 +38,22 @@ namespace Test
             bool contains
             )
         {
-            var hierarchy = new Hierarchy<char>(_hierarchy);
+            var hierarchy = new Hierarchy<char>(_parent);
             Assert.That(hierarchy[lhs].Contains(hierarchy[rhs]), Is.EqualTo(contains));
         }
 
         [Test]
         public void NewHierarchy()
         {
-            var hierarchy = new Hierarchy<char>(_hierarchy);
-            Assert.That(hierarchy.Members.Count, Is.EqualTo(_hierarchy.Count));
-            foreach(var member in _hierarchy.Keys)
+            var hierarchy = new Hierarchy<char>(_parent);
+            Assert.That(hierarchy.Members.Count, Is.EqualTo(_parent.Count));
+            foreach(var member in _parent.Keys)
             {
                 var hierarchyMember = hierarchy[member];
                 Assert.That(hierarchyMember       , Is.Not.Null       );
                 Assert.That(hierarchyMember.Member, Is.EqualTo(member));
 
-                var parentMember = _hierarchy[member].FirstOrDefault();
+                var parentMember = _parent[member].FirstOrDefault();
                 var parentHierarchyMember = hierarchy[parentMember];
 
                 Assert.That(hierarchyMember.Parent, Is.EqualTo(parentHierarchyMember));
@@ -66,7 +66,7 @@ namespace Test
             }
 
             foreach(var hierarchyMember in hierarchy.Members)
-                Assert.That(_hierarchy.ContainsKey(hierarchyMember.Member), Is.True);
+                Assert.That(_parent.ContainsKey(hierarchyMember.Member), Is.True);
         }
     }
 }
