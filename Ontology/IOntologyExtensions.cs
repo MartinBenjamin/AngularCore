@@ -15,16 +15,16 @@ namespace Ontology
                 ontology,
                 className);
 
-        public static IClass DomainObjectClass(
-            this IOntology ontology,
-            string         className
-            ) => new DomainObjectClass(
-                ontology,
-                className);
+        //public static IClass DomainObjectClass(
+        //    this IOntology ontology,
+        //    string         className
+        //    ) => new DomainObjectClass(
+        //        ontology,
+        //        className);
 
-        public static IClass DomainObjectClass<T>(
+        public static IClass Class<T>(
             this IOntology ontology
-            ) where T: DomainObject => ontology.DomainObjectClass(typeof(T).FullName);
+            ) where T: DomainObject => ontology.Class(typeof(T).FullName);
 
         public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
             this IOntology                              ontology,
@@ -255,11 +255,31 @@ namespace Ontology
 
             classExpressions[individual] = new HashSet<IClassExpression>();
 
-            foreach(var @class in ontology.Classes.Values.Where(c => c.HasMember(individual)))
-                ontology.Classify(
-                    classExpressions,
-                    individual,
-                    @class);
+            switch(individual)
+            {
+                case INamedIndividual namedIndividual:
+                    foreach(var @class in namedIndividual.Classes.Select(classAssertion => classAssertion.ClassExpression))
+                        ontology.Classify(
+                            classExpressions,
+                            individual,
+                            @class);
+                    break;
+                case IIndividual iindividual:
+                    if(ontology.Classes.TryGetValue(iindividual.ClassName, out var @class1))
+                        ontology.Classify(
+                            classExpressions,
+                            individual,
+                            @class1);
+
+                    break;
+                default:
+                    if(ontology.Classes.TryGetValue(individual.GetType().FullName, out var @class2))
+                        ontology.Classify(
+                            classExpressions,
+                            individual,
+                            @class2);
+                    break;
+            }
         }
 
         public static void Classify(

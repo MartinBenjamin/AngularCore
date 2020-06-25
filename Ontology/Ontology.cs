@@ -52,8 +52,8 @@ namespace Ontology
                         .Select(classAssertion => classAssertion.ClassExpression)
                         .ForEach(classExpression => classExpression.SuperClasses(classExpressions));
                     return classExpressions;
-                case DomainObject domainObject:
-                    return _classes[domainObject.ClassName].SuperClasses();
+                case IIndividual iindividual:
+                    return _classes[iindividual.ClassName].SuperClasses();
                 default:
                     return new HashSet<IClassExpression>();
             }

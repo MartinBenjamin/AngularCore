@@ -48,12 +48,12 @@ namespace Deals
             var _Name                 = Named.DataProperty<Named<Guid>, string>(named => named.Name);
             Named.SubClassOf(DomainObject);
 
-            var ClassificationScheme  = this.DomainObjectClass<ClassificationScheme>();
+            var ClassificationScheme  = this.Class<ClassificationScheme>();
             ClassificationScheme.SubClassOf(DomainObject);
             var Exclusivity = ClassificationScheme.NamedIndividual("Exclusivity");
             Exclusivity.Value(_Id, ClassificationSchemeIdentifier.Exclusivity);
 
-            var Role                  = this.DomainObjectClass<Role>();
+            var Role                  = this.Class<Role>();
             Role.SubClassOf(Named);
             var SponsorRole = Role.NamedIndividual("Sponsor");
             SponsorRole.Value(_Id, DealRoleIdentifier.Sponsor);
@@ -62,8 +62,8 @@ namespace Deals
             var LenderRole = Role.NamedIndividual("Lender");
             LenderRole.Value(_Id, DealRoleIdentifier.Lender);
 
-            var Organisation          = this.DomainObjectClass<Organisation>();
-            var LegalEntity           = this.DomainObjectClass<LegalEntity>();
+            var Organisation          = this.Class<Organisation>();
+            var LegalEntity           = this.Class<LegalEntity>();
             Mufg                      = LegalEntity.NamedIndividual("MUFG");
 
             var Deal                  = this.Class("Deal");
@@ -71,7 +71,7 @@ namespace Deals
             var _Classes              = Deal.ObjectProperty<Deal, DealClass>(deal => deal.Classes);
             Deal.SubClassOf(Named);
 
-            var DealParty             = this.DomainObjectClass<DealParty>();
+            var DealParty             = this.Class<DealParty>();
             var _Role                 = DealParty.ObjectProperty<DealParty, Role>(dealParty => dealParty.Role);
             var LenderParty           = _Role.HasValue(LenderRole);
             var AdvisorParty          = _Role.HasValue(AdvisorRole);
@@ -80,11 +80,11 @@ namespace Deals
             var _Organisation         = DealParty.ObjectProperty<DealParty, Organisation>(dealParty => dealParty.Organisation);
             var MufgParty             = _Organisation.HasValue(Mufg);
 
-            var Sponsor               = this.DomainObjectClass<Sponsor>();
+            var Sponsor               = this.Class<Sponsor>();
             Sponsor.SubClassOf(SponsorParty);
             var _Equity               = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
 
-            var DealClass             = this.DomainObjectClass<DealClass>();
+            var DealClass             = this.Class<DealClass>();
             var _ClassificationScheme = DealClass.ObjectProperty<DealClass, ClassificationScheme>(dealClass => dealClass.ClassificationScheme);
 
             var KeyCounterpartyRole   = new ObjectOneOf(this, KeyCounterpartyRoles);
@@ -114,7 +114,7 @@ namespace Deals
             Advisory.SubClassOf(_Parties.ExactCardinality(1, MufgAdvisorParty));
             Advisory.SubClassOf(Deal);
 
-            var ProjectFinance = this.DomainObjectClass("ProjectFinance");
+            var ProjectFinance = this.Class("ProjectFinance");
             ProjectFinance.SubClassOf(Debt);
             ProjectFinance
                 .SubClassOf(_Parties.MinCardinality(1, SponsorParty))

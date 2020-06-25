@@ -1,20 +1,23 @@
 ﻿using CommonDomainObjects;
+using Ontology;
 using System;
 using System.Collections.Generic;
 
 namespace Deals
 {
-    public class Deal: Named<Guid>
+    public class Deal:
+        Named<Guid>,
+        IIndividual
     {
-        public override string            ClassName   { get; protected set; }
-        public virtual  DealType          Type        { get; protected set; }
-        public virtual  IList<Agreement>  Agreements  { get; protected set; }
-        public virtual  IList<DealParty>  Parties     { get; protected set; }
-        public virtual  IList<Commitment> Commitments { get; protected set; }
-        public virtual  Stage             Stage       { get; protected set; }
-        public virtual  bool              Restricted  { get; protected set; }
-        public virtual  string            ProjectName { get; protected set; }
-        public virtual  IList<DealClass>  Classes     { get; protected set; }
+        public virtual string            ClassName   { get; protected set; }
+        public virtual DealType          Type        { get; protected set; }
+        public virtual IList<Agreement>  Agreements  { get; protected set; }
+        public virtual IList<DealParty>  Parties     { get; protected set; }
+        public virtual IList<Commitment> Commitments { get; protected set; }
+        public virtual Stage             Stage       { get; protected set; }
+        public virtual bool              Restricted  { get; protected set; }
+        public virtual string            ProjectName { get; protected set; }
+        public virtual IList<DealClass>  Classes     { get; protected set; }
 
         protected Deal() : base()
         {

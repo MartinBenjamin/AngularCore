@@ -53,7 +53,7 @@ namespace Ontology
             object individual
             )
         {
-            return ((DomainObject)individual).ClassName == _name;
+            return false;
         }
     }
 }

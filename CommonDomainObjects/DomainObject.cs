@@ -35,17 +35,6 @@ namespace CommonDomainObjects
 
         public virtual Type GetUnderlyingType()
             => GetType();
-
-        public virtual string ClassName
-        {
-            get
-            {
-                return GetUnderlyingType().FullName;
-            }
-            protected set
-            {
-            }
-        }
     }
 
     public abstract class DomainObject<TId>: DomainObject
