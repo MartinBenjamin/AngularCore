@@ -37,23 +37,4 @@ namespace Ontology
         public override string ToString()
             => _name;
     }
-
-    public class DomainObjectClass: Class
-    {
-        public DomainObjectClass(
-            IOntology ontology,
-            string    className
-            ) : base(
-                ontology,
-                className)
-        {
-        }
-
-        public override bool HasMember(
-            object individual
-            )
-        {
-            return false;
-        }
-    }
 }
