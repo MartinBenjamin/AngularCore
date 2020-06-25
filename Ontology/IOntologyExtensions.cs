@@ -15,16 +15,9 @@ namespace Ontology
                 ontology,
                 className);
 
-        //public static IClass DomainObjectClass(
-        //    this IOntology ontology,
-        //    string         className
-        //    ) => new DomainObjectClass(
-        //        ontology,
-        //        className);
-
         public static IClass Class<T>(
             this IOntology ontology
-            ) where T: DomainObject => ontology.Class(typeof(T).FullName);
+            ) => ontology.Class(typeof(T).FullName);
 
         public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
             this IOntology                              ontology,
