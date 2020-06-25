@@ -26,25 +26,18 @@ namespace Deals
 
     public class DealOntology: Ontology.Ontology
     {
-        public Role                AdvisorRole          { get; protected set; }
         public IList<Role>         KeyCounterpartyRoles { get; protected set; } = new List<Role>();
         public INamedIndividual    Mufg                 { get; protected set; }
         public IAnnotationProperty Restriction          { get; protected set; }
         public IAnnotationProperty SubPropertyName      { get; protected set; }
 
-
-        //public IDataPropertyExpression Id { get; protected set; }
-
-        // Abstract Syntax does not support annotation of SubClass Axioms.
-        // Functional Syntax does not support Class Axioms with nested descriptions.
-
         public DealOntology()
         {
-            var DomainObject          = this.Class("DomainObject");
+            var DomainObject          = this.Class<DomainObject<Guid>>();
             var _Id                   = DomainObject.DataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
             DomainObject.HasKey(_Id);
 
-            var Named                 = this.Class("Named");
+            var Named                 = this.Class<Named<Guid>>();
             var _Name                 = Named.DataProperty<Named<Guid>, string>(named => named.Name);
             Named.SubClassOf(DomainObject);
 
@@ -61,12 +54,14 @@ namespace Deals
             BorrowerRole.Value(_Id, DealRoleIdentifier.Borrower);
             var LenderRole = Role.NamedIndividual("Lender");
             LenderRole.Value(_Id, DealRoleIdentifier.Lender);
+            var AdvisorRole = Role.NamedIndividual("Advisor");
+            LenderRole.Value(_Id, DealRoleIdentifier.Advisor);
 
             var Organisation          = this.Class<Organisation>();
             var LegalEntity           = this.Class<LegalEntity>();
             Mufg                      = LegalEntity.NamedIndividual("MUFG");
 
-            var Deal                  = this.Class("Deal");
+            var Deal                  = this.Class<Deal>();
             var _Parties              = Deal.ObjectProperty<Deal, DealParty>(deal => deal.Parties);
             var _Classes              = Deal.ObjectProperty<Deal, DealClass>(deal => deal.Classes);
             Deal.SubClassOf(Named);
