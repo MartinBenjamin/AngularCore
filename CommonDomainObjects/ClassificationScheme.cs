@@ -41,8 +41,8 @@ namespace CommonDomainObjects
         }
 
         public virtual TClassificationSchemeClass this[
-            TClass classifier
-            ] => _classes.FirstOrDefault(classificationSchemeClass => classificationSchemeClass.Class.Equals(classifier));
+            TClass @class
+            ] => _classes.FirstOrDefault(classificationSchemeClass => classificationSchemeClass.Class.Equals(@class));
 
         public virtual void Visit(
             Action<TClassificationSchemeClass> enter,
