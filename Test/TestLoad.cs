@@ -125,6 +125,7 @@ namespace Test
                     var loadedMember = loadedMemberMap[member.Id];
                     Assert.That(loadedMember.Member, Is.EqualTo(member.Member));
                     Assert.That(loadedMember.Parent, Is.EqualTo(member.Parent));
+                    Assert.That(loadedMember.Children.ToHashSet().SetEquals(member.Children));
                 }
             }
         }

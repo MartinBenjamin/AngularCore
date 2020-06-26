@@ -8,6 +8,7 @@ using Service;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Test
@@ -91,13 +92,16 @@ namespace Test
 
             Assert.That(retrieved, Is.Not.Null);
             Assert.That(retrieved, Is.EqualTo(classificationScheme));
+            Assert.That(retrieved.Classes.ToHashSet().SetEquals(classificationScheme.Classes));
+
+            var map = classificationScheme.Classes.ToDictionary(classificationSchemeClass => classificationSchemeClass.Id);
 
             foreach(var retrievedClassificationSchemeClass in retrieved.Classes)
             {
-                var classificationSchemeClass = classificationScheme[retrievedClassificationSchemeClass.Class];
-                Assert.That(classificationSchemeClass, Is.Not.Null);
+                var classificationSchemeClass = map[retrievedClassificationSchemeClass.Id];
                 Assert.That(retrievedClassificationSchemeClass      , Is.EqualTo(classificationSchemeClass      ));
                 Assert.That(retrievedClassificationSchemeClass.Super, Is.EqualTo(classificationSchemeClass.Super));
+                Assert.That(retrievedClassificationSchemeClass.Sub.ToHashSet().SetEquals(classificationSchemeClass.Sub));
             }
         }
     }

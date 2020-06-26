@@ -106,14 +106,16 @@ namespace Test
             }
 
             var map = classificationScheme.Classes.ToDictionary(classificationSchemeClass => classificationSchemeClass.Id);
+            Assert.That(classificationSchemeModel.Classes.Select(classificationSchemeClassModel => classificationSchemeClassModel.Id)
+                .ToHashSet().SetEquals(map.Keys));
+
             foreach(var classificationSchemeClassModel in classificationSchemeModel.Classes)
             {
-                Assert.That(map.ContainsKey(classificationSchemeClassModel.Id));
                 var classificationSchemeClass = map[classificationSchemeClassModel.Id];
+                Assert.That(classificationSchemeClassModel.Class.Id, Is.EqualTo(classificationSchemeClass.Class.Id));
                 Assert.That(classificationSchemeClassModel.Super != null, Is.EqualTo(classificationSchemeClass.Super != null));
                 if(classificationSchemeClassModel.Super != null)
                     Assert.That(classificationSchemeClassModel.Super.Id, Is.EqualTo(classificationSchemeClass.Super.Id));
-                Assert.That(classificationSchemeClassModel.Class.Id, Is.EqualTo(classificationSchemeClass.Class.Id));
                 Assert.That(classificationSchemeClassModel.Sub.Select(sub => sub.Id).ToHashSet().SetEquals(
                     classificationSchemeClass.Sub.Select(sub => sub.Id)), Is.True);
             }
