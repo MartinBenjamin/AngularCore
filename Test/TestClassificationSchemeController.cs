@@ -1,20 +1,21 @@
 ﻿using Autofac;
 using CommonDomainObjects;
+using Microsoft.AspNetCore.Mvc;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
 using NHibernateIntegration;
 using NUnit.Framework;
-using Service;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Web;
+using Web.Controllers;
 
 namespace Test
 {
     [TestFixture]
-
-    public class TestClassificationSchemeService
+    public class TestClassificationSchemeController
     {
         private static readonly IDictionary<char, IList<char>> _super = new Dictionary<char, IList<char>>
         {
@@ -40,6 +41,10 @@ namespace Test
                 .RegisterModule(new SQLiteModule("Test"));
             builder
                 .RegisterModule<Service.Module>();
+            builder
+                .RegisterModule<ControllerModule>();
+            builder
+                .RegisterModule<MapperModule>();
 
             _container = builder.Build();
 
@@ -50,6 +55,7 @@ namespace Test
                 true);
         }
 
+
         [SetUp]
         public void SetUp()
         {
@@ -58,7 +64,7 @@ namespace Test
                 var session = scope.Resolve<ISession>();
                 session.CreateQuery("delete ClassificationSchemeClass").ExecuteUpdate();
                 session.CreateQuery("delete CommonDomainObjects.Class").ExecuteUpdate();
-                session.CreateQuery("delete ClassificationScheme"     ).ExecuteUpdate();
+                session.CreateQuery("delete ClassificationScheme").ExecuteUpdate();
             }
         }
 
@@ -85,20 +91,26 @@ namespace Test
                 await session.FlushAsync();
             }
 
-            ClassificationScheme retrieved = null;
+            Web.Model.ClassificationScheme classificationSchemeModel = null;
             using(var scope = _container.BeginLifetimeScope())
-                retrieved = await scope.Resolve<IDomainObjectService<Guid, ClassificationScheme>>().GetAsync(classificationScheme.Id);
-
-            Assert.That(retrieved, Is.Not.Null);
-            Assert.That(retrieved, Is.EqualTo(classificationScheme));
-
-            foreach(var retrievedClassificationSchemeClass in retrieved.Classes)
             {
-                var classificationSchemeClass = classificationScheme[retrievedClassificationSchemeClass.Class];
-                Assert.That(classificationSchemeClass, Is.Not.Null);
-                Assert.That(retrievedClassificationSchemeClass      , Is.EqualTo(classificationSchemeClass      ));
-                Assert.That(retrievedClassificationSchemeClass.Super, Is.EqualTo(classificationSchemeClass.Super));
+                var controller = scope.Resolve<ClassificationSchemeController>();
+                var actionResult = await controller.GetAsync(classificationScheme.Id);
+                Assert.That(actionResult, Is.Not.Null);
+                Assert.That(actionResult, Is.InstanceOf<OkObjectResult>());
+                var okObjectResult = (OkObjectResult)actionResult;
+                Assert.That(okObjectResult.Value, Is.InstanceOf<Web.Model.ClassificationScheme>());
+                classificationSchemeModel = (Web.Model.ClassificationScheme)okObjectResult.Value;
+                Assert.That(classificationSchemeModel.Id, Is.EqualTo(classificationScheme.Id));
             }
+
+            //foreach(var classificationSchemeClassModel in classificationSchemeModel.Classes)
+            //{
+            //    var classificationSchemeClass = classificationScheme[classificationSchemeClassModel.Class];
+            //    Assert.That(classificationSchemeClass, Is.Not.Null);
+            //    Assert.That(classificationSchemeClassModel.Id, Is.EqualTo(classificationSchemeClass.Id));
+            //    Assert.That(classificationSchemeClassModel.Super, Is.EqualTo(classificationSchemeClass.Super));
+            //}
         }
     }
 }
