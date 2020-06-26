@@ -5,7 +5,7 @@ namespace People
 {
     public class Person: AutonomousAgent
     {
-        new public virtual PersonNameComponents NameComponents { get; protected set; }
+        public virtual PersonNameComponents NameComponents { get; protected set; }
 
         protected Person() : base()
         {
