@@ -66,8 +66,7 @@ namespace Test
             {
                 var service = scope.Resolve<INamedService<TId, TNamed, NamedFilters>>();
                 var loaded = await service.FindAsync(new NamedFilters());
-                Assert.That(
-                    loaded.OrderBy(named => named.Id).SequenceEqual(transformed.OrderBy(named => named.Id)), Is.True);
+                Assert.That(loaded.ToHashSet().SetEquals(transformed), Is.True);
             }
         }
 
@@ -146,8 +145,7 @@ namespace Test
             {
                 var service = scope.Resolve<INamedService<Guid, Branch, NamedFilters>>();
                 var loaded = await service.FindAsync(new NamedFilters());
-                Assert.That(
-                    loaded.OrderBy(branch => branch.Id).SequenceEqual(branches.Select(t => t.Item1).OrderBy(branch => branch.Id)), Is.True);
+                Assert.That(loaded.ToHashSet().SetEquals(branches.Select(t => t.Item1)), Is.True);
 
                 var session = scope.Resolve<ISession>();
 
