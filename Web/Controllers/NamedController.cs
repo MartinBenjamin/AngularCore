@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace Web.Controllers
 {
-    public abstract class NamedController<TId, TNamed, TNamedFilters, TNamedModel, TNamedFiltersModel> : ControllerBase
+    public abstract class NamedController<TId, TNamed, TNamedFilters, TNamedModel, TNamedFiltersModel> :
+        DomainObjectController<TId, TNamed, TNamedModel>
         where TNamed: Named<TId>
         where TNamedFilters: NamedFilters
     {
@@ -17,19 +18,12 @@ namespace Web.Controllers
         protected NamedController(
             INamedService<TId, TNamed, TNamedFilters> service,
             IMapper                                   mapper
-            )
+            ) : base(
+                service,
+                mapper)
         {
             _service = service;
             _mapper  = mapper;
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetAsync(
-            TId id
-            )
-        {
-            var named = await _service.GetAsync(id);
-            return named == null ? (IActionResult)NotFound() : Ok(_mapper.Map<TNamedModel>(named));
         }
 
         [HttpGet]
