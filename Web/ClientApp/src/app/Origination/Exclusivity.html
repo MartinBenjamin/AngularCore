@@ -1,9 +1,9 @@
 <tr>
   <td class="RowHeading">Exclusivity:</td>
-  <td *ngIf="Classes; else Loading">
+  <td *ngIf="ClassificationSchemeClasses; else Loading">
     <select>
       <option [value]="null"></option>
-      <ng-container *ngFor="let classificationSchemeClass of Classes">
+      <ng-container *ngFor="let classificationSchemeClass of ClassificationSchemeClasses">
         <optgroup *ngIf="classificationSchemeClass.Sub.length;else Option"
                   [label]="classificationSchemeClass.Class.Name">
           <option *ngFor="let sub of classificationSchemeClass.Sub"

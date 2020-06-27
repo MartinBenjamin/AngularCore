@@ -11,7 +11,7 @@ import { IDomainObjectService } from '../IDomainObjectService';
     })
 export class Exclusivity
 {
-    private _classes: ClassificationSchemeClass[];
+    private _classificationSchemeClasses: ClassificationSchemeClass[];
 
     constructor(
         @Inject(ClassificationSchemeServiceToken)
@@ -20,12 +20,12 @@ export class Exclusivity
     {
         classificationSchemeService.Get('f7c20b62-ffe8-4c20-86b4-e5c68ba2469d').subscribe(
             classificationScheme =>
-                this._classes = classificationScheme.Classes.filter(
+                this._classificationSchemeClasses = classificationScheme.Classes.filter(
                     classificationSchemeClass => classificationSchemeClass.Super == null));
     }
 
-    get Classes(): ClassificationSchemeClass[]
+    get ClassificationSchemeClasses(): ClassificationSchemeClass[]
     {
-        return this._classes;
+        return this._classificationSchemeClasses;
     }
 }
