@@ -6,7 +6,7 @@ using System;
 
 namespace Web.Controllers
 {
-    [Route("api/configurationschemes")]
+    [Route("api/classificationschemes")]
     [ApiController]
     public class ClassificationSchemeController: DomainObjectController<Guid, ClassificationScheme, Model.ClassificationScheme>
     {
