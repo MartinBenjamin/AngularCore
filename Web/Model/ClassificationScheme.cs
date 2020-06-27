@@ -19,10 +19,10 @@ namespace Web.Model
         where TClassificationScheme : ClassificationScheme<TId, TClassificationScheme, TClassificationSchemeClass, TClass>
         where TClassificationSchemeClass : ClassificationSchemeClass<TId, TClassificationScheme, TClassificationSchemeClass, TClass>
     {
-        public TClass                                    Class    { get; set; }
-        public TClassificationSchemeClass                Super    { get; set; }
-        public virtual IList<TClassificationSchemeClass> Sub      { get; set; }
-        public Range<int>                                Interval { get; set; }
+        public TClass                            Class    { get; set; }
+        public TClassificationSchemeClass        Super    { get; set; }
+        public IList<TClassificationSchemeClass> Sub      { get; set; }
+        public Range<int>                        Interval { get; set; }
 
         public ClassificationSchemeClass() : base()
         {
