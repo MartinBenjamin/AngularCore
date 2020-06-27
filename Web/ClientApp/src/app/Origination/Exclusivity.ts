@@ -1,7 +1,8 @@
 import { Component, Inject } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { CurrenciesToken } from '../CurrencyServiceProvider';
-import { Currency } from '../Iso4217';
+import { ClassificationScheme, ClassificationSchemeClass } from '../ClassificationScheme';
+import { ClassificationSchemeServiceToken } from '../ClassificationSchemeServiceProvider';
+import { Guid } from '../CommonDomainObjects';
+import { IDomainObjectService } from '../IDomainObjectService';
 
 @Component(
     {
@@ -10,15 +11,21 @@ import { Currency } from '../Iso4217';
     })
 export class Exclusivity
 {
+    private _classes: ClassificationSchemeClass[];
+
     constructor(
-        //@Inject(CurrenciesToken)
-        //private _currencies: Observable<Currency[]>
-    )
+        @Inject(ClassificationSchemeServiceToken)
+        classificationSchemeService: IDomainObjectService<Guid, ClassificationScheme>
+        )
     {
+        classificationSchemeService.Get('f7c20b62-ffe8-4c20-86b4-e5c68ba2469d').subscribe(
+            classificationScheme =>
+                this._classes = classificationScheme.Classes.filter(
+                    classificationSchemeClass => classificationSchemeClass.Super == null));
     }
 
-    //get Currencies(): Observable<Currency[]>
-    //{
-    //    return this._currencies;
-    //}
+    get Classes(): ClassificationSchemeClass[]
+    {
+        return this._classes;
+    }
 }
