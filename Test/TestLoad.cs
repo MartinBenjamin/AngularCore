@@ -186,6 +186,7 @@ namespace Test
             await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
             await _container.Resolve<IEtl<IEnumerable<Currency>>>().ExecuteAsync();
             await _container.Resolve<IEtl<IEnumerable<(Branch, Identifier)>>>().ExecuteAsync();
+            await _container.Resolve<IEtl<ClassificationScheme>>().ExecuteAsync();
             //await new LegalEntityLoader(
             //    _container.Resolve<ISessionFactory>(),
             //    100).LoadAsync();
