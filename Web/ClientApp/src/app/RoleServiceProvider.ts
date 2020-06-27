@@ -29,4 +29,4 @@ export const RolesProvider: Provider =
         roleService: INamedService<string, Role, NamedFilters>
     ) => new ObservableNamedStore<Guid, Role>(roleService),
     deps: [RoleServiceToken]
-}
+};

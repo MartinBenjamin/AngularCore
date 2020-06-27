@@ -3,12 +3,13 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import { CurrenciesProvider, CurrencyServiceProvider, CurrencyServiceUrlToken } from './CurrencyServiceProvider';
-import { DealTracker } from './DealTracker';
+import { ClassificationSchemeServiceProvider, ClassificationSchemeServiceUrlToken } from './ClassificationSchemeServiceProvider';
 import { Gallery } from './Components/Gallery';
 import { GalleryModule } from './Components/GalleryModule';
+import { CurrenciesProvider, CurrencyServiceProvider, CurrencyServiceUrlToken } from './CurrencyServiceProvider';
+import { DealTracker } from './DealTracker';
 import { LegalEntityServiceProvider, LegalEntityServiceUrlToken } from './LegalEntityServiceProvider';
-import { RoleServiceUrlToken, RoleServiceProvider, RolesProvider } from './RoleServiceProvider';
+import { RoleServiceProvider, RoleServiceUrlToken, RolesProvider } from './RoleServiceProvider';
 
 @NgModule({
     declarations:
@@ -66,7 +67,12 @@ import { RoleServiceUrlToken, RoleServiceProvider, RolesProvider } from './RoleS
                 provide: LegalEntityServiceUrlToken,
                 useValue: '/api/legalentities'
             },
-            LegalEntityServiceProvider
+            LegalEntityServiceProvider,
+            {
+                provide: ClassificationSchemeServiceUrlToken,
+                useValue: '/api/classificationschemes'
+            },
+            ClassificationSchemeServiceProvider
         ],
     bootstrap: [DealTracker]
 })

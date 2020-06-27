@@ -32,6 +32,7 @@
   <ItemGroup>
     <None Remove="ClientApp\src\app\Agents.ts" />
     <None Remove="ClientApp\src\app\ClassificationScheme.ts" />
+    <None Remove="ClientApp\src\app\ClassificationSchemeServiceProvider.ts" />
     <None Remove="ClientApp\src\app\CommonDomainObjects.ts" />
     <None Remove="ClientApp\src\app\CurrencyServiceProvider.ts" />
     <None Remove="ClientApp\src\app\DealProvider.ts" />
@@ -86,6 +87,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\Agents.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\ClassificationScheme.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\ClassificationSchemeServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\CurrencyServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\DealProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Deals.ts" />
