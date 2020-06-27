@@ -1,5 +1,6 @@
 ﻿using Agents;
 using Autofac;
+using CommonDomainObjects;
 using Iso3166._1;
 using Iso3166._2;
 using Iso4217;
@@ -49,6 +50,11 @@ namespace Data
             builder
                 .RegisterType<BranchLoader>()
                 .As<IEtl<IEnumerable<(Branch, Identifier)>>>()
+                .SingleInstance();
+
+            builder
+                .RegisterType<ExclusivityLoader>()
+                .As<IEtl<ClassificationScheme>>()
                 .SingleInstance();
         }
     }

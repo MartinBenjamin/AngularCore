@@ -27,9 +27,9 @@ namespace Data
                 "Exclusivity.csv",
                 record => (
                     Class: new Class(
-                        record[0] != null ? new Guid(record[0]) : Guid.NewGuid(),
+                        record[0] != string.Empty ? new Guid(record[0]) : Guid.NewGuid(),
                         record[2]),
-                    SuperClassId: record[1] != null ? new Guid(record[1]) : Guid.Empty));
+                    SuperClassId: record[1] != string.Empty ? new Guid(record[1]) : Guid.Empty));
 
             var super = (
                 from tuple in classes
@@ -42,7 +42,9 @@ namespace Data
                     tuple => tuple.Class,
                     tuple => tuple.SuperClass);
 
-            var classificationScheme = new ClassificationScheme(super);
+            var classificationScheme = new ClassificationScheme(
+                new Guid("f7c20b62-ffe8-4c20-86b4-e5c68ba2469d"),
+                super);
             using(var session = _sessionFactory.OpenSession())
             using(var transaction = session.BeginTransaction())
             {

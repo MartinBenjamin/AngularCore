@@ -155,6 +155,12 @@ namespace Test
             }
         }
 
+        [Test]
+        public async Task Exclusivity()
+        {
+            await _container.Resolve<IEtl<ClassificationScheme>>().ExecuteAsync();
+        }
+
         //[Test]
         public async Task Lei()
         {
