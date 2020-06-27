@@ -6,6 +6,7 @@ import { TabbedViewModule } from '../Components/TabbedView';
 import { Borrowers } from '../Deal/Borrowers';
 import { Sponsors } from '../Deal/Sponsors';
 import { LegalEntityFinder, LegalEntityFinderButtons } from '../LegalEntityFinder';
+import { Exclusivity } from './Exclusivity';
 import { Facilities } from './Facilities';
 import { KeyCounterparties } from './KeyCounterparties';
 import { KeyDealData } from './KeyDealData';
@@ -13,12 +14,12 @@ import { MoreTabs } from './MoreTabs';
 import { OriginationTab } from './OriginationTab';
 import { TransactionDetails } from './TransactionDetails';
 
-
 @NgModule(
     {
         declarations:
             [
                 Borrowers,
+                Exclusivity,
                 Facilities,
                 KeyCounterparties,
                 KeyDealData,

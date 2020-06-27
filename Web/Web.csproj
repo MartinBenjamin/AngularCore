@@ -56,6 +56,7 @@
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal.Module.ts" />
+    <None Remove="ClientApp\src\app\Origination\Exclusivity.ts" />
     <None Remove="ClientApp\src\app\Origination\Facilities.ts" />
     <None Remove="ClientApp\src\app\Origination\Menu.ts" />
     <None Remove="ClientApp\src\app\Origination\MyDeals.ts" />
@@ -108,6 +109,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal.Module.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Exclusivity.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Facilities.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\KeyCounterparties.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Menu.ts" />

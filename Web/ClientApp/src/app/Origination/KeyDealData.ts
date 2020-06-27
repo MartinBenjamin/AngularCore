@@ -1,11 +1,12 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ViewEncapsulation } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { CurrenciesToken } from '../CurrencyServiceProvider';
 import { Currency } from '../Iso4217';
 
 @Component(
     {
-        templateUrl: './KeyDealData.html'
+        templateUrl: './KeyDealData.html',
+        encapsulation: ViewEncapsulation.None
     })
 export class KeyDealData
 {
