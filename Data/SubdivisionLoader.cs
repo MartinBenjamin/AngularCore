@@ -45,11 +45,11 @@ namespace Data
                     select
                     (
                         Child: child,
-                        Parents: (IList<IList<string>>)parents
+                        Parent: (IList<IList<string>>)parents
                     )
                 ).ToDictionary(
                     tuple => tuple.Child,
-                    tuple => tuple.Parents);
+                    tuple => tuple.Parent);
 
                 var childRecord = parentRecord.Transpose();
 
