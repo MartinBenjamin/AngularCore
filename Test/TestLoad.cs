@@ -158,7 +158,14 @@ namespace Test
         [Test]
         public async Task Exclusivity()
         {
-            await _container.Resolve<IEtl<ClassificationScheme>>().ExecuteAsync();
+            var classificationScheme = await _container.Resolve<IEtl<ClassificationScheme>>().ExecuteAsync();
+
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var service = scope.Resolve<IDomainObjectService<Guid, ClassificationScheme>>();
+                var loaded = await service.GetAsync(classificationScheme.Id);
+                Assert.That(loaded, Is.Not.Null);
+            }
         }
 
         //[Test]

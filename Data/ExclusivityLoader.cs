@@ -36,7 +36,7 @@ namespace Data
                 join superTuple in classes on tuple.SuperClassId equals superTuple.Class.Id into superTuples
                 select
                 (
-                    Class: tuple.Class,
+                    tuple.Class,
                     SuperClass: (IList<Class>)superTuples.Select(t => t.Class).ToList()
                 )).ToDictionary(
                     tuple => tuple.Class,
