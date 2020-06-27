@@ -38,10 +38,10 @@ namespace Data
                 select
                 (
                     Class: tuple.Class,
-                    SuperClasses: (IList<Class>)superTuples.Select(t => t.Class).ToList()
+                    SuperClass: (IList<Class>)superTuples.Select(t => t.Class).ToList()
                 )).ToDictionary(
                     tuple => tuple.Class,
-                    tuple => tuple.SuperClasses);
+                    tuple => tuple.SuperClass);
 
             var classificationScheme = new ClassificationScheme(super);
             using(var session = _sessionFactory.OpenSession())
