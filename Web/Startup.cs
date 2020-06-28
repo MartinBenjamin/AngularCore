@@ -41,6 +41,7 @@ namespace Web
                     var serializerSettings = options.SerializerSettings;
                     serializerSettings.ContractResolver           = new DefaultContractResolver();
                     serializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
+                    serializerSettings.TypeNameHandling           = TypeNameHandling.Auto;
                 });
 
             // In production, the Angular files will be served from this directory

@@ -1,5 +1,6 @@
 ﻿using Agents;
 using CommonDomainObjects;
+using Deals;
 using Iso3166._1;
 using Iso3166._2;
 using Iso4217;
@@ -17,7 +18,9 @@ namespace Web
             CreateMap<Range<int>                    , Model.Range<int>                    >().PreserveReferences();
             CreateMap<ClassificationScheme          , Model.ClassificationScheme          >().PreserveReferences();
             CreateMap<ClassificationSchemeClassifier, Model.ClassificationSchemeClassifier>().PreserveReferences();
-            CreateMap<Classifier                    , Model.Classifier                    >().PreserveReferences();
+            CreateMap<Classifier                    , Model.Classifier                    >()
+                .Include<ExclusivityClassifier, Model.ExclusivityClassifier>().PreserveReferences();
+            CreateMap<ExclusivityClassifier         , Model.ExclusivityClassifier         >().PreserveReferences();
             CreateMap<Currency                      , Model.Currency                      >().PreserveReferences();
             CreateMap<GeographicRegion              , Model.GeographicRegion              >().PreserveReferences();
             CreateMap<GeographicSubregion           , Model.GeographicalSubregion         >().PreserveReferences();

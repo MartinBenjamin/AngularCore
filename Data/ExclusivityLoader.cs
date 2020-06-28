@@ -1,4 +1,5 @@
 ﻿using CommonDomainObjects;
+using Deals;
 using NHibernate;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,7 @@ namespace Data
             var classes = await _csvExtractor.ExtractAsync(
                 "Exclusivity.csv",
                 record => (
-                    Classifier: new Classifier(
+                    Classifier: (Classifier)new ExclusivityClassifier(
                         record[0] != string.Empty ? new Guid(record[0]) : Guid.NewGuid(),
                         record[2]),
                     SuperClassifierId: record[1] != string.Empty ? new Guid(record[1]) : Guid.Empty));
