@@ -13,7 +13,6 @@ namespace CommonDomainObjects.Mapping
                     collectionMapping.Key(keyMapping => keyMapping.Column("SuperId"));
                     collectionMapping.OrderBy("IntervalStart");
                 });
-
         }
     }
 }
