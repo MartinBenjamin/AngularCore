@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Class, ClassificationScheme, ClassificationSchemeClass } from '../ClassificationScheme';
+import { Classifier, ClassificationScheme, ClassificationSchemeClassifier } from '../ClassificationScheme';
 import { ClassificationSchemeServiceToken } from '../ClassificationSchemeServiceProvider';
 import { Guid } from '../CommonDomainObjects';
 import { IDomainObjectService } from '../IDomainObjectService';
@@ -13,32 +13,32 @@ import { IDomainObjectService } from '../IDomainObjectService';
     })
 export class Exclusivity
 {
-    private _classificationSchemeClasses: Observable<ClassificationSchemeClass[]>;
-    private _class                      : Class;
+    private _classificationSchemeClassifiers: Observable<ClassificationSchemeClassifier[]>;
+    private _classifier                     : Classifier;
 
     constructor(
         @Inject(ClassificationSchemeServiceToken)
         classificationSchemeService: IDomainObjectService<Guid, ClassificationScheme>
         )
     {
-        this._classificationSchemeClasses = classificationSchemeService
+        this._classificationSchemeClassifiers = classificationSchemeService
             .Get('f7c20b62-ffe8-4c20-86b4-e5c68ba2469d')
-            .pipe(map(classificationScheme => classificationScheme.Classes.filter(
-                classificationSchemeClass => classificationSchemeClass.Super == null)));
+            .pipe(map(classificationScheme => classificationScheme.Classifiers.filter(
+                classificationSchemeClassifier => classificationSchemeClassifier.Super == null)));
     }
 
-    get ClassificationSchemeClasses(): Observable<ClassificationSchemeClass[]>
+    get ClassificationSchemeClassifiers(): Observable<ClassificationSchemeClassifier[]>
     {
-        return this._classificationSchemeClasses;
+        return this._classificationSchemeClassifiers;
     }
 
-    get Class(): Class
+    get Classifier(): Classifier
     {
-        return this._class;
+        return this._classifier;
     }
 
-    set Class(
-        selectedClass: Class
+    set Classifier(
+        classifier: Classifier
         )
     {
     }

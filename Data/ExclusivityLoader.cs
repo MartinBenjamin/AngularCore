@@ -26,21 +26,21 @@ namespace Data
             var classes = await _csvExtractor.ExtractAsync(
                 "Exclusivity.csv",
                 record => (
-                    Class: new Class(
+                    Classifier: new Classifier(
                         record[0] != string.Empty ? new Guid(record[0]) : Guid.NewGuid(),
                         record[2]),
-                    SuperClassId: record[1] != string.Empty ? new Guid(record[1]) : Guid.Empty));
+                    SuperClassifierId: record[1] != string.Empty ? new Guid(record[1]) : Guid.Empty));
 
             var super = (
                 from tuple in classes
-                join superTuple in classes on tuple.SuperClassId equals superTuple.Class.Id into superTuples
+                join superTuple in classes on tuple.SuperClassifierId equals superTuple.Classifier.Id into superTuples
                 select
                 (
-                    tuple.Class,
-                    SuperClass: (IList<Class>)superTuples.Select(t => t.Class).ToList()
+                    tuple.Classifier,
+                    SuperClassifier: (IList<Classifier>)superTuples.Select(t => t.Classifier).ToList()
                 )).ToDictionary(
-                    tuple => tuple.Class,
-                    tuple => tuple.SuperClass);
+                    tuple => tuple.Classifier,
+                    tuple => tuple.SuperClassifier);
 
             var classificationScheme = new ClassificationScheme(
                 new Guid("f7c20b62-ffe8-4c20-86b4-e5c68ba2469d"),
@@ -50,10 +50,10 @@ namespace Data
             {
                 await session.SaveAsync(classificationScheme);
                 await classificationScheme.VisitAsync(
-                    async classificationSchemeClass =>
+                    async classificationSchemeClassifier =>
                     {
-                        await session.SaveAsync(classificationSchemeClass.Class);
-                        await session.SaveAsync(classificationSchemeClass);
+                        await session.SaveAsync(classificationSchemeClassifier.Classifier);
+                        await session.SaveAsync(classificationSchemeClassifier);
                     },
                     null);
                 await transaction.CommitAsync();

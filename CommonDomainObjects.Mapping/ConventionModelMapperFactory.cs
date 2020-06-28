@@ -39,8 +39,9 @@ namespace CommonDomainObjects.Mapping
             mapper.AddMapping<GeographicRegionHierarchy      >();
             mapper.AddMapping<GeographicRegionHierarchyMember>();
             mapper.AddMapping<ClassificationScheme           >();
-            mapper.AddMapping<ClassificationSchemeClass      >();
-            mapper.AddMapping<Class                          >();
+            mapper.AddMapping<ClassificationSchemeClassifier >();
+            mapper.AddMapping<Classifier                     >();
+            mapper.AddMapping<ExclusivityClassifier          >();
             mapper.AddMapping<CountryJoin                    >();
             mapper.AddMapping<SubdivisionJoin                >();
             mapper.AddMapping<Currency                       >();

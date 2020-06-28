@@ -41,7 +41,7 @@ namespace Test
         {
             var map = _super.Keys.ToDictionary(
                 vertex => vertex,
-                vertex => new Class(
+                vertex => new Classifier(
                     Guid.Empty,
                     vertex.ToString()));
             var classificationScheme = new ClassificationScheme(_super.Select(c => map[c]));
@@ -52,32 +52,32 @@ namespace Test
         public void NewClassificationScheme()
         {
             var super = _super.Select(
-                vertex => new Class(
+                vertex => new Classifier(
                     Guid.Empty,
                     vertex.ToString()));
 
             var classificationScheme = new ClassificationScheme(super);
-            Assert.That(classificationScheme.Classes.Count, Is.EqualTo(_super.Count));
-            foreach(var @class in super.Keys)
+            Assert.That(classificationScheme.Classifiers.Count, Is.EqualTo(_super.Count));
+            foreach(var classifier in super.Keys)
             {
-                var classificationSchemeClass = classificationScheme[@class];
-                Assert.That(classificationSchemeClass      , Is.Not.Null     );
-                Assert.That(classificationSchemeClass.Class, Is.EqualTo(@class));
+                var classificationSchemeClassifier = classificationScheme[classifier];
+                Assert.That(classificationSchemeClassifier           , Is.Not.Null           );
+                Assert.That(classificationSchemeClassifier.Classifier, Is.EqualTo(classifier));
 
-                var superclass = super[@class].FirstOrDefault();
-                var superClassificationClass = classificationScheme[superclass];
+                var superClassifier = super[classifier].FirstOrDefault();
+                var superClassificationSchemeClassifier = classificationScheme[superClassifier];
 
-                Assert.That(classificationSchemeClass.Super, Is.EqualTo(superClassificationClass));
+                Assert.That(classificationSchemeClassifier.Super, Is.EqualTo(superClassificationSchemeClassifier));
 
-                if(superClassificationClass != null)
+                if(superClassificationSchemeClassifier != null)
                 {
-                    Assert.That(superClassificationClass.Sub, Has.Member(classificationSchemeClass));
-                    Assert.That(superClassificationClass.Interval.Contains(classificationSchemeClass.Interval));
+                    Assert.That(superClassificationSchemeClassifier.Sub, Has.Member(classificationSchemeClassifier));
+                    Assert.That(superClassificationSchemeClassifier.Interval.Contains(classificationSchemeClassifier.Interval));
                 }
             }
 
-            foreach(var classificationSchemeClass in classificationScheme.Classes)
-                Assert.That(super.ContainsKey(classificationSchemeClass.Class), Is.True);
+            foreach(var classificationSchemeClassifier in classificationScheme.Classifiers)
+                Assert.That(super.ContainsKey(classificationSchemeClassifier.Classifier), Is.True);
         }
     }
 }

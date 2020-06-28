@@ -17,7 +17,7 @@ namespace Deals
         public virtual Stage             Stage       { get; protected set; }
         public virtual bool              Restricted  { get; protected set; }
         public virtual string            ProjectName { get; protected set; }
-        public virtual IList<DealClass>  Classes     { get; protected set; }
+        public virtual IList<Classifier> Classifiers { get; protected set; }
 
         protected Deal() : base()
         {
@@ -39,7 +39,7 @@ namespace Deals
             Agreements  = new List<Agreement >();
             Parties     = new List<DealParty >();
             Commitments = new List<Commitment>();
-            Classes = new List<DealClass>();
+            Classifiers = new List<Classifier>();
         }
     }
 }

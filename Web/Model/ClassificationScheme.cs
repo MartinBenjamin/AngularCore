@@ -3,49 +3,49 @@ using System.Collections.Generic;
 
 namespace Web.Model
 {
-    public abstract class ClassificationScheme<TId, TClassificationScheme, TClassificationSchemeClass, TClass>: DomainObject<TId>
-        where TClassificationScheme : ClassificationScheme<TId, TClassificationScheme, TClassificationSchemeClass, TClass>
-        where TClassificationSchemeClass : ClassificationSchemeClass<TId, TClassificationScheme, TClassificationSchemeClass, TClass>
+    public abstract class ClassificationScheme<TId, TClassificationScheme, TClassificationSchemeClassifier, TClassifier>: DomainObject<TId>
+        where TClassificationScheme : ClassificationScheme<TId, TClassificationScheme, TClassificationSchemeClassifier, TClassifier>
+        where TClassificationSchemeClassifier : ClassificationSchemeClassifier<TId, TClassificationScheme, TClassificationSchemeClassifier, TClassifier>
     {
-        public IList<TClassificationSchemeClass> Classes { get; set; }
+        public IList<TClassificationSchemeClassifier> Classifiers { get; set; }
 
         public ClassificationScheme() : base()
         {
         }
     }
 
-    public abstract class ClassificationSchemeClass<TId, TClassificationScheme, TClassificationSchemeClass, TClass>:
+    public abstract class ClassificationSchemeClassifier<TId, TClassificationScheme, TClassificationSchemeClassifier, TClassifier>:
         DomainObject<TId>
-        where TClassificationScheme : ClassificationScheme<TId, TClassificationScheme, TClassificationSchemeClass, TClass>
-        where TClassificationSchemeClass : ClassificationSchemeClass<TId, TClassificationScheme, TClassificationSchemeClass, TClass>
+        where TClassificationScheme : ClassificationScheme<TId, TClassificationScheme, TClassificationSchemeClassifier, TClassifier>
+        where TClassificationSchemeClassifier : ClassificationSchemeClassifier<TId, TClassificationScheme, TClassificationSchemeClassifier, TClassifier>
     {
-        public TClass                            Class    { get; set; }
-        public TClassificationSchemeClass        Super    { get; set; }
-        public IList<TClassificationSchemeClass> Sub      { get; set; }
-        public Range<int>                        Interval { get; set; }
+        public TClassifier                            Classifier { get; set; }
+        public TClassificationSchemeClassifier        Super      { get; set; }
+        public IList<TClassificationSchemeClassifier> Sub        { get; set; }
+        public Range<int>                             Interval   { get; set; }
 
-        public ClassificationSchemeClass() : base()
+        public ClassificationSchemeClassifier() : base()
         {
         }
     }
 
-    public class Class: Named<Guid>
+    public class Classifier: Named<Guid>
     {
-        public Class() : base()
+        public Classifier() : base()
         {
         }
     }
 
-    public class ClassificationScheme: ClassificationScheme<Guid, ClassificationScheme, ClassificationSchemeClass, Class>
+    public class ClassificationScheme: ClassificationScheme<Guid, ClassificationScheme, ClassificationSchemeClassifier, Classifier>
     {
         public ClassificationScheme() : base()
         {
         }
     }
 
-    public class ClassificationSchemeClass: ClassificationSchemeClass<Guid, ClassificationScheme, ClassificationSchemeClass, Class>
+    public class ClassificationSchemeClassifier: ClassificationSchemeClassifier<Guid, ClassificationScheme, ClassificationSchemeClassifier, Classifier>
     {
-        public ClassificationSchemeClass() : base()
+        public ClassificationSchemeClassifier() : base()
         {
         }
     }

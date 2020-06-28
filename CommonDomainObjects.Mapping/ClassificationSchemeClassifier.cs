@@ -2,12 +2,12 @@
 
 namespace CommonDomainObjects.Mapping
 {
-    public class ClassificationSchemeClass: ClassMapping<CommonDomainObjects.ClassificationSchemeClass>
+    public class ClassificationSchemeClassifier: ClassMapping<CommonDomainObjects.ClassificationSchemeClassifier>
     {
-        public ClassificationSchemeClass()
+        public ClassificationSchemeClassifier()
         {
             Bag(
-                classificationSchemeClass => classificationSchemeClass.Sub,
+                classificationSchemeClassifier => classificationSchemeClassifier.Sub,
                 collectionMapping =>
                 {
                     collectionMapping.Key(keyMapping => keyMapping.Column("SuperId"));

@@ -5,7 +5,7 @@ namespace Deals
 {
     public class Exclusivity: Commitment
     {
-        protected Exclusivity(): base()
+        protected Exclusivity() : base()
         {
         }
 

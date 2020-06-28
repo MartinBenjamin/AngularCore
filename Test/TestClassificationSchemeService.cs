@@ -57,9 +57,9 @@ namespace Test
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
-                session.CreateQuery("delete ClassificationSchemeClass").ExecuteUpdate();
-                session.CreateQuery("delete CommonDomainObjects.Class").ExecuteUpdate();
-                session.CreateQuery("delete ClassificationScheme"     ).ExecuteUpdate();
+                session.CreateQuery("delete ClassificationSchemeClassifier").ExecuteUpdate();
+                session.CreateQuery("delete CommonDomainObjects.Classifier").ExecuteUpdate();
+                session.CreateQuery("delete ClassificationScheme"          ).ExecuteUpdate();
             }
         }
 
@@ -67,7 +67,7 @@ namespace Test
         public async Task Get()
         {
             var super = _super.Select(
-                vertex => new Class(
+                vertex => new Classifier(
                     Guid.NewGuid(),
                     vertex.ToString()));
 
@@ -77,10 +77,10 @@ namespace Test
                 var session = scope.Resolve<ISession>();
                 await session.SaveAsync(classificationScheme);
                 await classificationScheme.VisitAsync(
-                    async classificationSchemeClass =>
+                    async classificationSchemeClassifier =>
                     {
-                        await session.SaveAsync(classificationSchemeClass.Class);
-                        await session.SaveAsync(classificationSchemeClass);
+                        await session.SaveAsync(classificationSchemeClassifier.Classifier);
+                        await session.SaveAsync(classificationSchemeClassifier);
                     },
                     null);
                 await session.FlushAsync();
@@ -92,16 +92,16 @@ namespace Test
 
             Assert.That(retrieved, Is.Not.Null);
             Assert.That(retrieved, Is.EqualTo(classificationScheme));
-            Assert.That(retrieved.Classes.ToHashSet().SetEquals(classificationScheme.Classes));
+            Assert.That(retrieved.Classifiers.ToHashSet().SetEquals(classificationScheme.Classifiers));
 
-            var map = classificationScheme.Classes.ToDictionary(classificationSchemeClass => classificationSchemeClass.Id);
+            var map = classificationScheme.Classifiers.ToDictionary(classificationSchemeClassifier => classificationSchemeClassifier.Id);
 
-            foreach(var retrievedClassificationSchemeClass in retrieved.Classes)
+            foreach(var retrievedClassificationSchemeClassifier in retrieved.Classifiers)
             {
-                var classificationSchemeClass = map[retrievedClassificationSchemeClass.Id];
-                Assert.That(retrievedClassificationSchemeClass      , Is.EqualTo(classificationSchemeClass      ));
-                Assert.That(retrievedClassificationSchemeClass.Super, Is.EqualTo(classificationSchemeClass.Super));
-                Assert.That(retrievedClassificationSchemeClass.Sub.ToHashSet().SetEquals(classificationSchemeClass.Sub));
+                var classificationSchemeClassifier = map[retrievedClassificationSchemeClassifier.Id];
+                Assert.That(retrievedClassificationSchemeClassifier      , Is.EqualTo(classificationSchemeClassifier      ));
+                Assert.That(retrievedClassificationSchemeClassifier.Super, Is.EqualTo(classificationSchemeClassifier.Super));
+                Assert.That(retrievedClassificationSchemeClassifier.Sub.ToHashSet().SetEquals(classificationSchemeClassifier.Sub));
             }
         }
     }

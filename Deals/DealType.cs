@@ -63,7 +63,7 @@ namespace Deals
 
             var Deal                  = this.Class<Deal>();
             var _Parties              = Deal.ObjectProperty<Deal, DealParty>(deal => deal.Parties);
-            var _Classes              = Deal.ObjectProperty<Deal, DealClass>(deal => deal.Classes);
+            var _Classes              = Deal.ObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
             Deal.SubClassOf(Named);
 
             var DealParty             = this.Class<DealParty>();
@@ -79,8 +79,7 @@ namespace Deals
             Sponsor.SubClassOf(SponsorParty);
             var _Equity               = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
 
-            var DealClass             = this.Class<DealClass>();
-            var _ClassificationScheme = DealClass.ObjectProperty<DealClass, ClassificationScheme>(dealClass => dealClass.ClassificationScheme);
+            var DealClass             = this.Class<DealClassifier>();
 
             var KeyCounterpartyRole   = new ObjectOneOf(this, KeyCounterpartyRoles);
             var MufgLenderParty       = new ObjectIntersectionOf(LenderParty, MufgParty);
@@ -129,14 +128,14 @@ namespace Deals
                     SubPropertyName,
                     "Borrowers");
 
-            ProjectFinance
-                .SubClassOf(_Classes.ExactCardinality(1, _ClassificationScheme.HasValue(Exclusivity)))
-                .Annotate(
-                    Restriction,
-                    0)
-                .Annotate(
-                    SubPropertyName,
-                    "Exclusivity");
+            //ProjectFinance
+            //    .SubClassOf(_Classes.ExactCardinality(1, _ClassificationScheme.HasValue(Exclusivity)))
+            //    .Annotate(
+            //        Restriction,
+            //        0)
+            //    .Annotate(
+            //        SubPropertyName,
+            //        "Exclusivity");
             Sponsor
                 .SubClassOf(_Equity.ExactCardinality(1))
                 .Annotate(

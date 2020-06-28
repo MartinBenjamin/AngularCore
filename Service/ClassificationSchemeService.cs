@@ -25,16 +25,16 @@ namespace Service
             using(_session.BeginTransaction(IsolationLevel.ReadCommitted))
             {
                 _session
-                    .CreateCriteria<ClassificationSchemeClass>()
+                    .CreateCriteria<ClassificationSchemeClassifier>()
                     .Fetch("Sub")
-                    .Fetch("Class")
+                    .Fetch("Classifier")
                     .CreateCriteria("ClassificationScheme")
                         .Add(Expression.Eq("Id", id))
-                    .Future<ClassificationSchemeClass>();
+                    .Future<ClassificationSchemeClassifier>();
                 return await _session
                     .CreateCriteria<ClassificationScheme>()
                     .Add(Expression.Eq("Id", id))
-                    .Fetch("Classes")
+                    .Fetch("Classifiers")
                     .FutureValue<ClassificationScheme>().GetValueAsync();
             }
         }

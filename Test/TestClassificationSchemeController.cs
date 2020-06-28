@@ -63,8 +63,8 @@ namespace Test
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
-                session.CreateQuery("delete ClassificationSchemeClass").ExecuteUpdate();
-                session.CreateQuery("delete CommonDomainObjects.Class").ExecuteUpdate();
+                session.CreateQuery("delete ClassificationSchemeClassifier").ExecuteUpdate();
+                session.CreateQuery("delete CommonDomainObjects.Classifier").ExecuteUpdate();
                 session.CreateQuery("delete ClassificationScheme").ExecuteUpdate();
             }
         }
@@ -73,7 +73,7 @@ namespace Test
         public async Task Get()
         {
             var super = _super.Select(
-                vertex => new Class(
+                vertex => new Classifier(
                     Guid.NewGuid(),
                     vertex.ToString()));
 
@@ -83,10 +83,10 @@ namespace Test
                 var session = scope.Resolve<ISession>();
                 await session.SaveAsync(classificationScheme);
                 await classificationScheme.VisitAsync(
-                    async classificationSchemeClass =>
+                    async classificationSchemeClassifier =>
                     {
-                        await session.SaveAsync(classificationSchemeClass.Class);
-                        await session.SaveAsync(classificationSchemeClass);
+                        await session.SaveAsync(classificationSchemeClassifier.Classifier);
+                        await session.SaveAsync(classificationSchemeClassifier);
                     },
                     null);
                 await session.FlushAsync();
@@ -105,19 +105,19 @@ namespace Test
                 Assert.That(classificationSchemeModel.Id, Is.EqualTo(classificationScheme.Id));
             }
 
-            var map = classificationScheme.Classes.ToDictionary(classificationSchemeClass => classificationSchemeClass.Id);
-            Assert.That(classificationSchemeModel.Classes.Select(classificationSchemeClassModel => classificationSchemeClassModel.Id)
+            var map = classificationScheme.Classifiers.ToDictionary(classificationSchemeClassifier => classificationSchemeClassifier.Id);
+            Assert.That(classificationSchemeModel.Classifiers.Select(classificationSchemeClassifierModel => classificationSchemeClassifierModel.Id)
                 .ToHashSet().SetEquals(map.Keys));
 
-            foreach(var classificationSchemeClassModel in classificationSchemeModel.Classes)
+            foreach(var classificationSchemeClassifierModel in classificationSchemeModel.Classifiers)
             {
-                var classificationSchemeClass = map[classificationSchemeClassModel.Id];
-                Assert.That(classificationSchemeClassModel.Class.Id, Is.EqualTo(classificationSchemeClass.Class.Id));
-                Assert.That(classificationSchemeClassModel.Super != null, Is.EqualTo(classificationSchemeClass.Super != null));
-                if(classificationSchemeClassModel.Super != null)
-                    Assert.That(classificationSchemeClassModel.Super.Id, Is.EqualTo(classificationSchemeClass.Super.Id));
-                Assert.That(classificationSchemeClassModel.Sub.Select(sub => sub.Id).ToHashSet().SetEquals(
-                    classificationSchemeClass.Sub.Select(sub => sub.Id)), Is.True);
+                var classificationSchemeClassifier = map[classificationSchemeClassifierModel.Id];
+                Assert.That(classificationSchemeClassifierModel.Classifier.Id, Is.EqualTo(classificationSchemeClassifier.Classifier.Id));
+                Assert.That(classificationSchemeClassifierModel.Super != null, Is.EqualTo(classificationSchemeClassifier.Super != null));
+                if(classificationSchemeClassifierModel.Super != null)
+                    Assert.That(classificationSchemeClassifierModel.Super.Id, Is.EqualTo(classificationSchemeClassifier.Super.Id));
+                Assert.That(classificationSchemeClassifierModel.Sub.Select(sub => sub.Id).ToHashSet().SetEquals(
+                    classificationSchemeClassifier.Sub.Select(sub => sub.Id)), Is.True);
             }
         }
     }
