@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { DialogModule } from '../Components/Dialog';
 import { NumberModule } from '../Components/NumberModule';
 import { TabbedViewModule } from '../Components/TabbedView';
@@ -34,6 +35,7 @@ import { TransactionDetails } from './TransactionDetails';
             [
                 CommonModule,
                 DialogModule,
+                FormsModule,
                 NumberModule,
                 TabbedViewModule
             ],

@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ClassificationScheme, ClassificationSchemeClass } from '../ClassificationScheme';
+import { Class, ClassificationScheme, ClassificationSchemeClass } from '../ClassificationScheme';
 import { ClassificationSchemeServiceToken } from '../ClassificationSchemeServiceProvider';
 import { Guid } from '../CommonDomainObjects';
 import { IDomainObjectService } from '../IDomainObjectService';
@@ -14,6 +14,7 @@ import { IDomainObjectService } from '../IDomainObjectService';
 export class Exclusivity
 {
     private _classificationSchemeClasses: Observable<ClassificationSchemeClass[]>;
+    private _class                      : Class;
 
     constructor(
         @Inject(ClassificationSchemeServiceToken)
@@ -29,5 +30,17 @@ export class Exclusivity
     get ClassificationSchemeClasses(): Observable<ClassificationSchemeClass[]>
     {
         return this._classificationSchemeClasses;
+    }
+
+    get Class(): Class
+    {
+        return this._class;
+    }
+
+    set Class(
+        selectedClass: Class
+        )
+    {
+        alert(selectedClass.Name);
     }
 }
