@@ -1,4 +1,6 @@
 import { Component, Inject } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ClassificationScheme, ClassificationSchemeClass } from '../ClassificationScheme';
 import { ClassificationSchemeServiceToken } from '../ClassificationSchemeServiceProvider';
 import { Guid } from '../CommonDomainObjects';
@@ -11,20 +13,20 @@ import { IDomainObjectService } from '../IDomainObjectService';
     })
 export class Exclusivity
 {
-    private _classificationSchemeClasses: ClassificationSchemeClass[];
+    private _classificationSchemeClasses: Observable<ClassificationSchemeClass[]>;
 
     constructor(
         @Inject(ClassificationSchemeServiceToken)
         classificationSchemeService: IDomainObjectService<Guid, ClassificationScheme>
         )
     {
-        classificationSchemeService.Get('f7c20b62-ffe8-4c20-86b4-e5c68ba2469d').subscribe(
-            classificationScheme =>
-                this._classificationSchemeClasses = classificationScheme.Classes.filter(
-                    classificationSchemeClass => classificationSchemeClass.Super == null));
+        this._classificationSchemeClasses = classificationSchemeService
+            .Get('f7c20b62-ffe8-4c20-86b4-e5c68ba2469d')
+            .pipe(map(classificationScheme => classificationScheme.Classes.filter(
+                classificationSchemeClass => classificationSchemeClass.Super == null)));
     }
 
-    get ClassificationSchemeClasses(): ClassificationSchemeClass[]
+    get ClassificationSchemeClasses(): Observable<ClassificationSchemeClass[]>
     {
         return this._classificationSchemeClasses;
     }
