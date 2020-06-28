@@ -41,6 +41,5 @@ export class Exclusivity
         selectedClass: Class
         )
     {
-        alert(selectedClass.Name);
     }
 }
