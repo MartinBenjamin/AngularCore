@@ -7,12 +7,12 @@
         <optgroup *ngIf="classificationSchemeClass.Sub.length;else Option"
                   [label]="classificationSchemeClass.Class.Name">
           <option *ngFor="let sub of classificationSchemeClass.Sub"
-                  [value]="sub.Class">
+                  [value]="sub">
             {{sub.Class.Name}}
           </option>
         </optgroup>
         <ng-template #Option>
-          <option [value]="classificationSchemeClass.Class">
+          <option [value]="classificationSchemeClass">
             {{classificationSchemeClass.Class.Name}}
           </option>
         </ng-template>
