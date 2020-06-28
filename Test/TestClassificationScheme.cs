@@ -55,6 +55,7 @@ namespace Test
                 vertex => new Classifier(
                     Guid.Empty,
                     vertex.ToString()));
+            var sub = super.Transpose();
 
             var classificationScheme = new ClassificationScheme(super);
             Assert.That(classificationScheme.Classifiers.Count, Is.EqualTo(_super.Count));
@@ -74,10 +75,11 @@ namespace Test
                     Assert.That(superClassificationSchemeClassifier.Sub, Has.Member(classificationSchemeClassifier));
                     Assert.That(superClassificationSchemeClassifier.Interval.Contains(classificationSchemeClassifier.Interval));
                 }
-            }
 
-            foreach(var classificationSchemeClassifier in classificationScheme.Classifiers)
-                Assert.That(super.ContainsKey(classificationSchemeClassifier.Classifier), Is.True);
+                Assert.That(classificationSchemeClassifier.Sub.Select(
+                    subClassificationSchemeClassifier => subClassificationSchemeClassifier.Classifier).ToHashSet().SetEquals(
+                    sub[classificationSchemeClassifier.Classifier].ToHashSet()), Is.True);
+            }
         }
     }
 }
