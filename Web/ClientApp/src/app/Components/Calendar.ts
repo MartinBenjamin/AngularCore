@@ -20,7 +20,7 @@ export class Calendar implements OnInit
 <table class="popUpCalendar">
     <tr>
         <td>
-            <table class="calendar">
+            <table class="Calendar">
                 <colgroup>
                     <col span="7" />
                 </colgroup>
@@ -109,7 +109,7 @@ export class Calendar implements OnInit
             )
         {
             panel.innerHTML = Calendar._calendarTemplate;
-            let calendarTable    = <HTMLTableElement>panel.querySelector('table.calendar');
+            let calendarTable    = <HTMLTableElement>panel.querySelector('table.Calendar');
             let monthRow         = <HTMLTableRowElement>calendarTable.rows[0];
             let month            = <HTMLTableCellElement>monthRow.cells[2];
             let prevMonth        = <HTMLTableCellElement>monthRow.cells[0];
