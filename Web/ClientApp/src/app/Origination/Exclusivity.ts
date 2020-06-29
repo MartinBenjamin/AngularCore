@@ -111,6 +111,5 @@ export class Exclusivity implements OnDestroy
             classificationSchemeClassifier => classificationSchemeClassifier.Classifier.Id == this._classifier.Id)[0];
 
         this._exclusive = yes.Interval.Start <= current.Interval.Start && current.Interval.End <= yes.Interval.End;
-        alert(this._exclusive);
     }
 }
