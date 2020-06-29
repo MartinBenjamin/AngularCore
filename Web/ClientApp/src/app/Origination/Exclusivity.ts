@@ -5,6 +5,7 @@ import { Classifier, ClassificationScheme, ClassificationSchemeClassifier } from
 import { ClassificationSchemeServiceToken } from '../ClassificationSchemeServiceProvider';
 import { Guid } from '../CommonDomainObjects';
 import { IDomainObjectService } from '../IDomainObjectService';
+import { ClassificationSchemeIdentifier, Deal } from '../Deals';
 
 @Component(
     {
@@ -13,7 +14,8 @@ import { IDomainObjectService } from '../IDomainObjectService';
     })
 export class Exclusivity
 {
-    private _classificationSchemeClassifiers: Observable<ClassificationSchemeClassifier[]>;
+    private _classificationSchemeClassifiers: ClassificationSchemeClassifier[];
+    private _deal                           : Deal;
     private _classifier                     : Classifier;
 
     constructor(
@@ -21,15 +23,25 @@ export class Exclusivity
         classificationSchemeService: IDomainObjectService<Guid, ClassificationScheme>
         )
     {
-        this._classificationSchemeClassifiers = classificationSchemeService
-            .Get('f7c20b62-ffe8-4c20-86b4-e5c68ba2469d')
-            .pipe(map(classificationScheme => classificationScheme.Classifiers.filter(
-                classificationSchemeClassifier => classificationSchemeClassifier.Super == null)));
+        classificationSchemeService
+            .Get(ClassificationSchemeIdentifier.Exclusivity)
+            .subscribe(
+                classificationScheme => this._classificationSchemeClassifiers
+                    = classificationScheme.Classifiers.filter(
+                        classificationSchemeClassifier => classificationSchemeClassifier.Super == null));
     }
 
-    get ClassificationSchemeClassifiers(): Observable<ClassificationSchemeClassifier[]>
+    get ClassificationSchemeClassifiers(): ClassificationSchemeClassifier[]
     {
         return this._classificationSchemeClassifiers;
+    }
+
+    set Deal(
+        deal: Deal
+        )
+    {
+        this._deal = deal;
+        this.ComputeClassifier();
     }
 
     get Classifier(): Classifier
@@ -41,5 +53,23 @@ export class Exclusivity
         classifier: Classifier
         )
     {
+        this._deal.Classifiers.splice(
+            this._deal.Classifiers.indexOf(this._classifier),
+            1);
+        this._classifier = classifier;
+        this._deal.Classifiers.push(this._classifier);
+    }
+
+    private ComputeClassifier(): void
+    {
+        if(!this._deal)
+        {
+            this._classifier = null;
+            return;
+        }
+
+        let classifiers = this._deal.Classifiers.filter(classifer => (<any>classifer).$type == 'Web.Model.ExclusivityClassifier, Web')
+        if(classifiers.length)
+            this._classifier = classifiers[0];
     }
 }

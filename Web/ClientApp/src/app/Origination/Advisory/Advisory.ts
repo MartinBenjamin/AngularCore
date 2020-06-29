@@ -44,7 +44,8 @@ export class Advisory extends DealProvider implements AfterViewInit
                 Commitments: [],
                 Parties    : [],
                 Restricted : false,
-                ProjectName: null
+                ProjectName: null,
+                Classifiers: []
             });
         }
         else
