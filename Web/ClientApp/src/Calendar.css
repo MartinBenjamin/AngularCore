@@ -16,34 +16,35 @@ table.Calendar > tbody > tr > td
     height: 18px;
     padding: 0px;
     border: none;
-    color: #666;
+    color: #bababa;
 }
 
 table.Calendar > tbody > tr.month > td
 {
-    background-color: #54789e;
-    color: #fff;
+    background-color: #151515;
+    color: #bababa;
     font-weight: bold;
 }
 
 table.Calendar > tbody.CalendarDays > tr > td
 {
     cursor: pointer;
-    border: 1px solid #ccf;
-    background-color: #ccc;
+    border: 1px solid #7a7a7a;
+    background-color: #333;
+    color: #bababa;
 }
 
-table.Calendar > tbody.CalendarDays > tr > td.current
+table.Calendar > tbody.CalendarDays > tr > td.Current
 {
-    background-color: #fff;
+    background-color: #000;
 }
 
 table.popUpCalendar
 {
     border-collapse: separate;
     border-spacing: 2px;
-    border: 1px solid #ccf;
-    background-color: #fff;
+    border: 1px solid #7a7a7a;
+    background-color: #000;
     font-size: smaller;
 }
 

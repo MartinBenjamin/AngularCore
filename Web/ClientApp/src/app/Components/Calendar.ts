@@ -40,7 +40,7 @@ export class Calendar implements OnInit
                     <td>Sa</td>
                     <td>Su</td>
                 </tr>
-                <tbody class="calendarDays">
+                <tbody class="CalendarDays">
                     <tr><td /><td /><td /><td /><td /><td /><td /></tr>
                     <tr><td /><td /><td /><td /><td /><td /><td /></tr>
                     <tr><td /><td /><td /><td /><td /><td /><td /></tr>
@@ -167,7 +167,7 @@ export class Calendar implements OnInit
                             let dayCell = <HTMLTableCellElement & IDateCell>(row.cells[dayIndex]);
                             dayCell.innerText = date.getDate().toString();
                             dayCell.Date      = date.valueOf();
-                            dayCell.className = date.getMonth() == currentMonth.getMonth() ? 'current' : '';
+                            dayCell.className = date.getMonth() == currentMonth.getMonth() ? 'Current' : '';
 
                             date.setUTCDate(date.getUTCDate() + 1);
                         }
