@@ -79,8 +79,6 @@ namespace Deals
             Sponsor.SubClassOf(SponsorParty);
             var _Equity               = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
 
-            var DealClass             = this.Class<DealClassifier>();
-
             var KeyCounterpartyRole   = new ObjectOneOf(this, KeyCounterpartyRoles);
             var MufgLenderParty       = new ObjectIntersectionOf(LenderParty, MufgParty);
             var MufgAdvisorParty      = new ObjectIntersectionOf(AdvisorParty, MufgParty);
