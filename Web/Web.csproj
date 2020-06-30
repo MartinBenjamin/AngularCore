@@ -79,7 +79,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Agents\Agents.csproj" />
     <ProjectReference Include="..\CommonDomainObjects.Mapping\CommonDomainObjects.Mapping.csproj" />
-    <ProjectReference Include="..\NHibernateIntegration\NHibernateIntegration.csproj" />
     <ProjectReference Include="..\Organisations\Organisations.csproj" />
     <ProjectReference Include="..\Service\Service.csproj" />
   </ItemGroup>
