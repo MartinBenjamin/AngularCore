@@ -59,8 +59,6 @@ namespace Web
                 .RegisterType<ServiceBasedControllerActivator>()
                 .As<IControllerActivator>();
             builder
-                .RegisterModule<NHibernateIntegration.Module>();
-            builder
                 .RegisterType<CommonDomainObjects.Mapping.ConventionModelMapperFactory>()
                 .As<IModelMapperFactory>()
                 .SingleInstance();
