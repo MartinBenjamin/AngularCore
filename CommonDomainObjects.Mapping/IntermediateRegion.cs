@@ -6,7 +6,6 @@ namespace CommonDomainObjects.Mapping
     {
         public IntermediateRegion()
         {
-            DiscriminatorValue(nameof(UnsdM49.IntermediateRegion));
         }
     }
 }

@@ -6,7 +6,6 @@ namespace CommonDomainObjects.Mapping
     {
         public SubRegion()
         {
-            DiscriminatorValue(nameof(UnsdM49.SubRegion));
         }
     }
 }
