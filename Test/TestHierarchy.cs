@@ -45,28 +45,19 @@ namespace Test
         [Test]
         public void NewHierarchy()
         {
+            var child = _parent.Transpose();
             var hierarchy = new Hierarchy<char>(_parent);
             Assert.That(hierarchy.Members.Count, Is.EqualTo(_parent.Count));
-            foreach(var member in _parent.Keys)
-            {
-                var hierarchyMember = hierarchy[member];
-                Assert.That(hierarchyMember       , Is.Not.Null       );
-                Assert.That(hierarchyMember.Member, Is.EqualTo(member));
 
-                var parentMember = _parent[member].FirstOrDefault();
-                var parentHierarchyMember = hierarchy[parentMember];
+            Assert.That(_parent.Keys.Verify(
+                member          => hierarchy[member],
+                member          => _parent[member].FirstOrDefault(),
+                hierarchyMember => hierarchyMember.Parent), Is.True);
 
-                Assert.That(hierarchyMember.Parent, Is.EqualTo(parentHierarchyMember));
-
-                if(parentHierarchyMember != null)
-                {
-                    Assert.That(parentHierarchyMember.Children, Has.Member(hierarchyMember));
-                    Assert.That(parentHierarchyMember.Interval.Contains(hierarchyMember.Interval));
-                }
-            }
-
-            foreach(var hierarchyMember in hierarchy.Members)
-                Assert.That(_parent.ContainsKey(hierarchyMember.Member), Is.True);
+            Assert.That(_parent.Keys.Verify(
+                member          => hierarchy[member],
+                member          => child[member],
+                hierarchyMember => hierarchyMember.Children), Is.True);
         }
     }
 }
