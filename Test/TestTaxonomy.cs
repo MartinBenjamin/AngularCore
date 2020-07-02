@@ -45,28 +45,19 @@ namespace Test
         [Test]
         public void NewTaxonomy()
         {
+            var narrower = _broader.Transpose();
             var taxonomy = new Taxonomy<char>(_broader);
             Assert.That(taxonomy.Terms.Count, Is.EqualTo(_broader.Count));
-            foreach(var term in _broader.Keys)
-            {
-                var taxonomyTerm = taxonomy[term];
-                Assert.That(taxonomyTerm     , Is.Not.Null     );
-                Assert.That(taxonomyTerm.Term, Is.EqualTo(term));
 
-                var broaderTerm = _broader[term].FirstOrDefault();
-                var broaderTaxonomyTerm = taxonomy[broaderTerm];
+            Assert.That(_broader.Keys.Verify(
+                term         => taxonomy[term],
+                term         => _broader[term].FirstOrDefault(),
+                taxonomyTerm => taxonomyTerm.Broader), Is.True);
 
-                Assert.That(taxonomyTerm.Broader, Is.EqualTo(broaderTaxonomyTerm));
-
-                if(broaderTaxonomyTerm != null)
-                {
-                    Assert.That(broaderTaxonomyTerm.Narrower, Has.Member(taxonomyTerm));
-                    Assert.That(broaderTaxonomyTerm.Interval.Contains(taxonomyTerm.Interval));
-                }
-            }
-
-            foreach(var taxonomyTerm in taxonomy.Terms)
-                Assert.That(_broader.ContainsKey(taxonomyTerm.Term), Is.True);
+            Assert.That(_broader.Keys.Verify(
+                term         => taxonomy[term],
+                term         => narrower[term],
+                taxonomyTerm => taxonomyTerm.Narrower), Is.True);
         }
     }
 }

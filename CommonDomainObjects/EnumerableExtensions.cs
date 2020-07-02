@@ -66,6 +66,20 @@ namespace CommonDomainObjects
                 yield return nextbatch;
         }
 
+        public static bool Verify<U, V>(
+            this IEnumerable<U> category,
+            Func<U, V>          functor,
+            Func<U, U>          UMorphism,
+            Func<V, V>          VMorphism
+            ) => category.All(u => Equals(VMorphism(functor(u)), functor(UMorphism(u))));
+
+        public static bool Verify<U, V>(
+            this IEnumerable<U>     category,
+            Func<U, V>              functor,
+            Func<U, IEnumerable<U>> UMorphism,
+            Func<V, IEnumerable<V>> VMorphism
+            ) => category.All(u => VMorphism(functor(u)).ToHashSet().SetEquals(UMorphism(u).Select(functor)));
+
         public static IEnumerable<IList<T>> Permute<T>(
             this IEnumerable<T> enumerable
             )

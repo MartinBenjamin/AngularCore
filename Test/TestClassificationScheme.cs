@@ -59,27 +59,15 @@ namespace Test
 
             var classificationScheme = new ClassificationScheme(super);
             Assert.That(classificationScheme.Classifiers.Count, Is.EqualTo(_super.Count));
-            foreach(var classifier in super.Keys)
-            {
-                var classificationSchemeClassifier = classificationScheme[classifier];
-                Assert.That(classificationSchemeClassifier           , Is.Not.Null           );
-                Assert.That(classificationSchemeClassifier.Classifier, Is.EqualTo(classifier));
+            Assert.That(super.Keys.Verify(
+                classifier                     => classificationScheme[classifier],
+                classifier                     => super[classifier].FirstOrDefault(),
+                classificationSchemeClassifier => classificationSchemeClassifier.Super), Is.True);
 
-                var superClassifier = super[classifier].FirstOrDefault();
-                var superClassificationSchemeClassifier = classificationScheme[superClassifier];
-
-                Assert.That(classificationSchemeClassifier.Super, Is.EqualTo(superClassificationSchemeClassifier));
-
-                if(superClassificationSchemeClassifier != null)
-                {
-                    Assert.That(superClassificationSchemeClassifier.Sub, Has.Member(classificationSchemeClassifier));
-                    Assert.That(superClassificationSchemeClassifier.Interval.Contains(classificationSchemeClassifier.Interval));
-                }
-
-                Assert.That(classificationSchemeClassifier.Sub.Select(
-                    subClassificationSchemeClassifier => subClassificationSchemeClassifier.Classifier).ToHashSet().SetEquals(
-                    sub[classificationSchemeClassifier.Classifier].ToHashSet()), Is.True);
-            }
+            Assert.That(super.Keys.Verify(
+                classifier                     => classificationScheme[classifier],
+                classifier                     => sub[classifier],
+                classificationSchemeClassifier => classificationSchemeClassifier.Sub), Is.True);
         }
     }
 }
