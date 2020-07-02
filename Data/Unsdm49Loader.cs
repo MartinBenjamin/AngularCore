@@ -17,7 +17,7 @@ namespace Data
                 (string code, string name, GeographicRegion geographicRegion) => new Global            (code, name                  ),
                 (string code, string name, GeographicRegion geographicRegion) => new Region            (code, name, geographicRegion),
                 (string code, string name, GeographicRegion geographicRegion) => new SubRegion         (code, name, geographicRegion),
-                (string code, string name, GeographicRegion geographicRegion) => new IntermediateRegion(code, name, null            )
+                (string code, string name, GeographicRegion geographicRegion) => new IntermediateRegion(code, name, geographicRegion)
             };
 
         private readonly ICsvExtractor   _csvExtractor;
