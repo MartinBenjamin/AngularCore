@@ -68,6 +68,11 @@ namespace Test
                 classifier                     => classificationScheme[classifier],
                 classifier                     => sub[classifier],
                 classificationSchemeClassifier => classificationSchemeClassifier.Sub), Is.True);
+
+            Assert.That(classificationScheme.Classifiers
+                .Where(classificationSchemeClassifier => classificationSchemeClassifier.Super != null)
+                .All(classificationSchemeClassifier => classificationSchemeClassifier.Super.Contains(classificationSchemeClassifier)));
+
         }
     }
 }

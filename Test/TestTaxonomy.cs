@@ -58,6 +58,10 @@ namespace Test
                 term         => taxonomy[term],
                 term         => narrower[term],
                 taxonomyTerm => taxonomyTerm.Narrower), Is.True);
+
+            Assert.That(taxonomy.Terms
+                .Where(taxonomyTerm => taxonomyTerm.Broader != null)
+                .All(taxonomyTerm => taxonomyTerm.Broader.Contains(taxonomyTerm)));
         }
     }
 }

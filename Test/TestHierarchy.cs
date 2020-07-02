@@ -58,6 +58,10 @@ namespace Test
                 member          => hierarchy[member],
                 member          => child[member],
                 hierarchyMember => hierarchyMember.Children), Is.True);
+
+            Assert.That(hierarchy.Members
+                .Where(hierarchyMember => hierarchyMember.Parent != null)
+                .All(hierarchyMember => hierarchyMember.Parent.Contains(hierarchyMember)));
         }
     }
 }
