@@ -203,19 +203,17 @@ namespace Test
                     {
                         if(member.Parent != null)
                         {
-                            Assert.That(member.Member.Is<GeographicSubregion>());
                             Assert.That(member.Parent.Children.Contains(member));
-                            Assert.That(member.Parent.Member, Is.EqualTo(member.Member.As<GeographicSubregion>().Region));
-                            Assert.That(member.Parent.Member.Subregions.Contains(member.Member));
+                            var geographicSubregion = member.Member.As<GeographicSubregion>();
+                            if(geographicSubregion != null)
+                            {
+                                Assert.That(member.Parent.Member, Is.EqualTo(geographicSubregion.Region));
+                                Assert.That(member.Parent.Member.Subregions.Contains(member.Member));
+                            }
                         }
 
                         foreach(var child in member.Children)
-                        {
-                            Assert.That(child.Member.Is<GeographicSubregion>());
                             Assert.That(child.Parent, Is.EqualTo(member));
-                            Assert.That(child.Member.As<GeographicSubregion>().Region, Is.EqualTo(member.Member));
-                            Assert.That(member.Member.Subregions.Contains(child.Member));
-                        }
 
                         foreach(var child in member.Member.Subregions)
                         {

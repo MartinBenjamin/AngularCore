@@ -43,7 +43,7 @@ namespace Data
                 .SingleInstance();
 
             builder
-                .RegisterType<GeographicRegionHierarchyLoader>()
+                .RegisterType<Unsdm49Loader>()
                 .As<IEtl<GeographicRegionHierarchy>>()
                 .SingleInstance();
 

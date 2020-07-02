@@ -15,6 +15,7 @@
     <None Remove="ISO3166-2-US.csv" />
     <None Remove="ISO4217.csv" />
     <None Remove="Role.csv" />
+    <None Remove="UNSDM49.csv" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +29,7 @@
     <EmbeddedResource Include="ISO3166-2-US.csv" />
     <EmbeddedResource Include="ISO4217.csv" />
     <EmbeddedResource Include="Role.csv" />
+    <EmbeddedResource Include="UNSDM49.csv" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,6 +46,7 @@
     <ProjectReference Include="..\LegalEntities\LegalEntities.csproj" />
     <ProjectReference Include="..\Peg\Peg.csproj" />
     <ProjectReference Include="..\Roles\Roles.csproj" />
+    <ProjectReference Include="..\UnsdM49\UnsdM49.csproj" />
   </ItemGroup>
 
 </Project>
