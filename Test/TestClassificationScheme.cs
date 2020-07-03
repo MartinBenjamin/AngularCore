@@ -64,10 +64,20 @@ namespace Test
                 classifier                     => classificationScheme[classifier],
                 classificationSchemeClassifier => classificationSchemeClassifier.Super), Is.True);
 
+            Assert.That(classificationScheme.Classifiers.PreservesStructure(
+                classificationSchemeClassifier => classificationSchemeClassifier.Super,
+                classificationSchemeClassifier => classificationSchemeClassifier?.Classifier,
+                classifier                     => super[classifier].FirstOrDefault()), Is.True);
+
             Assert.That(super.Keys.PreservesStructure(
                 classifier                     => sub[classifier],
                 classifier                     => classificationScheme[classifier],
                 classificationSchemeClassifier => classificationSchemeClassifier.Sub), Is.True);
+
+            Assert.That(classificationScheme.Classifiers.PreservesStructure(
+                classificationSchemeClassifier => classificationSchemeClassifier.Sub,
+                classificationSchemeClassifier => classificationSchemeClassifier?.Classifier,
+                classifier                     => sub[classifier]), Is.True);
 
             Assert.That(classificationScheme.Classifiers
                 .Where(classificationSchemeClassifier => classificationSchemeClassifier.Super != null)

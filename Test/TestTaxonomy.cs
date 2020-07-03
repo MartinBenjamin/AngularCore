@@ -54,10 +54,20 @@ namespace Test
                 term         => taxonomy[term],
                 taxonomyTerm => taxonomyTerm.Broader), Is.True);
 
+            Assert.That(taxonomy.Terms.PreservesStructure(
+                taxonomyTerm => taxonomyTerm.Broader,
+                taxonomyTerm => taxonomyTerm != null ? taxonomyTerm.Term : default,
+                term         => _broader[term].FirstOrDefault()), Is.True);
+
             Assert.That(_broader.Keys.PreservesStructure(
                 term         => narrower[term],
                 term         => taxonomy[term],
                 taxonomyTerm => taxonomyTerm.Narrower), Is.True);
+
+            Assert.That(taxonomy.Terms.PreservesStructure(
+                taxonomyTerm => taxonomyTerm.Narrower,
+                taxonomyTerm => taxonomyTerm != null ? taxonomyTerm.Term : default,
+                term         => narrower[term]), Is.True);
 
             Assert.That(taxonomy.Terms
                 .Where(taxonomyTerm => taxonomyTerm.Broader != null)
