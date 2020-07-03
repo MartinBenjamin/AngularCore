@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using UnsdM49;
 
 namespace Test
 {
@@ -97,41 +98,20 @@ namespace Test
 
             var hierarchy = await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
             Assert.That(hierarchy.Members.Count, Is.GreaterThan(0));
-            Validate(hierarchy);
-            Assert.That(subdivisions.Cast<GeographicRegion>().PreservesStructure(
-                subdivision => ((Subdivision)subdivision).Region,
-                subdivision => hierarchy[subdivision],
-                hierarchyMember => hierarchyMember.Parent), Is.True);
+            Assert.That(hierarchy.Members
+                .Select(hierarchyMember => hierarchyMember.Member)
+                .Where(member => !member.Is<Country>())
+                .PreservesStructure(
+                    geographicRegion => geographicRegion is GeographicSubregion geographicSubregion ? geographicSubregion.Region : null,
+                    geographicRegion => hierarchy[geographicRegion],
+                    hierarchyMember  => hierarchyMember.Parent), Is.True);
 
-            using(var scope = _container.BeginLifetimeScope())
-            {
-                var session = scope.Resolve<ISession>();
-                session
-                    .CreateCriteria<GeographicRegion>()
-                    .Fetch("Subregions")
-                    .Future<GeographicRegion>();
-                session
-                    .CreateCriteria<GeographicRegionHierarchyMember>()
-                    .Fetch("Children")
-                    .Future<GeographicRegionHierarchyMember>();
-                var loadedHierarchy = await session
-                    .CreateCriteria<GeographicRegionHierarchy>()
-                    .Add(Expression.Eq("Id", hierarchy.Id))
-                    .Fetch("Members")
-                    .FutureValue<GeographicRegionHierarchy>().GetValueAsync();
-                Assert.That(loadedHierarchy, Is.Not.Null);
-                Validate(loadedHierarchy);
-
-                var loadedMemberMap = loadedHierarchy.Members.ToDictionary(member => member.Id);
-                foreach(var member in hierarchy.Members)
-                {
-                    Assert.That(loadedMemberMap.ContainsKey(member.Id));
-                    var loadedMember = loadedMemberMap[member.Id];
-                    Assert.That(loadedMember.Member, Is.EqualTo(member.Member));
-                    Assert.That(loadedMember.Parent, Is.EqualTo(member.Parent));
-                    Assert.That(loadedMember.Children.ToHashSet().SetEquals(member.Children));
-                }
-            }
+            Assert.That(hierarchy.Members
+                .Select(hierarchyMember => hierarchyMember.Member)
+                .PreservesStructure(
+                    geographicRegion => geographicRegion.Subregions,
+                    geographicRegion => hierarchy[geographicRegion],
+                    hierarchyMember  => hierarchyMember.Children.Where(child => !child.Member.Is<Country>())), Is.True);
         }
 
         [Test]
@@ -194,37 +174,6 @@ namespace Test
             //await new LegalEntityLoader(
             //    _container.Resolve<ISessionFactory>(),
             //    100).LoadAsync();
-        }
-
-        private void Validate(
-            GeographicRegionHierarchy hierarchy
-            )
-        {
-            hierarchy
-                .Members
-                .ForEach(
-                    member =>
-                    {
-                        if(member.Parent != null)
-                        {
-                            Assert.That(member.Parent.Children.Contains(member));
-                            var geographicSubregion = member.Member.As<GeographicSubregion>();
-                            if(geographicSubregion != null)
-                            {
-                                Assert.That(member.Parent.Member, Is.EqualTo(geographicSubregion.Region));
-                                Assert.That(member.Parent.Member.Subregions.Contains(member.Member));
-                            }
-                        }
-
-                        foreach(var child in member.Children)
-                            Assert.That(child.Parent, Is.EqualTo(member));
-
-                        foreach(var child in member.Member.Subregions)
-                        {
-                            var childHierachyMember = hierarchy[child];
-                            Assert.That(childHierachyMember.Parent, Is.EqualTo(member));
-                        }
-                    });
         }
     }
 }
