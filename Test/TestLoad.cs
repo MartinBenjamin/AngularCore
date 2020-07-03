@@ -7,7 +7,6 @@ using Iso3166._2;
 using Iso4217;
 using Locations;
 using NHibernate;
-using NHibernate.Criterion;
 using NHibernate.Tool.hbm2ddl;
 using NHibernateIntegration;
 using NUnit.Framework;
@@ -19,7 +18,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using UnsdM49;
 
 namespace Test
 {

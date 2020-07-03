@@ -90,6 +90,18 @@ namespace Test
             using(var scope = _container.BeginLifetimeScope())
                 retrieved = await scope.Resolve<IDomainObjectService<Guid, ClassificationScheme>>().GetAsync(classificationScheme.Id);
 
+            Assert.That(retrieved.Classifiers.PreservesStructure(
+                retrievedClassificationSchemeClassifier => retrievedClassificationSchemeClassifier.Super,
+                retrievedClassificationSchemeClassifier => retrievedClassificationSchemeClassifier != null ?
+                    classificationScheme[retrievedClassificationSchemeClassifier.Classifier] : null,
+                classificationSchemeClassifier => classificationSchemeClassifier.Super), Is.True);
+
+            Assert.That(retrieved.Classifiers.PreservesStructure(
+                retrievedClassificationSchemeClassifier => retrievedClassificationSchemeClassifier.Sub,
+                retrievedClassificationSchemeClassifier => retrievedClassificationSchemeClassifier != null ?
+                    classificationScheme[retrievedClassificationSchemeClassifier.Classifier] : null,
+                classificationSchemeClassifier => classificationSchemeClassifier.Sub), Is.True);
+
             Assert.That(retrieved, Is.Not.Null);
             Assert.That(retrieved, Is.EqualTo(classificationScheme));
             Assert.That(retrieved.Classifiers.ToHashSet().SetEquals(classificationScheme.Classifiers));
@@ -99,8 +111,9 @@ namespace Test
             foreach(var retrievedClassificationSchemeClassifier in retrieved.Classifiers)
             {
                 var classificationSchemeClassifier = map[retrievedClassificationSchemeClassifier.Id];
-                Assert.That(retrievedClassificationSchemeClassifier      , Is.EqualTo(classificationSchemeClassifier      ));
-                Assert.That(retrievedClassificationSchemeClassifier.Super, Is.EqualTo(classificationSchemeClassifier.Super));
+                Assert.That(retrievedClassificationSchemeClassifier           , Is.EqualTo(classificationSchemeClassifier           ));
+                Assert.That(retrievedClassificationSchemeClassifier.Classifier, Is.EqualTo(classificationSchemeClassifier.Classifier));
+                Assert.That(retrievedClassificationSchemeClassifier.Super     , Is.EqualTo(classificationSchemeClassifier.Super     ));
                 Assert.That(retrievedClassificationSchemeClassifier.Sub.ToHashSet().SetEquals(classificationSchemeClassifier.Sub));
             }
         }

@@ -44,7 +44,7 @@ namespace Test
                 vertex => new Classifier(
                     Guid.Empty,
                     vertex.ToString()));
-            var classificationScheme = new ClassificationScheme(_super.Select(c => map[c]));
+            var classificationScheme = new ClassificationScheme(_super.Select(classifier => map[classifier]));
             Assert.That(classificationScheme[map[lhs]].Contains(classificationScheme[map[rhs]]), Is.EqualTo(contains));
         }
 
