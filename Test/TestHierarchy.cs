@@ -49,14 +49,14 @@ namespace Test
             var hierarchy = new Hierarchy<char>(_parent);
             Assert.That(hierarchy.Members.Count, Is.EqualTo(_parent.Count));
 
-            Assert.That(_parent.Keys.Verify(
-                member          => hierarchy[member],
+            Assert.That(_parent.Keys.PreservesStructure(
                 member          => _parent[member].FirstOrDefault(),
+                member          => hierarchy[member],
                 hierarchyMember => hierarchyMember.Parent), Is.True);
 
-            Assert.That(_parent.Keys.Verify(
-                member          => hierarchy[member],
+            Assert.That(_parent.Keys.PreservesStructure(
                 member          => child[member],
+                member          => hierarchy[member],
                 hierarchyMember => hierarchyMember.Children), Is.True);
 
             Assert.That(hierarchy.Members

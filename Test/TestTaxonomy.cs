@@ -49,14 +49,14 @@ namespace Test
             var taxonomy = new Taxonomy<char>(_broader);
             Assert.That(taxonomy.Terms.Count, Is.EqualTo(_broader.Count));
 
-            Assert.That(_broader.Keys.Verify(
-                term         => taxonomy[term],
+            Assert.That(_broader.Keys.PreservesStructure(
                 term         => _broader[term].FirstOrDefault(),
+                term         => taxonomy[term],
                 taxonomyTerm => taxonomyTerm.Broader), Is.True);
 
-            Assert.That(_broader.Keys.Verify(
-                term         => taxonomy[term],
+            Assert.That(_broader.Keys.PreservesStructure(
                 term         => narrower[term],
+                term         => taxonomy[term],
                 taxonomyTerm => taxonomyTerm.Narrower), Is.True);
 
             Assert.That(taxonomy.Terms

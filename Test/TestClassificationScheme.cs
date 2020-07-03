@@ -59,14 +59,14 @@ namespace Test
 
             var classificationScheme = new ClassificationScheme(super);
             Assert.That(classificationScheme.Classifiers.Count, Is.EqualTo(_super.Count));
-            Assert.That(super.Keys.Verify(
-                classifier                     => classificationScheme[classifier],
+            Assert.That(super.Keys.PreservesStructure(
                 classifier                     => super[classifier].FirstOrDefault(),
+                classifier                     => classificationScheme[classifier],
                 classificationSchemeClassifier => classificationSchemeClassifier.Super), Is.True);
 
-            Assert.That(super.Keys.Verify(
-                classifier                     => classificationScheme[classifier],
+            Assert.That(super.Keys.PreservesStructure(
                 classifier                     => sub[classifier],
+                classifier                     => classificationScheme[classifier],
                 classificationSchemeClassifier => classificationSchemeClassifier.Sub), Is.True);
 
             Assert.That(classificationScheme.Classifiers

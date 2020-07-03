@@ -98,9 +98,9 @@ namespace Test
             var hierarchy = await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
             Assert.That(hierarchy.Members.Count, Is.GreaterThan(0));
             Validate(hierarchy);
-            Assert.That(subdivisions.Cast<GeographicRegion>().Verify(
-                subdivision => hierarchy[subdivision],
+            Assert.That(subdivisions.Cast<GeographicRegion>().PreservesStructure(
                 subdivision => ((Subdivision)subdivision).Region,
+                subdivision => hierarchy[subdivision],
                 hierarchyMember => hierarchyMember.Parent), Is.True);
 
             using(var scope = _container.BeginLifetimeScope())

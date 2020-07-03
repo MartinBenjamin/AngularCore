@@ -66,17 +66,17 @@ namespace CommonDomainObjects
                 yield return nextbatch;
         }
 
-        public static bool Verify<U, V>(
+        public static bool PreservesStructure<U, V>(
             this IEnumerable<U> category,
-            Func<U, V>          map,
             Func<U, U>          morphism,
+            Func<U, V>          map,
             Func<V, V>          mappedMorphism
             ) => category.All(u => Equals(mappedMorphism(map(u)), map(morphism(u))));
 
-        public static bool Verify<U, V>(
+        public static bool PreservesStructure<U, V>(
             this IEnumerable<U>     category,
-            Func<U, V>              map,
             Func<U, IEnumerable<U>> morphism,
+            Func<U, V>              map,
             Func<V, IEnumerable<V>> mappedMorphism
             ) => category.All(u => mappedMorphism(map(u)).ToHashSet().SetEquals(morphism(u).Select(map)));
 
