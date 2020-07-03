@@ -54,10 +54,20 @@ namespace Test
                 member          => hierarchy[member],
                 hierarchyMember => hierarchyMember.Parent), Is.True);
 
+            Assert.That(hierarchy.Members.PreservesStructure(
+                hierarchyMember => hierarchyMember.Parent,
+                hierarchyMember => hierarchyMember != null ? hierarchyMember.Member : default,
+                member          => _parent[member].FirstOrDefault()), Is.True);
+
             Assert.That(_parent.Keys.PreservesStructure(
                 member          => child[member],
                 member          => hierarchy[member],
                 hierarchyMember => hierarchyMember.Children), Is.True);
+
+            Assert.That(hierarchy.Members.PreservesStructure(
+                hierarchyMember => hierarchyMember.Children,
+                hierarchyMember => hierarchyMember != null ? hierarchyMember.Member : default,
+                member          => child[member]), Is.True);
 
             Assert.That(hierarchy.Members
                 .Where(hierarchyMember => hierarchyMember.Parent != null)
