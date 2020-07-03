@@ -93,11 +93,15 @@ namespace Test
         public async Task GeographicRegionHierarchy()
         {
             await _container.Resolve<IEtl<IEnumerable<Country>>>().ExecuteAsync();
-            await _container.Resolve<IEtl<IEnumerable<Subdivision>>>().ExecuteAsync();
+            var subdivisions = await _container.Resolve<IEtl<IEnumerable<Subdivision>>>().ExecuteAsync();
 
             var hierarchy = await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
             Assert.That(hierarchy.Members.Count, Is.GreaterThan(0));
             Validate(hierarchy);
+            Assert.That(subdivisions.Cast<GeographicRegion>().Verify(
+                subdivision => hierarchy[subdivision],
+                subdivision => ((Subdivision)subdivision).Region,
+                hierarchyMember => hierarchyMember.Parent), Is.True);
 
             using(var scope = _container.BeginLifetimeScope())
             {

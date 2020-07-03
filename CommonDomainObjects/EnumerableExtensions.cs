@@ -68,17 +68,17 @@ namespace CommonDomainObjects
 
         public static bool Verify<U, V>(
             this IEnumerable<U> category,
-            Func<U, V>          functor,
-            Func<U, U>          UMorphism,
-            Func<V, V>          VMorphism
-            ) => category.All(u => Equals(VMorphism(functor(u)), functor(UMorphism(u))));
+            Func<U, V>          map,
+            Func<U, U>          morphism,
+            Func<V, V>          mappedMorphism
+            ) => category.All(u => Equals(mappedMorphism(map(u)), map(morphism(u))));
 
         public static bool Verify<U, V>(
             this IEnumerable<U>     category,
-            Func<U, V>              functor,
-            Func<U, IEnumerable<U>> UMorphism,
-            Func<V, IEnumerable<V>> VMorphism
-            ) => category.All(u => VMorphism(functor(u)).ToHashSet().SetEquals(UMorphism(u).Select(functor)));
+            Func<U, V>              map,
+            Func<U, IEnumerable<U>> morphism,
+            Func<V, IEnumerable<V>> mappedMorphism
+            ) => category.All(u => mappedMorphism(map(u)).ToHashSet().SetEquals(morphism(u).Select(map)));
 
         public static IEnumerable<IList<T>> Permute<T>(
             this IEnumerable<T> enumerable
