@@ -105,13 +105,13 @@ namespace Test
                 Assert.That(classificationSchemeModel.Id, Is.EqualTo(classificationScheme.Id));
             }
 
-            var map = classificationScheme.Classifiers.ToDictionary(classificationSchemeClassifier => classificationSchemeClassifier.Id);
-            Assert.That(classificationSchemeModel.Classifiers.Select(classificationSchemeClassifierModel => classificationSchemeClassifierModel.Id)
-                .ToHashSet().SetEquals(map.Keys));
+            var classificationSchemeClassifierMap = classificationSchemeModel.Classifiers.ToDictionary(classificationSchemeClassifierModel => classificationSchemeClassifierModel.Id);
+            Assert.That(classificationScheme.Classifiers.Select(classificationSchemeClassifier => classificationSchemeClassifier.Id)
+                .ToHashSet().SetEquals(classificationSchemeClassifierMap.Keys));
 
-            foreach(var classificationSchemeClassifierModel in classificationSchemeModel.Classifiers)
+            foreach(var classificationSchemeClassifier in classificationScheme.Classifiers)
             {
-                var classificationSchemeClassifier = map[classificationSchemeClassifierModel.Id];
+                var classificationSchemeClassifierModel = classificationSchemeClassifierMap[classificationSchemeClassifier.Id];
                 Assert.That(classificationSchemeClassifierModel.Classifier.Id, Is.EqualTo(classificationSchemeClassifier.Classifier.Id));
                 Assert.That(classificationSchemeClassifierModel.Super != null, Is.EqualTo(classificationSchemeClassifier.Super != null));
                 if(classificationSchemeClassifierModel.Super != null)
@@ -119,6 +119,25 @@ namespace Test
                 Assert.That(classificationSchemeClassifierModel.Sub.Select(sub => sub.Id).ToHashSet().SetEquals(
                     classificationSchemeClassifier.Sub.Select(sub => sub.Id)), Is.True);
             }
+
+            var classifierMap = classificationSchemeModel.Classifiers.Select(
+                classificationSchemeClassifierModel => classificationSchemeClassifierModel.Classifier).ToDictionary(classifierModel => classifierModel.Id);
+
+            Assert.That(classificationScheme.Classifiers.PreservesStructure(
+                classificationSchemeClassifier => classificationSchemeClassifier.Super,
+                classificationSchemeClassifier => classificationSchemeClassifier != null ? classificationSchemeClassifierMap[classificationSchemeClassifier.Id] : null,
+                classificationSchemeClassifierModel => classificationSchemeClassifierModel.Super), Is.True);
+
+            Assert.That(classificationScheme.Classifiers.PreservesStructure(
+                classificationSchemeClassifier => classificationSchemeClassifier.Sub,
+                classificationSchemeClassifier => classificationSchemeClassifier != null ? classificationSchemeClassifierMap[classificationSchemeClassifier.Id] : null,
+                classificationSchemeClassifierModel => classificationSchemeClassifierModel.Sub), Is.True);
+
+            Assert.That(classificationScheme.Classifiers.PreservesStructure(
+                classificationSchemeClassifier => classificationSchemeClassifier.Classifier,
+                classificationSchemeClassifier => classificationSchemeClassifierMap[classificationSchemeClassifier.Id],
+                classifier => classifierMap[classifier.Id],
+                classificationSchemeClassifierModel => classificationSchemeClassifierModel.Classifier), Is.True);
         }
     }
 }

@@ -73,6 +73,14 @@ namespace CommonDomainObjects
             Func<V, V>          mappedMorphism
             ) => category.All(u => Equals(mappedMorphism(map(u)), map(morphism(u))));
 
+        public static bool PreservesStructure<U1, V1, U2, V2>(
+            this IEnumerable<U1> category,
+            Func<U1, U2>         u2,
+            Func<U1, V1>         v1Map,
+            Func<U2, V2>         v2Map,
+            Func<V1, V2>         v2
+            ) => category.All(u1 => Equals(v2(v1Map(u1)), v2Map(u2(u1))));
+
         public static bool PreservesStructure<U, V>(
             this IEnumerable<U>     category,
             Func<U, IEnumerable<U>> morphism,
