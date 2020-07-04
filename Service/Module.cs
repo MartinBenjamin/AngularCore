@@ -24,6 +24,10 @@ namespace Service
                 .As<IDomainObjectService<Guid, ClassificationScheme>>()
                 .InstancePerLifetimeScope();
             builder
+                .RegisterType<GeographicRegionHierarchyService>()
+                .As<IDomainObjectService<Guid, GeographicRegionHierarchy>>()
+                .InstancePerLifetimeScope();
+            builder
                 .RegisterType<NamedService<string, GeographicRegion, NamedFilters>>()
                 .As<INamedService<string, GeographicRegion, NamedFilters>>()
                 .InstancePerLifetimeScope();

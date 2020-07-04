@@ -31,7 +31,7 @@ namespace Service
                 _session
                     .CreateCriteria<GeographicRegionHierarchyMember>()
                     .Fetch("Children")
-                    .CreateCriteria("GeographicRegionHierarchy")
+                    .CreateCriteria("Hierarchy")
                         .Add(Expression.Eq("Id", id))
                     .Future<GeographicRegionHierarchyMember>();
                 return _session
