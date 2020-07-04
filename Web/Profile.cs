@@ -15,23 +15,25 @@ namespace Web
     {
         public Profile()
         {
-            CreateMap<Range<int>                    , Model.Range<int>                    >().PreserveReferences();
-            CreateMap<ClassificationScheme          , Model.ClassificationScheme          >().PreserveReferences();
-            CreateMap<ClassificationSchemeClassifier, Model.ClassificationSchemeClassifier>().PreserveReferences();
-            CreateMap<Classifier                    , Model.Classifier                    >()
-                .Include<ExclusivityClassifier, Model.ExclusivityClassifier>().PreserveReferences();
-            CreateMap<ExclusivityClassifier         , Model.ExclusivityClassifier         >().PreserveReferences();
-            CreateMap<Currency                      , Model.Currency                      >().PreserveReferences();
-            CreateMap<GeographicRegion              , Model.GeographicRegion              >().PreserveReferences();
-            CreateMap<GeographicSubregion           , Model.GeographicalSubregion         >().PreserveReferences();
-            CreateMap<Country                       , Model.Country                       >().PreserveReferences();
-            CreateMap<Subdivision                   , Model.Subdivision                   >().PreserveReferences();
-            CreateMap<AutonomousAgent               , Model.AutonomousAgent               >().PreserveReferences();
-            CreateMap<Organisation                  , Model.Organisation                  >().PreserveReferences();
-            CreateMap<OrganisationalSubUnit         , Model.OrganisationalSubUnit         >().PreserveReferences();
-            CreateMap<Branch                        , Model.Branch                        >().PreserveReferences();
-            CreateMap<LegalEntity                   , Model.LegalEntity                   >().PreserveReferences();
-            CreateMap<Role                          , Model.Role                          >().PreserveReferences();
+            CreateMap<Range<int>                     , Model.Range<int>                     >().PreserveReferences();
+            CreateMap<ClassificationScheme           , Model.ClassificationScheme           >().PreserveReferences();
+            CreateMap<ClassificationSchemeClassifier , Model.ClassificationSchemeClassifier >().PreserveReferences();
+            CreateMap<Classifier                     , Model.Classifier                     >()
+                .Include<ExclusivityClassifier       , Model.ExclusivityClassifier          >().PreserveReferences();
+            CreateMap<ExclusivityClassifier          , Model.ExclusivityClassifier          >().PreserveReferences();
+            CreateMap<Currency                       , Model.Currency                       >().PreserveReferences();
+            CreateMap<GeographicRegion               , Model.GeographicRegion               >().PreserveReferences();
+            CreateMap<GeographicSubregion            , Model.GeographicalSubregion          >().PreserveReferences();
+            CreateMap<GeographicRegionHierarchy      , Model.GeographicRegionHierarchy      >().PreserveReferences();
+            CreateMap<GeographicRegionHierarchyMember, Model.GeographicRegionHierarchyMember>().PreserveReferences();
+            CreateMap<Country                        , Model.Country                        >().PreserveReferences();
+            CreateMap<Subdivision                    , Model.Subdivision                    >().PreserveReferences();
+            CreateMap<AutonomousAgent                , Model.AutonomousAgent                >().PreserveReferences();
+            CreateMap<Organisation                   , Model.Organisation                   >().PreserveReferences();
+            CreateMap<OrganisationalSubUnit          , Model.OrganisationalSubUnit          >().PreserveReferences();
+            CreateMap<Branch                         , Model.Branch                         >().PreserveReferences();
+            CreateMap<LegalEntity                    , Model.LegalEntity                    >().PreserveReferences();
+            CreateMap<Role                           , Model.Role                           >().PreserveReferences();
         }
     }
 }
