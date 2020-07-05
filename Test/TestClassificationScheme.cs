@@ -59,25 +59,32 @@ namespace Test
 
             var classificationScheme = new ClassificationScheme(super);
             Assert.That(classificationScheme.Classifiers.Count, Is.EqualTo(_super.Count));
-            Assert.That(super.Keys.PreservesStructure(
-                classifier                     => super[classifier].FirstOrDefault(),
-                classifier                     => classificationScheme[classifier],
-                classificationSchemeClassifier => classificationSchemeClassifier.Super), Is.True);
 
-            Assert.That(classificationScheme.Classifiers.PreservesStructure(
-                classificationSchemeClassifier => classificationSchemeClassifier.Super,
-                classificationSchemeClassifier => classificationSchemeClassifier?.Classifier,
-                classifier                     => super[classifier].FirstOrDefault()), Is.True);
+            Func<Classifier, ClassificationSchemeClassifier> map = classifier => classificationScheme[classifier];
+            Func<ClassificationSchemeClassifier, Classifier> inverseMap =
+                classificationSchemeClassifier => classificationSchemeClassifier != null ? classificationSchemeClassifier.Classifier : default;
 
-            Assert.That(super.Keys.PreservesStructure(
-                classifier                     => sub[classifier],
-                classifier                     => classificationScheme[classifier],
-                classificationSchemeClassifier => classificationSchemeClassifier.Sub), Is.True);
+            Assert.That(super.Keys.All(
+                c =>
+                    map.PreservesStructure(
+                        classifier                     => super[classifier].FirstOrDefault(),
+                        classificationSchemeClassifier => classificationSchemeClassifier.Super,
+                        c) &&
+                    map.PreservesStructure(
+                        classifier                     => sub[classifier],
+                        classificationSchemeClassifier => classificationSchemeClassifier.Sub,
+                        c)), Is.True);
 
-            Assert.That(classificationScheme.Classifiers.PreservesStructure(
-                classificationSchemeClassifier => classificationSchemeClassifier.Sub,
-                classificationSchemeClassifier => classificationSchemeClassifier?.Classifier,
-                classifier                     => sub[classifier]), Is.True);
+            Assert.That(classificationScheme.Classifiers.All(
+                csc =>
+                    inverseMap.PreservesStructure(
+                        classificationSchemeClassifier => classificationSchemeClassifier.Super,
+                        classifier                     => super[classifier].FirstOrDefault(),
+                        csc) &&
+                    inverseMap.PreservesStructure(
+                        classificationSchemeClassifier => classificationSchemeClassifier.Sub,
+                        classifier                     => sub[classifier],
+                        csc)), Is.True);
 
             Assert.That(classificationScheme.Classifiers
                 .Where(classificationSchemeClassifier => classificationSchemeClassifier.Super != null)

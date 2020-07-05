@@ -66,15 +66,15 @@ namespace Test
                         c)), Is.True);
 
             Assert.That(taxonomy.Terms.All(
-                hm =>
+                tt =>
                     inverseMap.PreservesStructure(
                         taxonomyTerm => taxonomyTerm.Broader,
                         term         => _broader[term].FirstOrDefault(),
-                        hm) &&
+                        tt) &&
                     inverseMap.PreservesStructure(
                         taxonomyTerm => taxonomyTerm.Narrower,
                         term         => narrower[term],
-                        hm)), Is.True);
+                        tt)), Is.True);
 
             Assert.That(taxonomy.Terms
                 .Where(taxonomyTerm => taxonomyTerm.Broader != null)
