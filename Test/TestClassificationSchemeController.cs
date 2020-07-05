@@ -150,12 +150,8 @@ namespace Test
                     csc => csc.Sub,
                     classificationSchemeClassifier)), Is.True);
 
-            ValueTuple<
-                Func<ClassificationSchemeClassifier, Web.Model.ClassificationSchemeClassifier>,
-                Func<Classifier, Web.Model.Classifier>> map = (cscMap, cMap);
-
             Assert.That(classificationScheme.Classifiers.All(
-                classificationSchemeClassifier => map.PreservesStructure(
+                classificationSchemeClassifier => (cscMap, cMap).PreservesStructure(
                     csc => csc.Classifier,
                     csc => csc.Classifier,
                     classificationSchemeClassifier)), Is.True);
