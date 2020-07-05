@@ -106,6 +106,8 @@ namespace Test
             }
 
             var classificationSchemeClassifierModelMap = classificationSchemeModel.Classifiers.ToDictionary(classificationSchemeClassifierModel => classificationSchemeClassifierModel.Id);
+            var classifierModelMap = classificationSchemeModel.Classifiers.Select(
+                classificationSchemeClassifierModel => classificationSchemeClassifierModel.Classifier).ToDictionary(classifierModel => classifierModel.Id);
             Assert.That(classificationScheme.Classifiers.Select(classificationSchemeClassifier => classificationSchemeClassifier.Id)
                 .ToHashSet().SetEquals(classificationSchemeClassifierModelMap.Keys));
 
@@ -120,41 +122,25 @@ namespace Test
                     classificationSchemeClassifier.Sub.Select(sub => sub.Id)), Is.True);
             }
 
-            var classifierModelMap = classificationSchemeModel.Classifiers.Select(
-                classificationSchemeClassifierModel => classificationSchemeClassifierModel.Classifier).ToDictionary(classifierModel => classifierModel.Id);
-
-            Assert.That(classificationScheme.Classifiers.PreservesStructure(
-                classificationSchemeClassifier => classificationSchemeClassifier.Super,
-                classificationSchemeClassifier => classificationSchemeClassifier != null ? classificationSchemeClassifierModelMap[classificationSchemeClassifier.Id] : null,
-                classificationSchemeClassifierModel => classificationSchemeClassifierModel.Super), Is.True);
-
-            Assert.That(classificationScheme.Classifiers.PreservesStructure(
-                classificationSchemeClassifier => classificationSchemeClassifier.Sub,
-                classificationSchemeClassifier => classificationSchemeClassifier != null ? classificationSchemeClassifierModelMap[classificationSchemeClassifier.Id] : null,
-                classificationSchemeClassifierModel => classificationSchemeClassifierModel.Sub), Is.True);
-
             Func<ClassificationSchemeClassifier, Web.Model.ClassificationSchemeClassifier> cscMap =
                 classificationSchemeClassifier => classificationSchemeClassifier != null ? classificationSchemeClassifierModelMap[classificationSchemeClassifier.Id] : null;
 
             Func<Classifier, Web.Model.Classifier> cMap = classifier => classifierModelMap[classifier.Id];
 
             Assert.That(classificationScheme.Classifiers.All(
-                classificationSchemeClassifier => cscMap.PreservesStructure(
-                    csc => csc.Super,
-                    csc => csc.Super,
-                    classificationSchemeClassifier)), Is.True);
-
-            Assert.That(classificationScheme.Classifiers.All(
-                classificationSchemeClassifier => cscMap.PreservesStructure(
-                    csc => csc.Sub,
-                    csc => csc.Sub,
-                    classificationSchemeClassifier)), Is.True);
-
-            Assert.That(classificationScheme.Classifiers.All(
-                classificationSchemeClassifier => (cscMap, cMap).PreservesStructure(
-                    csc => csc.Classifier,
-                    csc => csc.Classifier,
-                    classificationSchemeClassifier)), Is.True);
+                classificationSchemeClassifier => 
+                    cscMap.PreservesStructure(
+                        csc => csc.Super,
+                        csc => csc.Super,
+                        classificationSchemeClassifier) &&
+                    cscMap.PreservesStructure(
+                        csc => csc.Sub,
+                        csc => csc.Sub,
+                        classificationSchemeClassifier) &&
+                    (cscMap, cMap).PreservesStructure(
+                        csc => csc.Classifier,
+                        csc => csc.Classifier,
+                        classificationSchemeClassifier)), Is.True);
         }
     }
 }
