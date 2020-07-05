@@ -73,20 +73,33 @@ namespace CommonDomainObjects
             Func<V, V>          mappedMorphism
             ) => category.All(u => Equals(mappedMorphism(map(u)), map(morphism(u))));
 
-        public static bool PreservesStructure<U1, V1, U2, V2>(
-            this IEnumerable<U1> category,
-            Func<U1, U2>         u2,
-            Func<U1, V1>         v1Map,
-            Func<U2, V2>         v2Map,
-            Func<V1, V2>         v2
-            ) => category.All(u1 => Equals(v2(v1Map(u1)), v2Map(u2(u1))));
-
         public static bool PreservesStructure<U, V>(
             this IEnumerable<U>     category,
             Func<U, IEnumerable<U>> morphism,
             Func<U, V>              map,
             Func<V, IEnumerable<V>> mappedMorphism
             ) => category.All(u => mappedMorphism(map(u)).ToHashSet().SetEquals(morphism(u).Select(map)));
+
+        public static bool PreservesStructure<U, V>(
+            this Func<U, V> map,
+            Func<U, U>      uMorphism,
+            Func<V, V>      vMorphism,
+            U               u
+            ) => Equals(vMorphism(map(u)), map(uMorphism(u)));
+
+        public static bool PreservesStructure<U, V>(
+            this Func<U, V>         map,
+            Func<U, IEnumerable<U>> uMorphism,
+            Func<V, IEnumerable<V>> vMorphism,
+            U                       u
+            ) => vMorphism(map(u)).ToHashSet().SetEquals(uMorphism(u).Select(map));
+
+        public static bool PreservesStructure<U1, V1, U2, V2>(
+            this (Func<U1, V1> u1, Func<U2, V2> u2) map,
+            Func<U1, U2>                            uMorphism,
+            Func<V1, V2>                            vMorphism,
+            U1                                      u1
+            ) => Equals(vMorphism(map.u1(u1)), map.u2(uMorphism(u1)));
 
         public static IEnumerable<IList<T>> Permute<T>(
             this IEnumerable<T> enumerable

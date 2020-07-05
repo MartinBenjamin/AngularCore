@@ -133,11 +133,17 @@ namespace Test
                 classificationSchemeClassifier => classificationSchemeClassifier != null ? classificationSchemeClassifierModelMap[classificationSchemeClassifier.Id] : null,
                 classificationSchemeClassifierModel => classificationSchemeClassifierModel.Sub), Is.True);
 
-            Assert.That(classificationScheme.Classifiers.PreservesStructure(
-                classificationSchemeClassifier => classificationSchemeClassifier.Classifier,
+            ValueTuple<
+                Func<ClassificationSchemeClassifier, Web.Model.ClassificationSchemeClassifier>,
+                Func<Classifier, Web.Model.Classifier>> map = (
                 classificationSchemeClassifier => classificationSchemeClassifierModelMap[classificationSchemeClassifier.Id],
-                classifier => classifierModelMap[classifier.Id],
-                classificationSchemeClassifierModel => classificationSchemeClassifierModel.Classifier), Is.True);
+                classifier => classifierModelMap[classifier.Id]);
+
+            Assert.That(classificationScheme.Classifiers.All(
+                classificationSchemeClassifier => map.PreservesStructure(
+                    csc => csc.Classifier,
+                    csc => csc.Classifier,
+                    classificationSchemeClassifier)), Is.True);
         }
     }
 }
