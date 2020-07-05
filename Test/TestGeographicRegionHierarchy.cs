@@ -2,6 +2,7 @@
 using Iso3166._2;
 using Locations;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -67,25 +68,32 @@ namespace Test
 
             var geographicRegionHierarchy = new GeographicRegionHierarchy(parent);
             Assert.That(geographicRegionHierarchy.Members.Count, Is.EqualTo(parent.Count));
-            Assert.That(parent.Keys.PreservesStructure(
-                geographicRegion       => parent[geographicRegion].FirstOrDefault(),
-                geographicRegion       => geographicRegionHierarchy[geographicRegion],
-                geographicRegionMember => geographicRegionMember.Parent), Is.True);
 
-            Assert.That(geographicRegionHierarchy.Members.PreservesStructure(
-                geographicRegionMember => geographicRegionMember.Parent,
-                geographicRegionMember => geographicRegionMember?.Member,
-                geographicRegion       => parent[geographicRegion].FirstOrDefault()), Is.True);
+            Func<GeographicRegion, GeographicRegionHierarchyMember> map = geographicRegion => geographicRegionHierarchy[geographicRegion];
+            Func<GeographicRegionHierarchyMember, GeographicRegion> inverseMap =
+                geographicRegionHierarchyMember => geographicRegionHierarchyMember != null ? geographicRegionHierarchyMember.Member : default;
 
-            Assert.That(parent.Keys.PreservesStructure(
-                geographicRegion       => child[geographicRegion],
-                geographicRegion       => geographicRegionHierarchy[geographicRegion],
-                geographicRegionMember => geographicRegionMember.Children), Is.True);
+            Assert.That(parent.Keys.All(
+                gr =>
+                    map.PreservesStructure(
+                        geographicRegion                => parent[geographicRegion].FirstOrDefault(),
+                        geographicRegionHierarchyMember => geographicRegionHierarchyMember.Parent,
+                        gr) &&
+                    map.PreservesStructure(
+                        geographicRegion                => child[geographicRegion],
+                        geographicRegionHierarchyMember => geographicRegionHierarchyMember.Children,
+                        gr)), Is.True);
 
-            Assert.That(geographicRegionHierarchy.Members.PreservesStructure(
-                geographicRegionMember => geographicRegionMember.Children,
-                geographicRegionMember => geographicRegionMember?.Member,
-                geographicRegion        => child[geographicRegion]), Is.True);
+            Assert.That(geographicRegionHierarchy.Members.All(
+                grhm =>
+                    inverseMap.PreservesStructure(
+                        geographicRegionHierarchyMember => geographicRegionHierarchyMember.Parent,
+                        geographicRegion                => parent[geographicRegion].FirstOrDefault(),
+                        grhm) &&
+                    inverseMap.PreservesStructure(
+                        geographicRegionHierarchyMember => geographicRegionHierarchyMember.Children,
+                        geographicRegion                => child[geographicRegion],
+                        grhm)), Is.True);
 
             Assert.That(geographicRegionHierarchy.Members
                 .Where(geographicRegionMember => geographicRegionMember.Parent != null)

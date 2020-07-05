@@ -128,19 +128,19 @@ namespace Test
             Func<Classifier, Web.Model.Classifier> cMap = classifier => classifierModelMap[classifier.Id];
 
             Assert.That(classificationScheme.Classifiers.All(
-                classificationSchemeClassifier => 
+                csc => 
                     cscMap.PreservesStructure(
-                        csc => csc.Super,
-                        csc => csc.Super,
-                        classificationSchemeClassifier) &&
+                        classificationSchemeClassifier => classificationSchemeClassifier.Super,
+                        classificationSchemeClassifier => classificationSchemeClassifier.Super,
+                        csc) &&
                     cscMap.PreservesStructure(
-                        csc => csc.Sub,
-                        csc => csc.Sub,
-                        classificationSchemeClassifier) &&
+                        classificationSchemeClassifier => classificationSchemeClassifier.Sub,
+                        classificationSchemeClassifier => classificationSchemeClassifier.Sub,
+                        csc) &&
                     (cscMap, cMap).PreservesStructure(
-                        csc => csc.Classifier,
-                        csc => csc.Classifier,
-                        classificationSchemeClassifier)), Is.True);
+                        classificationSchemeClassifier => classificationSchemeClassifier.Classifier,
+                        classificationSchemeClassifier => classificationSchemeClassifier.Classifier,
+                        csc)), Is.True);
         }
     }
 }
