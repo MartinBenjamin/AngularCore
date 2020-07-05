@@ -80,7 +80,9 @@ namespace Data
                         tuple => tuple.Child,
                         tuple => tuple.Parent);
 
-                var hierarchy = new GeographicRegionHierarchy(parent);
+                var hierarchy = new GeographicRegionHierarchy(
+                    new Guid("80bd57c5-7f3a-48d6-ba89-ad9ddaf12ebb"),
+                    parent);
 
                 await session.SaveAsync(hierarchy);
                 await hierarchy.VisitAsync(async member => await session.SaveAsync(member));

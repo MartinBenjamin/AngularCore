@@ -11,8 +11,17 @@ namespace Locations
         }
 
         public GeographicRegionHierarchy(
+            Guid                                                   id,
             IDictionary<GeographicRegion, IList<GeographicRegion>> parent
             ) : base(
+                id,
+                parent)
+        {
+        }
+
+        public GeographicRegionHierarchy(
+            IDictionary<GeographicRegion, IList<GeographicRegion>> parent
+            ) : this(
                 Guid.NewGuid(),
                 parent)
         {
