@@ -1,5 +1,6 @@
 ﻿using CommonDomainObjects;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -49,25 +50,31 @@ namespace Test
             var taxonomy = new Taxonomy<char>(_broader);
             Assert.That(taxonomy.Terms.Count, Is.EqualTo(_broader.Count));
 
-            Assert.That(_broader.Keys.PreservesStructure(
-                term         => _broader[term].FirstOrDefault(),
-                term         => taxonomy[term],
-                taxonomyTerm => taxonomyTerm.Broader), Is.True);
+            Func<char, TaxonomyTerm<char>> map = term => taxonomy[term];
+            Func<TaxonomyTerm<char>, char> inverseMap =
+                taxonomyTerm => taxonomyTerm != null ? taxonomyTerm.Term : default;
 
-            Assert.That(taxonomy.Terms.PreservesStructure(
-                taxonomyTerm => taxonomyTerm.Broader,
-                taxonomyTerm => taxonomyTerm != null ? taxonomyTerm.Term : default,
-                term         => _broader[term].FirstOrDefault()), Is.True);
+            Assert.That(_broader.Keys.All(
+                c =>
+                    map.PreservesStructure(
+                        term         => _broader[term].FirstOrDefault(),
+                        taxonomyTerm => taxonomyTerm.Broader,
+                        c) &&
+                    map.PreservesStructure(
+                        term         => narrower[term],
+                        taxonomyTerm => taxonomyTerm.Narrower,
+                        c)), Is.True);
 
-            Assert.That(_broader.Keys.PreservesStructure(
-                term         => narrower[term],
-                term         => taxonomy[term],
-                taxonomyTerm => taxonomyTerm.Narrower), Is.True);
-
-            Assert.That(taxonomy.Terms.PreservesStructure(
-                taxonomyTerm => taxonomyTerm.Narrower,
-                taxonomyTerm => taxonomyTerm != null ? taxonomyTerm.Term : default,
-                term         => narrower[term]), Is.True);
+            Assert.That(taxonomy.Terms.All(
+                hm =>
+                    inverseMap.PreservesStructure(
+                        taxonomyTerm => taxonomyTerm.Broader,
+                        term         => _broader[term].FirstOrDefault(),
+                        hm) &&
+                    inverseMap.PreservesStructure(
+                        taxonomyTerm => taxonomyTerm.Narrower,
+                        term         => narrower[term],
+                        hm)), Is.True);
 
             Assert.That(taxonomy.Terms
                 .Where(taxonomyTerm => taxonomyTerm.Broader != null)
