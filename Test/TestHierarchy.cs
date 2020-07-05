@@ -1,5 +1,6 @@
 ﻿using CommonDomainObjects;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -49,25 +50,31 @@ namespace Test
             var hierarchy = new Hierarchy<char>(_parent);
             Assert.That(hierarchy.Members.Count, Is.EqualTo(_parent.Count));
 
-            Assert.That(_parent.Keys.PreservesStructure(
-                member          => _parent[member].FirstOrDefault(),
-                member          => hierarchy[member],
-                hierarchyMember => hierarchyMember.Parent), Is.True);
+            Func<char, HierarchyMember<char>> map = member => hierarchy[member];
+            Func<HierarchyMember<char>, char> inverseMap =
+                hierarchyMember => hierarchyMember != null ? hierarchyMember.Member : default;
 
-            Assert.That(hierarchy.Members.PreservesStructure(
-                hierarchyMember => hierarchyMember.Parent,
-                hierarchyMember => hierarchyMember != null ? hierarchyMember.Member : default,
-                member          => _parent[member].FirstOrDefault()), Is.True);
+            Assert.That(_parent.Keys.All(
+                c =>
+                    map.PreservesStructure(
+                        member          => _parent[member].FirstOrDefault(),
+                        hierarchyMember => hierarchyMember.Parent,
+                        c) &&
+                    map.PreservesStructure(
+                        member          => child[member],
+                        hierarchyMember => hierarchyMember.Children,
+                        c)), Is.True);
 
-            Assert.That(_parent.Keys.PreservesStructure(
-                member          => child[member],
-                member          => hierarchy[member],
-                hierarchyMember => hierarchyMember.Children), Is.True);
-
-            Assert.That(hierarchy.Members.PreservesStructure(
-                hierarchyMember => hierarchyMember.Children,
-                hierarchyMember => hierarchyMember != null ? hierarchyMember.Member : default,
-                member          => child[member]), Is.True);
+            Assert.That(hierarchy.Members.All(
+                hm =>
+                    inverseMap.PreservesStructure(
+                        hierarchyMember => hierarchyMember.Parent,
+                        member          => _parent[member].FirstOrDefault(),
+                        hm) &&
+                    inverseMap.PreservesStructure(
+                        hierarchyMember => hierarchyMember.Children,
+                        member          => child[member],
+                        hm)), Is.True);
 
             Assert.That(hierarchy.Members
                 .Where(hierarchyMember => hierarchyMember.Parent != null)
