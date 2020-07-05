@@ -95,21 +95,26 @@ namespace Test
             var subdivisions = await _container.Resolve<IEtl<IEnumerable<Subdivision>>>().ExecuteAsync();
 
             var hierarchy = await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
+
+            Func<GeographicRegion, GeographicRegionHierarchyMember> map = geographicRegion => hierarchy[geographicRegion];
+
             Assert.That(hierarchy.Members.Count, Is.GreaterThan(0));
             Assert.That(hierarchy.Members
                 .Select(hierarchyMember => hierarchyMember.Member)
                 .Where(member => !member.Is<Country>())
-                .PreservesStructure(
-                    geographicRegion => geographicRegion is GeographicSubregion geographicSubregion ? geographicSubregion.Region : null,
-                    geographicRegion => hierarchy[geographicRegion],
-                    hierarchyMember  => hierarchyMember.Parent), Is.True);
+                .All(
+                    gr => map.PreservesStructure(
+                        geographicRegion => geographicRegion is GeographicSubregion geographicSubregion ? geographicSubregion.Region : null,
+                        hierarchyMember  => hierarchyMember.Parent,
+                        gr)), Is.True);
 
             Assert.That(hierarchy.Members
                 .Select(hierarchyMember => hierarchyMember.Member)
-                .PreservesStructure(
-                    geographicRegion => geographicRegion.Subregions,
-                    geographicRegion => hierarchy[geographicRegion],
-                    hierarchyMember  => hierarchyMember.Children.Where(child => !child.Member.Is<Country>())), Is.True);
+                .All(
+                    gr => map.PreservesStructure(
+                        geographicRegion => geographicRegion.Subregions,
+                        hierarchyMember  => hierarchyMember.Children.Where(child => !child.Member.Is<Country>()),
+                        gr)), Is.True);
         }
 
         [Test]
