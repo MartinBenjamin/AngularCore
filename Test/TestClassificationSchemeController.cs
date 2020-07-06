@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using CommonDomainObjects;
 using Microsoft.AspNetCore.Mvc;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
@@ -11,11 +12,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Web;
 using Web.Controllers;
-using Web.Model;
 
 namespace Test
 {
-    using CommonDomainObjects;
 
     [TestFixture]
     public class TestClassificationSchemeController
@@ -107,8 +106,11 @@ namespace Test
                 Assert.That(classificationSchemeModel.Id, Is.EqualTo(classificationScheme.Id));
             }
 
-            var classificationSchemeClassifierMap = classificationScheme.Classifiers.ToMap(classificationSchemeModel.Classifiers);
-            var classifierMap = classificationScheme.Classifiers.Select(classificationSchemeClassifier => classificationSchemeClassifier.Classifier).ToMap(
+            var classificationSchemeClassifierMap = Web.Model.DomainObjectExtensions.ToMap(
+                classificationScheme.Classifiers,
+                classificationSchemeModel.Classifiers);
+            var classifierMap = Web.Model.DomainObjectExtensions.ToMap(
+                classificationScheme.Classifiers.Select(classificationSchemeClassifier => classificationSchemeClassifier.Classifier),
                 classificationSchemeModel.Classifiers.Select(classificationSchemeClassifier => classificationSchemeClassifier.Classifier));
 
             foreach(var classificationSchemeClassifier in classificationScheme.Classifiers)
