@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using CommonDomainObjects;
 using Microsoft.AspNetCore.Mvc;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
@@ -12,9 +11,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Web;
 using Web.Controllers;
+using Web.Model;
 
 namespace Test
 {
+    using CommonDomainObjects;
+
     [TestFixture]
     public class TestClassificationSchemeController
     {
@@ -105,39 +107,34 @@ namespace Test
                 Assert.That(classificationSchemeModel.Id, Is.EqualTo(classificationScheme.Id));
             }
 
-            var classificationSchemeClassifierModelMap = classificationSchemeModel.Classifiers.ToDictionary(classificationSchemeClassifierModel => classificationSchemeClassifierModel.Id);
-            var classifierModelMap = classificationSchemeModel.Classifiers.Select(
-                classificationSchemeClassifierModel => classificationSchemeClassifierModel.Classifier).ToDictionary(classifierModel => classifierModel.Id);
-            Assert.That(classificationScheme.Classifiers.Select(classificationSchemeClassifier => classificationSchemeClassifier.Id)
-                .ToHashSet().SetEquals(classificationSchemeClassifierModelMap.Keys));
+            var classificationSchemeClassifierMap = classificationScheme.Classifiers.ToMap(classificationSchemeModel.Classifiers);
+            var classifierMap = classificationScheme.Classifiers.Select(classificationSchemeClassifier => classificationSchemeClassifier.Classifier).ToMap(
+                classificationSchemeModel.Classifiers.Select(classificationSchemeClassifier => classificationSchemeClassifier.Classifier));
 
             foreach(var classificationSchemeClassifier in classificationScheme.Classifiers)
             {
-                var classificationSchemeClassifierModel = classificationSchemeClassifierModelMap[classificationSchemeClassifier.Id];
-                Assert.That(classificationSchemeClassifierModel.Classifier.Id, Is.EqualTo(classificationSchemeClassifier.Classifier.Id));
-                Assert.That(classificationSchemeClassifierModel.Super != null, Is.EqualTo(classificationSchemeClassifier.Super != null));
-                if(classificationSchemeClassifierModel.Super != null)
-                    Assert.That(classificationSchemeClassifierModel.Super.Id, Is.EqualTo(classificationSchemeClassifier.Super.Id));
-                Assert.That(classificationSchemeClassifierModel.Sub.Select(sub => sub.Id).ToHashSet().SetEquals(
-                    classificationSchemeClassifier.Sub.Select(sub => sub.Id)), Is.True);
+                var classificationSchemeClassifierModel = classificationSchemeClassifierMap(classificationSchemeClassifier);
+                Assert.That(
+                    classificationSchemeClassifierModel.Classifier, Is.EqualTo(classifierMap(classificationSchemeClassifier.Classifier)));
+                Assert.That(
+                    classificationSchemeClassifierModel.Super,
+                    Is.EqualTo(classificationSchemeClassifierMap(classificationSchemeClassifier.Super)));
+                Assert.That(
+                    classificationSchemeClassifierModel.Sub.Select(sub => sub).ToHashSet().SetEquals(
+                    classificationSchemeClassifier.Sub.Select(sub => classificationSchemeClassifierMap(sub))), Is.True);
             }
 
-            Func<ClassificationSchemeClassifier, Web.Model.ClassificationSchemeClassifier> cscMap =
-                classificationSchemeClassifier => classificationSchemeClassifier != null ? classificationSchemeClassifierModelMap[classificationSchemeClassifier.Id] : null;
-
-            Func<Classifier, Web.Model.Classifier> cMap = classifier => classifierModelMap[classifier.Id];
-
             Assert.That(classificationScheme.Classifiers.All(
-                csc => 
-                    cscMap.PreservesStructure(
+                csc =>
+                    classificationSchemeClassifierMap.PreservesStructure(
                         classificationSchemeClassifier => classificationSchemeClassifier.Super,
                         classificationSchemeClassifier => classificationSchemeClassifier.Super,
                         csc) &&
-                    cscMap.PreservesStructure(
+                    classificationSchemeClassifierMap.PreservesStructure(
                         classificationSchemeClassifier => classificationSchemeClassifier.Sub,
                         classificationSchemeClassifier => classificationSchemeClassifier.Sub,
                         csc) &&
-                    (cscMap, cMap).PreservesStructure(
+                    (classificationSchemeClassifierMap, classifierMap).PreservesStructure(
                         classificationSchemeClassifier => classificationSchemeClassifier.Classifier,
                         classificationSchemeClassifier => classificationSchemeClassifier.Classifier,
                         csc)), Is.True);
