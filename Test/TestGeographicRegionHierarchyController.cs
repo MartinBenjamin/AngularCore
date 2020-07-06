@@ -16,6 +16,7 @@ using Web.Controllers;
 
 namespace Test
 {
+
     [TestFixture]
     class TestGeographicRegionHierarchyController
     {
@@ -109,19 +110,41 @@ namespace Test
                 Assert.That(geographicRegionHierarchyModel.Id, Is.EqualTo(geographicRegionHierarchy.Id));
             }
 
-            var map = geographicRegionHierarchy.Members.ToDictionary(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Id);
-            Assert.That(geographicRegionHierarchyModel.Members.Select(geographicRegionHierarchyMemberModel => geographicRegionHierarchyMemberModel.Id)
-                .ToHashSet().SetEquals(map.Keys));
+            var geographicRegionHierarchyMemberMap = (
+                from domainObject in geographicRegionHierarchy.Members
+                join domainObjectModel in geographicRegionHierarchyModel.Members
+                on domainObject.Id equals domainObjectModel.Id
+                select
+                (
+                    domainObject,
+                    domainObjectModel
+                )).ToDictionary(
+                    tuple => tuple.domainObject,
+                    tuple => tuple.domainObjectModel);
 
-            foreach(var geographicRegionHierarchyMemberModel in geographicRegionHierarchyModel.Members)
+            var geographicRegionMap = (
+                from domainObject in geographicRegionHierarchy.Members.Select(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Member)
+                join domainObjectModel in geographicRegionHierarchyModel.Members.Select(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Member)
+                on domainObject.Id equals domainObjectModel.Id
+                select
+                (
+                    domainObject,
+                    domainObjectModel
+                )).ToDictionary(
+                    tuple => tuple.domainObject,
+                    tuple => tuple.domainObjectModel);
+            
+            foreach(var geographicRegionHierarchyMember in geographicRegionHierarchy.Members)
             {
-                var classificationSchemeClassifier = map[geographicRegionHierarchyMemberModel.Id];
-                Assert.That(geographicRegionHierarchyMemberModel.Member.Id, Is.EqualTo(classificationSchemeClassifier.Member.Id));
-                Assert.That(geographicRegionHierarchyMemberModel.Parent != null, Is.EqualTo(classificationSchemeClassifier.Parent != null));
+                var geographicRegionHierarchyMemberModel = geographicRegionHierarchyMemberMap[geographicRegionHierarchyMember];
+                Assert.That(
+                    geographicRegionHierarchyMemberModel.Member, Is.EqualTo(geographicRegionMap[geographicRegionHierarchyMember.Member]));
+                Assert.That(geographicRegionHierarchyMemberModel.Parent != null, Is.EqualTo(geographicRegionHierarchyMember.Parent != null));
                 if(geographicRegionHierarchyMemberModel.Parent != null)
-                    Assert.That(geographicRegionHierarchyMemberModel.Parent.Id, Is.EqualTo(classificationSchemeClassifier.Parent.Id));
-                Assert.That(geographicRegionHierarchyMemberModel.Children.Select(child => child.Id).ToHashSet().SetEquals(
-                    classificationSchemeClassifier.Children.Select(child => child.Id)), Is.True);
+                    Assert.That(geographicRegionHierarchyMemberModel.Parent,
+                    Is.EqualTo(geographicRegionHierarchyMemberMap[geographicRegionHierarchyMember.Parent]));
+                Assert.That(geographicRegionHierarchyMemberModel.Children.ToHashSet().SetEquals(
+                    geographicRegionHierarchyMember.Children.Select(child => geographicRegionHierarchyMemberMap[child])), Is.True);
             }
         }
     }

@@ -120,7 +120,7 @@ namespace Test
                     classificationSchemeClassifierModel.Super,
                     Is.EqualTo(classificationSchemeClassifierMap(classificationSchemeClassifier.Super)));
                 Assert.That(
-                    classificationSchemeClassifierModel.Sub.Select(sub => sub).ToHashSet().SetEquals(
+                    classificationSchemeClassifierModel.Sub.ToHashSet().SetEquals(
                     classificationSchemeClassifier.Sub.Select(sub => classificationSchemeClassifierMap(sub))), Is.True);
             }
 
