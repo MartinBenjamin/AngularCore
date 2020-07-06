@@ -64,9 +64,12 @@ namespace Test
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
-                session.CreateQuery("delete ClassificationSchemeClassifier").ExecuteUpdate();
-                session.CreateQuery("delete CommonDomainObjects.Classifier").ExecuteUpdate();
-                session.CreateQuery("delete ClassificationScheme").ExecuteUpdate();
+                new[]
+                {
+                    "delete ClassificationSchemeClassifier",
+                    "delete Classifier",
+                    "delete ClassificationScheme"
+                }.ForEach(update => session.CreateQuery(update).ExecuteUpdate());
             }
         }
 
