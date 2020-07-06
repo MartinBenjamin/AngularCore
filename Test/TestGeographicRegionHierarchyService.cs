@@ -58,9 +58,12 @@ namespace Test
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
-                session.CreateQuery("delete GeographicRegionHierarchyMember").ExecuteUpdate();
-                session.CreateQuery("delete GeographicRegion"               ).ExecuteUpdate();
-                session.CreateQuery("delete GeographicRegionHierarchy"      ).ExecuteUpdate();
+                new[]
+                {
+                    "delete GeographicRegionHierarchyMember",
+                    "delete GeographicRegion",
+                    "delete GeographicRegionHierarchy"
+                }.ForEach(update => session.CreateQuery(update).ExecuteUpdate());
             }
         }
 
