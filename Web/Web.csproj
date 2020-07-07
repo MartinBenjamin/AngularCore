@@ -43,6 +43,9 @@
     <None Remove="ClientApp\src\app\DealTrackerLayout.Module.ts" />
     <None Remove="ClientApp\src\app\DealTrackerLayout.ts" />
     <None Remove="ClientApp\src\app\Components\TestTab.ts" />
+    <None Remove="ClientApp\src\app\GeographicRegionHierarchy.ts" />
+    <None Remove="ClientApp\src\app\GeographicRegionHierarchyProvider.ts" />
+    <None Remove="ClientApp\src\app\Hierarchy.ts" />
     <None Remove="ClientApp\src\app\Home\Aircraft.ts" />
     <None Remove="ClientApp\src\app\Home\Globe.ts" />
     <None Remove="ClientApp\src\app\IDomainObjectService.ts" />
@@ -98,6 +101,9 @@
     <TypeScriptCompile Include="ClientApp\src\app\DealTrackerLayout.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\DealTrackerLayout.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Components\TestTab.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\GeographicRegionHierarchy.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\GeographicRegionHierarchyProvider.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Hierarchy.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Home\Aircraft.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Home\Globe.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\IDomainObjectService.ts" />

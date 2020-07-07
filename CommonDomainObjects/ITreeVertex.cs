@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace CommonDomainObjects
 {
-    public interface ITreeVertex<TTreeVertex>
+    public interface ITreeVertex<out TTreeVertex>
         where TTreeVertex: ITreeVertex<TTreeVertex>
     {
         TTreeVertex                Parent   { get; }

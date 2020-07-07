@@ -4,8 +4,8 @@ export interface Country extends GeographicRegion
 {
     Alpha3Code : string;
     Alpha4Code : string;
-    NumericCode: string;
-    ShortName  : number;  
+    NumericCode: number;
+    ShortName  : string;  
     Alpha2Code : string;
 }
 
