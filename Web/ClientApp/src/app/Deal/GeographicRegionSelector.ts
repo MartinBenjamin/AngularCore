@@ -11,8 +11,34 @@ import { GeographicRegion } from '../Locations';
     Title="Country Selector"
     [Open]="Open"
     class="NoBorder">
-    <dt-dialog-body><table class="GridLayout">
-      </table>
+    <dt-dialog-body
+        ><table class="GeographicRegionSelector">
+            <tbody *ngIf="Regions; else Loading">
+                <tr>
+                    <td class="RowHeading">Region:</td>
+                    <td>
+                        <select
+                            >
+                            <option [ngValue]="null"></option>
+                            <optgroup
+                                *ngFor="let region of Regions"
+                                [label]="region.Member.Name">
+                                <option
+                                    *ngFor="let child of region.Children"
+                                    [ngValue]="child">
+                                    {{child.Member.Name}}
+                                </option>
+                            </optgroup>
+                        </select>
+                    </td>
+                <tr>
+            </tbody>
+            <ng-template #Loading>
+                <tr>
+                    <td></td>
+                </tr>
+            </ng-template>
+        </table>
     </dt-dialog-body>
     <dt-dialog-buttons><input type="button" value="Cancel" (click)="Cancel()" class="Button" /></dt-dialog-buttons>
 </dt-dialog>`
@@ -38,7 +64,7 @@ export class GeographicRegionSelector implements OnDestroy
                 {
                     this._geographicRegionHierarchy = result;
                     this._regions = result.Members.filter(
-                        geographicRegionHierarchyMember => (<any>geographicRegionHierarchyMember.Member).$type == 'Web.Model.ExclusivityClassifier, Web');
+                        geographicRegionHierarchyMember => geographicRegionHierarchyMember.Parent == null)[0].Children;
                 }));
     }
 
