@@ -6,7 +6,7 @@ export interface Hierarchy<
     THierarchyMember extends HierarchyMember<TId, THierarchy, THierarchyMember, TMember>,
     TMember> extends DomainObject<TId>
 {
-    Members: TMember[];
+    Members: THierarchyMember[];
 }
 
 export interface HierarchyMember<

@@ -1,10 +1,8 @@
 ﻿namespace Web.Model
 {
-    public class Subdivision: GeographicalSubregion
+    public class Subdivision: GeographicSubregion
     {
-        public string Code              { get; set; }
-        public string Country           { get; set; }
-        public string ParentSubdivision { get; set; }
-        public string Category          { get; set; }
+        public string Code     { get; set; }
+        public string Category { get; set; }
     }
 }

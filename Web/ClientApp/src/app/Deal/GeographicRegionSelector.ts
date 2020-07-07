@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { GeographicRegionHierarchy } from '../GeographicRegionHierarchy';
+import { GeographicRegionHierarchy, GeographicRegionHierarchyMember } from '../GeographicRegionHierarchy';
 import { GeographicRegionHierarchyToken } from '../GeographicRegionHierarchyProvider';
 import { GeographicRegion } from '../Locations';
 
@@ -11,8 +11,7 @@ import { GeographicRegion } from '../Locations';
     Title="Country Selector"
     [Open]="Open"
     class="NoBorder">
-    <dt-dialog-body
-        ><table class="GridLayout">
+    <dt-dialog-body><table class="GridLayout">
       </table>
     </dt-dialog-body>
     <dt-dialog-buttons><input type="button" value="Cancel" (click)="Cancel()" class="Button" /></dt-dialog-buttons>
@@ -22,7 +21,11 @@ export class GeographicRegionSelector implements OnDestroy
 {
     private _subscriptions            : Subscription[] = [];
     private _geographicRegionHierarchy: GeographicRegionHierarchy;
-    private _select                   : (geographicRegion: GeographicRegion) => void
+    private _regions                  : GeographicRegionHierarchyMember[];
+    private _countries                : GeographicRegion[];
+    private _subdivisions             : GeographicRegion[];
+    private _select: (geographicRegion: GeographicRegion) => void
+
 
     constructor(
         @Inject(GeographicRegionHierarchyToken)
@@ -34,6 +37,8 @@ export class GeographicRegionSelector implements OnDestroy
                 result =>
                 {
                     this._geographicRegionHierarchy = result;
+                    this._regions = result.Members.filter(
+                        geographicRegionHierarchyMember => (<any>geographicRegionHierarchyMember.Member).$type == 'Web.Model.ExclusivityClassifier, Web');
                 }));
     }
 
@@ -52,6 +57,11 @@ export class GeographicRegionSelector implements OnDestroy
         ): void
     {
         this._select = select;
+    }
+
+    get Regions(): GeographicRegionHierarchyMember[]
+    {
+        return this._regions;
     }
 
     SelectX(

@@ -22,8 +22,11 @@ namespace Web
                 .Include<ExclusivityClassifier       , Model.ExclusivityClassifier          >().PreserveReferences();
             CreateMap<ExclusivityClassifier          , Model.ExclusivityClassifier          >().PreserveReferences();
             CreateMap<Currency                       , Model.Currency                       >().PreserveReferences();
-            CreateMap<GeographicRegion               , Model.GeographicRegion               >().PreserveReferences();
-            CreateMap<GeographicSubregion            , Model.GeographicalSubregion          >().PreserveReferences();
+            CreateMap<GeographicRegion               , Model.GeographicRegion               >()
+                .Include<Country                     , Model.Country                        >()
+                .Include<GeographicSubregion         , Model.GeographicSubregion            >().PreserveReferences();
+            CreateMap<GeographicSubregion            , Model.GeographicSubregion            >()
+                .Include<Subdivision                 , Model.Subdivision                    >().PreserveReferences();
             CreateMap<GeographicRegionHierarchy      , Model.GeographicRegionHierarchy      >().PreserveReferences();
             CreateMap<GeographicRegionHierarchyMember, Model.GeographicRegionHierarchyMember>().PreserveReferences();
             CreateMap<Country                        , Model.Country                        >().PreserveReferences();
