@@ -115,7 +115,7 @@ namespace Test
             var classifierMap = Web.Model.DomainObjectExtensions.ToMap(
                 classificationScheme.Classifiers.Select(classificationSchemeClassifier => classificationSchemeClassifier.Classifier),
                 classificationSchemeModel.Classifiers.Select(classificationSchemeClassifier => classificationSchemeClassifier.Classifier));
-
+     
             foreach(var classificationSchemeClassifier in classificationScheme.Classifiers)
             {
                 var classificationSchemeClassifierModel = classificationSchemeClassifierMap(classificationSchemeClassifier);
@@ -139,10 +139,7 @@ namespace Test
                         classificationSchemeClassifier => classificationSchemeClassifier.Sub,
                         classificationSchemeClassifier => classificationSchemeClassifier.Sub,
                         csc) &&
-                    (classificationSchemeClassifierMap, classifierMap).PreservesStructure(
-                        classificationSchemeClassifier => classificationSchemeClassifier.Classifier,
-                        classificationSchemeClassifier => classificationSchemeClassifier.Classifier,
-                        csc)), Is.True);
+                        classificationSchemeClassifierMap(csc).Classifier == classifierMap(csc.Classifier)), Is.True);
         }
     }
 }
