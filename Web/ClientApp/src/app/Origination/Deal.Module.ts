@@ -8,6 +8,7 @@ import { TabbedViewModule } from '../Components/TabbedView';
 import { Borrowers } from '../Deal/Borrowers';
 import { Sponsors } from '../Deal/Sponsors';
 import { LegalEntityFinder, LegalEntityFinderButtons } from '../LegalEntityFinder';
+import { DealGeographicRegion } from './DealGeographicRegion';
 import { Exclusivity } from './Exclusivity';
 import { Facilities } from './Facilities';
 import { KeyCounterparties } from './KeyCounterparties';
@@ -21,6 +22,7 @@ import { TransactionDetails } from './TransactionDetails';
         declarations:
             [
                 Borrowers,
+                DealGeographicRegion,
                 Exclusivity,
                 Facilities,
                 KeyCounterparties,

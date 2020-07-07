@@ -1,15 +1,10 @@
-import { Component, Directive, Inject } from '@angular/core';
-import { GeographicRegionHierarchyServiceToken } from '../GeographicRegionHierarchyProvider';
-import { IDomainObjectService } from '../IDomainObjectService';
+import { Component, Inject, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Guid } from '../CommonDomainObjects';
 import { GeographicRegionHierarchy } from '../GeographicRegionHierarchy';
+import { GeographicRegionHierarchyServiceToken } from '../GeographicRegionHierarchyProvider';
+import { IDomainObjectService } from '../IDomainObjectService';
 import { GeographicRegion } from '../Locations';
-//import { Guid } from './CommonDomainObjects';
-//import { INamedService, NamedFilters } from './INamedService';
-//import { LegalEntity } from './LegalEntities';
-//import { LegalEntityServiceToken } from './LegalEntityServiceProvider';
-//import { NamedFinder } from './NamedFinder';
-
 
 @Component(
     {
@@ -24,15 +19,34 @@ import { GeographicRegion } from '../Locations';
     <dt-dialog-buttons><input type="button" value="Cancel" (click)="Cancel()" class="Button" /></dt-dialog-buttons>
 </dt-dialog>`
     })
-export class GeographicRegionSelector
+export class GeographicRegionSelector implements OnDestroy
 {
-    private _select: (geographicRegion: GeographicRegion) => void
+    private _subscriptions            : Subscription[] = [];
+    private _geographicRegionHierarchy: GeographicRegionHierarchy;
+    private _select                   : (geographicRegion: GeographicRegion) => void
 
     constructor(
         @Inject(GeographicRegionHierarchyServiceToken)
         geographicRegionHierarchyService: IDomainObjectService<Guid, GeographicRegionHierarchy>
         )
     {
+        geographicRegionHierarchyService
+            .Get('')
+            .subscribe(
+                geographicRegionHierarchy =>
+                {
+                    this._geographicRegionHierarchy = geographicRegionHierarchy;
+                    //this._classificationSchemeClassifiers = classificationScheme.Classifiers.filter(
+                    //    classificationSchemeClassifier => classificationSchemeClassifier.Super == null);
+                    //classificationScheme.Classifiers.forEach(
+                    //    classificationSchemeClassifier => this._map.set(
+                    //        classificationSchemeClassifier.Classifier,
+                    //        classificationSchemeClassifier));
+                    //this._yes = this._classificationSchemeClassifiers.filter(
+                    //    classificationSchemeClassifier =>
+                    //        classificationSchemeClassifier.Classifier.Id == ExclusivityClassifierIdentifier.Yes)[0];
+                    this.ComputeExclusive();
+                });
     }
 
     get Open(): boolean

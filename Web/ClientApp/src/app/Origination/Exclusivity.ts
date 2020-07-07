@@ -27,7 +27,7 @@ export class Exclusivity implements OnDestroy
         @Inject(ClassificationSchemeServiceToken)
         classificationSchemeService: IDomainObjectService<Guid, ClassificationScheme>,
         dealProvider: DealProvider
-    )
+        )
     {
         classificationSchemeService
             .Get(ClassificationSchemeIdentifier.Exclusivity)
