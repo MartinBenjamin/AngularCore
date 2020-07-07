@@ -13,6 +13,11 @@ import { GeographicRegion } from '../Locations';
     {
         border-collapse: collapse;
     }
+
+    table.GeographicRegionSelector tr.Subsequent td
+    {
+        padding-top: 1px;
+    }
 </style>
 <dt-dialog
     Title="Country Selector"
@@ -20,21 +25,37 @@ import { GeographicRegion } from '../Locations';
     class="NoBorder">
     <dt-dialog-body
         ><table class="GeographicRegionSelector">
-            <tr *ngIf="Regions; else Loading">
+            <tr *ngIf="Regions">
                 <td class="RowHeading">Region:</td>
                 <td>
                     <select
+                        [(ngModel)]="SubRegion"
                         >
                         <option [ngValue]="null"></option>
                         <optgroup
                             *ngFor="let region of Regions"
                             [label]="region.Member.Name">
                             <option
-                                *ngFor="let child of region.Children"
-                                [ngValue]="child">
-                                {{child.Member.Name}}
+                                *ngFor="let subRegion of region.Children"
+                                [ngValue]="subRegion">
+                                {{subRegion.Member.Name}}
                             </option>
                         </optgroup>
+                    </select>
+                </td>
+            <tr>
+            <tr *ngIf="SubRegion" class="Subsequent">
+                <td class="RowHeading">Country:</td>
+                <td>
+                    <select
+                        [(ngModel)]="Country"
+                        >
+                        <option [ngValue]="null"></option>
+                        <option
+                            *ngFor="let country of SubRegion.Children"
+                            [ngValue]="country">
+                            {{country.Member.Name}}
+                        </option>
                     </select>
                 </td>
             <tr>
@@ -53,6 +74,8 @@ export class GeographicRegionSelector implements OnDestroy
     private _subscriptions            : Subscription[] = [];
     private _geographicRegionHierarchy: GeographicRegionHierarchy;
     private _regions                  : GeographicRegionHierarchyMember[];
+    private _subRegion                : GeographicRegionHierarchyMember;
+    private _country                  : GeographicRegionHierarchyMember;
     private _countries                : GeographicRegion[];
     private _subdivisions             : GeographicRegion[];
     private _select: (geographicRegion: GeographicRegion) => void
@@ -79,6 +102,35 @@ export class GeographicRegionSelector implements OnDestroy
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
+    get Regions(): GeographicRegionHierarchyMember[]
+    {
+        return this._regions;
+    }
+
+    get SubRegion(): GeographicRegionHierarchyMember
+    {
+        return this._subRegion;
+    }
+
+    set SubRegion(
+        subRegion: GeographicRegionHierarchyMember
+        )
+    {
+        this._subRegion = subRegion;
+    }
+
+    get Country(): GeographicRegionHierarchyMember
+    {
+        return this._country;
+    }
+
+    set Country(
+        country: GeographicRegionHierarchyMember
+        )
+    {
+        this._country = country;
+    }
+
     get Open(): boolean
     {
         return this._select != null;
@@ -89,11 +141,6 @@ export class GeographicRegionSelector implements OnDestroy
         ): void
     {
         this._select = select;
-    }
-
-    get Regions(): GeographicRegionHierarchyMember[]
-    {
-        return this._regions;
     }
 
     SelectX(
