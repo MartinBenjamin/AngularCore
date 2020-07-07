@@ -6,6 +6,7 @@ import { DialogModule } from '../Components/Dialog';
 import { NumberModule } from '../Components/NumberModule';
 import { TabbedViewModule } from '../Components/TabbedView';
 import { Borrowers } from '../Deal/Borrowers';
+import { GeographicRegionSelector } from '../Deal/GeographicRegionSelector';
 import { Sponsors } from '../Deal/Sponsors';
 import { LegalEntityFinder, LegalEntityFinderButtons } from '../LegalEntityFinder';
 import { DealGeographicRegion } from './DealGeographicRegion';
@@ -25,6 +26,7 @@ import { TransactionDetails } from './TransactionDetails';
                 DealGeographicRegion,
                 Exclusivity,
                 Facilities,
+                GeographicRegionSelector,
                 KeyCounterparties,
                 KeyDealData,
                 LegalEntityFinder,

@@ -59,14 +59,14 @@ export class GeographicRegionSelector implements OnDestroy
         return this._select != null;
     }
 
-    Find(
+    Select(
         select: (geographicRegion: GeographicRegion) => void
         ): void
     {
         this._select = select;
     }
 
-    Select(
+    SelectX(
         geographicRegion: GeographicRegion
         ): void
     {
