@@ -1,9 +1,7 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { Guid } from '../CommonDomainObjects';
+import { Observable, Subscription } from 'rxjs';
 import { GeographicRegionHierarchy } from '../GeographicRegionHierarchy';
-import { GeographicRegionHierarchyServiceToken } from '../GeographicRegionHierarchyProvider';
-import { IDomainObjectService } from '../IDomainObjectService';
+import { GeographicRegionHierarchyToken } from '../GeographicRegionHierarchyProvider';
 import { GeographicRegion } from '../Locations';
 
 @Component(
@@ -26,27 +24,16 @@ export class GeographicRegionSelector implements OnDestroy
     private _select                   : (geographicRegion: GeographicRegion) => void
 
     constructor(
-        @Inject(GeographicRegionHierarchyServiceToken)
-        geographicRegionHierarchyService: IDomainObjectService<Guid, GeographicRegionHierarchy>
+        @Inject(GeographicRegionHierarchyToken)
+        geographicRegionHierarchy: Observable<GeographicRegionHierarchy>
         )
     {
-        geographicRegionHierarchyService
-            .Get('')
-            .subscribe(
-                geographicRegionHierarchy =>
+        this._subscriptions.push(
+            geographicRegionHierarchy.subscribe(
+                result =>
                 {
-                    this._geographicRegionHierarchy = geographicRegionHierarchy;
-                    //this._classificationSchemeClassifiers = classificationScheme.Classifiers.filter(
-                    //    classificationSchemeClassifier => classificationSchemeClassifier.Super == null);
-                    //classificationScheme.Classifiers.forEach(
-                    //    classificationSchemeClassifier => this._map.set(
-                    //        classificationSchemeClassifier.Classifier,
-                    //        classificationSchemeClassifier));
-                    //this._yes = this._classificationSchemeClassifiers.filter(
-                    //    classificationSchemeClassifier =>
-                    //        classificationSchemeClassifier.Classifier.Id == ExclusivityClassifierIdentifier.Yes)[0];
-                    //this.ComputeExclusive();
-                });
+                    this._geographicRegionHierarchy = result;
+                }));
     }
 
     ngOnDestroy(): void
