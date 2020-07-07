@@ -109,11 +109,9 @@ namespace Test
                 Assert.That(classificationSchemeModel.Id, Is.EqualTo(classificationScheme.Id));
             }
 
-            var classificationSchemeClassifierMap = Web.Model.DomainObjectExtensions.ToMap(
-                classificationScheme.Classifiers,
+            var classificationSchemeClassifierMap = classificationScheme.Classifiers.ToMap(
                 classificationSchemeModel.Classifiers);
-            var classifierMap = Web.Model.DomainObjectExtensions.ToMap(
-                classificationScheme.Classifiers.Select(classificationSchemeClassifier => classificationSchemeClassifier.Classifier),
+            var classifierMap = classificationScheme.Classifiers.Select(classificationSchemeClassifier => classificationSchemeClassifier.Classifier).ToMap(
                 classificationSchemeModel.Classifiers.Select(classificationSchemeClassifier => classificationSchemeClassifier.Classifier));
      
             foreach(var classificationSchemeClassifier in classificationScheme.Classifiers)
