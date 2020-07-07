@@ -1,10 +1,9 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { Guid } from '../CommonDomainObjects';
+import { Observable, Subscription } from 'rxjs';
 import { DealProvider } from '../DealProvider';
 import { Deal } from '../Deals';
-import { GeographicRegionHierarchyServiceToken } from '../GeographicRegionHierarchyProvider';
-import { IDomainObjectService } from '../IDomainObjectService';
+import { GeographicRegionHierarchy } from '../GeographicRegionHierarchy';
+import { GeographicRegionHierarchyToken } from '../GeographicRegionHierarchyProvider';
 
 @Component(
     {
@@ -13,15 +12,23 @@ import { IDomainObjectService } from '../IDomainObjectService';
     })
 export class DealGeographicRegion implements OnDestroy
 {
-    private _subscriptions: Subscription[] = [];
-    private _deal         : Deal;
+    private _subscriptions            : Subscription[] = [];
+    private _geographicRegionHierarchy: GeographicRegionHierarchy;
+    private _deal                     : Deal;
 
     constructor(
-        @Inject(GeographicRegionHierarchyServiceToken)
-        geographicRegionHierarchyService: IDomainObjectService<Guid, GeographicRegionHierarchy>
+        @Inject(GeographicRegionHierarchyToken)
+        geographicRegionHierarchy: Observable<GeographicRegionHierarchy>,
         dealProvider: DealProvider
         )
     {
+        this._subscriptions.push(
+            geographicRegionHierarchy.subscribe(
+                result =>
+                {
+                    this._geographicRegionHierarchy = result;
+                }));
+
         this._subscriptions.push(dealProvider.subscribe(deal => this._deal = deal));
     }
 

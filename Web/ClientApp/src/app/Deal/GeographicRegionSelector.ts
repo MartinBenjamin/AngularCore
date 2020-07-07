@@ -45,8 +45,13 @@ export class GeographicRegionSelector implements OnDestroy
                     //this._yes = this._classificationSchemeClassifiers.filter(
                     //    classificationSchemeClassifier =>
                     //        classificationSchemeClassifier.Classifier.Id == ExclusivityClassifierIdentifier.Yes)[0];
-                    this.ComputeExclusive();
+                    //this.ComputeExclusive();
                 });
+    }
+
+    ngOnDestroy(): void
+    {
+        this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
     get Open(): boolean
