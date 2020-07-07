@@ -7,7 +7,14 @@ import { GeographicRegion } from '../Locations';
 @Component(
     {
         selector: 'geographic-region-selector',
-        template: `<dt-dialog
+        template: `
+<style type="text/css">
+    table.GeographicRegionSelector
+    {
+        border-collapse: collapse;
+    }
+</style>
+<dt-dialog
     Title="Country Selector"
     [Open]="Open"
     class="NoBorder">
@@ -63,8 +70,9 @@ export class GeographicRegionSelector implements OnDestroy
                 result =>
                 {
                     this._geographicRegionHierarchy = result;
-                    this._regions = result.Members.filter(
-                        geographicRegionHierarchyMember => geographicRegionHierarchyMember.Parent == null)[0].Children;
+                    this._regions = result.Members
+                        .filter(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Parent == null)[0].Children
+                        .filter(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Children.length);
                 }));
     }
 
