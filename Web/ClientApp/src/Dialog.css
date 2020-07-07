@@ -37,3 +37,8 @@ div.DialogBackground
     background-color: #fff;
     opacity: 0.2;
 }
+
+dt-dialog.NoBorder table.Dialog td.Body
+{
+    border: none;
+}

@@ -9,7 +9,8 @@ import { GeographicRegion } from '../Locations';
         selector: 'geographic-region-selector',
         template: `<dt-dialog
     Title="Country Selector"
-    [Open]="Open">
+    [Open]="Open"
+    class="NoBorder">
     <dt-dialog-body
         ><table class="GridLayout">
       </table>
