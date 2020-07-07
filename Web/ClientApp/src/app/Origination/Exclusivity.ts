@@ -14,12 +14,14 @@ import { IDomainObjectService } from '../IDomainObjectService';
     })
 export class Exclusivity implements OnDestroy
 {
-    private _subscriptions: Subscription[] = [];
+    private _subscriptions                  : Subscription[] = [];
     private _classificationScheme           : ClassificationScheme;
     private _classificationSchemeClassifiers: ClassificationSchemeClassifier[];
     private _deal                           : Deal;
     private _classifier                     : Classifier;
     private _exclusive                      : boolean;
+    private _map                            = new Map<Classifier, ClassificationSchemeClassifier>();
+    private _yes                            : ClassificationSchemeClassifier;
 
     constructor(
         @Inject(ClassificationSchemeServiceToken)
@@ -35,6 +37,13 @@ export class Exclusivity implements OnDestroy
                     this._classificationScheme = classificationScheme;
                     this._classificationSchemeClassifiers = classificationScheme.Classifiers.filter(
                         classificationSchemeClassifier => classificationSchemeClassifier.Super == null);
+                    classificationScheme.Classifiers.forEach(
+                        classificationSchemeClassifier => this._map.set(
+                            classificationSchemeClassifier.Classifier,
+                            classificationSchemeClassifier));
+                    this._yes = this._classificationSchemeClassifiers.filter(
+                        classificationSchemeClassifier =>
+                            classificationSchemeClassifier.Classifier.Id == ExclusivityClassifierIdentifier.Yes)[0];
                     this.ComputeExclusive();
                 });
 
@@ -104,12 +113,7 @@ export class Exclusivity implements OnDestroy
             return;
         }
 
-        let yes = this._classificationSchemeClassifiers.filter(
-            classificationSchemeClassifier => classificationSchemeClassifier.Classifier.Id == ExclusivityClassifierIdentifier.Yes)[0];
-
-        let current = this._classificationScheme.Classifiers.filter(
-            classificationSchemeClassifier => classificationSchemeClassifier.Classifier.Id == this._classifier.Id)[0];
-
-        this._exclusive = yes.Interval.Start <= current.Interval.Start && current.Interval.End <= yes.Interval.End;
+        let current = this._map.get(this._classifier);
+        this._exclusive = this._yes.Interval.Start <= current.Interval.Start && current.Interval.End <= this._yes.Interval.End;
     }
 }
