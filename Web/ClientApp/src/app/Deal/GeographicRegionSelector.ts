@@ -20,26 +20,24 @@ import { GeographicRegion } from '../Locations';
     class="NoBorder">
     <dt-dialog-body
         ><table class="GeographicRegionSelector">
-            <tbody *ngIf="Regions; else Loading">
-                <tr>
-                    <td class="RowHeading">Region:</td>
-                    <td>
-                        <select
-                            >
-                            <option [ngValue]="null"></option>
-                            <optgroup
-                                *ngFor="let region of Regions"
-                                [label]="region.Member.Name">
-                                <option
-                                    *ngFor="let child of region.Children"
-                                    [ngValue]="child">
-                                    {{child.Member.Name}}
-                                </option>
-                            </optgroup>
-                        </select>
-                    </td>
-                <tr>
-            </tbody>
+            <tr *ngIf="Regions; else Loading">
+                <td class="RowHeading">Region:</td>
+                <td>
+                    <select
+                        >
+                        <option [ngValue]="null"></option>
+                        <optgroup
+                            *ngFor="let region of Regions"
+                            [label]="region.Member.Name">
+                            <option
+                                *ngFor="let child of region.Children"
+                                [ngValue]="child">
+                                {{child.Member.Name}}
+                            </option>
+                        </optgroup>
+                    </select>
+                </td>
+            <tr>
             <ng-template #Loading>
                 <tr>
                     <td></td>
