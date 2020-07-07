@@ -8,6 +8,7 @@ import { Gallery } from './Components/Gallery';
 import { GalleryModule } from './Components/GalleryModule';
 import { CurrenciesProvider, CurrencyServiceProvider, CurrencyServiceUrlToken } from './CurrencyServiceProvider';
 import { DealTracker } from './DealTracker';
+import { GeographicRegionHierarchyServiceProvider, GeographicRegionHierarchyServiceUrlToken } from './GeographicRegionHierarchyProvider';
 import { LegalEntityServiceProvider, LegalEntityServiceUrlToken } from './LegalEntityServiceProvider';
 import { RoleServiceProvider, RoleServiceUrlToken, RolesProvider } from './RoleServiceProvider';
 
@@ -72,7 +73,12 @@ import { RoleServiceProvider, RoleServiceUrlToken, RolesProvider } from './RoleS
                 provide: ClassificationSchemeServiceUrlToken,
                 useValue: '/api/classificationschemes'
             },
-            ClassificationSchemeServiceProvider
+            ClassificationSchemeServiceProvider,
+            {
+                provide: GeographicRegionHierarchyServiceUrlToken,
+                useValue: '/api/geographicregionhierarchies'
+            },
+            GeographicRegionHierarchyServiceProvider
         ],
     bootstrap: [DealTracker]
 })
