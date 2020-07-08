@@ -193,8 +193,9 @@ export class GeographicRegionSelector implements OnDestroy
                 {
                     if((<any>geographicRegionHierarchyMember.Member).$type == 'Web.Model.Country, Web')
                         countries.push(geographicRegionHierarchyMember);
+
                     else
-                        return countries.concat(geographicRegionHierarchyMember.Children);
+                        geographicRegionHierarchyMember.Children.forEach(country => countries.push(country));
 
                     return countries;
                 },
