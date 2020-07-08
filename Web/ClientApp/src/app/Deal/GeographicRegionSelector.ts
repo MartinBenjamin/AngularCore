@@ -74,6 +74,21 @@ import { GeographicRegion } from '../Locations';
                     </select>
                 </td>
             <tr>
+            <tr *ngIf="Subdivisions" class="Subsequent">
+                <td class="RowHeading">Country:</td>
+                <td>
+                    <select
+                        [(ngModel)]="Subdivision"
+                        >
+                        <option [ngValue]="null"></option>
+                        <option
+                            *ngFor="let subdivision of Subdivisions"
+                            [ngValue]="subdivision">
+                            {{subdivision.Member.Name}}
+                        </option>
+                    </select>
+                </td>
+            <tr>
             <ng-template #Loading>
                 <tr>
                     <td></td>
@@ -95,7 +110,8 @@ export class GeographicRegionSelector implements OnDestroy
     private _subRegion                : GeographicRegionHierarchyMember;
     private _intermediateRegion       : GeographicRegionHierarchyMember;
     private _country                  : GeographicRegionHierarchyMember;
-    private _select: (geographicRegion: GeographicRegion) => void
+    private _subdivision              : GeographicRegionHierarchyMember;
+    private _select                   : (geographicRegion: GeographicRegion) => void
 
 
     constructor(
@@ -134,6 +150,11 @@ export class GeographicRegionSelector implements OnDestroy
         return this._countries;
     }
 
+    get Subdivisions(): GeographicRegionHierarchyMember[]
+    {
+        return this._subdivisions;
+    }
+
     get SubRegion(): GeographicRegionHierarchyMember
     {
         return this._subRegion;
@@ -170,6 +191,19 @@ export class GeographicRegionSelector implements OnDestroy
         )
     {
         this._country = country;
+        this.ResetSubdivision();
+    }
+
+    get Subdivision(): GeographicRegionHierarchyMember
+    {
+        return this._subdivision;
+    }
+
+    set Subdivision(
+        subdivision: GeographicRegionHierarchyMember
+    )
+    {
+        this._subdivision = subdivision;
     }
 
     get Open(): boolean
@@ -196,6 +230,17 @@ export class GeographicRegionSelector implements OnDestroy
 
         if(parent != null && (<any>parent.Children[0].Member).$type == 'Web.Model.Country, Web')
             this._countries = parent.Children;
+
+        this.ResetSubdivision();
+    }
+
+    private ResetSubdivision()
+    {
+        this._subdivision = null;
+        this._subdivisions = null;
+
+        if(this._country != null && this._country.Children.length)
+            this._subdivisions = this._country.Children;
     }
 
     Select(
