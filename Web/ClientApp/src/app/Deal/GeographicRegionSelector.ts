@@ -44,7 +44,22 @@ import { GeographicRegion } from '../Locations';
                     </select>
                 </td>
             <tr>
-            <tr *ngIf="SubRegion" class="Subsequent">
+            <tr *ngIf="IntermediateRegions" class="Subsequent">
+                <td class="RowHeading">Intermediate Region:</td>
+                <td>
+                    <select
+                        [(ngModel)]="IntermediateRegion"
+                        >
+                        <option [ngValue]="null"></option>
+                        <option
+                            *ngFor="let intermediateRegion of IntermediateRegions"
+                            [ngValue]="intermediateRegion">
+                            {{intermediateRegion.Member.Name}}
+                        </option>
+                    </select>
+                </td>
+            <tr>
+            <tr *ngIf="Countries" class="Subsequent">
                 <td class="RowHeading">Country:</td>
                 <td>
                     <select
@@ -52,7 +67,7 @@ import { GeographicRegion } from '../Locations';
                         >
                         <option [ngValue]="null"></option>
                         <option
-                            *ngFor="let country of SubRegion.Children"
+                            *ngFor="let country of Countries"
                             [ngValue]="country">
                             {{country.Member.Name}}
                         </option>
@@ -74,10 +89,12 @@ export class GeographicRegionSelector implements OnDestroy
     private _subscriptions            : Subscription[] = [];
     private _geographicRegionHierarchy: GeographicRegionHierarchy;
     private _regions                  : GeographicRegionHierarchyMember[];
+    private _intermediateRegions      : GeographicRegionHierarchyMember[];
+    private _countries                : GeographicRegionHierarchyMember[];
+    private _subdivisions             : GeographicRegionHierarchyMember[];
     private _subRegion                : GeographicRegionHierarchyMember;
+    private _intermediateRegion       : GeographicRegionHierarchyMember;
     private _country                  : GeographicRegionHierarchyMember;
-    private _countries                : GeographicRegion[];
-    private _subdivisions             : GeographicRegion[];
     private _select: (geographicRegion: GeographicRegion) => void
 
 
@@ -107,6 +124,16 @@ export class GeographicRegionSelector implements OnDestroy
         return this._regions;
     }
 
+    get IntermediateRegions(): GeographicRegionHierarchyMember[]
+    {
+        return this._intermediateRegions;
+    }
+
+    get Countries(): GeographicRegionHierarchyMember[]
+    {
+        return this._countries;
+    }
+
     get SubRegion(): GeographicRegionHierarchyMember
     {
         return this._subRegion;
@@ -117,6 +144,20 @@ export class GeographicRegionSelector implements OnDestroy
         )
     {
         this._subRegion = subRegion;
+        this.ResetIntermediate();
+    }
+
+    get IntermediateRegion(): GeographicRegionHierarchyMember
+    {
+        return this._intermediateRegion;
+    }
+
+    set IntermediateRegion(
+        intermediateRegion: GeographicRegionHierarchyMember
+        )
+    {
+        this._intermediateRegion = intermediateRegion;
+        this.ResetCountry();
     }
 
     get Country(): GeographicRegionHierarchyMember
@@ -134,6 +175,27 @@ export class GeographicRegionSelector implements OnDestroy
     get Open(): boolean
     {
         return this._select != null;
+    }
+
+    private ResetIntermediate()
+    {
+        this._intermediateRegion = null;
+        this._intermediateRegions = null;
+
+        if(this._subRegion != null && (<any>this._subRegion.Children[0].Member).$type != 'Web.Model.Country, Web')
+            this._intermediateRegions = this._subRegion.Children;
+
+        this.ResetCountry();
+    }
+
+    private ResetCountry()
+    {
+        this._country = null;
+        this._countries = null;
+        var parent = this._intermediateRegion ? this._intermediateRegion : this._subRegion;
+
+        if(parent != null && (<any>parent.Children[0].Member).$type == 'Web.Model.Country, Web')
+            this._countries = parent.Children;
     }
 
     Select(
