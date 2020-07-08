@@ -90,7 +90,8 @@ import { GeographicRegion } from '../Locations';
             </ng-template>
         </table>
     </dt-dialog-body>
-    <dt-dialog-buttons><input type="button" value="Cancel" (click)="Cancel()" class="Button" /></dt-dialog-buttons>
+    <dt-dialog-buttons><input type="button" value="Apply" (click)="Apply()" [disabled]="!Country" class="Button"
+        /><input type="button" value="Cancel" (click)="Cancel()" class="Button" /></dt-dialog-buttons>
 </dt-dialog>`
     })
 export class GeographicRegionSelector implements OnDestroy
@@ -226,6 +227,12 @@ export class GeographicRegionSelector implements OnDestroy
     {
         this._select = select;
         this.ResetSubRegion();
+    }
+
+    Apply(): void
+    {
+        this._select(this._country.Member);
+        this.Close();
     }
 
     Cancel(): void
