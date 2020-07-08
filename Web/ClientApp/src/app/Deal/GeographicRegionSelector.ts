@@ -211,6 +211,12 @@ export class GeographicRegionSelector implements OnDestroy
         return this._select != null;
     }
 
+    private ResetSubRegion()
+    {
+        this._subRegion = null;
+        this.ResetIntermediate();
+    }
+
     private ResetIntermediate()
     {
         this._intermediateRegion = null;
@@ -248,6 +254,7 @@ export class GeographicRegionSelector implements OnDestroy
         ): void
     {
         this._select = select;
+        this.ResetSubRegion();
     }
 
     SelectX(
