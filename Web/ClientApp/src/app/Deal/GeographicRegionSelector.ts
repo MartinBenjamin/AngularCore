@@ -164,8 +164,16 @@ export class GeographicRegionSelector implements OnDestroy
         country: GeographicRegionHierarchyMember
         )
     {
-        this._country = country;
-        this.ResetSubdivision();
+        if(!country.Children.length)
+        {
+            this._select(country.Member);
+            this.Close();
+        }
+        else
+        {
+            this._country = country;
+            this.ResetSubdivision();
+        }
     }
 
     get Subdivision(): GeographicRegionHierarchyMember
@@ -177,7 +185,8 @@ export class GeographicRegionSelector implements OnDestroy
         subdivision: GeographicRegionHierarchyMember
         )
     {
-        this._subdivision = subdivision;
+        this._select(subdivision.Member);
+        this.Close();
     }
 
     get Open(): boolean
@@ -217,14 +226,6 @@ export class GeographicRegionSelector implements OnDestroy
     {
         this._select = select;
         this.ResetSubRegion();
-    }
-
-    SelectX(
-        geographicRegion: GeographicRegion
-        ): void
-    {
-        this._select(geographicRegion);
-        this.Close();
     }
 
     Cancel(): void
