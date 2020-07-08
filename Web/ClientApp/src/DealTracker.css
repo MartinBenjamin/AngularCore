@@ -40,6 +40,12 @@ input[type="button"]
   border: 1px solid #bababa;
 }
 
+input[type="button"]:disabled
+{
+  color: #7a7a7a;
+  border-color: #7a7a7a;
+}
+
 textarea
 {
   border: 1px solid #bababa;
