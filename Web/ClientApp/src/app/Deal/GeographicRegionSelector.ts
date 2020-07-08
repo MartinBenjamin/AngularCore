@@ -29,8 +29,7 @@ import { GeographicRegion } from '../Locations';
                 <td class="RowHeading">Region:</td>
                 <td>
                     <select
-                        [(ngModel)]="SubRegion"
-                        >
+                        [(ngModel)]="SubRegion">
                         <option [ngValue]="null"></option>
                         <optgroup
                             *ngFor="let region of Regions"
@@ -48,14 +47,25 @@ import { GeographicRegion } from '../Locations';
                 <td class="RowHeading">Country:</td>
                 <td>
                     <select
-                        [(ngModel)]="Country"
-                        >
+                        [(ngModel)]="Country">
                         <option [ngValue]="null"></option>
-                        <option
-                            *ngFor="let country of Countries"
-                            [ngValue]="country">
-                            {{country.Member.Name}}
-                        </option>
+                        <ng-container *ngFor="let geograhicRegion of Countries">
+                            <option
+                                *ngIf="geograhicRegion.Member.$type == 'Web.Model.Country, Web';else IntermediateRegion"
+                                [ngValue]="geograhicRegion">
+                                {{geograhicRegion.Member.Name}}
+                            </option>
+                            <ng-template #IntermediateRegion>
+                                <optgroup
+                                    [label]="geograhicRegion.Member.Name">
+                                    <option
+                                        *ngFor="let country of geograhicRegion.Children"
+                                        [ngValue]="country">
+                                        {{country.Member.Name}}
+                                    </option>
+                                </optgroup>
+                            </ng-template>
+                        </ng-container>
                     </select>
                 </td>
             <tr>
@@ -63,8 +73,7 @@ import { GeographicRegion } from '../Locations';
                 <td class="RowHeading">Subdivision:</td>
                 <td>
                     <select
-                        [(ngModel)]="Subdivision"
-                        >
+                        [(ngModel)]="Subdivision">
                         <option [ngValue]="null"></option>
                         <option
                             *ngFor="let subdivision of Subdivisions"
@@ -166,7 +175,7 @@ export class GeographicRegionSelector implements OnDestroy
 
     set Subdivision(
         subdivision: GeographicRegionHierarchyMember
-    )
+        )
     {
         this._subdivision = subdivision;
     }
@@ -188,18 +197,7 @@ export class GeographicRegionSelector implements OnDestroy
         this._countries = null;
 
         if(this._subRegion)
-            this._countries = this._subRegion.Children.reduce<GeographicRegionHierarchyMember[]>(
-                (countries, geographicRegionHierarchyMember) =>
-                {
-                    if((<any>geographicRegionHierarchyMember.Member).$type == 'Web.Model.Country, Web')
-                        countries.push(geographicRegionHierarchyMember);
-
-                    else
-                        geographicRegionHierarchyMember.Children.forEach(country => countries.push(country));
-
-                    return countries;
-                },
-                []);
+            this._countries = this._subRegion.Children;
 
         this.ResetSubdivision();
     }
