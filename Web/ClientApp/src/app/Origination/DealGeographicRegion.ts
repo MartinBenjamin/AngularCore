@@ -21,8 +21,7 @@ export class DealGeographicRegion implements OnDestroy
     private _deal         : Deal;
     private _region       : GeographicRegion;
     private _country      : GeographicRegion;
-    private _subdivision  : GeographicRegion;
-    private _category     : string;
+    private _subdivision  : Subdivision;
 
     @ViewChild('geographicRegionSelector')
     private _geographicRegionSelector: GeographicRegionSelector;
@@ -77,7 +76,10 @@ export class DealGeographicRegion implements OnDestroy
 
     get Category(): string
     {
-        return this._category;
+        return this._subdivision != null ? this._subdivision.Category
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ') : null;
     }
 
     Find(): void
@@ -97,15 +99,12 @@ export class DealGeographicRegion implements OnDestroy
             this._region      = null;
             this._country     = null;
             this._subdivision = null;
-            this._category    = null;
             return;
         }
 
         if((<any>this._deal.GeographicRegion).$type == 'Web.Model.Subdivision, Web')
         {
-            this._subdivision = this._deal.GeographicRegion;
-            let category = (<Subdivision>this._subdivision).Category;
-            this._category = category.charAt(0).toUpperCase() + category.slice(1);            
+            this._subdivision = <Subdivision>this._deal.GeographicRegion;
             this.ComputeCountry()
         }
         else
