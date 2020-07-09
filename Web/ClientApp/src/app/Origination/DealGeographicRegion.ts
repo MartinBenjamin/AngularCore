@@ -5,6 +5,8 @@ import { Deal } from '../Deals';
 import { GeographicRegionHierarchy } from '../GeographicRegionHierarchy';
 import { GeographicRegionHierarchyToken } from '../GeographicRegionHierarchyProvider';
 import { GeographicRegionSelector } from '../Deal/GeographicRegionSelector';
+import { Subdivision } from '../Iso3166';
+import { GeographicRegion } from '../Locations';
 
 @Component(
     {
@@ -16,6 +18,9 @@ export class DealGeographicRegion implements OnDestroy
     private _subscriptions            : Subscription[] = [];
     private _geographicRegionHierarchy: GeographicRegionHierarchy;
     private _deal                     : Deal;
+    private _region                   : GeographicRegion;
+    private _country                  : GeographicRegion;
+    private _subdivision              : GeographicRegion;
 
     @ViewChild('geographicRegionSelector')
     private _geographicRegionSelector: GeographicRegionSelector;
@@ -41,9 +46,27 @@ export class DealGeographicRegion implements OnDestroy
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
-    public Find(): void
+    get Region(): GeographicRegion
+    {
+        return this._region;
+    }
+
+    get Country(): GeographicRegion
+    {
+        return this._country;
+    }
+
+    get Subdivision(): GeographicRegion
+    {
+        return this._subdivision;
+    }
+
+    Find(): void
     {
         this._geographicRegionSelector.Select(
-            geographicRegion => { });
+            geographicRegion =>
+            {
+                this._deal.GeographicRegion = geographicRegion;
+            });
     }
 }

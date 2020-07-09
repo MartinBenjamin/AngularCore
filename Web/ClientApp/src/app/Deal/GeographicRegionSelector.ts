@@ -73,7 +73,8 @@ import { GeographicRegion } from '../Locations';
                 <td class="RowHeading">Subdivision:</td>
                 <td>
                     <select
-                        [(ngModel)]="Subdivision">
+                        [ngModel]="null"
+                        (ngModelChange)="SubdivisionChanged($event)">
                         <option [ngValue]="null"></option>
                         <option
                             *ngFor="let subdivision of Subdivisions"
@@ -96,15 +97,13 @@ import { GeographicRegion } from '../Locations';
     })
 export class GeographicRegionSelector implements OnDestroy
 {
-    private _subscriptions            : Subscription[] = [];
-    private _geographicRegionHierarchy: GeographicRegionHierarchy;
-    private _regions                  : GeographicRegionHierarchyMember[];
-    private _countries                : GeographicRegionHierarchyMember[];
-    private _subdivisions             : GeographicRegionHierarchyMember[];
-    private _subRegion                : GeographicRegionHierarchyMember;
-    private _country                  : GeographicRegionHierarchyMember;
-    private _subdivision              : GeographicRegionHierarchyMember;
-    private _select                   : (geographicRegion: GeographicRegion) => void
+    private _subscriptions: Subscription[] = [];
+    private _regions      : GeographicRegionHierarchyMember[];
+    private _countries    : GeographicRegionHierarchyMember[];
+    private _subdivisions : GeographicRegionHierarchyMember[];
+    private _subRegion    : GeographicRegionHierarchyMember;
+    private _country      : GeographicRegionHierarchyMember;
+    private _select       : (geographicRegion: GeographicRegion) => void
 
 
     constructor(
@@ -114,13 +113,9 @@ export class GeographicRegionSelector implements OnDestroy
     {
         this._subscriptions.push(
             geographicRegionHierarchy.subscribe(
-                result =>
-                {
-                    this._geographicRegionHierarchy = result;
-                    this._regions = result.Members
-                        .filter(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Parent == null)[0].Children
-                        .filter(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Children.length);
-                }));
+                result => this._regions = result.Members
+                    .filter(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Parent == null)[0].Children
+                    .filter(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Children.length)));
     }
 
     ngOnDestroy(): void
@@ -177,22 +172,17 @@ export class GeographicRegionSelector implements OnDestroy
         }
     }
 
-    get Subdivision(): GeographicRegionHierarchyMember
-    {
-        return this._subdivision;
-    }
-
-    set Subdivision(
-        subdivision: GeographicRegionHierarchyMember
-        )
-    {
-        this._select(subdivision.Member);
-        this.Close();
-    }
-
     get Open(): boolean
     {
         return this._select != null;
+    }
+
+    SubdivisionChanged(
+        subdivision: GeographicRegionHierarchyMember
+        ): void
+    {
+        this._select(subdivision.Member);
+        this.Close();
     }
 
     private ResetSubRegion()
@@ -214,7 +204,6 @@ export class GeographicRegionSelector implements OnDestroy
 
     private ResetSubdivision()
     {
-        this._subdivision = null;
         this._subdivisions = null;
 
         if(this._country != null && this._country.Children.length)
@@ -243,5 +232,6 @@ export class GeographicRegionSelector implements OnDestroy
     protected Close(): void
     {
         this._select = null;
+        this.ResetSubRegion();
     }
 }

@@ -1,6 +1,7 @@
 import { PartyInRole } from "./Parties";
 import { Guid, Named } from "./CommonDomainObjects";
 import { Classifier } from "./ClassificationScheme";
+import { GeographicRegion } from "./Locations";
 
 export class DealRoleIdentifier
 {
@@ -34,14 +35,15 @@ export interface DealType extends Named<Guid>
 
 export interface Deal extends Named<Guid>
 {
-    Type       : DealType;
-    Agreements : Agreement[];
-    Parties    : DealParty[];
-    Commitments: Commitment[];
-    Stage      : Stage;
-    Restricted : boolean;
-    ProjectName: string;
-    Classifiers: Classifier[];
+    Type            : DealType;
+    Agreements      : Agreement[];
+    Parties         : DealParty[];
+    Commitments     : Commitment[];
+    Stage           : Stage;
+    Restricted      : boolean;
+    ProjectName     : string;
+    Classifiers     : Classifier[];
+    GeographicRegion: GeographicRegion;
 }
 
 export interface DealParty extends PartyInRole
