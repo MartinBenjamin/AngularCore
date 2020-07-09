@@ -87,6 +87,7 @@ export class DealGeographicRegion implements OnDestroy
         }
         else
         {
+            this._subdivision = null;
             this._country = this._deal.GeographicRegion;
             this.ComputeRegion();
         }
@@ -94,7 +95,8 @@ export class DealGeographicRegion implements OnDestroy
 
     ComputeCountry(): void
     {
-
+        this._country = this._geographicRegionHierarchy.Members.find(
+            geographicRegionHierarchyMember => geographicRegionHierarchyMember.Member == this._subdivision).Parent.Member;
     }
 
     ComputeRegion(): void
