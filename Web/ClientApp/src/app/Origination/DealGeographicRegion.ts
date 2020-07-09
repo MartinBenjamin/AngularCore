@@ -67,6 +67,38 @@ export class DealGeographicRegion implements OnDestroy
             geographicRegion =>
             {
                 this._deal.GeographicRegion = geographicRegion;
+                this.ComputeSubdivision();
             });
+    }
+
+    ComputeSubdivision(): void
+    {
+        if(!(this._geographicRegionHierarchy && this._deal && this._deal.GeographicRegion))
+        {
+            this._region      = null;
+            this._country     = null;
+            this._subdivision = null;
+        }
+
+        if((<any>this._deal.GeographicRegion).$type == 'Web.Model.Subdivision, Web')
+        {
+            this._subdivision = this._deal.GeographicRegion;
+            this.ComputeCountry()
+        }
+        else
+        {
+            this._country = this._deal.GeographicRegion;
+            this.ComputeRegion();
+        }
+    }
+
+    ComputeCountry(): void
+    {
+
+    }
+
+    ComputeRegion(): void
+    {
+
     }
 }
