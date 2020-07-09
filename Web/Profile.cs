@@ -23,8 +23,8 @@ namespace Web
             CreateMap<ExclusivityClassifier          , Model.ExclusivityClassifier          >().PreserveReferences();
             CreateMap<Currency                       , Model.Currency                       >().PreserveReferences();
             CreateMap<GeographicRegion               , Model.GeographicRegion               >()
-                .Include<Country                     , Model.Country                        >()
-                .Include<GeographicSubregion         , Model.GeographicSubregion            >().PreserveReferences();
+                .Include<GeographicSubregion         , Model.GeographicSubregion            >()
+                .Include<Country                     , Model.Country                        >().PreserveReferences();
             CreateMap<GeographicSubregion            , Model.GeographicSubregion            >()
                 .Include<Subdivision                 , Model.Subdivision                    >().PreserveReferences();
             CreateMap<GeographicRegionHierarchy      , Model.GeographicRegionHierarchy      >().PreserveReferences();
