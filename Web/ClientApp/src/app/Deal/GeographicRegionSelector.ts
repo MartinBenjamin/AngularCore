@@ -114,7 +114,7 @@ export class GeographicRegionSelector implements OnDestroy
         this._subscriptions.push(
             geographicRegionHierarchy.subscribe(
                 result => this._regions = result.Members
-                    .filter(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Parent == null)[0].Children
+                    .find(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Parent == null).Children
                     .filter(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Children.length)));
     }
 
