@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { DealProvider } from '../DealProvider';
 import { Deal } from '../Deals';
-import { GeographicRegionHierarchy } from '../GeographicRegionHierarchy';
+import { GeographicRegionHierarchy, GeographicRegionHierarchyMember } from '../GeographicRegionHierarchy';
 import { GeographicRegionHierarchyToken } from '../GeographicRegionHierarchyProvider';
 import { GeographicRegionSelector } from '../Deal/GeographicRegionSelector';
 import { Subdivision } from '../Iso3166';
@@ -16,8 +16,8 @@ import { GeographicRegion } from '../Locations';
 export class DealGeographicRegion implements OnDestroy
 {
     private _subscriptions            : Subscription[] = [];
-    private _geographicRegionHierarchy: GeographicRegionHierarchy;
-    private _map                      = new Map<GeographicRegion, GeographicRegionHierarchy>();
+    private _map                      = new Map<GeographicRegion, GeographicRegionHierarchyMember>();
+    private _regions                  : GeographicRegionHierarchyMember[];
     private _deal                     : Deal;
     private _region                   : GeographicRegion;
     private _country                  : GeographicRegion;
@@ -36,7 +36,13 @@ export class DealGeographicRegion implements OnDestroy
             geographicRegionHierarchy.subscribe(
                 result =>
                 {
-                    this._geographicRegionHierarchy = result;
+                    result.Members.forEach(
+                        geographicRegionHierarchyMember => this._map.set(
+                            geographicRegionHierarchyMember.Member,
+                            geographicRegionHierarchyMember));
+                    this._regions = result.Members
+                        .find(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Parent == null).Children
+                        .filter(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Children.length);
                 }));
 
         this._subscriptions.push(dealProvider.subscribe(deal => this._deal = deal));
@@ -74,7 +80,7 @@ export class DealGeographicRegion implements OnDestroy
 
     ComputeSubdivision(): void
     {
-        if(!(this._geographicRegionHierarchy && this._deal && this._deal.GeographicRegion))
+        if(!(this._map.size && this._deal && this._deal.GeographicRegion))
         {
             this._region      = null;
             this._country     = null;
@@ -96,19 +102,15 @@ export class DealGeographicRegion implements OnDestroy
 
     ComputeCountry(): void
     {
-        this._country = this._geographicRegionHierarchy.Members
-            .find(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Member == this._subdivision).Parent.Member;
-
+        this._country = this._map.get(this._subdivision).Parent.Member;
         this.ComputeRegion();
     }
 
     ComputeRegion(): void
     {
-        let countryMember = this._geographicRegionHierarchy.Members.find(
-            geographicRegionHierarchyMember => geographicRegionHierarchyMember.Member == this._country);
+        let countryMember = this._map.get(this._country);
 
-        this._region = this._geographicRegionHierarchy.Members
-            .find(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Parent == null).Children
+        this._region = this._regions
             .find(geographicRegionHierarchyMember =>
                 geographicRegionHierarchyMember.Interval.Start < countryMember.Interval.Start &&
                 geographicRegionHierarchyMember.Interval.End   > countryMember.Interval.End).Member;
