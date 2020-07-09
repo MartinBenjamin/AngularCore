@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { GeographicRegionHierarchy, GeographicRegionHierarchyMember } from '../GeographicRegionHierarchy';
 import { GeographicRegionHierarchyToken } from '../GeographicRegionHierarchyProvider';
-import { GeographicRegion } from '../Locations';
+import { GeographicRegion, GeographicRegionType } from '../Locations';
 
 @Component(
     {
@@ -51,7 +51,7 @@ import { GeographicRegion } from '../Locations';
                         <option [ngValue]="null"></option>
                         <ng-container *ngFor="let geograhicRegion of Countries">
                             <option
-                                *ngIf="geograhicRegion.Member.$type == 'Web.Model.Country, Web';else IntermediateRegion"
+                                *ngIf="geograhicRegion.Member.Type == CountryType;else IntermediateRegion"
                                 [ngValue]="geograhicRegion">
                                 {{geograhicRegion.Member.Name}}
                             </option>
@@ -105,6 +105,7 @@ export class GeographicRegionSelector implements OnDestroy
     private _country      : GeographicRegionHierarchyMember;
     private _select       : (geographicRegion: GeographicRegion) => void
 
+    public CountryType    = GeographicRegionType.Iso3166_1Country;
 
     constructor(
         @Inject(GeographicRegionHierarchyToken)

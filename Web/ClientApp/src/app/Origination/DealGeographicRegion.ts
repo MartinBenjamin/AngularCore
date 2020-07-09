@@ -5,7 +5,7 @@ import { DealProvider } from '../DealProvider';
 import { Deal } from '../Deals';
 import { GeographicRegionHierarchy, GeographicRegionHierarchyMember } from '../GeographicRegionHierarchy';
 import { GeographicRegionHierarchyToken } from '../GeographicRegionHierarchyProvider';
-import { GeographicRegion } from '../Locations';
+import { GeographicRegion, GeographicRegionType } from '../Locations';
 import { Subdivision } from '../Iso3166';
 
 @Component(
@@ -100,7 +100,7 @@ export class DealGeographicRegion implements OnDestroy
             return;
         }
 
-        if((<any>this._deal.GeographicRegion).$type == 'Web.Model.Subdivision, Web')
+        if(this._deal.GeographicRegion.Type == GeographicRegionType.Iso3166_2Subdivision)
         {
             this._subdivision = <Subdivision>this._deal.GeographicRegion;
             this.ComputeCountry()
