@@ -17,6 +17,7 @@ export class DealGeographicRegion implements OnDestroy
 {
     private _subscriptions            : Subscription[] = [];
     private _geographicRegionHierarchy: GeographicRegionHierarchy;
+    private _map                      = new Map<GeographicRegion, GeographicRegionHierarchy>();
     private _deal                     : Deal;
     private _region                   : GeographicRegion;
     private _country                  : GeographicRegion;
@@ -95,12 +96,21 @@ export class DealGeographicRegion implements OnDestroy
 
     ComputeCountry(): void
     {
-        this._country = this._geographicRegionHierarchy.Members.find(
-            geographicRegionHierarchyMember => geographicRegionHierarchyMember.Member == this._subdivision).Parent.Member;
+        this._country = this._geographicRegionHierarchy.Members
+            .find(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Member == this._subdivision).Parent.Member;
+
+        this.ComputeRegion();
     }
 
     ComputeRegion(): void
     {
+        let countryMember = this._geographicRegionHierarchy.Members.find(
+            geographicRegionHierarchyMember => geographicRegionHierarchyMember.Member == this._country);
 
+        this._region = this._geographicRegionHierarchy.Members
+            .find(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Parent == null).Children
+            .find(geographicRegionHierarchyMember =>
+                geographicRegionHierarchyMember.Interval.Start < countryMember.Interval.Start &&
+                geographicRegionHierarchyMember.Interval.End   > countryMember.Interval.End).Member;
     }
 }
