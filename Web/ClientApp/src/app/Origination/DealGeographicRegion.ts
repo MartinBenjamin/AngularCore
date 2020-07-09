@@ -1,11 +1,10 @@
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
+import { GeographicRegionSelector } from '../Deal/GeographicRegionSelector';
 import { DealProvider } from '../DealProvider';
 import { Deal } from '../Deals';
 import { GeographicRegionHierarchy, GeographicRegionHierarchyMember } from '../GeographicRegionHierarchy';
 import { GeographicRegionHierarchyToken } from '../GeographicRegionHierarchyProvider';
-import { GeographicRegionSelector } from '../Deal/GeographicRegionSelector';
-import { Subdivision } from '../Iso3166';
 import { GeographicRegion } from '../Locations';
 
 @Component(
@@ -15,13 +14,13 @@ import { GeographicRegion } from '../Locations';
     })
 export class DealGeographicRegion implements OnDestroy
 {
-    private _subscriptions            : Subscription[] = [];
-    private _map                      = new Map<GeographicRegion, GeographicRegionHierarchyMember>();
-    private _regions                  : GeographicRegionHierarchyMember[];
-    private _deal                     : Deal;
-    private _region                   : GeographicRegion;
-    private _country                  : GeographicRegion;
-    private _subdivision              : GeographicRegion;
+    private _subscriptions: Subscription[] = [];
+    private _map          = new Map<GeographicRegion, GeographicRegionHierarchyMember>();
+    private _regions      : GeographicRegionHierarchyMember[];
+    private _deal         : Deal;
+    private _region       : GeographicRegion;
+    private _country      : GeographicRegion;
+    private _subdivision  : GeographicRegion;
 
     @ViewChild('geographicRegionSelector')
     private _geographicRegionSelector: GeographicRegionSelector;
