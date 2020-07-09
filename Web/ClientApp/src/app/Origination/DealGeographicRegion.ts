@@ -77,9 +77,7 @@ export class DealGeographicRegion implements OnDestroy
     get Category(): string
     {
         return this._subdivision != null ? this._subdivision.Category
-            .split(' ')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ') : null;
+            .replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase()) : null;
     }
 
     Find(): void
