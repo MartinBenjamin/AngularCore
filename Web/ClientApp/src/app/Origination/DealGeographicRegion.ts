@@ -44,7 +44,13 @@ export class DealGeographicRegion implements OnDestroy
                         .filter(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Children.length);
                 }));
 
-        this._subscriptions.push(dealProvider.subscribe(deal => this._deal = deal));
+        this._subscriptions.push(
+            dealProvider.subscribe(
+                deal =>
+                {
+                    this._deal = deal;
+                    this.ComputeSubdivision();
+                }));
     }
 
     ngOnDestroy(): void
@@ -84,6 +90,7 @@ export class DealGeographicRegion implements OnDestroy
             this._region      = null;
             this._country     = null;
             this._subdivision = null;
+            return;
         }
 
         if((<any>this._deal.GeographicRegion).$type == 'Web.Model.Subdivision, Web')
