@@ -6,6 +6,7 @@ import { Deal } from '../Deals';
 import { GeographicRegionHierarchy, GeographicRegionHierarchyMember } from '../GeographicRegionHierarchy';
 import { GeographicRegionHierarchyToken } from '../GeographicRegionHierarchyProvider';
 import { GeographicRegion } from '../Locations';
+import { Subdivision } from '../Iso3166';
 
 @Component(
     {
@@ -21,6 +22,7 @@ export class DealGeographicRegion implements OnDestroy
     private _region       : GeographicRegion;
     private _country      : GeographicRegion;
     private _subdivision  : GeographicRegion;
+    private _category     : string;
 
     @ViewChild('geographicRegionSelector')
     private _geographicRegionSelector: GeographicRegionSelector;
@@ -73,6 +75,11 @@ export class DealGeographicRegion implements OnDestroy
         return this._subdivision;
     }
 
+    get Category(): string
+    {
+        return this._category;
+    }
+
     Find(): void
     {
         this._geographicRegionSelector.Select(
@@ -90,12 +97,15 @@ export class DealGeographicRegion implements OnDestroy
             this._region      = null;
             this._country     = null;
             this._subdivision = null;
+            this._category    = null;
             return;
         }
 
         if((<any>this._deal.GeographicRegion).$type == 'Web.Model.Subdivision, Web')
         {
             this._subdivision = this._deal.GeographicRegion;
+            let category = (<Subdivision>this._subdivision).Category;
+            this._category = category.charAt(0).toUpperCase() + category.slice(1);            
             this.ComputeCountry()
         }
         else
