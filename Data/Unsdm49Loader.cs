@@ -54,11 +54,11 @@ namespace Data
 
                 var countryParent = (await _csvExtractor
                     .ExtractAsync("UNSDM49.csv"))
-                    .Where(record => countries.ContainsKey(record[record.Count - 5/* Deal with incorrectly encoded RFC4180 file.*/]))
+                    .Where(record => countries.ContainsKey(record[10]))
                     .Select(
                         record =>
                         (
-                            Child: countries[record[record.Count - 5/* Deal with incorrectly encoded RFC4180 file.*/]],
+                            Child: countries[record[10]],
                             Parent: (IList<GeographicRegion>)new List<GeographicRegion>
                             {
                                 GetParent(

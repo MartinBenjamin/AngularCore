@@ -1,4 +1,4 @@
-Subdivision category,3166-2 code,Subdivision name,Local variant,Language code,Romanization system,Parent subdivision
+﻿Subdivision category,3166-2 code,Subdivision name,Local variant,Language code,Romanization system,Parent subdivision
 council area,GB-ABE,Aberdeen City,,en,,GB-SCT
 council area,GB-ABD,Aberdeenshire,,en,,GB-SCT
 council area,GB-ANS,Angus,,en,,GB-SCT
@@ -94,7 +94,7 @@ council area,GB-HLD,Highland,,en,,GB-SCT
 London borough,GB-HIL,Hillingdon,,en,,GB-ENG
 London borough,GB-HNS,Hounslow,,en,,GB-ENG
 council area,GB-IVC,Inverclyde,,en,,GB-SCT
-unitary authority,GB-AGY,Isle of Anglesey [Sir Ynys M�n GB-YNM],,en,,GB-WLS
+unitary authority,GB-AGY,Isle of Anglesey [Sir Ynys Môn GB-YNM],,en,,GB-WLS
 unitary authority,GB-IOW,Isle of Wight,,en,,GB-ENG
 unitary authority,GB-IOS*,Isles of Scilly,,en,,GB-ENG
 London borough,GB-ISL,Islington,,en,,GB-ENG
