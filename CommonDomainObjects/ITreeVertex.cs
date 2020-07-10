@@ -4,21 +4,21 @@ using System.Threading.Tasks;
 
 namespace CommonDomainObjects
 {
-    public interface ITreeVertex<out TTreeVertex>
-        where TTreeVertex: ITreeVertex<TTreeVertex>
+    public interface ITreeVertex<out TVertex>
+        where TVertex: ITreeVertex<TVertex>
     {
-        TTreeVertex                Parent   { get; }
+        TVertex                Parent   { get; }
 
-        IReadOnlyList<TTreeVertex> Children { get; }
+        IReadOnlyList<TVertex> Children { get; }
     }
 
     public static class ITreeVertexExtensions
     {
-        public static void Visit<TTreeVertex>(
-            this TTreeVertex    treeVertex,
-            Action<TTreeVertex> enter,
-            Action<TTreeVertex> exit = null
-            ) where TTreeVertex: ITreeVertex<TTreeVertex>
+        public static void Visit<TVertex>(
+            this TVertex    treeVertex,
+            Action<TVertex> enter,
+            Action<TVertex> exit = null
+            ) where TVertex: ITreeVertex<TVertex>
         {
             enter?.Invoke(treeVertex);
 
@@ -29,11 +29,11 @@ namespace CommonDomainObjects
             exit?.Invoke(treeVertex);
         }
 
-        public static async Task VisitAsync<TTreeVertex>(
-            this TTreeVertex        treeVertex,
-            Func<TTreeVertex, Task> enter,
-            Func<TTreeVertex, Task> exit = null
-            ) where TTreeVertex : ITreeVertex<TTreeVertex>
+        public static async Task VisitAsync<TVertex>(
+            this TVertex        treeVertex,
+            Func<TVertex, Task> enter,
+            Func<TVertex, Task> exit = null
+            ) where TVertex : ITreeVertex<TVertex>
         {
             if(enter != null)
                 await enter(treeVertex);
