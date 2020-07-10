@@ -41,8 +41,7 @@ export class DealGeographicRegion implements OnDestroy
                             geographicRegionHierarchyMember.Member.Id,
                             geographicRegionHierarchyMember));
                     this._regions = result.Members
-                        .find(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Parent == null).Children
-                        .filter(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Children.length);
+                        .filter(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Member.Type == GeographicRegionType.UnsdM49SubRegion);
                 }));
 
         this._subscriptions.push(
