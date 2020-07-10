@@ -16,7 +16,7 @@ import { Subdivision } from '../Iso3166';
 export class DealGeographicRegion implements OnDestroy
 {
     private _subscriptions: Subscription[] = [];
-    private _map          = new Map<GeographicRegion, GeographicRegionHierarchyMember>();
+    private _map          = new Map<string, GeographicRegionHierarchyMember>();
     private _regions      : GeographicRegionHierarchyMember[];
     private _deal         : Deal;
     private _region       : GeographicRegion;
@@ -38,7 +38,7 @@ export class DealGeographicRegion implements OnDestroy
                 {
                     result.Members.forEach(
                         geographicRegionHierarchyMember => this._map.set(
-                            geographicRegionHierarchyMember.Member,
+                            geographicRegionHierarchyMember.Member.Id,
                             geographicRegionHierarchyMember));
                     this._regions = result.Members
                         .find(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Parent == null).Children
@@ -115,13 +115,13 @@ export class DealGeographicRegion implements OnDestroy
 
     ComputeCountry(): void
     {
-        this._country = this._map.get(this._subdivision).Parent.Member;
+        this._country = this._map.get(this._subdivision.Id).Parent.Member;
         this.ComputeRegion();
     }
 
     ComputeRegion(): void
     {
-        let countryMember = this._map.get(this._country);
+        let countryMember = this._map.get(this._country.Id);
 
         this._region = this._regions
             .find(geographicRegionHierarchyMember =>
