@@ -45,5 +45,22 @@ namespace CommonDomainObjects
             if(exit != null)
                 await exit(treeVertex);
         }
+
+        public static void Select<TSource, TResult>(
+            this TSource                    source,
+            Func<TSource, TResult, TResult> selector,
+            TResult                         resultParent = null
+            )
+            where TSource: class, ITreeVertex<TSource>
+            where TResult: class, ITreeVertex<TResult>
+        {
+            var result = selector(
+                source,
+                resultParent);
+
+            source.Children.ForEach(child => child.Select(
+                selector,
+                result));
+        }
     }
 }
