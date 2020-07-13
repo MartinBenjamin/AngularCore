@@ -20,7 +20,7 @@ export class Exclusivity implements OnDestroy
     private _deal                           : Deal;
     private _classifier                     : Classifier;
     private _exclusive                      : boolean;
-    private _map                            = new Map<Classifier, ClassificationSchemeClassifier>();
+    private _map                            = new Map<Guid, ClassificationSchemeClassifier>();
     private _yes                            : ClassificationSchemeClassifier;
 
     constructor(
@@ -39,11 +39,11 @@ export class Exclusivity implements OnDestroy
                         classificationSchemeClassifier => classificationSchemeClassifier.Super == null);
                     classificationScheme.Classifiers.forEach(
                         classificationSchemeClassifier => this._map.set(
-                            classificationSchemeClassifier.Classifier,
+                            classificationSchemeClassifier.Classifier.Id,
                             classificationSchemeClassifier));
-                    this._yes = this._classificationSchemeClassifiers.filter(
+                    this._yes = this._classificationSchemeClassifiers.find(
                         classificationSchemeClassifier =>
-                            classificationSchemeClassifier.Classifier.Id == ExclusivityClassifierIdentifier.Yes)[0];
+                            classificationSchemeClassifier.Classifier.Id == ExclusivityClassifierIdentifier.Yes);
                     this.ComputeExclusive();
                 });
 
@@ -98,10 +98,7 @@ export class Exclusivity implements OnDestroy
             return;
         }
 
-        let classifiers = this._deal.Classifiers.filter(classifer => (<any>classifer).$type == 'Web.Model.ExclusivityClassifier, Web')
-        if(classifiers.length)
-            this._classifier = classifiers[0];
-
+        this._classifier = this._deal.Classifiers.find(classifer => (<any>classifer).$type == 'Web.Model.ExclusivityClassifier, Web');
         this.ComputeExclusive();
     }
 
@@ -113,7 +110,7 @@ export class Exclusivity implements OnDestroy
             return;
         }
 
-        let current = this._map.get(this._classifier);
+        let current = this._map.get(this._classifier.Id);
         this._exclusive = this._yes.Interval.Start <= current.Interval.Start && current.Interval.End <= this._yes.Interval.End;
     }
 }
