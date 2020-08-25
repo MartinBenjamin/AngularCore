@@ -71,7 +71,7 @@ namespace Deals
             var LenderParty           = _Role.HasValue(LenderRole);
             var AdvisorParty          = _Role.HasValue(AdvisorRole);
             var SponsorParty          = _Role.HasValue(SponsorRole);
-            var BorrrowerParty        = _Role.HasValue(BorrowerRole);
+            var BorrowerParty         = _Role.HasValue(BorrowerRole);
             var _Organisation         = DealParty.ObjectProperty<DealParty, Organisation>(dealParty => dealParty.Organisation);
             var MufgParty             = _Organisation.HasValue(Mufg);
 
@@ -101,7 +101,7 @@ namespace Deals
             var Debt = this.Class("Debt");
             Debt.SubClassOf(Deal);
             Debt.SubClassOf(_Parties.ExactCardinality(1, MufgLenderParty));
-            Debt.SubClassOf(_Parties.MinCardinality(1, BorrrowerParty))
+            Debt.SubClassOf(_Parties.MinCardinality(1, BorrowerParty))
                 .Annotate(
                     Restriction,
                     0)
