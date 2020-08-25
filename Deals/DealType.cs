@@ -99,8 +99,15 @@ namespace Deals
                     Restriction,
                     0);
             var Debt = this.Class("Debt");
-            Debt.SubClassOf(_Parties.ExactCardinality(1, MufgLenderParty));
             Debt.SubClassOf(Deal);
+            Debt.SubClassOf(_Parties.ExactCardinality(1, MufgLenderParty));
+            Debt.SubClassOf(_Parties.MinCardinality(1, BorrrowerParty))
+                .Annotate(
+                    Restriction,
+                    0)
+                .Annotate(
+                    SubPropertyName,
+                    "Borrowers");
 
             var Advisory = this.Class("Advisory");
             Advisory.SubClassOf(_Parties.ExactCardinality(1, MufgAdvisorParty));
@@ -116,15 +123,6 @@ namespace Deals
                 .Annotate(
                     SubPropertyName,
                     "Sponsors");
-
-            ProjectFinance
-                .SubClassOf(_Parties.MinCardinality(1, BorrrowerParty))
-                .Annotate(
-                    Restriction,
-                    0)
-                .Annotate(
-                    SubPropertyName,
-                    "Borrowers");
 
             //ProjectFinance
             //    .SubClassOf(_Classes.ExactCardinality(1, _ClassificationScheme.HasValue(Exclusivity)))
