@@ -110,8 +110,15 @@ namespace Deals
                     "Borrowers");
 
             var Advisory = this.Class("Advisory");
-            Advisory.SubClassOf(_Parties.ExactCardinality(1, MufgAdvisorParty));
             Advisory.SubClassOf(Deal);
+            Advisory.SubClassOf(_Parties.ExactCardinality(1, MufgAdvisorParty));
+            Advisory.SubClassOf(_Parties.MaxCardinality(0, SponsorParty))
+                .Annotate(
+                    Restriction,
+                    0)
+                .Annotate(
+                    SubPropertyName,
+                    "Sponsors");
 
             var ProjectFinance = this.Class("ProjectFinance");
             ProjectFinance.SubClassOf(Debt);
