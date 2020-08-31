@@ -43,20 +43,25 @@ namespace Ontology
             object individual
             )
         {
+            var classExpressions = new HashSet<IClassExpression>();
             switch(individual)
             {
                 case INamedIndividual namedIndividual:
-                    var classExpressions = new HashSet<IClassExpression>();
                     namedIndividual
                         .Classes
                         .Select(classAssertion => classAssertion.ClassExpression)
                         .ForEach(classExpression => classExpression.SuperClasses(classExpressions));
-                    return classExpressions;
+                    break;
                 case IIndividual iindividual:
-                    return _classes[iindividual.ClassName].SuperClasses();
+                    if(_classes.TryGetValue(iindividual.ClassName, out var @class1))
+                        class1.SuperClasses(classExpressions);
+                    break;
                 default:
-                    return new HashSet<IClassExpression>();
+                    if(_classes.TryGetValue(individual.GetType().FullName, out var @class2))
+                        class2.SuperClasses(classExpressions);
+                    break;
             }
+            return classExpressions;
         }
     }
 }
