@@ -35,8 +35,9 @@ namespace Ontology
                 .Where(classExpression => classExpression.Keys.Count > 0).ToList();
             var commonKeyedClassExpressions = Classes(rhs);
             commonKeyedClassExpressions.IntersectWith(keyedClassExpressions);
-            return commonKeyedClassExpressions.All(
-                classExpression => classExpression.Keys.All(hasKey => hasKey.AreEqual(lhs, rhs)));
+            return
+                commonKeyedClassExpressions.Count > 0 &&
+                commonKeyedClassExpressions.All(classExpression => classExpression.Keys.All(hasKey => hasKey.AreEqual(lhs, rhs)));
         }
 
         public HashSet<IClassExpression> Classes(

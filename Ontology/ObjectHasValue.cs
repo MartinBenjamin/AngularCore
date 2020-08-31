@@ -22,6 +22,6 @@ namespace Ontology
             object individual
             ) => _objectPropertyExpression
                 .Values(individual)
-                .Any(value => _objectPropertyExpression.Ontology.AreEqual(individual, value));
+                .Any(value => _objectPropertyExpression.Ontology.AreEqual(_individual, value));
     }
 }
