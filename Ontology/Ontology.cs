@@ -39,7 +39,7 @@ namespace Ontology
                 classExpression => classExpression.Keys.All(hasKey => hasKey.AreEqual(lhs, rhs)));
         }
 
-        protected HashSet<IClassExpression> Classes(
+        public HashSet<IClassExpression> Classes(
             object individual
             )
         {
@@ -56,9 +56,13 @@ namespace Ontology
                     if(_classes.TryGetValue(iindividual.ClassName, out var @class1))
                         class1.SuperClasses(classExpressions);
                     break;
-                default:
-                    if(_classes.TryGetValue(individual.GetType().FullName, out var @class2))
+                case string className:
+                    if(_classes.TryGetValue(className, out var @class2))
                         class2.SuperClasses(classExpressions);
+                    break;
+                default:
+                    if(_classes.TryGetValue(individual.GetType().FullName, out var @class3))
+                        class3.SuperClasses(classExpressions);
                     break;
             }
             return classExpressions;

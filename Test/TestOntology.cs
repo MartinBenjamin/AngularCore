@@ -193,6 +193,35 @@ namespace Test
             Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(deal)));
         }
 
+
+        [TestCase("ProjectFinance", false)]
+        [TestCase("Advisory"      , true )]
+        public void NoSponsors(
+            string className,
+            bool   result
+            )
+        {
+            var dealOntology = new DealOntology();
+            var classes = dealOntology.Classes(className);
+
+            var subClassOf =
+            (
+                from classExpression in classes
+                from axiom in classExpression.SuperClasses
+                from annotation in axiom.Annotations
+                from annotationAnnotation in annotation.Annotations
+                where
+                    annotation.Property == dealOntology.Restriction &&
+                    annotationAnnotation.Property == dealOntology.SubPropertyName &&
+                    annotationAnnotation.Value.Equals("Sponsors") &&
+                    axiom.SuperClassExpression is IObjectMaxCardinality objectMaxCardinality &&
+                    objectMaxCardinality.Cardinality == 0
+                select axiom
+            ).FirstOrDefault();
+
+            Assert.That(subClassOf != null, Is.EqualTo(result));
+        }
+
         [TestCase(0, false)]
         [TestCase(1, true )]
         [TestCase(2, true )]
