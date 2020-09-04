@@ -8,6 +8,9 @@ namespace Ontology
     {
         private IList<IAxiom>               _axioms  = new List<IAxiom>();
         private IDictionary<string, IClass> _classes = new Dictionary<string, IClass>();
+        private IDictionary<IClassExpression, HashSet<IClassExpression>>
+                                            _superClasses = new Dictionary<IClassExpression, HashSet<IClassExpression>>();
+
         private IClass _thing;
         private IClass _nothing;
 
@@ -43,29 +46,53 @@ namespace Ontology
             object individual
             )
         {
-            var classExpressions = new HashSet<IClassExpression>();
             switch(individual)
             {
                 case INamedIndividual namedIndividual:
+                    HashSet<IClassExpression> classExpressions = new HashSet<IClassExpression>();
                     namedIndividual
                         .Classes
                         .Select(classAssertion => classAssertion.ClassExpression)
-                        .ForEach(classExpression => classExpression.SuperClasses(classExpressions));
-                    break;
+                        .ForEach(classExpression => classExpressions.UnionWith(SuperClasses(classExpression)));
+                    return classExpressions;
                 case IIndividual iindividual:
                     if(_classes.TryGetValue(iindividual.ClassName, out var @class1))
-                        class1.SuperClasses(classExpressions);
+                        return SuperClasses(@class1);
                     break;
                 case string className:
                     if(_classes.TryGetValue(className, out var @class2))
-                        class2.SuperClasses(classExpressions);
+                        return SuperClasses(@class2);
                     break;
                 default:
                     if(_classes.TryGetValue(individual.GetType().FullName, out var @class3))
-                        class3.SuperClasses(classExpressions);
+                        return SuperClasses(@class3);
                     break;
             }
-            return classExpressions;
+            return new HashSet<IClassExpression>();
+        }
+
+        public HashSet<IClassExpression> SuperClasses(
+            IClassExpression classExpression
+            )
+        {
+            HashSet<IClassExpression> superClassExpressions;
+            if(_superClasses.TryGetValue(
+                classExpression,
+                out superClassExpressions))
+                return superClassExpressions;
+
+            superClassExpressions = new HashSet<IClassExpression>();
+            _superClasses[classExpression] = superClassExpressions;
+            superClassExpressions.Add(classExpression);
+
+            foreach(var superClassExpression in classExpression.SuperClasses.Select(superClass => superClass.SuperClassExpression))
+                superClassExpressions.UnionWith(SuperClasses(superClassExpression));
+
+            if(classExpression is IObjectIntersectionOf objectIntersectionOf)
+                foreach(var componentClassExpression in objectIntersectionOf.ClassExpressions)
+                    superClassExpressions.UnionWith(SuperClasses(componentClassExpression));
+
+            return superClassExpressions;
         }
     }
 }
