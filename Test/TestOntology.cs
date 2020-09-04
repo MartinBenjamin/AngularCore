@@ -198,7 +198,8 @@ namespace Test
             )
         {
             var dealOntology = new DealOntology();
-            var classes = dealOntology.Classes(className);
+            var @class = ((IOntology)dealOntology).Classes[className];
+            var classes = dealOntology.SuperClasses(@class);
 
             var subClassOf =
             (

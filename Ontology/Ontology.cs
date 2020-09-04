@@ -59,13 +59,9 @@ namespace Ontology
                     if(_classes.TryGetValue(iindividual.ClassName, out var @class1))
                         return SuperClasses(@class1);
                     break;
-                case string className:
-                    if(_classes.TryGetValue(className, out var @class2))
-                        return SuperClasses(@class2);
-                    break;
                 default:
-                    if(_classes.TryGetValue(individual.GetType().FullName, out var @class3))
-                        return SuperClasses(@class3);
+                    if(_classes.TryGetValue(individual.GetType().FullName, out var @class2))
+                        return SuperClasses(@class2);
                     break;
             }
             return new HashSet<IClassExpression>();
