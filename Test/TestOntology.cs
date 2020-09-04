@@ -68,9 +68,7 @@ namespace Test
                 null);
 
             var dealOntology = new DealOntology();
-            IOntology ontology = dealOntology;
-
-            var classification = ontology.Classify(deal);
+            var classification = dealOntology.Classify(deal);
             Assert.That(classification.ContainsKey(deal));
             classification[deal].ForEach(TestContext.WriteLine);
 
@@ -116,10 +114,9 @@ namespace Test
                     "Sponsor"),
                 null,
                 equity);
-            var dealOntology = new DealOntology();
-            IOntology ontology = dealOntology;
 
-            var classification = ontology.Classify(deal);
+            var dealOntology = new DealOntology();
+            var classification = dealOntology.Classify(deal);
             Assert.That(classification.ContainsKey(deal));
             Assert.That(classification.ContainsKey(sponsor));
             classification[sponsor].ForEach(TestContext.WriteLine);
@@ -167,10 +164,9 @@ namespace Test
                     role,
                     null,
                     null));
-            var dealOntology = new DealOntology();
-            IOntology ontology = dealOntology;
 
-            var classification = ontology.Classify(deal);
+            var dealOntology = new DealOntology();
+            var classification = dealOntology.Classify(deal);
             Assert.That(classification.ContainsKey(deal));
             classification[deal].ForEach(TestContext.WriteLine);
 
@@ -248,10 +244,9 @@ namespace Test
                     (Organisation)null,
                     role,
                     null));
-            var dealOntology = new DealOntology();
-            IOntology ontology = dealOntology;
 
-            var classification = ontology.Classify(deal);
+            var dealOntology = new DealOntology();
+            var classification = dealOntology.Classify(deal);
             Assert.That(classification.ContainsKey(deal));
             classification[deal].ForEach(TestContext.WriteLine);
 
