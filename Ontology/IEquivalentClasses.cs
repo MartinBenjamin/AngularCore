@@ -2,8 +2,8 @@
 
 namespace Ontology
 {
-    interface IEquivalentClasses: IClassAxiom
+    public interface IEquivalentClasses: IClassAxiom
     {
-        IList<IClassExpression> ClassExpressions { get; }
+        IEnumerable<IClassExpression> ClassExpressions { get; }
     }
 }

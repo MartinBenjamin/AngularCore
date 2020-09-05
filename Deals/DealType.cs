@@ -41,10 +41,10 @@ namespace Deals
             var _Name                 = Named.DataProperty<Named<Guid>, string>(named => named.Name);
             Named.SubClassOf(DomainObject);
 
-            var ClassificationScheme  = this.Class<ClassificationScheme>();
-            ClassificationScheme.SubClassOf(DomainObject);
-            var Exclusivity = ClassificationScheme.NamedIndividual("Exclusivity");
-            Exclusivity.Value(_Id, ClassificationSchemeIdentifier.Exclusivity);
+            //var ClassificationScheme  = this.Class<ClassificationScheme>();
+            //ClassificationScheme.SubClassOf(DomainObject);
+            //var Exclusivity = ClassificationScheme.NamedIndividual("Exclusivity");
+            //Exclusivity.Value(_Id, ClassificationSchemeIdentifier.Exclusivity);
 
             var Role                  = this.Class<Role>();
             Role.SubClassOf(Named);
@@ -55,7 +55,7 @@ namespace Deals
             var LenderRole = Role.NamedIndividual("Lender");
             LenderRole.Value(_Id, DealRoleIdentifier.Lender);
             var AdvisorRole = Role.NamedIndividual("Advisor");
-            LenderRole.Value(_Id, DealRoleIdentifier.Advisor);
+            AdvisorRole.Value(_Id, DealRoleIdentifier.Advisor);
 
             var Organisation          = this.Class<Organisation>();
             var LegalEntity           = this.Class<LegalEntity>();
@@ -130,6 +130,17 @@ namespace Deals
                 .Annotate(
                     SubPropertyName,
                     "Sponsors");
+
+            var Classifier  = this.Class<Classifier>();
+            Classifier.SubClassOf(Named);
+            var Exclusivity = this.Class<ExclusivityClassifier>();
+            Exclusivity.SubClassOf(Classifier);
+            var NotExclusive = Exclusivity.NamedIndividual("NotExclusive");
+            NotExclusive.Value(_Id, ExclusivityClassifierIdentifier.No);
+            var Exclusive = new ObjectIntersectionOf(Exclusivity, new ObjectComplementOf(new ObjectOneOf(this, NotExclusive)));
+
+            var ExclusiveDeal = this.Class("ExclusiveDeal");
+            ExclusiveDeal.Define(new ObjectSomeValuesFrom(_Classes, Exclusive));
 
             //ProjectFinance
             //    .SubClassOf(_Classes.ExactCardinality(1, _ClassificationScheme.HasValue(Exclusivity)))

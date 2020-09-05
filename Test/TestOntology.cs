@@ -270,6 +270,30 @@ namespace Test
             Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(deal)));
         }
 
+        [TestCase(false)]
+        [TestCase(true )]
+        public void ExclusiveDeal(
+            bool result
+            )
+        {
+            var dealOntology = new DealOntology();
+            IOntology ontology = dealOntology;
+            var exclusiveDeal = ontology.Classes["ExclusiveDeal"];
+
+            var deal = new Deal(
+                Guid.NewGuid(),
+                "Test",
+                "ProjectFinance",
+                null,
+                null);
+
+            deal.Classifiers.Add(new ExclusivityClassifier(
+                result ? Guid.Empty : ExclusivityClassifierIdentifier.No,
+                null));
+
+            Assert.That(exclusiveDeal.HasMember(deal), Is.EqualTo(result));
+        }
+
         //[TestCase(false)]
         //[TestCase(true )]
         //public void ExclusivityMandatory(

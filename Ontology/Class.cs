@@ -1,5 +1,4 @@
-﻿using CommonDomainObjects;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Ontology
 {
@@ -11,6 +10,7 @@ namespace Ontology
         private IList<IHasKey>                   _keys             = new List<IHasKey>();
         private IList<IObjectPropertyExpression> _objectProperties = new List<IObjectPropertyExpression>();
         private IList<IDataPropertyExpression>   _dataProperties   = new List<IDataPropertyExpression>();
+        private IClassExpression                 _definition;
 
         public Class(
             IOntology ontology,
@@ -32,9 +32,33 @@ namespace Ontology
 
         public virtual bool HasMember(
             object individual
-            ) => false;
+            ) => _definition.HasMember(individual);
+
+        IClassExpression IClass.Definition
+        {
+            get => _definition;
+            set => _definition = value;
+        }
 
         public override string ToString()
             => _name;
+    }
+
+    public class Class<T>: Class
+    {
+        public Class(
+            IOntology ontology
+            ) : base(
+                ontology,
+                typeof(T).FullName)
+        {
+        }
+
+        public override bool HasMember(
+            object individual
+            )
+        {
+            return ((Ontology)_ontology).Classes(individual).Contains(this);
+        }
     }
 }

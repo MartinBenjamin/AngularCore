@@ -18,4 +18,9 @@ namespace Deals
         {
         }
     }
+
+    public static class ExclusivityClassifierIdentifier
+    {
+        public static readonly Guid No = new Guid("f53d8101-9155-48fc-b4e5-dc4c536363d3");
+    }
 }

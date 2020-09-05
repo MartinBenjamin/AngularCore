@@ -17,7 +17,7 @@ namespace Ontology
 
         public static IClass Class<T>(
             this IOntology ontology
-            ) => ontology.Class(typeof(T).FullName);
+            ) => new Class<T>(ontology);
 
         public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
             this IOntology                              ontology,
@@ -113,6 +113,13 @@ namespace Ontology
                 subClassExpression.Ontology,
                 subClassExpression,
                 superClassExpression);
+
+        public static IEquivalentClasses Define(
+            this IClass      @class,
+            IClassExpression definition
+            ) => new ClassDefinition(
+                @class,
+                definition);
 
         public static IObjectHasValue HasValue(
             this IObjectPropertyExpression objectPropertyExpression,
