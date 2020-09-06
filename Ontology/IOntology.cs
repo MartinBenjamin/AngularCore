@@ -10,6 +10,10 @@ namespace Ontology
 
         IDictionary<string, IClass> Classes { get; }
 
+        IDictionary<object, HashSet<IClassExpression>> Classify(object individual);
+
+        HashSet<IClassExpression> ClassifyIndividual(object individual);
+
         bool AreEqual(
             object lhs,
             object rhs);

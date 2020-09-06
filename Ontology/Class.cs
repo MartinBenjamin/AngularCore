@@ -58,7 +58,7 @@ namespace Ontology
             object individual
             )
         {
-            return ((Ontology)_ontology).ClassifyIndividual(individual).Contains(this);
+            return _ontology.ClassifyIndividual(individual).Contains(this);
         }
     }
 }

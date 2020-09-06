@@ -28,6 +28,16 @@ namespace Ontology
 
         IDictionary<string, IClass> IOntology.Classes => _classes;
 
+        public IDictionary<object, HashSet<IClassExpression>> Classify(
+            object individual
+            )
+        {
+            IDictionary<object, HashSet<IClassExpression>> classExpressions = new Dictionary<object, HashSet<IClassExpression>>();
+            Classify(
+                classExpressions,
+                individual);
+            return classExpressions;
+        }
 
         bool IOntology.AreEqual(
             object lhs,
