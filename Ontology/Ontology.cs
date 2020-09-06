@@ -34,60 +34,195 @@ namespace Ontology
             object rhs
             )
         {
-            var commonKeyedClassExpressions = Classes(lhs)
+            var commonKeyedClassExpressions = ClassifyIndividual(lhs)
                 .Where(classExpression => classExpression.Keys.Count > 0).ToHashSet();
-            commonKeyedClassExpressions.IntersectWith(Classes(rhs));
+            commonKeyedClassExpressions.IntersectWith(ClassifyIndividual(rhs));
             return
                 commonKeyedClassExpressions.Count > 0 &&
                 commonKeyedClassExpressions.All(classExpression => classExpression.Keys.All(hasKey => hasKey.AreEqual(lhs, rhs)));
         }
 
-        public HashSet<IClassExpression> Classes(
-            object individual
+        public void Classify(
+            IDictionary<object, HashSet<IClassExpression>> classExpressions,
+            object                                         individual
             )
         {
+            if(classExpressions.ContainsKey(individual))
+                return;
+
+            classExpressions[individual] = new HashSet<IClassExpression>();
+
             switch(individual)
             {
                 case INamedIndividual namedIndividual:
-                    HashSet<IClassExpression> classExpressions = new HashSet<IClassExpression>();
-                    namedIndividual
-                        .Classes
-                        .Select(classAssertion => classAssertion.ClassExpression)
-                        .ForEach(classExpression => classExpressions.UnionWith(SuperClasses(classExpression)));
-                    return classExpressions;
+                    foreach(var @class in namedIndividual.Classes.Select(classAssertion => classAssertion.ClassExpression))
+                        Classify(
+                            classExpressions,
+                            individual,
+                            @class);
+                    break;
                 case IIndividual iindividual:
                     if(_classes.TryGetValue(iindividual.ClassName, out var @class1))
-                        return SuperClasses(@class1);
+                        Classify(
+                            classExpressions,
+                            individual,
+                            @class1);
                     break;
                 default:
                     if(_classes.TryGetValue(individual.GetType().FullName, out var @class2))
-                        return SuperClasses(@class2);
+                        Classify(
+                            classExpressions,
+                            individual,
+                            @class2);
                     break;
             }
-            return new HashSet<IClassExpression>();
+
+            foreach(var @class in _classes.Values.Where(@class => @class.Definition != null).Where(@class => @class.Definition.HasMember(individual)))
+                Classify(
+                    classExpressions,
+                    individual,
+                    @class);
         }
+
+        public void Classify(
+            IDictionary<object, HashSet<IClassExpression>> classExpressions,
+            object                                         individual,
+            IClassExpression                               classExpression
+            )
+        {
+            if(!classExpressions[individual].Add(classExpression))
+                // Class Expression already processed.
+                return;
+
+            foreach(var superClassExpression in classExpression.SuperClasses.Select(superClass => superClass.SuperClassExpression))
+                Classify(
+                    classExpressions,
+                    individual,
+                    superClassExpression);
+
+            if(classExpression is IObjectIntersectionOf objectIntersectionOf)
+                foreach(var componentClassExpression in objectIntersectionOf.ClassExpressions)
+                    Classify(
+                        classExpressions,
+                        individual,
+                        componentClassExpression);
+
+            foreach(var objectPropertyExpression in classExpression.ObjectProperties)
+                foreach(object value in objectPropertyExpression.Values(individual))
+                    Classify(
+                        classExpressions,
+                        value);
+        }
+
+        public HashSet<IClassExpression> ClassifyIndividual(
+            object individual
+            )
+        {
+            var classExpressions = new HashSet<IClassExpression>();
+
+            switch(individual)
+            {
+                case INamedIndividual namedIndividual:
+                    foreach(var @class in namedIndividual.Classes.Select(classAssertion => classAssertion.ClassExpression))
+                        ClassifyIndividual(
+                            classExpressions,
+                            individual,
+                            @class);
+                    break;
+                case IIndividual iindividual:
+                    if(_classes.TryGetValue(iindividual.ClassName, out var @class1))
+                        ClassifyIndividual(
+                            classExpressions,
+                            individual,
+                            @class1);
+                    break;
+                default:
+                    if(_classes.TryGetValue(individual.GetType().FullName, out var @class2))
+                        ClassifyIndividual(
+                            classExpressions,
+                            individual,
+                            @class2);
+                    break;
+            }
+
+            foreach(var @class in _classes.Values.Where(@class => @class.Definition != null).Where(@class => @class.Definition.HasMember(individual)))
+                ClassifyIndividual(
+                    classExpressions,
+                    individual,
+                    @class);
+
+            return classExpressions;
+        }
+
+        public void ClassifyIndividual(
+            HashSet<IClassExpression> classExpressions,
+            object                    individual,
+            IClassExpression          classExpression
+            )
+        {
+            if(!classExpressions.Add(classExpression))
+                // Class Expression already processed.
+                return;
+
+            foreach(var superClassExpression in classExpression.SuperClasses.Select(superClass => superClass.SuperClassExpression))
+                ClassifyIndividual(
+                    classExpressions,
+                    individual,
+                    superClassExpression);
+
+            if(classExpression is IObjectIntersectionOf objectIntersectionOf)
+                foreach(var componentClassExpression in objectIntersectionOf.ClassExpressions)
+                    ClassifyIndividual(
+                        classExpressions,
+                        individual,
+                        componentClassExpression);
+        }
+
+        //public HashSet<IClassExpression> Classes(
+        //    object individual
+        //    )
+        //{
+        //    switch(individual)
+        //    {
+        //        case INamedIndividual namedIndividual:
+        //            HashSet<IClassExpression> classExpressions = new HashSet<IClassExpression>();
+        //            namedIndividual
+        //                .Classes
+        //                .Select(classAssertion => classAssertion.ClassExpression)
+        //                .ForEach(classExpression => classExpressions.UnionWith(SuperClasses(classExpression)));
+        //            return classExpressions;
+        //        case IIndividual iindividual:
+        //            if(_classes.TryGetValue(iindividual.ClassName, out var @class1))
+        //                return SuperClasses(@class1);
+        //            break;
+        //        default:
+        //            if(_classes.TryGetValue(individual.GetType().FullName, out var @class2))
+        //                return SuperClasses(@class2);
+        //            break;
+        //    }
+        //    return new HashSet<IClassExpression>();
+        //}
 
         public HashSet<IClassExpression> SuperClasses(
             IClassExpression classExpression
             )
         {
             HashSet<IClassExpression> superClassExpressions;
-            if(_superClasses.TryGetValue(
+            if(!_superClasses.TryGetValue(
                 classExpression,
                 out superClassExpressions))
-                return superClassExpressions;
+            {
+                superClassExpressions = new HashSet<IClassExpression>();
+                _superClasses[classExpression] = superClassExpressions;
+                superClassExpressions.Add(classExpression);
 
-            superClassExpressions = new HashSet<IClassExpression>();
-            _superClasses[classExpression] = superClassExpressions;
-            superClassExpressions.Add(classExpression);
+                foreach(var superClassExpression in classExpression.SuperClasses.Select(superClass => superClass.SuperClassExpression))
+                    superClassExpressions.UnionWith(SuperClasses(superClassExpression));
 
-            foreach(var superClassExpression in classExpression.SuperClasses.Select(superClass => superClass.SuperClassExpression))
-                superClassExpressions.UnionWith(SuperClasses(superClassExpression));
-
-            if(classExpression is IObjectIntersectionOf objectIntersectionOf)
-                foreach(var componentClassExpression in objectIntersectionOf.ClassExpressions)
-                    superClassExpressions.UnionWith(SuperClasses(componentClassExpression));
-
+                if(classExpression is IObjectIntersectionOf objectIntersectionOf)
+                    foreach(var componentClassExpression in objectIntersectionOf.ClassExpressions)
+                        superClassExpressions.UnionWith(SuperClasses(componentClassExpression));
+            }
             return superClassExpressions;
         }
     }

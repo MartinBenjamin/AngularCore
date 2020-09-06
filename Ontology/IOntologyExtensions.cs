@@ -238,105 +238,105 @@ namespace Ontology
             )
         {
             IDictionary<object, HashSet<IClassExpression>> classExpressions = new Dictionary<object, HashSet<IClassExpression>>();
-            ontology.Classify(
+            ((Ontology)ontology).Classify(
                 classExpressions,
                 individual);
             return classExpressions;
         }
 
-        public static void Classify(
-            this IOntology                                 ontology,
-            IDictionary<object, HashSet<IClassExpression>> classExpressions,
-            object                                         individual
-            )
-        {
-            if(classExpressions.ContainsKey(individual))
-                return;
+        //public static void Classify(
+        //    this IOntology                                 ontology,
+        //    IDictionary<object, HashSet<IClassExpression>> classExpressions,
+        //    object                                         individual
+        //    )
+        //{
+        //    if(classExpressions.ContainsKey(individual))
+        //        return;
 
-            classExpressions[individual] = new HashSet<IClassExpression>();
+        //    classExpressions[individual] = new HashSet<IClassExpression>();
 
-            switch(individual)
-            {
-                case INamedIndividual namedIndividual:
-                    foreach(var @class in namedIndividual.Classes.Select(classAssertion => classAssertion.ClassExpression))
-                        ontology.Classify(
-                            classExpressions,
-                            individual,
-                            @class);
-                    break;
-                case IIndividual iindividual:
-                    if(ontology.Classes.TryGetValue(iindividual.ClassName, out var @class1))
-                        ontology.Classify(
-                            classExpressions,
-                            individual,
-                            @class1);
+        //    switch(individual)
+        //    {
+        //        case INamedIndividual namedIndividual:
+        //            foreach(var @class in namedIndividual.Classes.Select(classAssertion => classAssertion.ClassExpression))
+        //                ontology.Classify(
+        //                    classExpressions,
+        //                    individual,
+        //                    @class);
+        //            break;
+        //        case IIndividual iindividual:
+        //            if(ontology.Classes.TryGetValue(iindividual.ClassName, out var @class1))
+        //                ontology.Classify(
+        //                    classExpressions,
+        //                    individual,
+        //                    @class1);
 
-                    break;
-                default:
-                    if(ontology.Classes.TryGetValue(individual.GetType().FullName, out var @class2))
-                        ontology.Classify(
-                            classExpressions,
-                            individual,
-                            @class2);
-                    break;
-            }
-        }
+        //            break;
+        //        default:
+        //            if(ontology.Classes.TryGetValue(individual.GetType().FullName, out var @class2))
+        //                ontology.Classify(
+        //                    classExpressions,
+        //                    individual,
+        //                    @class2);
+        //            break;
+        //    }
+        //}
 
-        public static void Classify(
-            this IOntology                                 ontology,
-            IDictionary<object, HashSet<IClassExpression>> classExpressions,
-            object                                         individual,
-            IClassExpression                               classExpression
-            )
-        {
-            if(!classExpressions[individual].Add(classExpression))
-                // Class Expression already processed.
-                return;
+        //public static void Classify(
+        //    this IOntology                                 ontology,
+        //    IDictionary<object, HashSet<IClassExpression>> classExpressions,
+        //    object                                         individual,
+        //    IClassExpression                               classExpression
+        //    )
+        //{
+        //    if(!classExpressions[individual].Add(classExpression))
+        //        // Class Expression already processed.
+        //        return;
 
-            foreach(var superClassExpression in classExpression.SuperClasses.Select(superClass => superClass.SuperClassExpression))
-                ontology.Classify(
-                    classExpressions,
-                    individual,
-                    superClassExpression);
+        //    foreach(var superClassExpression in classExpression.SuperClasses.Select(superClass => superClass.SuperClassExpression))
+        //        ontology.Classify(
+        //            classExpressions,
+        //            individual,
+        //            superClassExpression);
 
-            if(classExpression is IObjectIntersectionOf objectIntersectionOf)
-                foreach(var componentClassExpression in objectIntersectionOf.ClassExpressions)
-                    ontology.Classify(
-                        classExpressions,
-                        individual,
-                        componentClassExpression);
+        //    if(classExpression is IObjectIntersectionOf objectIntersectionOf)
+        //        foreach(var componentClassExpression in objectIntersectionOf.ClassExpressions)
+        //            ontology.Classify(
+        //                classExpressions,
+        //                individual,
+        //                componentClassExpression);
 
-            foreach(var objectPropertyExpression in classExpression.ObjectProperties)
-                foreach(object value in objectPropertyExpression.Values(individual))
-                    ontology.Classify(
-                        classExpressions,
-                        value);
-        }
+        //    foreach(var objectPropertyExpression in classExpression.ObjectProperties)
+        //        foreach(object value in objectPropertyExpression.Values(individual))
+        //            ontology.Classify(
+        //                classExpressions,
+        //                value);
+        //}
 
-        public static HashSet<IClassExpression> SuperClasses(
-            this IClassExpression classExpression
-            )
-        {
-            var superClassExpressions = new HashSet<IClassExpression>();
-            classExpression.SuperClasses(superClassExpressions);
-            return superClassExpressions;
-        }
+        //public static HashSet<IClassExpression> SuperClasses(
+        //    this IClassExpression classExpression
+        //    )
+        //{
+        //    var superClassExpressions = new HashSet<IClassExpression>();
+        //    classExpression.SuperClasses(superClassExpressions);
+        //    return superClassExpressions;
+        //}
 
-        public static void SuperClasses(
-            this IClassExpression     classExpression,
-            HashSet<IClassExpression> superClassExpressions
-            )
-        {
-            if(!superClassExpressions.Add(classExpression))
-                // Class Expression already processed.
-                return;
+        //public static void SuperClasses(
+        //    this IClassExpression     classExpression,
+        //    HashSet<IClassExpression> superClassExpressions
+        //    )
+        //{
+        //    if(!superClassExpressions.Add(classExpression))
+        //        // Class Expression already processed.
+        //        return;
 
-            foreach(var superClassExpression in classExpression.SuperClasses.Select(superClass => superClass.SuperClassExpression))
-                superClassExpression.SuperClasses(superClassExpressions);
+        //    foreach(var superClassExpression in classExpression.SuperClasses.Select(superClass => superClass.SuperClassExpression))
+        //        superClassExpression.SuperClasses(superClassExpressions);
 
-            if(classExpression is IObjectIntersectionOf objectIntersectionOf)
-                foreach(var componentClassExpression in objectIntersectionOf.ClassExpressions)
-                    componentClassExpression.SuperClasses(superClassExpressions);
-        }
+        //    if(classExpression is IObjectIntersectionOf objectIntersectionOf)
+        //        foreach(var componentClassExpression in objectIntersectionOf.ClassExpressions)
+        //            componentClassExpression.SuperClasses(superClassExpressions);
+        //}
     }
 }

@@ -292,6 +292,7 @@ namespace Test
                 null));
 
             Assert.That(exclusiveDeal.HasMember(deal), Is.EqualTo(result));
+            Assert.That(ontology.Classify(deal)[deal].Contains(exclusiveDeal), Is.EqualTo(result));
         }
 
         //[TestCase(false)]
