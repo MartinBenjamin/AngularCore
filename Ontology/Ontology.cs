@@ -60,68 +60,14 @@ namespace Ontology
             if(classExpressions.ContainsKey(individual))
                 return;
 
-            classExpressions[individual] = new HashSet<IClassExpression>();
+            classExpressions[individual] = ClassifyIndividual(individual);
 
-            switch(individual)
-            {
-                case INamedIndividual namedIndividual:
-                    foreach(var @class in namedIndividual.Classes.Select(classAssertion => classAssertion.ClassExpression))
+            foreach(var classExpression in classExpressions[individual])
+                foreach(var objectPropertyExpression in classExpression.ObjectProperties)
+                    foreach(object value in objectPropertyExpression.Values(individual))
                         Classify(
                             classExpressions,
-                            individual,
-                            @class);
-                    break;
-                case IIndividual iindividual:
-                    if(_classes.TryGetValue(iindividual.ClassName, out var @class1))
-                        Classify(
-                            classExpressions,
-                            individual,
-                            @class1);
-                    break;
-                default:
-                    if(_classes.TryGetValue(individual.GetType().FullName, out var @class2))
-                        Classify(
-                            classExpressions,
-                            individual,
-                            @class2);
-                    break;
-            }
-
-            foreach(var @class in _classes.Values.Where(@class => @class.Definition != null).Where(@class => @class.Definition.HasMember(individual)))
-                Classify(
-                    classExpressions,
-                    individual,
-                    @class);
-        }
-
-        public void Classify(
-            IDictionary<object, HashSet<IClassExpression>> classExpressions,
-            object                                         individual,
-            IClassExpression                               classExpression
-            )
-        {
-            if(!classExpressions[individual].Add(classExpression))
-                // Class Expression already processed.
-                return;
-
-            foreach(var superClassExpression in classExpression.SuperClasses.Select(superClass => superClass.SuperClassExpression))
-                Classify(
-                    classExpressions,
-                    individual,
-                    superClassExpression);
-
-            if(classExpression is IObjectIntersectionOf objectIntersectionOf)
-                foreach(var componentClassExpression in objectIntersectionOf.ClassExpressions)
-                    Classify(
-                        classExpressions,
-                        individual,
-                        componentClassExpression);
-
-            foreach(var objectPropertyExpression in classExpression.ObjectProperties)
-                foreach(object value in objectPropertyExpression.Values(individual))
-                    Classify(
-                        classExpressions,
-                        value);
+                            value);
         }
 
         public HashSet<IClassExpression> ClassifyIndividual(
