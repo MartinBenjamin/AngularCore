@@ -19,7 +19,11 @@ namespace Ontology
         IList<IClassExpression> IObjectUnionOf.ClassExpressions => _classExpressions;
 
         public override bool HasMember(
+            IDictionary<object, HashSet<IClassExpression>>
+                   classifications,
             object individual
-            ) => _classExpressions.Any(classExpression => classExpression.HasMember(individual));
+            ) => _classExpressions.Any(classExpression => classExpression.HasMember(
+                classifications,
+                individual));
     }
 }

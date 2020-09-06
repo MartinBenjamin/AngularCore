@@ -229,5 +229,39 @@ namespace Ontology
             annotated.Annotations.Add(annotation);
             return annotation;
         }
+
+        public static IDictionary<object, HashSet<IClassExpression>> Classify(
+            this IOntology ontology,
+            object         individual
+            )
+        {
+            var classifications = new Dictionary<object, HashSet<IClassExpression>>();
+            ontology.Classify(
+                classifications,
+                individual);
+            return classifications;
+        }
+
+        public static void Classify(
+            this IOntology ontology,
+            IDictionary<object, HashSet<IClassExpression>>
+                           classifications,
+            object         individual
+            )
+        {
+            if(classifications.ContainsKey(individual))
+                return;
+
+            classifications[individual] = ontology.ClassifyIndividual(
+                classifications,
+                individual);
+
+            foreach(var classExpression in classifications[individual])
+                foreach(var objectPropertyExpression in classExpression.ObjectProperties)
+                    foreach(object value in objectPropertyExpression.Values(individual))
+                        ontology.Classify(
+                            classifications,
+                            value);
+        }
     }
 }

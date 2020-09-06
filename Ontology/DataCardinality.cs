@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Ontology
 {
@@ -48,6 +49,8 @@ namespace Ontology
         }
 
         public override bool HasMember(
+            IDictionary<object, HashSet<IClassExpression>>
+                   classification,
             object individual
             ) => Count(individual) >= _cardinality;
     }
@@ -68,6 +71,8 @@ namespace Ontology
         }
 
         public override bool HasMember(
+            IDictionary<object, HashSet<IClassExpression>>
+                   classification,
             object individual
             ) => Count(individual) <= _cardinality;
     }
@@ -88,6 +93,8 @@ namespace Ontology
         }
 
         public override bool HasMember(
+            IDictionary<object, HashSet<IClassExpression>>
+                   classification,
             object individual
             ) => Count(individual) == _cardinality;
     }

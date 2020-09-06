@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Ontology
 {
@@ -19,7 +20,12 @@ namespace Ontology
         IClassExpression IObjectAllValuesFrom.ClassExpression => _classExpression;
 
         public override bool HasMember(
+            IDictionary<object, HashSet<IClassExpression>>
+                   classifications,
             object individual
-            ) => _objectPropertyExpression.Values(individual).All(_classExpression.HasMember);
+            ) => _objectPropertyExpression.Values(individual).All(
+                value => _classExpression.HasMember(
+                    classifications,
+                    value));
     }
 }

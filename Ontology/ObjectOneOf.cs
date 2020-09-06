@@ -22,8 +22,13 @@ namespace Ontology
         IList<object> IObjectOneOf.Individuals => _individuals;
 
         public override bool HasMember(
+            IDictionary<object, HashSet<IClassExpression>>
+                   classifications,
             object individual
-            ) => _individuals
-                .Any(i => _ontology.AreEqual(individual, i));
+            ) => _individuals.Any(
+                i => _ontology.AreEqual(
+                    classifications,
+                    individual,
+                    i));
     }
 }

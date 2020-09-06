@@ -1,4 +1,6 @@
-﻿namespace Ontology
+﻿using System.Collections.Generic;
+
+namespace Ontology
 {
     public class Thing: Class
     {
@@ -11,6 +13,8 @@
         }
 
         public override bool HasMember(
+            IDictionary<object, HashSet<IClassExpression>>
+                   classifications,
             object individual
             ) => true;
     }

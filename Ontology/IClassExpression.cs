@@ -9,6 +9,9 @@ namespace Ontology
         IList<IObjectPropertyExpression> ObjectProperties { get; }
         IList<IDataPropertyExpression>   DataProperties   { get; }
 
-        bool HasMember(object individual);
+        bool HasMember(
+            IDictionary<object, HashSet<IClassExpression>>
+                   classification,
+            object individual);
     }
 }

@@ -68,13 +68,13 @@ namespace Test
                 null);
 
             var dealOntology = new DealOntology();
-            var classification = dealOntology.Classify(deal);
-            Assert.That(classification.ContainsKey(deal));
-            classification[deal].ForEach(TestContext.WriteLine);
+            var classifications = dealOntology.Classify(deal);
+            Assert.That(classifications.ContainsKey(deal));
+            classifications[deal].ForEach(TestContext.WriteLine);
 
             var subClassOf = 
             (
-                from classExpression in classification[deal]
+                from classExpression in classifications[deal]
                 from axiom in classExpression.SuperClasses
                 from annotation in axiom.Annotations
                 where
@@ -85,7 +85,9 @@ namespace Test
             ).FirstOrDefault();
 
             Assert.That(subClassOf, Is.Not.Null);
-            Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(deal)));
+            Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(
+                classifications,
+                deal)));
         }
 
         
@@ -116,14 +118,14 @@ namespace Test
                 equity);
 
             var dealOntology = new DealOntology();
-            var classification = dealOntology.Classify(deal);
-            Assert.That(classification.ContainsKey(deal));
-            Assert.That(classification.ContainsKey(sponsor));
-            classification[sponsor].ForEach(TestContext.WriteLine);
+            var classifications = dealOntology.Classify(deal);
+            Assert.That(classifications.ContainsKey(deal));
+            Assert.That(classifications.ContainsKey(sponsor));
+            classifications[sponsor].ForEach(TestContext.WriteLine);
 
             var subClassOf =
             (
-                from classExpression in classification[sponsor]
+                from classExpression in classifications[sponsor]
                 from axiom in classExpression.SuperClasses
                 from annotation in axiom.Annotations
                 where
@@ -134,7 +136,9 @@ namespace Test
             ).FirstOrDefault();
 
             Assert.That(subClassOf, Is.Not.Null);
-            Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(sponsor)));
+            Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(
+                classifications,
+                sponsor)));
         }
 
         [TestCase(0, false)]
@@ -166,13 +170,13 @@ namespace Test
                     null));
 
             var dealOntology = new DealOntology();
-            var classification = dealOntology.Classify(deal);
-            Assert.That(classification.ContainsKey(deal));
-            classification[deal].ForEach(TestContext.WriteLine);
+            var classifications = dealOntology.Classify(deal);
+            Assert.That(classifications.ContainsKey(deal));
+            classifications[deal].ForEach(TestContext.WriteLine);
 
             var subClassOf =
             (
-                from classExpression in classification[deal]
+                from classExpression in classifications[deal]
                 from axiom in classExpression.SuperClasses
                 from annotation in axiom.Annotations
                 from annotationAnnotation in annotation.Annotations
@@ -186,7 +190,9 @@ namespace Test
             ).FirstOrDefault();
 
             Assert.That(subClassOf, Is.Not.Null);
-            Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(deal)));
+            Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(
+                classifications,
+                deal)));
         }
 
 
@@ -247,13 +253,13 @@ namespace Test
                     null));
 
             var dealOntology = new DealOntology();
-            var classification = dealOntology.Classify(deal);
-            Assert.That(classification.ContainsKey(deal));
-            classification[deal].ForEach(TestContext.WriteLine);
+            var classifications = dealOntology.Classify(deal);
+            Assert.That(classifications.ContainsKey(deal));
+            classifications[deal].ForEach(TestContext.WriteLine);
 
             var subClassOf =
             (
-                from classExpression in classification[deal]
+                from classExpression in classifications[deal]
                 from axiom in classExpression.SuperClasses
                 from annotation in axiom.Annotations
                 from annotationAnnotation in annotation.Annotations
@@ -267,7 +273,9 @@ namespace Test
             ).FirstOrDefault();
 
             Assert.That(subClassOf, Is.Not.Null);
-            Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(deal)));
+            Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(
+                classifications,
+                deal)));
         }
 
         [TestCase(false)]
@@ -290,9 +298,12 @@ namespace Test
             deal.Classifiers.Add(new ExclusivityClassifier(
                 result ? Guid.Empty : ExclusivityClassifierIdentifier.No,
                 null));
+            var classifications = dealOntology.Classify(deal);
 
-            Assert.That(exclusiveDeal.HasMember(deal), Is.EqualTo(result));
-            Assert.That(ontology.Classify(deal)[deal].Contains(exclusiveDeal), Is.EqualTo(result));
+            Assert.That(exclusiveDeal.HasMember(
+                classifications,
+                deal), Is.EqualTo(result));
+            Assert.That(classifications[deal].Contains(exclusiveDeal), Is.EqualTo(result));
         }
 
         //[TestCase(false)]

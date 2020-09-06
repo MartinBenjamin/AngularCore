@@ -31,8 +31,12 @@ namespace Ontology
         IList<IDataPropertyExpression> IClassExpression.DataProperties => _dataProperties;
 
         public virtual bool HasMember(
+            IDictionary<object, HashSet<IClassExpression>>
+                   classifications,
             object individual
-            ) => _definition.HasMember(individual);
+            ) => _definition.HasMember(
+                classifications,
+                individual);
 
         IClassExpression IClass.Definition
         {
@@ -55,10 +59,14 @@ namespace Ontology
         }
 
         public override bool HasMember(
+            IDictionary<object, HashSet<IClassExpression>>
+                   classifications,
             object individual
             )
         {
-            return _ontology.ClassifyIndividual(individual).Contains(this);
+            return _ontology.ClassifyIndividual(
+                classifications,
+                individual).Contains(this);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Ontology
 {
@@ -40,8 +41,13 @@ namespace Ontology
         }
 
         public override bool HasMember(
+            IDictionary<object, HashSet<IClassExpression>>
+                   classifications,
             object individual
-            ) => _objectPropertyExpression.Values(individual).Count(_classExpression.HasMember) >= _cardinality;
+            ) => _objectPropertyExpression.Values(individual).Count(
+                value => _classExpression.HasMember(
+                    classifications,
+                    value)) >= _cardinality;
     }
 
     public class ObjectMaxCardinality:
@@ -60,8 +66,13 @@ namespace Ontology
         }
 
         public override bool HasMember(
+            IDictionary<object, HashSet<IClassExpression>>
+                   classifications,
             object individual
-            ) => _objectPropertyExpression.Values(individual).Count(_classExpression.HasMember) <= _cardinality;
+            ) => _objectPropertyExpression.Values(individual).Count(
+                value => _classExpression.HasMember(
+                    classifications,
+                    value)) <= _cardinality;
     }
     
     public class ObjectExactCardinality:
@@ -80,7 +91,12 @@ namespace Ontology
         }
 
         public override bool HasMember(
+            IDictionary<object, HashSet<IClassExpression>>
+                   classifications,
             object individual
-            ) => _objectPropertyExpression.Values(individual).Count(_classExpression.HasMember) == _cardinality;
+            ) => _objectPropertyExpression.Values(individual).Count(
+                value => _classExpression.HasMember(
+                    classifications,
+                    value)) == _cardinality;
     }
 }

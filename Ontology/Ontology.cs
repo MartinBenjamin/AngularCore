@@ -28,53 +28,40 @@ namespace Ontology
 
         IDictionary<string, IClass> IOntology.Classes => _classes;
 
-        public IDictionary<object, HashSet<IClassExpression>> Classify(
-            object individual
-            )
-        {
-            IDictionary<object, HashSet<IClassExpression>> classExpressions = new Dictionary<object, HashSet<IClassExpression>>();
-            Classify(
-                classExpressions,
-                individual);
-            return classExpressions;
-        }
-
         bool IOntology.AreEqual(
+            IDictionary<object, HashSet<IClassExpression>>
+                   classifications,
             object lhs,
             object rhs
             )
         {
-            var commonKeyedClassExpressions = ClassifyIndividual(lhs)
+            var commonKeyedClassExpressions = ClassifyIndividual(
+                classifications,
+                lhs)
                 .Where(classExpression => classExpression.Keys.Count > 0).ToHashSet();
-            commonKeyedClassExpressions.IntersectWith(ClassifyIndividual(rhs));
+            commonKeyedClassExpressions.IntersectWith(ClassifyIndividual(
+                classifications,
+                rhs));
             return
                 commonKeyedClassExpressions.Count > 0 &&
                 commonKeyedClassExpressions.All(classExpression => classExpression.Keys.All(hasKey => hasKey.AreEqual(lhs, rhs)));
         }
 
-        public void Classify(
-            IDictionary<object, HashSet<IClassExpression>> classExpressions,
-            object                                         individual
-            )
-        {
-            if(classExpressions.ContainsKey(individual))
-                return;
-
-            classExpressions[individual] = ClassifyIndividual(individual);
-
-            foreach(var classExpression in classExpressions[individual])
-                foreach(var objectPropertyExpression in classExpression.ObjectProperties)
-                    foreach(object value in objectPropertyExpression.Values(individual))
-                        Classify(
-                            classExpressions,
-                            value);
-        }
-
         public HashSet<IClassExpression> ClassifyIndividual(
+            IDictionary<object, HashSet<IClassExpression>>
+                   classifications,
             object individual
             )
         {
-            var classExpressions = new HashSet<IClassExpression>();
+            HashSet<IClassExpression> classExpressions;
+
+            if(classifications.TryGetValue(
+                individual,
+                out classExpressions))
+                return classExpressions;
+
+            classifications[individual] =
+            classExpressions = new HashSet<IClassExpression>();
 
             switch(individual)
             {
@@ -101,7 +88,9 @@ namespace Ontology
                     break;
             }
 
-            foreach(var @class in _classes.Values.Where(@class => @class.Definition != null).Where(@class => @class.Definition.HasMember(individual)))
+            foreach(var @class in _classes.Values.Where(@class => @class.Definition != null).Where(@class => @class.Definition.HasMember(
+                classifications,
+                individual)))
                 ClassifyIndividual(
                     classExpressions,
                     individual,

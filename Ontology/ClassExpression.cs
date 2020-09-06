@@ -21,6 +21,9 @@ namespace Ontology
 
         IList<IDataPropertyExpression> IClassExpression.DataProperties => _dataProperties;
 
-        public abstract bool HasMember(object individual);
+        public abstract bool HasMember(
+            IDictionary<object, HashSet<IClassExpression>>
+                   classifications,
+            object individual);
     }
 }

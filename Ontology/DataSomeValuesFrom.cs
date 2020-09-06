@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Ontology
 {
@@ -19,6 +20,8 @@ namespace Ontology
         IDataRange IDataSomeValuesFrom.DataRange => _dataRange;
 
         public override bool HasMember(
+            IDictionary<object, HashSet<IClassExpression>>
+                   classification,
             object individual
             ) => _dataPropertyExpression.Values(individual).Any(_dataRange.HasMember);
     }
