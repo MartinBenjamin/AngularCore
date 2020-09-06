@@ -23,9 +23,8 @@ namespace Ontology
             IDictionary<object, HashSet<IClassExpression>>
                    classifications,
             object individual
-            ) => _objectPropertyExpression
-                .Values(individual)
-                .Any(value => _objectPropertyExpression.Ontology.AreEqual(
+            ) => _objectPropertyExpression.Values(individual).Any(
+                value => _objectPropertyExpression.Ontology.AreEqual(
                     classifications,
                     _individual,
                     value));
