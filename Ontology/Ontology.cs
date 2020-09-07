@@ -99,7 +99,7 @@ namespace Ontology
             return classExpressions;
         }
 
-        public void ClassifyIndividual(
+        private void ClassifyIndividual(
             HashSet<IClassExpression> classExpressions,
             object                    individual,
             IClassExpression          classExpression
@@ -122,31 +122,6 @@ namespace Ontology
                         individual,
                         componentClassExpression);
         }
-
-        //public HashSet<IClassExpression> Classes(
-        //    object individual
-        //    )
-        //{
-        //    switch(individual)
-        //    {
-        //        case INamedIndividual namedIndividual:
-        //            HashSet<IClassExpression> classExpressions = new HashSet<IClassExpression>();
-        //            namedIndividual
-        //                .Classes
-        //                .Select(classAssertion => classAssertion.ClassExpression)
-        //                .ForEach(classExpression => classExpressions.UnionWith(SuperClasses(classExpression)));
-        //            return classExpressions;
-        //        case IIndividual iindividual:
-        //            if(_classes.TryGetValue(iindividual.ClassName, out var @class1))
-        //                return SuperClasses(@class1);
-        //            break;
-        //        default:
-        //            if(_classes.TryGetValue(individual.GetType().FullName, out var @class2))
-        //                return SuperClasses(@class2);
-        //            break;
-        //    }
-        //    return new HashSet<IClassExpression>();
-        //}
 
         public HashSet<IClassExpression> SuperClasses(
             IClassExpression classExpression
