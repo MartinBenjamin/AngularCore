@@ -9,9 +9,9 @@ namespace Ontology
         public DataType(
             IOntology ontology,
             string    name
-        ) : base(
-            ontology,
-            name)
+            ) : base(
+                ontology,
+                name)
         {
         }
 
