@@ -50,6 +50,34 @@ namespace Test
             Assert.That(x, Is.EqualTo(0));
         }
 
+        [TestCase(0 , true)]
+        [TestCase("", true)]
+        public void TestTning(
+            object individual,
+            bool   result
+            )
+        {
+            IOntology ontology = new DealOntology();
+            Assert.That(ontology.Thing.HasMember(
+                new Dictionary<object, HashSet<IClassExpression>>(),
+                individual),
+                Is.EqualTo(result));
+        }
+
+        [TestCase(0 , false)]
+        [TestCase("", false)]
+        public void TestNothning(
+            object individual,
+            bool   result
+            )
+        {
+            IOntology ontology = new DealOntology();
+            Assert.That(ontology.Nothing.HasMember(
+                new Dictionary<object, HashSet<IClassExpression>>(),
+                individual),
+                Is.EqualTo(result));
+        }
+
         [TestCase(null , false)]
         [TestCase(""   , false)]
         [TestCase("a"  , true )]
