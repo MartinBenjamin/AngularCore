@@ -68,7 +68,6 @@ namespace Ontology
             Expression<Func<T, IEnumerable<TProperty>>> property
             )
         {
-
             var dataPropertyExpression = domain.Ontology.DataProperty(property);
 
             new DataPropertyDomain(
@@ -84,7 +83,6 @@ namespace Ontology
             Expression<Func<T, TProperty>> property
             )
         {
-
             var dataPropertyExpression = new FunctionalDataProperty<T, TProperty>(
                 domain.Ontology,
                 property);
