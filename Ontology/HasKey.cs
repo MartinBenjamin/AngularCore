@@ -25,7 +25,6 @@ namespace Ontology
         bool IHasKey.AreEqual(
             object lhs,
             object rhs
-            ) => _properties.All(
-                property => property.Values(lhs).ToHashSet().SetEquals(property.Values(rhs).ToHashSet()));
+            ) => _properties.All(property => property.AreEqual(lhs, rhs));
     }
 }

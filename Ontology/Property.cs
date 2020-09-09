@@ -22,7 +22,7 @@ namespace Ontology
             _property = property.Compile();
         }
 
-        IEnumerable<object> IPropertyExpression.Values(
+        public virtual IEnumerable<object> Values(
             object individual
             )
         {
@@ -124,6 +124,11 @@ namespace Ontology
         protected override IEnumerable<object> Values(
             INamedIndividual namedIndividual
             ) => namedIndividual[this];
+
+        bool IDataPropertyExpression.AreEqual(
+            object lhs,
+            object rhs
+            ) => Values(lhs).ToHashSet().SetEquals(Values(rhs).ToHashSet());
     }
     
     public class FunctionalDataProperty<T, TProperty>:
@@ -142,5 +147,10 @@ namespace Ontology
         protected override object Value(
             INamedIndividual namedIndividual
             ) => namedIndividual[this].FirstOrDefault();
+
+        bool IDataPropertyExpression.AreEqual(
+            object lhs,
+            object rhs
+            ) => Equals(Value(lhs), Value(rhs));
     }
 }

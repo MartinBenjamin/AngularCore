@@ -13,5 +13,8 @@ namespace Ontology
 
     public interface IDataPropertyExpression: IPropertyExpression
     {
+        bool AreEqual(
+            object lhs,
+            object rhs);
     }
 }
