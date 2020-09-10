@@ -95,6 +95,23 @@ namespace Ontology
             return dataPropertyExpression;
         }
 
+        public static IDataPropertyExpression DataProperty<T>(
+            this IClass                    domain,
+            Expression<Func<T, DateTime?>> property
+            )
+        {
+            var dataPropertyExpression = new FunctionalDataProperty<T, DateTime?>(
+                domain.Ontology,
+                property);
+
+            new DataPropertyDomain(
+                domain.Ontology,
+                dataPropertyExpression,
+                domain);
+
+            return dataPropertyExpression;
+        }
+
         public static IHasKey HasKey(
             this IClassExpression            classExpression,
             params IDataPropertyExpression[] dataPropertyExpressions

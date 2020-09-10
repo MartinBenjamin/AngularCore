@@ -1,6 +1,6 @@
 ﻿namespace Ontology
 {
-    public interface IDataType:
+    public interface IDatatype:
         IEntity,
         IDataRange
     {

@@ -2,11 +2,11 @@
 
 namespace Ontology
 {
-    public class DataType:
+    public class Datatype:
         Entity,
-        IDataType
+        IDatatype
     {
-        public DataType(
+        public Datatype(
             IOntology ontology,
             string    name
             ) : base(
