@@ -7,9 +7,8 @@
         private IObjectPropertyExpression _objectPropertyExpression;
 
         protected ObjectPropertyAxiom(
-            IOntology                 ontology,
             IObjectPropertyExpression objectPropertyExpression
-            ) : base(ontology)
+            ) : base(objectPropertyExpression.Ontology)
         {
             _objectPropertyExpression = objectPropertyExpression;
         }

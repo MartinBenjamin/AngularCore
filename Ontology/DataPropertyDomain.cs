@@ -7,12 +7,9 @@
         private IClassExpression _domain;
 
         public DataPropertyDomain(
-            IOntology               ontology,
             IDataPropertyExpression dataPropertyExpression,
             IClassExpression        domain
-            ) : base(
-                ontology,
-                dataPropertyExpression)
+            ) : base(dataPropertyExpression)
         {
             _domain = domain;
             _domain.DataProperties.Add(dataPropertyExpression);

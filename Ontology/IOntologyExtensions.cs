@@ -39,7 +39,6 @@ namespace Ontology
             var objectPropertyExpression = domain.Ontology.ObjectProperty(property);
 
             new ObjectPropertyDomain(
-                domain.Ontology,
                 objectPropertyExpression,
                 domain);
 
@@ -56,7 +55,6 @@ namespace Ontology
                 property);
 
             new ObjectPropertyDomain(
-                domain.Ontology,
                 objectPropertyExpression,
                 domain);
 
@@ -71,7 +69,6 @@ namespace Ontology
             var dataPropertyExpression = domain.Ontology.DataProperty(property);
 
             new DataPropertyDomain(
-                domain.Ontology,
                 dataPropertyExpression,
                 domain);
 
@@ -88,24 +85,6 @@ namespace Ontology
                 property);
 
             new DataPropertyDomain(
-                domain.Ontology,
-                dataPropertyExpression,
-                domain);
-
-            return dataPropertyExpression;
-        }
-
-        public static IDataPropertyExpression DataProperty<T>(
-            this IClass                    domain,
-            Expression<Func<T, DateTime?>> property
-            )
-        {
-            var dataPropertyExpression = new FunctionalDataProperty<T, DateTime?>(
-                domain.Ontology,
-                property);
-
-            new DataPropertyDomain(
-                domain.Ontology,
                 dataPropertyExpression,
                 domain);
 

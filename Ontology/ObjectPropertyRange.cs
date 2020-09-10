@@ -7,12 +7,9 @@
         private IClassExpression _range;
 
         public ObjectPropertyRange(
-            IOntology                 ontology,
             IObjectPropertyExpression objectPropertyExpression,
             IClassExpression          range
-            ):base(
-                ontology,
-                objectPropertyExpression)
+            ) : base(objectPropertyExpression)
         {
             _range = range;
         }

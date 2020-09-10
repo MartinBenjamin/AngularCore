@@ -7,12 +7,9 @@
         private IDataRange _range;
 
         public DataPropertyRange(
-            IOntology               ontology,
             IDataPropertyExpression dataPropertyExpression,
             IDataRange              range
-            ) : base(
-                ontology,
-                dataPropertyExpression)
+            ) : base(dataPropertyExpression)
         {
             _range = range;
         }
