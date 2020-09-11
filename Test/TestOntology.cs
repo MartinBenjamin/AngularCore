@@ -334,56 +334,51 @@ namespace Test
             Assert.That(classifications[deal].Contains(exclusiveDeal), Is.EqualTo(result));
         }
 
-        //[TestCase(false)]
-        //[TestCase(true )]
-        //public void ExclusivityMandatory(
-        //    bool result
-        //    )
-        //{
-        //    var deal = new Deal(
-        //        Guid.NewGuid(),
-        //        "Test",
-        //        "ProjectFinance",
-        //        null,
-        //        null);
+        [TestCase(false)]
+        [TestCase(true)]
+        public void ExclusivityMandatory(
+            bool result
+            )
+        {
+            var deal = new Deal(
+                Guid.NewGuid(),
+                "Test",
+                "ProjectFinance",
+                null,
+                null);
 
-        //    if(result)
-        //    {
-        //        var scheme = new ClassificationScheme(
-        //            ClassificationSchemeIdentifier.Exclusivity,
-        //            new Dictionary<CommonDomainObjects.Classifier, IList<CommonDomainObjects.Classifier>>());
+            if(result)
+                deal.Classifiers.Add(
+                    new ExclusivityClassifier(
+                        ExclusivityClassifierIdentifier.No,
+                        string.Empty));
 
-        //        new DealClassifier(
-        //            deal,
-        //            scheme,
-        //            null);
-        //    }
+            var dealOntology = new DealOntology();
+            IOntology ontology = dealOntology;
 
-        //    var dealOntology = new DealOntology();
-        //    IOntology ontology = dealOntology;
+            var classifications = ontology.Classify(deal);
+            Assert.That(classifications.ContainsKey(deal));
+            classifications[deal].ForEach(TestContext.WriteLine);
 
-        //    var classification = ontology.Classify(deal);
-        //    Assert.That(classification.ContainsKey(deal));
-        //    classification[deal].ForEach(TestContext.WriteLine);
+            var subClassOf =
+            (
+                from classExpression in classifications[deal]
+                from axiom in classExpression.SuperClasses
+                from annotation in axiom.Annotations
+                from annotationAnnotation in annotation.Annotations
+                where
+                    annotation.Property == dealOntology.Restriction &&
+                    annotationAnnotation.Property == dealOntology.SubPropertyName &&
+                    annotationAnnotation.Value.Equals("Exclusivity") &&
+                    axiom.SuperClassExpression is IPropertyRestriction propertyRestriction &&
+                    propertyRestriction.PropertyExpression.Name == "Classifiers"
+                select axiom
+            ).FirstOrDefault();
 
-        //    var subClassOf =
-        //    (
-        //        from classExpression in classification[deal]
-        //        from axiom in classExpression.SuperClasses
-        //        from annotation in axiom.Annotations
-        //        from annotationAnnotation in annotation.Annotations
-        //        where
-        //            annotation.Property == dealOntology.Restriction &&
-        //            annotationAnnotation.Property == dealOntology.SubPropertyName &&
-        //            annotationAnnotation.Value.Equals("Exclusivity") &&
-        //            axiom.SuperClassExpression is IPropertyRestriction propertyRestriction &&
-        //            propertyRestriction.PropertyExpression.Name == "Classes"
-        //        select axiom
-        //    ).FirstOrDefault();
-
-        //    Assert.That(subClassOf, Is.Not.Null);
-        //    Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(deal)));
-        //}
-
+            Assert.That(subClassOf, Is.Not.Null);
+            Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(
+                classifications,
+                deal)));
+        }
     }
 }

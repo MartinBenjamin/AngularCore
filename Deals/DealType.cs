@@ -30,6 +30,7 @@ namespace Deals
         public INamedIndividual    Mufg                 { get; protected set; }
         public IAnnotationProperty Restriction          { get; protected set; }
         public IAnnotationProperty SubPropertyName      { get; protected set; }
+        public IAnnotationProperty Validated            { get; protected set; }
 
         public DealOntology()
         {
@@ -62,8 +63,9 @@ namespace Deals
             Mufg                      = LegalEntity.NamedIndividual("MUFG");
 
             var Deal                  = this.Class<Deal>();
-            var _Parties              = Deal.ObjectProperty<Deal, DealParty>(deal => deal.Parties);
-            var _Classes              = Deal.ObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
+            var _Parties              = Deal.ObjectProperty<Deal, DealParty >(deal => deal.Parties    );
+            var _Classifiers          = Deal.ObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
+            var _Commitments          = Deal.ObjectProperty<Deal, Commitment>(deal => deal.Commitments);
             Deal.SubClassOf(Named);
 
             var DealParty             = this.Class<DealParty>();
@@ -90,6 +92,9 @@ namespace Deals
             SubPropertyName = new AnnotationProperty(
                 this,
                 "SubPropertyName");
+            Validated = new AnnotationProperty(
+                this,
+                "Validated");
 
             Deal.SubClassOf(
                 new DataSomeValuesFrom(
@@ -131,30 +136,37 @@ namespace Deals
                     SubPropertyName,
                     "Sponsors");
 
-            var Classifier  = this.Class<Classifier>();
+            var Classifier = this.Class<Classifier>();
             Classifier.SubClassOf(Named);
-            var Exclusivity = this.Class<ExclusivityClassifier>();
-            Exclusivity.SubClassOf(Classifier);
-            var NotExclusive = Exclusivity.NamedIndividual("NotExclusive");
+            var ExclusivityClassifier = this.Class<ExclusivityClassifier>();
+            ExclusivityClassifier.SubClassOf(Classifier);
+            Deal.SubClassOf(_Classifiers.ExactCardinality(1, ExclusivityClassifier))
+                .Annotate(
+                    Restriction,
+                    0)
+                .Annotate(
+                    SubPropertyName,
+                    "Exclusivity");
+
+            var NotExclusive = ExclusivityClassifier.NamedIndividual("NotExclusive");
             NotExclusive.Value(_Id, ExclusivityClassifierIdentifier.No);
-            var Exclusive = new ObjectIntersectionOf(Exclusivity, new ObjectComplementOf(new ObjectOneOf(this, NotExclusive)));
+            var Exclusive = new ObjectIntersectionOf(ExclusivityClassifier, new ObjectComplementOf(new ObjectOneOf(this, NotExclusive)));
 
             var ExclusiveDeal = this.Class("ExclusiveDeal");
-            ExclusiveDeal.Define(new ObjectSomeValuesFrom(_Classes, Exclusive));
+            ExclusiveDeal.Define(new ObjectSomeValuesFrom(_Classifiers, Exclusive));
 
-            //ProjectFinance
-            //    .SubClassOf(_Classes.ExactCardinality(1, _ClassificationScheme.HasValue(Exclusivity)))
-            //    .Annotate(
-            //        Restriction,
-            //        0)
-            //    .Annotate(
-            //        SubPropertyName,
-            //        "Exclusivity");
             Sponsor
                 .SubClassOf(_Equity.ExactCardinality(1))
                 .Annotate(
                     Restriction,
                     0);
+
+            var Exclusivity = this.Class<Exclusivity>();
+            var _date = Exclusivity.DataProperty<Exclusivity, DateTime?>(exclusivity => exclusivity.Date);
+            _date.Range(((IOntology)this).DateTime)
+                .Annotate(
+                    Validated,
+                    "");
         }
     }
 }
