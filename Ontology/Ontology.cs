@@ -1,4 +1,5 @@
 ﻿using CommonDomainObjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,13 +12,15 @@ namespace Ontology
         private IDictionary<IClassExpression, HashSet<IClassExpression>>
                                             _superClasses = new Dictionary<IClassExpression, HashSet<IClassExpression>>();
 
-        private IClass _thing;
-        private IClass _nothing;
+        private IClass    _thing;
+        private IClass    _nothing;
+        private IDatatype _dateTime;
 
         public Ontology()
         {
-            _thing   = new Thing(this);
-            _nothing = new Nothing(this);
+            _thing    = new Thing(this);
+            _nothing  = new Nothing(this);
+            _dateTime = new Datatype<DateTime>(this, "xsd:dateTime");
         }
 
         IClassExpression IOntology.Thing => _thing;
@@ -27,6 +30,8 @@ namespace Ontology
         IList<IAxiom> IOntology.Axioms => _axioms;
 
         IDictionary<string, IClass> IOntology.Classes => _classes;
+
+        IDatatype IOntology.DateTime => _dateTime;
 
         bool IOntology.AreEqual(
             IDictionary<object, HashSet<IClassExpression>>

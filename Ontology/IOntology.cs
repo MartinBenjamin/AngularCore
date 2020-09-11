@@ -4,9 +4,11 @@ namespace Ontology
 {
     public interface IOntology
     {
-        IClassExpression Thing   { get; }
-        IClassExpression Nothing { get; }
-        IList<IAxiom>    Axioms  { get; }
+        IClassExpression Thing    { get; }
+        IClassExpression Nothing  { get; }
+        IList<IAxiom>    Axioms   { get; }
+
+        IDatatype        DateTime { get; }
 
         IDictionary<string, IClass> Classes { get; }
 

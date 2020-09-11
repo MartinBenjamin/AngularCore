@@ -91,6 +91,13 @@ namespace Ontology
             return dataPropertyExpression;
         }
 
+        public static IDataPropertyRange Range(
+            this IDataPropertyExpression dataPropertyExpression,
+            IDatatype                    datatype
+            ) => new DataPropertyRange(
+                dataPropertyExpression,
+                datatype);
+
         public static IHasKey HasKey(
             this IClassExpression            classExpression,
             params IDataPropertyExpression[] dataPropertyExpressions

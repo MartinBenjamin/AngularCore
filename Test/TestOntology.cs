@@ -52,7 +52,7 @@ namespace Test
 
         [TestCase(0 , true)]
         [TestCase("", true)]
-        public void TestTning(
+        public void TestThing(
             object individual,
             bool   result
             )
@@ -66,7 +66,7 @@ namespace Test
 
         [TestCase(0 , false)]
         [TestCase("", false)]
-        public void TestNothning(
+        public void TestNothing(
             object individual,
             bool   result
             )
