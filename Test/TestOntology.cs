@@ -380,5 +380,46 @@ namespace Test
                 classifications,
                 deal)));
         }
+
+        [Test]
+        public void Exclusivity()
+        {
+            var deal = new Deal(
+                Guid.NewGuid(),
+                "Test",
+                "ProjectFinance",
+                null,
+                null);
+
+            var exclusivity = new Exclusivity(
+                Guid.NewGuid(),
+                deal,
+                DateTime.Today);
+
+            deal.Commitments.Add(exclusivity);
+
+            var dealOntology = new DealOntology();
+            IOntology ontology = dealOntology;
+
+            var classifications = ontology.Classify(deal);
+            Assert.That(classifications.ContainsKey(exclusivity));
+            classifications[exclusivity].ForEach(TestContext.WriteLine);
+
+            var range =
+            (
+                from classExpression in classifications[exclusivity]
+                from dataProperty in classExpression.DataProperties
+                from dataPropertyRange in ontology.Axioms.OfType<IDataPropertyRange>()
+                from annotation in dataPropertyRange.Annotations
+                where
+                    dataPropertyRange.DataPropertyExpression == dataProperty &&
+                    annotation.Property == dealOntology.Validated
+                select dataPropertyRange
+            ).FirstOrDefault();
+
+            Assert.That(range, Is.Not.Null);
+            Assert.That(range.DataPropertyExpression.Name, Is.EqualTo("Date"));
+            Assert.That(range.Range, Is.EqualTo(ontology.DateTime));
+        }
     }
 }
