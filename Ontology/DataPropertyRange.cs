@@ -12,7 +12,7 @@
             ) : base(dataPropertyExpression)
         {
             _range = range;
-            dataPropertyExpression.Range = this;
+            dataPropertyExpression.Ranges.Add(this);
         }
 
         IDataRange IDataPropertyRange.Range => _range;

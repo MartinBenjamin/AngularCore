@@ -409,7 +409,7 @@ namespace Test
             (
                 from classExpression in classifications[exclusivity]
                 from dataProperty in classExpression.DataProperties
-                let dataPropertyRange = dataProperty.Range
+                from dataPropertyRange in dataProperty.Ranges
                 from annotation in dataPropertyRange.Annotations
                 where
                     annotation.Property == dealOntology.Validated

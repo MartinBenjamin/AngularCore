@@ -112,7 +112,7 @@ namespace Ontology
         Property<T, TProperty>,
         IDataPropertyExpression
     {
-        private IDataPropertyRange _dataPropertyRange;
+        private IList<IDataPropertyRange> _ranges = new List<IDataPropertyRange>();
 
         public DataProperty(
             IOntology                                   ontology,
@@ -123,11 +123,7 @@ namespace Ontology
         {
         }
 
-        IDataPropertyRange IDataPropertyExpression.Range
-        {
-            get => _dataPropertyRange;
-            set => _dataPropertyRange = value;
-        }
+        IList<IDataPropertyRange> IDataPropertyExpression.Ranges => _ranges;
 
         bool IDataPropertyExpression.AreEqual(
             object lhs,
@@ -143,7 +139,7 @@ namespace Ontology
         FunctionalProperty<T, TProperty>,
         IDataPropertyExpression
     {
-        private IDataPropertyRange _dataPropertyRange;
+        private IList<IDataPropertyRange> _ranges = new List<IDataPropertyRange>();
 
         public FunctionalDataProperty(
             IOntology                      ontology,
@@ -154,11 +150,7 @@ namespace Ontology
         {
         }
 
-        IDataPropertyRange IDataPropertyExpression.Range
-        {
-            get => _dataPropertyRange;
-            set => _dataPropertyRange = value;
-        }
+        IList<IDataPropertyRange> IDataPropertyExpression.Ranges => _ranges;
 
         protected override object Value(
             INamedIndividual namedIndividual
