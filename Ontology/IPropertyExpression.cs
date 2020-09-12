@@ -13,6 +13,8 @@ namespace Ontology
 
     public interface IDataPropertyExpression: IPropertyExpression
     {
+        IDataPropertyRange Range { get; set; }
+
         bool AreEqual(
             object lhs,
             object rhs);

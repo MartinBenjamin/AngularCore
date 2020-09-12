@@ -112,6 +112,8 @@ namespace Ontology
         Property<T, TProperty>,
         IDataPropertyExpression
     {
+        private IDataPropertyRange _dataPropertyRange;
+
         public DataProperty(
             IOntology                                   ontology,
             Expression<Func<T, IEnumerable<TProperty>>> property
@@ -121,20 +123,28 @@ namespace Ontology
         {
         }
 
-        protected override IEnumerable<object> Values(
-            INamedIndividual namedIndividual
-            ) => namedIndividual[this];
+        IDataPropertyRange IDataPropertyExpression.Range
+        {
+            get => _dataPropertyRange;
+            set => _dataPropertyRange = value;
+        }
 
         bool IDataPropertyExpression.AreEqual(
             object lhs,
             object rhs
             ) => Values(lhs).ToHashSet().SetEquals(Values(rhs).ToHashSet());
+
+        protected override IEnumerable<object> Values(
+            INamedIndividual namedIndividual
+            ) => namedIndividual[this];
     }
     
     public class FunctionalDataProperty<T, TProperty>:
         FunctionalProperty<T, TProperty>,
         IDataPropertyExpression
     {
+        private IDataPropertyRange _dataPropertyRange;
+
         public FunctionalDataProperty(
             IOntology                      ontology,
             Expression<Func<T, TProperty>> property
@@ -142,6 +152,12 @@ namespace Ontology
                 ontology,
                 property)
         {
+        }
+
+        IDataPropertyRange IDataPropertyExpression.Range
+        {
+            get => _dataPropertyRange;
+            set => _dataPropertyRange = value;
         }
 
         protected override object Value(
