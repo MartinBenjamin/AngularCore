@@ -6,11 +6,9 @@ namespace Ontology
         Entity,
         IClass
     {
-        private IList<ISubClassOf>               _superClasses     = new List<ISubClassOf>();
-        private IList<IHasKey>                   _keys             = new List<IHasKey>();
-        private IList<IObjectPropertyExpression> _objectProperties = new List<IObjectPropertyExpression>();
-        private IList<IDataPropertyExpression>   _dataProperties   = new List<IDataPropertyExpression>();
-        private IClassExpression                 _definition;
+        private IList<ISubClassOf> _superClasses = new List<ISubClassOf>();
+        private IList<IHasKey>     _keys         = new List<IHasKey>();
+        private IClassExpression   _definition;
 
         public Class(
             IOntology ontology,
@@ -24,10 +22,6 @@ namespace Ontology
         IList<ISubClassOf> IClassExpression.SuperClasses => _superClasses;
 
         IList<IHasKey> IClassExpression.Keys => _keys;
-
-        IList<IObjectPropertyExpression> IClassExpression.ObjectProperties => _objectProperties;
-
-        IList<IDataPropertyExpression> IClassExpression.DataProperties => _dataProperties;
 
         public virtual bool HasMember(
             IDictionary<object, HashSet<IClassExpression>>

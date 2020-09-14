@@ -408,7 +408,7 @@ namespace Test
             var range =
             (
                 from classExpression in classifications[exclusivity]
-                from dataProperty in classExpression.DataProperties
+                from dataProperty in ontology.GetDataPropertyExpressions(classExpression)
                 from dataPropertyRange in dataProperty.Ranges
                 from annotation in dataPropertyRange.Annotations
                 where

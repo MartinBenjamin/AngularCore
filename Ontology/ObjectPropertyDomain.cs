@@ -12,7 +12,6 @@
             ) : base(objectPropertyExpression)
         {
             _domain = domain;
-            _domain.ObjectProperties.Add(objectPropertyExpression);
         }
 
         IClassExpression IObjectPropertyDomain.Domain => _domain;
