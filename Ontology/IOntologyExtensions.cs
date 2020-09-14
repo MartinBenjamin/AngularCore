@@ -233,37 +233,6 @@ namespace Ontology
             return annotation;
         }
 
-        public static IEnumerable<IClass> GetClasses(
-            this IOntology ontology
-            )
-        {
-            return ontology.GetAxioms().OfType<IClass>();
-        }
-
-        public static IEnumerable<IObjectPropertyExpression> GetObjectPropertyExpressions(
-            this IOntology   ontology,
-            IClassExpression domain
-            )
-        {
-            return ontology
-                .GetAxioms()
-                .OfType<IObjectPropertyDomain>()
-                .Where(objectPropertyDomain => objectPropertyDomain.Domain == domain)
-                .Select(objectPropertyDomain => objectPropertyDomain.ObjectPropertyExpression);
-        }
-
-        public static IEnumerable<IDataPropertyExpression> GetDataPropertyExpressions(
-            this IOntology ontology,
-            IClassExpression domain
-            )
-        {
-            return ontology
-                .GetAxioms()
-                .OfType<IDataPropertyDomain>()
-                .Where(dataPropertyDomain => dataPropertyDomain.Domain == domain)
-                .Select(dataPropertyDomain => dataPropertyDomain.DataPropertyExpression);
-        }
-
         public static IDictionary<object, HashSet<IClassExpression>> Classify(
             this IOntology ontology,
             object         individual

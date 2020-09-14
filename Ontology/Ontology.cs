@@ -39,11 +39,37 @@ namespace Ontology
         public IEnumerable<IAxiom> GetAxioms()
         {
             foreach(var import in _imported)
-                foreach(var axiom in import.GetClasses())
+                foreach(var axiom in import.GetAxioms())
                     yield return axiom;
 
             foreach(var axiom in _axioms)
                 yield return axiom;
+        }
+
+        public IEnumerable<IClass> GetClasses()
+        {
+            return GetAxioms()
+                .OfType<IClass>();
+        }
+
+        public IEnumerable<IObjectPropertyExpression> GetObjectPropertyExpressions(
+            IClassExpression domain
+            )
+        {
+            return GetAxioms()
+                .OfType<IObjectPropertyDomain>()
+                .Where(objectPropertyDomain => objectPropertyDomain.Domain == domain)
+                .Select(objectPropertyDomain => objectPropertyDomain.ObjectPropertyExpression);
+        }
+
+        public IEnumerable<IDataPropertyExpression> GetDataPropertyExpressions(
+            IClassExpression domain
+            )
+        {
+            return GetAxioms()
+                .OfType<IDataPropertyDomain>()
+                .Where(dataPropertyDomain => dataPropertyDomain.Domain == domain)
+                .Select(dataPropertyDomain => dataPropertyDomain.DataPropertyExpression);
         }
 
         public IEnumerable<IHasKey> GetHasKeys(
