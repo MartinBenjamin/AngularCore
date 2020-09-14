@@ -11,6 +11,9 @@ namespace Ontology
 
         IDatatype        DateTime { get; }
 
+        IEnumerable<IAxiom>  GetAxioms();
+        IEnumerable<IHasKey> GetHasKeys(IClassExpression classExpression);
+
         bool AreEqual(
             IDictionary<object, HashSet<IClassExpression>>
                    classifications,

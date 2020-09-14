@@ -36,6 +36,25 @@ namespace Ontology
 
         IDatatype IOntology.DateTime => _dateTime;
 
+        public IEnumerable<IAxiom> GetAxioms()
+        {
+            foreach(var import in _imported)
+                foreach(var axiom in import.GetClasses())
+                    yield return axiom;
+
+            foreach(var axiom in _axioms)
+                yield return axiom;
+        }
+
+        public IEnumerable<IHasKey> GetHasKeys(
+            IClassExpression classExpression
+            )
+        {
+            return GetAxioms()
+                .OfType<IHasKey>()
+                .Where(hasKey => hasKey.ClassExpression == classExpression);
+        }
+
         bool IOntology.AreEqual(
             IDictionary<object, HashSet<IClassExpression>>
                    classifications,
@@ -46,13 +65,13 @@ namespace Ontology
             var commonKeyedClassExpressions = ClassifyIndividual(
                 classifications,
                 lhs)
-                .Where(classExpression => this.GetHasKeys(classExpression).Any()).ToHashSet();
+                .Where(classExpression => GetHasKeys(classExpression).Any()).ToHashSet();
             commonKeyedClassExpressions.IntersectWith(ClassifyIndividual(
                 classifications,
                 rhs));
             return
                 commonKeyedClassExpressions.Count > 0 &&
-                commonKeyedClassExpressions.All(classExpression => this.GetHasKeys(classExpression).All(hasKey => hasKey.AreEqual(lhs, rhs)));
+                commonKeyedClassExpressions.All(classExpression => GetHasKeys(classExpression).All(hasKey => hasKey.AreEqual(lhs, rhs)));
         }
 
         public HashSet<IClassExpression> ClassifyIndividual(

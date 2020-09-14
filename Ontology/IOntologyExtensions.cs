@@ -233,18 +233,6 @@ namespace Ontology
             return annotation;
         }
 
-        public static IEnumerable<IAxiom> GetAxioms(
-            this IOntology ontology
-            )
-        {
-            foreach(var import in ontology.Imported)
-                foreach(var axiom in import.GetClasses())
-                    yield return axiom;
-
-            foreach(var axiom in ontology.Axioms)
-                yield return axiom;
-        }
-
         public static IEnumerable<IClass> GetClasses(
             this IOntology ontology
             )
@@ -274,17 +262,6 @@ namespace Ontology
                 .OfType<IDataPropertyDomain>()
                 .Where(dataPropertyDomain => dataPropertyDomain.Domain == domain)
                 .Select(dataPropertyDomain => dataPropertyDomain.DataPropertyExpression);
-        }
-
-        public static IEnumerable<IHasKey> GetHasKeys(
-            this IOntology   ontology,
-            IClassExpression classExpression
-            )
-        {
-            return ontology
-                .GetAxioms()
-                .OfType<IHasKey>()
-                .Where(hasKey => hasKey.ClassExpression == classExpression);
         }
 
         public static IDictionary<object, HashSet<IClassExpression>> Classify(
