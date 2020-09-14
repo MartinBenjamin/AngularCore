@@ -7,8 +7,8 @@ namespace Ontology
 {
     public class Ontology: IOntology
     {
+        private IList<IOntology>            _imported;
         private IList<IAxiom>               _axioms  = new List<IAxiom>();
-        private IDictionary<string, IClass> _classes = new Dictionary<string, IClass>();
         private IDictionary<IClassExpression, HashSet<IClassExpression>>
                                             _superClasses = new Dictionary<IClassExpression, HashSet<IClassExpression>>();
 
@@ -16,20 +16,23 @@ namespace Ontology
         private IClass    _nothing;
         private IDatatype _dateTime;
 
-        public Ontology()
+        public Ontology(
+            params IOntology[] imported
+            )
         {
+            _imported = imported;
             _thing    = new Thing(this);
             _nothing  = new Nothing(this);
             _dateTime = new Datatype<DateTime>(this, "xsd:dateTime");
         }
+
+        IList<IOntology> IOntology.Imported => _imported;
 
         IClassExpression IOntology.Thing => _thing;
 
         IClassExpression IOntology.Nothing => _nothing;
 
         IList<IAxiom> IOntology.Axioms => _axioms;
-
-        IDictionary<string, IClass> IOntology.Classes => _classes;
 
         IDatatype IOntology.DateTime => _dateTime;
 
@@ -78,22 +81,22 @@ namespace Ontology
                             @class);
                     break;
                 case IIndividual iindividual:
-                    if(_classes.TryGetValue(iindividual.ClassName, out var @class1))
-                        ClassifyIndividual(
+                    this.GetClasses().Where(@class => @class.Name == iindividual.ClassName).ForEach(
+                        @class => ClassifyIndividual(
                             classExpressions,
                             individual,
-                            @class1);
+                            @class));
                     break;
                 default:
-                    if(_classes.TryGetValue(individual.GetType().FullName, out var @class2))
-                        ClassifyIndividual(
+                    this.GetClasses().Where(@class => @class.Name == individual.GetType().FullName).ForEach(
+                        @class => ClassifyIndividual(
                             classExpressions,
                             individual,
-                            @class2);
+                            @class));
                     break;
             }
 
-            foreach(var @class in _classes.Values.Where(@class => @class.Definition != null).Where(@class => @class.Definition.HasMember(
+            foreach(var @class in this.GetClasses().Where(@class => @class.Definition != null).Where(@class => @class.Definition.HasMember(
                 classifications,
                 individual)))
                 ClassifyIndividual(

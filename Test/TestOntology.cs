@@ -232,7 +232,8 @@ namespace Test
             )
         {
             var dealOntology = new DealOntology();
-            var @class = ((IOntology)dealOntology).Classes[className];
+            var @class = dealOntology.GetClasses().FirstOrDefault(c =>  c.Name == className);
+            Assert.That(@class, Is.Not.Null);
             var classes = dealOntology.SuperClasses(@class);
 
             var subClassOf =
@@ -313,8 +314,7 @@ namespace Test
             )
         {
             var dealOntology = new DealOntology();
-            IOntology ontology = dealOntology;
-            var exclusiveDeal = ontology.Classes["ExclusiveDeal"];
+            var exclusiveDeal = dealOntology.GetClasses().FirstOrDefault(@class => @class.Name == "ExclusiveDeal");
 
             var deal = new Deal(
                 Guid.NewGuid(),

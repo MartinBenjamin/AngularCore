@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace Ontology
@@ -229,6 +230,25 @@ namespace Ontology
                 value);
             annotated.Annotations.Add(annotation);
             return annotation;
+        }
+
+        public static IEnumerable<IAxiom> GetAxioms(
+            this IOntology ontology
+            )
+        {
+            foreach(var import in ontology.Imported)
+                foreach(var axiom in import.GetClasses())
+                    yield return axiom;
+
+            foreach(var axiom in ontology.Axioms)
+                yield return axiom;
+        }
+
+        public static IEnumerable<IClass> GetClasses(
+            this IOntology ontology
+            )
+        {
+            return ontology.GetAxioms().OfType<IClass>();
         }
 
         public static IDictionary<object, HashSet<IClassExpression>> Classify(

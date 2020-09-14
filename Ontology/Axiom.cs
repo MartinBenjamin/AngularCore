@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Ontology
+﻿namespace Ontology
 {
     public abstract class Axiom:
         Annotated,

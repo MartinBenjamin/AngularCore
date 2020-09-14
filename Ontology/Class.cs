@@ -19,7 +19,6 @@ namespace Ontology
                 ontology,
                 name)
         {
-            ontology.Classes[_name] = this;
         }
 
         IList<ISubClassOf> IClassExpression.SuperClasses => _superClasses;

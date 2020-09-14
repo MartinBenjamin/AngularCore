@@ -6,11 +6,10 @@ namespace Ontology
     {
         IClassExpression Thing    { get; }
         IClassExpression Nothing  { get; }
+        IList<IOntology> Imported { get; }
         IList<IAxiom>    Axioms   { get; }
 
         IDatatype        DateTime { get; }
-
-        IDictionary<string, IClass> Classes { get; }
 
         bool AreEqual(
             IDictionary<object, HashSet<IClassExpression>>
