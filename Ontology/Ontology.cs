@@ -88,16 +88,19 @@ namespace Ontology
             object rhs
             )
         {
-            var commonKeyedClassExpressions = ClassifyIndividual(
+            var commonClassExpressions = ClassifyIndividual(
                 classifications,
-                lhs)
-                .Where(classExpression => GetHasKeys(classExpression).Any()).ToHashSet();
-            commonKeyedClassExpressions.IntersectWith(ClassifyIndividual(
+                lhs).ToHashSet();
+            commonClassExpressions.IntersectWith(ClassifyIndividual(
                 classifications,
                 rhs));
+            var hasKeys =
+                from commonClassExpression in commonClassExpressions
+                from hasKey in GetHasKeys(commonClassExpression)
+                select hasKey;
             return
-                commonKeyedClassExpressions.Count > 0 &&
-                commonKeyedClassExpressions.All(classExpression => GetHasKeys(classExpression).All(hasKey => hasKey.AreEqual(lhs, rhs)));
+                hasKeys.Any() &&
+                hasKeys.All(hasKey => hasKey.AreEqual(lhs, rhs));
         }
 
         public HashSet<IClassExpression> ClassifyIndividual(
