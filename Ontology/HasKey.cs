@@ -3,19 +3,21 @@ using System.Linq;
 
 namespace Ontology
 {
-    public class HasKey: IHasKey
+    public class HasKey:
+        Axiom,
+        IHasKey
     {
         private IClassExpression               _classExpression;
         private IList<IDataPropertyExpression> _properties;
 
         public HasKey(
+            IOntology                        ontology,
             IClassExpression                 classExpression,
             params IDataPropertyExpression[] properties
-            )
+            ) : base(ontology)
         {
             _classExpression = classExpression;
             _properties      = properties;
-            _classExpression.Keys.Add(this);
         }
 
         IClassExpression IHasKey.ClassExpression => _classExpression;

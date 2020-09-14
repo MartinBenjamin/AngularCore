@@ -1,14 +1,13 @@
-﻿using NUnit.Framework;
+﻿using CommonDomainObjects;
+using Deals;
+using NUnit.Framework;
+using Ontology;
+using Organisations;
+using Roles;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using CommonDomainObjects;
-using Deals;
-using Ontology;
 using System.Diagnostics;
-using Roles;
-using Organisations;
+using System.Linq;
 
 namespace Test
 {

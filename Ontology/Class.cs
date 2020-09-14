@@ -7,7 +7,6 @@ namespace Ontology
         IClass
     {
         private IList<ISubClassOf> _superClasses = new List<ISubClassOf>();
-        private IList<IHasKey>     _keys         = new List<IHasKey>();
         private IClassExpression   _definition;
 
         public Class(
@@ -20,8 +19,6 @@ namespace Ontology
         }
 
         IList<ISubClassOf> IClassExpression.SuperClasses => _superClasses;
-
-        IList<IHasKey> IClassExpression.Keys => _keys;
 
         public virtual bool HasMember(
             IDictionary<object, HashSet<IClassExpression>>

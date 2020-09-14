@@ -46,13 +46,13 @@ namespace Ontology
             var commonKeyedClassExpressions = ClassifyIndividual(
                 classifications,
                 lhs)
-                .Where(classExpression => classExpression.Keys.Count > 0).ToHashSet();
+                .Where(classExpression => this.GetHasKeys(classExpression).Any()).ToHashSet();
             commonKeyedClassExpressions.IntersectWith(ClassifyIndividual(
                 classifications,
                 rhs));
             return
                 commonKeyedClassExpressions.Count > 0 &&
-                commonKeyedClassExpressions.All(classExpression => classExpression.Keys.All(hasKey => hasKey.AreEqual(lhs, rhs)));
+                commonKeyedClassExpressions.All(classExpression => this.GetHasKeys(classExpression).All(hasKey => hasKey.AreEqual(lhs, rhs)));
         }
 
         public HashSet<IClassExpression> ClassifyIndividual(

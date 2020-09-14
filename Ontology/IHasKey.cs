@@ -2,7 +2,7 @@
 
 namespace Ontology
 {
-    public interface IHasKey
+    public interface IHasKey: IAxiom
     {
         IClassExpression               ClassExpression { get; }
         IList<IDataPropertyExpression> Properties      { get; }

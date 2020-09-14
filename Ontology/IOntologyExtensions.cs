@@ -100,10 +100,11 @@ namespace Ontology
                 datatype);
 
         public static IHasKey HasKey(
-            this IClassExpression            classExpression,
+            this IClass                      @class,
             params IDataPropertyExpression[] dataPropertyExpressions
             ) => new HasKey(
-                classExpression,
+                @class.Ontology,
+                @class,
                 dataPropertyExpressions);
 
         public static ISubClassOf SubClassOf(
@@ -273,6 +274,17 @@ namespace Ontology
                 .OfType<IDataPropertyDomain>()
                 .Where(dataPropertyDomain => dataPropertyDomain.Domain == domain)
                 .Select(dataPropertyDomain => dataPropertyDomain.DataPropertyExpression);
+        }
+
+        public static IEnumerable<IHasKey> GetHasKeys(
+            this IOntology   ontology,
+            IClassExpression classExpression
+            )
+        {
+            return ontology
+                .GetAxioms()
+                .OfType<IHasKey>()
+                .Where(hasKey => hasKey.ClassExpression == classExpression);
         }
 
         public static IDictionary<object, HashSet<IClassExpression>> Classify(
