@@ -17,6 +17,7 @@ namespace Ontology
         IEnumerable<IObjectPropertyExpression> GetObjectPropertyExpressions(IClassExpression domain);
         IEnumerable<IDataPropertyExpression>   GetDataPropertyExpressions(IClassExpression domain);
         IEnumerable<IHasKey>                   GetHasKeys(IClassExpression classExpression);
+        IEnumerable<ISubClassOf>               GetSuperClasses(IClassExpression classExpression);
 
         bool AreEqual(
             IDictionary<object, HashSet<IClassExpression>>

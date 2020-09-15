@@ -15,7 +15,6 @@
         {
             _subClassExpression   = subClassExpression;
             _superClassExpression = superClassExpression;
-            _subClassExpression.SuperClasses.Add(this);
         }
 
         IClassExpression ISubClassOf.SubClassExpression => _subClassExpression;

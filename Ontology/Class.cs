@@ -6,8 +6,7 @@ namespace Ontology
         Entity,
         IClass
     {
-        private IList<ISubClassOf> _superClasses = new List<ISubClassOf>();
-        private IClassExpression   _definition;
+        private IClassExpression _definition;
 
         public Class(
             IOntology ontology,
@@ -17,8 +16,6 @@ namespace Ontology
                 name)
         {
         }
-
-        IList<ISubClassOf> IClassExpression.SuperClasses => _superClasses;
 
         public virtual bool HasMember(
             IOntology                                      context,

@@ -70,6 +70,12 @@ namespace Ontology
                 .OfType<IHasKey>()
                 .Where(hasKey => hasKey.ClassExpression == classExpression);
 
+        public IEnumerable<ISubClassOf> GetSuperClasses(
+            IClassExpression classExpression
+            ) => GetAxioms()
+                .OfType<ISubClassOf>()
+                .Where(subClassOf => subClassOf.SubClassExpression == classExpression);
+
         bool IOntology.AreEqual(
             IDictionary<object, HashSet<IClassExpression>>
                    classifications,
@@ -163,7 +169,7 @@ namespace Ontology
                 // Class Expression already processed.
                 return;
 
-            foreach(var superClassExpression in classExpression.SuperClasses.Select(superClass => superClass.SuperClassExpression))
+            foreach(var superClassExpression in GetSuperClasses(classExpression).Select(superClass => superClass.SuperClassExpression))
                 ClassifyIndividual(
                     classExpressions,
                     individual,
@@ -190,7 +196,7 @@ namespace Ontology
                 _superClasses[classExpression] = superClassExpressions;
                 superClassExpressions.Add(classExpression);
 
-                foreach(var superClassExpression in classExpression.SuperClasses.Select(superClass => superClass.SuperClassExpression))
+                foreach(var superClassExpression in GetSuperClasses(classExpression).Select(superClass => superClass.SuperClassExpression))
                     superClassExpressions.UnionWith(SuperClasses(superClassExpression));
 
                 if(classExpression is IObjectIntersectionOf objectIntersectionOf)

@@ -104,7 +104,7 @@ namespace Test
             var subClassOf = 
             (
                 from classExpression in classifications[deal]
-                from axiom in classExpression.SuperClasses
+                from axiom in dealOntology.GetSuperClasses(classExpression)
                 from annotation in axiom.Annotations
                 where
                     annotation.Property == dealOntology.Restriction &&
@@ -156,7 +156,7 @@ namespace Test
             var subClassOf =
             (
                 from classExpression in classifications[sponsor]
-                from axiom in classExpression.SuperClasses
+                from axiom in dealOntology.GetSuperClasses(classExpression)
                 from annotation in axiom.Annotations
                 where
                     annotation.Property == dealOntology.Restriction &&
@@ -208,7 +208,7 @@ namespace Test
             var subClassOf =
             (
                 from classExpression in classifications[deal]
-                from axiom in classExpression.SuperClasses
+                from axiom in dealOntology.GetSuperClasses(classExpression)
                 from annotation in axiom.Annotations
                 from annotationAnnotation in annotation.Annotations
                 where
@@ -243,7 +243,7 @@ namespace Test
             var subClassOf =
             (
                 from classExpression in classes
-                from axiom in classExpression.SuperClasses
+                from axiom in dealOntology.GetSuperClasses(classExpression)
                 from annotation in axiom.Annotations
                 from annotationAnnotation in annotation.Annotations
                 where
@@ -293,7 +293,7 @@ namespace Test
             var subClassOf =
             (
                 from classExpression in classifications[deal]
-                from axiom in classExpression.SuperClasses
+                from axiom in dealOntology.GetSuperClasses(classExpression)
                 from annotation in axiom.Annotations
                 from annotationAnnotation in annotation.Annotations
                 where
@@ -369,7 +369,7 @@ namespace Test
             var subClassOf =
             (
                 from classExpression in classifications[deal]
-                from axiom in classExpression.SuperClasses
+                from axiom in dealOntology.GetSuperClasses(classExpression)
                 from annotation in axiom.Annotations
                 from annotationAnnotation in annotation.Annotations
                 where
