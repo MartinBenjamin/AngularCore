@@ -3,9 +3,7 @@ using System.Linq;
 
 namespace Ontology
 {
-    public class ObjectIntersectionOf:
-        ClassExpression,
-        IObjectIntersectionOf
+    public class ObjectIntersectionOf: IObjectIntersectionOf
     {
         private IList<IClassExpression> _classExpressions { get; }
 
@@ -18,7 +16,7 @@ namespace Ontology
 
         IList<IClassExpression> IObjectIntersectionOf.ClassExpressions => _classExpressions;
 
-        public override bool HasMember(
+        bool IClassExpression.HasMember(
             IOntology                                      context,
             IDictionary<object, HashSet<IClassExpression>> classifications,
             object                                         individual

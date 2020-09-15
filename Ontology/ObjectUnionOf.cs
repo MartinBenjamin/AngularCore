@@ -3,9 +3,7 @@ using System.Linq;
 
 namespace Ontology
 {
-    public class ObjectUnionOf:
-        ClassExpression,
-        IObjectUnionOf
+    public class ObjectUnionOf: IObjectUnionOf
     {
         private IList<IClassExpression> _classExpressions { get; }
 
@@ -18,7 +16,7 @@ namespace Ontology
 
         IList<IClassExpression> IObjectUnionOf.ClassExpressions => _classExpressions;
 
-        public override bool HasMember(
+        bool IClassExpression.HasMember(
             IOntology                                      context,
             IDictionary<object, HashSet<IClassExpression>> classifications,
             object                                         individual

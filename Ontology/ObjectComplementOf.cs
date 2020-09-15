@@ -2,9 +2,7 @@
 
 namespace Ontology
 {
-    public class ObjectComplementOf:
-        ClassExpression,
-        IObjectComplementOf
+    public class ObjectComplementOf: IObjectComplementOf
     {
         private IClassExpression _classExpression;
 
@@ -17,7 +15,7 @@ namespace Ontology
 
         IClassExpression IObjectComplementOf.ClassExpression => _classExpression;
 
-        public override bool HasMember(
+        bool IClassExpression.HasMember(
             IOntology                                      context,
             IDictionary<object, HashSet<IClassExpression>> classifications,
             object                                         individual

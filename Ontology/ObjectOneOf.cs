@@ -3,9 +3,7 @@ using System.Linq;
 
 namespace Ontology
 {
-    public class ObjectOneOf:
-        ClassExpression,
-        IObjectOneOf
+    public class ObjectOneOf: IObjectOneOf
     {
         private IList<object> _individuals;
 
@@ -18,7 +16,7 @@ namespace Ontology
 
         IList<object> IObjectOneOf.Individuals => _individuals;
 
-        public override bool HasMember(
+        bool IClassExpression.HasMember(
             IOntology                                      context,
             IDictionary<object, HashSet<IClassExpression>> classifications,
             object                                         individual
