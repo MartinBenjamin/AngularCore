@@ -194,7 +194,6 @@ namespace Ontology
             this IClass classExpression,
             string      name
             ) => ((IClassAssertion)new ClassAssertion(
-                classExpression.Ontology,
                 classExpression,
                 new NamedIndividual(
                     classExpression.Ontology,

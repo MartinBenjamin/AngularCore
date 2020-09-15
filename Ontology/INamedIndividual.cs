@@ -82,10 +82,9 @@ namespace Ontology
         private INamedIndividual _namedIndividual;
 
         public ClassAssertion(
-            IOntology        ontology,
             IClassExpression classExpression,
             INamedIndividual namedIndividual
-            ) : base(ontology)
+            ) : base(namedIndividual.Ontology)
         {
             _classExpression = classExpression;
             _namedIndividual = namedIndividual;
