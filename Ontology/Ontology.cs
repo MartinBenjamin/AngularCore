@@ -145,7 +145,7 @@ namespace Ontology
                     this,
                     classifications,
                     individual))
-                .ForEach(@class =>ClassifyIndividual(
+                .ForEach(@class => ClassifyIndividual(
                     classExpressions,
                     individual,
                     @class));
