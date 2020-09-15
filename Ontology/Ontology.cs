@@ -37,49 +37,33 @@ namespace Ontology
         IDatatype IOntology.DateTime => _dateTime;
 
         public IEnumerable<IAxiom> GetAxioms()
-        {
-            foreach(var import in _imported)
-                foreach(var axiom in import.GetAxioms())
-                    yield return axiom;
-
-            foreach(var axiom in _axioms)
-                yield return axiom;
-        }
+            => _imported
+                .SelectMany(import => import.GetAxioms())
+                .Concat(_axioms);
 
         public IEnumerable<IClass> GetClasses()
-        {
-            return GetAxioms()
+            => GetAxioms()
                 .OfType<IClass>();
-        }
 
         public IEnumerable<IObjectPropertyExpression> GetObjectPropertyExpressions(
             IClassExpression domain
-            )
-        {
-            return GetAxioms()
+            ) => GetAxioms()
                 .OfType<IObjectPropertyDomain>()
                 .Where(objectPropertyDomain => objectPropertyDomain.Domain == domain)
                 .Select(objectPropertyDomain => objectPropertyDomain.ObjectPropertyExpression);
-        }
 
         public IEnumerable<IDataPropertyExpression> GetDataPropertyExpressions(
             IClassExpression domain
-            )
-        {
-            return GetAxioms()
+            ) => GetAxioms()
                 .OfType<IDataPropertyDomain>()
                 .Where(dataPropertyDomain => dataPropertyDomain.Domain == domain)
                 .Select(dataPropertyDomain => dataPropertyDomain.DataPropertyExpression);
-        }
 
         public IEnumerable<IHasKey> GetHasKeys(
             IClassExpression classExpression
-            )
-        {
-            return GetAxioms()
+            ) => GetAxioms()
                 .OfType<IHasKey>()
                 .Where(hasKey => hasKey.ClassExpression == classExpression);
-        }
 
         bool IOntology.AreEqual(
             IDictionary<object, HashSet<IClassExpression>>
@@ -129,14 +113,14 @@ namespace Ontology
                             @class);
                     break;
                 case IIndividual iindividual:
-                    this.GetClasses().Where(@class => @class.Name == iindividual.ClassName).ForEach(
+                    GetClasses().Where(@class => @class.Name == iindividual.ClassName).ForEach(
                         @class => ClassifyIndividual(
                             classExpressions,
                             individual,
                             @class));
                     break;
                 default:
-                    this.GetClasses().Where(@class => @class.Name == individual.GetType().FullName).ForEach(
+                    GetClasses().Where(@class => @class.Name == individual.GetType().FullName).ForEach(
                         @class => ClassifyIndividual(
                             classExpressions,
                             individual,
