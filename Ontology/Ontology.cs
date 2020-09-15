@@ -7,26 +7,26 @@ namespace Ontology
 {
     public class Ontology: IOntology
     {
-        private IList<IOntology>            _imported;
-        private IList<IAxiom>               _axioms  = new List<IAxiom>();
+        private IList<IOntology> _imports;
+        private IList<IAxiom>    _axioms  = new List<IAxiom>();
         private IDictionary<IClassExpression, HashSet<IClassExpression>>
-                                            _superClasses = new Dictionary<IClassExpression, HashSet<IClassExpression>>();
+                                 _superClasses = new Dictionary<IClassExpression, HashSet<IClassExpression>>();
 
         private IClass    _thing;
         private IClass    _nothing;
         private IDatatype _dateTime;
 
         public Ontology(
-            params IOntology[] imported
+            params IOntology[] imports
             )
         {
-            _imported = imported;
+            _imports  = imports;
             _thing    = new Thing(this);
             _nothing  = new Nothing(this);
             _dateTime = new Datatype<DateTime>(this, "xsd:dateTime");
         }
 
-        IList<IOntology> IOntology.Imported => _imported;
+        IList<IOntology> IOntology.Imports => _imports;
 
         IClassExpression IOntology.Thing => _thing;
 
@@ -37,7 +37,7 @@ namespace Ontology
         IDatatype IOntology.DateTime => _dateTime;
 
         public IEnumerable<IAxiom> GetAxioms()
-            => _imported
+            => _imports
                 .SelectMany(import => import.GetAxioms())
                 .Concat(_axioms);
 

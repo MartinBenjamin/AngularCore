@@ -4,10 +4,10 @@ namespace Ontology
 {
     public interface IOntology
     {
-        IClassExpression Thing    { get; }
-        IClassExpression Nothing  { get; }
-        IList<IOntology> Imported { get; }
-        IList<IAxiom>    Axioms   { get; }
+        IClassExpression Thing   { get; }
+        IClassExpression Nothing { get; }
+        IList<IOntology> Imports { get; }
+        IList<IAxiom>    Axioms  { get; }
 
         IDatatype        DateTime { get; }
 
