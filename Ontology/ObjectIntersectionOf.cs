@@ -19,10 +19,11 @@ namespace Ontology
         IList<IClassExpression> IObjectIntersectionOf.ClassExpressions => _classExpressions;
 
         public override bool HasMember(
-            IDictionary<object, HashSet<IClassExpression>>
-                   classifications,
-            object individual
+            IOntology                                      context,
+            IDictionary<object, HashSet<IClassExpression>> classifications,
+            object                                         individual
             ) => _classExpressions.All(classExpression => classExpression.HasMember(
+                context,
                 classifications,
                 individual));
     }

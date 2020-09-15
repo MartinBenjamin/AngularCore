@@ -14,15 +14,17 @@ namespace Ontology
             IDataRange              dataRange
             ) : base(dataPropertyExpression)
         {
-            _dataRange              = dataRange;
+            _dataRange = dataRange;
         }
 
         IDataRange IDataAllValuesFrom.DataRange => _dataRange;
 
         public override bool HasMember(
-            IDictionary<object, HashSet<IClassExpression>>
-                   classification,
-            object individual
-            ) => _dataPropertyExpression.Values(individual).All(_dataRange.HasMember);
+            IOntology                                      context,
+            IDictionary<object, HashSet<IClassExpression>> classifications,
+            object                                         individual
+            ) => _dataPropertyExpression.Values(
+                context,
+                individual).All(_dataRange.HasMember);
     }
 }

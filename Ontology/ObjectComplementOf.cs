@@ -18,10 +18,11 @@ namespace Ontology
         IClassExpression IObjectComplementOf.ClassExpression => _classExpression;
 
         public override bool HasMember(
-            IDictionary<object, HashSet<IClassExpression>>
-                   classifications,
-            object individual
+            IOntology                                      context,
+            IDictionary<object, HashSet<IClassExpression>> classifications,
+            object                                         individual
             ) => !_classExpression.HasMember(
+                context,
                 classifications,
                 individual);
     }

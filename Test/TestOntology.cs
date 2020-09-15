@@ -58,6 +58,7 @@ namespace Test
         {
             IOntology ontology = new DealOntology();
             Assert.That(ontology.Thing.HasMember(
+                ontology,
                 new Dictionary<object, HashSet<IClassExpression>>(),
                 individual),
                 Is.EqualTo(result));
@@ -72,6 +73,7 @@ namespace Test
         {
             IOntology ontology = new DealOntology();
             Assert.That(ontology.Nothing.HasMember(
+                ontology,
                 new Dictionary<object, HashSet<IClassExpression>>(),
                 individual),
                 Is.EqualTo(result));
@@ -113,6 +115,7 @@ namespace Test
 
             Assert.That(subClassOf, Is.Not.Null);
             Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(
+                dealOntology,
                 classifications,
                 deal)));
         }
@@ -164,6 +167,7 @@ namespace Test
 
             Assert.That(subClassOf, Is.Not.Null);
             Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(
+                dealOntology,
                 classifications,
                 sponsor)));
         }
@@ -218,6 +222,7 @@ namespace Test
 
             Assert.That(subClassOf, Is.Not.Null);
             Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(
+                dealOntology,
                 classifications,
                 deal)));
         }
@@ -302,6 +307,7 @@ namespace Test
 
             Assert.That(subClassOf, Is.Not.Null);
             Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(
+                dealOntology,
                 classifications,
                 deal)));
         }
@@ -328,6 +334,7 @@ namespace Test
             var classifications = dealOntology.Classify(deal);
 
             Assert.That(exclusiveDeal.HasMember(
+                dealOntology,
                 classifications,
                 deal), Is.EqualTo(result));
             Assert.That(classifications[deal].Contains(exclusiveDeal), Is.EqualTo(result));
@@ -376,6 +383,7 @@ namespace Test
 
             Assert.That(subClassOf, Is.Not.Null);
             Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(
+                dealOntology,
                 classifications,
                 deal)));
         }

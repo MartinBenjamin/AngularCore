@@ -8,7 +8,8 @@ namespace Ontology
         IList<IDataPropertyExpression> Properties      { get; }
 
         bool AreEqual(
-            object lhs,
-            object rhs);
+            IOntology context,
+            object    lhs,
+            object    rhs);
     }
 }

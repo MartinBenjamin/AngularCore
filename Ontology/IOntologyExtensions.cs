@@ -260,7 +260,9 @@ namespace Ontology
 
             foreach(var classExpression in classifications[individual])
                 foreach(var objectPropertyExpression in ontology.GetObjectPropertyExpressions(classExpression))
-                    foreach(object value in objectPropertyExpression.Values(individual))
+                    foreach(object value in objectPropertyExpression.Values(
+                        ontology,
+                        individual))
                         ontology.Classify(
                             classifications,
                             value);

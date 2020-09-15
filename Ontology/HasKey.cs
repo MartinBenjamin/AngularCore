@@ -25,8 +25,12 @@ namespace Ontology
         IList<IDataPropertyExpression> IHasKey.Properties => _properties;
 
         bool IHasKey.AreEqual(
-            object lhs,
-            object rhs
-            ) => _properties.All(property => property.AreEqual(lhs, rhs));
+            IOntology context,
+            object    lhs,
+            object    rhs
+            ) => _properties.All(property => property.AreEqual(
+                context,
+                lhs,
+                rhs));
     }
 }

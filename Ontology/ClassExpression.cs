@@ -13,8 +13,8 @@ namespace Ontology
         IList<ISubClassOf> IClassExpression.SuperClasses => _superClasses;
 
         public abstract bool HasMember(
-            IDictionary<object, HashSet<IClassExpression>>
-                   classifications,
-            object individual);
+            IOntology                                      context,
+            IDictionary<object, HashSet<IClassExpression>> classifications,
+            object                                         individual);
     }
 }

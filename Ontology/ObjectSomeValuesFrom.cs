@@ -20,12 +20,15 @@ namespace Ontology
         IClassExpression IObjectSomeValuesFrom.ClassExpression => _classExpression;
 
         public override bool HasMember(
-            IDictionary<object, HashSet<IClassExpression>>
-                   classifications,
-            object individual
-            ) => _objectPropertyExpression.Values(individual).Any(
-                value => _classExpression.HasMember(
-                    classifications,
-                    value));
+            IOntology                                      context,
+            IDictionary<object, HashSet<IClassExpression>> classifications,
+            object                                         individual
+            ) => _objectPropertyExpression.Values(
+                context,
+                individual).Any(
+                    value => _classExpression.HasMember(
+                        context,
+                        classifications,
+                        value));
     }
 }

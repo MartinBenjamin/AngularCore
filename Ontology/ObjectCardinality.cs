@@ -41,13 +41,16 @@ namespace Ontology
         }
 
         public override bool HasMember(
-            IDictionary<object, HashSet<IClassExpression>>
-                   classifications,
-            object individual
-            ) => _objectPropertyExpression.Values(individual).Count(
-                value => _classExpression.HasMember(
-                    classifications,
-                    value)) >= _cardinality;
+            IOntology                                      context,
+            IDictionary<object, HashSet<IClassExpression>> classifications,
+            object                                         individual
+            ) => _objectPropertyExpression.Values(
+                context,
+                individual).Count(
+                    value => _classExpression.HasMember(
+                        context,
+                        classifications,
+                        value)) >= _cardinality;
     }
 
     public class ObjectMaxCardinality:
@@ -66,13 +69,16 @@ namespace Ontology
         }
 
         public override bool HasMember(
-            IDictionary<object, HashSet<IClassExpression>>
-                   classifications,
-            object individual
-            ) => _objectPropertyExpression.Values(individual).Count(
-                value => _classExpression.HasMember(
-                    classifications,
-                    value)) <= _cardinality;
+            IOntology                                      context,
+            IDictionary<object, HashSet<IClassExpression>> classifications,
+            object                                         individual
+            ) => _objectPropertyExpression.Values(
+                context,
+                individual).Count(
+                    value => _classExpression.HasMember(
+                        context,
+                        classifications,
+                        value)) <= _cardinality;
     }
     
     public class ObjectExactCardinality:
@@ -91,12 +97,15 @@ namespace Ontology
         }
 
         public override bool HasMember(
-            IDictionary<object, HashSet<IClassExpression>>
-                   classifications,
-            object individual
-            ) => _objectPropertyExpression.Values(individual).Count(
-                value => _classExpression.HasMember(
-                    classifications,
-                    value)) == _cardinality;
+            IOntology                                      context,
+            IDictionary<object, HashSet<IClassExpression>> classifications,
+            object                                         individual
+            ) => _objectPropertyExpression.Values(
+                context,
+                individual).Count(
+                    value => _classExpression.HasMember(
+                        context,
+                        classifications,
+                        value)) == _cardinality;
     }
 }

@@ -89,13 +89,15 @@ namespace Ontology
                 select hasKey;
             return
                 hasKeys.Any() &&
-                hasKeys.All(hasKey => hasKey.AreEqual(lhs, rhs));
+                hasKeys.All(hasKey => hasKey.AreEqual(
+                    this,
+                    lhs,
+                    rhs));
         }
 
         public HashSet<IClassExpression> ClassifyIndividual(
-            IDictionary<object, HashSet<IClassExpression>>
-                   classifications,
-            object individual
+            IDictionary<object, HashSet<IClassExpression>> classifications,
+            object                                         individual
             )
         {
             HashSet<IClassExpression> classExpressions;
@@ -140,6 +142,7 @@ namespace Ontology
 
             GetClasses()
                 .Where(@class => @class.Definition != null && @class.Definition.HasMember(
+                    this,
                     classifications,
                     individual))
                 .ForEach(@class =>ClassifyIndividual(

@@ -23,18 +23,23 @@ namespace Ontology
         }
 
         public virtual IEnumerable<object> Values(
-            object individual
+            IOntology context,
+            object    individual
             )
         {
             switch(individual)
             {
                 case T t                             : return _property(t).Cast<object>();
-                case INamedIndividual namedIndividual: return Values(namedIndividual);
+                case INamedIndividual namedIndividual: return Values(
+                    context,
+                    namedIndividual);
                 default                              : return Enumerable.Empty<object>();
             }
         }
 
-        protected abstract IEnumerable<object> Values(INamedIndividual namedIndividual);
+        protected abstract IEnumerable<object> Values(
+            IOntology        context,
+            INamedIndividual namedIndividual);
     }
 
     public abstract class FunctionalProperty<T, TProperty>:
@@ -54,22 +59,30 @@ namespace Ontology
         }
 
         IEnumerable<object> IPropertyExpression.Values(
-            object individual
-            ) => Value(individual).ToEnumerable();
+            IOntology context,
+            object    individual
+            ) => Value(
+                context,
+                individual).ToEnumerable();
 
         protected object Value(
-            object individual
+            IOntology context,
+            object    individual
             )
         {
             switch(individual)
             {
                 case T t                             : return _property(t);
-                case INamedIndividual namedIndividual: return Value(namedIndividual);
+                case INamedIndividual namedIndividual: return Value(
+                    context,
+                    namedIndividual);
                 default                              : return null;
             }
         }
 
-        protected abstract object Value(INamedIndividual namedIndividual);
+        protected abstract object Value(
+            IOntology        context,
+            INamedIndividual namedIndividual);
     }
 
     public class ObjectProperty<T, TProperty>:
@@ -86,8 +99,16 @@ namespace Ontology
         }
 
         protected override IEnumerable<object> Values(
+            IOntology        context,
             INamedIndividual namedIndividual
-            ) => namedIndividual[this];
+            ) => context
+                .GetAxioms()
+                .OfType<IObjectPropertyAssertion>()
+                .Where(
+                    objectPropertyAssertion =>
+                        objectPropertyAssertion.SourceIndividual         == namedIndividual &&
+                        objectPropertyAssertion.ObjectPropertyExpression == this)
+                .Select(objectPropertyAssertion => objectPropertyAssertion.TargetIndividual);
     }
 
     public class FunctionalObjectProperty<T, TProperty>:
@@ -104,8 +125,17 @@ namespace Ontology
         }
 
         protected override object Value(
+            IOntology        context,
             INamedIndividual namedIndividual
-            ) => namedIndividual[this].FirstOrDefault();
+            ) => context
+                .GetAxioms()
+                .OfType<IObjectPropertyAssertion>()
+                .Where(
+                    objectPropertyAssertion =>
+                        objectPropertyAssertion.SourceIndividual         == namedIndividual &&
+                        objectPropertyAssertion.ObjectPropertyExpression == this)
+                .Select(objectPropertyAssertion => objectPropertyAssertion.TargetIndividual)
+                .FirstOrDefault();
     }
 
     public class DataProperty<T, TProperty>:
@@ -126,13 +156,27 @@ namespace Ontology
         IList<IDataPropertyRange> IDataPropertyExpression.Ranges => _ranges;
 
         bool IDataPropertyExpression.AreEqual(
-            object lhs,
-            object rhs
-            ) => Values(lhs).ToHashSet().SetEquals(Values(rhs).ToHashSet());
+            IOntology context,
+            object    lhs,
+            object    rhs
+            ) => Values(
+                context,
+                lhs).ToHashSet().SetEquals(
+                    Values(
+                        context,
+                        rhs).ToHashSet());
 
         protected override IEnumerable<object> Values(
+            IOntology        context,
             INamedIndividual namedIndividual
-            ) => namedIndividual[this];
+            ) => context
+                .GetAxioms()
+                .OfType<IDataPropertyAssertion>()
+                .Where(
+                    dataPropertyAssertion =>
+                        dataPropertyAssertion.SourceIndividual       == namedIndividual &&
+                        dataPropertyAssertion.DataPropertyExpression == this)
+                .Select(dataPropertyAssertion => dataPropertyAssertion.TargetValue);
     }
     
     public class FunctionalDataProperty<T, TProperty>:
@@ -153,12 +197,24 @@ namespace Ontology
         IList<IDataPropertyRange> IDataPropertyExpression.Ranges => _ranges;
 
         protected override object Value(
+            IOntology        context,
             INamedIndividual namedIndividual
-            ) => namedIndividual[this].FirstOrDefault();
+            ) => context
+                .GetAxioms()
+                .OfType<IDataPropertyAssertion>()
+                .Where(
+                    dataPropertyAssertion =>
+                        dataPropertyAssertion.SourceIndividual       == namedIndividual &&
+                        dataPropertyAssertion.DataPropertyExpression == this)
+                .Select(dataPropertyAssertion => dataPropertyAssertion.TargetValue)
+                .FirstOrDefault();
 
         bool IDataPropertyExpression.AreEqual(
-            object lhs,
-            object rhs
-            ) => Equals(Value(lhs), Value(rhs));
+            IOntology context,
+            object    lhs,
+            object    rhs
+            ) => Equals(
+                Value(context, lhs),
+                Value(context, rhs));
     }
 }

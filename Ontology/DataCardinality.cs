@@ -25,10 +25,13 @@ namespace Ontology
         IDataRange IDataCardinality.DataRange => _dataRange;
 
         protected int Count(
-            object individual
+            IOntology context,
+            object    individual
             )
         {
-            var values = _dataPropertyExpression.Values(individual);
+            var values = _dataPropertyExpression.Values(
+                context,
+                individual);
             return _dataRange != null ? values.Count(_dataRange.HasMember) : values.Count();
         }
     }
@@ -49,10 +52,12 @@ namespace Ontology
         }
 
         public override bool HasMember(
-            IDictionary<object, HashSet<IClassExpression>>
-                   classification,
-            object individual
-            ) => Count(individual) >= _cardinality;
+            IOntology                                      context,
+            IDictionary<object, HashSet<IClassExpression>> classifications,
+            object                                         individual
+            ) => Count(
+                context,
+                individual) >= _cardinality;
     }
 
     public class DataMaxCardinality:
@@ -71,10 +76,12 @@ namespace Ontology
         }
 
         public override bool HasMember(
-            IDictionary<object, HashSet<IClassExpression>>
-                   classification,
-            object individual
-            ) => Count(individual) <= _cardinality;
+            IOntology                                      context,
+            IDictionary<object, HashSet<IClassExpression>> classifications,
+            object                                         individual
+            ) => Count(
+                context,
+                individual) <= _cardinality;
     }
 
     public class DataExactCardinality:
@@ -93,9 +100,11 @@ namespace Ontology
         }
 
         public override bool HasMember(
-            IDictionary<object, HashSet<IClassExpression>>
-                   classification,
-            object individual
-            ) => Count(individual) == _cardinality;
+            IOntology                                      context,
+            IDictionary<object, HashSet<IClassExpression>> classifications,
+            object                                         individual
+            ) => Count(
+                context,
+                individual) == _cardinality;
     }
 }

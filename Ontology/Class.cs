@@ -21,10 +21,11 @@ namespace Ontology
         IList<ISubClassOf> IClassExpression.SuperClasses => _superClasses;
 
         public virtual bool HasMember(
-            IDictionary<object, HashSet<IClassExpression>>
-                   classifications,
-            object individual
+            IOntology                                      context,
+            IDictionary<object, HashSet<IClassExpression>> classifications,
+            object                                         individual
             ) => _definition.HasMember(
+                context,
                 classifications,
                 individual);
 
@@ -49,12 +50,12 @@ namespace Ontology
         }
 
         public override bool HasMember(
-            IDictionary<object, HashSet<IClassExpression>>
-                   classifications,
-            object individual
+            IOntology                                      context,
+            IDictionary<object, HashSet<IClassExpression>> classifications,
+            object                                         individual
             )
         {
-            return _ontology.ClassifyIndividual(
+            return context.ClassifyIndividual(
                 classifications,
                 individual).Contains(this);
         }

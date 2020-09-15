@@ -4,7 +4,9 @@ namespace Ontology
 {
     public interface IPropertyExpression: IEntity
     {
-        IEnumerable<object> Values(object individual);
+        IEnumerable<object> Values(
+            IOntology context,
+            object    individual);
     }
 
     public interface IObjectPropertyExpression: IPropertyExpression
@@ -16,7 +18,8 @@ namespace Ontology
         IList<IDataPropertyRange> Ranges { get; }
 
         bool AreEqual(
-            object lhs,
-            object rhs);
+            IOntology context,
+            object    lhs,
+            object    rhs);
     }
 }

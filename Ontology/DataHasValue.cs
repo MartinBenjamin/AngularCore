@@ -21,9 +21,11 @@ namespace Ontology
         object IDataHasValue.Value => _value;
 
         public override bool HasMember(
-            IDictionary<object, HashSet<IClassExpression>>
-                   classification,
-            object individual
-            ) => _dataPropertyExpression.Values(individual).Contains(_value);
+            IOntology                                      context,
+            IDictionary<object, HashSet<IClassExpression>> classifications,
+            object                                         individual
+            ) => _dataPropertyExpression.Values(
+                context,    
+                individual).Contains(_value);
     }
 }
