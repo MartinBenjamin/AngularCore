@@ -1,16 +1,7 @@
-﻿using CommonDomainObjects;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Ontology
+﻿namespace Ontology
 {
     public interface INamedIndividual: IEntity
     {
-        IList<IObjectPropertyAssertion> ObjectProperties { get; }
-        IList<IDataPropertyAssertion>   DataProperties   { get; }
-
-        IEnumerable<object> this[IObjectPropertyExpression objectPropertyExpression] { get; }
-        IEnumerable<object> this[IDataPropertyExpression   dataPropertyExpression  ] { get; }
     }
 
     public interface IAssertion: IAxiom
@@ -45,9 +36,6 @@ namespace Ontology
         Entity,
         INamedIndividual
     {
-        private IList<IObjectPropertyAssertion> _objectProperties = new List<IObjectPropertyAssertion>();
-        private IList<IDataPropertyAssertion>   _dataProperties   = new List<IDataPropertyAssertion>();
-
         public NamedIndividual(
             IOntology ontology,
             string    name
@@ -56,22 +44,6 @@ namespace Ontology
                 name)
         {
         }
-
-        IEnumerable<object> INamedIndividual.this[
-            IObjectPropertyExpression objectPropertyExpression
-            ] => _objectProperties
-                .Where(objectPropertyAssertion => objectPropertyAssertion.ObjectPropertyExpression == objectPropertyAssertion)
-                .Select(objectPropertyAssertion => objectPropertyAssertion.TargetIndividual);
-
-        IEnumerable<object> INamedIndividual.this[
-            IDataPropertyExpression dataPropertyExpression
-            ] => _dataProperties
-                .Where(dataPropertyAssertion => dataPropertyAssertion.DataPropertyExpression == dataPropertyExpression)
-                .Select(dataPropertyAssertion => dataPropertyAssertion.TargetValue);
-
-        IList<IObjectPropertyAssertion> INamedIndividual.ObjectProperties => _objectProperties;
-
-        IList<IDataPropertyAssertion> INamedIndividual.DataProperties => _dataProperties;
     }
 
     public class ClassAssertion:
@@ -136,7 +108,6 @@ namespace Ontology
         {
             _objectPropertyExpression = objectPropertyExpression;
             _targetIndividual         = targetIndividual;
-            _sourceIndividual.ObjectProperties.Add(this);
         }
 
         IObjectPropertyExpression IObjectPropertyAssertion.ObjectPropertyExpression => _objectPropertyExpression;
@@ -163,7 +134,6 @@ namespace Ontology
         {
             _dataPropertyExpression = dataPropertyExpression;
             _targetValue            = target;
-            _sourceIndividual.DataProperties.Add(this);
         }
 
         IDataPropertyExpression IDataPropertyAssertion.DataPropertyExpression => _dataPropertyExpression;
