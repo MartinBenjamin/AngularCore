@@ -106,35 +106,41 @@ namespace Ontology
             switch(individual)
             {
                 case INamedIndividual namedIndividual:
-                    foreach(var @class in namedIndividual.Classes.Select(classAssertion => classAssertion.ClassExpression))
-                        ClassifyIndividual(
+                    GetAxioms()
+                        .OfType<IClassAssertion>()
+                        .Where(classAssertion => classAssertion.NamedIndividual == namedIndividual)
+                        .Select(classAssertion => classAssertion.ClassExpression)
+                        .ForEach(classExpression => ClassifyIndividual(
                             classExpressions,
                             individual,
-                            @class);
+                            classExpression));
                     break;
                 case IIndividual iindividual:
-                    GetClasses().Where(@class => @class.Name == iindividual.ClassName).ForEach(
-                        @class => ClassifyIndividual(
+                    GetClasses()
+                        .Where(@class => @class.Name == iindividual.ClassName)
+                        .ForEach(@class => ClassifyIndividual(
                             classExpressions,
                             individual,
                             @class));
                     break;
                 default:
-                    GetClasses().Where(@class => @class.Name == individual.GetType().FullName).ForEach(
-                        @class => ClassifyIndividual(
+                    GetClasses()
+                        .Where(@class => @class.Name == individual.GetType().FullName)
+                        .ForEach(@class => ClassifyIndividual(
                             classExpressions,
                             individual,
                             @class));
                     break;
             }
 
-            foreach(var @class in this.GetClasses().Where(@class => @class.Definition != null).Where(@class => @class.Definition.HasMember(
-                classifications,
-                individual)))
-                ClassifyIndividual(
+            GetClasses()
+                .Where(@class => @class.Definition != null && @class.Definition.HasMember(
+                    classifications,
+                    individual))
+                .ForEach(@class =>ClassifyIndividual(
                     classExpressions,
                     individual,
-                    @class);
+                    @class));
 
             return classExpressions;
         }

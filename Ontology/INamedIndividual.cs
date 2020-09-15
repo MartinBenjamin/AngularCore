@@ -8,7 +8,6 @@ namespace Ontology
     {
         IList<IObjectPropertyAssertion> ObjectProperties { get; }
         IList<IDataPropertyAssertion>   DataProperties   { get; }
-        IList<IClassAssertion>          Classes          { get; }
 
         IEnumerable<object> this[IObjectPropertyExpression objectPropertyExpression] { get; }
         IEnumerable<object> this[IDataPropertyExpression   dataPropertyExpression  ] { get; }
@@ -48,7 +47,6 @@ namespace Ontology
     {
         private IList<IObjectPropertyAssertion> _objectProperties = new List<IObjectPropertyAssertion>();
         private IList<IDataPropertyAssertion>   _dataProperties   = new List<IDataPropertyAssertion>();
-        private IList<IClassAssertion>          _classes          = new List<IClassAssertion>();
 
         public NamedIndividual(
             IOntology ontology,
@@ -74,8 +72,6 @@ namespace Ontology
         IList<IObjectPropertyAssertion> INamedIndividual.ObjectProperties => _objectProperties;
 
         IList<IDataPropertyAssertion> INamedIndividual.DataProperties => _dataProperties;
-
-        IList<IClassAssertion> INamedIndividual.Classes => _classes;
     }
 
     public class ClassAssertion:
@@ -93,7 +89,6 @@ namespace Ontology
         {
             _classExpression = classExpression;
             _namedIndividual = namedIndividual;
-            _namedIndividual.Classes.Add(this);
         }
 
         IClassExpression IClassAssertion.ClassExpression => _classExpression;
