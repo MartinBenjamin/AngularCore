@@ -36,10 +36,15 @@ namespace Ontology
 
         IDatatype IOntology.DateTime => _dateTime;
 
-        public IEnumerable<IAxiom> GetAxioms()
+        public IEnumerable<IOntology> GetOntologies()
             => _imports
-                .SelectMany(import => import.GetAxioms())
-                .Concat(_axioms);
+                .SelectMany(import => import.GetOntologies())
+                .Append(this)
+                .Distinct();
+
+        public IEnumerable<IAxiom> GetAxioms()
+            => GetOntologies()
+                .SelectMany(import => import.Axioms);
 
         public IEnumerable<IClass> GetClasses()
             => GetAxioms()

@@ -11,6 +11,7 @@ namespace Ontology
 
         IDatatype        DateTime { get; }
 
+        IEnumerable<IOntology>                 GetOntologies();
         IEnumerable<IAxiom>                    GetAxioms();
         IEnumerable<IClass>                    GetClasses();
         IEnumerable<IObjectPropertyExpression> GetObjectPropertyExpressions(IClassExpression domain);
