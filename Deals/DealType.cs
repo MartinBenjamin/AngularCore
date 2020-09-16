@@ -24,6 +24,25 @@ namespace Deals
         public static readonly Guid Mufg = Guid.Empty;
     }
 
+    public class CommonDomainObjects: Ontology.Ontology
+    {
+        public IClass                  DomainObject;
+        public IDataPropertyExpression Id;
+        public IClass                  Named;
+        public IDataPropertyExpression Name;
+
+        public CommonDomainObjects()
+        {
+            DomainObject = this.Class<DomainObject<Guid>>();
+            Id = DomainObject.DataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
+            DomainObject.HasKey(Id);
+
+            Named = this.Class<Named<Guid>>();
+            Name = Named.DataProperty<Named<Guid>, string>(named => named.Name);
+            Named.SubClassOf(DomainObject);
+        }
+    }
+
     public class DealOntology: Ontology.Ontology
     {
         public IList<Role>         KeyCounterpartyRoles { get; protected set; } = new List<Role>();

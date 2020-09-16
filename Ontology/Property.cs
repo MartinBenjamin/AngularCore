@@ -102,8 +102,7 @@ namespace Ontology
             IOntology        context,
             INamedIndividual namedIndividual
             ) => context
-                .GetAxioms()
-                .OfType<IObjectPropertyAssertion>()
+                .Get<IObjectPropertyAssertion>()
                 .Where(objectPropertyAssertion =>
                     objectPropertyAssertion.SourceIndividual         == namedIndividual &&
                     objectPropertyAssertion.ObjectPropertyExpression == this)
@@ -127,8 +126,7 @@ namespace Ontology
             IOntology        context,
             INamedIndividual namedIndividual
             ) => context
-                .GetAxioms()
-                .OfType<IObjectPropertyAssertion>()
+                .Get<IObjectPropertyAssertion>()
                 .Where(objectPropertyAssertion =>
                     objectPropertyAssertion.SourceIndividual         == namedIndividual &&
                     objectPropertyAssertion.ObjectPropertyExpression == this)
@@ -159,8 +157,7 @@ namespace Ontology
             IOntology        context,
             INamedIndividual namedIndividual
             ) => context
-                .GetAxioms()
-                .OfType<IDataPropertyAssertion>()
+                .Get<IDataPropertyAssertion>()
                 .Where(dataPropertyAssertion =>
                     dataPropertyAssertion.SourceIndividual       == namedIndividual &&
                     dataPropertyAssertion.DataPropertyExpression == this)
@@ -192,8 +189,7 @@ namespace Ontology
             IOntology        context,
             INamedIndividual namedIndividual
             ) => context
-                .GetAxioms()
-                .OfType<IDataPropertyAssertion>()
+                .Get<IDataPropertyAssertion>()
                 .Where(dataPropertyAssertion =>
                     dataPropertyAssertion.SourceIndividual       == namedIndividual &&
                     dataPropertyAssertion.DataPropertyExpression == this)

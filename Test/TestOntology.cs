@@ -227,7 +227,7 @@ namespace Test
             )
         {
             var dealOntology = new DealOntology();
-            var @class = dealOntology.GetClasses().FirstOrDefault(c =>  c.Name == className);
+            var @class = dealOntology.Get<IClass>().FirstOrDefault(c =>  c.Name == className);
             Assert.That(@class, Is.Not.Null);
             var classes = dealOntology.SuperClasses(@class);
 
@@ -310,7 +310,7 @@ namespace Test
             )
         {
             var dealOntology = new DealOntology();
-            var exclusiveDeal = dealOntology.GetClasses().FirstOrDefault(@class => @class.Name == "ExclusiveDeal");
+            var exclusiveDeal = dealOntology.Get<IClass>().FirstOrDefault(@class => @class.Name == "ExclusiveDeal");
 
             var deal = new Deal(
                 Guid.NewGuid(),
@@ -407,7 +407,7 @@ namespace Test
             (
                 from classExpression in classifications[exclusivity]
                 from dataProperty in ontology.GetDataPropertyExpressions(classExpression)
-                from dataPropertyRange in ontology.GetAxioms().OfType<IDataPropertyRange>()
+                from dataPropertyRange in ontology.Get<IDataPropertyRange>()
                 from annotation in dataPropertyRange.Annotations
                 where
                     dataPropertyRange.DataPropertyExpression == dataProperty &&

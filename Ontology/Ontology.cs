@@ -40,38 +40,31 @@ namespace Ontology
                 .Append(this)
                 .Distinct();
 
-        public IEnumerable<IAxiom> GetAxioms()
+        public IEnumerable<TAxiom> Get<TAxiom>() where TAxiom: IAxiom
             => GetOntologies()
-                .SelectMany(import => import.Axioms);
-
-        public IEnumerable<IClass> GetClasses()
-            => GetAxioms()
-                .OfType<IClass>();
+                .SelectMany(import => import.Axioms)
+                .OfType<TAxiom>();
 
         public IEnumerable<IObjectPropertyExpression> GetObjectPropertyExpressions(
             IClassExpression domain
-            ) => GetAxioms()
-                .OfType<IObjectPropertyDomain>()
+            ) => Get<IObjectPropertyDomain>()
                 .Where(objectPropertyDomain => objectPropertyDomain.Domain == domain)
                 .Select(objectPropertyDomain => objectPropertyDomain.ObjectPropertyExpression);
 
         public IEnumerable<IDataPropertyExpression> GetDataPropertyExpressions(
             IClassExpression domain
-            ) => GetAxioms()
-                .OfType<IDataPropertyDomain>()
+            ) => Get<IDataPropertyDomain>()
                 .Where(dataPropertyDomain => dataPropertyDomain.Domain == domain)
                 .Select(dataPropertyDomain => dataPropertyDomain.DataPropertyExpression);
 
         public IEnumerable<IHasKey> GetHasKeys(
             IClassExpression classExpression
-            ) => GetAxioms()
-                .OfType<IHasKey>()
+            ) => Get<IHasKey>()
                 .Where(hasKey => hasKey.ClassExpression == classExpression);
 
         public IEnumerable<ISubClassOf> GetSuperClasses(
             IClassExpression classExpression
-            ) => GetAxioms()
-                .OfType<ISubClassOf>()
+            ) => Get<ISubClassOf>()
                 .Where(subClassOf => subClassOf.SubClassExpression == classExpression);
 
         bool IOntology.AreEqual(
@@ -117,8 +110,7 @@ namespace Ontology
             switch(individual)
             {
                 case INamedIndividual namedIndividual:
-                    GetAxioms()
-                        .OfType<IClassAssertion>()
+                    Get<IClassAssertion>()
                         .Where(classAssertion => classAssertion.NamedIndividual == namedIndividual)
                         .Select(classAssertion => classAssertion.ClassExpression)
                         .ForEach(classExpression => ClassifyIndividual(
@@ -127,7 +119,7 @@ namespace Ontology
                             classExpression));
                     break;
                 case IIndividual iindividual:
-                    GetClasses()
+                    Get<IClass>()
                         .Where(@class => @class.Name == iindividual.ClassName)
                         .ForEach(@class => ClassifyIndividual(
                             classExpressions,
@@ -135,7 +127,7 @@ namespace Ontology
                             @class));
                     break;
                 default:
-                    GetClasses()
+                    Get<IClass>()
                         .Where(@class => @class.Name == individual.GetType().FullName)
                         .ForEach(@class => ClassifyIndividual(
                             classExpressions,
@@ -145,7 +137,7 @@ namespace Ontology
             }
 
             (
-                from eqivalentClasses in GetAxioms().OfType<IEquivalentClasses>()
+                from eqivalentClasses in Get<IEquivalentClasses>()
                 from @class in eqivalentClasses.ClassExpressions.OfType<IClass>()
                 let classExpression = eqivalentClasses.ClassExpressions.Where(classExpression => !(classExpression is IClass)).FirstOrDefault()
                 where
