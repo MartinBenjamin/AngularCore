@@ -188,6 +188,14 @@ namespace Ontology
 
         IList<IDataPropertyRange> IDataPropertyExpression.Ranges => _ranges;
 
+        bool IDataPropertyExpression.AreEqual(
+            IOntology context,
+            object    lhs,
+            object    rhs
+            ) => Equals(
+                Value(context, lhs),
+                Value(context, rhs));
+
         protected override object Value(
             IOntology        context,
             INamedIndividual namedIndividual
@@ -199,13 +207,5 @@ namespace Ontology
                     dataPropertyAssertion.DataPropertyExpression == this)
                 .Select(dataPropertyAssertion => dataPropertyAssertion.TargetValue)
                 .FirstOrDefault();
-
-        bool IDataPropertyExpression.AreEqual(
-            IOntology context,
-            object    lhs,
-            object    rhs
-            ) => Equals(
-                Value(context, lhs),
-                Value(context, rhs));
     }
 }
