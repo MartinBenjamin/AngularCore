@@ -54,30 +54,22 @@ namespace Test
         public void TestThing(
             object individual,
             bool   result
-            )
-        {
-            IOntology ontology = new DealOntology();
-            Assert.That(ontology.Thing.HasMember(
-                ontology,
-                new Dictionary<object, HashSet<IClassExpression>>(),
+            ) => Assert.That(Ontology.Ontology.Thing.HasMember(
+                null,
+                null,
                 individual),
                 Is.EqualTo(result));
-        }
 
         [TestCase(0 , false)]
         [TestCase("", false)]
         public void TestNothing(
             object individual,
             bool   result
-            )
-        {
-            IOntology ontology = new DealOntology();
-            Assert.That(ontology.Nothing.HasMember(
-                ontology,
-                new Dictionary<object, HashSet<IClassExpression>>(),
+            ) => Assert.That(Ontology.Ontology.Nothing.HasMember(
+                null,
+                null,
                 individual),
                 Is.EqualTo(result));
-        }
 
         [TestCase(null , false)]
         [TestCase(""   , false)]
@@ -119,8 +111,7 @@ namespace Test
                 classifications,
                 deal)));
         }
-
-        
+       
         [TestCase(null, false)]
         [TestCase(0   ,  true)]
         [TestCase(1   ,  true)]

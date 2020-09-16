@@ -11,7 +11,7 @@
             )
         {
             _ontology = ontology;
-            _ontology.Axioms.Add(this);
+            _ontology?.Axioms.Add(this);
         }
 
         IOntology IAxiom.Ontology => _ontology;

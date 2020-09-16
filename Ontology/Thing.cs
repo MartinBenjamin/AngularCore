@@ -4,11 +4,9 @@ namespace Ontology
 {
     public class Thing: Class
     {
-        internal Thing(
-            IOntology ontology
-            ) : base(
-                ontology,
-                "Thing")
+        internal Thing() : base(
+            null,
+            "Thing")
         {
         }
 

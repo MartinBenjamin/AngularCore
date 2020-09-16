@@ -12,8 +12,8 @@ namespace Ontology
         private IDictionary<IClassExpression, HashSet<IClassExpression>>
                                  _superClasses = new Dictionary<IClassExpression, HashSet<IClassExpression>>();
 
-        private IClass    _thing;
-        private IClass    _nothing;
+        public static readonly IClass Thing   = new Thing();
+        public static readonly IClass Nothing = new Nothing();
         private IDatatype _dateTime;
 
         public Ontology(
@@ -21,16 +21,14 @@ namespace Ontology
             )
         {
             _imports  = imports;
-            _thing    = new Thing(this);
-            _nothing  = new Nothing(this);
             _dateTime = new Datatype<DateTime>(this, "xsd:dateTime");
         }
 
         IList<IOntology> IOntology.Imports => _imports;
 
-        IClassExpression IOntology.Thing => _thing;
+        IClassExpression IOntology.Thing => Thing;
 
-        IClassExpression IOntology.Nothing => _nothing;
+        IClassExpression IOntology.Nothing => Nothing;
 
         IList<IAxiom> IOntology.Axioms => _axioms;
 
