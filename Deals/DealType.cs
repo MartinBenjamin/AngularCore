@@ -26,10 +26,10 @@ namespace Deals
 
     public class CommonDomainObjects: Ontology.Ontology
     {
-        public IClass DomainObject;
-        public IDataPropertyExpression Id;
-        public IClass Named;
-        public IDataPropertyExpression Name;
+        public readonly IClass                  DomainObject;
+        public readonly IDataPropertyExpression Id;
+        public readonly IClass                  Named;
+        public readonly IDataPropertyExpression Name;
 
         private static CommonDomainObjects _instance;
 
