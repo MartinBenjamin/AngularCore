@@ -15,8 +15,6 @@ namespace Ontology
 
     public interface IDataPropertyExpression: IPropertyExpression
     {
-        IList<IDataPropertyRange> Ranges { get; }
-
         bool AreEqual(
             IOntology context,
             object    lhs,

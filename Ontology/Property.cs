@@ -140,8 +140,6 @@ namespace Ontology
         Property<T, TProperty>,
         IDataPropertyExpression
     {
-        private IList<IDataPropertyRange> _ranges = new List<IDataPropertyRange>();
-
         public DataProperty(
             IOntology                                   ontology,
             Expression<Func<T, IEnumerable<TProperty>>> property
@@ -150,8 +148,6 @@ namespace Ontology
                 property)
         {
         }
-
-        IList<IDataPropertyRange> IDataPropertyExpression.Ranges => _ranges;
 
         bool IDataPropertyExpression.AreEqual(
             IOntology context,
@@ -175,8 +171,6 @@ namespace Ontology
         FunctionalProperty<T, TProperty>,
         IDataPropertyExpression
     {
-        private IList<IDataPropertyRange> _ranges = new List<IDataPropertyRange>();
-
         public FunctionalDataProperty(
             IOntology                      ontology,
             Expression<Func<T, TProperty>> property
@@ -185,8 +179,6 @@ namespace Ontology
                 property)
         {
         }
-
-        IList<IDataPropertyRange> IDataPropertyExpression.Ranges => _ranges;
 
         bool IDataPropertyExpression.AreEqual(
             IOntology context,

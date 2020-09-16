@@ -407,9 +407,10 @@ namespace Test
             (
                 from classExpression in classifications[exclusivity]
                 from dataProperty in ontology.GetDataPropertyExpressions(classExpression)
-                from dataPropertyRange in dataProperty.Ranges
+                from dataPropertyRange in ontology.GetAxioms().OfType<IDataPropertyRange>()
                 from annotation in dataPropertyRange.Annotations
                 where
+                    dataPropertyRange.DataPropertyExpression == dataProperty &&
                     annotation.Property == dealOntology.Validated
                 select dataPropertyRange
             ).FirstOrDefault();
