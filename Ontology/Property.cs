@@ -104,10 +104,9 @@ namespace Ontology
             ) => context
                 .GetAxioms()
                 .OfType<IObjectPropertyAssertion>()
-                .Where(
-                    objectPropertyAssertion =>
-                        objectPropertyAssertion.SourceIndividual         == namedIndividual &&
-                        objectPropertyAssertion.ObjectPropertyExpression == this)
+                .Where(objectPropertyAssertion =>
+                    objectPropertyAssertion.SourceIndividual         == namedIndividual &&
+                    objectPropertyAssertion.ObjectPropertyExpression == this)
                 .Select(objectPropertyAssertion => objectPropertyAssertion.TargetIndividual);
     }
 
@@ -130,10 +129,9 @@ namespace Ontology
             ) => context
                 .GetAxioms()
                 .OfType<IObjectPropertyAssertion>()
-                .Where(
-                    objectPropertyAssertion =>
-                        objectPropertyAssertion.SourceIndividual         == namedIndividual &&
-                        objectPropertyAssertion.ObjectPropertyExpression == this)
+                .Where(objectPropertyAssertion =>
+                    objectPropertyAssertion.SourceIndividual         == namedIndividual &&
+                    objectPropertyAssertion.ObjectPropertyExpression == this)
                 .Select(objectPropertyAssertion => objectPropertyAssertion.TargetIndividual)
                 .FirstOrDefault();
     }
@@ -159,12 +157,7 @@ namespace Ontology
             IOntology context,
             object    lhs,
             object    rhs
-            ) => Values(
-                context,
-                lhs).ToHashSet().SetEquals(
-                    Values(
-                        context,
-                        rhs).ToHashSet());
+            ) => Values(context, lhs).ToHashSet().SetEquals(Values(context, rhs));
 
         protected override IEnumerable<object> Values(
             IOntology        context,
@@ -172,10 +165,9 @@ namespace Ontology
             ) => context
                 .GetAxioms()
                 .OfType<IDataPropertyAssertion>()
-                .Where(
-                    dataPropertyAssertion =>
-                        dataPropertyAssertion.SourceIndividual       == namedIndividual &&
-                        dataPropertyAssertion.DataPropertyExpression == this)
+                .Where(dataPropertyAssertion =>
+                    dataPropertyAssertion.SourceIndividual       == namedIndividual &&
+                    dataPropertyAssertion.DataPropertyExpression == this)
                 .Select(dataPropertyAssertion => dataPropertyAssertion.TargetValue);
     }
     
@@ -202,10 +194,9 @@ namespace Ontology
             ) => context
                 .GetAxioms()
                 .OfType<IDataPropertyAssertion>()
-                .Where(
-                    dataPropertyAssertion =>
-                        dataPropertyAssertion.SourceIndividual       == namedIndividual &&
-                        dataPropertyAssertion.DataPropertyExpression == this)
+                .Where(dataPropertyAssertion =>
+                    dataPropertyAssertion.SourceIndividual       == namedIndividual &&
+                    dataPropertyAssertion.DataPropertyExpression == this)
                 .Select(dataPropertyAssertion => dataPropertyAssertion.TargetValue)
                 .FirstOrDefault();
 

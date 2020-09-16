@@ -22,8 +22,5 @@ namespace Ontology
             ) => context.ClassifyIndividual(
                 classifications,
                 individual).Contains(this);
-
-        public override string ToString()
-            => _name;
     }
 }

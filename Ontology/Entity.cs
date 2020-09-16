@@ -15,5 +15,7 @@
         }
 
         string IEntity.Name => _name;
+
+        public override string ToString() => _name;
     }
 }
