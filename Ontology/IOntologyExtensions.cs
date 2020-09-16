@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace Ontology
@@ -16,7 +15,7 @@ namespace Ontology
 
         public static IClass Class<T>(
             this IOntology ontology
-            ) => new Class<T>(ontology);
+            ) => ontology.Class(typeof(T).FullName);
 
         public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
             this IOntology                              ontology,

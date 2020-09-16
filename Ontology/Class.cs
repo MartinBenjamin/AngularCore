@@ -26,26 +26,4 @@ namespace Ontology
         public override string ToString()
             => _name;
     }
-
-    public class Class<T>: Class
-    {
-        public Class(
-            IOntology ontology
-            ) : base(
-                ontology,
-                typeof(T).FullName)
-        {
-        }
-
-        public override bool HasMember(
-            IOntology                                      context,
-            IDictionary<object, HashSet<IClassExpression>> classifications,
-            object                                         individual
-            )
-        {
-            return context.ClassifyIndividual(
-                classifications,
-                individual).Contains(this);
-        }
-    }
 }
