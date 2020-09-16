@@ -26,12 +26,14 @@ namespace Deals
 
     public class CommonDomainObjects: Ontology.Ontology
     {
-        public IClass                  DomainObject;
+        public IClass DomainObject;
         public IDataPropertyExpression Id;
-        public IClass                  Named;
+        public IClass Named;
         public IDataPropertyExpression Name;
 
-        public CommonDomainObjects()
+        private static CommonDomainObjects _instance;
+
+        private CommonDomainObjects()
         {
             DomainObject = this.Class<DomainObject<Guid>>();
             Id = DomainObject.DataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
@@ -40,6 +42,17 @@ namespace Deals
             Named = this.Class<Named<Guid>>();
             Name = Named.DataProperty<Named<Guid>, string>(named => named.Name);
             Named.SubClassOf(DomainObject);
+        }
+
+        public static CommonDomainObjects Instance
+        {
+            get
+            {
+                if(_instance == null)
+                    _instance = new CommonDomainObjects();
+
+                return _instance;
+            }
         }
     }
 
@@ -51,31 +64,20 @@ namespace Deals
         public IAnnotationProperty SubPropertyName      { get; protected set; }
         public IAnnotationProperty Validated            { get; protected set; }
 
-        public DealOntology()
+        public DealOntology(): base(CommonDomainObjects.Instance)
         {
-            var DomainObject          = this.Class<DomainObject<Guid>>();
-            var _Id                   = DomainObject.DataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
-            DomainObject.HasKey(_Id);
-
-            var Named                 = this.Class<Named<Guid>>();
-            var _Name                 = Named.DataProperty<Named<Guid>, string>(named => named.Name);
-            Named.SubClassOf(DomainObject);
-
-            //var ClassificationScheme  = this.Class<ClassificationScheme>();
-            //ClassificationScheme.SubClassOf(DomainObject);
-            //var Exclusivity = ClassificationScheme.NamedIndividual("Exclusivity");
-            //Exclusivity.Value(_Id, ClassificationSchemeIdentifier.Exclusivity);
+            var commonDomainObject = CommonDomainObjects.Instance;
 
             var Role                  = this.Class<Role>();
-            Role.SubClassOf(Named);
+            Role.SubClassOf(commonDomainObject.Named);
             var SponsorRole = Role.NamedIndividual("Sponsor");
-            SponsorRole.Value(_Id, DealRoleIdentifier.Sponsor);
+            SponsorRole.Value(commonDomainObject.Id, DealRoleIdentifier.Sponsor);
             var BorrowerRole = Role.NamedIndividual("Borrower");
-            BorrowerRole.Value(_Id, DealRoleIdentifier.Borrower);
+            BorrowerRole.Value(commonDomainObject.Id, DealRoleIdentifier.Borrower);
             var LenderRole = Role.NamedIndividual("Lender");
-            LenderRole.Value(_Id, DealRoleIdentifier.Lender);
+            LenderRole.Value(commonDomainObject.Id, DealRoleIdentifier.Lender);
             var AdvisorRole = Role.NamedIndividual("Advisor");
-            AdvisorRole.Value(_Id, DealRoleIdentifier.Advisor);
+            AdvisorRole.Value(commonDomainObject.Id, DealRoleIdentifier.Advisor);
 
             var Organisation          = this.Class<Organisation>();
             var LegalEntity           = this.Class<LegalEntity>();
@@ -85,7 +87,7 @@ namespace Deals
             var _Parties              = Deal.ObjectProperty<Deal, DealParty >(deal => deal.Parties    );
             var _Classifiers          = Deal.ObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
             var _Commitments          = Deal.ObjectProperty<Deal, Commitment>(deal => deal.Commitments);
-            Deal.SubClassOf(Named);
+            Deal.SubClassOf(commonDomainObject.Named);
 
             var DealParty             = this.Class<DealParty>();
             var _Role                 = DealParty.ObjectProperty<DealParty, Role>(dealParty => dealParty.Role);
@@ -117,7 +119,7 @@ namespace Deals
 
             Deal.SubClassOf(
                 new DataSomeValuesFrom(
-                    _Name,
+                    commonDomainObject.Name,
                     new DataComplementOf(new DataOneOf(string.Empty))))
                 .Annotate(
                     Restriction,
@@ -156,7 +158,7 @@ namespace Deals
                     "Sponsors");
 
             var Classifier = this.Class<Classifier>();
-            Classifier.SubClassOf(Named);
+            Classifier.SubClassOf(commonDomainObject.Named);
             var ExclusivityClassifier = this.Class<ExclusivityClassifier>();
             ExclusivityClassifier.SubClassOf(Classifier);
             Deal.SubClassOf(_Classifiers.ExactCardinality(1, ExclusivityClassifier))
@@ -168,7 +170,7 @@ namespace Deals
                     "Exclusivity");
 
             var NotExclusive = ExclusivityClassifier.NamedIndividual("NotExclusive");
-            NotExclusive.Value(_Id, ExclusivityClassifierIdentifier.No);
+            NotExclusive.Value(commonDomainObject.Id, ExclusivityClassifierIdentifier.No);
             var Exclusive = new ObjectIntersectionOf(ExclusivityClassifier, new ObjectComplementOf(new ObjectOneOf(this, NotExclusive)));
 
             var ExclusiveDeal = this.Class("ExclusiveDeal");
