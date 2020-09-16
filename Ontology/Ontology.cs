@@ -146,15 +146,21 @@ namespace Ontology
                     break;
             }
 
-            GetClasses()
-                .Where(@class => @class.Definition != null && @class.Definition.HasMember(
-                    this,
-                    classifications,
-                    individual))
-                .ForEach(@class => ClassifyIndividual(
-                    classExpressions,
-                    individual,
-                    @class));
+            (
+                from eqivalentClasses in GetAxioms().OfType<IEquivalentClasses>()
+                from @class in eqivalentClasses.ClassExpressions.OfType<IClass>()
+                let classExpression = eqivalentClasses.ClassExpressions.Where(classExpression => !(classExpression is IClass)).FirstOrDefault()
+                where
+                    classExpression != null &&
+                    classExpression.HasMember(
+                        this,
+                        classifications,
+                        individual)
+                select @class
+            ).ForEach(@class => ClassifyIndividual(
+                classExpressions,
+                individual,
+                @class));
 
             return classExpressions;
         }

@@ -118,7 +118,8 @@ namespace Ontology
         public static IEquivalentClasses Define(
             this IClass      @class,
             IClassExpression definition
-            ) => new ClassDefinition(
+            ) => new EquivalentClasses(
+                @class.Ontology,
                 @class,
                 definition);
 

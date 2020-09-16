@@ -6,8 +6,6 @@ namespace Ontology
         Entity,
         IClass
     {
-        private IClassExpression _definition;
-
         public Class(
             IOntology ontology,
             string    name
@@ -21,16 +19,9 @@ namespace Ontology
             IOntology                                      context,
             IDictionary<object, HashSet<IClassExpression>> classifications,
             object                                         individual
-            ) => _definition.HasMember(
-                context,
+            ) => context.ClassifyIndividual(
                 classifications,
-                individual);
-
-        IClassExpression IClass.Definition
-        {
-            get => _definition;
-            set => _definition = value;
-        }
+                individual).Contains(this);
 
         public override string ToString()
             => _name;

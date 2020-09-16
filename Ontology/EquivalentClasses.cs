@@ -33,7 +33,6 @@ namespace Ontology
         {
             _class      = @class;
             _definition = definition;
-            _class.Definition = _definition;
         }
 
         IEnumerable<IClassExpression> IEquivalentClasses.ClassExpressions

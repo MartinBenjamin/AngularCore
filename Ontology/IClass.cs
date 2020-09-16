@@ -4,6 +4,5 @@
         IEntity,
         IClassExpression
     {
-        IClassExpression Definition { get; set; }
     }
 }
