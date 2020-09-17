@@ -114,6 +114,54 @@ namespace Deals
         }
     }
 
+    public class Organisations: Ontology.Ontology
+    {
+        public readonly IClass Organisation;
+
+        private static Organisations _instance;
+
+        private Organisations() : base(CommonDomainObjects.Instance)
+        {
+            Organisation = this.Class<Organisation>();
+            Organisation.SubClassOf(CommonDomainObjects.Instance.Named);
+        }
+
+        public static Organisations Instance
+        {
+            get
+            {
+                if(_instance == null)
+                    _instance = new Organisations();
+
+                return _instance;
+            }
+        }
+    }
+
+    public class LegalEntities: Ontology.Ontology
+    {
+        public readonly IClass LegalEntity;
+
+        private static LegalEntities _instance;
+
+        private LegalEntities() : base(Organisations.Instance)
+        {
+            LegalEntity = this.Class<LegalEntity>();
+            LegalEntity.SubClassOf(Organisations.Instance.Organisation);
+        }
+
+        public static LegalEntities Instance
+        {
+            get
+            {
+                if(_instance == null)
+                    _instance = new LegalEntities();
+
+                return _instance;
+            }
+        }
+    }
+
     public class Parties: Ontology.Ontology
     {
         public readonly IClass                    PartyInRole;
@@ -195,6 +243,11 @@ namespace Deals
         public readonly IClass                  Sponsor;
         public readonly IDataPropertyExpression Equity;
 
+        public readonly INamedIndividual        Bank;
+        public readonly IClass                  BankParty;
+        public readonly IClass                  BankLenderParty;
+        public readonly IClass                  BankAdvisorParty;
+
         private static DealParties _instance;
 
         private DealParties() : base(
@@ -202,6 +255,7 @@ namespace Deals
             Roles.Instance,
             RoleIndividuals.Instance,
             Parties.Instance,
+            LegalEntities.Instance,
             Validation.Instance)
         {
             var roles           = Roles.Instance;
@@ -228,9 +282,17 @@ namespace Deals
                 .Annotate(
                     Validation.Instance.Restriction,
                     0);
+
+            Bank             = LegalEntities.Instance.LegalEntity.NamedIndividual("Bank");
+            BankParty        = this.Class("BankParty");
+            BankLenderParty  = this.Class("BankLenderParty");
+            BankAdvisorParty = this.Class("BankAdvisorParty");
+            BankParty.Define(parties.Organisation.HasValue(Bank));
+            BankLenderParty.Define(new ObjectIntersectionOf(LenderParty, BankParty));
+            BankAdvisorParty.Define(new ObjectIntersectionOf(AdvisorParty, BankParty));
         }
 
-        public static DealParties Instance
+    public static DealParties Instance
         {
             get
             {
@@ -245,7 +307,6 @@ namespace Deals
     public class DealOntology: Ontology.Ontology
     {
         public IList<Role>      KeyCounterpartyRoles { get; protected set; } = new List<Role>();
-        public INamedIndividual Mufg                 { get; protected set; }
 
         public DealOntology(): base(
             CommonDomainObjects.Instance,
@@ -262,22 +323,13 @@ namespace Deals
             var dealParties         = DealParties.Instance;
             var validation          = Validation.Instance;
 
-            var Organisation          = this.Class<Organisation>();
-            var LegalEntity           = this.Class<LegalEntity>();
-            Mufg                      = LegalEntity.NamedIndividual("MUFG");
-
             var Deal                  = this.Class<Deal>();
             Deal.SubClassOf(commonDomainObjects.Named);
             var _Parties              = Deal.ObjectProperty<Deal, DealParty >(deal => deal.Parties    );
             var _Classifiers          = Deal.ObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
             var _Commitments          = Deal.ObjectProperty<Deal, Commitment>(deal => deal.Commitments);
 
-            var MufgParty             = parties.Organisation.HasValue(Mufg);
-
-
             var KeyCounterpartyRole   = new ObjectOneOf(this, KeyCounterpartyRoles);
-            var MufgLenderParty       = new ObjectIntersectionOf(dealParties.LenderParty, MufgParty);
-            var MufgAdvisorParty      = new ObjectIntersectionOf(dealParties.AdvisorParty, MufgParty);
             var KeyCounterpartyParty  = new ObjectSomeValuesFrom(parties.Role, KeyCounterpartyRole);
 
             Deal.SubClassOf(
@@ -289,7 +341,7 @@ namespace Deals
                     0);
             var Debt = this.Class("Debt");
             Debt.SubClassOf(Deal);
-            Debt.SubClassOf(_Parties.ExactCardinality(1, MufgLenderParty));
+            Debt.SubClassOf(_Parties.ExactCardinality(1, dealParties.BankLenderParty));
             Debt.SubClassOf(_Parties.MinCardinality(1, dealParties.BorrowerParty))
                 .Annotate(
                     validation.Restriction,
@@ -300,7 +352,7 @@ namespace Deals
 
             var Advisory = this.Class("Advisory");
             Advisory.SubClassOf(Deal);
-            Advisory.SubClassOf(_Parties.ExactCardinality(1, MufgAdvisorParty));
+            Advisory.SubClassOf(_Parties.ExactCardinality(1, dealParties.BankAdvisorParty));
             Advisory.SubClassOf(_Parties.MaxCardinality(0, dealParties.SponsorParty))
                 .Annotate(
                     validation.Restriction,
