@@ -300,7 +300,7 @@ namespace Deals
 
             KeyCounterpartyRole = this.Class("KeyCounterpartyRole");
             KeyCounterparty     = this.Class("KeyCounterparty");
-            KeyCounterparty.Define(new ObjectSomeValuesFrom(parties.Role, KeyCounterpartyRole));
+            KeyCounterparty.Define(new ObjectAllValuesFrom(parties.Role, KeyCounterpartyRole));
         }
 
         public static DealParties Instance
