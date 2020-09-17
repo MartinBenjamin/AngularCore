@@ -313,8 +313,6 @@ namespace Deals
 
     public class DealOntology: Ontology.Ontology
     {
-        public IList<Role>      KeyCounterpartyRoles { get; protected set; } = new List<Role>();
-
         public DealOntology(): base(
             CommonDomainObjects.Instance,
             Roles.Instance,
@@ -326,15 +324,15 @@ namespace Deals
             var commonDomainObjects = CommonDomainObjects.Instance;
             var roles               = Roles.Instance;
             var roleIndividuals     = RoleIndividuals.Instance;
-            var parties             = Parties.Instance;
+            var parties             = Deals.Parties.Instance;
             var dealParties         = DealParties.Instance;
             var validation          = Validation.Instance;
 
-            var Deal                  = this.Class<Deal>();
+            var Deal        = this.Class<Deal>();
             Deal.SubClassOf(commonDomainObjects.Named);
-            var _Parties              = Deal.ObjectProperty<Deal, DealParty >(deal => deal.Parties    );
-            var _Classifiers          = Deal.ObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
-            var _Commitments          = Deal.ObjectProperty<Deal, Commitment>(deal => deal.Commitments);
+            var Parties     = Deal.ObjectProperty<Deal, DealParty >(deal => deal.Parties    );
+            var Classifiers = Deal.ObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
+            var Commitments = Deal.ObjectProperty<Deal, Commitment>(deal => deal.Commitments);
 
             Deal.SubClassOf(
                 new DataSomeValuesFrom(
@@ -345,8 +343,8 @@ namespace Deals
                     0);
             var Debt = this.Class("Debt");
             Debt.SubClassOf(Deal);
-            Debt.SubClassOf(_Parties.ExactCardinality(1, dealParties.BankLenderParty));
-            Debt.SubClassOf(_Parties.MinCardinality(1, dealParties.BorrowerParty))
+            Debt.SubClassOf(Parties.ExactCardinality(1, dealParties.BankLenderParty));
+            Debt.SubClassOf(Parties.MinCardinality(1, dealParties.BorrowerParty))
                 .Annotate(
                     validation.Restriction,
                     0)
@@ -356,8 +354,8 @@ namespace Deals
 
             var Advisory = this.Class("Advisory");
             Advisory.SubClassOf(Deal);
-            Advisory.SubClassOf(_Parties.ExactCardinality(1, dealParties.BankAdvisorParty));
-            Advisory.SubClassOf(_Parties.MaxCardinality(0, dealParties.SponsorParty))
+            Advisory.SubClassOf(Parties.ExactCardinality(1, dealParties.BankAdvisorParty));
+            Advisory.SubClassOf(Parties.MaxCardinality(0, dealParties.SponsorParty))
                 .Annotate(
                     validation.Restriction,
                     0)
@@ -368,7 +366,7 @@ namespace Deals
             var ProjectFinance = this.Class("ProjectFinance");
             ProjectFinance.SubClassOf(Debt);
             ProjectFinance
-                .SubClassOf(_Parties.MinCardinality(1, dealParties.SponsorParty))
+                .SubClassOf(Parties.MinCardinality(1, dealParties.SponsorParty))
                 .Annotate(
                     validation.Restriction,
                     0)
@@ -380,7 +378,7 @@ namespace Deals
             Classifier.SubClassOf(commonDomainObjects.Named);
             var ExclusivityClassifier = this.Class<ExclusivityClassifier>();
             ExclusivityClassifier.SubClassOf(Classifier);
-            Deal.SubClassOf(_Classifiers.ExactCardinality(1, ExclusivityClassifier))
+            Deal.SubClassOf(Classifiers.ExactCardinality(1, ExclusivityClassifier))
                 .Annotate(
                     validation.Restriction,
                     0)
@@ -393,7 +391,7 @@ namespace Deals
             var Exclusive = new ObjectIntersectionOf(ExclusivityClassifier, new ObjectComplementOf(new ObjectOneOf(this, NotExclusive)));
 
             var ExclusiveDeal = this.Class("ExclusiveDeal");
-            ExclusiveDeal.Define(new ObjectSomeValuesFrom(_Classifiers, Exclusive));
+            ExclusiveDeal.Define(new ObjectSomeValuesFrom(Classifiers, Exclusive));
 
             var Exclusivity = this.Class<Exclusivity>();
             var _date = Exclusivity.DataProperty<Exclusivity, DateTime?>(exclusivity => exclusivity.Date);
