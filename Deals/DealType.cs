@@ -88,6 +88,67 @@ namespace Deals
         }
     }
 
+    public class Roles: Ontology.Ontology
+    {
+        public readonly IClass Role;
+
+        private static Roles _instance;
+
+        private Roles() : base(CommonDomainObjects.Instance)
+        {
+            Role = this.Class<Role>();
+            Role.SubClassOf(CommonDomainObjects.Instance.Named);
+        }
+
+        public static Roles Instance
+        {
+            get
+            {
+                if(_instance == null)
+                    _instance = new Roles();
+
+                return _instance;
+            }
+        }
+    }
+
+    public class RoleIndividuals: Ontology.Ontology
+    {
+        public readonly INamedIndividual Sponsor;
+        public readonly INamedIndividual Borrower;
+        public readonly INamedIndividual Lender;
+        public readonly INamedIndividual Advisor;
+
+        private static RoleIndividuals _instance;
+
+        private RoleIndividuals() : base(
+            CommonDomainObjects.Instance,
+            Roles.Instance)
+        {
+            var role = Roles.Instance.Role;
+            var id = CommonDomainObjects.Instance.Id;
+            Sponsor  = role.NamedIndividual("Sponsor");
+            Borrower = role.NamedIndividual("Borrower");
+            Lender   = role.NamedIndividual("Lender");
+            Advisor  = role.NamedIndividual("Advisor");
+            Sponsor.Value(id, DealRoleIdentifier.Sponsor);
+            Borrower.Value(id, DealRoleIdentifier.Borrower);
+            Lender.Value(id, DealRoleIdentifier.Lender);
+            Advisor.Value(id, DealRoleIdentifier.Advisor);
+        }
+
+        public static RoleIndividuals Instance
+        {
+            get
+            {
+                if(_instance == null)
+                    _instance = new RoleIndividuals();
+
+                return _instance;
+            }
+        }
+    }
+
     public class DealOntology: Ontology.Ontology
     {
         public IList<Role>      KeyCounterpartyRoles { get; protected set; } = new List<Role>();
@@ -95,21 +156,14 @@ namespace Deals
 
         public DealOntology(): base(
             CommonDomainObjects.Instance,
+            Roles.Instance,
+            RoleIndividuals.Instance,
             Validation.Instance)
         {
-            var commonDomainObject = CommonDomainObjects.Instance;
-            var validation         = Validation.Instance;
-
-            var Role                  = this.Class<Role>();
-            Role.SubClassOf(commonDomainObject.Named);
-            var SponsorRole = Role.NamedIndividual("Sponsor");
-            SponsorRole.Value(commonDomainObject.Id, DealRoleIdentifier.Sponsor);
-            var BorrowerRole = Role.NamedIndividual("Borrower");
-            BorrowerRole.Value(commonDomainObject.Id, DealRoleIdentifier.Borrower);
-            var LenderRole = Role.NamedIndividual("Lender");
-            LenderRole.Value(commonDomainObject.Id, DealRoleIdentifier.Lender);
-            var AdvisorRole = Role.NamedIndividual("Advisor");
-            AdvisorRole.Value(commonDomainObject.Id, DealRoleIdentifier.Advisor);
+            var commonDomainObjects = CommonDomainObjects.Instance;
+            var roles               = Roles.Instance;
+            var roleIndividuals     = RoleIndividuals.Instance;
+            var validation          = Validation.Instance;
 
             var Organisation          = this.Class<Organisation>();
             var LegalEntity           = this.Class<LegalEntity>();
@@ -119,14 +173,14 @@ namespace Deals
             var _Parties              = Deal.ObjectProperty<Deal, DealParty >(deal => deal.Parties    );
             var _Classifiers          = Deal.ObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
             var _Commitments          = Deal.ObjectProperty<Deal, Commitment>(deal => deal.Commitments);
-            Deal.SubClassOf(commonDomainObject.Named);
+            Deal.SubClassOf(commonDomainObjects.Named);
 
             var DealParty             = this.Class<DealParty>();
             var _Role                 = DealParty.ObjectProperty<DealParty, Role>(dealParty => dealParty.Role);
-            var LenderParty           = _Role.HasValue(LenderRole);
-            var AdvisorParty          = _Role.HasValue(AdvisorRole);
-            var SponsorParty          = _Role.HasValue(SponsorRole);
-            var BorrowerParty         = _Role.HasValue(BorrowerRole);
+            var LenderParty           = _Role.HasValue(roleIndividuals.Lender);
+            var AdvisorParty          = _Role.HasValue(roleIndividuals.Advisor);
+            var SponsorParty          = _Role.HasValue(roleIndividuals.Sponsor);
+            var BorrowerParty         = _Role.HasValue(roleIndividuals.Borrower);
             var _Organisation         = DealParty.ObjectProperty<DealParty, Organisation>(dealParty => dealParty.Organisation);
             var MufgParty             = _Organisation.HasValue(Mufg);
 
@@ -141,7 +195,7 @@ namespace Deals
 
             Deal.SubClassOf(
                 new DataSomeValuesFrom(
-                    commonDomainObject.Name,
+                    commonDomainObjects.Name,
                     new DataComplementOf(new DataOneOf(string.Empty))))
                 .Annotate(
                     validation.Restriction,
@@ -180,7 +234,7 @@ namespace Deals
                     "Sponsors");
 
             var Classifier = this.Class<Classifier>();
-            Classifier.SubClassOf(commonDomainObject.Named);
+            Classifier.SubClassOf(commonDomainObjects.Named);
             var ExclusivityClassifier = this.Class<ExclusivityClassifier>();
             ExclusivityClassifier.SubClassOf(Classifier);
             Deal.SubClassOf(_Classifiers.ExactCardinality(1, ExclusivityClassifier))
@@ -192,7 +246,7 @@ namespace Deals
                     "Exclusivity");
 
             var NotExclusive = ExclusivityClassifier.NamedIndividual("NotExclusive");
-            NotExclusive.Value(commonDomainObject.Id, ExclusivityClassifierIdentifier.No);
+            NotExclusive.Value(commonDomainObjects.Id, ExclusivityClassifierIdentifier.No);
             var Exclusive = new ObjectIntersectionOf(ExclusivityClassifier, new ObjectComplementOf(new ObjectOneOf(this, NotExclusive)));
 
             var ExclusiveDeal = this.Class("ExclusiveDeal");
