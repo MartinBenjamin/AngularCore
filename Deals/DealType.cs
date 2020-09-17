@@ -184,6 +184,64 @@ namespace Deals
         }
     }
 
+    public class DealParties: Ontology.Ontology
+    {
+        public readonly IClass                  DealParty;
+        public readonly IClass                  LenderParty;
+        public readonly IClass                  AdvisorParty;
+        public readonly IClass                  SponsorParty;
+        public readonly IClass                  BorrowerParty;
+        public readonly IClass                  MufgParty;
+        public readonly IClass                  Sponsor;
+        public readonly IDataPropertyExpression Equity;
+
+        private static DealParties _instance;
+
+        private DealParties() : base(
+            CommonDomainObjects.Instance,
+            Roles.Instance,
+            RoleIndividuals.Instance,
+            Parties.Instance,
+            Validation.Instance)
+        {
+            var roles           = Roles.Instance;
+            var roleIndividuals = RoleIndividuals.Instance;
+            var parties         = Parties.Instance;
+
+            DealParty = this.Class<DealParty>();
+            DealParty.SubClassOf(parties.PartyInRole);
+            LenderParty   = this.Class("LenderParty");
+            AdvisorParty  = this.Class("AdvisorParty");
+            BorrowerParty = this.Class("BorrowerParty");
+            SponsorParty  = this.Class("SponsorParty");
+            
+            LenderParty.Define(parties.Role.HasValue(roleIndividuals.Lender));
+            AdvisorParty.Define(parties.Role.HasValue(roleIndividuals.Advisor));
+            BorrowerParty.Define(parties.Role.HasValue(roleIndividuals.Borrower));
+            SponsorParty.Define(parties.Role.HasValue(roleIndividuals.Sponsor));;
+
+            Sponsor = this.Class<Sponsor>();
+            Sponsor.SubClassOf(SponsorParty);
+            Equity = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
+            Sponsor
+                .SubClassOf(Equity.ExactCardinality(1))
+                .Annotate(
+                    Validation.Instance.Restriction,
+                    0);
+        }
+
+        public static DealParties Instance
+        {
+            get
+            {
+                if(_instance == null)
+                    _instance = new DealParties();
+
+                return _instance;
+            }
+        }
+    }
+
     public class DealOntology: Ontology.Ontology
     {
         public IList<Role>      KeyCounterpartyRoles { get; protected set; } = new List<Role>();
@@ -194,12 +252,14 @@ namespace Deals
             Roles.Instance,
             RoleIndividuals.Instance,
             Parties.Instance,
+            DealParties.Instance,
             Validation.Instance)
         {
             var commonDomainObjects = CommonDomainObjects.Instance;
             var roles               = Roles.Instance;
             var roleIndividuals     = RoleIndividuals.Instance;
             var parties             = Parties.Instance;
+            var dealParties         = DealParties.Instance;
             var validation          = Validation.Instance;
 
             var Organisation          = this.Class<Organisation>();
@@ -212,21 +272,12 @@ namespace Deals
             var _Classifiers          = Deal.ObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
             var _Commitments          = Deal.ObjectProperty<Deal, Commitment>(deal => deal.Commitments);
 
-            var DealParty             = this.Class<DealParty>();
-            DealParty.SubClassOf(parties.PartyInRole);
-            var LenderParty           = parties.Role.HasValue(roleIndividuals.Lender);
-            var AdvisorParty          = parties.Role.HasValue(roleIndividuals.Advisor);
-            var SponsorParty          = parties.Role.HasValue(roleIndividuals.Sponsor);
-            var BorrowerParty         = parties.Role.HasValue(roleIndividuals.Borrower);
             var MufgParty             = parties.Organisation.HasValue(Mufg);
 
-            var Sponsor               = this.Class<Sponsor>();
-            Sponsor.SubClassOf(SponsorParty);
-            var _Equity               = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
 
             var KeyCounterpartyRole   = new ObjectOneOf(this, KeyCounterpartyRoles);
-            var MufgLenderParty       = new ObjectIntersectionOf(LenderParty, MufgParty);
-            var MufgAdvisorParty      = new ObjectIntersectionOf(AdvisorParty, MufgParty);
+            var MufgLenderParty       = new ObjectIntersectionOf(dealParties.LenderParty, MufgParty);
+            var MufgAdvisorParty      = new ObjectIntersectionOf(dealParties.AdvisorParty, MufgParty);
             var KeyCounterpartyParty  = new ObjectSomeValuesFrom(parties.Role, KeyCounterpartyRole);
 
             Deal.SubClassOf(
@@ -239,7 +290,7 @@ namespace Deals
             var Debt = this.Class("Debt");
             Debt.SubClassOf(Deal);
             Debt.SubClassOf(_Parties.ExactCardinality(1, MufgLenderParty));
-            Debt.SubClassOf(_Parties.MinCardinality(1, BorrowerParty))
+            Debt.SubClassOf(_Parties.MinCardinality(1, dealParties.BorrowerParty))
                 .Annotate(
                     validation.Restriction,
                     0)
@@ -250,7 +301,7 @@ namespace Deals
             var Advisory = this.Class("Advisory");
             Advisory.SubClassOf(Deal);
             Advisory.SubClassOf(_Parties.ExactCardinality(1, MufgAdvisorParty));
-            Advisory.SubClassOf(_Parties.MaxCardinality(0, SponsorParty))
+            Advisory.SubClassOf(_Parties.MaxCardinality(0, dealParties.SponsorParty))
                 .Annotate(
                     validation.Restriction,
                     0)
@@ -261,7 +312,7 @@ namespace Deals
             var ProjectFinance = this.Class("ProjectFinance");
             ProjectFinance.SubClassOf(Debt);
             ProjectFinance
-                .SubClassOf(_Parties.MinCardinality(1, SponsorParty))
+                .SubClassOf(_Parties.MinCardinality(1, dealParties.SponsorParty))
                 .Annotate(
                     validation.Restriction,
                     0)
@@ -287,12 +338,6 @@ namespace Deals
 
             var ExclusiveDeal = this.Class("ExclusiveDeal");
             ExclusiveDeal.Define(new ObjectSomeValuesFrom(_Classifiers, Exclusive));
-
-            Sponsor
-                .SubClassOf(_Equity.ExactCardinality(1))
-                .Annotate(
-                    validation.Restriction,
-                    0);
 
             var Exclusivity = this.Class<Exclusivity>();
             var _date = Exclusivity.DataProperty<Exclusivity, DateTime?>(exclusivity => exclusivity.Date);
