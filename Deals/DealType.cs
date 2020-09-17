@@ -32,6 +32,7 @@ namespace Deals
         public readonly IDataPropertyExpression Id;
         public readonly IClass                  Named;
         public readonly IDataPropertyExpression Name;
+        public readonly IClass                  Classifier;
 
         private static CommonDomainObjects _instance;
 
@@ -42,8 +43,11 @@ namespace Deals
             DomainObject.HasKey(Id);
 
             Named = this.Class<Named<Guid>>();
-            Name = Named.DataProperty<Named<Guid>, string>(named => named.Name);
             Named.SubClassOf(DomainObject);
+            Name = Named.DataProperty<Named<Guid>, string>(named => named.Name);
+
+            Classifier = this.Class<Classifier>();
+            Classifier.SubClassOf(Named);
         }
 
         public static CommonDomainObjects Instance
@@ -299,7 +303,7 @@ namespace Deals
             KeyCounterparty.Define(new ObjectSomeValuesFrom(parties.Role, KeyCounterpartyRole));
         }
 
-    public static DealParties Instance
+        public static DealParties Instance
         {
             get
             {
@@ -313,11 +317,16 @@ namespace Deals
 
     public class DealOntology: Ontology.Ontology
     {
+        public readonly IClass                    Deal;
+        public readonly IObjectPropertyExpression Parties;
+        public readonly IObjectPropertyExpression Commitments;
+        public readonly IObjectPropertyExpression Classifiers;
+
         public DealOntology(): base(
             CommonDomainObjects.Instance,
             Roles.Instance,
             RoleIndividuals.Instance,
-            Parties.Instance,
+            Deals.Parties.Instance,
             DealParties.Instance,
             Validation.Instance)
         {
@@ -330,9 +339,9 @@ namespace Deals
 
             var Deal        = this.Class<Deal>();
             Deal.SubClassOf(commonDomainObjects.Named);
-            var Parties     = Deal.ObjectProperty<Deal, DealParty >(deal => deal.Parties    );
-            var Classifiers = Deal.ObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
-            var Commitments = Deal.ObjectProperty<Deal, Commitment>(deal => deal.Commitments);
+            Parties     = Deal.ObjectProperty<Deal, DealParty >(deal => deal.Parties    );
+            Classifiers = Deal.ObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
+            Commitments = Deal.ObjectProperty<Deal, Commitment>(deal => deal.Commitments);
 
             Deal.SubClassOf(
                 new DataSomeValuesFrom(
@@ -341,6 +350,7 @@ namespace Deals
                 .Annotate(
                     validation.Restriction,
                     0);
+
             var Debt = this.Class("Debt");
             Debt.SubClassOf(Deal);
             Debt.SubClassOf(Parties.ExactCardinality(1, dealParties.BankLenderParty));
@@ -374,10 +384,8 @@ namespace Deals
                     validation.SubPropertyName,
                     "Sponsors");
 
-            var Classifier = this.Class<Classifier>();
-            Classifier.SubClassOf(commonDomainObjects.Named);
             var ExclusivityClassifier = this.Class<ExclusivityClassifier>();
-            ExclusivityClassifier.SubClassOf(Classifier);
+            ExclusivityClassifier.SubClassOf(commonDomainObjects.Classifier);
             Deal.SubClassOf(Classifiers.ExactCardinality(1, ExclusivityClassifier))
                 .Annotate(
                     validation.Restriction,
@@ -394,8 +402,8 @@ namespace Deals
             ExclusiveDeal.Define(new ObjectSomeValuesFrom(Classifiers, Exclusive));
 
             var Exclusivity = this.Class<Exclusivity>();
-            var _date = Exclusivity.DataProperty<Exclusivity, DateTime?>(exclusivity => exclusivity.Date);
-            _date.Range(DateTime)
+            var Date = Exclusivity.DataProperty<Exclusivity, DateTime?>(exclusivity => exclusivity.Date);
+            Date.Range(DateTime)
                 .Annotate(
                     validation.RangeValidated,
                     null);
