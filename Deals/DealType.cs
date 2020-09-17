@@ -248,6 +248,9 @@ namespace Deals
         public readonly IClass                  BankLenderParty;
         public readonly IClass                  BankAdvisorParty;
 
+        public readonly IClass                  KeyCounterpartyRole;
+        public readonly IClass                  KeyCounterparty;
+
         private static DealParties _instance;
 
         private DealParties() : base(
@@ -290,6 +293,10 @@ namespace Deals
             BankParty.Define(parties.Organisation.HasValue(Bank));
             BankLenderParty.Define(new ObjectIntersectionOf(LenderParty, BankParty));
             BankAdvisorParty.Define(new ObjectIntersectionOf(AdvisorParty, BankParty));
+
+            KeyCounterpartyRole = this.Class("KeyCounterpartyRole");
+            KeyCounterparty     = this.Class("KeyCounterparty");
+            KeyCounterparty.Define(new ObjectSomeValuesFrom(parties.Role, KeyCounterpartyRole));
         }
 
     public static DealParties Instance
@@ -328,9 +335,6 @@ namespace Deals
             var _Parties              = Deal.ObjectProperty<Deal, DealParty >(deal => deal.Parties    );
             var _Classifiers          = Deal.ObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
             var _Commitments          = Deal.ObjectProperty<Deal, Commitment>(deal => deal.Commitments);
-
-            var KeyCounterpartyRole   = new ObjectOneOf(this, KeyCounterpartyRoles);
-            var KeyCounterpartyParty  = new ObjectSomeValuesFrom(parties.Role, KeyCounterpartyRole);
 
             Deal.SubClassOf(
                 new DataSomeValuesFrom(

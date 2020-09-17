@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Ontology
 {
-    class ObjectAllValuesFrom:
+    public class ObjectAllValuesFrom:
         ObjectPropertyRestriction,
         IObjectAllValuesFrom
     {
