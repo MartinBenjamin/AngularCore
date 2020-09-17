@@ -56,17 +56,49 @@ namespace Deals
         }
     }
 
+    public class Validation: Ontology.Ontology
+    {
+        public readonly IAnnotationProperty Restriction;
+        public readonly IAnnotationProperty SubPropertyName;
+        public readonly IAnnotationProperty RangeValidated;
+
+        private static Validation _instance;
+
+        private Validation() : base()
+        {
+            Restriction = new AnnotationProperty(
+                this,
+                "Restriction");
+            SubPropertyName = new AnnotationProperty(
+                this,
+                "SubPropertyName");
+            RangeValidated = new AnnotationProperty(
+                this,
+                "Validated");
+        }
+        public static Validation Instance
+        {
+            get
+            {
+                if(_instance == null)
+                    _instance = new Validation();
+
+                return _instance;
+            }
+        }
+    }
+
     public class DealOntology: Ontology.Ontology
     {
-        public IList<Role>         KeyCounterpartyRoles { get; protected set; } = new List<Role>();
-        public INamedIndividual    Mufg                 { get; protected set; }
-        public IAnnotationProperty Restriction          { get; protected set; }
-        public IAnnotationProperty SubPropertyName      { get; protected set; }
-        public IAnnotationProperty RangeValidated       { get; protected set; }
+        public IList<Role>      KeyCounterpartyRoles { get; protected set; } = new List<Role>();
+        public INamedIndividual Mufg                 { get; protected set; }
 
-        public DealOntology(): base(CommonDomainObjects.Instance)
+        public DealOntology(): base(
+            CommonDomainObjects.Instance,
+            Validation.Instance)
         {
             var commonDomainObject = CommonDomainObjects.Instance;
+            var validation         = Validation.Instance;
 
             var Role                  = this.Class<Role>();
             Role.SubClassOf(commonDomainObject.Named);
@@ -107,32 +139,22 @@ namespace Deals
             var MufgAdvisorParty      = new ObjectIntersectionOf(AdvisorParty, MufgParty);
             var KeyCounterpartyParty  = new ObjectSomeValuesFrom(_Role, KeyCounterpartyRole);
 
-            Restriction = new AnnotationProperty(
-                this,
-                "Restriction");
-            SubPropertyName = new AnnotationProperty(
-                this,
-                "SubPropertyName");
-            RangeValidated = new AnnotationProperty(
-                this,
-                "Validated");
-
             Deal.SubClassOf(
                 new DataSomeValuesFrom(
                     commonDomainObject.Name,
                     new DataComplementOf(new DataOneOf(string.Empty))))
                 .Annotate(
-                    Restriction,
+                    validation.Restriction,
                     0);
             var Debt = this.Class("Debt");
             Debt.SubClassOf(Deal);
             Debt.SubClassOf(_Parties.ExactCardinality(1, MufgLenderParty));
             Debt.SubClassOf(_Parties.MinCardinality(1, BorrowerParty))
                 .Annotate(
-                    Restriction,
+                    validation.Restriction,
                     0)
                 .Annotate(
-                    SubPropertyName,
+                    validation.SubPropertyName,
                     "Borrowers");
 
             var Advisory = this.Class("Advisory");
@@ -140,10 +162,10 @@ namespace Deals
             Advisory.SubClassOf(_Parties.ExactCardinality(1, MufgAdvisorParty));
             Advisory.SubClassOf(_Parties.MaxCardinality(0, SponsorParty))
                 .Annotate(
-                    Restriction,
+                    validation.Restriction,
                     0)
                 .Annotate(
-                    SubPropertyName,
+                    validation.SubPropertyName,
                     "Sponsors");
 
             var ProjectFinance = this.Class("ProjectFinance");
@@ -151,10 +173,10 @@ namespace Deals
             ProjectFinance
                 .SubClassOf(_Parties.MinCardinality(1, SponsorParty))
                 .Annotate(
-                    Restriction,
+                    validation.Restriction,
                     0)
                 .Annotate(
-                    SubPropertyName,
+                    validation.SubPropertyName,
                     "Sponsors");
 
             var Classifier = this.Class<Classifier>();
@@ -163,10 +185,10 @@ namespace Deals
             ExclusivityClassifier.SubClassOf(Classifier);
             Deal.SubClassOf(_Classifiers.ExactCardinality(1, ExclusivityClassifier))
                 .Annotate(
-                    Restriction,
+                    validation.Restriction,
                     0)
                 .Annotate(
-                    SubPropertyName,
+                    validation.SubPropertyName,
                     "Exclusivity");
 
             var NotExclusive = ExclusivityClassifier.NamedIndividual("NotExclusive");
@@ -179,14 +201,14 @@ namespace Deals
             Sponsor
                 .SubClassOf(_Equity.ExactCardinality(1))
                 .Annotate(
-                    Restriction,
+                    validation.Restriction,
                     0);
 
             var Exclusivity = this.Class<Exclusivity>();
             var _date = Exclusivity.DataProperty<Exclusivity, DateTime?>(exclusivity => exclusivity.Date);
             _date.Range(DateTime)
                 .Annotate(
-                    RangeValidated,
+                    validation.RangeValidated,
                     null);
         }
     }
