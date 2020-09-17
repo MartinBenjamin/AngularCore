@@ -411,7 +411,7 @@ namespace Test
                 from annotation in dataPropertyRange.Annotations
                 where
                     dataPropertyRange.DataPropertyExpression == dataProperty &&
-                    annotation.Property == dealOntology.Validated
+                    annotation.Property == dealOntology.RangeValidated
                 select dataPropertyRange
             ).FirstOrDefault();
 

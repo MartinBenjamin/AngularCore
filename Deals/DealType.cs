@@ -62,7 +62,7 @@ namespace Deals
         public INamedIndividual    Mufg                 { get; protected set; }
         public IAnnotationProperty Restriction          { get; protected set; }
         public IAnnotationProperty SubPropertyName      { get; protected set; }
-        public IAnnotationProperty Validated            { get; protected set; }
+        public IAnnotationProperty RangeValidated       { get; protected set; }
 
         public DealOntology(): base(CommonDomainObjects.Instance)
         {
@@ -113,7 +113,7 @@ namespace Deals
             SubPropertyName = new AnnotationProperty(
                 this,
                 "SubPropertyName");
-            Validated = new AnnotationProperty(
+            RangeValidated = new AnnotationProperty(
                 this,
                 "Validated");
 
@@ -184,10 +184,10 @@ namespace Deals
 
             var Exclusivity = this.Class<Exclusivity>();
             var _date = Exclusivity.DataProperty<Exclusivity, DateTime?>(exclusivity => exclusivity.Date);
-            _date.Range(((IOntology)this).DateTime)
+            _date.Range(DateTime)
                 .Annotate(
-                    Validated,
-                    "");
+                    RangeValidated,
+                    null);
         }
     }
 }

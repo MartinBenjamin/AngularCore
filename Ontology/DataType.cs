@@ -28,10 +28,9 @@ namespace Ontology
         IDatatype
     {
         public Datatype(
-            IOntology ontology,
-            string    name
+            string name
             ) : base(
-                ontology,
+                null,
                 name)
         {
         }

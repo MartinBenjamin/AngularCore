@@ -12,16 +12,15 @@ namespace Ontology
         private IDictionary<IClassExpression, HashSet<IClassExpression>>
                                  _superClasses = new Dictionary<IClassExpression, HashSet<IClassExpression>>();
 
-        public static readonly IClass Thing   = new Thing();
-        public static readonly IClass Nothing = new Nothing();
-        private IDatatype _dateTime;
+        public static readonly IClass    Thing    = new Thing();
+        public static readonly IClass    Nothing  = new Nothing();
+        public static readonly IDatatype DateTime = new Datatype<DateTime>("xsd:dateTime");
 
         public Ontology(
             params IOntology[] imports
             )
         {
-            _imports  = imports;
-            _dateTime = new Datatype<DateTime>(this, "xsd:dateTime");
+            _imports = imports;
         }
 
         IList<IOntology> IOntology.Imports => _imports;
@@ -32,7 +31,7 @@ namespace Ontology
 
         IList<IAxiom> IOntology.Axioms => _axioms;
 
-        IDatatype IOntology.DateTime => _dateTime;
+        IDatatype IOntology.DateTime => DateTime;
 
         public IEnumerable<IOntology> GetOntologies()
             => _imports
