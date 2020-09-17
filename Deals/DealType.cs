@@ -295,8 +295,8 @@ namespace Deals
             BankLenderParty  = this.Class("BankLenderParty");
             BankAdvisorParty = this.Class("BankAdvisorParty");
             BankParty.Define(parties.Organisation.HasValue(Bank));
-            BankLenderParty.Define(new ObjectIntersectionOf(LenderParty, BankParty));
-            BankAdvisorParty.Define(new ObjectIntersectionOf(AdvisorParty, BankParty));
+            BankLenderParty.Define(LenderParty.Intersect(BankParty));
+            BankAdvisorParty.Define(AdvisorParty.Intersect(BankParty));
 
             KeyCounterpartyRole = this.Class("KeyCounterpartyRole");
             KeyCounterparty     = this.Class("KeyCounterparty");
@@ -396,7 +396,7 @@ namespace Deals
 
             var NotExclusive = ExclusivityClassifier.NamedIndividual("NotExclusive");
             NotExclusive.Value(commonDomainObjects.Id, ExclusivityClassifierIdentifier.No);
-            var Exclusive = new ObjectIntersectionOf(ExclusivityClassifier, new ObjectComplementOf(new ObjectOneOf(this, NotExclusive)));
+            var Exclusive = ExclusivityClassifier.Intersect(new ObjectOneOf(this, NotExclusive).Complement());
 
             var ExclusiveDeal = this.Class("ExclusiveDeal");
             ExclusiveDeal.Define(new ObjectSomeValuesFrom(Classifiers, Exclusive));

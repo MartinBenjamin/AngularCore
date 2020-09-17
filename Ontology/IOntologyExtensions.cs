@@ -5,7 +5,39 @@ using System.Linq.Expressions;
 namespace Ontology
 {
     public static class IOntologyExtensions
-    {  
+    {
+        public static IObjectIntersectionOf Intersect(
+            this IClassExpression lhs,
+            IClassExpression      rhs
+            ) => new ObjectIntersectionOf(lhs, rhs);
+
+        public static IObjectIntersectionOf Intersect(
+            this IObjectIntersectionOf lhs,
+            IClassExpression           rhs
+            )
+        {
+            lhs.ClassExpressions.Add(rhs);
+            return lhs;
+        }
+
+        public static IObjectUnionOf Union(
+            this IClassExpression lhs,
+            IClassExpression      rhs
+            ) => new ObjectUnionOf(lhs, rhs);
+
+        public static IObjectUnionOf Union(
+            this IObjectUnionOf lhs,
+            IClassExpression    rhs
+            )
+        {
+            lhs.ClassExpressions.Add(rhs);
+            return lhs;
+        }
+
+        public static IObjectComplementOf Complement(
+            this IClassExpression classExpression
+            ) => new ObjectComplementOf(classExpression);
+
         public static IClass Class(
             this IOntology ontology,
             string         className
@@ -24,10 +56,24 @@ namespace Ontology
                 ontology,
                 property);
 
+        public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
+            this IOntology                 ontology,
+            Expression<Func<T, TProperty>> property
+            ) => new FunctionalObjectProperty<T, TProperty>(
+                ontology,
+                property);
+
         public static IDataPropertyExpression DataProperty<T, TProperty>(
             this IOntology                              ontology,
             Expression<Func<T, IEnumerable<TProperty>>> property
             ) => new DataProperty<T, TProperty>(
+                ontology,
+                property);
+
+        public static IDataPropertyExpression DataProperty<T, TProperty>(
+            this IOntology                 ontology,
+            Expression<Func<T, TProperty>> property
+            ) => new FunctionalDataProperty<T, TProperty>(
                 ontology,
                 property);
 
@@ -50,9 +96,7 @@ namespace Ontology
             Expression<Func<T, TProperty>> property
             )
         {
-            var objectPropertyExpression = new FunctionalObjectProperty<T, TProperty>(
-                domain.Ontology,
-                property);
+            var objectPropertyExpression = domain.Ontology.ObjectProperty(property);
 
             new ObjectPropertyDomain(
                 objectPropertyExpression,
@@ -80,9 +124,7 @@ namespace Ontology
             Expression<Func<T, TProperty>> property
             )
         {
-            var dataPropertyExpression = new FunctionalDataProperty<T, TProperty>(
-                domain.Ontology,
-                property);
+            var dataPropertyExpression = domain.Ontology.DataProperty(property);
 
             new DataPropertyDomain(
                 dataPropertyExpression,
