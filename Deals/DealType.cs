@@ -6,6 +6,8 @@ using Roles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Parties;
+using People;
 
 namespace Deals
 {
@@ -112,6 +114,39 @@ namespace Deals
         }
     }
 
+    public class Parties: Ontology.Ontology
+    {
+        public readonly IClass                    PartyInRole;
+        public readonly IObjectPropertyExpression Role;
+        public readonly IObjectPropertyExpression Organisation;
+        public readonly IObjectPropertyExpression Person;
+
+        private static Parties _instance;
+
+        private Parties() : base(
+            CommonDomainObjects.Instance,
+            Roles.Instance)
+        {
+            var commonDomainObjects = CommonDomainObjects.Instance;
+            PartyInRole = this.Class<PartyInRole>();
+            PartyInRole.SubClassOf(commonDomainObjects.DomainObject);
+            Role         = PartyInRole.ObjectProperty<PartyInRole, Role        >(partyInRole => partyInRole.Role        );
+            Organisation = PartyInRole.ObjectProperty<PartyInRole, Organisation>(partyInRole => partyInRole.Organisation);
+            Person       = PartyInRole.ObjectProperty<PartyInRole, Person      >(partyInRole => partyInRole.Person      );
+        }
+
+        public static Parties Instance
+        {
+            get
+            {
+                if(_instance == null)
+                    _instance = new Parties();
+
+                return _instance;
+            }
+        }
+    }
+
     public class RoleIndividuals: Ontology.Ontology
     {
         public readonly INamedIndividual Sponsor;
@@ -158,11 +193,13 @@ namespace Deals
             CommonDomainObjects.Instance,
             Roles.Instance,
             RoleIndividuals.Instance,
+            Parties.Instance,
             Validation.Instance)
         {
             var commonDomainObjects = CommonDomainObjects.Instance;
             var roles               = Roles.Instance;
             var roleIndividuals     = RoleIndividuals.Instance;
+            var parties             = Parties.Instance;
             var validation          = Validation.Instance;
 
             var Organisation          = this.Class<Organisation>();
@@ -170,19 +207,18 @@ namespace Deals
             Mufg                      = LegalEntity.NamedIndividual("MUFG");
 
             var Deal                  = this.Class<Deal>();
+            Deal.SubClassOf(commonDomainObjects.Named);
             var _Parties              = Deal.ObjectProperty<Deal, DealParty >(deal => deal.Parties    );
             var _Classifiers          = Deal.ObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
             var _Commitments          = Deal.ObjectProperty<Deal, Commitment>(deal => deal.Commitments);
-            Deal.SubClassOf(commonDomainObjects.Named);
 
             var DealParty             = this.Class<DealParty>();
-            var _Role                 = DealParty.ObjectProperty<DealParty, Role>(dealParty => dealParty.Role);
-            var LenderParty           = _Role.HasValue(roleIndividuals.Lender);
-            var AdvisorParty          = _Role.HasValue(roleIndividuals.Advisor);
-            var SponsorParty          = _Role.HasValue(roleIndividuals.Sponsor);
-            var BorrowerParty         = _Role.HasValue(roleIndividuals.Borrower);
-            var _Organisation         = DealParty.ObjectProperty<DealParty, Organisation>(dealParty => dealParty.Organisation);
-            var MufgParty             = _Organisation.HasValue(Mufg);
+            DealParty.SubClassOf(parties.PartyInRole);
+            var LenderParty           = parties.Role.HasValue(roleIndividuals.Lender);
+            var AdvisorParty          = parties.Role.HasValue(roleIndividuals.Advisor);
+            var SponsorParty          = parties.Role.HasValue(roleIndividuals.Sponsor);
+            var BorrowerParty         = parties.Role.HasValue(roleIndividuals.Borrower);
+            var MufgParty             = parties.Organisation.HasValue(Mufg);
 
             var Sponsor               = this.Class<Sponsor>();
             Sponsor.SubClassOf(SponsorParty);
@@ -191,7 +227,7 @@ namespace Deals
             var KeyCounterpartyRole   = new ObjectOneOf(this, KeyCounterpartyRoles);
             var MufgLenderParty       = new ObjectIntersectionOf(LenderParty, MufgParty);
             var MufgAdvisorParty      = new ObjectIntersectionOf(AdvisorParty, MufgParty);
-            var KeyCounterpartyParty  = new ObjectSomeValuesFrom(_Role, KeyCounterpartyRole);
+            var KeyCounterpartyParty  = new ObjectSomeValuesFrom(parties.Role, KeyCounterpartyRole);
 
             Deal.SubClassOf(
                 new DataSomeValuesFrom(
