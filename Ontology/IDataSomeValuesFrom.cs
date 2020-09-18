@@ -1,6 +1,6 @@
 ﻿namespace Ontology
 {
-    interface IDataSomeValuesFrom: IDataPropertyRestriction
+    public interface IDataSomeValuesFrom: IDataPropertyRestriction
     {
         IDataRange DataRange { get; }
     }

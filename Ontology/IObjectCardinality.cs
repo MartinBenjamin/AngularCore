@@ -13,6 +13,7 @@
     public interface IObjectMaxCardinality: IObjectCardinality
     {
     }
+
     public interface IObjectExactCardinality: IObjectCardinality
     {
     }
