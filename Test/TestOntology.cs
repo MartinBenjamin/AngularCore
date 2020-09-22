@@ -301,6 +301,19 @@ namespace Test
                 dealOntology,
                 classifications,
                 deal)));
+
+            var parties = dealOntology.Get<IObjectPropertyExpression>().FirstOrDefault(ope => ope.Name == "Parties");
+            Assert.That(parties, Is.Not.Null);
+            var partyErrors = dealOntology.Validate(classifications)[deal][parties];
+            var sponsorErrors = (
+                from partyError in partyErrors
+                from annotation in partyError.Annotations
+                from annotationAnnotation in annotation.Annotations
+                where
+                    annotationAnnotation.Property == Validation.Instance.SubPropertyName &&
+                    annotationAnnotation.Value.Equals("Borrowers")
+                select partyError);
+            Assert.That(sponsorErrors.Any(), Is.Not.EqualTo(result));
         }
 
         [TestCase(false)]

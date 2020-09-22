@@ -409,4 +409,33 @@ namespace Deals
                     null);
         }
     }
+
+    public static class ClassificationsExtensions
+    {
+        public static IDictionary<object, ILookup<IPropertyExpression, ISubClassOf>> Validate(
+            this IOntology                                 ontology,
+            IDictionary<object, HashSet<IClassExpression>> classifications
+            ) => (
+                from keyValuePair in classifications
+                let individual = keyValuePair.Key
+                from classExpression in keyValuePair.Value
+                from subClassOf in ontology.Get<ISubClassOf>()
+                from annotation in subClassOf.Annotations
+                where
+                    subClassOf.SubClassExpression == classExpression &&
+                    subClassOf.SuperClassExpression is IPropertyRestriction &&
+                    annotation.Property == Validation.Instance.Restriction &&
+                    !subClassOf.SuperClassExpression.HasMember(
+                        ontology,
+                        classifications,
+                        individual)
+                group subClassOf by individual into errorsGroupedByIndividual
+                select errorsGroupedByIndividual
+            ).ToDictionary(
+                group => group.Key,
+                group => group.ToLookup(
+                    g => ((IPropertyRestriction)g.SuperClassExpression).PropertyExpression,
+                    g => g));
+    }
+
 }
