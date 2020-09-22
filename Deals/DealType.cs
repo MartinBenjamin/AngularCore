@@ -440,8 +440,7 @@ namespace Deals
             ).ToDictionary(
                 group => group.Key,
                 group => group.ToLookup(
-                    g => ((IPropertyRestriction)g.SuperClassExpression).PropertyExpression,
-                    g => g));
+                    g => ((IPropertyRestriction)g.SuperClassExpression).PropertyExpression));
     }
 
 }
