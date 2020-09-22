@@ -321,6 +321,7 @@ namespace Deals
         public readonly IObjectPropertyExpression Parties;
         public readonly IObjectPropertyExpression Commitments;
         public readonly IObjectPropertyExpression Classifiers;
+        public readonly IObjectPropertyExpression Borrowers;
 
         public DealOntology(): base(
             CommonDomainObjects.Instance,
@@ -342,6 +343,7 @@ namespace Deals
             Parties     = Deal.ObjectProperty<Deal, DealParty >(deal => deal.Parties    );
             Classifiers = Deal.ObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
             Commitments = Deal.ObjectProperty<Deal, Commitment>(deal => deal.Commitments);
+            Borrowers   = Deal.ObjectProperty<Deal, DealParty >(deal => deal.Borrowers  );
 
             Deal.SubClassOf(
                 new DataSomeValuesFrom(
@@ -361,6 +363,10 @@ namespace Deals
                 .Annotate(
                     validation.SubPropertyName,
                     "Borrowers");
+            Debt.SubClassOf(Borrowers.MinCardinality(1))
+                .Annotate(
+                    validation.Restriction,
+                    0);
 
             var Advisory = this.Class("Advisory");
             Advisory.SubClassOf(Deal);

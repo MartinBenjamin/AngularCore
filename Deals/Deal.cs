@@ -3,6 +3,7 @@ using Locations;
 using Ontology;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Deals
 {
@@ -20,6 +21,9 @@ namespace Deals
         public virtual string            ProjectName      { get; protected set; }
         public virtual IList<Classifier> Classifiers      { get; protected set; }
         public virtual GeographicRegion  GeographicRegion { get; protected set; }
+
+        public virtual IEnumerable<DealParty> Borrowers
+            => Parties.Where(dealParty => dealParty.Role.Id == DealRoleIdentifier.Borrower);
 
         protected Deal() : base()
         {

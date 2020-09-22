@@ -305,7 +305,7 @@ namespace Test
             var parties = dealOntology.Get<IObjectPropertyExpression>().FirstOrDefault(ope => ope.Name == "Parties");
             Assert.That(parties, Is.Not.Null);
             var partyErrors = dealOntology.Validate(classifications)[deal][parties];
-            var sponsorErrors = (
+            var borrowerErrors = (
                 from partyError in partyErrors
                 from annotation in partyError.Annotations
                 from annotationAnnotation in annotation.Annotations
@@ -313,7 +313,45 @@ namespace Test
                     annotationAnnotation.Property == Validation.Instance.SubPropertyName &&
                     annotationAnnotation.Value.Equals("Borrowers")
                 select partyError);
-            Assert.That(sponsorErrors.Any(), Is.Not.EqualTo(result));
+            Assert.That(borrowerErrors.Any(), Is.Not.EqualTo(result));
+        }
+
+        [TestCase(0, false)]
+        [TestCase(1, true )]
+        [TestCase(2, true )]
+        public void BorrowersMandatory1(
+            int  borrowerCount,
+            bool result
+            )
+        {
+            var deal = new Deal(
+                Guid.NewGuid(),
+                "Test",
+                "ProjectFinance",
+                null,
+                null);
+
+            var role = new Role(
+                DealRoleIdentifier.Borrower,
+                null);
+            Enumerable
+                .Range(0, borrowerCount)
+                .ForEach(i => new DealParty(
+                    Guid.NewGuid(),
+                    deal,
+                    (Organisation)null,
+                    role,
+                    null));
+
+            var dealOntology = new DealOntology();
+            var classifications = dealOntology.Classify(deal);
+            Assert.That(classifications.ContainsKey(deal));
+            classifications[deal].ForEach(TestContext.WriteLine);
+
+            var borrowers = dealOntology.Get<IObjectPropertyExpression>().FirstOrDefault(ope => ope.Name == "Borrowers");
+            Assert.That(borrowers, Is.Not.Null);
+            var borrowerErrors = dealOntology.Validate(classifications)[deal][borrowers];
+            Assert.That(borrowerErrors.Any(), Is.Not.EqualTo(result));
         }
 
         [TestCase(false)]
