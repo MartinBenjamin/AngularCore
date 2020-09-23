@@ -219,6 +219,42 @@ namespace Test
         }
 
 
+        [TestCase(0, false)]
+        [TestCase(1, true )]
+        [TestCase(2, true )]
+        public void SponsorsMandatory1(
+            int  sponsorCount,
+            bool result
+            )
+        {
+            var deal = new Deal(
+                Guid.NewGuid(),
+                "Test",
+                "ProjectFinance",
+                null,
+                null);
+
+            var role = new Role(
+                DealRoleIdentifier.Sponsor,
+                null);
+            Enumerable
+                .Range(0, sponsorCount)
+                .ForEach(i => new Sponsor(
+                    Guid.NewGuid(),
+                    deal,
+                    null,
+                    role,
+                    null,
+                    null));
+
+            var dealOntology = new DealOntology();
+            var classifications = dealOntology.Classify(deal);
+            Assert.That(classifications.ContainsKey(deal));
+            classifications[deal].ForEach(TestContext.WriteLine);
+
+            Assert.That(dealOntology.Validate(classifications)[deal][dealOntology.Sponsors].Any(), Is.Not.EqualTo(result));
+        }
+
         [TestCase("ProjectFinance", false)]
         [TestCase("Advisory"      , true )]
         public void NoSponsors(
@@ -348,10 +384,7 @@ namespace Test
             Assert.That(classifications.ContainsKey(deal));
             classifications[deal].ForEach(TestContext.WriteLine);
 
-            var borrowers = dealOntology.Get<IObjectPropertyExpression>().FirstOrDefault(ope => ope.Name == "Borrowers");
-            Assert.That(borrowers, Is.Not.Null);
-            var borrowerErrors = dealOntology.Validate(classifications)[deal][borrowers];
-            Assert.That(borrowerErrors.Any(), Is.Not.EqualTo(result));
+            Assert.That(dealOntology.Validate(classifications)[deal][dealOntology.Borrowers].Any(), Is.Not.EqualTo(result));
         }
 
         [TestCase(false)]
