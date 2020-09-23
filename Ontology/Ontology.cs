@@ -126,12 +126,15 @@ namespace Ontology
                             @class));
                     break;
                 default:
-                    Get<IClass>()
-                        .Where(@class => @class.Name == individual.GetType().FullName)
-                        .ForEach(@class => ClassifyIndividual(
-                            classExpressions,
-                            individual,
-                            @class));
+                    (
+                        from @class in Get<IClass>()
+                        from type in individual.GetTypes()
+                        where @class.Name == type.FullName
+                        select @class
+                    ).ForEach(@class => ClassifyIndividual(
+                        classExpressions,
+                        individual,
+                        @class));
                     break;
             }
 
