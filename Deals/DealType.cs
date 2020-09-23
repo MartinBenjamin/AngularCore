@@ -80,7 +80,7 @@ namespace Deals
                 "SubPropertyName");
             RangeValidated = new AnnotationProperty(
                 this,
-                "Validated");
+                "RangeValidated");
         }
         public static Validation Instance
         {
