@@ -196,28 +196,17 @@ namespace Test
             Assert.That(classifications.ContainsKey(deal));
             classifications[deal].ForEach(TestContext.WriteLine);
 
-            var subClassOf =
-            (
-                from classExpression in classifications[deal]
-                from axiom in dealOntology.GetSuperClasses(classExpression)
-                from annotation in axiom.Annotations
+            var partyErrors = dealOntology.Validate(classifications)[deal][dealOntology.Parties];
+            var sponsorErrors = (
+                from partyError in partyErrors
+                from annotation in partyError.Annotations
                 from annotationAnnotation in annotation.Annotations
                 where
-                    annotation.Property == Validation.Instance.Restriction &&
                     annotationAnnotation.Property == Validation.Instance.SubPropertyName &&
-                    annotationAnnotation.Value.Equals("Sponsors") &&
-                    axiom.SuperClassExpression is IPropertyRestriction propertyRestriction &&
-                    propertyRestriction.PropertyExpression.Name == "Parties"
-                select axiom
-            ).FirstOrDefault();
-
-            Assert.That(subClassOf, Is.Not.Null);
-            Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(
-                dealOntology,
-                classifications,
-                deal)));
+                    annotationAnnotation.Value.Equals("Sponsors")
+                select partyError);
+            Assert.That(sponsorErrors.Any(), Is.Not.EqualTo(result));
         }
-
 
         [TestCase(0, false)]
         [TestCase(1, true )]
@@ -317,30 +306,7 @@ namespace Test
             Assert.That(classifications.ContainsKey(deal));
             classifications[deal].ForEach(TestContext.WriteLine);
 
-            var subClassOf =
-            (
-                from classExpression in classifications[deal]
-                from axiom in dealOntology.GetSuperClasses(classExpression)
-                from annotation in axiom.Annotations
-                from annotationAnnotation in annotation.Annotations
-                where
-                    annotation.Property == Validation.Instance.Restriction &&
-                    annotationAnnotation.Property == Validation.Instance.SubPropertyName &&
-                    annotationAnnotation.Value.Equals("Borrowers") &&
-                    axiom.SuperClassExpression is IPropertyRestriction propertyRestriction &&
-                    propertyRestriction.PropertyExpression.Name == "Parties"
-                select axiom
-            ).FirstOrDefault();
-
-            Assert.That(subClassOf, Is.Not.Null);
-            Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(
-                dealOntology,
-                classifications,
-                deal)));
-
-            var parties = dealOntology.Get<IObjectPropertyExpression>().FirstOrDefault(ope => ope.Name == "Parties");
-            Assert.That(parties, Is.Not.Null);
-            var partyErrors = dealOntology.Validate(classifications)[deal][parties];
+            var partyErrors = dealOntology.Validate(classifications)[deal][dealOntology.Parties];
             var borrowerErrors = (
                 from partyError in partyErrors
                 from annotation in partyError.Annotations
