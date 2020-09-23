@@ -27,15 +27,6 @@ namespace Test
         }
 
         [Test]
-        public void Test()
-        {
-            var edge = new OneToManyEdge<Deal, DealParty>(deal => deal.Parties);
-            Assert.That(edge.Name, Is.EqualTo("Parties"));
-            var edge2 = new ManyToOneEdge<DealParty, Deal>(dealParty => dealParty.Deal);
-            Assert.That(edge2.Name, Is.EqualTo("Deal"));
-        }
-
-        [Test]
         public void ToEnumerable()
         {
             Assert.That(((int?)null).ToEnumerable().Count(), Is.EqualTo(0));
@@ -93,23 +84,7 @@ namespace Test
             Assert.That(classifications.ContainsKey(deal));
             classifications[deal].ForEach(TestContext.WriteLine);
 
-            var subClassOf = 
-            (
-                from classExpression in classifications[deal]
-                from axiom in dealOntology.GetSuperClasses(classExpression)
-                from annotation in axiom.Annotations
-                where
-                    annotation.Property == Validation.Instance.Restriction &&
-                    axiom.SuperClassExpression is IPropertyRestriction propertyRestriction &&
-                    propertyRestriction.PropertyExpression.Name == "Name"
-                select axiom
-            ).FirstOrDefault();
-
-            Assert.That(subClassOf, Is.Not.Null);
-            Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(
-                dealOntology,
-                classifications,
-                deal)));
+            Assert.That(dealOntology.Validate(classifications)[deal][Deals.CommonDomainObjects.Instance.Name].Any(), Is.Not.EqualTo(result));
         }
        
         [TestCase(null, false)]
@@ -144,23 +119,8 @@ namespace Test
             Assert.That(classifications.ContainsKey(sponsor));
             classifications[sponsor].ForEach(TestContext.WriteLine);
 
-            var subClassOf =
-            (
-                from classExpression in classifications[sponsor]
-                from axiom in dealOntology.GetSuperClasses(classExpression)
-                from annotation in axiom.Annotations
-                where
-                    annotation.Property == Validation.Instance.Restriction &&
-                    axiom.SuperClassExpression is IPropertyRestriction propertyRestriction &&
-                    propertyRestriction.PropertyExpression.Name == "Equity"
-                select axiom
-            ).FirstOrDefault();
-
-            Assert.That(subClassOf, Is.Not.Null);
-            Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(
-                dealOntology,
-                classifications,
-                sponsor)));
+            var errors = dealOntology.Validate(classifications);
+            Assert.That(errors.ContainsKey(sponsor) && errors[sponsor][DealParties.Instance.Equity].Any(), Is.Not.EqualTo(result));
         }
 
         [TestCase(0, false)]
