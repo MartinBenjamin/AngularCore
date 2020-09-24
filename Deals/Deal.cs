@@ -22,12 +22,6 @@ namespace Deals
         public virtual IList<Classifier> Classifiers      { get; protected set; }
         public virtual GeographicRegion  GeographicRegion { get; protected set; }
 
-        // Subproperties.
-        public virtual IEnumerable<DealParty> Borrowers
-            => Parties.Where(dealParty => dealParty.Role.Id == DealRoleIdentifier.Borrower);
-        public virtual IEnumerable<Sponsor  > Sponsors
-            => Parties.Where(dealParty => dealParty.Role.Id == DealRoleIdentifier.Sponsor).Cast<Sponsor>();
-
         protected Deal() : base()
         {
         }

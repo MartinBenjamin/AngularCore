@@ -344,8 +344,12 @@ namespace Deals
             Parties     = Deal.ObjectProperty<Deal, DealParty >(deal => deal.Parties    );
             Classifiers = Deal.ObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
             Commitments = Deal.ObjectProperty<Deal, Commitment>(deal => deal.Commitments);
-            Borrowers   = Deal.ObjectProperty<Deal, DealParty >(deal => deal.Borrowers  );
-            Sponsors    = Deal.ObjectProperty<Deal, Sponsor   >(deal => deal.Sponsors   );
+            Borrowers   = Deal.ObjectProperty<Deal, DealParty >(
+                "Borrowers",
+                deal => deal.Parties.Where(dealParty => dealParty.Role.Id == DealRoleIdentifier.Borrower));
+            Sponsors    = Deal.ObjectProperty<Deal, Sponsor   >(
+                "Sponsors",
+                deal => deal.Parties.Where(dealParty => dealParty.Role.Id == DealRoleIdentifier.Sponsor).Cast<Sponsor>());
 
             Deal.SubClassOf(
                 new DataSomeValuesFrom(

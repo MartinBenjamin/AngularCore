@@ -13,13 +13,24 @@ namespace Ontology
         private Func<T, IEnumerable<TProperty>> _property;
 
         protected Property(
-            IOntology                                   ontology,
-            Expression<Func<T, IEnumerable<TProperty>>> property
+            IOntology                       ontology,
+            string                          name,
+            Func<T, IEnumerable<TProperty>> property
             ) : base(
                 ontology,
-                property.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TProperty).Name)
+                name)
         {
-            _property = property.Compile();
+            _property = property;
+        }
+
+        protected Property(
+            IOntology                                   ontology,
+            Expression<Func<T, IEnumerable<TProperty>>> property
+            ) : this(
+                ontology,
+                property.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TProperty).Name,
+                property.Compile())
+        {
         }
 
         public virtual IEnumerable<object> Values(
@@ -49,13 +60,24 @@ namespace Ontology
         private Func<T, TProperty> _property;
 
         protected FunctionalProperty(
-            IOntology                      ontology,
-            Expression<Func<T, TProperty>> property
+            IOntology          ontology,
+            string             name,
+            Func<T, TProperty> property
             ) : base(
                 ontology,
-                property.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TProperty).Name)
+                name)
         {
-            _property = property.Compile();
+            _property = property;
+        }
+
+        protected FunctionalProperty(
+            IOntology                      ontology,
+            Expression<Func<T, TProperty>> property
+            ) : this(
+                ontology,
+                property.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TProperty).Name,
+                property.Compile())
+        {
         }
 
         IEnumerable<object> IPropertyExpression.Values(
@@ -90,6 +112,17 @@ namespace Ontology
         IObjectPropertyExpression
     {
         public ObjectProperty(
+            IOntology                       ontology,
+            string                          name,
+            Func<T, IEnumerable<TProperty>> property
+            ) : base(
+                ontology,
+                name,
+                property)
+        {
+        }
+
+        public ObjectProperty(
             IOntology                                   ontology,
             Expression<Func<T, IEnumerable<TProperty>>> property
             ) : base(
@@ -112,7 +145,18 @@ namespace Ontology
     public class FunctionalObjectProperty<T, TProperty>:
         FunctionalProperty<T, TProperty>,
         IObjectPropertyExpression
-    {
+    {    
+        public FunctionalObjectProperty(
+            IOntology          ontology,
+            string             name,
+            Func<T, TProperty> property
+            ) : base(
+                ontology,
+                name,
+                property)
+        {
+        }
+
         public FunctionalObjectProperty(
             IOntology                      ontology,
             Expression<Func<T, TProperty>> property
@@ -138,6 +182,17 @@ namespace Ontology
         Property<T, TProperty>,
         IDataPropertyExpression
     {
+        public DataProperty(
+            IOntology                       ontology,
+            string                          name,
+            Func<T, IEnumerable<TProperty>> property
+            ) : base(
+                ontology,
+                name,
+                property)
+        {
+        }
+
         public DataProperty(
             IOntology                                   ontology,
             Expression<Func<T, IEnumerable<TProperty>>> property
@@ -168,6 +223,17 @@ namespace Ontology
         FunctionalProperty<T, TProperty>,
         IDataPropertyExpression
     {
+        public FunctionalDataProperty(
+            IOntology          ontology,
+            string             name,
+            Func<T, TProperty> property
+            ) : base(
+                ontology,
+                name,
+                property)
+        {
+        }
+
         public FunctionalDataProperty(
             IOntology                      ontology,
             Expression<Func<T, TProperty>> property
