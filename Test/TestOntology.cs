@@ -272,7 +272,6 @@ namespace Test
                         string.Empty));
 
             var dealOntology = new DealOntology();
-
             var classifications = dealOntology.Classify(deal);
             Assert.That(classifications.ContainsKey(deal));
             classifications[deal].ForEach(TestContext.WriteLine);
@@ -298,17 +297,15 @@ namespace Test
             deal.Commitments.Add(exclusivity);
 
             var dealOntology = new DealOntology();
-            IOntology ontology = dealOntology;
-
-            var classifications = ontology.Classify(deal);
+            var classifications = dealOntology.Classify(deal);
             Assert.That(classifications.ContainsKey(exclusivity));
             classifications[exclusivity].ForEach(TestContext.WriteLine);
 
             var range =
             (
                 from classExpression in classifications[exclusivity]
-                from dataProperty in ontology.GetDataPropertyExpressions(classExpression)
-                from dataPropertyRange in ontology.Get<IDataPropertyRange>()
+                from dataProperty in dealOntology.GetDataPropertyExpressions(classExpression)
+                from dataPropertyRange in dealOntology.Get<IDataPropertyRange>()
                 from annotation in dataPropertyRange.Annotations
                 where
                     dataPropertyRange.DataPropertyExpression == dataProperty &&
@@ -318,7 +315,7 @@ namespace Test
 
             Assert.That(range, Is.Not.Null);
             Assert.That(range.DataPropertyExpression.Name, Is.EqualTo("Date"));
-            Assert.That(range.Range, Is.EqualTo(ontology.DateTime));
+            Assert.That(range.Range, Is.EqualTo(Ontology.Ontology.DateTime));
         }
     }
 }
