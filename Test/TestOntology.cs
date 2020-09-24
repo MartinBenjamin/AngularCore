@@ -156,51 +156,6 @@ namespace Test
             Assert.That(classifications.ContainsKey(deal));
             classifications[deal].ForEach(TestContext.WriteLine);
 
-            var partyErrors = dealOntology.Validate(classifications)[deal][dealOntology.Parties];
-            var sponsorErrors = (
-                from partyError in partyErrors
-                from annotation in partyError.Annotations
-                from annotationAnnotation in annotation.Annotations
-                where
-                    annotationAnnotation.Property == Validation.Instance.SubPropertyName &&
-                    annotationAnnotation.Value.Equals("Sponsors")
-                select partyError);
-            Assert.That(sponsorErrors.Any(), Is.Not.EqualTo(result));
-        }
-
-        [TestCase(0, false)]
-        [TestCase(1, true )]
-        [TestCase(2, true )]
-        public void SponsorsMandatory1(
-            int  sponsorCount,
-            bool result
-            )
-        {
-            var deal = new Deal(
-                Guid.NewGuid(),
-                "Test",
-                "ProjectFinance",
-                null,
-                null);
-
-            var role = new Role(
-                DealRoleIdentifier.Sponsor,
-                null);
-            Enumerable
-                .Range(0, sponsorCount)
-                .ForEach(i => new Sponsor(
-                    Guid.NewGuid(),
-                    deal,
-                    null,
-                    role,
-                    null,
-                    null));
-
-            var dealOntology = new DealOntology();
-            var classifications = dealOntology.Classify(deal);
-            Assert.That(classifications.ContainsKey(deal));
-            classifications[deal].ForEach(TestContext.WriteLine);
-
             Assert.That(dealOntology.Validate(classifications)[deal][dealOntology.Sponsors].Any(), Is.Not.EqualTo(result));
         }
 
@@ -266,50 +221,6 @@ namespace Test
             Assert.That(classifications.ContainsKey(deal));
             classifications[deal].ForEach(TestContext.WriteLine);
 
-            var partyErrors = dealOntology.Validate(classifications)[deal][dealOntology.Parties];
-            var borrowerErrors = (
-                from partyError in partyErrors
-                from annotation in partyError.Annotations
-                from annotationAnnotation in annotation.Annotations
-                where
-                    annotationAnnotation.Property == Validation.Instance.SubPropertyName &&
-                    annotationAnnotation.Value.Equals("Borrowers")
-                select partyError);
-            Assert.That(borrowerErrors.Any(), Is.Not.EqualTo(result));
-        }
-
-        [TestCase(0, false)]
-        [TestCase(1, true )]
-        [TestCase(2, true )]
-        public void BorrowersMandatory1(
-            int  borrowerCount,
-            bool result
-            )
-        {
-            var deal = new Deal(
-                Guid.NewGuid(),
-                "Test",
-                "ProjectFinance",
-                null,
-                null);
-
-            var role = new Role(
-                DealRoleIdentifier.Borrower,
-                null);
-            Enumerable
-                .Range(0, borrowerCount)
-                .ForEach(i => new DealParty(
-                    Guid.NewGuid(),
-                    deal,
-                    (Organisation)null,
-                    role,
-                    null));
-
-            var dealOntology = new DealOntology();
-            var classifications = dealOntology.Classify(deal);
-            Assert.That(classifications.ContainsKey(deal));
-            classifications[deal].ForEach(TestContext.WriteLine);
-
             Assert.That(dealOntology.Validate(classifications)[deal][dealOntology.Borrowers].Any(), Is.Not.EqualTo(result));
         }
 
@@ -342,56 +253,8 @@ namespace Test
         }
 
         [TestCase(false)]
-        [TestCase(true)]
-        public void ExclusivityMandatory(
-            bool result
-            )
-        {
-            var deal = new Deal(
-                Guid.NewGuid(),
-                "Test",
-                "ProjectFinance",
-                null,
-                null);
-
-            if(result)
-                deal.Classifiers.Add(
-                    new ExclusivityClassifier(
-                        ExclusivityClassifierIdentifier.No,
-                        string.Empty));
-
-            var dealOntology = new DealOntology();
-            IOntology ontology = dealOntology;
-
-            var classifications = ontology.Classify(deal);
-            Assert.That(classifications.ContainsKey(deal));
-            classifications[deal].ForEach(TestContext.WriteLine);
-
-            var subClassOf =
-            (
-                from classExpression in classifications[deal]
-                from axiom in dealOntology.GetSuperClasses(classExpression)
-                from annotation in axiom.Annotations
-                from annotationAnnotation in annotation.Annotations
-                where
-                    annotation.Property == Validation.Instance.Restriction &&
-                    annotationAnnotation.Property == Validation.Instance.SubPropertyName &&
-                    annotationAnnotation.Value.Equals("Exclusivity") &&
-                    axiom.SuperClassExpression is IPropertyRestriction propertyRestriction &&
-                    propertyRestriction.PropertyExpression.Name == "Classifiers"
-                select axiom
-            ).FirstOrDefault();
-
-            Assert.That(subClassOf, Is.Not.Null);
-            Assert.That(result, Is.EqualTo(subClassOf.SuperClassExpression.HasMember(
-                dealOntology,
-                classifications,
-                deal)));
-        }
-
-        [TestCase(false)]
         [TestCase(true )]
-        public void ExclusivityMandatory1(
+        public void ExclusivityMandatory(
             bool result
             )
         {
