@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace Ontology
 {
@@ -21,16 +20,6 @@ namespace Ontology
                 name)
         {
             _property = property;
-        }
-
-        protected Property(
-            IOntology                                   ontology,
-            Expression<Func<T, IEnumerable<TProperty>>> property
-            ) : this(
-                ontology,
-                property.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TProperty).Name,
-                property.Compile())
-        {
         }
 
         public virtual IEnumerable<object> Values(
@@ -68,16 +57,6 @@ namespace Ontology
                 name)
         {
             _property = property;
-        }
-
-        protected FunctionalProperty(
-            IOntology                      ontology,
-            Expression<Func<T, TProperty>> property
-            ) : this(
-                ontology,
-                property.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TProperty).Name,
-                property.Compile())
-        {
         }
 
         IEnumerable<object> IPropertyExpression.Values(
@@ -122,15 +101,6 @@ namespace Ontology
         {
         }
 
-        public ObjectProperty(
-            IOntology                                   ontology,
-            Expression<Func<T, IEnumerable<TProperty>>> property
-            ) : base(
-                ontology,
-                property)
-        {
-        }
-
         protected override IEnumerable<object> Values(
             IOntology        context,
             INamedIndividual namedIndividual
@@ -153,15 +123,6 @@ namespace Ontology
             ) : base(
                 ontology,
                 name,
-                property)
-        {
-        }
-
-        public FunctionalObjectProperty(
-            IOntology                      ontology,
-            Expression<Func<T, TProperty>> property
-            ) : base(
-                ontology,
                 property)
         {
         }
@@ -189,15 +150,6 @@ namespace Ontology
             ) : base(
                 ontology,
                 name,
-                property)
-        {
-        }
-
-        public DataProperty(
-            IOntology                                   ontology,
-            Expression<Func<T, IEnumerable<TProperty>>> property
-            ) : base(
-                ontology,
                 property)
         {
         }
@@ -230,15 +182,6 @@ namespace Ontology
             ) : base(
                 ontology,
                 name,
-                property)
-        {
-        }
-
-        public FunctionalDataProperty(
-            IOntology                      ontology,
-            Expression<Func<T, TProperty>> property
-            ) : base(
-                ontology,
                 property)
         {
         }
