@@ -389,6 +389,34 @@ namespace Test
                 deal)));
         }
 
+        [TestCase(false)]
+        [TestCase(true )]
+        public void ExclusivityMandatory1(
+            bool result
+            )
+        {
+            var deal = new Deal(
+                Guid.NewGuid(),
+                "Test",
+                "ProjectFinance",
+                null,
+                null);
+
+            if(result)
+                deal.Classifiers.Add(
+                    new ExclusivityClassifier(
+                        ExclusivityClassifierIdentifier.No,
+                        string.Empty));
+
+            var dealOntology = new DealOntology();
+
+            var classifications = dealOntology.Classify(deal);
+            Assert.That(classifications.ContainsKey(deal));
+            classifications[deal].ForEach(TestContext.WriteLine);
+
+            Assert.That(dealOntology.Validate(classifications)[deal][dealOntology.Exclusivity].Any(), Is.Not.EqualTo(result));
+        }
+
         [Test]
         public void Exclusivity()
         {

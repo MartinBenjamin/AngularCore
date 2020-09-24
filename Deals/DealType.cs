@@ -323,6 +323,7 @@ namespace Deals
         public readonly IObjectPropertyExpression Classifiers;
         public readonly IObjectPropertyExpression Borrowers;
         public readonly IObjectPropertyExpression Sponsors;
+        public readonly IObjectPropertyExpression Exclusivity;
 
         public DealOntology(): base(
             CommonDomainObjects.Instance,
@@ -350,6 +351,9 @@ namespace Deals
             Sponsors    = Deal.ObjectProperty<Deal, Sponsor   >(
                 "Sponsors",
                 deal => deal.Parties.Where(dealParty => dealParty.Role.Id == DealRoleIdentifier.Sponsor).Cast<Sponsor>());
+            this.Exclusivity = Deal.ObjectProperty<Deal, ExclusivityClassifier>(
+                "Exclusivity",
+                deal => deal.Classifiers.OfType<ExclusivityClassifier>().FirstOrDefault());
 
             Deal.SubClassOf(
                 new DataSomeValuesFrom(
@@ -401,6 +405,11 @@ namespace Deals
                 .Annotate(
                     validation.SubPropertyName,
                     "Sponsors");
+
+            Deal.SubClassOf(this.Exclusivity.ExactCardinality(1))
+                .Annotate(
+                    validation.Restriction,
+                    0);
 
             var ExclusivityClassifier = this.Class<ExclusivityClassifier>();
             ExclusivityClassifier.SubClassOf(commonDomainObjects.Classifier);
