@@ -18,15 +18,15 @@ namespace Ontology
         IEnumerable<IHasKey>                   GetHasKeys(IClassExpression classExpression);
         IEnumerable<ISubClassOf>               GetSuperClasses(IClassExpression classExpression);
 
-        bool AreEqual(
-            IDictionary<object, HashSet<IClassExpression>>
-                   classifications,
-            object lhs,
-            object rhs);
+        //bool AreEqual(
+        //    IDictionary<object, HashSet<IClassExpression>>
+        //           classifications,
+        //    object lhs,
+        //    object rhs);
 
-        HashSet<IClassExpression> ClassifyIndividual(
-            IDictionary<object, HashSet<IClassExpression>>
-                   classifications,
-            object individual);
+        //HashSet<IClassExpression> ClassifyIndividual(
+        //    IDictionary<object, HashSet<IClassExpression>>
+        //           classifications,
+        //    object individual);
     }
 }

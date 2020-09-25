@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Ontology
 {
@@ -15,15 +14,6 @@ namespace Ontology
         }
 
         IList<IClassExpression> IObjectUnionOf.ClassExpressions => _classExpressions;
-
-        bool IClassExpression.HasMember(
-            IOntology                                      context,
-            IDictionary<object, HashSet<IClassExpression>> classifications,
-            object                                         individual
-            ) => _classExpressions.Any(classExpression => classExpression.HasMember(
-                context,
-                classifications,
-                individual));
 
         bool IClassExpression.Evaluate(
             IClassMembershipEvaluator evaluator,

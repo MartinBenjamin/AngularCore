@@ -14,11 +14,6 @@ namespace Ontology
         }
 
         IPropertyExpression IPropertyRestriction.PropertyExpression => _propertyExpression;
-
-        public abstract bool HasMember(
-            IOntology                                      context,
-            IDictionary<object, HashSet<IClassExpression>> classifications,
-            object                                         individual);
             
         public abstract bool Evaluate(
             IClassMembershipEvaluator evaluator,

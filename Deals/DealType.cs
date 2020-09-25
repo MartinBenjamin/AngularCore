@@ -442,7 +442,13 @@ namespace Deals
         public static IDictionary<object, ILookup<IPropertyExpression, ISubClassOf>> Validate(
             this IOntology                                 ontology,
             IDictionary<object, HashSet<IClassExpression>> classifications
-            ) => (
+            )
+        {
+            var evaluator = new ClassMembershipEvaluator(
+                ontology,
+                classifications);
+
+            return (
                 from keyValuePair in classifications
                 let individual = keyValuePair.Key
                 from classExpression in keyValuePair.Value
@@ -452,9 +458,8 @@ namespace Deals
                     subClassOf.SubClassExpression == classExpression &&
                     subClassOf.SuperClassExpression is IPropertyRestriction &&
                     annotation.Property == Validation.Instance.Restriction &&
-                    !subClassOf.SuperClassExpression.HasMember(
-                        ontology,
-                        classifications,
+                    !subClassOf.SuperClassExpression.Evaluate(
+                        evaluator,
                         individual)
                 group subClassOf by individual into errorsGroupedByIndividual
                 select errorsGroupedByIndividual
@@ -462,6 +467,7 @@ namespace Deals
                 group => group.Key,
                 group => group.ToLookup(
                     g => ((IPropertyRestriction)g.SuperClassExpression).PropertyExpression));
+        }
     }
 
 }

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Ontology
+﻿namespace Ontology
 {
     public class ObjectAllValuesFrom:
         ObjectPropertyRestriction,
@@ -18,18 +15,6 @@ namespace Ontology
         }
 
         IClassExpression IObjectAllValuesFrom.ClassExpression => _classExpression;
-
-        public override bool HasMember(
-            IOntology                                      context,
-            IDictionary<object, HashSet<IClassExpression>> classifications,
-            object                                         individual
-            ) => _objectPropertyExpression.Values(
-                context,
-                individual).All(
-                    value => _classExpression.HasMember(
-                        context,
-                        classifications,
-                        value));
 
         public override bool Evaluate(
             IClassMembershipEvaluator evaluator,

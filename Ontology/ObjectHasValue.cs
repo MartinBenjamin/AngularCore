@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Ontology
+﻿namespace Ontology
 {
     public class ObjectHasValue:
         ObjectPropertyRestriction,
@@ -18,18 +15,6 @@ namespace Ontology
         }
 
         object IObjectHasValue.Individual => _individual;
-
-        public override bool HasMember(
-            IOntology                                      context,
-            IDictionary<object, HashSet<IClassExpression>> classifications,
-            object                                         individual
-            ) => _objectPropertyExpression.Values(
-                context,
-                individual).Any(
-                    value => context.AreEqual(
-                        classifications,
-                        _individual,
-                        value));
                         
        public override bool Evaluate(
             IClassMembershipEvaluator evaluator,

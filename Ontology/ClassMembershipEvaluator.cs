@@ -35,21 +35,21 @@ namespace Ontology
             object              individual
             ) => dataMinCardinality.DataPropertyExpression.Values(
                 _ontology,
-                individual).Count(value => dataMinCardinality?.DataRange.HasMember(value) ?? true) >= dataMinCardinality.Cardinality;
+                individual).Count(value => dataMinCardinality.DataRange?.HasMember(value) ?? true) >= dataMinCardinality.Cardinality;
 
         bool IClassMembershipEvaluator.Evaluate(
             IDataMaxCardinality dataMaxCardinality,
             object              individual
             ) => dataMaxCardinality.DataPropertyExpression.Values(
                 _ontology,
-                individual).Count(value => dataMaxCardinality?.DataRange.HasMember(value) ?? true) <= dataMaxCardinality.Cardinality;
+                individual).Count(value => dataMaxCardinality.DataRange?.HasMember(value) ?? true) <= dataMaxCardinality.Cardinality;
 
         bool IClassMembershipEvaluator.Evaluate(
             IDataExactCardinality dataExactCardinality,
             object                individual
             ) => dataExactCardinality.DataPropertyExpression.Values(
                 _ontology,
-                individual).Count(value => dataExactCardinality?.DataRange.HasMember(value) ?? true) == dataExactCardinality.Cardinality;
+                individual).Count(value => dataExactCardinality.DataRange?.HasMember(value) ?? true) == dataExactCardinality.Cardinality;
 
         bool IClassMembershipEvaluator.Evaluate(
             IDataHasValue dataHasValue,

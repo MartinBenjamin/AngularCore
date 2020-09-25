@@ -14,14 +14,6 @@ namespace Ontology
                 name)
         {
         }
-
-        public virtual bool HasMember(
-            IOntology                                      context,
-            IDictionary<object, HashSet<IClassExpression>> classifications,
-            object                                         individual
-            ) => context.ClassifyIndividual(
-                classifications,
-                individual).Contains(this);
                 
         bool IClassExpression.Evaluate(
             IClassMembershipEvaluator evaluator,

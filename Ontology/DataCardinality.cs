@@ -51,14 +51,6 @@ namespace Ontology
         {
         }
 
-        public override bool HasMember(
-            IOntology                                      context,
-            IDictionary<object, HashSet<IClassExpression>> classifications,
-            object                                         individual
-            ) => Count(
-                context,
-                individual) >= _cardinality;
-
         public override bool Evaluate(
             IClassMembershipEvaluator evaluator,
             object                    individual
@@ -81,14 +73,6 @@ namespace Ontology
                 dataRange)
         {
         }
-
-        public override bool HasMember(
-            IOntology                                      context,
-            IDictionary<object, HashSet<IClassExpression>> classifications,
-            object                                         individual
-            ) => Count(
-                context,
-                individual) <= _cardinality;
 
         public override bool Evaluate(
             IClassMembershipEvaluator evaluator,
@@ -113,14 +97,6 @@ namespace Ontology
                 dataRange)
         {
         }
-
-        public override bool HasMember(
-            IOntology                                      context,
-            IDictionary<object, HashSet<IClassExpression>> classifications,
-            object                                         individual
-            ) => Count(
-                context,
-                individual) == _cardinality;
 
         public override bool Evaluate(
             IClassMembershipEvaluator evaluator,

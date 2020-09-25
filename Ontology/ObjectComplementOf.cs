@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Ontology
+﻿namespace Ontology
 {
     public class ObjectComplementOf: IObjectComplementOf
     {
@@ -14,15 +12,6 @@ namespace Ontology
         }
 
         IClassExpression IObjectComplementOf.ClassExpression => _classExpression;
-
-        bool IClassExpression.HasMember(
-            IOntology                                      context,
-            IDictionary<object, HashSet<IClassExpression>> classifications,
-            object                                         individual
-            ) => !_classExpression.HasMember(
-                context,
-                classifications,
-                individual);
                 
         bool IClassExpression.Evaluate(
             IClassMembershipEvaluator evaluator,

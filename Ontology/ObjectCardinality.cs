@@ -17,7 +17,7 @@ namespace Ontology
             ) : base(objectPropertyExpression)
         {
             _cardinality     = cardinality;
-            _classExpression = classExpression ?? _objectPropertyExpression.Ontology.Thing;
+            _classExpression = classExpression;
         }
 
         int IObjectCardinality.Cardinality => _cardinality;
@@ -39,18 +39,6 @@ namespace Ontology
                 classExpression)
         {
         }
-
-        public override bool HasMember(
-            IOntology                                      context,
-            IDictionary<object, HashSet<IClassExpression>> classifications,
-            object                                         individual
-            ) => _objectPropertyExpression.Values(
-                context,
-                individual).Count(
-                    value => _classExpression.HasMember(
-                        context,
-                        classifications,
-                        value)) >= _cardinality;
 
         public override bool Evaluate(
             IClassMembershipEvaluator evaluator,
@@ -76,18 +64,6 @@ namespace Ontology
         {
         }
 
-        public override bool HasMember(
-            IOntology                                      context,
-            IDictionary<object, HashSet<IClassExpression>> classifications,
-            object                                         individual
-            ) => _objectPropertyExpression.Values(
-                context,
-                individual).Count(
-                    value => _classExpression.HasMember(
-                        context,
-                        classifications,
-                        value)) <= _cardinality;
-
         public override bool Evaluate(
             IClassMembershipEvaluator evaluator,
             object                    individual
@@ -110,18 +86,6 @@ namespace Ontology
                 classExpression)
         {
         }
-
-        public override bool HasMember(
-            IOntology                                      context,
-            IDictionary<object, HashSet<IClassExpression>> classifications,
-            object                                         individual
-            ) => _objectPropertyExpression.Values(
-                context,
-                individual).Count(
-                    value => _classExpression.HasMember(
-                        context,
-                        classifications,
-                        value)) == _cardinality;
 
         public override bool Evaluate(
             IClassMembershipEvaluator evaluator,

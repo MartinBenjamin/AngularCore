@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-
-namespace Ontology
+﻿namespace Ontology
 {
-    public class Nothing: Class
+    public class Nothing:
+        Entity,
+        IClass
     {
         internal Nothing() : base(
             null,
@@ -10,10 +10,9 @@ namespace Ontology
         {
         }
 
-        public override bool HasMember(
-            IOntology                                      context,
-            IDictionary<object, HashSet<IClassExpression>> classifications,
-            object                                         individual
+        bool IClassExpression.Evaluate(
+            IClassMembershipEvaluator evaluator,
+            object                    individual
             ) => false;
     }
 }
