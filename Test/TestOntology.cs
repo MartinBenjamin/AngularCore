@@ -40,27 +40,25 @@ namespace Test
             Assert.That(x, Is.EqualTo(0));
         }
 
-        //[TestCase(0 , true)]
-        //[TestCase("", true)]
-        //public void TestThing(
-        //    object individual,
-        //    bool   result
-        //    ) => Assert.That(Ontology.Ontology.Thing.HasMember(
-        //        null,
-        //        null,
-        //        individual),
-        //        Is.EqualTo(result));
+        [TestCase(0, true)]
+        [TestCase("", true)]
+        public void TestThing(
+            object individual,
+            bool result
+            ) => Assert.That(Ontology.Ontology.Thing.Evaluate(
+                null,
+                individual),
+                Is.EqualTo(result));
 
-        //[TestCase(0 , false)]
-        //[TestCase("", false)]
-        //public void TestNothing(
-        //    object individual,
-        //    bool   result
-        //    ) => Assert.That(Ontology.Ontology.Nothing.HasMember(
-        //        null,
-        //        null,
-        //        individual),
-        //        Is.EqualTo(result));
+        [TestCase(0, false)]
+        [TestCase("", false)]
+        public void TestNothing(
+            object individual,
+            bool result
+            ) => Assert.That(Ontology.Ontology.Nothing.Evaluate(
+                null,
+                individual),
+                Is.EqualTo(result));
 
         [TestCase(null , false)]
         [TestCase(""   , false)]
