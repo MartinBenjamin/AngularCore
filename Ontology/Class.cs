@@ -22,5 +22,12 @@ namespace Ontology
             ) => context.ClassifyIndividual(
                 classifications,
                 individual).Contains(this);
+                
+        bool IClassExpression.Evaluate(
+            IClassMembershipEvaluator evaluator,
+            object                    individual
+            ) => evaluator.Evaluate(
+                this,
+                individual);
     }
 }

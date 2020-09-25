@@ -51,6 +51,14 @@ namespace Ontology
                         context,
                         classifications,
                         value)) >= _cardinality;
+
+        public override bool Evaluate(
+            IClassMembershipEvaluator evaluator,
+            object                    individual
+            ) => evaluator.Evaluate(
+                this,
+                individual);
+
     }
 
     public class ObjectMaxCardinality:
@@ -79,6 +87,13 @@ namespace Ontology
                         context,
                         classifications,
                         value)) <= _cardinality;
+
+        public override bool Evaluate(
+            IClassMembershipEvaluator evaluator,
+            object                    individual
+            ) => evaluator.Evaluate(
+                this,
+                individual);
     }
     
     public class ObjectExactCardinality:
@@ -107,5 +122,12 @@ namespace Ontology
                         context,
                         classifications,
                         value)) == _cardinality;
+
+        public override bool Evaluate(
+            IClassMembershipEvaluator evaluator,
+            object                    individual
+            ) => evaluator.Evaluate(
+                this,
+                individual);
     }
 }

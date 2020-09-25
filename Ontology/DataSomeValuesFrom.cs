@@ -26,5 +26,12 @@ namespace Ontology
             ) => _dataPropertyExpression.Values(
                 context,
                 individual).Any(_dataRange.HasMember);
+
+        public override bool Evaluate(
+            IClassMembershipEvaluator evaluator,
+            object                    individual
+            ) => evaluator.Evaluate(
+                this,
+                individual);
     }
 }

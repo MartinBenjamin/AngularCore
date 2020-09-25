@@ -25,5 +25,12 @@ namespace Ontology
                     classifications,
                     individual,
                     i));
+                    
+        bool IClassExpression.Evaluate(
+            IClassMembershipEvaluator evaluator,
+            object                    individual
+            ) => evaluator.Evaluate(
+                this,
+                individual);
     }
 }

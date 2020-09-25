@@ -4,8 +4,8 @@ using System.Linq;
 namespace Ontology
 {
     public class DataAllValuesFrom:
-        DataPropertyRestriction,
-        IDataAllValuesFrom
+         DataPropertyRestriction,
+         IDataAllValuesFrom
     {
         private IDataRange _dataRange;
 
@@ -26,5 +26,12 @@ namespace Ontology
             ) => _dataPropertyExpression.Values(
                 context,
                 individual).All(_dataRange.HasMember);
+
+        public override bool Evaluate(
+            IClassMembershipEvaluator evaluator,
+            object                    individual
+        ) => evaluator.Evaluate(
+            this,
+            individual);
     }
 }

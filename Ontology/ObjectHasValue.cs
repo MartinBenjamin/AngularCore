@@ -30,5 +30,12 @@ namespace Ontology
                         classifications,
                         _individual,
                         value));
+                        
+       public override bool Evaluate(
+            IClassMembershipEvaluator evaluator,
+            object                    individual
+            ) => evaluator.Evaluate(
+                this,
+                individual);
     }
 }

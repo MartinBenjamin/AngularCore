@@ -58,6 +58,13 @@ namespace Ontology
             ) => Count(
                 context,
                 individual) >= _cardinality;
+
+        public override bool Evaluate(
+            IClassMembershipEvaluator evaluator,
+            object                    individual
+            ) => evaluator.Evaluate(
+                this,
+                individual);
     }
 
     public class DataMaxCardinality:
@@ -82,6 +89,14 @@ namespace Ontology
             ) => Count(
                 context,
                 individual) <= _cardinality;
+
+        public override bool Evaluate(
+            IClassMembershipEvaluator evaluator,
+            object                    individual
+            ) => evaluator.Evaluate(
+                this,
+                individual);
+
     }
 
     public class DataExactCardinality:
@@ -106,5 +121,12 @@ namespace Ontology
             ) => Count(
                 context,
                 individual) == _cardinality;
+
+        public override bool Evaluate(
+            IClassMembershipEvaluator evaluator,
+            object                    individual
+            ) => evaluator.Evaluate(
+                this,
+                individual);
     }
 }

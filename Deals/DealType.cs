@@ -423,7 +423,7 @@ namespace Deals
 
             var NotExclusive = ExclusivityClassifier.NamedIndividual("NotExclusive");
             NotExclusive.Value(commonDomainObjects.Id, ExclusivityClassifierIdentifier.No);
-            var Exclusive = ExclusivityClassifier.Intersect(new ObjectOneOf(this, NotExclusive).Complement());
+            var Exclusive = ExclusivityClassifier.Intersect(new ObjectOneOf(NotExclusive).Complement());
 
             var ExclusiveDeal = this.Class("ExclusiveDeal");
             ExclusiveDeal.Define(new ObjectSomeValuesFrom(Classifiers, Exclusive));

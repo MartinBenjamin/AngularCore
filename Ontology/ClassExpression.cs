@@ -12,5 +12,10 @@ namespace Ontology
             IOntology                                      context,
             IDictionary<object, HashSet<IClassExpression>> classifications,
             object                                         individual);
+
+        public abstract bool Evaluate(
+            IClassMembershipEvaluator evaluator,
+            object                    individual
+            );
     }
 }

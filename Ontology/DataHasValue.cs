@@ -27,5 +27,12 @@ namespace Ontology
             ) => _dataPropertyExpression.Values(
                 context,    
                 individual).Contains(_value);
+
+        public override bool Evaluate(
+            IClassMembershipEvaluator evaluator,
+            object                    individual
+            ) => evaluator.Evaluate(
+                this,
+                individual);
     }
 }

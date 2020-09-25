@@ -350,33 +350,30 @@ namespace Ontology
             )
         {
             var classifications = new Dictionary<object, HashSet<IClassExpression>>();
+            var evaluator = new ClassMembershipEvaluator(
+                ontology,
+                classifications);
             ontology.Classify(
-                classifications,
+                evaluator,
                 individual);
             return classifications;
         }
 
         public static void Classify(
-            this IOntology ontology,
-            IDictionary<object, HashSet<IClassExpression>>
-                           classifications,
-            object         individual
+            this IOntology           ontology,
+            ClassMembershipEvaluator evaluator,
+            object                   individual
             )
         {
-            if(classifications.ContainsKey(individual))
-                return;
+            var classExpressions = evaluator.Classify(individual);
 
-            classifications[individual] = ontology.ClassifyIndividual(
-                classifications,
-                individual);
-
-            foreach(var classExpression in classifications[individual])
+            foreach(var classExpression in classExpressions)
                 foreach(var objectPropertyExpression in ontology.GetObjectPropertyExpressions(classExpression))
                     foreach(object value in objectPropertyExpression.Values(
                         ontology,
                         individual))
                         ontology.Classify(
-                            classifications,
+                            evaluator,
                             value);
         }
     }
