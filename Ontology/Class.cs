@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Ontology
+﻿namespace Ontology
 {
     public class Class:
         Entity,
