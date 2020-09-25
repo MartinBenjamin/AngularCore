@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Ontology
+﻿namespace Ontology
 {
     public class DataHasValue:
         DataPropertyRestriction,

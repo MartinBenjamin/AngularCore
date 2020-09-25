@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Ontology
+﻿namespace Ontology
 {
     public abstract class ObjectCardinality:
         ObjectPropertyRestriction,
@@ -46,7 +43,6 @@ namespace Ontology
             ) => evaluator.Evaluate(
                 this,
                 individual);
-
     }
 
     public class ObjectMaxCardinality:

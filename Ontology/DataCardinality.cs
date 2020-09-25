@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Ontology
+﻿namespace Ontology
 {
     public abstract class DataCardinality:
         DataPropertyRestriction,
@@ -23,17 +20,6 @@ namespace Ontology
         int IDataCardinality.Cardinality => _cardinality;
 
         IDataRange IDataCardinality.DataRange => _dataRange;
-
-        protected int Count(
-            IOntology context,
-            object    individual
-            )
-        {
-            var values = _dataPropertyExpression.Values(
-                context,
-                individual);
-            return _dataRange != null ? values.Count(_dataRange.HasMember) : values.Count();
-        }
     }
 
     public class DataMinCardinality:
@@ -80,7 +66,6 @@ namespace Ontology
             ) => evaluator.Evaluate(
                 this,
                 individual);
-
     }
 
     public class DataExactCardinality:
