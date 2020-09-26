@@ -425,8 +425,8 @@ namespace Deals
             NotExclusive.Value(commonDomainObjects.Id, ExclusivityClassifierIdentifier.No);
             var Exclusive = ExclusivityClassifier.Intersect(new ObjectOneOf(NotExclusive).Complement());
 
-            var intermediate = this.Class("Intermediate");
             var ExclusiveDeal = this.Class("ExclusiveDeal");
+            var intermediate = this.Class("Intermediate");
             intermediate.Define(new ObjectSomeValuesFrom(Classifiers, Exclusive));
             ExclusiveDeal.Define(new ObjectIntersectionOf(intermediate));
 

@@ -1,4 +1,5 @@
 ﻿using CommonDomainObjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,6 +10,22 @@ namespace Ontology
         private readonly IOntology                                               _ontology;
         private readonly IList<(IClass Class, IClassExpression ClassExpression)> _definitions;
         private readonly IDictionary<object, HashSet<IClassExpression>>          _classifications;
+
+        private class ClassVisitor: ClassExpressionVisitor
+        {
+            private readonly Action<IClass> _action;
+
+            public ClassVisitor(
+                Action<IClass> action
+                )
+            {
+                _action = action;
+            }
+
+            public override void Enter(
+                IClass @class) => _action(@class);
+        }
+
 
         public ClassMembershipEvaluator(
             IOntology                                      ontology,
@@ -23,11 +40,41 @@ namespace Ontology
                 where equivalentClasses.ClassExpressions.Contains(@class)
                 from classExpression in equivalentClasses.ClassExpressions
                 where !(classExpression is IClass)
+                group classExpression by @class into classExpressionsGroupedbyClass
                 select
                 (
-                    @class,
-                    classExpression
+                    classExpressionsGroupedbyClass.Key,
+                    classExpressionsGroupedbyClass.First()
                 )).ToList();
+
+            IClass current = null;
+            IList<IClass> adjacent = null;
+            var adjacencyList = _ontology.Get<IClass>()
+                .ToDictionary(
+                    @class => @class,
+                    @class => (IList<IClass>)new List<IClass>());
+
+            var classVisitor = new ClassVisitor(
+                @class =>
+                {
+                    if(!adjacent.Contains(@class))
+                        adjacent.Add(@class);
+                });
+
+            _definitions.ForEach(
+                definition =>
+                {
+                    current = definition.Class;
+                    adjacencyList[current] = adjacent = new List<IClass>();
+                    definition.ClassExpression?.Accept(classVisitor);
+                });
+
+            _definitions = (
+                from @class in adjacencyList.TopologicalSort()
+                join definition in _definitions on @class equals definition.Class
+                where definition.ClassExpression != null
+                select definition
+                ).ToList();
 
         }
 
