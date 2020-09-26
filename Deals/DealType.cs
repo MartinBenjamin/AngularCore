@@ -426,7 +426,9 @@ namespace Deals
             var Exclusive = ExclusivityClassifier.Intersect(new ObjectOneOf(NotExclusive).Complement());
 
             var ExclusiveDeal = this.Class("ExclusiveDeal");
-            ExclusiveDeal.Define(new ObjectSomeValuesFrom(Classifiers, Exclusive));
+            var intermediate = this.Class("Intermediate");
+            intermediate.Define(new ObjectSomeValuesFrom(Classifiers, Exclusive));
+            ExclusiveDeal.Define(new ObjectIntersectionOf(intermediate));
 
             var Exclusivity = this.Class<Exclusivity>();
             var Date = Exclusivity.DataProperty<Exclusivity, DateTime?>(exclusivity => exclusivity.Date);
