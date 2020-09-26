@@ -77,46 +77,43 @@ namespace Ontology
             ) => Classify(individual).Contains(@class);
 
         bool IClassMembershipEvaluator.Evaluate(
-            IDataAllValuesFrom dataAllValuesFrom,
-            object             individual
-            ) => dataAllValuesFrom.DataPropertyExpression.Values(
-                _ontology,
-                individual).All(dataAllValuesFrom.DataRange.HasMember);
-
-        bool IClassMembershipEvaluator.Evaluate(
-            IDataMinCardinality dataMinCardinality,
-            object              individual
-            ) => dataMinCardinality.DataPropertyExpression.Values(
-                _ontology,
-                individual).Count(value => dataMinCardinality.DataRange?.HasMember(value) ?? true) >= dataMinCardinality.Cardinality;
-
-        bool IClassMembershipEvaluator.Evaluate(
-            IDataMaxCardinality dataMaxCardinality,
-            object              individual
-            ) => dataMaxCardinality.DataPropertyExpression.Values(
-                _ontology,
-                individual).Count(value => dataMaxCardinality.DataRange?.HasMember(value) ?? true) <= dataMaxCardinality.Cardinality;
-
-        bool IClassMembershipEvaluator.Evaluate(
-            IDataExactCardinality dataExactCardinality,
+            IObjectIntersectionOf objectIntersectionOf,
             object                individual
-            ) => dataExactCardinality.DataPropertyExpression.Values(
-                _ontology,
-                individual).Count(value => dataExactCardinality.DataRange?.HasMember(value) ?? true) == dataExactCardinality.Cardinality;
+            ) => objectIntersectionOf.ClassExpressions.All(classExpression => classExpression.Evaluate(
+                this,
+                individual));
 
         bool IClassMembershipEvaluator.Evaluate(
-            IDataHasValue dataHasValue,
-            object        individual
-            ) => dataHasValue.DataPropertyExpression.Values(
-                _ontology,
-                individual).Contains(dataHasValue.Value);
+            IObjectUnionOf objectUnionOf,
+            object         individual
+            ) => objectUnionOf.ClassExpressions.Any(classExpression => classExpression.Evaluate(
+                this,
+                individual));
 
         bool IClassMembershipEvaluator.Evaluate(
-            IDataSomeValuesFrom dataSomeValuesFrom,
+            IObjectComplementOf objectComplementOf,
             object              individual
-            ) => dataSomeValuesFrom.DataPropertyExpression.Values(
+            ) => !objectComplementOf.ClassExpression.Evaluate(
+                this,
+                individual);
+
+        bool IClassMembershipEvaluator.Evaluate(
+            IObjectOneOf objectOneOf,
+            object       individual
+            ) => objectOneOf.Individuals.Any(
+                member => AreEqual(
+                    individual,
+                    member));
+
+        bool IClassMembershipEvaluator.Evaluate(
+            IObjectSomeValuesFrom objectSomeValuesFrom,
+            object                individual
+            ) => objectSomeValuesFrom.ObjectPropertyExpression.Values(
                 _ontology,
-                individual).Any(dataSomeValuesFrom.DataRange.HasMember);
+                individual).Any(
+                    value => objectSomeValuesFrom.ClassExpression.Evaluate(
+                        this,
+                        value));
 
         bool IClassMembershipEvaluator.Evaluate(
             IObjectAllValuesFrom objectAllValuesFrom,
@@ -126,6 +123,16 @@ namespace Ontology
                 individual).All(
                     value => objectAllValuesFrom.ClassExpression.Evaluate(
                         this,
+                        value));
+
+        bool IClassMembershipEvaluator.Evaluate(
+            IObjectHasValue objectHasValue,
+            object          individual
+            ) => objectHasValue.ObjectPropertyExpression.Values(
+                _ontology,
+                individual).Any(
+                    value => AreEqual(
+                        objectHasValue.Individual,
                         value));
 
         bool IClassMembershipEvaluator.Evaluate(
@@ -159,53 +166,46 @@ namespace Ontology
                         value)) == objectExactCardinality.Cardinality;
 
         bool IClassMembershipEvaluator.Evaluate(
-            IObjectComplementOf objectComplementOf,
+            IDataSomeValuesFrom dataSomeValuesFrom,
             object              individual
-            ) => !objectComplementOf.ClassExpression.Evaluate(
-                this,
-                individual);
-
-        bool IClassMembershipEvaluator.Evaluate(
-            IObjectHasValue objectHasValue,
-            object          individual
-            ) => objectHasValue.ObjectPropertyExpression.Values(
+            ) => dataSomeValuesFrom.DataPropertyExpression.Values(
                 _ontology,
-                individual).Any(
-                    value => AreEqual(
-                        objectHasValue.Individual,
-                        value));
+                individual).Any(dataSomeValuesFrom.DataRange.HasMember);
 
         bool IClassMembershipEvaluator.Evaluate(
-            IObjectIntersectionOf objectIntersectionOf,
-            object                individual
-            ) => objectIntersectionOf.ClassExpressions.All(classExpression => classExpression.Evaluate(
-                this,
-                individual));
-
-        bool IClassMembershipEvaluator.Evaluate(
-            IObjectOneOf objectOneOf,
-            object       individual
-            ) => objectOneOf.Individuals.Any(
-                member => AreEqual(
-                    individual,
-                    member));
-
-        bool IClassMembershipEvaluator.Evaluate(
-            IObjectSomeValuesFrom objectSomeValuesFrom,
-            object                individual
-            ) => objectSomeValuesFrom.ObjectPropertyExpression.Values(
+            IDataAllValuesFrom dataAllValuesFrom,
+            object             individual
+            ) => dataAllValuesFrom.DataPropertyExpression.Values(
                 _ontology,
-                individual).Any(
-                    value => objectSomeValuesFrom.ClassExpression.Evaluate(
-                        this,
-                        value));
+                individual).All(dataAllValuesFrom.DataRange.HasMember);
 
         bool IClassMembershipEvaluator.Evaluate(
-            IObjectUnionOf objectUnionOf,
-            object         individual
-            ) => objectUnionOf.ClassExpressions.Any(classExpression => classExpression.Evaluate(
-                this,
-                individual));
+            IDataHasValue dataHasValue,
+            object        individual
+            ) => dataHasValue.DataPropertyExpression.Values(
+                _ontology,
+                individual).Contains(dataHasValue.Value);
+
+        bool IClassMembershipEvaluator.Evaluate(
+            IDataMinCardinality dataMinCardinality,
+            object              individual
+            ) => dataMinCardinality.DataPropertyExpression.Values(
+                _ontology,
+                individual).Count(value => dataMinCardinality.DataRange?.HasMember(value) ?? true) >= dataMinCardinality.Cardinality;
+
+        bool IClassMembershipEvaluator.Evaluate(
+            IDataMaxCardinality dataMaxCardinality,
+            object              individual
+            ) => dataMaxCardinality.DataPropertyExpression.Values(
+                _ontology,
+                individual).Count(value => dataMaxCardinality.DataRange?.HasMember(value) ?? true) <= dataMaxCardinality.Cardinality;
+
+        bool IClassMembershipEvaluator.Evaluate(
+            IDataExactCardinality dataExactCardinality,
+            object                individual
+            ) => dataExactCardinality.DataPropertyExpression.Values(
+                _ontology,
+                individual).Count(value => dataExactCardinality.DataRange?.HasMember(value) ?? true) == dataExactCardinality.Cardinality;
 
         private bool AreEqual(
             object lhs,
