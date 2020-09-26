@@ -73,7 +73,6 @@
         public virtual void Enter(IObjectSomeValuesFrom   objectSomeValuesFrom  ) {}
         public virtual void Exit (IObjectSomeValuesFrom   objectSomeValuesFrom  ) {}
         public virtual void Enter(IObjectUnionOf          objectUnionOf         ) {}
-        public virtual void Exit(IObjectUnionOf objectUnionOf                   ) {}
-
+        public virtual void Exit (IObjectUnionOf          objectUnionOf         ) {}
     }
 }
