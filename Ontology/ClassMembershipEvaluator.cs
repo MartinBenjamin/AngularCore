@@ -67,7 +67,6 @@ namespace Ontology
             _definitions = (
                 from @class in adjacencyList.TopologicalSort()
                 join definition in _definitions on @class equals definition.Class
-                where definition.ClassExpression != null
                 select definition
                 ).ToList();
         }
