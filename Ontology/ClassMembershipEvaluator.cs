@@ -48,25 +48,21 @@ namespace Ontology
                 )).ToList();
 
             IClass current = null;
-            IList<IClass> adjacent = null;
+            HashSet<IClass> adjacent = null;
             var adjacencyList = _ontology.Get<IClass>()
                 .ToDictionary(
                     @class => @class,
                     @class => (IList<IClass>)new List<IClass>());
 
-            var classVisitor = new ClassVisitor(
-                @class =>
-                {
-                    if(!adjacent.Contains(@class))
-                        adjacent.Add(@class);
-                });
+            var classVisitor = new ClassVisitor(@class => adjacent.Add(@class));
 
             _definitions.ForEach(
                 definition =>
                 {
                     current = definition.Class;
-                    adjacencyList[current] = adjacent = new List<IClass>();
+                    adjacent = new HashSet<IClass>();
                     definition.ClassExpression?.Accept(classVisitor);
+                    adjacencyList[current] = adjacent.ToList();
                 });
 
             _definitions = (
@@ -75,7 +71,6 @@ namespace Ontology
                 where definition.ClassExpression != null
                 select definition
                 ).ToList();
-
         }
 
         bool IClassMembershipEvaluator.Evaluate(
