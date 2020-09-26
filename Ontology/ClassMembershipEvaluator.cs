@@ -6,8 +6,9 @@ namespace Ontology
 {
     public class ClassMembershipEvaluator: IClassMembershipEvaluator
     {
-        private IOntology                                      _ontology;
-        private IDictionary<object, HashSet<IClassExpression>> _classifications;
+        private readonly IOntology                                               _ontology;
+        private readonly IList<(IClass Class, IClassExpression ClassExpression)> _definitions;
+        private readonly IDictionary<object, HashSet<IClassExpression>>          _classifications;
 
         public ClassMembershipEvaluator(
             IOntology                                      ontology,
@@ -16,6 +17,18 @@ namespace Ontology
         {
             _ontology        = ontology;
             _classifications = classifications;
+            _definitions     = (
+                from @class in _ontology.Get<IClass>()
+                from equivalentClasses in _ontology.Get<IEquivalentClasses>()
+                where equivalentClasses.ClassExpressions.Contains(@class)
+                from classExpression in equivalentClasses.ClassExpressions
+                where !(classExpression is IClass)
+                select
+                (
+                    @class,
+                    classExpression
+                )).ToList();
+
         }
 
         bool IClassMembershipEvaluator.Evaluate(
@@ -220,15 +233,12 @@ namespace Ontology
             }
 
             (
-                from eqivalentClasses in _ontology.Get<IEquivalentClasses>()
-                from @class in eqivalentClasses.ClassExpressions.OfType<IClass>()
-                let classExpression = eqivalentClasses.ClassExpressions.Where(classExpression => !(classExpression is IClass)).FirstOrDefault()
+                from definition in _definitions
                 where
-                    classExpression != null &&
-                    classExpression.Evaluate(
+                    definition.ClassExpression.Evaluate(
                         this,
                         individual)
-                select @class
+                select definition.Class
             ).ForEach(@class => Classify(
                 classExpressions,
                 individual,
