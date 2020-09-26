@@ -16,6 +16,15 @@
 
         IClassExpression IObjectAllValuesFrom.ClassExpression => _classExpression;
 
+        public override void Accept(
+            IClassExpressionVisitor visitor
+            )
+        {
+            visitor.Enter(this);
+            _classExpression.Accept(visitor);
+            visitor.Exit(this);
+        }
+
         public override bool Evaluate(
             IClassMembershipEvaluator evaluator,
             object                    individual

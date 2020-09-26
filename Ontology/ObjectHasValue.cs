@@ -15,8 +15,16 @@
         }
 
         object IObjectHasValue.Individual => _individual;
-                        
-       public override bool Evaluate(
+
+        public override void Accept(
+            IClassExpressionVisitor visitor
+            )
+        {
+            visitor.Enter(this);
+            visitor.Exit(this);
+        }
+
+        public override bool Evaluate(
             IClassMembershipEvaluator evaluator,
             object                    individual
             ) => evaluator.Evaluate(

@@ -14,7 +14,15 @@ namespace Ontology
         }
 
         IList<object> IObjectOneOf.Individuals => _individuals;
-                    
+
+        void IClassExpression.Accept(
+            IClassExpressionVisitor visitor
+            )
+        {
+            visitor.Enter(this);
+            visitor.Exit(this);
+        }
+
         bool IClassExpression.Evaluate(
             IClassMembershipEvaluator evaluator,
             object                    individual

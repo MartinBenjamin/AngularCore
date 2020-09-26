@@ -16,6 +16,14 @@
 
         object IDataHasValue.Value => _value;
 
+        public override void Accept(
+            IClassExpressionVisitor visitor
+            )
+        {
+            visitor.Enter(this);
+            visitor.Exit(this);
+        }
+
         public override bool Evaluate(
             IClassMembershipEvaluator evaluator,
             object                    individual

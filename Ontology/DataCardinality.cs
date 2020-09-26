@@ -37,6 +37,14 @@
         {
         }
 
+        public override void Accept(
+            IClassExpressionVisitor visitor
+            )
+        {
+            visitor.Enter(this);
+            visitor.Exit(this);
+        }
+
         public override bool Evaluate(
             IClassMembershipEvaluator evaluator,
             object                    individual
@@ -60,6 +68,14 @@
         {
         }
 
+        public override void Accept(
+            IClassExpressionVisitor visitor
+            )
+        {
+            visitor.Enter(this);
+            visitor.Exit(this);
+        }
+
         public override bool Evaluate(
             IClassMembershipEvaluator evaluator,
             object                    individual
@@ -81,6 +97,14 @@
                 cardinality,
                 dataRange)
         {
+        }
+
+        public override void Accept(
+            IClassExpressionVisitor visitor
+            )
+        {
+            visitor.Enter(this);
+            visitor.Exit(this);
         }
 
         public override bool Evaluate(

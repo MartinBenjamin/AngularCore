@@ -13,9 +13,10 @@ namespace Ontology
             IDictionary<object, HashSet<IClassExpression>> classifications,
             object                                         individual);
 
+        public abstract void Accept(IClassExpressionVisitor visitor);
+
         public abstract bool Evaluate(
             IClassMembershipEvaluator evaluator,
-            object                    individual
-            );
+            object                    individual);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CommonDomainObjects;
+using System.Collections.Generic;
 
 namespace Ontology
 {
@@ -14,6 +15,15 @@ namespace Ontology
         }
 
         IList<IClassExpression> IObjectUnionOf.ClassExpressions => _classExpressions;
+
+        void IClassExpression.Accept(
+            IClassExpressionVisitor visitor
+            )
+        {
+            visitor.Enter(this);
+            _classExpressions.ForEach(classExpression => classExpression.Accept(visitor));
+            visitor.Exit(this);
+        }
 
         bool IClassExpression.Evaluate(
             IClassMembershipEvaluator evaluator,

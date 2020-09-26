@@ -14,7 +14,8 @@ namespace Ontology
         }
 
         IPropertyExpression IPropertyRestriction.PropertyExpression => _propertyExpression;
-            
+        public abstract void Accept(IClassExpressionVisitor visitor);
+
         public abstract bool Evaluate(
             IClassMembershipEvaluator evaluator,
             object                    individual);

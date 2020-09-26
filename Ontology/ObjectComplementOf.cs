@@ -12,7 +12,16 @@
         }
 
         IClassExpression IObjectComplementOf.ClassExpression => _classExpression;
-                
+
+        void IClassExpression.Accept(
+            IClassExpressionVisitor visitor
+            )
+        {
+            visitor.Enter(this);
+            _classExpression.Accept(visitor);
+            visitor.Exit(this);
+        }
+
         bool IClassExpression.Evaluate(
             IClassMembershipEvaluator evaluator,
             object                    individual
