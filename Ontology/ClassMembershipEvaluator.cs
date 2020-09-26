@@ -47,7 +47,6 @@ namespace Ontology
                     classExpressionsGroupedbyClass.First()
                 )).ToList();
 
-            IClass current = null;
             HashSet<IClass> adjacent = null;
             var adjacencyList = _ontology.Get<IClass>()
                 .ToDictionary(
@@ -59,10 +58,9 @@ namespace Ontology
             _definitions.ForEach(
                 definition =>
                 {
-                    current = definition.Class;
                     adjacent = new HashSet<IClass>();
                     definition.ClassExpression?.Accept(classVisitor);
-                    adjacencyList[current] = adjacent.ToList();
+                    adjacencyList[definition.Class] = adjacent.ToList();
                 });
 
             _definitions = (
