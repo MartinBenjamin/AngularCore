@@ -48,10 +48,11 @@ namespace Ontology
                 )).ToList();
 
             HashSet<IClass> adjacent = null;
+            IList<IClass> empty = Enumerable.Empty<IClass>().ToList();
             var adjacencyList = _ontology.Get<IClass>()
                 .ToDictionary(
                     @class => @class,
-                    @class => (IList<IClass>)new List<IClass>());
+                    @class => empty);
 
             var classVisitor = new ClassVisitor(@class => adjacent.Add(@class));
 
