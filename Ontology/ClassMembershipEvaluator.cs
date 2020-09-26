@@ -207,7 +207,7 @@ namespace Ontology
                 this,
                 individual));
 
-        bool AreEqual(
+        private bool AreEqual(
             object lhs,
             object rhs
             )
