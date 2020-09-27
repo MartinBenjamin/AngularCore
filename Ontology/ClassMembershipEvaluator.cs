@@ -60,7 +60,7 @@ namespace Ontology
                 definition =>
                 {
                     adjacent = new HashSet<IClass>();
-                    definition.ClassExpression?.Accept(classVisitor);
+                    definition.ClassExpression.Accept(classVisitor);
                     adjacencyList[definition.Class] = adjacent;
                 });
 
