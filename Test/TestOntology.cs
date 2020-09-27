@@ -38,6 +38,7 @@ namespace Test
                 x = y;
             Assert.That(x, Is.Not.Null);
             Assert.That(x, Is.EqualTo(0));
+            Assert.That((default(object)).ToEnumerable().Count(), Is.EqualTo(0));
         }
 
         [TestCase(0, true)]

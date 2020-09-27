@@ -205,4 +205,92 @@ namespace Ontology
                 .Select(dataPropertyAssertion => dataPropertyAssertion.TargetValue)
                 .FirstOrDefault();
     }
+
+    public abstract class Property:
+        Entity,
+        IPropertyExpression
+    {
+        protected Property(
+            IOntology ontology,
+            string    name
+            ) : base(
+                ontology,
+                name)
+        {
+        }
+
+        public virtual IEnumerable<object> Values(
+            IOntology context,
+            object    individual
+            )
+        {
+            switch(individual)
+            {
+                case INamedIndividual namedIndividual: return Values(
+                    context,
+                    namedIndividual);
+                default:
+                    var value = individual.GetValue(_name);
+                    return value is IEnumerable<object> enumerable ? enumerable : value.ToEnumerable();
+            }
+        }
+
+        protected abstract IEnumerable<object> Values(
+            IOntology        context,
+            INamedIndividual namedIndividual);
+    }
+
+    public class ObjectProperty:
+        Property,
+        IObjectPropertyExpression
+    {
+        public ObjectProperty(
+            IOntology ontology,
+            string    name
+            ) : base(
+                ontology,
+                name)
+        {
+        }
+
+        protected override IEnumerable<object> Values(
+            IOntology        context,
+            INamedIndividual namedIndividual
+            ) => context
+                .Get<IObjectPropertyAssertion>()
+                .Where(objectPropertyAssertion =>
+                    objectPropertyAssertion.SourceIndividual         == namedIndividual &&
+                    objectPropertyAssertion.ObjectPropertyExpression == this)
+                .Select(objectPropertyAssertion => objectPropertyAssertion.TargetIndividual);
+    }
+
+    public class DataProperty:
+        Property,
+        IDataPropertyExpression
+    {
+        public DataProperty(
+            IOntology ontology,
+            string    name
+            ) : base(
+                ontology,
+                name)
+        {
+        }
+
+        bool IDataPropertyExpression.AreEqual(
+            IOntology context,
+            object    lhs,
+            object    rhs
+            ) => Values(context, lhs).ToHashSet().SetEquals(Values(context, rhs));
+
+        protected override IEnumerable<object> Values(
+            IOntology        context,
+            INamedIndividual namedIndividual
+            ) => context
+                .Get<IDataPropertyAssertion>()
+                .Where(dataPropertyAssertion =>
+                    dataPropertyAssertion.SourceIndividual       == namedIndividual &&
+                    dataPropertyAssertion.DataPropertyExpression == this)
+                .Select(dataPropertyAssertion => dataPropertyAssertion.TargetValue);
+    }
 }
