@@ -48,7 +48,7 @@ namespace Ontology
                 )).ToList();
 
             HashSet<IClass> adjacent = null;
-            IList<IClass> empty = Enumerable.Empty<IClass>().ToList();
+            var empty = new HashSet<IClass>();
             var adjacencyList = _ontology.Get<IClass>()
                 .ToDictionary(
                     @class => @class,
@@ -61,7 +61,7 @@ namespace Ontology
                 {
                     adjacent = new HashSet<IClass>();
                     definition.ClassExpression?.Accept(classVisitor);
-                    adjacencyList[definition.Class] = adjacent.ToList();
+                    adjacencyList[definition.Class] = adjacent;
                 });
 
             _definitions = (

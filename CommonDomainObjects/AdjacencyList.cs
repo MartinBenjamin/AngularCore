@@ -23,10 +23,35 @@ namespace CommonDomainObjects
             return longestPaths[vertex];
         }
 
+        private static int LongestPath<TVertex, TAdjacent>(
+            this IDictionary<TVertex, TAdjacent> graph,
+            IDictionary<TVertex, int>            longestPaths,
+            TVertex                              vertex
+            ) where TAdjacent: IEnumerable<TVertex>
+        {
+            if(!longestPaths.ContainsKey(vertex))
+                longestPaths[vertex] = graph[vertex]
+                    .Select(adjacentVertex => graph.LongestPath(
+                        longestPaths,
+                        adjacentVertex) + 1)
+                    .Append(0)
+                    .Max();
+
+            return longestPaths[vertex];
+        }
+
         public static int LongestPath<TVertex>(
             this IDictionary<TVertex, IList<TVertex>> graph,
             TVertex                                   vertex
             ) => graph.LongestPath(
+                new Dictionary<TVertex, int>(),
+                vertex);
+
+        public static int LongestPath<TVertex, TAdjacent>(
+            this IDictionary<TVertex, TAdjacent> graph,
+            TVertex                              vertex
+            ) where TAdjacent : IEnumerable<TVertex>
+                => graph.LongestPath(
                 new Dictionary<TVertex, int>(),
                 vertex);
 
@@ -37,6 +62,15 @@ namespace CommonDomainObjects
                     new Dictionary<TVertex, int>(),
                     vertex)
                 select vertex;
+
+        public static IEnumerable<TVertex> TopologicalSort<TVertex, TAdjacent>(
+            this IDictionary<TVertex, TAdjacent> graph
+            ) where TAdjacent : IEnumerable<TVertex>
+                => from vertex in graph.Keys
+                 orderby graph.LongestPath(
+                     new Dictionary<TVertex, int>(),
+                     vertex)
+                 select vertex;
 
         public static IDictionary<TVertex, IList<TVertex>> Transpose<TVertex>(
             this IDictionary<TVertex, IList<TVertex>> graph
