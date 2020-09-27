@@ -229,10 +229,24 @@ namespace Ontology
                 case INamedIndividual namedIndividual: return Values(
                     context,
                     namedIndividual);
-                default:
-                    var value = individual.GetValue(_name);
-                    return value is IEnumerable<object> enumerable ? enumerable : value.ToEnumerable();
+                default: return Values(individual);
             }
+        }
+
+        protected IEnumerable<object> Values(
+            object individual
+            )
+        {
+            var propertyInfo = individual.GetType().GetProperty(_name);
+
+            if(propertyInfo == null)
+                return Enumerable.Empty<object>();
+
+            var value = propertyInfo.GetValue(
+                individual,
+                null);
+
+            return value is IEnumerable<object> enumerable ? enumerable : value.ToEnumerable();
         }
 
         protected abstract IEnumerable<object> Values(
