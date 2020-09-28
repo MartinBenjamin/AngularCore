@@ -86,6 +86,14 @@ namespace Ontology
         }
 
         void IClassExpressionVisitor.Visit(
+            IObjectHasSelf objectHasSelf
+            )
+        {
+            _enter?.Visit(objectHasSelf);
+            _exit?.Visit(objectHasSelf);
+        }
+
+        void IClassExpressionVisitor.Visit(
             IObjectMinCardinality objectMinCardinality
             )
         {

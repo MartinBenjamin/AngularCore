@@ -137,6 +137,16 @@ namespace Ontology
                         value));
 
         bool IClassMembershipEvaluator.Evaluate(
+            IObjectHasSelf objectHasValue,
+            object         individual
+            ) => objectHasValue.ObjectPropertyExpression.Values(
+                _ontology,
+                individual).Any(
+                    value => AreEqual(
+                        individual,
+                        value));
+
+        bool IClassMembershipEvaluator.Evaluate(
             IObjectMinCardinality objectMinCardinality,
             object                individual
             ) => objectMinCardinality.ObjectPropertyExpression.Values(

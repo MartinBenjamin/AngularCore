@@ -10,6 +10,7 @@
         void Visit(IObjectSomeValuesFrom   objectSomeValuesFrom  );
         void Visit(IObjectAllValuesFrom    objectAllValuesFrom   );
         void Visit(IObjectHasValue         objectHasValue        );
+        void Visit(IObjectHasSelf          objectHasSelf         );
         void Visit(IObjectMinCardinality   objectMinCardinality  );
         void Visit(IObjectMaxCardinality   objectMinCardinality  );
         void Visit(IObjectExactCardinality objectExactCardinality);
@@ -31,6 +32,7 @@
         public virtual void Visit(IObjectSomeValuesFrom   objectSomeValuesFrom  ) {}
         public virtual void Visit(IObjectAllValuesFrom    objectAllValuesFrom   ) {}
         public virtual void Visit(IObjectHasValue         objectHasValue        ) {}
+        public virtual void Visit(IObjectHasSelf          objectHasSelf         ) {}
         public virtual void Visit(IObjectMinCardinality   objectMinCardinality  ) {}
         public virtual void Visit(IObjectMaxCardinality   objectMaxCardinality  ) {}
         public virtual void Visit(IObjectExactCardinality objectExactCardinality) {}

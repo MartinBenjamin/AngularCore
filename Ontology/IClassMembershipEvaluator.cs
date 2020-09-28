@@ -10,6 +10,7 @@
         bool Evaluate(IObjectSomeValuesFrom   objectSomeValuesFrom  , object individual);
         bool Evaluate(IObjectAllValuesFrom    objectAllValuesFrom   , object individual);
         bool Evaluate(IObjectHasValue         objectHasValue        , object individual);
+        bool Evaluate(IObjectHasSelf          objectHasSelf         , object individual);
         bool Evaluate(IObjectMinCardinality   objectMinCardinality  , object individual);
         bool Evaluate(IObjectMaxCardinality   objectMaxCardinality  , object individual);
         bool Evaluate(IObjectExactCardinality objectExactCardinality, object individual);
