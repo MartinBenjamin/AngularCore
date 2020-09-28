@@ -15,12 +15,7 @@
 
         void IClassExpression.Accept(
             IClassExpressionVisitor visitor
-            )
-        {
-            visitor.Enter(this);
-            _classExpression.Accept(visitor);
-            visitor.Exit(this);
-        }
+            ) => visitor.Visit(this);
 
         bool IClassExpression.Evaluate(
             IClassMembershipEvaluator evaluator,

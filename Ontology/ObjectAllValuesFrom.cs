@@ -18,12 +18,7 @@
 
         public override void Accept(
             IClassExpressionVisitor visitor
-            )
-        {
-            visitor.Enter(this);
-            _classExpression.Accept(visitor);
-            visitor.Exit(this);
-        }
+            ) => visitor.Visit(this);
 
         public override bool Evaluate(
             IClassMembershipEvaluator evaluator,

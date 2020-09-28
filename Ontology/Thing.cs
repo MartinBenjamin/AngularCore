@@ -12,11 +12,7 @@
 
         void IClassExpression.Accept(
             IClassExpressionVisitor visitor
-            )
-        {
-            visitor.Enter(this);
-            visitor.Exit(this);
-        }
+            ) => visitor.Visit(this);
 
         bool IClassExpression.Evaluate(
             IClassMembershipEvaluator evaluator,

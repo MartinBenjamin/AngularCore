@@ -2,77 +2,43 @@
 {
     public interface IClassExpressionVisitor
     {
-        void Enter(IClass                  @class                );
-        void Exit (IClass                  @class                );
-        void Enter(IObjectIntersectionOf   objectIntersectionOf  );
-        void Exit (IObjectIntersectionOf   objectIntersectionOf  );
-        void Enter(IObjectUnionOf          objectUnionOf         );
-        void Exit (IObjectUnionOf          objectUnionOf         );
-        void Enter(IObjectComplementOf     objectComplementOf    );
-        void Exit (IObjectComplementOf     objectComplementOf    );
-        void Enter(IObjectOneOf            objectOneOf           );
-        void Exit (IObjectOneOf            objectOneOf           );
-        void Enter(IObjectSomeValuesFrom   objectSomeValuesFrom  );
-        void Exit (IObjectSomeValuesFrom   objectSomeValuesFrom  );
-        void Enter(IObjectAllValuesFrom    objectAllValuesFrom   );
-        void Exit (IObjectAllValuesFrom    objectAllValuesFrom   );
-        void Enter(IObjectHasValue         objectHasValue        );
-        void Exit (IObjectHasValue         objectHasValue        );
-        void Enter(IObjectMinCardinality   objectMinCardinality  );
-        void Exit (IObjectMinCardinality   objectMinCardinality  );
-        void Enter(IObjectMaxCardinality   objectMaxCardinality  );
-        void Exit (IObjectMaxCardinality   objectMaxCardinality  );
-        void Enter(IObjectExactCardinality objectExactCardinality);
-        void Exit (IObjectExactCardinality objectExactCardinality);
-        void Enter(IDataSomeValuesFrom     dataSomeValuesFrom    );
-        void Exit (IDataSomeValuesFrom     dataSomeValuesFrom    );
-        void Enter(IDataAllValuesFrom      dataAllValuesFrom     );
-        void Exit (IDataAllValuesFrom      dataAllValuesFrom     );
-        void Enter(IDataHasValue           dataHasValue          );
-        void Exit (IDataHasValue           dataHasValue          );
-        void Enter(IDataMinCardinality     dataMinCardinality    );
-        void Exit (IDataMinCardinality     dataMinCardinality    );
-        void Enter(IDataMaxCardinality     dataMaxCardinality    );
-        void Exit (IDataMaxCardinality     dataMaxCardinality    );
-        void Enter(IDataExactCardinality   dataExactCardinality  );
-        void Exit (IDataExactCardinality   dataExactCardinality  );
+        void Visit(IClass                  @class                );
+        void Visit(IObjectIntersectionOf   objectIntersectionOf  );
+        void Visit(IObjectUnionOf          objectUnionOf         );
+        void Visit(IObjectComplementOf     objectComplementOf    );
+        void Visit(IObjectOneOf            objectOneOf           );
+        void Visit(IObjectSomeValuesFrom   objectSomeValuesFrom  );
+        void Visit(IObjectAllValuesFrom    objectAllValuesFrom   );
+        void Visit(IObjectHasValue         objectHasValue        );
+        void Visit(IObjectMinCardinality   objectMinCardinality  );
+        void Visit(IObjectMaxCardinality   objectMinCardinality  );
+        void Visit(IObjectExactCardinality objectExactCardinality);
+        void Visit(IDataSomeValuesFrom     dataSomeValuesFrom    );
+        void Visit(IDataAllValuesFrom      dataAllValuesFrom     );
+        void Visit(IDataHasValue           dataHasValue          );
+        void Visit(IDataMinCardinality     dataMinCardinality    );
+        void Visit(IDataMaxCardinality     dataMaxCardinality    );
+        void Visit(IDataExactCardinality   dataExactCardinality  );
     }
 
     public class ClassExpressionVisitor: IClassExpressionVisitor
     {
-        public virtual void Enter(IClass                  @class                ) {}
-        public virtual void Exit (IClass                  @class                ) {}
-        public virtual void Enter(IObjectIntersectionOf   objectIntersectionOf  ) {}
-        public virtual void Exit (IObjectIntersectionOf   objectIntersectionOf  ) {}
-        public virtual void Enter(IObjectUnionOf          objectUnionOf         ) {}
-        public virtual void Exit (IObjectUnionOf          objectUnionOf         ) {}
-        public virtual void Enter(IObjectComplementOf     objectComplementOf    ) {}
-        public virtual void Exit (IObjectComplementOf     objectComplementOf    ) {}
-        public virtual void Enter(IObjectOneOf            objectOneOf           ) {}
-        public virtual void Exit (IObjectOneOf            objectOneOf           ) {}
-        public virtual void Enter(IObjectSomeValuesFrom   objectSomeValuesFrom  ) {}
-        public virtual void Exit (IObjectSomeValuesFrom   objectSomeValuesFrom  ) {}
-        public virtual void Enter(IObjectAllValuesFrom    objectAllValuesFrom   ) {}
-        public virtual void Exit (IObjectAllValuesFrom    objectAllValuesFrom   ) {}
-        public virtual void Enter(IObjectHasValue         objectHasValue        ) {}
-        public virtual void Exit (IObjectHasValue         objectHasValue        ) {}
-        public virtual void Enter(IObjectMinCardinality   objectMinCardinality  ) {}
-        public virtual void Exit (IObjectMinCardinality   objectMinCardinality  ) {}
-        public virtual void Enter(IObjectMaxCardinality   objectMaxCardinality  ) {}
-        public virtual void Exit (IObjectMaxCardinality   objectMaxCardinality  ) {}
-        public virtual void Enter(IObjectExactCardinality objectExactCardinality) {}
-        public virtual void Exit (IObjectExactCardinality objectExactCardinality) {}
-        public virtual void Enter(IDataSomeValuesFrom     dataSomeValuesFrom    ) {}
-        public virtual void Exit (IDataSomeValuesFrom     dataSomeValuesFrom    ) {}
-        public virtual void Enter(IDataAllValuesFrom      dataAllValuesFrom     ) {}
-        public virtual void Exit (IDataAllValuesFrom      dataAllValuesFrom     ) {}
-        public virtual void Enter(IDataHasValue           dataHasValue          ) {}
-        public virtual void Exit (IDataHasValue           dataHasValue          ) {}
-        public virtual void Enter(IDataMinCardinality     dataMinCardinality    ) {}
-        public virtual void Exit (IDataMinCardinality     dataMinCardinality    ) {}
-        public virtual void Enter(IDataMaxCardinality     dataMaxCardinality    ) {}
-        public virtual void Exit (IDataMaxCardinality     dataMaxCardinality    ) {}
-        public virtual void Enter(IDataExactCardinality   dataExactCardinality  ) {}
-        public virtual void Exit (IDataExactCardinality   dataExactCardinality  ) {}
+        public virtual void Visit(IClass                  @class                ) {}
+        public virtual void Visit(IObjectIntersectionOf   objectIntersectionOf  ) {}
+        public virtual void Visit(IObjectUnionOf          objectUnionOf         ) {}
+        public virtual void Visit(IObjectComplementOf     objectComplementOf    ) {}
+        public virtual void Visit(IObjectOneOf            objectOneOf           ) {}
+        public virtual void Visit(IObjectSomeValuesFrom   objectSomeValuesFrom  ) {}
+        public virtual void Visit(IObjectAllValuesFrom    objectAllValuesFrom   ) {}
+        public virtual void Visit(IObjectHasValue         objectHasValue        ) {}
+        public virtual void Visit(IObjectMinCardinality   objectMinCardinality  ) {}
+        public virtual void Visit(IObjectMaxCardinality   objectMaxCardinality  ) {}
+        public virtual void Visit(IObjectExactCardinality objectExactCardinality) {}
+        public virtual void Visit(IDataSomeValuesFrom     dataSomeValuesFrom    ) {}
+        public virtual void Visit(IDataAllValuesFrom      dataAllValuesFrom     ) {}
+        public virtual void Visit(IDataHasValue           dataHasValue          ) {}
+        public virtual void Visit(IDataMinCardinality     dataMinCardinality    ) {}
+        public virtual void Visit(IDataMaxCardinality     dataMaxCardinality    ) {}
+        public virtual void Visit(IDataExactCardinality   dataExactCardinality  ) {}
     }
 }

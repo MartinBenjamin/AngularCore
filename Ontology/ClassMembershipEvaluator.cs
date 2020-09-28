@@ -22,8 +22,9 @@ namespace Ontology
                 _action = action;
             }
 
-            public override void Enter(
-                IClass @class) => _action(@class);
+            public override void Visit(
+                IClass @class
+                ) => _action(@class);
         }
 
 
@@ -54,7 +55,7 @@ namespace Ontology
                     @class => @class,
                     @class => empty);
 
-            var classVisitor = new ClassVisitor(@class => adjacent.Add(@class));
+            var classVisitor = new ClassExpressionNavigator(new ClassVisitor(@class => adjacent.Add(@class)));
 
             _definitions.ForEach(
                 definition =>
