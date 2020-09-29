@@ -175,13 +175,15 @@ namespace Test
             (
                 from classExpression in classes
                 from axiom in dealOntology.GetSuperClasses(classExpression)
+                let objectCardinality = axiom.SuperClassExpression as IObjectCardinality
                 where
-                    axiom.SuperClassExpression is IObjectCardinality objectCardinality &&
-                    objectCardinality.ObjectPropertyExpression == dealOntology.Sponsors
+                    objectCardinality?.ObjectPropertyExpression == dealOntology.Sponsors
                 select
-                    new Range2<int>(
-                        (axiom.SuperClassExpression as IObjectMinCardinality)?.Cardinality ?? 0,
-                        (axiom.SuperClassExpression as IObjectMaxCardinality)?.Cardinality)).First();
+                    objectCardinality is IObjectMinCardinality ?
+                        new Range2<int>(objectCardinality.Cardinality, null) :
+                        objectCardinality is IObjectMaxCardinality ?
+                            new Range2<int>(0, objectCardinality.Cardinality) :
+                            new Range2<int>(objectCardinality.Cardinality, objectCardinality.Cardinality)).FirstOrDefault();
 
             Assert.That(sponsorCardinality.Start, Is.EqualTo(start));
             Assert.That(sponsorCardinality.End  , Is.EqualTo(end  ));
