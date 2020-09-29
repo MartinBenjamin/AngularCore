@@ -55,7 +55,9 @@ namespace CommonDomainObjects
         }
 
         public override int GetHashCode()
-            => Start.GetHashCode();
+            => HashCode.Combine(
+                Start.GetHashCode(),
+                End.GetHashCode());
 
         public override string ToString()
             => string.Format(
@@ -131,7 +133,9 @@ namespace CommonDomainObjects
         }
 
         public override int GetHashCode()
-            => Start.GetHashCode();
+            => HashCode.Combine(
+                Start.GetHashCode(),
+                End.GetHashCode());
 
         public static bool operator ==(
             Range2<T> lhs,
