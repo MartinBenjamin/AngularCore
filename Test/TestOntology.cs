@@ -158,11 +158,12 @@ namespace Test
             Assert.That(dealOntology.Validate(classifications)[deal][dealOntology.Sponsors].Any(), Is.Not.EqualTo(result));
         }
 
-        [TestCase("ProjectFinance", false)]
-        [TestCase("Advisory"      , true )]
-        public void NoSponsors(
+        [TestCase("ProjectFinance", 1, null)]
+        [TestCase("Advisory"      , 0, 0   )]
+        public void SponsorMultiplicity(
             string className,
-            bool   result
+            int?   start,
+            int?   end
             )
         {
             var dealOntology = new DealOntology();
@@ -170,22 +171,20 @@ namespace Test
             Assert.That(@class, Is.Not.Null);
             var classes = dealOntology.SuperClasses(@class);
 
-            var subClassOf =
+            var sponsorCardinality =
             (
                 from classExpression in classes
                 from axiom in dealOntology.GetSuperClasses(classExpression)
-                from annotation in axiom.Annotations
-                from annotationAnnotation in annotation.Annotations
                 where
-                    annotation.Property == Validation.Instance.Restriction &&
-                    annotationAnnotation.Property == Validation.Instance.SubPropertyName &&
-                    annotationAnnotation.Value.Equals("Sponsors") &&
-                    axiom.SuperClassExpression is IObjectMaxCardinality objectMaxCardinality &&
-                    objectMaxCardinality.Cardinality == 0
-                select axiom
-            ).FirstOrDefault();
+                    axiom.SuperClassExpression is IObjectCardinality objectCardinality &&
+                    objectCardinality.ObjectPropertyExpression == dealOntology.Sponsors
+                select
+                    new Range2<int>(
+                        (axiom.SuperClassExpression as IObjectMinCardinality)?.Cardinality ?? 0,
+                        (axiom.SuperClassExpression as IObjectMaxCardinality)?.Cardinality)).First();
 
-            Assert.That(subClassOf != null, Is.EqualTo(result));
+            Assert.That(sponsorCardinality.Start, Is.EqualTo(start));
+            Assert.That(sponsorCardinality.End  , Is.EqualTo(end  ));
         }
 
         [TestCase(0, false)]

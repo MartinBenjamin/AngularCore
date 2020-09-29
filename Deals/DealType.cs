@@ -381,6 +381,10 @@ namespace Deals
             var Advisory = this.Class("Advisory");
             Advisory.SubClassOf(Deal);
             Advisory.SubClassOf(Parties.ExactCardinality(1, dealParties.BankAdvisorParty));
+            Advisory.SubClassOf(Sponsors.MaxCardinality(0))
+                .Annotate(
+                    validation.Restriction,
+                    0);
             Advisory.SubClassOf(Parties.MaxCardinality(0, dealParties.SponsorParty))
                 .Annotate(
                     validation.Restriction,
