@@ -1,44 +1,61 @@
-﻿using CommonDomainObjects;
+﻿using Autofac;
+using CommonDomainObjects;
 using Deals;
 using NUnit.Framework;
 using Ontology;
 using Organisations;
 using Roles;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
 namespace Test
 {
+    public class OntologyModule: Autofac.Module
+    {
+        public OntologyModule()
+        {
+        }
+
+        protected override void Load(
+            ContainerBuilder builder
+            )
+        {
+            builder.RegisterType<Deals.CommonDomainObjects>().AsSelf().As<IOntology>().SingleInstance();
+            builder.RegisterType<Deals.Validation         >().AsSelf().As<IOntology>().SingleInstance();
+            builder.RegisterType<Deals.Roles              >().AsSelf().As<IOntology>().SingleInstance();
+            builder.RegisterType<Deals.RoleIndividuals    >().AsSelf().As<IOntology>().SingleInstance();
+            builder.RegisterType<Deals.Organisations      >().AsSelf().As<IOntology>().SingleInstance();
+            builder.RegisterType<Deals.LegalEntities      >().AsSelf().As<IOntology>().SingleInstance();
+            builder.RegisterType<Deals.Parties            >().AsSelf().As<IOntology>().SingleInstance();
+            builder.RegisterType<Deals.Deals              >().AsSelf().As<IOntology>().SingleInstance();
+            builder.RegisterType<Deals.ProjectFinance     >().AsSelf().As<IOntology>().SingleInstance();
+        }
+    }
     [TestFixture]
     public class TestOntology
     {
         private const string _listenerName = "TestListener";
 
-        private static readonly Deals.CommonDomainObjects _commonDomainObjects = new Deals.CommonDomainObjects();
-        private static readonly Deals.Validation          _validation          = new Deals.Validation();
-        private static readonly Deals.Roles               _roles               = new Deals.Roles(
-            _commonDomainObjects);
-        private static readonly Deals.RoleIndividuals     _roleIndividuals     = new Deals.RoleIndividuals(
-            _commonDomainObjects,
-            _roles);
-        private static readonly Deals.Organisations       _organisations       = new Deals.Organisations(
-            _commonDomainObjects);
-        private static readonly Deals.Parties             _parties             = new Deals.Parties(
-            _commonDomainObjects);
-        private static readonly Deals.LegalEntities       _legalEntities       = new Deals.LegalEntities(
-            _organisations);
-        private static readonly Deals.Deals               _deals               = new Deals.Deals(
-            _commonDomainObjects,
-            _roles,
-            _roleIndividuals,
-            _legalEntities,
-            _parties,
-            _validation);
-        private readonly Deals.ProjectFinance             _projectFinance      = new Deals.ProjectFinance(
-            _deals,
-            _validation);
+        private Deals.CommonDomainObjects _commonDomainObjects;
+        private Deals.Validation          _validation         ;
+        private Deals.Deals               _deals              ;
+        private Deals.ProjectFinance      _projectFinance     ;
+
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            var builder = new ContainerBuilder();
+            builder
+                .RegisterModule<OntologyModule>();
+
+            var container = builder.Build();
+
+            _commonDomainObjects = container.Resolve<Deals.CommonDomainObjects>();
+            _validation          = container.Resolve<Deals.Validation         >();
+            _deals               = container.Resolve<Deals.Deals              >();
+            _projectFinance      = container.Resolve<Deals.ProjectFinance     >();
+        }
 
         [SetUp]
         public void SetUp()
