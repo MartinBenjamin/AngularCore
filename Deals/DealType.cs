@@ -34,9 +34,7 @@ namespace Deals
         public readonly IDataPropertyExpression Name;
         public readonly IClass                  Classifier;
 
-        private static CommonDomainObjects _instance;
-
-        private CommonDomainObjects() : base("CommonDomainObjects")
+        public CommonDomainObjects() : base("CommonDomainObjects")
         {
             DomainObject = this.Class<DomainObject<Guid>>();
             Id = DomainObject.DataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
@@ -49,17 +47,6 @@ namespace Deals
             Classifier = this.Class<Classifier>();
             Classifier.SubClassOf(Named);
         }
-
-        public static CommonDomainObjects Instance
-        {
-            get
-            {
-                if(_instance == null)
-                    _instance = new CommonDomainObjects();
-
-                return _instance;
-            }
-        }
     }
 
     public class Validation: Ontology.Ontology
@@ -68,9 +55,7 @@ namespace Deals
         public readonly IAnnotationProperty SubPropertyName;
         public readonly IAnnotationProperty RangeValidated;
 
-        private static Validation _instance;
-
-        private Validation() : base("Validation")
+        public Validation() : base("Validation")
         {
             Restriction = new AnnotationProperty(
                 this,
@@ -82,41 +67,20 @@ namespace Deals
                 this,
                 "RangeValidated");
         }
-        public static Validation Instance
-        {
-            get
-            {
-                if(_instance == null)
-                    _instance = new Validation();
-
-                return _instance;
-            }
-        }
     }
 
     public class Roles: Ontology.Ontology
     {
         public readonly IClass Role;
 
-        private static Roles _instance;
-
-        private Roles() : base(
-            "Roles",
-            CommonDomainObjects.Instance)
+        public Roles(
+            CommonDomainObjects commonDomainObjects
+            ) : base(
+                "Roles",
+                commonDomainObjects)
         {
             Role = this.Class<Role>();
-            Role.SubClassOf(CommonDomainObjects.Instance.Named);
-        }
-
-        public static Roles Instance
-        {
-            get
-            {
-                if(_instance == null)
-                    _instance = new Roles();
-
-                return _instance;
-            }
+            Role.SubClassOf(commonDomainObjects.Named);
         }
     }
 
@@ -124,25 +88,14 @@ namespace Deals
     {
         public readonly IClass Organisation;
 
-        private static Organisations _instance;
-
-        private Organisations() : base(
-            "Organisations",
-            CommonDomainObjects.Instance)
+        public Organisations(
+            CommonDomainObjects commonDomainObjects
+            ) : base(
+                "Organisations",
+                commonDomainObjects)
         {
             Organisation = this.Class<Organisation>();
-            Organisation.SubClassOf(CommonDomainObjects.Instance.Named);
-        }
-
-        public static Organisations Instance
-        {
-            get
-            {
-                if(_instance == null)
-                    _instance = new Organisations();
-
-                return _instance;
-            }
+            Organisation.SubClassOf(commonDomainObjects.Named);
         }
     }
 
@@ -150,25 +103,14 @@ namespace Deals
     {
         public readonly IClass LegalEntity;
 
-        private static LegalEntities _instance;
-
-        private LegalEntities() : base(
-            "LegalEntities",
-            Organisations.Instance)
+        public LegalEntities(
+            Organisations organisations
+            ) : base(
+                "LegalEntities",
+                organisations)
         {
             LegalEntity = this.Class<LegalEntity>();
-            LegalEntity.SubClassOf(Organisations.Instance.Organisation);
-        }
-
-        public static LegalEntities Instance
-        {
-            get
-            {
-                if(_instance == null)
-                    _instance = new LegalEntities();
-
-                return _instance;
-            }
+            LegalEntity.SubClassOf(organisations.Organisation);
         }
     }
 
@@ -179,30 +121,17 @@ namespace Deals
         public readonly IObjectPropertyExpression Organisation;
         public readonly IObjectPropertyExpression Person;
 
-        private static Parties _instance;
-
-        private Parties() : base(
-            "Parties",
-            CommonDomainObjects.Instance,
-            Roles.Instance)
+        public Parties(
+            CommonDomainObjects commonDomainObjects
+            ) : base(
+                "Parties",
+                commonDomainObjects)
         {
-            var commonDomainObjects = CommonDomainObjects.Instance;
             PartyInRole = this.Class<PartyInRole>();
             PartyInRole.SubClassOf(commonDomainObjects.DomainObject);
             Role         = PartyInRole.ObjectProperty<PartyInRole, Role        >(partyInRole => partyInRole.Role        );
             Organisation = PartyInRole.ObjectProperty<PartyInRole, Organisation>(partyInRole => partyInRole.Organisation);
             Person       = PartyInRole.ObjectProperty<PartyInRole, Person      >(partyInRole => partyInRole.Person      );
-        }
-
-        public static Parties Instance
-        {
-            get
-            {
-                if(_instance == null)
-                    _instance = new Parties();
-
-                return _instance;
-            }
         }
     }
 
@@ -213,34 +142,24 @@ namespace Deals
         public readonly INamedIndividual Lender;
         public readonly INamedIndividual Advisor;
 
-        private static RoleIndividuals _instance;
-
-        private RoleIndividuals() : base(
-            "RoleIndividuals",
-            CommonDomainObjects.Instance,
-            Roles.Instance)
+        public RoleIndividuals(
+            CommonDomainObjects commonDomainObjects,
+            Roles               roles
+            ) : base(
+                "RoleIndividuals",
+                commonDomainObjects,
+                roles)
         {
-            var role = Roles.Instance.Role;
-            var id = CommonDomainObjects.Instance.Id;
-            Sponsor  = role.NamedIndividual("Sponsor");
+            var role = roles.Role;
+            var id = commonDomainObjects.Id;
+            Sponsor  = role.NamedIndividual("Sponsor" );
             Borrower = role.NamedIndividual("Borrower");
-            Lender   = role.NamedIndividual("Lender");
-            Advisor  = role.NamedIndividual("Advisor");
+            Lender   = role.NamedIndividual("Lender"  );
+            Advisor  = role.NamedIndividual("Advisor" );
             Sponsor.Value(id, DealRoleIdentifier.Sponsor);
             Borrower.Value(id, DealRoleIdentifier.Borrower);
             Lender.Value(id, DealRoleIdentifier.Lender);
             Advisor.Value(id, DealRoleIdentifier.Advisor);
-        }
-
-        public static RoleIndividuals Instance
-        {
-            get
-            {
-                if(_instance == null)
-                    _instance = new RoleIndividuals();
-
-                return _instance;
-            }
         }
     }
 
@@ -274,20 +193,21 @@ namespace Deals
         public readonly IClass                    KeyCounterpartyRole;
         public readonly IClass                    KeyCounterparty;
 
-        public Deals(): base(
-            "Deals",
-            CommonDomainObjects.Instance,
-            Roles.Instance,
-            RoleIndividuals.Instance,
-            global::Deals.Parties.Instance,
-            Validation.Instance)
+        public Deals(
+            CommonDomainObjects commonDomainObjects,
+            Roles               roles,
+            RoleIndividuals     roleIndividuals,
+            LegalEntities       legalEntities,
+            Parties             parties,
+            Validation          validation
+            ): base(
+                "Deals",
+                commonDomainObjects,
+                roles,
+                roleIndividuals,
+                parties,
+                validation)
         {
-            var commonDomainObjects = CommonDomainObjects.Instance;
-            var roles               = Roles.Instance;
-            var roleIndividuals     = RoleIndividuals.Instance;
-            var parties             = global::Deals.Parties.Instance;
-            var validation          = Validation.Instance;
-
             var Deal        = this.Class<Deal>();
             Deal.SubClassOf(commonDomainObjects.Named);
             Parties     = Deal.ObjectProperty<Deal, DealParty >(deal => deal.Parties    );
@@ -313,10 +233,10 @@ namespace Deals
 
             DealParty = this.Class<DealParty>();
             DealParty.SubClassOf(parties.PartyInRole);
-            LenderParty   = this.Class("LenderParty");
-            AdvisorParty  = this.Class("AdvisorParty");
+            LenderParty   = this.Class("LenderParty"  );
+            AdvisorParty  = this.Class("AdvisorParty" );
             BorrowerParty = this.Class("BorrowerParty");
-            SponsorParty  = this.Class("SponsorParty");
+            SponsorParty  = this.Class("SponsorParty" );
             
             LenderParty.Define(parties.Role.HasValue(roleIndividuals.Lender));
             AdvisorParty.Define(parties.Role.HasValue(roleIndividuals.Advisor));
@@ -329,10 +249,10 @@ namespace Deals
             Sponsor
                 .SubClassOf(Equity.ExactCardinality(1))
                 .Annotate(
-                    Validation.Instance.Restriction,
+                    validation.Restriction,
                     0);
 
-            Bank             = LegalEntities.Instance.LegalEntity.NamedIndividual("Bank");
+            Bank             = legalEntities.LegalEntity.NamedIndividual("Bank");
             BankParty        = this.Class("BankParty");
             BankLenderParty  = this.Class("BankLenderParty");
             BankAdvisorParty = this.Class("BankAdvisorParty");
@@ -414,20 +334,17 @@ namespace Deals
     {
         public readonly IClass Deal;
 
-        public ProjectFinance(): base("ProjectFinance")
+        public ProjectFinance(
+            Deals      deals,
+            Validation validation
+            ): base(
+                "ProjectFinance",
+                deals,
+                validation)
         {
-            var deal       = new Deals();
-            var validation = Validation.Instance;
-
-            _imports = new IOntology[]
-            {
-                deal,
-                validation
-            };
-
             var Deal = this.Class("Deal");
-            Deal.SubClassOf(deal.Debt);
-            Deal.SubClassOf(deal.Sponsors.MinCardinality(1))
+            Deal.SubClassOf(deals.Debt);
+            Deal.SubClassOf(deals.Sponsors.MinCardinality(1))
                 .Annotate(
                     validation.Restriction,
                     0);
@@ -454,7 +371,7 @@ namespace Deals
                 where
                     subClassOf.SubClassExpression == classExpression &&
                     subClassOf.SuperClassExpression is IPropertyRestriction &&
-                    annotation.Property == Validation.Instance.Restriction &&
+                    annotation.Property.Iri == "Validation.Restriction" &&
                     !subClassOf.SuperClassExpression.Evaluate(
                         evaluator,
                         individual)
