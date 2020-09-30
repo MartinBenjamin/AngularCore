@@ -44,6 +44,40 @@ namespace CommonDomainObjects
                     vertex)
                 select vertex;
         }
+
+        public static void AddEdge<TOut, TIn>(
+            this IList<IEdge<Type>>                  edges,
+            Expression<Func<TOut, IEnumerable<TIn>>> selectIncoming
+            ) where TIn : class
+        {
+            var memberExpression = selectIncoming.Body as MemberExpression;
+
+            if(memberExpression == null)
+                throw new ArgumentException(
+                    "Body of Expression must be a MemberExpression.",
+                    nameof(selectIncoming));
+
+            edges.Add(new OneToManyEdge<TOut, TIn>(
+                memberExpression.Member.Name,
+                selectIncoming.Compile()));
+        }
+
+        public static void AddEdge<TOut, TIn>(
+            this IList<IEdge<Type>>     edges,
+            Expression<Func<TOut, TIn>> selectIncoming
+            ) where TIn : class
+        {
+            var memberExpression = selectIncoming.Body as MemberExpression;
+
+            if(memberExpression == null)
+                throw new ArgumentException(
+                    "Body of Expression must be a MemberExpression.",
+                    nameof(selectIncoming));
+
+            edges.Add(new ManyToOneEdge<TOut, TIn>(
+                memberExpression.Member.Name,
+                selectIncoming.Compile()));
+        }
     }
 
     public abstract class Graph<TGraph, TVertex, TEdge>
@@ -230,12 +264,30 @@ namespace CommonDomainObjects
         private Func<TOut, IEnumerable<TIn>> _selectIncoming;
 
         public OneToManyEdge(
+            string                       name,
+            Func<TOut, IEnumerable<TIn>> selectIncoming
+            ) : base(
+                typeof(TOut),
+                typeof(TIn))
+        {
+            Name            = name;
+            _selectIncoming = selectIncoming;
+        }
+
+        public OneToManyEdge(
             Expression<Func<TOut, IEnumerable<TIn>>> selectIncoming
             ) : base(
                 typeof(TOut),
                 typeof(TIn))
         {
-            Name = selectIncoming.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TIn).Name;
+            var memberExpression = selectIncoming.Body as MemberExpression;
+
+            if(memberExpression == null)
+                throw new ArgumentException(
+                    "Body of Expression must be a MemberExpression.",
+                    nameof(selectIncoming));
+
+            Name            = memberExpression.Member.Name;
             _selectIncoming = selectIncoming.Compile();
         }
 
@@ -250,12 +302,30 @@ namespace CommonDomainObjects
         private Func<TOut, TIn> _selectIncoming;
 
         public ManyToOneEdge(
+            string name,
+            Func<TOut, TIn> selectIncoming
+            ) : base(
+                typeof(TOut),
+                typeof(TIn))
+        {
+            Name            = name;
+            _selectIncoming = selectIncoming;
+        }
+
+        public ManyToOneEdge(
             Expression<Func<TOut, TIn>> selectIncoming
             ) : base(
                 typeof(TOut),
                 typeof(TIn))
         {
-            Name = selectIncoming.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TIn).Name;
+            var memberExpression = selectIncoming.Body as MemberExpression;
+
+            if(memberExpression == null)
+                throw new ArgumentException(
+                    "Body of Expression must be a MemberExpression.",
+                    nameof(selectIncoming));
+
+            Name            = memberExpression.Member.Name;
             _selectIncoming = selectIncoming.Compile();
         }
 
