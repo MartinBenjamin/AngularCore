@@ -244,9 +244,11 @@ namespace Deals
         }
     }
 
-    public class DealOntology: Ontology.Ontology
+    public class Deals: Ontology.Ontology
     {
         public readonly IClass                    Deal;
+        public readonly IClass                    Debt;
+        public readonly IClass                    Advisory;
 
         public readonly IObjectPropertyExpression Parties;
         public readonly IObjectPropertyExpression Commitments;
@@ -272,18 +274,18 @@ namespace Deals
         public readonly IClass                    KeyCounterpartyRole;
         public readonly IClass                    KeyCounterparty;
 
-        public DealOntology(): base(
+        public Deals(): base(
             "Deals",
             CommonDomainObjects.Instance,
             Roles.Instance,
             RoleIndividuals.Instance,
-            Deals.Parties.Instance,
+            global::Deals.Parties.Instance,
             Validation.Instance)
         {
             var commonDomainObjects = CommonDomainObjects.Instance;
             var roles               = Roles.Instance;
             var roleIndividuals     = RoleIndividuals.Instance;
-            var parties             = Deals.Parties.Instance;
+            var parties             = global::Deals.Parties.Instance;
             var validation          = Validation.Instance;
 
             var Deal        = this.Class<Deal>();
@@ -342,35 +344,21 @@ namespace Deals
             KeyCounterparty     = this.Class("KeyCounterparty");
             KeyCounterparty.Define(new ObjectSomeValuesFrom(parties.Role, KeyCounterpartyRole));
 
-            var Debt = this.Class("Debt");
+            Debt = this.Class("Debt");
             Debt.SubClassOf(Deal);
             Debt.SubClassOf(Parties.ExactCardinality(1, BankLenderParty));
-            Debt.SubClassOf(Parties.MinCardinality(1, BorrowerParty))
-                .Annotate(
-                    validation.Restriction,
-                    0)
-                .Annotate(
-                    validation.SubPropertyName,
-                    "Borrowers");
             Debt.SubClassOf(Borrowers.MinCardinality(1))
                 .Annotate(
                     validation.Restriction,
                     0);
 
-            var Advisory = this.Class("Advisory");
+            Advisory = this.Class("Advisory");
             Advisory.SubClassOf(Deal);
             Advisory.SubClassOf(Parties.ExactCardinality(1, BankAdvisorParty));
             Advisory.SubClassOf(Sponsors.MaxCardinality(0))
                 .Annotate(
                     validation.Restriction,
                     0);
-            Advisory.SubClassOf(Parties.MaxCardinality(0, SponsorParty))
-                .Annotate(
-                    validation.Restriction,
-                    0)
-                .Annotate(
-                    validation.SubPropertyName,
-                    "Sponsors");
 
             var ProjectFinance = this.Class("ProjectFinance");
             ProjectFinance.SubClassOf(Debt);
@@ -419,6 +407,30 @@ namespace Deals
                 .Annotate(
                     validation.RangeValidated,
                     null);
+        }
+    }
+
+    public class ProjectFinance: Ontology.Ontology
+    {
+        public readonly IClass Deal;
+
+        public ProjectFinance(): base("ProjectFinance")
+        {
+            var deal       = new Deals();
+            var validation = Validation.Instance;
+
+            _imports = new IOntology[]
+            {
+                deal,
+                validation
+            };
+
+            var Deal = this.Class("Deal");
+            Deal.SubClassOf(deal.Debt);
+            Deal.SubClassOf(deal.Sponsors.MinCardinality(1))
+                .Annotate(
+                    validation.Restriction,
+                    0);
         }
     }
 

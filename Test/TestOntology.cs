@@ -41,21 +41,21 @@ namespace Test
             Assert.That((default(object)).ToEnumerable().Count(), Is.EqualTo(0));
         }
 
-        [TestCase(0, true)]
+        [TestCase( 0, true)]
         [TestCase("", true)]
         public void TestThing(
             object individual,
-            bool result
+            bool   result
             ) => Assert.That(Ontology.Ontology.Thing.Evaluate(
                 null,
                 individual),
                 Is.EqualTo(result));
 
-        [TestCase(0, false)]
+        [TestCase( 0, false)]
         [TestCase("", false)]
         public void TestNothing(
             object individual,
-            bool result
+            bool   result
             ) => Assert.That(Ontology.Ontology.Nothing.Evaluate(
                 null,
                 individual),
@@ -74,16 +74,18 @@ namespace Test
             var deal = new Deal(
                 Guid.NewGuid(),
                 value,
-                "Deals.ProjectFinance",
+                "Deals.Deal",
                 null,
                 null);
 
-            var dealOntology = new DealOntology();
-            var classifications = dealOntology.Classify(deal);
+            var ontology = new Deals.Deals();
+            var classifications = ontology.Classify(deal);
             Assert.That(classifications.ContainsKey(deal));
             classifications[deal].ForEach(TestContext.WriteLine);
 
-            Assert.That(dealOntology.Validate(classifications)[deal][Deals.CommonDomainObjects.Instance.Name].Any(), Is.Not.EqualTo(result));
+            var name = ontology.Get<IDataPropertyExpression>().Where(dpe => dpe.Iri == "CommonDomainObjects.Name").FirstOrDefault();
+            Assert.IsNotNull(name);
+            Assert.That(ontology.Validate(classifications)[deal][name].Any(), Is.Not.EqualTo(result));
         }
        
         [TestCase(null, false)]
@@ -99,7 +101,7 @@ namespace Test
             var deal = new Deal(
                 Guid.NewGuid(),
                 "Test",
-                "Deals.ProjectFinance",
+                "Deals.Deal",
                 null,
                 null);
 
@@ -112,14 +114,16 @@ namespace Test
                 null,
                 equity);
 
-            var dealOntology = new DealOntology();
-            var classifications = dealOntology.Classify(deal);
+            var ontology = new Deals.Deals();
+            var classifications = ontology.Classify(deal);
             Assert.That(classifications.ContainsKey(deal));
             Assert.That(classifications.ContainsKey(sponsor));
             classifications[sponsor].ForEach(TestContext.WriteLine);
 
-            var errors = dealOntology.Validate(classifications);
-            Assert.That(errors.ContainsKey(sponsor) && errors[sponsor][dealOntology.Equity].Any(), Is.Not.EqualTo(result));
+            var equityProperty = ontology.Get<IDataPropertyExpression>().Where(dpe => dpe.Iri == "Deals.Equity").FirstOrDefault();
+            Assert.IsNotNull(equityProperty);
+            var errors = ontology.Validate(classifications);
+            Assert.That(errors.ContainsKey(sponsor) && errors[sponsor][equityProperty].Any(), Is.Not.EqualTo(result));
         }
 
         [TestCase(0, false)]
@@ -133,7 +137,7 @@ namespace Test
             var deal = new Deal(
                 Guid.NewGuid(),
                 "Test",
-                "Deals.ProjectFinance",
+                "ProjectFinance.Deal",
                 null,
                 null);
 
@@ -150,12 +154,14 @@ namespace Test
                     null,
                     null));
 
-            var dealOntology = new DealOntology();
-            var classifications = dealOntology.Classify(deal);
+            var ontology = new ProjectFinance();
+            var classifications = ontology.Classify(deal);
             Assert.That(classifications.ContainsKey(deal));
             classifications[deal].ForEach(TestContext.WriteLine);
 
-            Assert.That(dealOntology.Validate(classifications)[deal][dealOntology.Sponsors].Any(), Is.Not.EqualTo(result));
+            var sponsors = ontology.Get<IObjectPropertyExpression>().Where(ope => ope.Iri == "Deals.Sponsors").FirstOrDefault();
+            Assert.IsNotNull(sponsors);
+            Assert.That(ontology.Validate(classifications)[deal][sponsors].Any(), Is.Not.EqualTo(result));
         }
 
         [TestCase("ProjectFinance", 1, null)]
@@ -166,7 +172,7 @@ namespace Test
             int?   end
             )
         {
-            var dealOntology = new DealOntology();
+            var dealOntology = new Deals.Deals();
             var @class = dealOntology.Get<IClass>().FirstOrDefault(c =>  c.LocalName == className);
             Assert.That(@class, Is.Not.Null);
             var classes = dealOntology.SuperClasses(@class);
@@ -216,7 +222,7 @@ namespace Test
                     role,
                     null));
 
-            var dealOntology = new DealOntology();
+            var dealOntology = new Deals.Deals();
             var classifications = dealOntology.Classify(deal);
             Assert.That(classifications.ContainsKey(deal));
             classifications[deal].ForEach(TestContext.WriteLine);
@@ -230,7 +236,7 @@ namespace Test
             bool result
             )
         {
-            var dealOntology = new DealOntology();
+            var dealOntology = new Deals.Deals();
             var exclusiveDeal = dealOntology.Get<IClass>().FirstOrDefault(@class => @class.LocalName == "ExclusiveDeal");
 
             var deal = new Deal(
@@ -266,7 +272,7 @@ namespace Test
                         ExclusivityClassifierIdentifier.No,
                         string.Empty));
 
-            var dealOntology = new DealOntology();
+            var dealOntology = new Deals.Deals();
             var classifications = dealOntology.Classify(deal);
             Assert.That(classifications.ContainsKey(deal));
             classifications[deal].ForEach(TestContext.WriteLine);
@@ -291,7 +297,7 @@ namespace Test
 
             deal.Commitments.Add(exclusivity);
 
-            var dealOntology = new DealOntology();
+            var dealOntology = new Deals.Deals();
             var classifications = dealOntology.Classify(deal);
             Assert.That(classifications.ContainsKey(exclusivity));
             classifications[exclusivity].ForEach(TestContext.WriteLine);

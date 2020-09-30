@@ -7,11 +7,11 @@ namespace Ontology
 {
     public class Ontology: IOntology
     {
-        private string           _iri;
-        private IList<IOntology> _imports;
-        private IList<IAxiom>    _axioms  = new List<IAxiom>();
-        private IDictionary<IClassExpression, HashSet<IClassExpression>>
-                                 _superClasses = new Dictionary<IClassExpression, HashSet<IClassExpression>>();
+        private   string           _iri;
+        protected IList<IOntology> _imports;
+        private   IList<IAxiom>    _axioms  = new List<IAxiom>();
+        private   IDictionary<IClassExpression, HashSet<IClassExpression>>
+                                   _superClasses = new Dictionary<IClassExpression, HashSet<IClassExpression>>();
 
         public static readonly IClass    Thing    = new Thing();
         public static readonly IClass    Nothing  = new Nothing();
