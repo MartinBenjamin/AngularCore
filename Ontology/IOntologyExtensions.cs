@@ -47,15 +47,15 @@ namespace Ontology
 
         public static IClass Class<T>(
             this IOntology ontology
-            ) => ontology.Class(typeof(T).FullName);
+            ) => ontology.Class(typeof(T).Name);
 
         public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
             this IOntology                  ontology,
-            string                          name,
+            string                          localName,
             Func<T, IEnumerable<TProperty>> property
             ) => new ObjectProperty<T, TProperty>(
                 ontology,
-                name,
+                localName,
                 property);
 
         public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
@@ -67,11 +67,11 @@ namespace Ontology
 
         public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
             this IOntology     ontology,
-            string             name,
+            string             localName,
             Func<T, TProperty> property
             ) => new FunctionalObjectProperty<T, TProperty>(
                 ontology,
-                name,
+                localName,
                 property);
 
         public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
@@ -83,11 +83,11 @@ namespace Ontology
 
         public static IDataPropertyExpression DataProperty<T, TProperty>(
             this IOntology                  ontology,
-            string                          name,
+            string                          localName,
             Func<T, IEnumerable<TProperty>> property
             ) => new DataProperty<T, TProperty>(
                 ontology,
-                name,
+                localName,
                 property);
 
         public static IDataPropertyExpression DataProperty<T, TProperty>(
@@ -99,11 +99,11 @@ namespace Ontology
 
         public static IDataPropertyExpression DataProperty<T, TProperty>(
             this IOntology     ontology,
-            string             name,
+            string             localName,
             Func<T, TProperty> property
             ) => new FunctionalDataProperty<T, TProperty>(
                 ontology,
-                name,
+                localName,
                 property);
 
         public static IDataPropertyExpression DataProperty<T, TProperty>(
@@ -115,12 +115,12 @@ namespace Ontology
 
         public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
             this IClass                     domain,
-            string                          name,
+            string                          localName,
             Func<T, IEnumerable<TProperty>> property
             )
         {
             var objectPropertyExpression = domain.Ontology.ObjectProperty(
-                name,
+                localName,
                 property);
 
             new ObjectPropertyDomain(
@@ -146,12 +146,12 @@ namespace Ontology
 
         public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
             this IClass        domain,
-            string             name,
+            string             localName,
             Func<T, TProperty> property
             )
         {
             var objectPropertyExpression = domain.Ontology.ObjectProperty(
-                name,
+                localName,
                 property);
 
             new ObjectPropertyDomain(
@@ -297,19 +297,19 @@ namespace Ontology
 
         public static INamedIndividual NamedIndividual(
             this IOntology ontology,
-            string         name
+            string         localName
             ) => new NamedIndividual(
                 ontology,
-                name);
+                localName);
 
         public static INamedIndividual NamedIndividual(
             this IClass classExpression,
-            string      name
+            string      localName
             ) => ((IClassAssertion)new ClassAssertion(
                 classExpression,
                 new NamedIndividual(
                     classExpression.Ontology,
-                    name))).NamedIndividual;
+                    localName))).NamedIndividual;
 
         public static IObjectPropertyAssertion Value(
             this INamedIndividual     sourceIndividual,

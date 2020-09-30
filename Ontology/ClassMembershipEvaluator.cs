@@ -264,7 +264,7 @@ namespace Ontology
                     break;
                 case IIndividual iindividual:
                     _ontology.Get<IClass>()
-                        .Where(@class => @class.Name == iindividual.ClassName)
+                        .Where(@class => @class.Iri == iindividual.ClassIri)
                         .ForEach(@class => Classify(
                             classExpressions,
                             individual,
@@ -274,7 +274,7 @@ namespace Ontology
                     (
                         from @class in _ontology.Get<IClass>()
                         from type in individual.GetTypes()
-                        where @class.Name == type.FullName
+                        where @class.Iri == type.FullName
                         select @class
                     ).ForEach(@class => Classify(
                         classExpressions,

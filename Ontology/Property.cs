@@ -13,11 +13,11 @@ namespace Ontology
 
         protected Property(
             IOntology                       ontology,
-            string                          name,
+            string                          localName,
             Func<T, IEnumerable<TProperty>> property
             ) : base(
                 ontology,
-                name)
+                localName)
         {
             _property = property;
         }
@@ -50,11 +50,11 @@ namespace Ontology
 
         protected FunctionalProperty(
             IOntology          ontology,
-            string             name,
+            string             localName,
             Func<T, TProperty> property
             ) : base(
                 ontology,
-                name)
+                localName)
         {
             _property = property;
         }
@@ -92,11 +92,11 @@ namespace Ontology
     {
         public ObjectProperty(
             IOntology                       ontology,
-            string                          name,
+            string                          localName,
             Func<T, IEnumerable<TProperty>> property
             ) : base(
                 ontology,
-                name,
+                localName,
                 property)
         {
         }
@@ -118,11 +118,11 @@ namespace Ontology
     {    
         public FunctionalObjectProperty(
             IOntology          ontology,
-            string             name,
+            string             localName,
             Func<T, TProperty> property
             ) : base(
                 ontology,
-                name,
+                localName,
                 property)
         {
         }
@@ -145,11 +145,11 @@ namespace Ontology
     {
         public DataProperty(
             IOntology                       ontology,
-            string                          name,
+            string                          localName,
             Func<T, IEnumerable<TProperty>> property
             ) : base(
                 ontology,
-                name,
+                localName,
                 property)
         {
         }
@@ -177,11 +177,11 @@ namespace Ontology
     {
         public FunctionalDataProperty(
             IOntology          ontology,
-            string             name,
+            string             localName,
             Func<T, TProperty> property
             ) : base(
                 ontology,
-                name,
+                localName,
                 property)
         {
         }
@@ -212,10 +212,10 @@ namespace Ontology
     {
         protected Property(
             IOntology ontology,
-            string    name
+            string    localName
             ) : base(
                 ontology,
-                name)
+                localName)
         {
         }
 
@@ -237,7 +237,7 @@ namespace Ontology
             object individual
             )
         {
-            var propertyInfo = individual.GetType().GetProperty(_name);
+            var propertyInfo = individual.GetType().GetProperty(_localName);
 
             if(propertyInfo == null)
                 return Enumerable.Empty<object>();
@@ -260,10 +260,10 @@ namespace Ontology
     {
         public ObjectProperty(
             IOntology ontology,
-            string    name
+            string    localName
             ) : base(
                 ontology,
-                name)
+                localName)
         {
         }
 
@@ -284,10 +284,10 @@ namespace Ontology
     {
         public DataProperty(
             IOntology ontology,
-            string    name
+            string    localName
             ) : base(
                 ontology,
-                name)
+                localName)
         {
         }
 

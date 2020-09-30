@@ -2,6 +2,7 @@
 {
     public interface IEntity: IAxiom
     {
-        string Name { get; }
+        string Iri       { get; }
+        string LocalName { get; }
     }
 }

@@ -4,6 +4,7 @@ namespace Ontology
 {
     public interface IOntology
     {
+        string           Iri     { get; }
         IClassExpression Thing   { get; }
         IClassExpression Nothing { get; }
         IList<IOntology> Imports { get; }

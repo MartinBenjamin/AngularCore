@@ -7,6 +7,7 @@ namespace Ontology
 {
     public class Ontology: IOntology
     {
+        private string           _iri;
         private IList<IOntology> _imports;
         private IList<IAxiom>    _axioms  = new List<IAxiom>();
         private IDictionary<IClassExpression, HashSet<IClassExpression>>
@@ -17,11 +18,15 @@ namespace Ontology
         public static readonly IDatatype DateTime = new Datatype<DateTime>("xsd:dateTime");
 
         public Ontology(
+            string             iri,
             params IOntology[] imports
             )
         {
+            _iri     = iri;
             _imports = imports;
         }
+
+        string IOntology.Iri => _iri;
 
         IList<IOntology> IOntology.Imports => _imports;
 

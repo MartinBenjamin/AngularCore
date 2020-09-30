@@ -4,18 +4,20 @@
         Axiom,
         IEntity
     {
-        protected string _name;
+        protected string _localName;
 
         protected Entity(
             IOntology ontology,
-            string    name
+            string    localName
             ) : base(ontology)
         {
-            _name = name;
+            _localName = localName;
         }
 
-        string IEntity.Name => _name;
+        string IEntity.Iri => _ontology.Iri + '.' + _localName;
 
-        public override string ToString() => _name;
+        string IEntity.LocalName => _localName;
+
+        public override string ToString() => _localName;
     }
 }

@@ -8,10 +8,10 @@ namespace Ontology
     {
         public Datatype(
             IOntology ontology,
-            string    name
+            string    localName
             ) : base(
                 ontology,
-                name)
+                localName)
         {
         }
 
@@ -28,10 +28,10 @@ namespace Ontology
         IDatatype
     {
         public Datatype(
-            string name
+            string localName
             ) : base(
                 null,
-                name)
+                localName)
         {
         }
 

@@ -2,6 +2,6 @@
 {
     public interface IIndividual
     {
-        string ClassName { get; }
+        string ClassIri { get; }
     }
 }

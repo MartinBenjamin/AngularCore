@@ -74,7 +74,7 @@ namespace Test
             var deal = new Deal(
                 Guid.NewGuid(),
                 value,
-                "ProjectFinance",
+                "Deals.ProjectFinance",
                 null,
                 null);
 
@@ -99,7 +99,7 @@ namespace Test
             var deal = new Deal(
                 Guid.NewGuid(),
                 "Test",
-                "ProjectFinance",
+                "Deals.ProjectFinance",
                 null,
                 null);
 
@@ -119,7 +119,7 @@ namespace Test
             classifications[sponsor].ForEach(TestContext.WriteLine);
 
             var errors = dealOntology.Validate(classifications);
-            Assert.That(errors.ContainsKey(sponsor) && errors[sponsor][DealParties.Instance.Equity].Any(), Is.Not.EqualTo(result));
+            Assert.That(errors.ContainsKey(sponsor) && errors[sponsor][dealOntology.Equity].Any(), Is.Not.EqualTo(result));
         }
 
         [TestCase(0, false)]
@@ -133,7 +133,7 @@ namespace Test
             var deal = new Deal(
                 Guid.NewGuid(),
                 "Test",
-                "ProjectFinance",
+                "Deals.ProjectFinance",
                 null,
                 null);
 
@@ -167,7 +167,7 @@ namespace Test
             )
         {
             var dealOntology = new DealOntology();
-            var @class = dealOntology.Get<IClass>().FirstOrDefault(c =>  c.Name == className);
+            var @class = dealOntology.Get<IClass>().FirstOrDefault(c =>  c.LocalName == className);
             Assert.That(@class, Is.Not.Null);
             var classes = dealOntology.SuperClasses(@class);
 
@@ -200,7 +200,7 @@ namespace Test
             var deal = new Deal(
                 Guid.NewGuid(),
                 "Test",
-                "ProjectFinance",
+                "Deals.ProjectFinance",
                 null,
                 null);
 
@@ -231,12 +231,12 @@ namespace Test
             )
         {
             var dealOntology = new DealOntology();
-            var exclusiveDeal = dealOntology.Get<IClass>().FirstOrDefault(@class => @class.Name == "ExclusiveDeal");
+            var exclusiveDeal = dealOntology.Get<IClass>().FirstOrDefault(@class => @class.LocalName == "ExclusiveDeal");
 
             var deal = new Deal(
                 Guid.NewGuid(),
                 "Test",
-                "ProjectFinance",
+                "Deals.ProjectFinance",
                 null,
                 null);
 
@@ -256,7 +256,7 @@ namespace Test
             var deal = new Deal(
                 Guid.NewGuid(),
                 "Test",
-                "ProjectFinance",
+                "Deals.ProjectFinance",
                 null,
                 null);
 
@@ -280,7 +280,7 @@ namespace Test
             var deal = new Deal(
                 Guid.NewGuid(),
                 "Test",
-                "ProjectFinance",
+                "Deals.ProjectFinance",
                 null,
                 null);
 
@@ -309,7 +309,7 @@ namespace Test
             ).FirstOrDefault();
 
             Assert.That(range, Is.Not.Null);
-            Assert.That(range.DataPropertyExpression.Name, Is.EqualTo("Date"));
+            Assert.That(range.DataPropertyExpression.LocalName, Is.EqualTo("Date"));
             Assert.That(range.Range, Is.EqualTo(Ontology.Ontology.DateTime));
         }
     }

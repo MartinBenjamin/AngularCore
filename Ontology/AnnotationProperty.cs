@@ -6,10 +6,10 @@
     {
         public AnnotationProperty(
             IOntology ontology,
-            string    name
+            string    localName
             ) : base(
                 ontology,
-                name)
+                localName)
         {
         }
     }

@@ -36,7 +36,7 @@ namespace Deals
 
         private static CommonDomainObjects _instance;
 
-        private CommonDomainObjects()
+        private CommonDomainObjects() : base("CommonDomainObjects")
         {
             DomainObject = this.Class<DomainObject<Guid>>();
             Id = DomainObject.DataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
@@ -70,7 +70,7 @@ namespace Deals
 
         private static Validation _instance;
 
-        private Validation() : base()
+        private Validation() : base("Validation")
         {
             Restriction = new AnnotationProperty(
                 this,
@@ -100,7 +100,9 @@ namespace Deals
 
         private static Roles _instance;
 
-        private Roles() : base(CommonDomainObjects.Instance)
+        private Roles() : base(
+            "Roles",
+            CommonDomainObjects.Instance)
         {
             Role = this.Class<Role>();
             Role.SubClassOf(CommonDomainObjects.Instance.Named);
@@ -124,7 +126,9 @@ namespace Deals
 
         private static Organisations _instance;
 
-        private Organisations() : base(CommonDomainObjects.Instance)
+        private Organisations() : base(
+            "Organisations",
+            CommonDomainObjects.Instance)
         {
             Organisation = this.Class<Organisation>();
             Organisation.SubClassOf(CommonDomainObjects.Instance.Named);
@@ -148,7 +152,9 @@ namespace Deals
 
         private static LegalEntities _instance;
 
-        private LegalEntities() : base(Organisations.Instance)
+        private LegalEntities() : base(
+            "LegalEntities",
+            Organisations.Instance)
         {
             LegalEntity = this.Class<LegalEntity>();
             LegalEntity.SubClassOf(Organisations.Instance.Organisation);
@@ -176,6 +182,7 @@ namespace Deals
         private static Parties _instance;
 
         private Parties() : base(
+            "Parties",
             CommonDomainObjects.Instance,
             Roles.Instance)
         {
@@ -209,6 +216,7 @@ namespace Deals
         private static RoleIndividuals _instance;
 
         private RoleIndividuals() : base(
+            "RoleIndividuals",
             CommonDomainObjects.Instance,
             Roles.Instance)
         {
@@ -236,38 +244,149 @@ namespace Deals
         }
     }
 
-    public class DealParties: Ontology.Ontology
+    //public class DealParties: Ontology.Ontology
+    //{
+    //    public readonly IClass                  DealParty;
+    //    public readonly IClass                  LenderParty;
+    //    public readonly IClass                  AdvisorParty;
+    //    public readonly IClass                  SponsorParty;
+    //    public readonly IClass                  BorrowerParty;
+    //    public readonly IClass                  MufgParty;
+    //    public readonly IClass                  Sponsor;
+    //    public readonly IDataPropertyExpression Equity;
+
+    //    public readonly INamedIndividual        Bank;
+    //    public readonly IClass                  BankParty;
+    //    public readonly IClass                  BankLenderParty;
+    //    public readonly IClass                  BankAdvisorParty;
+
+    //    public readonly IClass                  KeyCounterpartyRole;
+    //    public readonly IClass                  KeyCounterparty;
+
+    //    private static DealParties _instance;
+
+    //    private DealParties() : base(
+    //        CommonDomainObjects.Instance,
+    //        Roles.Instance,
+    //        RoleIndividuals.Instance,
+    //        Parties.Instance,
+    //        LegalEntities.Instance,
+    //        Validation.Instance)
+    //    {
+    //        var roles           = Roles.Instance;
+    //        var roleIndividuals = RoleIndividuals.Instance;
+    //        var parties         = Parties.Instance;
+
+    //        DealParty = this.Class<DealParty>();
+    //        DealParty.SubClassOf(parties.PartyInRole);
+    //        LenderParty   = this.Class("LenderParty");
+    //        AdvisorParty  = this.Class("AdvisorParty");
+    //        BorrowerParty = this.Class("BorrowerParty");
+    //        SponsorParty  = this.Class("SponsorParty");
+            
+    //        LenderParty.Define(parties.Role.HasValue(roleIndividuals.Lender));
+    //        AdvisorParty.Define(parties.Role.HasValue(roleIndividuals.Advisor));
+    //        BorrowerParty.Define(parties.Role.HasValue(roleIndividuals.Borrower));
+    //        SponsorParty.Define(parties.Role.HasValue(roleIndividuals.Sponsor));;
+
+    //        Sponsor = this.Class<Sponsor>();
+    //        Sponsor.SubClassOf(SponsorParty);
+    //        Equity = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
+    //        Sponsor
+    //            .SubClassOf(Equity.ExactCardinality(1))
+    //            .Annotate(
+    //                Validation.Instance.Restriction,
+    //                0);
+
+    //        Bank             = LegalEntities.Instance.LegalEntity.NamedIndividual("Bank");
+    //        BankParty        = this.Class("BankParty");
+    //        BankLenderParty  = this.Class("BankLenderParty");
+    //        BankAdvisorParty = this.Class("BankAdvisorParty");
+    //        BankParty.Define(parties.Organisation.HasValue(Bank));
+    //        BankLenderParty.Define(LenderParty.Intersect(BankParty));
+    //        BankAdvisorParty.Define(AdvisorParty.Intersect(BankParty));
+
+    //        KeyCounterpartyRole = this.Class("KeyCounterpartyRole");
+    //        KeyCounterparty     = this.Class("KeyCounterparty");
+    //        KeyCounterparty.Define(new ObjectSomeValuesFrom(parties.Role, KeyCounterpartyRole));
+    //    }
+
+    //    public static DealParties Instance
+    //    {
+    //        get
+    //        {
+    //            if(_instance == null)
+    //                _instance = new DealParties();
+
+    //            return _instance;
+    //        }
+    //    }
+    //}
+
+    public class DealOntology: Ontology.Ontology
     {
-        public readonly IClass                  DealParty;
-        public readonly IClass                  LenderParty;
-        public readonly IClass                  AdvisorParty;
-        public readonly IClass                  SponsorParty;
-        public readonly IClass                  BorrowerParty;
-        public readonly IClass                  MufgParty;
-        public readonly IClass                  Sponsor;
-        public readonly IDataPropertyExpression Equity;
+        public readonly IClass                    Deal;
 
-        public readonly INamedIndividual        Bank;
-        public readonly IClass                  BankParty;
-        public readonly IClass                  BankLenderParty;
-        public readonly IClass                  BankAdvisorParty;
+        public readonly IObjectPropertyExpression Parties;
+        public readonly IObjectPropertyExpression Commitments;
+        public readonly IObjectPropertyExpression Classifiers;
+        public readonly IObjectPropertyExpression Borrowers;
+        public readonly IObjectPropertyExpression Sponsors;
+        public readonly IObjectPropertyExpression Exclusivity;
+        
+        public readonly IClass                    DealParty;
+        public readonly IClass                    LenderParty;
+        public readonly IClass                    AdvisorParty;
+        public readonly IClass                    SponsorParty;
+        public readonly IClass                    BorrowerParty;
+        public readonly IClass                    MufgParty;
+        public readonly IClass                    Sponsor;
+        public readonly IDataPropertyExpression   Equity;
+                                                  
+        public readonly INamedIndividual          Bank;
+        public readonly IClass                    BankParty;
+        public readonly IClass                    BankLenderParty;
+        public readonly IClass                    BankAdvisorParty;
+                                                  
+        public readonly IClass                    KeyCounterpartyRole;
+        public readonly IClass                    KeyCounterparty;
 
-        public readonly IClass                  KeyCounterpartyRole;
-        public readonly IClass                  KeyCounterparty;
-
-        private static DealParties _instance;
-
-        private DealParties() : base(
+        public DealOntology(): base(
+            "Deals",
             CommonDomainObjects.Instance,
             Roles.Instance,
             RoleIndividuals.Instance,
-            Parties.Instance,
-            LegalEntities.Instance,
+            Deals.Parties.Instance,
             Validation.Instance)
         {
-            var roles           = Roles.Instance;
-            var roleIndividuals = RoleIndividuals.Instance;
-            var parties         = Parties.Instance;
+            var commonDomainObjects = CommonDomainObjects.Instance;
+            var roles               = Roles.Instance;
+            var roleIndividuals     = RoleIndividuals.Instance;
+            var parties             = Deals.Parties.Instance;
+            var validation          = Validation.Instance;
+
+            var Deal        = this.Class<Deal>();
+            Deal.SubClassOf(commonDomainObjects.Named);
+            Parties     = Deal.ObjectProperty<Deal, DealParty >(deal => deal.Parties    );
+            Classifiers = Deal.ObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
+            Commitments = Deal.ObjectProperty<Deal, Commitment>(deal => deal.Commitments);
+            Borrowers   = Deal.ObjectProperty<Deal, DealParty >(
+                "Borrowers",
+                deal => deal.Parties.Where(dealParty => dealParty.Role.Id == DealRoleIdentifier.Borrower));
+            Sponsors    = Deal.ObjectProperty<Deal, Sponsor   >(
+                "Sponsors",
+                deal => deal.Parties.Where(dealParty => dealParty.Role.Id == DealRoleIdentifier.Sponsor).Cast<Sponsor>());
+            this.Exclusivity = Deal.ObjectProperty<Deal, ExclusivityClassifier>(
+                "Exclusivity",
+                deal => deal.Classifiers.OfType<ExclusivityClassifier>().FirstOrDefault());
+
+            Deal.SubClassOf(
+                new DataSomeValuesFrom(
+                    commonDomainObjects.Name,
+                    new DataComplementOf(new DataOneOf(string.Empty))))
+                .Annotate(
+                    validation.Restriction,
+                    0);
 
             DealParty = this.Class<DealParty>();
             DealParty.SubClassOf(parties.PartyInRole);
@@ -301,72 +420,11 @@ namespace Deals
             KeyCounterpartyRole = this.Class("KeyCounterpartyRole");
             KeyCounterparty     = this.Class("KeyCounterparty");
             KeyCounterparty.Define(new ObjectSomeValuesFrom(parties.Role, KeyCounterpartyRole));
-        }
-
-        public static DealParties Instance
-        {
-            get
-            {
-                if(_instance == null)
-                    _instance = new DealParties();
-
-                return _instance;
-            }
-        }
-    }
-
-    public class DealOntology: Ontology.Ontology
-    {
-        public readonly IClass                    Deal;
-        public readonly IObjectPropertyExpression Parties;
-        public readonly IObjectPropertyExpression Commitments;
-        public readonly IObjectPropertyExpression Classifiers;
-        public readonly IObjectPropertyExpression Borrowers;
-        public readonly IObjectPropertyExpression Sponsors;
-        public readonly IObjectPropertyExpression Exclusivity;
-
-        public DealOntology(): base(
-            CommonDomainObjects.Instance,
-            Roles.Instance,
-            RoleIndividuals.Instance,
-            Deals.Parties.Instance,
-            DealParties.Instance,
-            Validation.Instance)
-        {
-            var commonDomainObjects = CommonDomainObjects.Instance;
-            var roles               = Roles.Instance;
-            var roleIndividuals     = RoleIndividuals.Instance;
-            var parties             = Deals.Parties.Instance;
-            var dealParties         = DealParties.Instance;
-            var validation          = Validation.Instance;
-
-            var Deal        = this.Class<Deal>();
-            Deal.SubClassOf(commonDomainObjects.Named);
-            Parties     = Deal.ObjectProperty<Deal, DealParty >(deal => deal.Parties    );
-            Classifiers = Deal.ObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
-            Commitments = Deal.ObjectProperty<Deal, Commitment>(deal => deal.Commitments);
-            Borrowers   = Deal.ObjectProperty<Deal, DealParty >(
-                "Borrowers",
-                deal => deal.Parties.Where(dealParty => dealParty.Role.Id == DealRoleIdentifier.Borrower));
-            Sponsors    = Deal.ObjectProperty<Deal, Sponsor   >(
-                "Sponsors",
-                deal => deal.Parties.Where(dealParty => dealParty.Role.Id == DealRoleIdentifier.Sponsor).Cast<Sponsor>());
-            this.Exclusivity = Deal.ObjectProperty<Deal, ExclusivityClassifier>(
-                "Exclusivity",
-                deal => deal.Classifiers.OfType<ExclusivityClassifier>().FirstOrDefault());
-
-            Deal.SubClassOf(
-                new DataSomeValuesFrom(
-                    commonDomainObjects.Name,
-                    new DataComplementOf(new DataOneOf(string.Empty))))
-                .Annotate(
-                    validation.Restriction,
-                    0);
 
             var Debt = this.Class("Debt");
             Debt.SubClassOf(Deal);
-            Debt.SubClassOf(Parties.ExactCardinality(1, dealParties.BankLenderParty));
-            Debt.SubClassOf(Parties.MinCardinality(1, dealParties.BorrowerParty))
+            Debt.SubClassOf(Parties.ExactCardinality(1, BankLenderParty));
+            Debt.SubClassOf(Parties.MinCardinality(1, BorrowerParty))
                 .Annotate(
                     validation.Restriction,
                     0)
@@ -380,12 +438,12 @@ namespace Deals
 
             var Advisory = this.Class("Advisory");
             Advisory.SubClassOf(Deal);
-            Advisory.SubClassOf(Parties.ExactCardinality(1, dealParties.BankAdvisorParty));
+            Advisory.SubClassOf(Parties.ExactCardinality(1, BankAdvisorParty));
             Advisory.SubClassOf(Sponsors.MaxCardinality(0))
                 .Annotate(
                     validation.Restriction,
                     0);
-            Advisory.SubClassOf(Parties.MaxCardinality(0, dealParties.SponsorParty))
+            Advisory.SubClassOf(Parties.MaxCardinality(0, SponsorParty))
                 .Annotate(
                     validation.Restriction,
                     0)
@@ -402,7 +460,7 @@ namespace Deals
                     0);
 
             ProjectFinance
-                .SubClassOf(Parties.MinCardinality(1, dealParties.SponsorParty))
+                .SubClassOf(Parties.MinCardinality(1, SponsorParty))
                 .Annotate(
                     validation.Restriction,
                     0)
@@ -475,5 +533,4 @@ namespace Deals
                     g => ((IPropertyRestriction)g.SuperClassExpression).PropertyExpression));
         }
     }
-
 }
