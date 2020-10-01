@@ -18,5 +18,7 @@ namespace Ontology
         IEnumerable<IDataPropertyExpression>   GetDataPropertyExpressions(IClassExpression domain);
         IEnumerable<IHasKey>                   GetHasKeys(IClassExpression classExpression);
         IEnumerable<ISubClassOf>               GetSuperClasses(IClassExpression classExpression);
+
+        HashSet<IClassExpression>              SuperClasses(IClassExpression classExpression);
     }
 }

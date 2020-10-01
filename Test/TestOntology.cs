@@ -6,6 +6,7 @@ using Ontology;
 using Organisations;
 using Roles;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -29,7 +30,8 @@ namespace Test
             builder.RegisterType<Deals.LegalEntities      >().AsSelf().As<IOntology>().SingleInstance();
             builder.RegisterType<Deals.Parties            >().AsSelf().As<IOntology>().SingleInstance();
             builder.RegisterType<Deals.Deals              >().AsSelf().As<IOntology>().SingleInstance();
-            builder.RegisterType<Deals.ProjectFinance     >().AsSelf().As<IOntology>().SingleInstance();
+            builder.RegisterType<Deals.Advisory           >().AsSelf().As<IOntology>().As<IDealOntology>().SingleInstance();
+            builder.RegisterType<Deals.ProjectFinance     >().AsSelf().As<IOntology>().As<IDealOntology>().SingleInstance();
         }
     }
     [TestFixture]
@@ -37,6 +39,7 @@ namespace Test
     {
         private const string _listenerName = "TestListener";
 
+        private IContainer                _container          ;
         private Deals.CommonDomainObjects _commonDomainObjects;
         private Deals.Validation          _validation         ;
         private Deals.Deals               _deals              ;
@@ -49,12 +52,12 @@ namespace Test
             builder
                 .RegisterModule<OntologyModule>();
 
-            var container = builder.Build();
+            _container = builder.Build();
 
-            _commonDomainObjects = container.Resolve<Deals.CommonDomainObjects>();
-            _validation          = container.Resolve<Deals.Validation         >();
-            _deals               = container.Resolve<Deals.Deals              >();
-            _projectFinance      = container.Resolve<Deals.ProjectFinance     >();
+            _commonDomainObjects = _container.Resolve<Deals.CommonDomainObjects>();
+            _validation          = _container.Resolve<Deals.Validation         >();
+            _deals               = _container.Resolve<Deals.Deals              >();
+            _projectFinance      = _container.Resolve<Deals.ProjectFinance     >();
         }
 
         [SetUp]
@@ -204,15 +207,16 @@ namespace Test
             int?   end
             )
         {
-            var @class = _deals.Get<IClass>().FirstOrDefault(c =>  c.LocalName == className);
-            Assert.That(@class, Is.Not.Null);
-            var classes = _deals.SuperClasses(@class);
+            var dealOntology = _container.Resolve<IEnumerable<IDealOntology>>().FirstOrDefault(o => o.Iri == className);
+            Assert.IsNotNull(dealOntology);
+            var classes = dealOntology.SuperClasses(dealOntology.Deal);
 
             var sponsorCardinality =
             (
                 from classExpression in classes
-                from axiom in _deals.GetSuperClasses(classExpression)
-                let objectCardinality = axiom.SuperClassExpression as IObjectCardinality
+                from subClassOf in dealOntology.Get<ISubClassOf>()
+                where subClassOf.SubClassExpression == classExpression
+                let objectCardinality = subClassOf.SuperClassExpression as IObjectCardinality
                 where
                     objectCardinality?.ObjectPropertyExpression == _deals.Sponsors
                 select

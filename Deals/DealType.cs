@@ -28,11 +28,11 @@ namespace Deals
 
     public class CommonDomainObjects: Ontology.Ontology
     {
-        public readonly IClass                  DomainObject;
-        public readonly IDataPropertyExpression Id;
-        public readonly IClass                  Named;
-        public readonly IDataPropertyExpression Name;
-        public readonly IClass                  Classifier;
+        public IClass                  DomainObject { get; protected set; }
+        public IDataPropertyExpression Id           { get; protected set; }
+        public IClass                  Named        { get; protected set; }
+        public IDataPropertyExpression Name         { get; protected set; }
+        public IClass                  Classifier   { get; protected set; }
 
         public CommonDomainObjects() : base("CommonDomainObjects")
         {
@@ -51,9 +51,9 @@ namespace Deals
 
     public class Validation: Ontology.Ontology
     {
-        public readonly IAnnotationProperty Restriction;
-        public readonly IAnnotationProperty SubPropertyName;
-        public readonly IAnnotationProperty RangeValidated;
+        public IAnnotationProperty Restriction     { get; protected set; }
+        public IAnnotationProperty SubPropertyName { get; protected set; }
+        public IAnnotationProperty RangeValidated  { get; protected set; }
 
         public Validation() : base("Validation")
         {
@@ -71,7 +71,7 @@ namespace Deals
 
     public class Roles: Ontology.Ontology
     {
-        public readonly IClass Role;
+        public IClass Role { get; protected set; }
 
         public Roles(
             CommonDomainObjects commonDomainObjects
@@ -86,7 +86,7 @@ namespace Deals
 
     public class Organisations: Ontology.Ontology
     {
-        public readonly IClass Organisation;
+        public IClass Organisation { get; protected set; }
 
         public Organisations(
             CommonDomainObjects commonDomainObjects
@@ -101,7 +101,7 @@ namespace Deals
 
     public class LegalEntities: Ontology.Ontology
     {
-        public readonly IClass LegalEntity;
+        public IClass LegalEntity { get; protected set; }
 
         public LegalEntities(
             Organisations organisations
@@ -116,10 +116,10 @@ namespace Deals
 
     public class Parties: Ontology.Ontology
     {
-        public readonly IClass                    PartyInRole;
-        public readonly IObjectPropertyExpression Role;
-        public readonly IObjectPropertyExpression Organisation;
-        public readonly IObjectPropertyExpression Person;
+        public IClass                    PartyInRole  { get; protected set; }
+        public IObjectPropertyExpression Role         { get; protected set; }
+        public IObjectPropertyExpression Organisation { get; protected set; }
+        public IObjectPropertyExpression Person       { get; protected set; }
 
         public Parties(
             CommonDomainObjects commonDomainObjects
@@ -165,33 +165,33 @@ namespace Deals
 
     public class Deals: Ontology.Ontology
     {
-        public readonly IClass                    Deal;
-        public readonly IClass                    Debt;
-        public readonly IClass                    Advisory;
+        public IClass                    Deal                { get; protected set; }
+        public IClass                    Debt                { get; protected set; }
+        public IClass                    Advisory            { get; protected set; }
 
-        public readonly IObjectPropertyExpression Parties;
-        public readonly IObjectPropertyExpression Commitments;
-        public readonly IObjectPropertyExpression Classifiers;
-        public readonly IObjectPropertyExpression Borrowers;
-        public readonly IObjectPropertyExpression Sponsors;
-        public readonly IObjectPropertyExpression Exclusivity;
+        public IObjectPropertyExpression Parties             { get; protected set; }
+        public IObjectPropertyExpression Commitments         { get; protected set; }
+        public IObjectPropertyExpression Classifiers         { get; protected set; }
+        public IObjectPropertyExpression Borrowers           { get; protected set; }
+        public IObjectPropertyExpression Sponsors            { get; protected set; }
+        public IObjectPropertyExpression Exclusivity         { get; protected set; }
         
-        public readonly IClass                    DealParty;
-        public readonly IClass                    LenderParty;
-        public readonly IClass                    AdvisorParty;
-        public readonly IClass                    SponsorParty;
-        public readonly IClass                    BorrowerParty;
-        public readonly IClass                    MufgParty;
-        public readonly IClass                    Sponsor;
-        public readonly IDataPropertyExpression   Equity;
-                                                  
-        public readonly INamedIndividual          Bank;
-        public readonly IClass                    BankParty;
-        public readonly IClass                    BankLenderParty;
-        public readonly IClass                    BankAdvisorParty;
-                                                  
-        public readonly IClass                    KeyCounterpartyRole;
-        public readonly IClass                    KeyCounterparty;
+        public IClass                    DealParty           { get; protected set; }
+        public IClass                    LenderParty         { get; protected set; }
+        public IClass                    AdvisorParty        { get; protected set; }
+        public IClass                    SponsorParty        { get; protected set; }
+        public IClass                    BorrowerParty       { get; protected set; }
+        public IClass                    MufgParty           { get; protected set; }
+        public IClass                    Sponsor             { get; protected set; }
+        public IDataPropertyExpression   Equity              { get; protected set; }
+
+        public INamedIndividual          Bank                { get; protected set; }
+        public IClass                    BankParty           { get; protected set; }
+        public IClass                    BankLenderParty     { get; protected set; }
+        public IClass                    BankAdvisorParty    { get; protected set; }
+                                         
+        public IClass                    KeyCounterpartyRole { get; protected set; }
+        public IClass                    KeyCounterparty     { get; protected set; }
 
         public Deals(
             CommonDomainObjects commonDomainObjects,
@@ -227,6 +227,10 @@ namespace Deals
                 new DataSomeValuesFrom(
                     commonDomainObjects.Name,
                     new DataComplementOf(new DataOneOf(string.Empty))))
+                .Annotate(
+                    validation.Restriction,
+                    0);
+            Deal.SubClassOf(this.Exclusivity.ExactCardinality(1))
                 .Annotate(
                     validation.Restriction,
                     0);
@@ -272,36 +276,6 @@ namespace Deals
                     validation.Restriction,
                     0);
 
-            Advisory = this.Class("Advisory");
-            Advisory.SubClassOf(Deal);
-            Advisory.SubClassOf(Parties.ExactCardinality(1, BankAdvisorParty));
-            Advisory.SubClassOf(Sponsors.MaxCardinality(0))
-                .Annotate(
-                    validation.Restriction,
-                    0);
-
-            var ProjectFinance = this.Class("ProjectFinance");
-            ProjectFinance.SubClassOf(Debt);
-            ProjectFinance
-                .SubClassOf(Sponsors.MinCardinality(1))
-                .Annotate(
-                    validation.Restriction,
-                    0);
-
-            ProjectFinance
-                .SubClassOf(Parties.MinCardinality(1, SponsorParty))
-                .Annotate(
-                    validation.Restriction,
-                    0)
-                .Annotate(
-                    validation.SubPropertyName,
-                    "Sponsors");
-
-            Deal.SubClassOf(this.Exclusivity.ExactCardinality(1))
-                .Annotate(
-                    validation.Restriction,
-                    0);
-
             var ExclusivityClassifier = this.Class<ExclusivityClassifier>();
             ExclusivityClassifier.SubClassOf(commonDomainObjects.Classifier);
             Deal.SubClassOf(Classifiers.ExactCardinality(1, ExclusivityClassifier))
@@ -330,9 +304,40 @@ namespace Deals
         }
     }
 
-    public class ProjectFinance: Ontology.Ontology
+    public interface IDealOntology: IOntology
     {
-        public readonly IClass Deal;
+        IClass Deal { get; }
+    }
+
+    public class Advisory:
+        Ontology.Ontology,
+        IDealOntology
+    {
+        public IClass Deal { get; protected set; }
+
+        public Advisory(
+            Deals      deals,
+            Validation validation
+            ) : base(
+                "Advisory",
+                deals,
+                validation)
+        {
+            Deal = this.Class("Deal");
+            Deal.SubClassOf(Deal);
+            Deal.SubClassOf(deals.Parties.ExactCardinality(1, deals.BankAdvisorParty));
+            Deal.SubClassOf(deals.Sponsors.MaxCardinality(0))
+                .Annotate(
+                    validation.Restriction,
+                    0);
+        }
+    }
+
+    public class ProjectFinance:
+        Ontology.Ontology,
+        IDealOntology
+    {
+        public IClass Deal { get; protected set; }
 
         public ProjectFinance(
             Deals      deals,
@@ -342,7 +347,7 @@ namespace Deals
                 deals,
                 validation)
         {
-            var Deal = this.Class("Deal");
+            Deal = this.Class("Deal");
             Deal.SubClassOf(deals.Debt);
             Deal.SubClassOf(deals.Sponsors.MinCardinality(1))
                 .Annotate(
