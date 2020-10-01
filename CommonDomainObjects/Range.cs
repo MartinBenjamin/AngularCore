@@ -3,7 +3,7 @@
 namespace CommonDomainObjects
 {
     // Closed Interval.
-    public class Range<T> where T: IComparable<T>
+    public class Range<T> where T: struct, IComparable<T>
     {
         public virtual T Start { get; protected set; }
         public virtual T End   { get; protected set; }
