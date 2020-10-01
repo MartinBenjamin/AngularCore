@@ -336,11 +336,10 @@ namespace Test
             var range =
             (
                 from classExpression in classifications[exclusivity]
-                from dataProperty in _deals.GetDataPropertyExpressions(classExpression)
-                from dataPropertyRange in _deals.Get<IDataPropertyRange>()
+                join dataPropertyDomain in _deals.Get<IDataPropertyDomain>() on classExpression equals dataPropertyDomain.Domain
+                join dataPropertyRange in _deals.Get<IDataPropertyRange>() on dataPropertyDomain.DataPropertyExpression equals dataPropertyRange.DataPropertyExpression
                 from annotation in dataPropertyRange.Annotations
                 where
-                    dataPropertyRange.DataPropertyExpression == dataProperty &&
                     annotation.Property == _validation.RangeValidated
                 select dataPropertyRange
             ).FirstOrDefault();

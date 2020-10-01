@@ -1,5 +1,7 @@
-﻿using System;
+﻿using CommonDomainObjects;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace Ontology
@@ -365,16 +367,16 @@ namespace Ontology
             object                   individual
             )
         {
-            var classExpressions = evaluator.Classify(individual);
-
-            foreach(var classExpression in classExpressions)
-                foreach(var objectPropertyExpression in ontology.GetObjectPropertyExpressions(classExpression))
-                    foreach(object value in objectPropertyExpression.Values(
-                        ontology,
-                        individual))
-                        ontology.Classify(
-                            evaluator,
-                            value);
+            (
+                from classExpression in evaluator.Classify(individual)
+                join objectPropertyDomain in ontology.Get<IObjectPropertyDomain>() on classExpression equals objectPropertyDomain.Domain
+                from value in objectPropertyDomain.ObjectPropertyExpression.Values(
+                    ontology,
+                    individual)
+                select value
+            ).ForEach(value => ontology.Classify(
+               evaluator,
+               value));
         }
     }
 }
