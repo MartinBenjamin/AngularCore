@@ -45,14 +45,9 @@ namespace CommonDomainObjects
 
         public override bool Equals(
             object obj
-            )
-        {
-            var range = obj as Range<T>;
-            return
-                range != null &&
+            ) => obj is Range<T> range &&
                 Start.Equals(range.Start) &&
                 End.Equals(range.End);
-        }
 
         public override int GetHashCode()
             => HashCode.Combine(
@@ -123,14 +118,9 @@ namespace CommonDomainObjects
 
         public override bool Equals(
             object obj
-            )
-        {
-            var range = obj as Range2<T>;
-            return
-                range != null &&
+            ) => obj is Range<T> range &&
                 Start.Equals(range.Start) &&
                 End.Equals(range.End);
-        }
 
         public override int GetHashCode()
             => HashCode.Combine(

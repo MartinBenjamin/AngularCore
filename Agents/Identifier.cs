@@ -23,14 +23,10 @@
 
         public override bool Equals(
             object obj
-            )
-        {
-            var identifier = obj as Identifier;
-            return
+            ) => obj is Identifier identifier &&
                 identifier != null &&
                 Scheme     == identifier.Scheme &&
                 Value      == identifier.Value;
-        }
 
         public override int GetHashCode()
             => Value.GetHashCode();
