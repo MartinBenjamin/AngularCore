@@ -30,10 +30,6 @@ namespace Ontology
 
         IList<IOntology> IOntology.Imports => _imports;
 
-        IClassExpression IOntology.Thing => Thing;
-
-        IClassExpression IOntology.Nothing => Nothing;
-
         IList<IAxiom> IOntology.Axioms => _axioms;
 
         IDatatype IOntology.DateTime => DateTime;

@@ -1,11 +1,11 @@
 ﻿namespace Ontology
 {
-    public class Nothing:
-        Entity,
+    internal class Nothing:
+        BuiltIn,
         IClass
     {
         internal Nothing() : base(
-            null,
+            ReservedVocabulary.StandardPrefixNames["owl"],
             "Nothing")
         {
         }

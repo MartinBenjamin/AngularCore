@@ -152,7 +152,7 @@ namespace Ontology
             ) => objectMinCardinality.ObjectPropertyExpression.Values(
                 _ontology,
                 individual).Count(
-                    value => (objectMinCardinality.ClassExpression ?? _ontology.Thing).Evaluate(
+                    value => (objectMinCardinality.ClassExpression ?? ReservedVocabulary.Thing).Evaluate(
                         this,
                         value)) >= objectMinCardinality.Cardinality;
 
@@ -162,7 +162,7 @@ namespace Ontology
             ) => objectMaxCardinality.ObjectPropertyExpression.Values(
                 _ontology,
                 individual).Count(
-                    value => (objectMaxCardinality.ClassExpression ?? _ontology.Thing).Evaluate(
+                    value => (objectMaxCardinality.ClassExpression ?? ReservedVocabulary.Thing).Evaluate(
                         this,
                         value)) <= objectMaxCardinality.Cardinality;
 
@@ -172,7 +172,7 @@ namespace Ontology
             ) => objectExactCardinality.ObjectPropertyExpression.Values(
                 _ontology,
                 individual).Count(
-                    value => (objectExactCardinality.ClassExpression ?? _ontology.Thing).Evaluate(
+                    value => (objectExactCardinality.ClassExpression ?? ReservedVocabulary.Thing).Evaluate(
                         this,
                         value)) == objectExactCardinality.Cardinality;
 
