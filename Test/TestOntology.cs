@@ -90,7 +90,7 @@ namespace Test
         public void TestThing(
             object individual,
             bool   result
-            ) => Assert.That(Ontology.Ontology.Thing.Evaluate(
+            ) => Assert.That(ReservedVocabulary.Thing.Evaluate(
                 null,
                 individual),
                 Is.EqualTo(result));
@@ -100,7 +100,7 @@ namespace Test
         public void TestNothing(
             object individual,
             bool   result
-            ) => Assert.That(Ontology.Ontology.Nothing.Evaluate(
+            ) => Assert.That(ReservedVocabulary.Nothing.Evaluate(
                 null,
                 individual),
                 Is.EqualTo(result));
@@ -346,7 +346,7 @@ namespace Test
 
             Assert.That(range, Is.Not.Null);
             Assert.That(range.DataPropertyExpression.LocalName, Is.EqualTo("Date"));
-            Assert.That(range.Range, Is.EqualTo(Ontology.Ontology.DateTime));
+            Assert.That(range.Range, Is.EqualTo(ReservedVocabulary.DateTime));
         }
     }
 }

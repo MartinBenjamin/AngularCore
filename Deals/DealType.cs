@@ -297,7 +297,7 @@ namespace Deals
 
             var Exclusivity = this.Class<Exclusivity>();
             var Date = Exclusivity.DataProperty<Exclusivity, DateTime?>(exclusivity => exclusivity.Date);
-            Date.Range(DateTime)
+            Date.Range(ReservedVocabulary.DateTime)
                 .Annotate(
                     validation.RangeValidated,
                     null);

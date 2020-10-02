@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Ontology
 {
@@ -14,5 +15,7 @@ namespace Ontology
 
         public static IClass Thing   = new Thing();
         public static IClass Nothing = new Nothing();
+
+        public static IDatatype DateTime = new Datatype<DateTime>("xsd", "dateTime");
     }
 }

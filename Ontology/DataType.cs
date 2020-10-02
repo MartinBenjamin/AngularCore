@@ -24,13 +24,14 @@ namespace Ontology
     }
 
     public class Datatype<T>:
-        Entity,
+        BuiltIn,
         IDatatype
     {
         public Datatype(
+            string prefixName,
             string localName
             ) : base(
-                null,
+                ReservedVocabulary.StandardPrefixNames[prefixName],
                 localName)
         {
         }
