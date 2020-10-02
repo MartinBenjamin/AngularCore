@@ -308,18 +308,23 @@ namespace Ontology
                 // Class Expression already processed.
                 return;
 
-            foreach(var superClassExpression in _ontology.GetSuperClasses(classExpression).Select(superClass => superClass.SuperClassExpression))
+            _ontology
+                .Get<ISubClassOf>()
+                .Where(subClassOf => subClassOf.SubClassExpression == classExpression)
+                .Select(subClassOf => subClassOf.SuperClassExpression)
+                .ForEach(superClassExpression =>
                 Classify(
                     classExpressions,
                     individual,
-                    superClassExpression);
+                    superClassExpression));
 
             if(classExpression is IObjectIntersectionOf objectIntersectionOf)
-                foreach(var componentClassExpression in objectIntersectionOf.ClassExpressions)
-                    Classify(
-                        classExpressions,
-                        individual,
-                        componentClassExpression);
+                objectIntersectionOf.ClassExpressions
+                    .ForEach(componentClassExpression =>
+                        Classify(
+                            classExpressions,
+                            individual,
+                            componentClassExpression));
         }
     }
 }
