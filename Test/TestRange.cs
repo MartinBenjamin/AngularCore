@@ -8,8 +8,8 @@ namespace Test
     [TestFixture]
     public class TestRange
     {
-        private static int _start;
-        private static int _count = 3;
+        private static readonly int _start;
+        private static readonly int _count = 3;
 
         [TestCaseSource("ConstructTestCases")]
         public void Construct(

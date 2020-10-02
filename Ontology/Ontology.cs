@@ -1,5 +1,4 @@
 ﻿using CommonDomainObjects;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,11 +6,11 @@ namespace Ontology
 {
     public class Ontology: IOntology
     {
-        private string           _iri;
-        private IList<IOntology> _imports;
-        private IList<IAxiom>    _axioms  = new List<IAxiom>();
-        private IDictionary<IClassExpression, HashSet<IClassExpression>>
-                                 _superClasses = new Dictionary<IClassExpression, HashSet<IClassExpression>>();
+        private readonly string           _iri;
+        private readonly IList<IOntology> _imports;
+        private readonly IList<IAxiom>    _axioms  = new List<IAxiom>();
+        private readonly IDictionary<IClassExpression, HashSet<IClassExpression>>
+                                          _superClasses = new Dictionary<IClassExpression, HashSet<IClassExpression>>();
 
         public Ontology(
             string             iri,
@@ -43,10 +42,9 @@ namespace Ontology
             IClassExpression classExpression
             )
         {
-            HashSet<IClassExpression> superClassExpressions;
             if(!_superClasses.TryGetValue(
                 classExpression,
-                out superClassExpressions))
+                out HashSet<IClassExpression> superClassExpressions))
             {
                 superClassExpressions = new HashSet<IClassExpression>();
                 _superClasses[classExpression] = superClassExpressions;

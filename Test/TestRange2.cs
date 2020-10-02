@@ -8,9 +8,9 @@ namespace Test
     [TestFixture]
     public class TestRange2
     {
-        private static int? _unbounded = Range2<int>.Unbounded;
-        private static int  _start;
-        private static int  _count = 3;
+        private static readonly int? _unbounded = Range2<int>.Unbounded;
+        private static readonly int  _start;
+        private static readonly int  _count = 3;
 
         [TestCaseSource("ConstructTestCases")]
         public void Construct(
