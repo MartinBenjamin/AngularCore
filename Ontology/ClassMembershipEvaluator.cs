@@ -312,19 +312,17 @@ namespace Ontology
                 .Get<ISubClassOf>()
                 .Where(subClassOf => subClassOf.SubClassExpression == classExpression)
                 .Select(subClassOf => subClassOf.SuperClassExpression)
-                .ForEach(superClassExpression =>
-                Classify(
+                .ForEach(superClassExpression => Classify(
                     classExpressions,
                     individual,
                     superClassExpression));
 
             if(classExpression is IObjectIntersectionOf objectIntersectionOf)
                 objectIntersectionOf.ClassExpressions
-                    .ForEach(componentClassExpression =>
-                        Classify(
-                            classExpressions,
-                            individual,
-                            componentClassExpression));
+                    .ForEach(componentClassExpression => Classify(
+                        classExpressions,
+                        individual,
+                        componentClassExpression));
         }
     }
 }
