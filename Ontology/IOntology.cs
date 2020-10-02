@@ -12,8 +12,6 @@ namespace Ontology
 
         IEnumerable<IOntology>    GetOntologies();
         IEnumerable<TAxiom>       Get<TAxiom>() where TAxiom : IAxiom;
-        IEnumerable<ISubClassOf>  GetSuperClasses(IClassExpression classExpression);
-
         HashSet<IClassExpression> SuperClasses(IClassExpression classExpression);
     }
 }

@@ -45,11 +45,6 @@ namespace Ontology
                 .SelectMany(import => import.Axioms)
                 .OfType<TAxiom>();
 
-        public IEnumerable<ISubClassOf> GetSuperClasses(
-            IClassExpression classExpression
-            ) => Get<ISubClassOf>()
-                .Where(subClassOf => subClassOf.SubClassExpression == classExpression);
-
         public HashSet<IClassExpression> SuperClasses(
             IClassExpression classExpression
             )
@@ -63,12 +58,15 @@ namespace Ontology
                 _superClasses[classExpression] = superClassExpressions;
                 superClassExpressions.Add(classExpression);
 
-                foreach(var superClassExpression in GetSuperClasses(classExpression).Select(superClass => superClass.SuperClassExpression))
-                    superClassExpressions.UnionWith(SuperClasses(superClassExpression));
+                Get<ISubClassOf>()
+                    .Where(subClassOf => subClassOf.SubClassExpression == classExpression)
+                    .Select(subClassOf => subClassOf.SuperClassExpression)
+                    .ForEach(superClassExpression => superClassExpressions.UnionWith(SuperClasses(superClassExpression)));
 
                 if(classExpression is IObjectIntersectionOf objectIntersectionOf)
-                    foreach(var componentClassExpression in objectIntersectionOf.ClassExpressions)
-                        superClassExpressions.UnionWith(SuperClasses(componentClassExpression));
+                    objectIntersectionOf
+                        .ClassExpressions
+                        .ForEach(componentClassExpression => superClassExpressions.UnionWith(SuperClasses(componentClassExpression)));
             }
             return superClassExpressions;
         }
