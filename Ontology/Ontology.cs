@@ -45,18 +45,6 @@ namespace Ontology
                 .SelectMany(import => import.Axioms)
                 .OfType<TAxiom>();
 
-        public IEnumerable<IObjectPropertyExpression> GetObjectPropertyExpressions(
-            IClassExpression domain
-            ) => Get<IObjectPropertyDomain>()
-                .Where(objectPropertyDomain => objectPropertyDomain.Domain == domain)
-                .Select(objectPropertyDomain => objectPropertyDomain.ObjectPropertyExpression);
-
-        public IEnumerable<IDataPropertyExpression> GetDataPropertyExpressions(
-            IClassExpression domain
-            ) => Get<IDataPropertyDomain>()
-                .Where(dataPropertyDomain => dataPropertyDomain.Domain == domain)
-                .Select(dataPropertyDomain => dataPropertyDomain.DataPropertyExpression);
-
         public IEnumerable<IHasKey> GetHasKeys(
             IClassExpression classExpression
             ) => Get<IHasKey>()
