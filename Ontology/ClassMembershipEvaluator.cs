@@ -227,7 +227,7 @@ namespace Ontology
             commonClassExpressions.IntersectWith(Classify(rhs));
             var hasKeys =
                 from commonClassExpression in commonClassExpressions
-                from hasKey in _ontology.GetHasKeys(commonClassExpression)
+                join hasKey in _ontology.Get<IHasKey>() on commonClassExpression equals hasKey.ClassExpression
                 select hasKey;
             return
                 hasKeys.Any() &&

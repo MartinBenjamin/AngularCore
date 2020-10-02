@@ -10,11 +10,10 @@ namespace Ontology
 
         IDatatype        DateTime { get; }
 
-        IEnumerable<IOntology>   GetOntologies();
-        IEnumerable<TAxiom>      Get<TAxiom>() where TAxiom : IAxiom;
-        IEnumerable<IHasKey>     GetHasKeys(IClassExpression classExpression);
-        IEnumerable<ISubClassOf> GetSuperClasses(IClassExpression classExpression);
+        IEnumerable<IOntology>    GetOntologies();
+        IEnumerable<TAxiom>       Get<TAxiom>() where TAxiom : IAxiom;
+        IEnumerable<ISubClassOf>  GetSuperClasses(IClassExpression classExpression);
 
-        HashSet<IClassExpression>              SuperClasses(IClassExpression classExpression);
+        HashSet<IClassExpression> SuperClasses(IClassExpression classExpression);
     }
 }

@@ -45,11 +45,6 @@ namespace Ontology
                 .SelectMany(import => import.Axioms)
                 .OfType<TAxiom>();
 
-        public IEnumerable<IHasKey> GetHasKeys(
-            IClassExpression classExpression
-            ) => Get<IHasKey>()
-                .Where(hasKey => hasKey.ClassExpression == classExpression);
-
         public IEnumerable<ISubClassOf> GetSuperClasses(
             IClassExpression classExpression
             ) => Get<ISubClassOf>()
