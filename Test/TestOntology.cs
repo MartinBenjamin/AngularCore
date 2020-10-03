@@ -213,12 +213,9 @@ namespace Test
 
             var sponsorCardinality =
             (
-                from classExpression in classes
-                from subClassOf in dealOntology.Get<ISubClassOf>()
-                where subClassOf.SubClassExpression == classExpression
-                let objectCardinality = subClassOf.SuperClassExpression as IObjectCardinality
+                from objectCardinality in classes.OfType<IObjectCardinality>()
                 where
-                    objectCardinality?.ObjectPropertyExpression == _deals.Sponsors
+                    objectCardinality.ObjectPropertyExpression == _deals.Sponsors
                 select
                     objectCardinality is IObjectMinCardinality ?
                         new Range2<int>(objectCardinality.Cardinality, null) :
