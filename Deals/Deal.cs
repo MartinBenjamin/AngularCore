@@ -11,7 +11,7 @@ namespace Deals
         Named<Guid>,
         IIndividual
     {
-        public virtual string            ClassIri        { get; protected set; }
+        public virtual string            ClassIri         { get; protected set; }
         public virtual DealType          Type             { get; protected set; }
         public virtual IList<Agreement>  Agreements       { get; protected set; }
         public virtual IList<DealParty>  Parties          { get; protected set; }
