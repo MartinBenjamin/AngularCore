@@ -10,7 +10,7 @@ namespace CommonDomainObjects
         {
             private readonly T _t;
 
-            private struct ValueEnumerator<T>: IEnumerator<T>
+            private struct ValueEnumerator: IEnumerator<T>
             {
                 private readonly T   _t;
                 private readonly int _count;
@@ -53,7 +53,7 @@ namespace CommonDomainObjects
 
             public IEnumerator<T> GetEnumerator()
             {
-                return new ValueEnumerator<T>(_t);
+                return new ValueEnumerator(_t);
             }
 
             IEnumerator IEnumerable.GetEnumerator()
