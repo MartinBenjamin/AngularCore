@@ -50,9 +50,7 @@ namespace CommonDomainObjects
             Expression<Func<TOut, IEnumerable<TIn>>> selectIncoming
             ) where TIn : class
         {
-            var memberExpression = selectIncoming.Body as MemberExpression;
-
-            if(memberExpression == null)
+            if(!(selectIncoming.Body is MemberExpression memberExpression))
                 throw new ArgumentException(
                     "Body of Expression must be a MemberExpression.",
                     nameof(selectIncoming));
@@ -67,9 +65,7 @@ namespace CommonDomainObjects
             Expression<Func<TOut, TIn>> selectIncoming
             ) where TIn : class
         {
-            var memberExpression = selectIncoming.Body as MemberExpression;
-
-            if(memberExpression == null)
+            if(!(selectIncoming.Body is MemberExpression memberExpression))
                 throw new ArgumentException(
                     "Body of Expression must be a MemberExpression.",
                     nameof(selectIncoming));
@@ -261,7 +257,7 @@ namespace CommonDomainObjects
     public class OneToManyEdge<TOut, TIn>: Edge
         where TIn : class
     {
-        private Func<TOut, IEnumerable<TIn>> _selectIncoming;
+        private readonly Func<TOut, IEnumerable<TIn>> _selectIncoming;
 
         public OneToManyEdge(
             string                       name,
@@ -280,9 +276,7 @@ namespace CommonDomainObjects
                 typeof(TOut),
                 typeof(TIn))
         {
-            var memberExpression = selectIncoming.Body as MemberExpression;
-
-            if(memberExpression == null)
+            if(!(selectIncoming.Body is MemberExpression memberExpression))
                 throw new ArgumentException(
                     "Body of Expression must be a MemberExpression.",
                     nameof(selectIncoming));
@@ -299,7 +293,7 @@ namespace CommonDomainObjects
     public class ManyToOneEdge<TOut, TIn>: Edge
         where TIn: class
     {
-        private Func<TOut, TIn> _selectIncoming;
+        private readonly Func<TOut, TIn> _selectIncoming;
 
         public ManyToOneEdge(
             string name,
@@ -318,9 +312,7 @@ namespace CommonDomainObjects
                 typeof(TOut),
                 typeof(TIn))
         {
-            var memberExpression = selectIncoming.Body as MemberExpression;
-
-            if(memberExpression == null)
+            if(!(selectIncoming.Body is MemberExpression memberExpression))
                 throw new ArgumentException(
                     "Body of Expression must be a MemberExpression.",
                     nameof(selectIncoming));

@@ -155,10 +155,12 @@ namespace Deals
 
     public class Deals: Ontology.Ontology
     {
+        public IClass                    DealType            { get; protected set; }
         public IClass                    Deal                { get; protected set; }
         public IClass                    Debt                { get; protected set; }
         public IClass                    Advisory            { get; protected set; }
 
+        public IObjectPropertyExpression Type                { get; protected set; }
         public IObjectPropertyExpression Parties             { get; protected set; }
         public IObjectPropertyExpression Commitments         { get; protected set; }
         public IObjectPropertyExpression Classifiers         { get; protected set; }
@@ -195,11 +197,15 @@ namespace Deals
                 commonDomainObjects,
                 roles,
                 roleIndividuals,
+                legalEntities,
                 parties,
                 validation)
         {
-            var Deal        = this.Class<Deal>();
+            DealType    = this.Class<DealType>();
+            DealType.SubClassOf(commonDomainObjects.Named);
+            Deal        = this.Class<Deal>();
             Deal.SubClassOf(commonDomainObjects.Named);
+            Type        = Deal.ObjectProperty<Deal, DealType  >(deal => deal.Type       );
             Parties     = Deal.ObjectProperty<Deal, DealParty >(deal => deal.Parties    );
             Classifiers = Deal.ObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
             Commitments = Deal.ObjectProperty<Deal, Commitment>(deal => deal.Commitments);
@@ -306,15 +312,22 @@ namespace Deals
         public IClass Deal { get; protected set; }
 
         public Advisory(
-            Deals      deals,
-            Validation validation
+            CommonDomainObjects commonDomainObjects,
+            Validation          validation,
+            Deals               deals
             ) : base(
                 "Advisory",
-                deals,
-                validation)
+                commonDomainObjects,
+                validation,
+                deals)
         {
+            var dealType = deals.DealType.NamedIndividual("Advisory");
+            dealType.Value(
+                commonDomainObjects.Id,
+                DealTypeIdentifier.Advisory);
+
             Deal = this.Class("Deal");
-            Deal.SubClassOf(Deal);
+            Deal.SubClassOf(deals.Deal);
             Deal.SubClassOf(deals.Parties.ExactCardinality(1, deals.BankAdvisorParty));
             Deal.SubClassOf(deals.Sponsors.MaxCardinality(0))
                 .Annotate(
@@ -330,15 +343,23 @@ namespace Deals
         public IClass Deal { get; protected set; }
 
         public ProjectFinance(
-            Deals      deals,
-            Validation validation
+            CommonDomainObjects commonDomainObjects,
+            Deals               deals,
+            Validation          validation
             ): base(
                 "ProjectFinance",
+                commonDomainObjects,
                 deals,
                 validation)
         {
+            var dealType = deals.DealType.NamedIndividual("ProjectFinance");
+            dealType.Value(
+                commonDomainObjects.Id,
+                DealTypeIdentifier.ProjectFinance);
+
             Deal = this.Class("Deal");
             Deal.SubClassOf(deals.Debt);
+            Deal.SubClassOf(deals.Type.HasValue(dealType));
             Deal.SubClassOf(deals.Sponsors.MinCardinality(1))
                 .Annotate(
                     validation.Restriction,

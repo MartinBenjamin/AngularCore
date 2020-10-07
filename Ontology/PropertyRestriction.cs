@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-
-namespace Ontology
+﻿namespace Ontology
 {
     public abstract class PropertyRestriction: IPropertyRestriction
     {
-        private IPropertyExpression _propertyExpression;
+        private readonly IPropertyExpression _propertyExpression;
 
         protected PropertyRestriction(
             IPropertyExpression propertyExpression
@@ -14,6 +12,7 @@ namespace Ontology
         }
 
         IPropertyExpression IPropertyRestriction.PropertyExpression => _propertyExpression;
+
         public abstract void Accept(IClassExpressionVisitor visitor);
 
         public abstract bool Evaluate(

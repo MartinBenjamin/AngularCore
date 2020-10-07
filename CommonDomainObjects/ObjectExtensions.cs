@@ -8,7 +8,7 @@ namespace CommonDomainObjects
     {
         private struct EnumerableValue<T>: IEnumerable<T>
         {
-            private T _t;
+            private readonly T _t;
 
             private struct ValueEnumerator<T>: IEnumerator<T>
             {
