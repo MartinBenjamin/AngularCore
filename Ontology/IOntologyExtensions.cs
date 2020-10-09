@@ -95,7 +95,7 @@ namespace Ontology
         public static IDataPropertyExpression DataProperty<T, TProperty>(
             this IOntology                              ontology,
             Expression<Func<T, IEnumerable<TProperty>>> property
-            ) => ontology.DataProperty<T, TProperty>(
+            ) => ontology.DataProperty(
                 property.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TProperty).Name,
                 property.Compile());
 
@@ -111,7 +111,7 @@ namespace Ontology
         public static IDataPropertyExpression DataProperty<T, TProperty>(
             this IOntology                 ontology,
             Expression<Func<T, TProperty>> property
-            ) => ontology.DataProperty<T, TProperty>(
+            ) => ontology.DataProperty(
                 property.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TProperty).Name,
                 property.Compile());
 
