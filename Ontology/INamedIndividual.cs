@@ -126,14 +126,14 @@
             IOntology               ontology,
             IDataPropertyExpression dataPropertyExpression,
             INamedIndividual        sourceIndividual,
-            object                  target
+            object                  targetValue
             ) : base(
                 ontology,
                 dataPropertyExpression,
                 sourceIndividual)
         {
             _dataPropertyExpression = dataPropertyExpression;
-            _targetValue            = target;
+            _targetValue            = targetValue;
         }
 
         IDataPropertyExpression IDataPropertyAssertion.DataPropertyExpression => _dataPropertyExpression;
