@@ -50,8 +50,8 @@
         Axiom,
         IClassAssertion
     {
-        private IClassExpression _classExpression;
-        private INamedIndividual _namedIndividual;
+        private readonly IClassExpression _classExpression;
+        private readonly INamedIndividual _namedIndividual;
 
         public ClassAssertion(
             IClassExpression classExpression,
@@ -71,8 +71,8 @@
         Axiom,
         IPropertyAssertion
     {
-        protected IPropertyExpression _propertyExpression;
-        protected INamedIndividual    _sourceIndividual;
+        protected readonly IPropertyExpression _propertyExpression;
+        protected readonly INamedIndividual    _sourceIndividual;
 
         protected PropertyAssertion(
             IOntology           ontology,
@@ -93,8 +93,8 @@
         PropertyAssertion,
         IObjectPropertyAssertion
     {
-        private IObjectPropertyExpression _objectPropertyExpression;
-        private object                    _targetIndividual;
+        private readonly IObjectPropertyExpression _objectPropertyExpression;
+        private readonly object                    _targetIndividual;
 
         public ObjectPropertyAssertion(
             IOntology                 ontology,
@@ -119,8 +119,8 @@
         PropertyAssertion,
         IDataPropertyAssertion
     {
-        private IDataPropertyExpression _dataPropertyExpression;
-        private object                  _targetValue;
+        private readonly IDataPropertyExpression _dataPropertyExpression;
+        private readonly object                  _targetValue;
 
         public DataPropertyAssertion(
             IOntology               ontology,
