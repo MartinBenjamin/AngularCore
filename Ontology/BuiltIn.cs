@@ -4,8 +4,8 @@
         Axiom,
         IEntity
     {
-        protected string _iri;
-        protected string _localName;
+        protected readonly string _iri;
+        protected readonly string _localName;
 
         protected BuiltIn(
             string prefixIri,

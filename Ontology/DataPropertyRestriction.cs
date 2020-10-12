@@ -4,7 +4,7 @@
         PropertyRestriction,
         IDataPropertyRestriction
     {
-        protected IDataPropertyExpression _dataPropertyExpression;
+        protected readonly IDataPropertyExpression _dataPropertyExpression;
 
         protected DataPropertyRestriction(
             IDataPropertyExpression dataPropertyExpression

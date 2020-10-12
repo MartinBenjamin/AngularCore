@@ -4,7 +4,7 @@ namespace Ontology
 {
     public class ObjectOneOf: IObjectOneOf
     {
-        private IList<object> _individuals;
+        private readonly IList<object> _individuals;
 
         public ObjectOneOf(
             params object[] individuals

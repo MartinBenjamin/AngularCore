@@ -4,8 +4,8 @@
         Annotated,
         IAnnotation
     {
-        private IAnnotationProperty _property;
-        private object              _value;
+        private readonly IAnnotationProperty _property;
+        private readonly object              _value;
 
         public Annotation(
             IAnnotationProperty property,

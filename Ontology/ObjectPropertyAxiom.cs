@@ -4,7 +4,7 @@
         Axiom,
         IObjectPropertyAxiom
     {
-        private IObjectPropertyExpression _objectPropertyExpression;
+        private readonly IObjectPropertyExpression _objectPropertyExpression;
 
         protected ObjectPropertyAxiom(
             IObjectPropertyExpression objectPropertyExpression

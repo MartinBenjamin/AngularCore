@@ -6,7 +6,7 @@ namespace Ontology
         Axiom,
         IEquivalentClasses
     {
-        private IList<IClassExpression> _classExpressions;
+        private readonly IList<IClassExpression> _classExpressions;
 
         public EquivalentClasses(
             IOntology                 ontology,

@@ -4,8 +4,8 @@
         DataPropertyRestriction,
         IDataCardinality
     {
-        protected int        _cardinality;
-        protected IDataRange _dataRange;
+        protected readonly int        _cardinality;
+        protected readonly IDataRange _dataRange;
 
         protected DataCardinality(
             IDataPropertyExpression dataPropertyExpression,

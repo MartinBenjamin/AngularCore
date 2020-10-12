@@ -4,7 +4,7 @@
          DataPropertyRestriction,
          IDataAllValuesFrom
     {
-        private IDataRange _dataRange;
+        private readonly IDataRange _dataRange;
 
         public DataAllValuesFrom(
             IDataPropertyExpression dataPropertyExpression,

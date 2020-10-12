@@ -4,8 +4,8 @@
         ObjectPropertyRestriction,
         IObjectCardinality
     {
-        protected int              _cardinality;
-        protected IClassExpression _classExpression;
+        protected readonly int              _cardinality;
+        protected readonly IClassExpression _classExpression;
 
         protected ObjectCardinality(
             IObjectPropertyExpression  objectPropertyExpression,

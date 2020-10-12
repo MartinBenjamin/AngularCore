@@ -4,7 +4,7 @@
         Axiom,
         IDataPropertyAxiom
     {
-        private IDataPropertyExpression _dataPropertyExpression;
+        private readonly IDataPropertyExpression _dataPropertyExpression;
 
         protected DataPropertyAxiom(
             IDataPropertyExpression dataPropertyExpression

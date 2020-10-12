@@ -4,7 +4,7 @@
         ObjectPropertyRestriction,
         IObjectHasValue
     {
-        private object _individual;
+        private readonly object _individual;
 
         public ObjectHasValue(
             IObjectPropertyExpression objectPropertyExpression,

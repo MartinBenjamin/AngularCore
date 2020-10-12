@@ -4,7 +4,7 @@
         ObjectPropertyRestriction,
         IObjectSomeValuesFrom
     {
-        private IClassExpression _classExpression;
+        private readonly IClassExpression _classExpression;
 
         public ObjectSomeValuesFrom(
             IObjectPropertyExpression objectPropertyExpression,

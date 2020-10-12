@@ -2,7 +2,7 @@
 {
     public class ObjectComplementOf: IObjectComplementOf
     {
-        private IClassExpression _classExpression;
+        private readonly IClassExpression _classExpression;
 
         public ObjectComplementOf(
             IClassExpression classExpression

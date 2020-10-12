@@ -4,7 +4,7 @@
         Axiom,
         IEntity
     {
-        protected string _localName;
+        protected readonly string _localName;
 
         protected Entity(
             IOntology ontology,

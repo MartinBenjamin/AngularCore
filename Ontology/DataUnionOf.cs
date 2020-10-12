@@ -5,7 +5,7 @@ namespace Ontology
 {
     public class DataUnionOf: IDataUnionOf
     {
-        private IList<IDataRange> _dataRanges;
+        private readonly IList<IDataRange> _dataRanges;
 
         public DataUnionOf(
             params IDataRange[] dataRanges

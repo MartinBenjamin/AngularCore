@@ -4,7 +4,7 @@
         ObjectPropertyAxiom,
         IObjectPropertyRange
     {
-        private IClassExpression _range;
+        private readonly IClassExpression _range;
 
         public ObjectPropertyRange(
             IObjectPropertyExpression objectPropertyExpression,

@@ -5,7 +5,7 @@ namespace Ontology
 {
     public class DataIntersectionOf: IDataIntersectionOf
     {
-        private IList<IDataRange> _dataRanges;
+        private readonly IList<IDataRange> _dataRanges;
 
         public DataIntersectionOf(
             params IDataRange[] dataRanges

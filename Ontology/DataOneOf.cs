@@ -5,7 +5,7 @@ namespace Ontology
 {
     public class DataOneOf: IDataOneOf
     {
-        private IList<object> _values;
+        private readonly IList<object> _values;
 
         public DataOneOf(
             params object[] values

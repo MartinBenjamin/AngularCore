@@ -12,7 +12,7 @@
         void Visit(IObjectHasValue         objectHasValue        );
         void Visit(IObjectHasSelf          objectHasSelf         );
         void Visit(IObjectMinCardinality   objectMinCardinality  );
-        void Visit(IObjectMaxCardinality   objectMinCardinality  );
+        void Visit(IObjectMaxCardinality   objectMaxCardinality  );
         void Visit(IObjectExactCardinality objectExactCardinality);
         void Visit(IDataSomeValuesFrom     dataSomeValuesFrom    );
         void Visit(IDataAllValuesFrom      dataAllValuesFrom     );

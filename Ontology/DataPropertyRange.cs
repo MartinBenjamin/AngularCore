@@ -4,7 +4,7 @@
         DataPropertyAxiom,
         IDataPropertyRange
     {
-        private IDataRange _range;
+        private readonly IDataRange _range;
 
         public DataPropertyRange(
             IDataPropertyExpression dataPropertyExpression,

@@ -5,7 +5,7 @@ namespace Ontology
 {
     public class ObjectUnionOf: IObjectUnionOf
     {
-        private IList<IClassExpression> _classExpressions { get; }
+        private readonly IList<IClassExpression> _classExpressions;
 
         public ObjectUnionOf(
             params IClassExpression[] classExpressions

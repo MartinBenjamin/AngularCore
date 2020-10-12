@@ -4,8 +4,8 @@
         Axiom,
         ISubClassOf
     {
-        private IClassExpression _subClassExpression;
-        private IClassExpression _superClassExpression;
+        private readonly IClassExpression _subClassExpression;
+        private readonly IClassExpression _superClassExpression;
 
         public SubClassOf(
             IOntology        ontology,

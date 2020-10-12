@@ -4,7 +4,7 @@ namespace Ontology
 {
     public abstract class Annotated: IAnnotated
     {
-        private IList<IAnnotation> _annotations = new List<IAnnotation>();
+        private readonly IList<IAnnotation> _annotations = new List<IAnnotation>();
 
         protected Annotated()
         {

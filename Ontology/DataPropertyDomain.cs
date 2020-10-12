@@ -4,7 +4,7 @@
         DataPropertyAxiom,
         IDataPropertyDomain
     {
-        private IClassExpression _domain;
+        private readonly IClassExpression _domain;
 
         public DataPropertyDomain(
             IDataPropertyExpression dataPropertyExpression,

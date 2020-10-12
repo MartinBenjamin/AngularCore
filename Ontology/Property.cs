@@ -9,7 +9,7 @@ namespace Ontology
         Entity,
         IPropertyExpression
     {
-        private Func<T, IEnumerable<TProperty>> _property;
+        private readonly Func<T, IEnumerable<TProperty>> _property;
 
         protected Property(
             IOntology                       ontology,
@@ -46,7 +46,7 @@ namespace Ontology
         Entity,
         IPropertyExpression
     {
-        private Func<T, TProperty> _property;
+        private readonly Func<T, TProperty> _property;
 
         protected FunctionalProperty(
             IOntology          ontology,

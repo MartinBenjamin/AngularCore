@@ -13,9 +13,9 @@ namespace Ontology
             { "owl" , "http://www.w3.org/2002/07/owl#"              }
         };
 
-        public static IClass Thing   = new Thing();
-        public static IClass Nothing = new Nothing();
+        public static readonly IClass Thing   = new Thing();
+        public static readonly IClass Nothing = new Nothing();
 
-        public static IDatatype DateTime = new Datatype<DateTime>("xsd", "dateTime");
+        public static readonly IDatatype DateTime = new Datatype<DateTime>("xsd", "dateTime");
     }
 }

@@ -5,7 +5,7 @@ namespace Ontology
 {
     public class ObjectIntersectionOf: IObjectIntersectionOf
     {
-        private IList<IClassExpression> _classExpressions { get; }
+        private readonly IList<IClassExpression> _classExpressions;
 
         public ObjectIntersectionOf(
             params IClassExpression[] classExpressions

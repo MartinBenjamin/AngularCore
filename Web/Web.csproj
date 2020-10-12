@@ -60,6 +60,43 @@
     <None Remove="ClientApp\src\app\NamedFinder.ts" />
     <None Remove="ClientApp\src\app\ObservableDomainObjectStore.ts" />
     <None Remove="ClientApp\src\app\ObservableNamedStore.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IAnnotated.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IAnnotation.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IAnnotationProperty.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IAxiom.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IClass.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IClassAxiom.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IClassExpression.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IClassExpressionVisitor.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IClassMembershipEvaluator.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IDataAllValuesFrom.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IDataCardinality.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IDataComplementOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IDataHasValue.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IDataIntersectionOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IDataOneOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IDataPropertyRestriction.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IDataRange.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IDataSomeValuesFrom.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IDatatype.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IDataUnionOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IEntity.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IEquivalentClasses.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IHasKey.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IObjectAllValuesFrom.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IObjectCardinality.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IObjectComplementOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IObjectHasSelf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IObjectHasValue.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IObjectIntersectionOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IObjectOneOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IObjectPropertyRestriction.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IObjectSomeValuesFrom.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IObjectUnionOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IOntology.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IPropertyExpression.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IPropertyRestriction.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ISubClassOf.ts" />
     <None Remove="ClientApp\src\app\Organisations.ts" />
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.ts" />
@@ -121,6 +158,43 @@
     <TypeScriptCompile Include="ClientApp\src\app\NamedFinder.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\ObservableDomainObjectStore.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\ObservableNamedStore.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IAnnotationProperty.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IAnnotated.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IAnnotation.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IAxiom.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IClass.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IClassAxiom.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IClassExpression.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IClassExpressionVisitor.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IClassMembershipEvaluator.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataAllValuesFrom.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataCardinality.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataComplementOf.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataHasValue.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataIntersectionOf.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataOneOf.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataPropertyRestriction.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataRange.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataSomeValuesFrom.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDatatype.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataUnionOf.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IEntity.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IEquivalentClasses.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IHasKey.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectAllValuesFrom.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectCardinality.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectComplementOf.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectHasSelf.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectHasValue.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectIntersectionOf.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectOneOf.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectPropertyRestriction.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectSomeValuesFrom.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectUnionOf.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IOntology.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IPropertyExpression.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IPropertyRestriction.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ISubClassOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Organisations.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.ts" />
@@ -171,5 +245,21 @@
       </ResolvedFileToPublish>
     </ItemGroup>
   </Target>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptTarget>ES2015</TypeScriptTarget>
+    <TypeScriptJSXEmit>React</TypeScriptJSXEmit>
+    <TypeScriptModuleKind>ES6</TypeScriptModuleKind>
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptRemoveComments>False</TypeScriptRemoveComments>
+    <TypeScriptOutFile />
+    <TypeScriptOutDir />
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+    <TypeScriptSourceMap>True</TypeScriptSourceMap>
+    <TypeScriptMapRoot />
+    <TypeScriptSourceRoot />
+  </PropertyGroup>
 
 </Project>

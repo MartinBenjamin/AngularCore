@@ -2,7 +2,7 @@
 {
     public class DataComplementOf: IDataComplementOf
     {
-        private IDataRange _dataRange;
+        private readonly IDataRange _dataRange;
 
         public DataComplementOf(
             IDataRange dataRange

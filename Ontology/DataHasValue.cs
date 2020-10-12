@@ -4,7 +4,7 @@
         DataPropertyRestriction,
         IDataHasValue
     {
-        private object _value;
+        private readonly object _value;
 
         public DataHasValue(
             IDataPropertyExpression dataPropertyExpression,

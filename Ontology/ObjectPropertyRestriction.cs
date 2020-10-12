@@ -4,7 +4,7 @@
         PropertyRestriction,
         IObjectPropertyRestriction
     {
-        protected IObjectPropertyExpression _objectPropertyExpression;
+        protected readonly IObjectPropertyExpression _objectPropertyExpression;
 
         protected ObjectPropertyRestriction(
             IObjectPropertyExpression objectPropertyExpression

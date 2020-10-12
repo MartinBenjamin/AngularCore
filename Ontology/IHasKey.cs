@@ -4,8 +4,8 @@ namespace Ontology
 {
     public interface IHasKey: IAxiom
     {
-        IClassExpression               ClassExpression { get; }
-        IList<IDataPropertyExpression> Properties      { get; }
+        IClassExpression               ClassExpression         { get; }
+        IList<IDataPropertyExpression> DataPropertyExpressions { get; }
 
         bool AreEqual(
             IOntology context,
