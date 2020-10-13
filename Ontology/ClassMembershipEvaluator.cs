@@ -241,11 +241,9 @@ namespace Ontology
             object individual
             )
         {
-            HashSet<IClassExpression> classExpressions;
-
             if(_classifications.TryGetValue(
                 individual,
-                out classExpressions))
+                out HashSet<IClassExpression> classExpressions))
                 return classExpressions;
 
             _classifications[individual] =
