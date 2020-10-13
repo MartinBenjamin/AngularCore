@@ -83,6 +83,7 @@
     <None Remove="ClientApp\src\app\Ontology\IEntity.ts" />
     <None Remove="ClientApp\src\app\Ontology\IEquivalentClasses.ts" />
     <None Remove="ClientApp\src\app\Ontology\IHasKey.ts" />
+    <None Remove="ClientApp\src\app\Ontology\INamedIndividual.ts" />
     <None Remove="ClientApp\src\app\Ontology\IObjectAllValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IObjectCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\IObjectComplementOf.ts" />
@@ -181,6 +182,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IEntity.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IEquivalentClasses.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IHasKey.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\INamedIndividual.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectAllValuesFrom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectCardinality.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectComplementOf.ts" />

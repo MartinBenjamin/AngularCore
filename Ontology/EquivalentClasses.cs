@@ -16,6 +16,6 @@ namespace Ontology
             _classExpressions = classExpressions;
         }
 
-        IEnumerable<IClassExpression> IEquivalentClasses.ClassExpressions => _classExpressions;
+        IList<IClassExpression> IEquivalentClasses.ClassExpressions => _classExpressions;
     }
 }
