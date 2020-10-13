@@ -13,6 +13,7 @@
     public interface IDataMaxCardinality: IDataCardinality
     {
     }
+
     public interface IDataExactCardinality: IDataCardinality
     {
     }
