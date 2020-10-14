@@ -9,8 +9,8 @@ namespace Ontology
     {
         private readonly IOntology                                               _ontology;
         private readonly IList<(IClass Class, IClassExpression ClassExpression)> _definitions;
-        private readonly IDictionary<IClassExpression, IList<IClassExpression>>  _superClassExpressions;
-        private readonly IDictionary<IClassExpression, IList<IClassExpression>>  _subClassExpressions;
+        private readonly ILookup<IClassExpression, IClassExpression>             _superClassExpressions;
+        private readonly ILookup<IClassExpression, IClassExpression>             _subClassExpressions;
         private readonly IDictionary<IClassExpression, IList<IClassExpression>>  _disjointClassExpressions;
         private readonly IDictionary<object, HashSet<IClassExpression>>          _classifications;
 
@@ -36,17 +36,15 @@ namespace Ontology
             IDictionary<object, HashSet<IClassExpression>> classifications
             )
         {
-            _ontology                 = ontology;
-            _classifications          = classifications;
-            _superClassExpressions    = (
-                from subClassOf in _ontology.Get<ISubClassOf>()
-                group subClassOf.SuperClassExpression by subClassOf.SubClassExpression into superClassExpressions
-                select superClassExpressions
-                ).ToDictionary(
-                superClassExpressions => superClassExpressions.Key,
-                superClassExpressions => (IList<IClassExpression>)superClassExpressions.ToList());
-            _subClassExpressions   = _superClassExpressions.Transpose();
-            _definitions              = (
+            _ontology              = ontology;
+            _classifications       = classifications;
+            _superClassExpressions = _ontology.Get<ISubClassOf>().ToLookup(
+                subClassOf => subClassOf.SubClassExpression,
+                subClassOf => subClassOf.SuperClassExpression);
+            _subClassExpressions   = _ontology.Get<ISubClassOf>().ToLookup(
+                subClassOf => subClassOf.SuperClassExpression,
+                subClassOf => subClassOf.SubClassExpression);
+            _definitions           = (
                 from @class in _ontology.Get<IClass>()
                 from equivalentClasses in _ontology.Get<IEquivalentClasses>()
                 where equivalentClasses.ClassExpressions.Contains(@class)
@@ -81,14 +79,8 @@ namespace Ontology
             {
                 var disjointClassExpressions = _disjointClassExpressions[classExpression];
                 for(var index = 0;index < disjointClassExpressions.Count;++index)
-                {
-                    var disjointClassExpression = disjointClassExpressions[index];
-                    if(_subClassExpressions.TryGetValue(
-                        disjointClassExpression,
-                        out var subclassExpressions))
-                            subclassExpressions.ForEach(
-                                subclassExpression => disjointClassExpressions.Add(subclassExpression));
-                }
+                    _subClassExpressions[disjointClassExpressions[index]].ForEach(
+                        subclassExpression => disjointClassExpressions.Add(subclassExpression));
             }
 
             HashSet<IClass> adjacent = null;
@@ -361,10 +353,7 @@ namespace Ontology
                 // Class Expression already processed.
                 return;
 
-            if(_superClassExpressions.TryGetValue(
-                classExpression,
-                out var superClasses))
-                superClasses.ForEach(superClassExpression => Classify(
+            _superClassExpressions[classExpression].ForEach(superClassExpression => Classify(
                     classExpressions,
                     individual,
                     superClassExpression));
