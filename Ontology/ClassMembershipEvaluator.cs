@@ -11,7 +11,7 @@ namespace Ontology
         private readonly IList<(IClass Class, IClassExpression ClassExpression)> _definitions;
         private readonly ILookup<IClassExpression, IClassExpression>             _superClassExpressions;
         private readonly ILookup<IClassExpression, IClassExpression>             _subClassExpressions;
-        private readonly IDictionary<IClassExpression, IList<IClassExpression>>  _disjointClassExpressions;
+        private readonly ILookup<IClassExpression, IClassExpression>             _disjointClassExpressions;
         private readonly IDictionary<object, HashSet<IClassExpression>>          _classifications;
 
         private class ClassVisitor: ClassExpressionVisitor
@@ -66,22 +66,22 @@ namespace Ontology
                 (
                     ClassExpression1,
                     ClassExpression2
-                ));
-            _disjointClassExpressions = (
-                from disjointPair in disjointPairs
-                group disjointPair.ClassExpression2 by disjointPair.ClassExpression1 into disjointGroup
-                select disjointGroup
-                ).ToDictionary(
-                disjointGroup => disjointGroup.Key,
-                disjointGroup => (IList<IClassExpression>)disjointGroup.ToList());
+                )).ToList();
 
-            foreach(var classExpression in _disjointClassExpressions.Keys)
+            for(var index = 0;index < disjointPairs.Count;++index)
             {
-                var disjointClassExpressions = _disjointClassExpressions[classExpression];
-                for(var index = 0;index < disjointClassExpressions.Count;++index)
-                    _subClassExpressions[disjointClassExpressions[index]].ForEach(
-                        subclassExpression => disjointClassExpressions.Add(subclassExpression));
+                var (ClassExpression1, ClassExpression2) = disjointPairs[index];
+                _subClassExpressions[ClassExpression2].ForEach(
+                    subclassExpression => disjointPairs.Add(
+                        (
+                            ClassExpression1,
+                            ClassExpression2: subclassExpression
+                        )));
             }
+
+            _disjointClassExpressions = disjointPairs.ToLookup(
+                disjointPair => disjointPair.ClassExpression1,
+                disjointPair => disjointPair.ClassExpression2);
 
             HashSet<IClass> adjacent = null;
             var empty = new HashSet<IClass>();
@@ -318,8 +318,7 @@ namespace Ontology
 
             var disjointClasses = (
                 from classExpression in classExpressions
-                join pair in _disjointClassExpressions on classExpression equals pair.Key
-                from disjointClassExpression in pair.Value
+                from disjointClassExpression in _disjointClassExpressions[classExpression]
                 where disjointClassExpression is IClass
                 select (IClass)disjointClassExpression
                 ).ToList();
