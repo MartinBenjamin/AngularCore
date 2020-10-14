@@ -1,5 +1,4 @@
-﻿using CommonDomainObjects;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Ontology
 {

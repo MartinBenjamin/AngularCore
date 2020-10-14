@@ -98,6 +98,8 @@
     <None Remove="ClientApp\src\app\Ontology\IPropertyExpression.ts" />
     <None Remove="ClientApp\src\app\Ontology\IPropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\ISubClassOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectIntersectionOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectUnionOf.ts" />
     <None Remove="ClientApp\src\app\Organisations.ts" />
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.ts" />
@@ -197,6 +199,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IPropertyExpression.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IPropertyRestriction.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ISubClassOf.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectIntersectionOf.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectUnionOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Organisations.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.ts" />
