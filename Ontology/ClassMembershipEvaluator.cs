@@ -9,6 +9,9 @@ namespace Ontology
     {
         private readonly IOntology                                               _ontology;
         private readonly IList<(IClass Class, IClassExpression ClassExpression)> _definitions;
+        private readonly IDictionary<IClassExpression, IList<IClassExpression>>  _superClassExpressions;
+        private readonly IDictionary<IClassExpression, IList<IClassExpression>>  _subClassExpressions;
+        private readonly IDictionary<IClassExpression, IList<IClassExpression>>  _disjointClassExpressions;
         private readonly IDictionary<object, HashSet<IClassExpression>>          _classifications;
 
         private class ClassVisitor: ClassExpressionVisitor
@@ -33,9 +36,17 @@ namespace Ontology
             IDictionary<object, HashSet<IClassExpression>> classifications
             )
         {
-            _ontology        = ontology;
-            _classifications = classifications;
-            _definitions     = (
+            _ontology                 = ontology;
+            _classifications          = classifications;
+            _superClassExpressions    = (
+                from subClassOf in _ontology.Get<ISubClassOf>()
+                group subClassOf.SuperClassExpression by subClassOf.SubClassExpression into superClassExpressions
+                select superClassExpressions
+                ).ToDictionary(
+                superClassExpressions => superClassExpressions.Key,
+                superClassExpressions => (IList<IClassExpression>)superClassExpressions.ToList());
+            _subClassExpressions   = _superClassExpressions.Transpose();
+            _definitions              = (
                 from @class in _ontology.Get<IClass>()
                 from equivalentClasses in _ontology.Get<IEquivalentClasses>()
                 where equivalentClasses.ClassExpressions.Contains(@class)
@@ -47,6 +58,38 @@ namespace Ontology
                     classExpressionsGroupedbyClass.Key,
                     classExpressionsGroupedbyClass.First()
                 )).ToList();
+
+            var disjointPairs = (
+                from disjointClasses in _ontology.Get<IDisjointClasses>()
+                from ClassExpression1 in disjointClasses.ClassExpressions
+                from ClassExpression2 in disjointClasses.ClassExpressions
+                where ClassExpression1 != ClassExpression2
+                select
+                (
+                    ClassExpression1,
+                    ClassExpression2
+                ));
+            _disjointClassExpressions = (
+                from disjointPair in disjointPairs
+                group disjointPair.ClassExpression2 by disjointPair.ClassExpression1 into disjointGroup
+                select disjointGroup
+                ).ToDictionary(
+                disjointGroup => disjointGroup.Key,
+                disjointGroup => (IList<IClassExpression>)disjointGroup.ToList());
+
+            foreach(var classExpression in _disjointClassExpressions.Keys)
+            {
+                var disjointClassExpressions = _disjointClassExpressions[classExpression];
+                for(var index = 0;index < disjointClassExpressions.Count;++index)
+                {
+                    var disjointClassExpression = disjointClassExpressions[index];
+                    if(_subClassExpressions.TryGetValue(
+                        disjointClassExpression,
+                        out var subclassExpressions))
+                            subclassExpressions.ForEach(
+                                subclassExpression => disjointClassExpressions.Add(subclassExpression));
+                }
+            }
 
             HashSet<IClass> adjacent = null;
             var empty = new HashSet<IClass>();
@@ -281,8 +324,20 @@ namespace Ontology
                     break;
             }
 
+            var disjointClasses = (
+                from classExpression in classExpressions
+                join pair in _disjointClassExpressions on classExpression equals pair.Key
+                from disjointClassExpression in pair.Value
+                where disjointClassExpression is IClass
+                select (IClass)disjointClassExpression
+                ).ToList();
+
+            var candidates = _definitions
+                .Where(definition => !disjointClasses.Contains(definition.Class))
+                .ToList();
+
             (
-                from definition in _definitions
+                from definition in candidates
                 where
                     definition.ClassExpression.Evaluate(
                         this,
@@ -306,11 +361,10 @@ namespace Ontology
                 // Class Expression already processed.
                 return;
 
-            _ontology
-                .Get<ISubClassOf>()
-                .Where(subClassOf => subClassOf.SubClassExpression == classExpression)
-                .Select(subClassOf => subClassOf.SuperClassExpression)
-                .ForEach(superClassExpression => Classify(
+            if(_superClassExpressions.TryGetValue(
+                classExpression,
+                out var superClasses))
+                superClasses.ForEach(superClassExpression => Classify(
                     classExpressions,
                     individual,
                     superClassExpression));

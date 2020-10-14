@@ -272,7 +272,7 @@ namespace Test
             var deal = new Deal(
                 Guid.NewGuid(),
                 "Test",
-                "Deals.ProjectFinance",
+                "Deals.Debt",
                 null,
                 null);
 

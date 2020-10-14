@@ -237,6 +237,11 @@ namespace Deals
             AdvisorParty  = this.Class("AdvisorParty" );
             BorrowerParty = this.Class("BorrowerParty");
             SponsorParty  = this.Class("SponsorParty" );
+
+            LenderParty.SubClassOf(DealParty);
+            AdvisorParty.SubClassOf(DealParty);
+            BorrowerParty.SubClassOf(DealParty);
+            SponsorParty.SubClassOf(DealParty);
             
             LenderParty.Define(parties.Role.HasValue(roleIndividuals.Lender));
             AdvisorParty.Define(parties.Role.HasValue(roleIndividuals.Advisor));
@@ -260,6 +265,10 @@ namespace Deals
             BankLenderParty.Define(LenderParty.Intersect(BankParty));
             BankAdvisorParty.Define(AdvisorParty.Intersect(BankParty));
 
+            BankParty.SubClassOf(DealParty);
+            BankLenderParty.SubClassOf(DealParty);
+            BankAdvisorParty.SubClassOf(DealParty);
+
             KeyCounterpartyRole = this.Class("KeyCounterpartyRole");
             KeyCounterparty     = this.Class("KeyCounterparty");
             KeyCounterparty.Define(new ObjectSomeValuesFrom(parties.Role, KeyCounterpartyRole));
@@ -271,6 +280,13 @@ namespace Deals
                 .Annotate(
                     validation.Restriction,
                     0);
+
+            new DisjointClasses(
+                this,
+                Deal,
+                DealType,
+                DealParty,
+                commonDomainObjects.Classifier);
 
             var ExclusivityClassifier = this.Class<ExclusivityClassifier>();
             ExclusivityClassifier.SubClassOf(commonDomainObjects.Classifier);
