@@ -303,6 +303,7 @@ namespace Deals
             var Exclusive = ExclusivityClassifier.Intersect(new ObjectOneOf(NotExclusive).Complement());
 
             var ExclusiveDeal = this.Class("ExclusiveDeal");
+            ExclusiveDeal.SubClassOf(Deal);
             var intermediate = this.Class("Intermediate");
             intermediate.Define(new ObjectSomeValuesFrom(Classifiers, Exclusive));
             ExclusiveDeal.Define(new ObjectIntersectionOf(intermediate));
