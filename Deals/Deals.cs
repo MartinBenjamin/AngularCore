@@ -271,6 +271,7 @@ namespace Deals
 
             KeyCounterpartyRole = this.Class("KeyCounterpartyRole");
             KeyCounterparty     = this.Class("KeyCounterparty");
+            KeyCounterparty.SubClassOf(DealParty);
             KeyCounterparty.Define(new ObjectSomeValuesFrom(parties.Role, KeyCounterpartyRole));
 
             Debt = this.Class("Debt");
