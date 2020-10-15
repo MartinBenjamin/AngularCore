@@ -8,7 +8,8 @@ namespace Ontology
     public class ClassMembershipEvaluator: IClassMembershipEvaluator
     {
         private readonly IOntology                                               _ontology;
-        private readonly IList<(IClass Class, IClassExpression ClassExpression)> _definitions;
+        private readonly IDictionary<IClass, IClassExpression>                   _definitions;
+        private readonly IList<IClass>                                           _definedClasses;
         private readonly ILookup<IClassExpression, IClassExpression>             _superClassExpressions;
         private readonly ILookup<IClassExpression, IClassExpression>             _subClassExpressions;
         private readonly ILookup<IClassExpression, IClassExpression>             _disjointClassExpressions;
@@ -53,9 +54,11 @@ namespace Ontology
                 group classExpression by @class into classExpressionsGroupedbyClass
                 select
                 (
-                    classExpressionsGroupedbyClass.Key,
-                    classExpressionsGroupedbyClass.First()
-                )).ToList();
+                    Class          : classExpressionsGroupedbyClass.Key,
+                    ClassExpression: classExpressionsGroupedbyClass.First()
+                )).ToDictionary(
+                    definition => definition.Class,
+                    definition => definition.ClassExpression);
 
             var disjointPairs = (
                 from disjointClasses in _ontology.Get<IDisjointClasses>()
@@ -93,17 +96,17 @@ namespace Ontology
             var classVisitor = new ClassExpressionNavigator(new ClassVisitor(@class => adjacent.Add(@class)));
 
             _definitions.ForEach(
-                definition =>
+                pair =>
                 {
                     adjacent = new HashSet<IClass>();
-                    definition.ClassExpression.Accept(classVisitor);
-                    adjacencyList[definition.Class] = adjacent;
+                    pair.Value.Accept(classVisitor);
+                    adjacencyList[pair.Key] = adjacent;
                 });
 
-            _definitions = (
+            _definedClasses = (
                 from @class in adjacencyList.TopologicalSort()
-                join definition in _definitions on @class equals definition.Class
-                select definition
+                join definition in _definitions on @class equals definition.Key
+                select definition.Key
                 ).ToList();
         }
 
@@ -281,8 +284,8 @@ namespace Ontology
                 out HashSet<IClassExpression> classExpressions))
                 return classExpressions;
 
-            _classifications[individual] =
-            classExpressions = new HashSet<IClassExpression>();
+            _classifications[individual] = classExpressions = new HashSet<IClassExpression>();
+            IList<IClass> candidates = _definedClasses.ToList();
 
             switch(individual)
             {
@@ -292,6 +295,7 @@ namespace Ontology
                         .Select(classAssertion => classAssertion.ClassExpression)
                         .ForEach(classExpression => Classify(
                             classExpressions,
+                            candidates,
                             individual,
                             classExpression));
                     break;
@@ -300,6 +304,7 @@ namespace Ontology
                         .Where(@class => @class.Iri == iindividual.ClassIri)
                         .ForEach(@class => Classify(
                             classExpressions,
+                            candidates,
                             individual,
                             @class));
                     break;
@@ -311,39 +316,30 @@ namespace Ontology
                         select @class
                     ).ForEach(@class => Classify(
                         classExpressions,
+                        candidates,
                         individual,
                         @class));
                     break;
             }
 
-            var disjointClasses = (
-                from classExpression in classExpressions
-                from disjointClassExpression in _disjointClassExpressions[classExpression]
-                where disjointClassExpression is IClass
-                select (IClass)disjointClassExpression
-                ).ToList();
-
-            var candidates = _definitions
-                .Where(definition => !disjointClasses.Contains(definition.Class))
-                .ToList();
-
-            (
-                from definition in candidates
-                where
-                    definition.ClassExpression.Evaluate(
-                        this,
-                        individual)
-                select definition.Class
-            ).ForEach(@class => Classify(
-                classExpressions,
-                individual,
-                @class));
+            while(candidates.Count > 0)
+                if(_definitions[candidates[0]].Evaluate(
+                    this,
+                    individual))
+                    Classify(
+                        classExpressions,
+                        candidates,
+                        individual,
+                        candidates[0]);
+                else
+                    candidates.RemoveAt(0);
 
             return classExpressions;
         }
 
         private void Classify(
             HashSet<IClassExpression> classExpressions,
+            IList<IClass>             candidates,
             object                    individual,
             IClassExpression          classExpression
             )
@@ -352,8 +348,15 @@ namespace Ontology
                 // Class Expression already processed.
                 return;
 
+            // Prune candidates.
+            if(classExpression is IClass @class)
+                candidates.Remove(@class);
+            _disjointClassExpressions[classExpression].OfType<IClass>().ForEach(
+                disjointClass => candidates.Remove(disjointClass));
+
             _superClassExpressions[classExpression].ForEach(superClassExpression => Classify(
                     classExpressions,
+                    candidates,
                     individual,
                     superClassExpression));
 
@@ -361,6 +364,7 @@ namespace Ontology
                 objectIntersectionOf.ClassExpressions
                     .ForEach(componentClassExpression => Classify(
                         classExpressions,
+                        candidates,
                         individual,
                         componentClassExpression));
         }
