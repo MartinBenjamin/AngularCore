@@ -7,13 +7,13 @@ namespace Ontology
 {
     public class ClassMembershipEvaluator: IClassMembershipEvaluator
     {
-        private readonly IOntology                                               _ontology;
-        private readonly IDictionary<IClass, IClassExpression>                   _definitions;
-        private readonly IList<IClass>                                           _definedClasses;
-        private readonly ILookup<IClassExpression, IClassExpression>             _superClassExpressions;
-        private readonly ILookup<IClassExpression, IClassExpression>             _subClassExpressions;
-        private readonly ILookup<IClassExpression, IClassExpression>             _disjointClassExpressions;
-        private readonly IDictionary<object, HashSet<IClassExpression>>          _classifications;
+        private readonly IOntology                                      _ontology;
+        private readonly IDictionary<IClass, IClassExpression>          _classDefinitions;
+        private readonly IList<IClass>                                  _definedClasses;
+        private readonly ILookup<IClassExpression, IClassExpression>    _superClassExpressions;
+        private readonly ILookup<IClassExpression, IClassExpression>    _subClassExpressions;
+        private readonly ILookup<IClassExpression, IClassExpression>    _disjointClassExpressions;
+        private readonly IDictionary<object, HashSet<IClassExpression>> _classifications;
 
         private class ClassVisitor: ClassExpressionVisitor
         {
@@ -45,7 +45,7 @@ namespace Ontology
             _subClassExpressions   = _ontology.Get<ISubClassOf>().ToLookup(
                 subClassOf => subClassOf.SuperClassExpression,
                 subClassOf => subClassOf.SubClassExpression);
-            _definitions           = (
+            _classDefinitions      = (
                 from @class in _ontology.Get<IClass>()
                 from equivalentClasses in _ontology.Get<IEquivalentClasses>()
                 where equivalentClasses.ClassExpressions.Contains(@class)
@@ -95,7 +95,7 @@ namespace Ontology
 
             var classVisitor = new ClassExpressionNavigator(new ClassVisitor(@class => adjacent.Add(@class)));
 
-            _definitions.ForEach(
+            _classDefinitions.ForEach(
                 pair =>
                 {
                     adjacent = new HashSet<IClass>();
@@ -105,7 +105,7 @@ namespace Ontology
 
             _definedClasses = (
                 from @class in adjacencyList.TopologicalSort()
-                join definition in _definitions on @class equals definition.Key
+                join definition in _classDefinitions on @class equals definition.Key
                 select definition.Key
                 ).ToList();
         }
@@ -323,7 +323,7 @@ namespace Ontology
             }
 
             while(candidates.Count > 0)
-                if(_definitions[candidates[0]].Evaluate(
+                if(_classDefinitions[candidates[0]].Evaluate(
                     this,
                     individual))
                     Classify(
