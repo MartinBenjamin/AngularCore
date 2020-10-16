@@ -346,12 +346,12 @@ namespace Ontology
             return annotation;
         }
 
-        public static IDictionary<object, HashSet<IClassExpression>> Classify(
+        public static IDictionary<object, ISet<IClassExpression>> Classify(
             this IOntology ontology,
             object         individual
             )
         {
-            var classifications = new Dictionary<object, HashSet<IClassExpression>>();
+            var classifications = new Dictionary<object, ISet<IClassExpression>>();
             var evaluator = new ClassMembershipEvaluator(
                 ontology,
                 classifications);

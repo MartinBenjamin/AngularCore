@@ -7,13 +7,13 @@ namespace Ontology
 {
     public class ClassMembershipEvaluator: IClassMembershipEvaluator
     {
-        private readonly IOntology                                      _ontology;
-        private readonly IDictionary<IClass, IClassExpression>          _classDefinitions;
-        private readonly IList<IClass>                                  _definedClasses;
-        private readonly ILookup<IClassExpression, IClassExpression>    _superClassExpressions;
-        private readonly ILookup<IClassExpression, IClassExpression>    _subClassExpressions;
-        private readonly ILookup<IClassExpression, IClassExpression>    _disjointClassExpressions;
-        private readonly IDictionary<object, HashSet<IClassExpression>> _classifications;
+        private readonly IOntology                                   _ontology;
+        private readonly IDictionary<IClass, IClassExpression>       _classDefinitions;
+        private readonly IList<IClass>                               _definedClasses;
+        private readonly ILookup<IClassExpression, IClassExpression> _superClassExpressions;
+        private readonly ILookup<IClassExpression, IClassExpression> _subClassExpressions;
+        private readonly ILookup<IClassExpression, IClassExpression> _disjointClassExpressions;
+        private readonly IDictionary<object, ISet<IClassExpression>> _classifications;
 
         private class ClassVisitor: ClassExpressionVisitor
         {
@@ -31,10 +31,25 @@ namespace Ontology
                 ) => _action(@class);
         }
 
+        private struct ClassComparer: IComparer<IClass>
+        {
+            private readonly IDictionary<IClass, int> _longestPaths;
+
+            public ClassComparer(
+                IDictionary<IClass, int> longestPaths
+                )
+            {
+                _longestPaths = longestPaths;
+            }
+
+            int IComparer<IClass>.Compare(
+                IClass x,
+                IClass y) => _longestPaths[x].CompareTo(_longestPaths[y]);
+        }
 
         public ClassMembershipEvaluator(
-            IOntology                                      ontology,
-            IDictionary<object, HashSet<IClassExpression>> classifications
+            IOntology                                   ontology,
+            IDictionary<object, ISet<IClassExpression>> classifications
             )
         {
             _ontology              = ontology;
@@ -275,17 +290,17 @@ namespace Ontology
                     rhs));
         }
 
-        public HashSet<IClassExpression> Classify(
+        public ISet<IClassExpression> Classify(
             object individual
             )
         {
             if(_classifications.TryGetValue(
                 individual,
-                out HashSet<IClassExpression> classExpressions))
+                out ISet<IClassExpression> classExpressions))
                 return classExpressions;
 
             _classifications[individual] = classExpressions = new HashSet<IClassExpression>();
-            IList<IClass> candidates = _definedClasses.ToList();
+            var candidates = _definedClasses.ToHashSet();
 
             switch(individual)
             {
@@ -322,26 +337,25 @@ namespace Ontology
                     break;
             }
 
-            while(candidates.Count > 0)
-                if(_classDefinitions[candidates[0]].Evaluate(
+            foreach(var definedClass in _definedClasses)
+                if(candidates.Contains(definedClass) &&
+                   _classDefinitions[definedClass].Evaluate(
                     this,
                     individual))
                     Classify(
                         classExpressions,
                         candidates,
                         individual,
-                        candidates[0]);
-                else
-                    candidates.RemoveAt(0);
+                        definedClass);
 
             return classExpressions;
         }
 
         private void Classify(
-            HashSet<IClassExpression> classExpressions,
-            IList<IClass>             candidates,
-            object                    individual,
-            IClassExpression          classExpression
+            ISet<IClassExpression> classExpressions,
+            ISet<IClass>           candidates,
+            object                 individual,
+            IClassExpression       classExpression
             )
         {
             if(!classExpressions.Add(classExpression))
@@ -351,8 +365,7 @@ namespace Ontology
             // Prune candidates.
             if(classExpression is IClass @class)
                 candidates.Remove(@class);
-            _disjointClassExpressions[classExpression].OfType<IClass>().ForEach(
-                disjointClass => candidates.Remove(disjointClass));
+            candidates.ExceptWith(_disjointClassExpressions[classExpression].OfType<IClass>());
 
             _superClassExpressions[classExpression].ForEach(superClassExpression => Classify(
                     classExpressions,
