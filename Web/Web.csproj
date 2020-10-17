@@ -93,6 +93,9 @@
     <None Remove="ClientApp\src\app\Ontology\IDataHasValue.ts" />
     <None Remove="ClientApp\src\app\Ontology\IDataIntersectionOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\IDataOneOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IDataPropertyAxiom.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IDataPropertyDomain.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IDataPropertyRange.ts" />
     <None Remove="ClientApp\src\app\Ontology\IDataPropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\IDataRange.ts" />
     <None Remove="ClientApp\src\app\Ontology\IDataSomeValuesFrom.ts" />
@@ -110,6 +113,9 @@
     <None Remove="ClientApp\src\app\Ontology\IObjectHasValue.ts" />
     <None Remove="ClientApp\src\app\Ontology\IObjectIntersectionOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\IObjectOneOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IObjectPropertyAxiom.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IObjectPropertyDomain.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IObjectPropertyRange.ts" />
     <None Remove="ClientApp\src\app\Ontology\IObjectPropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\IObjectSomeValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IObjectUnionOf.ts" />
@@ -229,6 +235,9 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataHasValue.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataIntersectionOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataOneOf.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataPropertyAxiom.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataPropertyDomain.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataPropertyRange.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataPropertyRestriction.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataRange.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataSomeValuesFrom.ts" />
@@ -246,6 +255,9 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectHasValue.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectIntersectionOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectOneOf.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectPropertyAxiom.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectPropertyDomain.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectPropertyRange.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectPropertyRestriction.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectSomeValuesFrom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectUnionOf.ts" />
