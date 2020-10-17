@@ -126,6 +126,7 @@ namespace Ontology
                 property);
 
             new ObjectPropertyDomain(
+                domain.Ontology,
                 objectPropertyExpression,
                 domain);
 
@@ -140,6 +141,7 @@ namespace Ontology
             var objectPropertyExpression = domain.Ontology.ObjectProperty(property);
 
             new ObjectPropertyDomain(
+                domain.Ontology,
                 objectPropertyExpression,
                 domain);
 
@@ -157,6 +159,7 @@ namespace Ontology
                 property);
 
             new ObjectPropertyDomain(
+                domain.Ontology,
                 objectPropertyExpression,
                 domain);
 
@@ -171,6 +174,7 @@ namespace Ontology
             var objectPropertyExpression = domain.Ontology.ObjectProperty(property);
 
             new ObjectPropertyDomain(
+                domain.Ontology,
                 objectPropertyExpression,
                 domain);
 
@@ -185,6 +189,7 @@ namespace Ontology
             var dataPropertyExpression = domain.Ontology.DataProperty(property);
 
             new DataPropertyDomain(
+                domain.Ontology,
                 dataPropertyExpression,
                 domain);
 
@@ -199,6 +204,7 @@ namespace Ontology
             var dataPropertyExpression = domain.Ontology.DataProperty(property);
 
             new DataPropertyDomain(
+                domain.Ontology,
                 dataPropertyExpression,
                 domain);
 
@@ -209,6 +215,7 @@ namespace Ontology
             this IDataPropertyExpression dataPropertyExpression,
             IDatatype                    datatype
             ) => new DataPropertyRange(
+                dataPropertyExpression.Ontology,
                 dataPropertyExpression,
                 datatype);
 
@@ -305,12 +312,13 @@ namespace Ontology
                 localName);
 
         public static INamedIndividual NamedIndividual(
-            this IClass classExpression,
+            this IClass @class,
             string      localName
             ) => ((IClassAssertion)new ClassAssertion(
-                classExpression,
+                @class.Ontology,
+                @class,
                 new NamedIndividual(
-                    classExpression.Ontology,
+                    @class.Ontology,
                     localName))).NamedIndividual;
 
         public static IObjectPropertyAssertion Value(

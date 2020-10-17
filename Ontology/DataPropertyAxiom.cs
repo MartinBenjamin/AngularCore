@@ -7,8 +7,9 @@
         private readonly IDataPropertyExpression _dataPropertyExpression;
 
         protected DataPropertyAxiom(
+            IOntology               ontology,
             IDataPropertyExpression dataPropertyExpression
-            ) : base(dataPropertyExpression.Ontology)
+            ) : base(ontology)
         {
             _dataPropertyExpression = dataPropertyExpression;
         }

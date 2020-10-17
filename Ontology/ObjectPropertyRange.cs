@@ -7,9 +7,12 @@
         private readonly IClassExpression _range;
 
         public ObjectPropertyRange(
+            IOntology                 ontology,
             IObjectPropertyExpression objectPropertyExpression,
             IClassExpression          range
-            ) : base(objectPropertyExpression)
+            ) : base(
+                ontology,
+                objectPropertyExpression)
         {
             _range = range;
         }

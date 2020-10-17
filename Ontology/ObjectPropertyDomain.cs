@@ -7,9 +7,12 @@
         private readonly IClassExpression _domain;
 
         public ObjectPropertyDomain(
+            IOntology                 ontology,
             IObjectPropertyExpression objectPropertyExpression,
             IClassExpression          domain
-            ) : base(objectPropertyExpression)
+            ) : base(
+                ontology,
+                objectPropertyExpression)
         {
             _domain = domain;
         }

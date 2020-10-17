@@ -22,9 +22,10 @@
         private readonly INamedIndividual _namedIndividual;
 
         public ClassAssertion(
+            IOntology        ontology,
             IClassExpression classExpression,
             INamedIndividual namedIndividual
-            ) : base(namedIndividual.Ontology)
+            ) : base(ontology)
         {
             _classExpression = classExpression;
             _namedIndividual = namedIndividual;
