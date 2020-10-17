@@ -11,14 +11,14 @@ export class ObjectHasValue
     public constructor(
         objectPropertyExpression: IObjectPropertyExpression,
         public Individual       : object
-    )
+        )
     {
         super(objectPropertyExpression)
     }
 
     Accept(
         visitor: IClassExpressionVisitor
-    )
+        )
     {
         visitor.ObjectHasValue(this);
     }
@@ -26,7 +26,7 @@ export class ObjectHasValue
     Evaluate(
         evaluator: IClassMembershipEvaluator,
         individual: object
-    ): boolean
+        ): boolean
     {
         return evaluator.ObjectHasValue(
             this,

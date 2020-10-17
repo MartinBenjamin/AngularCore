@@ -1,7 +1,7 @@
-import { ObjectPropertyRestriction } from "./ObjectPropertyRestriction";
+import { IClassExpression } from "./IClassExpression";
 import { IObjectCardinality } from "./IObjectCardinality";
 import { IObjectPropertyExpression } from "./IPropertyExpression";
-import { IClassExpression } from "./IClassExpression";
+import { ObjectPropertyRestriction } from "./ObjectPropertyRestriction";
 
 export class ObjectCardinality
     extends ObjectPropertyRestriction
