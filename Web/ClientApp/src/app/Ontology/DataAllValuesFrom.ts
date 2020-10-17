@@ -9,7 +9,7 @@ export class DataAllValuesFrom
     extends DataPropertyRestriction
     implements IDataAllValuesFrom
 {
-    public constructor(
+    constructor(
         dataPropertyExpression: IDataPropertyExpression,
         public DataRange      : IDataRange
         )
