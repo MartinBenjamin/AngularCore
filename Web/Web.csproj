@@ -72,6 +72,9 @@
     <None Remove="ClientApp\src\app\Ontology\DataIntersectionOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMaxCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMinCardinality.ts" />
+    <None Remove="ClientApp\src\app\Ontology\DataPropertyAxiom.ts" />
+    <None Remove="ClientApp\src\app\Ontology\DataPropertyDomain.ts" />
+    <None Remove="ClientApp\src\app\Ontology\DataPropertyRange.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataPropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataRange.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataSomeValuesFrom.ts" />
@@ -135,6 +138,9 @@
     <None Remove="ClientApp\src\app\Ontology\ObjectMaxCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMinCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectOneOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectPropertyAxiom.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectPropertyDomain.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectPropertyRange.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectSomeValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectUnionOf.ts" />
@@ -213,6 +219,9 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataIntersectionOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataMaxCardinality.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataMinCardinality.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataPropertyAxiom.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataPropertyDomain.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataPropertyRange.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataPropertyRestriction.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataRange.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataSomeValuesFrom.ts" />
@@ -277,6 +286,9 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectMaxCardinality.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectMinCardinality.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectOneOf.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectPropertyAxiom.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectPropertyDomain.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectPropertyRange.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectPropertyRestriction.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectSomeValuesFrom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectUnionOf.ts" />

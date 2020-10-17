@@ -3,5 +3,5 @@ import { IDataPropertyAxiom } from "./IDataPropertyAxiom";
 
 export interface IDataPropertyDomain extends IDataPropertyAxiom
 {
-    Domain: IClassExpression;
+    readonly Domain: IClassExpression;
 }

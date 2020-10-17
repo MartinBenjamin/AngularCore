@@ -3,5 +3,5 @@ import { IObjectPropertyExpression } from "./IPropertyExpression";
 
 export interface IObjectPropertyAxiom extends IAxiom
 {
-    ObjectPropertyExpression: IObjectPropertyExpression;
+    readonly ObjectPropertyExpression: IObjectPropertyExpression;
 }
