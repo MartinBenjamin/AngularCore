@@ -11,5 +11,7 @@ export class Axiom
         )
     {
         super();
+        if(Ontology)
+            Ontology.Axioms.push(this);
     }
 }
