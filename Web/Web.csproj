@@ -62,6 +62,8 @@
     <None Remove="ClientApp\src\app\ObservableNamedStore.ts" />
     <None Remove="ClientApp\src\app\Ontology\Annotated.ts" />
     <None Remove="ClientApp\src\app\Ontology\Axiom.ts" />
+    <None Remove="ClientApp\src\app\Ontology\BuiltIn.ts" />
+    <None Remove="ClientApp\src\app\Ontology\Class.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataAllValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataComplementOf.ts" />
@@ -96,6 +98,7 @@
     <None Remove="ClientApp\src\app\Ontology\IDataSomeValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IDatatype.ts" />
     <None Remove="ClientApp\src\app\Ontology\IDataUnionOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IDisjointClasses.ts" />
     <None Remove="ClientApp\src\app\Ontology\IEntity.ts" />
     <None Remove="ClientApp\src\app\Ontology\IEquivalentClasses.ts" />
     <None Remove="ClientApp\src\app\Ontology\IHasKey.ts" />
@@ -114,6 +117,8 @@
     <None Remove="ClientApp\src\app\Ontology\IPropertyExpression.ts" />
     <None Remove="ClientApp\src\app\Ontology\IPropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\ISubClassOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\NamedIndividual.ts" />
+    <None Remove="ClientApp\src\app\Ontology\Nothing.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectAllValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectComplementOf.ts" />
@@ -128,6 +133,8 @@
     <None Remove="ClientApp\src\app\Ontology\ObjectSomeValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectUnionOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\PropertyRestriction.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ReservedVocabulary.ts" />
+    <None Remove="ClientApp\src\app\Ontology\Thing.ts" />
     <None Remove="ClientApp\src\app\Organisations.ts" />
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.ts" />
@@ -191,6 +198,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\ObservableNamedStore.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Annotated.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Axiom.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\BuiltIn.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\Class.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataCardinality.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataComplementOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataExactCardinality.ts" />
@@ -225,6 +234,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataSomeValuesFrom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDatatype.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataUnionOf.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDisjointClasses.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IEntity.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IEquivalentClasses.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IHasKey.ts" />
@@ -243,6 +253,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IPropertyExpression.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IPropertyRestriction.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ISubClassOf.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\NamedIndividual.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\Nothing.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectAllValuesFrom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectCardinality.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectComplementOf.ts" />
@@ -257,6 +269,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectSomeValuesFrom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectUnionOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\PropertyRestriction.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ReservedVocabulary.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\Thing.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Organisations.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.ts" />
