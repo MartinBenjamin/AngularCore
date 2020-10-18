@@ -1,5 +1,5 @@
 import { IClassExpression } from "./IClassExpression";
-import { IObjectPropertyRestriction } from "./IObjectPropertyRestriction ";
+import { IObjectPropertyRestriction } from "./IObjectPropertyRestriction";
 
 export interface IObjectSomeValuesFrom extends IObjectPropertyRestriction
 {
