@@ -250,7 +250,26 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual              : object
         ): object[]
     {
-        return null;
+        if(IsNamedIndividual(individual))
+            return this.NamedIndividualObjectPropertyValues(
+                objectPropertyExpression,
+                individual);
+
+        if(objectPropertyExpression.LocalName in individual)
+        {
+            let values = individual[objectPropertyExpression.LocalName];
+            return Array.isArray(values) ? values : [values];
+        }
+
+        return [];
+    }
+
+    private NamedIndividualObjectPropertyValues(
+        objectPropertyExpression: IObjectPropertyExpression,
+        namedIndividual         : INamedIndividual
+        ): object[]
+    {
+        return [];
     }
 
     private DataPropertyValues(
