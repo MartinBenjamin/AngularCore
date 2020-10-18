@@ -15,16 +15,19 @@ import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IObjectPropertyExpression } from "./IPropertyExpression";
 import { INamedIndividual } from "./INamedIndividual";
-
-
-function IsNamedIndividual(individual: INamedIndividual | object): individual is INamedIndividual
-{
-    return (individual as INamedIndividual).Ontology !== undefined;
-}
+import { IOntology } from "./IOntology";
 
 export class ClassMembershipEvaluator implements IClassMembershipEvaluator
 {
-    Class                 (class$                : IClass                 , individual: object): boolean { return false; }
+    private _ontology: IOntology;
+
+    Class(
+        class$    : IClass,
+        individual: object
+        ): boolean
+    {
+        return false;
+    }
 
     ObjectIntersectionOf(
         objectIntersectionOf: IObjectIntersectionOf,
@@ -250,7 +253,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual              : object
         ): object[]
     {
-        if(IsNamedIndividual(individual))
+        if(this._ontology.IsAxiom.INamedIndividual(individual))
             return this.NamedIndividualObjectPropertyValues(
                 objectPropertyExpression,
                 individual);

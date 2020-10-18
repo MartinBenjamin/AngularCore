@@ -1,13 +1,14 @@
 import { IAxiom } from "./IAxiom";
+import { IIsAxiom } from './IIsAxiom'
 
 export interface IOntology
 {
     Iri    : string;
     Imports: IOntology[];
     Axioms : IAxiom[];
-
+    IsAxiom: IIsAxiom;
     GetOntologies(): Iterable<IOntology>;
-    Get<TAxiom extends IAxiom>(): Iterable<TAxiom>;
+    Get<TAxiom extends IAxiom>(typeGuard: (axiom: object) => axiom is TAxiom): Iterable<TAxiom>;
 }
 
 function* i(
@@ -42,6 +43,7 @@ export class Ontology implements IOntology
     Iri: string;
     Imports: IOntology[];
     Axioms: IAxiom[];
+    IsAxiom: null;
     GetOntologies(): Iterable<IOntology>
     {
         //return {
