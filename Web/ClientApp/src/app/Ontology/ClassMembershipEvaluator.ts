@@ -14,6 +14,13 @@ import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IObjectPropertyExpression } from "./IPropertyExpression";
+import { INamedIndividual } from "./INamedIndividual";
+
+
+function IsNamedIndividual(individual: INamedIndividual | object): individual is INamedIndividual
+{
+    return (individual as INamedIndividual).Ontology !== undefined;
+}
 
 export class ClassMembershipEvaluator implements IClassMembershipEvaluator
 {
