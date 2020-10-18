@@ -9,7 +9,7 @@ import { IObjectPropertyDomain } from "./IObjectPropertyDomain";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
 import { ISubClassOf } from "./ISubClassOf";
 
-export interface IIsAxiom
+export interface IIsAxiom2
 {
     IClass                   (axiom: object): axiom is IClass;
     IObjectPropertyExpression(axiom: object): axiom is IObjectPropertyExpression;
@@ -25,4 +25,24 @@ export interface IIsAxiom
     IDataPropertyAssertion   (axiom: object): axiom is IDataPropertyAssertion;
     IObjectPropertyDomain    (axiom: object): axiom is IObjectPropertyDomain;
     IDataPropertyDomain      (axiom: object): axiom is IDataPropertyDomain;
+}
+
+type TypeGuard<T extends object> = (o: object) => o is T;
+
+export interface IIsAxiom
+{
+    IClass                   : TypeGuard<IClass                   >;
+    IObjectPropertyExpression: TypeGuard<IObjectPropertyExpression>;
+    IDataPropertyExpression  : TypeGuard<IDataPropertyExpression  >;
+    IAnnotationProperty      : TypeGuard<IAnnotationProperty      >;
+    INamedIndividual         : TypeGuard<INamedIndividual         >;
+    IHasKey                  : TypeGuard<IHasKey                  >;
+    ISubClassOf              : TypeGuard<ISubClassOf              >;
+    IEquivalentClasses       : TypeGuard<IEquivalentClasses       >;
+    IDisjointClasses         : TypeGuard<IDisjointClasses         >;
+    IClassAssertion          : TypeGuard<IClassAssertion          >;
+    IObjectPropertyAssertion : TypeGuard<IObjectPropertyAssertion >;
+    IDataPropertyAssertion   : TypeGuard<IDataPropertyAssertion   >;
+    IObjectPropertyDomain    : TypeGuard<IObjectPropertyDomain    >;
+    IDataPropertyDomain      : TypeGuard<IDataPropertyDomain      >;
 }
