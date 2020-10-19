@@ -127,16 +127,15 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual          : object
         ): boolean
     {
-        let values = this.ObjectPropertyValues(
+        return this.ObjectPropertyValues(
             objectMinCardinality.ObjectPropertyExpression,
-            individual);
-
-        if(objectMinCardinality.ClassExpression)
-            values = values.filter(value => objectMinCardinality.ClassExpression.Evaluate(
-                this,
-                value));
-
-        return values.length >= objectMinCardinality.Cardinality;
+            individual).reduce(
+                (count: number, value: object) =>
+                    !objectMinCardinality.ClassExpression ||
+                    objectMinCardinality.ClassExpression.Evaluate(
+                        this,
+                        value) ? count + 1 : count,
+                0) >= objectMinCardinality.Cardinality;
     }
 
     ObjectMaxCardinality(
@@ -144,16 +143,15 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual          : object
         ): boolean
     {
-        let values = this.ObjectPropertyValues(
+        return this.ObjectPropertyValues(
             objectMaxCardinality.ObjectPropertyExpression,
-            individual);
-
-        if(objectMaxCardinality.ClassExpression)
-            values = values.filter(value => objectMaxCardinality.ClassExpression.Evaluate(
-                this,
-                value));
-
-        return values.length <= objectMaxCardinality.Cardinality;
+            individual).reduce(
+                (count: number, value: object) =>
+                    !objectMaxCardinality.ClassExpression ||
+                    objectMaxCardinality.ClassExpression.Evaluate(
+                        this,
+                        value) ? count + 1 : count,
+                0) <= objectMaxCardinality.Cardinality;
     }
 
     ObjectExactCardinality(
@@ -161,16 +159,15 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual            : object
         ): boolean
     {
-        let values = this.ObjectPropertyValues(
+        return this.ObjectPropertyValues(
             objectExactCardinality.ObjectPropertyExpression,
-            individual);
-
-        if(objectExactCardinality.ClassExpression)
-            values = values.filter(value => objectExactCardinality.ClassExpression.Evaluate(
-                this,
-                value));
-
-        return values.length === objectExactCardinality.Cardinality;
+            individual).reduce(
+                (count: number, value: object) =>
+                    !objectExactCardinality.ClassExpression ||
+                    objectExactCardinality.ClassExpression.Evaluate(
+                        this,
+                        value) ? count + 1 : count,
+                0) === objectExactCardinality.Cardinality;
     }
 
     DataSomeValuesFrom(
@@ -208,14 +205,13 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual        : object
         ): boolean
     {
-        let values = this.DataPropertyValues(
+        return this.DataPropertyValues(
             dataMinCardinality.DataPropertyExpression,
-            individual);
-
-        if(dataMinCardinality.DataRange)
-            values = values.filter(value => dataMinCardinality.DataRange.HasMember(value));
-
-        return values.length >= dataMinCardinality.Cardinality;
+            individual).reduce(
+                (count: number, value: object) =>
+                    !dataMinCardinality.DataRange ||
+                    dataMinCardinality.DataRange.HasMember(value) ? count + 1 : count,
+                0) >= dataMinCardinality.Cardinality;
     }
 
     DataMaxCardinality(
@@ -223,14 +219,13 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual        : object
         ): boolean
     {
-        let values = this.DataPropertyValues(
+        return this.DataPropertyValues(
             dataMaxCardinality.DataPropertyExpression,
-            individual);
-
-        if(dataMaxCardinality.DataRange)
-            values = values.filter(value => dataMaxCardinality.DataRange.HasMember(value));
-
-        return values.length <= dataMaxCardinality.Cardinality;
+            individual).reduce(
+                (count: number, value: object) =>
+                    !dataMaxCardinality.DataRange ||
+                    dataMaxCardinality.DataRange.HasMember(value) ? count + 1 : count,
+                0) <= dataMaxCardinality.Cardinality;
     }
 
     DataExactCardinality(
@@ -238,14 +233,13 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual          : object
         ): boolean
     {
-        let values = this.DataPropertyValues(
+        return this.DataPropertyValues(
             dataExactCardinality.DataPropertyExpression,
-            individual);
-
-        if(dataExactCardinality.DataRange)
-            values = values.filter(value => dataExactCardinality.DataRange.HasMember(value));
-
-        return values.length === dataExactCardinality.Cardinality;
+            individual).reduce(
+                (count: number, value: object) =>
+                    !dataExactCardinality.DataRange ||
+                    dataExactCardinality.DataRange.HasMember(value) ? count + 1 : count,
+                0) === dataExactCardinality.Cardinality;
     }
 
     private ObjectPropertyValues(
