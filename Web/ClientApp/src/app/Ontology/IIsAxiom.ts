@@ -8,6 +8,7 @@ import { IClassAssertion, IDataPropertyAssertion, INamedIndividual, IObjectPrope
 import { IObjectPropertyDomain } from "./IObjectPropertyDomain";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
 import { ISubClassOf } from "./ISubClassOf";
+import { IEntity } from "./IEntity";
 
 export interface IIsAxiom2
 {
@@ -31,6 +32,7 @@ type TypeGuard<T extends object> = (o: object) => o is T;
 
 export interface IIsAxiom
 {
+    IEntity                  : TypeGuard<IEntity                  >;
     IClass                   : TypeGuard<IClass                   >;
     IObjectPropertyExpression: TypeGuard<IObjectPropertyExpression>;
     IDataPropertyExpression  : TypeGuard<IDataPropertyExpression  >;

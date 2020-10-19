@@ -2,12 +2,14 @@ import { AnnotationProperty } from "./AnnotationProperty";
 import { Class } from "./Class";
 import { DataPropertyDomain } from "./DataPropertyDomain";
 import { DisjointClasses } from "./DisjointClasses";
+import { Entity } from "./Entity";
 import { EquivalentClasses } from "./EquivalentClasses";
 import { HasKey } from "./HasKey";
 import { IAnnotationProperty } from "./IAnnotationProperty";
 import { IClass } from "./IClass";
 import { IDataPropertyDomain } from "./IDataPropertyDomain";
 import { IDisjointClasses } from "./IDisjointClasses";
+import { IEntity } from "./IEntity";
 import { IEquivalentClasses } from "./IEquivalentClasses";
 import { IHasKey } from "./IHasKey";
 import { IIsAxiom } from "./IIsAxiom";
@@ -22,6 +24,7 @@ import { SubClassOf } from "./SubClassOf";
 
 export class IsAxiom implements IIsAxiom
 {
+    IEntity                  (axiom: object): axiom is IEntity                   { return axiom instanceof Entity                  ; }
     IClass                   (axiom: object): axiom is IClass                    { return axiom instanceof Class                   ; }
     IObjectPropertyExpression(axiom: object): axiom is IObjectPropertyExpression { return axiom instanceof ObjectPropertyExpression; }
     IDataPropertyExpression  (axiom: object): axiom is IDataPropertyExpression   { return axiom instanceof DataPropertyExpression  ; }
