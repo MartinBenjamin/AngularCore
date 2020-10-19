@@ -13,13 +13,15 @@ import { IObjectIntersectionOf } from "./IObjectIntersectionOf";
 import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
-import { IObjectPropertyExpression } from "./IPropertyExpression";
-import { INamedIndividual } from "./INamedIndividual";
+import { IObjectPropertyExpression, IDataPropertyExpression } from "./IPropertyExpression";
+import { INamedIndividual, IObjectPropertyAssertion, IDataPropertyAssertion } from "./INamedIndividual";
 import { IOntology } from "./IOntology";
 
 export class ClassMembershipEvaluator implements IClassMembershipEvaluator
 {
     private _ontology: IOntology;
+    private _objectPropertyAssertions: Map<INamedIndividual, IObjectPropertyAssertion[]>;
+    private _dataPropertyAssertions  : Map<INamedIndividual, IDataPropertyAssertion[]  >;
 
     Class(
         class$    : IClass,
@@ -255,7 +257,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         if(objectPropertyExpression.LocalName in individual)
         {
             let values = individual[objectPropertyExpression.LocalName];
-            return Array.isArray(values) ? values : [values];
+            return Array.isArray(values) ? values : values !== null ? [values] : [];
         }
 
         return [];
@@ -266,15 +268,44 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         namedIndividual         : INamedIndividual
         ): object[]
     {
+        if(this._objectPropertyAssertions.has(namedIndividual))
+            return this._objectPropertyAssertions.get(namedIndividual)
+                .filter(objectPropertyAssertion => objectPropertyAssertion.ObjectPropertyExpression === objectPropertyExpression)
+                .map(objectPropertyAssertion => objectPropertyAssertion.TargetIndividual);
+
         return [];
     }
 
     private DataPropertyValues(
-        objectPropertyExpression: IObjectPropertyExpression,
-        individual              : object
+        dataPropertyExpression: IDataPropertyExpression,
+        individual            : object
         ): object[]
     {
-        return null;
+        if(this._ontology.IsAxiom.INamedIndividual(individual))
+            return this.NamedIndividualDataPropertyValues(
+                dataPropertyExpression,
+                individual);
+
+        if(dataPropertyExpression.LocalName in individual)
+        {
+            let values = individual[dataPropertyExpression.LocalName];
+            return Array.isArray(values) ? values : values !== null ? [values] : [];
+        }
+
+        return [];
+    }
+
+    private NamedIndividualDataPropertyValues(
+        dataPropertyExpression: IDataPropertyExpression,
+        namedIndividual       : INamedIndividual
+        ): object[]
+    {
+        if(this._dataPropertyAssertions.has(namedIndividual))
+            return this._dataPropertyAssertions.get(namedIndividual)
+                .filter(dataPropertyAssertion => dataPropertyAssertion.DataPropertyExpression === dataPropertyExpression)
+                .map(dataPropertyAssertion => dataPropertyAssertion.TargetValue);
+
+        return [];
     }
 
     private AreEqual(
