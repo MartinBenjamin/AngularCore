@@ -22,6 +22,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     private _ontology: IOntology;
     private _objectPropertyAssertions: Map<INamedIndividual, IObjectPropertyAssertion[]>;
     private _dataPropertyAssertions  : Map<INamedIndividual, IDataPropertyAssertion[]  >;
+    private _functionalDataProperties: Set<IDataPropertyExpression>;
 
     Class(
         class$    : IClass,
@@ -263,19 +264,6 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         return [];
     }
 
-    private NamedIndividualObjectPropertyValues(
-        objectPropertyExpression: IObjectPropertyExpression,
-        namedIndividual         : INamedIndividual
-        ): object[]
-    {
-        if(this._objectPropertyAssertions.has(namedIndividual))
-            return this._objectPropertyAssertions.get(namedIndividual)
-                .filter(objectPropertyAssertion => objectPropertyAssertion.ObjectPropertyExpression === objectPropertyExpression)
-                .map(objectPropertyAssertion => objectPropertyAssertion.TargetIndividual);
-
-        return [];
-    }
-
     private DataPropertyValues(
         dataPropertyExpression: IDataPropertyExpression,
         individual            : object
@@ -295,17 +283,54 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         return [];
     }
 
+    private DataPropertyValue(
+        dataPropertyExpression: IDataPropertyExpression,
+        individual            : object
+        ): object
+    {
+        if(this._ontology.IsAxiom.INamedIndividual(individual))
+            return this.NamedIndividualDataPropertyValue(
+                dataPropertyExpression,
+                individual);
+
+        return dataPropertyExpression.LocalName in individual ?
+            individual[dataPropertyExpression.LocalName] : null;
+    }
+
+    private NamedIndividualObjectPropertyValues(
+        objectPropertyExpression: IObjectPropertyExpression,
+        namedIndividual         : INamedIndividual
+        ): object[]
+    {
+        let objectPropertyAssertions = this._objectPropertyAssertions.get(namedIndividual);
+        return objectPropertyAssertions ?
+            objectPropertyAssertions
+                .filter(objectPropertyAssertion => objectPropertyAssertion.ObjectPropertyExpression === objectPropertyExpression)
+                .map(objectPropertyAssertion => objectPropertyAssertion.TargetIndividual) : [];
+    }
+
     private NamedIndividualDataPropertyValues(
         dataPropertyExpression: IDataPropertyExpression,
         namedIndividual       : INamedIndividual
         ): object[]
     {
-        if(this._dataPropertyAssertions.has(namedIndividual))
-            return this._dataPropertyAssertions.get(namedIndividual)
+        let dataPropertyAssertions = this._dataPropertyAssertions.get(namedIndividual);
+        return dataPropertyAssertions ?
+            dataPropertyAssertions
                 .filter(dataPropertyAssertion => dataPropertyAssertion.DataPropertyExpression === dataPropertyExpression)
-                .map(dataPropertyAssertion => dataPropertyAssertion.TargetValue);
+                .map(dataPropertyAssertion => dataPropertyAssertion.TargetValue) : [];
+    }
 
-        return [];
+    private NamedIndividualDataPropertyValue(
+        dataPropertyExpression: IDataPropertyExpression,
+        namedIndividual       : INamedIndividual
+        ): object
+    {
+        let values = this.NamedIndividualDataPropertyValues(
+            dataPropertyExpression,
+            namedIndividual);
+
+        return values.length ? values[0] : null;
     }
 
     private AreEqual(
@@ -314,5 +339,31 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         ): boolean
     {
         return false;
+    }
+
+    private DataPropertyExpressionAreEqual(
+        dataPropertyExpression: IDataPropertyExpression,
+        lhs: object,
+        rhs: object
+        ): boolean
+    {
+        if(this._functionalDataProperties.has(dataPropertyExpression))
+            return this.DataPropertyValue(
+                dataPropertyExpression,
+                lhs) === this.DataPropertyValue(
+                    dataPropertyExpression,
+                    rhs);
+        else
+        {
+            let lhsValues = new Set<object>(this.DataPropertyValues(
+                dataPropertyExpression,
+                lhs));
+            let rhsValues = new Set<object>(this.DataPropertyValues(
+                dataPropertyExpression,
+                rhs));
+
+            return lhsValues.size === rhsValues.size &&
+                [...lhsValues].every(lhsValue => rhsValues.has(lhsValue));
+        }
     }
 }
