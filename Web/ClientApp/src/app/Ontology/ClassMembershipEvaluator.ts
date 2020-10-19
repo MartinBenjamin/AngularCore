@@ -5,7 +5,7 @@ import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
 import { IDataHasValue } from "./IDataHasValue";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
-import { IDataPropertyAssertion, INamedIndividual, IObjectPropertyAssertion } from "./INamedIndividual";
+import { IDataPropertyAssertion, INamedIndividual, IObjectPropertyAssertion, IClassAssertion } from "./INamedIndividual";
 import { IObjectAllValuesFrom } from "./IObjectAllValuesFrom";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectComplementOf } from "./IObjectComplementOf";
@@ -22,10 +22,16 @@ import { IHasKey } from "./IHasKey";
 export class ClassMembershipEvaluator implements IClassMembershipEvaluator
 {
     private _ontology: IOntology;
+    private _classes: Map<string, IClass>;
+    private _classAssertions         : Map<INamedIndividual, IClassAssertion[]>;
     private _objectPropertyAssertions: Map<INamedIndividual, IObjectPropertyAssertion[]>;
-    private _dataPropertyAssertions  : Map<INamedIndividual, IDataPropertyAssertion[]  >;
-    private _hasKeys                 : Map<IClassExpression, IHasKey[]                 >;
+    private _dataPropertyAssertions  : Map<INamedIndividual, IDataPropertyAssertion[]>;
+    private _hasKeys                 : Map<IClassExpression, IHasKey[]>;
+    private _superClassExpressions   : Map<IClassExpression, IClassExpression[]>;
+    private _subClassExpressions     : Map<IClassExpression, IClassExpression[]>;
+    private _disjointClassExpressions: Map<IClassExpression, IClassExpression[]>;
     private _functionalDataProperties: Set<IDataPropertyExpression>;
+    private _classifications         : Map<object, Set<IClassExpression>>;
 
     Class(
         class$    : IClass,
@@ -252,7 +258,83 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual: object
         ): Set<IClassExpression>
     {
-        return null;
+        let classExpressions = this._classifications.get(individual);
+        if(classExpressions)
+            return classExpressions;
+
+        classExpressions = new Set<IClassExpression>();
+        this._classifications.set(
+            individual,
+            classExpressions);
+
+        let candidates = new Set<IClass>();
+
+        if(this._ontology.IsAxiom.INamedIndividual(individual))
+        {
+            let classAssertions = this._classAssertions.get(individual);
+            if(classAssertions)
+                classAssertions
+                    .map(classAssertion => classAssertion.ClassExpression)
+                    .forEach(classExpression => this.ApplyClassExpression(
+                        classExpressions,
+                        candidates,
+                        individual,
+                        classExpression));
+        }
+        else if('ClassIri' in individual)
+        {
+            let class$ = this._classes.get(individual['ClassIri']);
+            if(class$)
+            {
+                classExpressions.add(class$);
+                this.ApplyClassExpression(
+                    classExpressions,
+                    candidates,
+                    individual,
+                    class$);
+            }
+        }
+    }
+
+    private ApplyClassExpression(
+        classExpressions: Set<IClassExpression>,
+        candidates      : Set<IClass>,
+        individual      : object,
+        classExpression : IClassExpression
+        ): void
+    {
+        if(classExpressions.has(classExpression))
+            // Class Expression already processed.
+            return;
+
+        classExpressions.add(classExpression);
+
+        // Prune candidates.
+        if(this._ontology.IsAxiom.IClass(classExpression))
+            candidates.delete(classExpression);
+
+        let disjointClassExpressions = this._disjointClassExpressions.get(classExpression);
+        if(disjointClassExpressions)
+            for(let disjointClassExpression of disjointClassExpressions)
+                if(this._ontology.IsAxiom.IClass(disjointClassExpression))
+                    candidates.delete(disjointClassExpression);;
+
+
+        let superClassExpressions = this._superClassExpressions.get(classExpression);
+        if(superClassExpressions)
+            superClassExpressions.forEach(superClassExpression => this.ApplyClassExpression(
+                classExpressions,
+                candidates,
+                individual,
+                superClassExpression));
+
+        //if(this._ontology.IsAxiom.IclassExpression is IObjectIntersectionOf objectIntersectionOf)
+        //    objectIntersectionOf.ClassExpressions
+        //        .ForEach(componentClassExpression => Classify(
+        //            classExpressions,
+        //            candidates,
+        //            individual,
+        //            componentClassExpression));
     }
 
     private ObjectPropertyValues(
