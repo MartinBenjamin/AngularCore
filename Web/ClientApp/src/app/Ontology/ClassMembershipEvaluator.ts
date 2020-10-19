@@ -1,9 +1,11 @@
 import { IClass } from "./IClass";
+import { IClassExpression } from "./IClassExpression";
 import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
 import { IDataHasValue } from "./IDataHasValue";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
+import { IDataPropertyAssertion, INamedIndividual, IObjectPropertyAssertion } from "./INamedIndividual";
 import { IObjectAllValuesFrom } from "./IObjectAllValuesFrom";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectComplementOf } from "./IObjectComplementOf";
@@ -13,15 +15,16 @@ import { IObjectIntersectionOf } from "./IObjectIntersectionOf";
 import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
-import { IObjectPropertyExpression, IDataPropertyExpression } from "./IPropertyExpression";
-import { INamedIndividual, IObjectPropertyAssertion, IDataPropertyAssertion } from "./INamedIndividual";
 import { IOntology } from "./IOntology";
+import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
+import { IHasKey } from "./IHasKey";
 
 export class ClassMembershipEvaluator implements IClassMembershipEvaluator
 {
     private _ontology: IOntology;
     private _objectPropertyAssertions: Map<INamedIndividual, IObjectPropertyAssertion[]>;
     private _dataPropertyAssertions  : Map<INamedIndividual, IDataPropertyAssertion[]  >;
+    private _hasKeys                 : Map<IClassExpression, IHasKey[]                 >;
     private _functionalDataProperties: Set<IDataPropertyExpression>;
 
     Class(
@@ -29,7 +32,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual: object
         ): boolean
     {
-        return false;
+        return [...this.Classify(individual)].indexOf(class$) != -1;
     }
 
     ObjectIntersectionOf(
@@ -245,6 +248,13 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                 0) === dataExactCardinality.Cardinality;
     }
 
+    Classify(
+        individual: object
+        ): Set<IClassExpression>
+    {
+        return null;
+    }
+
     private ObjectPropertyValues(
         objectPropertyExpression: IObjectPropertyExpression,
         individual              : object
@@ -338,7 +348,21 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         rhs: object
         ): boolean
     {
-        return false;
+        let lhsClassExpressions = this.Classify(lhs);
+        let rhsClassExpressions = this.Classify(rhs);
+        let hasKeys = [];
+        [...lhsClassExpressions]
+            .filter(lhsClassExpression => this._hasKeys.has(lhsClassExpression))
+            .filter(lhsClassExpression => rhsClassExpressions.has(lhsClassExpression))
+            .forEach(lhsClassExpression => hasKeys.push(...this._hasKeys.get(lhsClassExpression)))
+
+        return hasKeys.length &&
+            hasKeys.every(
+                hasKey => hasKey.DataPropertyExpressions.every(
+                    dataPropertyExpression => this.DataPropertyExpressionAreEqual(
+                        dataPropertyExpression,
+                        lhs,
+                        rhs)));
     }
 
     private DataPropertyExpressionAreEqual(
