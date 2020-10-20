@@ -326,8 +326,7 @@ namespace Ontology
                 default:
                     (
                         from @class in _ontology.Get<IClass>()
-                        from type in individual.GetTypes()
-                        where @class.Iri == type.FullName
+                        join type in individual.GetTypes() on @class.Iri equals type.FullName
                         select @class
                     ).ForEach(@class => Classify(
                         classExpressions,

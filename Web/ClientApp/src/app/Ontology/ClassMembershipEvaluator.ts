@@ -22,7 +22,7 @@ import { IHasKey } from "./IHasKey";
 export class ClassMembershipEvaluator implements IClassMembershipEvaluator
 {
     private _ontology: IOntology;
-    private _classes: Map<string, IClass>;
+    private _classes                 : Map<string, IClass>;
     private _classAssertions         : Map<INamedIndividual, IClassAssertion[]>;
     private _objectPropertyAssertions: Map<INamedIndividual, IObjectPropertyAssertion[]>;
     private _dataPropertyAssertions  : Map<INamedIndividual, IDataPropertyAssertion[]>;
