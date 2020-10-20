@@ -10,6 +10,7 @@ namespace Ontology
         private readonly IOntology                                   _ontology;
         private readonly IDictionary<IClass, IClassExpression>       _classDefinitions;
         private readonly IList<IClass>                               _definedClasses;
+        private readonly IDictionary<string, IClass>                 _classes;
         private readonly ILookup<INamedIndividual, IClassExpression> _classAssertions;
         private readonly ILookup<IClassExpression, IClassExpression> _superClassExpressions;
         private readonly ILookup<IClassExpression, IClassExpression> _subClassExpressions;
@@ -55,6 +56,8 @@ namespace Ontology
         {
             _ontology              = ontology;
             _classifications       = classifications;
+            _classes = _ontology.Get<IClass>().ToDictionary(
+                @class => @class.Iri);
             _classAssertions       = _ontology.Get<IClassAssertion>().ToLookup(
                 classAssertion => classAssertion.NamedIndividual,
                 classAssertion => classAssertion.ClassExpression);
@@ -316,24 +319,25 @@ namespace Ontology
                             classExpression));
                     break;
                 case IIndividual iindividual:
-                    _ontology.Get<IClass>()
-                        .Where(@class => @class.Iri == iindividual.ClassIri)
-                        .ForEach(@class => Classify(
+                    if(_classes.TryGetValue(
+                        iindividual.ClassIri,
+                        out IClass @class))
+                        Classify(
                             classExpressions,
                             candidates,
                             individual,
-                            @class));
+                            @class);
                     break;
                 default:
                     (
-                        from @class in _ontology.Get<IClass>()
-                        join type in individual.GetTypes() on @class.Iri equals type.FullName
-                        select @class
-                    ).ForEach(@class => Classify(
+                        from @class1 in _classes.Values
+                        join type in individual.GetTypes() on @class1.Iri equals type.FullName
+                        select @class1
+                    ).ForEach(@class1 => Classify(
                         classExpressions,
                         candidates,
                         individual,
-                        @class));
+                        @class1));
                     break;
             }
 
