@@ -23,7 +23,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
 {
     private _ontology: IOntology;
     private _classes                 : Map<string, IClass>;
-    private _classAssertions         : Map<INamedIndividual, IClassAssertion[]>;
+    private _classAssertions         : Map<INamedIndividual, IClassExpression[]>;
     private _objectPropertyAssertions: Map<INamedIndividual, IObjectPropertyAssertion[]>;
     private _dataPropertyAssertions  : Map<INamedIndividual, IDataPropertyAssertion[]>;
     private _hasKeys                 : Map<IClassExpression, IHasKey[]>;
@@ -271,15 +271,14 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
 
         if(this._ontology.IsAxiom.INamedIndividual(individual))
         {
-            let classAssertions = this._classAssertions.get(individual);
-            if(classAssertions)
-                classAssertions
-                    .map(classAssertion => classAssertion.ClassExpression)
-                    .forEach(classExpression => this.ApplyClassExpression(
+            let assertedClassExpressions = this._classAssertions.get(individual);
+            if(assertedClassExpressions)
+                assertedClassExpressions
+                    .forEach(assertedClassExpression => this.ApplyClassExpression(
                         classExpressions,
                         candidates,
                         individual,
-                        classExpression));
+                        assertedClassExpression));
         }
         else if('ClassIri' in individual)
         {
