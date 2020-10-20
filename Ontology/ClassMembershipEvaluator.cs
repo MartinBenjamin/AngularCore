@@ -10,6 +10,7 @@ namespace Ontology
         private readonly IOntology                                   _ontology;
         private readonly IDictionary<IClass, IClassExpression>       _classDefinitions;
         private readonly IList<IClass>                               _definedClasses;
+        private readonly ILookup<INamedIndividual, IClassExpression> _classAssertions;
         private readonly ILookup<IClassExpression, IClassExpression> _superClassExpressions;
         private readonly ILookup<IClassExpression, IClassExpression> _subClassExpressions;
         private readonly ILookup<IClassExpression, IClassExpression> _disjointClassExpressions;
@@ -54,6 +55,9 @@ namespace Ontology
         {
             _ontology              = ontology;
             _classifications       = classifications;
+            _classAssertions       = _ontology.Get<IClassAssertion>().ToLookup(
+                classAssertion => classAssertion.NamedIndividual,
+                classAssertion => classAssertion.ClassExpression);
             _superClassExpressions = _ontology.Get<ISubClassOf>().ToLookup(
                 subClassOf => subClassOf.SubClassExpression,
                 subClassOf => subClassOf.SuperClassExpression);
@@ -305,10 +309,7 @@ namespace Ontology
             switch(individual)
             {
                 case INamedIndividual namedIndividual:
-                    _ontology.Get<IClassAssertion>()
-                        .Where(classAssertion => classAssertion.NamedIndividual == namedIndividual)
-                        .Select(classAssertion => classAssertion.ClassExpression)
-                        .ForEach(classExpression => Classify(
+                    _classAssertions[namedIndividual].ForEach(classExpression => Classify(
                             classExpressions,
                             candidates,
                             individual,
