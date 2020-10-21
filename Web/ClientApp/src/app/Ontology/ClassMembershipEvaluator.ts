@@ -27,8 +27,8 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     private _objectPropertyAssertions = new Map<INamedIndividual, IObjectPropertyAssertion[]>()
     private _dataPropertyAssertions   = new Map<INamedIndividual, IDataPropertyAssertion[]>();
     private _hasKeys                  = new Map<IClassExpression, IHasKey[]>();
-    private _superClassExpressions    : Map<IClassExpression, IClassExpression[]>;
-    private _subClassExpressions      : Map<IClassExpression, IClassExpression[]>;
+    private _superClassExpressions    = new Map<IClassExpression, IClassExpression[]>();
+    private _subClassExpressions      = new Map<IClassExpression, IClassExpression[]>();
     private _disjointClassExpressions : Map<IClassExpression, IClassExpression[]>;
     private _functionalDataProperties : Set<IDataPropertyExpression>;
     private _classifications          : Map<object, Set<IClassExpression>>;
@@ -88,6 +88,27 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                 this._hasKeys.set(
                     hasKey.ClassExpression,
                     [hasKey]);
+        }
+
+        for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
+        {
+            let superClassExpressions = this._superClassExpressions.get(subClassOf.SubClassExpression);
+            if(superClassExpressions)
+                superClassExpressions.push(subClassOf.SuperClassExpression);
+
+            else
+                this._superClassExpressions.set(
+                    subClassOf.SubClassExpression,
+                    [subClassOf.SuperClassExpression]);
+
+            let subClassExpressions = this._superClassExpressions.get(subClassOf.SuperClassExpression);
+            if(subClassExpressions)
+                subClassExpressions.push(subClassOf.SubClassExpression);
+
+           else
+                this._subClassExpressions.set(
+                    subClassOf.SuperClassExpression,
+                    [subClassOf.SubClassExpression]);
         }
     }
 
