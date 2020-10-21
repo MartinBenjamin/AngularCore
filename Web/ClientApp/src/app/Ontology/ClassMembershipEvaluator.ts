@@ -54,6 +54,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     private readonly _subClassExpressions      : Map<IClassExpression, IClassExpression[]>;
     private readonly _disjointClassExpressions : Map<IClassExpression, IClassExpression[]>;
     private readonly _functionalDataProperties = new Set<IDataPropertyExpression>();
+    private readonly _classDefinitions         : Map<IClass, IClassExpression[]>;
     private readonly _classifications          : Map<object, Set<IClassExpression>>;
 
     constructor(
@@ -123,6 +124,20 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
 
         for(let functionalDataProperty of ontology.Get(ontology.IsAxiom.IFunctionalDataProperty))
             this._functionalDataProperties.add(functionalDataProperty.DataPropertyExpression);
+
+        let definitions: [IClass, IClassExpression][] = [];
+        for(let equivalentClasses of ontology.Get(ontology.IsAxiom.IEquivalentClasses))
+            for(let class$ of equivalentClasses.ClassExpressions.filter(classExpression => ontology.IsAxiom.IClass(classExpression)))
+                for(let classExpression of equivalentClasses.ClassExpressions.filter(classExpression => !ontology.IsAxiom.IClass(classExpression)))
+                    definitions.push(
+                        [
+                            <IClass>class$,
+                            classExpression
+                        ]);
+        this._classDefinitions = Group(
+            definitions,
+            definition => definition[0],
+            definition => definition[1]);
     }
 
     Class(
@@ -376,14 +391,11 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         {
             let class$ = this._classes.get(individual['ClassIri']);
             if(class$)
-            {
-                classExpressions.add(class$);
                 this.ApplyClassExpression(
                     classExpressions,
                     candidates,
                     individual,
                     class$);
-            }
         }
     }
 
