@@ -55,6 +55,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     private readonly _disjointClassExpressions : Map<IClassExpression, IClassExpression[]>;
     private readonly _functionalDataProperties = new Set<IDataPropertyExpression>();
     private readonly _classDefinitions         : Map<IClass, IClassExpression[]>;
+    private readonly _definedClasses           : IClass[];
     private readonly _classifications          : Map<object, Set<IClassExpression>>;
 
     constructor(
@@ -138,6 +139,8 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
             definitions,
             definition => definition[0],
             definition => definition[1]);
+        // Should be topologically sorted.
+        this._definedClasses = Array.from( this._classDefinitions.keys());
     }
 
     Class(
@@ -397,6 +400,17 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                     individual,
                     class$);
         }
+
+        for(let definedClass of this._definedClasses)
+            if(candidates.has(definedClass) &&
+                this._classDefinitions.get(definedClass)[0].Evaluate(
+                    this,
+                    individual))
+                this.ApplyClassExpression(
+                    classExpressions,
+                    candidates,
+                    individual,
+                    definedClass);
     }
 
     private ApplyClassExpression(
