@@ -21,17 +21,63 @@ import { IHasKey } from "./IHasKey";
 
 export class ClassMembershipEvaluator implements IClassMembershipEvaluator
 {
-    private _ontology: IOntology;
-    private _classes                 : Map<string, IClass>;
-    private _classAssertions         : Map<INamedIndividual, IClassExpression[]>;
-    private _objectPropertyAssertions: Map<INamedIndividual, IObjectPropertyAssertion[]>;
-    private _dataPropertyAssertions  : Map<INamedIndividual, IDataPropertyAssertion[]>;
-    private _hasKeys                 : Map<IClassExpression, IHasKey[]>;
-    private _superClassExpressions   : Map<IClassExpression, IClassExpression[]>;
-    private _subClassExpressions     : Map<IClassExpression, IClassExpression[]>;
-    private _disjointClassExpressions: Map<IClassExpression, IClassExpression[]>;
-    private _functionalDataProperties: Set<IDataPropertyExpression>;
-    private _classifications         : Map<object, Set<IClassExpression>>;
+    private _ontology                 : IOntology;
+    private _classes                  = new Map<string, IClass>();
+    private _classAssertions          = new Map<INamedIndividual, IClassExpression[]>();
+    private _objectPropertyAssertions = new Map<INamedIndividual, IObjectPropertyAssertion[]>()
+    private _dataPropertyAssertions   = new Map<INamedIndividual, IDataPropertyAssertion[]>();
+    private _hasKeys                  : Map<IClassExpression, IHasKey[]>;
+    private _superClassExpressions    : Map<IClassExpression, IClassExpression[]>;
+    private _subClassExpressions      : Map<IClassExpression, IClassExpression[]>;
+    private _disjointClassExpressions : Map<IClassExpression, IClassExpression[]>;
+    private _functionalDataProperties : Set<IDataPropertyExpression>;
+    private _classifications          : Map<object, Set<IClassExpression>>;
+
+    constructor(
+        ontology: IOntology
+        )
+    {
+        for(let class$ of ontology.Get<IClass>(ontology.IsAxiom.IClass))
+            this._classes.set(
+                class$.Iri,
+                class$);
+
+        for(let classAssertion of ontology.Get<IClassAssertion>(ontology.IsAxiom.IClassAssertion))
+        {
+            let classAssertions = this._classAssertions.get(classAssertion.NamedIndividual);
+            if(classAssertions)
+                classAssertions.push(classAssertion.ClassExpression);
+
+            else
+                this._classAssertions.set(
+                    classAssertion.NamedIndividual,
+                    [classAssertion.ClassExpression]);
+        }
+
+        for(let objectPropertyAssertion of ontology.Get<IObjectPropertyAssertion>(ontology.IsAxiom.IObjectPropertyAssertion))
+        {
+            let objectPropertyAssertions = this._objectPropertyAssertions.get(objectPropertyAssertion.SourceIndividual);
+            if(objectPropertyAssertions)
+                objectPropertyAssertions.push(objectPropertyAssertion);
+
+            else
+                this._objectPropertyAssertions.set(
+                    objectPropertyAssertion.SourceIndividual,
+                    [objectPropertyAssertion]);
+        }
+
+        for(let dataPropertyAssertion of ontology.Get<IDataPropertyAssertion>(ontology.IsAxiom.IDataPropertyAssertion))
+        {
+            let dataPropertyAssertions = this._dataPropertyAssertions.get(dataPropertyAssertion.SourceIndividual);
+            if(dataPropertyAssertions)
+                dataPropertyAssertions.push(dataPropertyAssertion);
+
+            else
+                this._dataPropertyAssertions.set(
+                    dataPropertyAssertion.SourceIndividual,
+                    [dataPropertyAssertion]);
+        }
+    }
 
     Class(
         class$    : IClass,
@@ -348,8 +394,8 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
 
         if(objectPropertyExpression.LocalName in individual)
         {
-            let values = individual[objectPropertyExpression.LocalName];
-            return Array.isArray(values) ? values : values !== null ? [values] : [];
+            let value = individual[objectPropertyExpression.LocalName];
+            return Array.isArray(value) ? value : value !== null ? [value] : [];
         }
 
         return [];
@@ -367,8 +413,8 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
 
         if(dataPropertyExpression.LocalName in individual)
         {
-            let values = individual[dataPropertyExpression.LocalName];
-            return Array.isArray(values) ? values : values !== null ? [values] : [];
+            let value = individual[dataPropertyExpression.LocalName];
+            return Array.isArray(value) ? value : value !== null ? [value] : [];
         }
 
         return [];
