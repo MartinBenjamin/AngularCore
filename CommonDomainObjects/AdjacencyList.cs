@@ -57,20 +57,29 @@ namespace CommonDomainObjects
 
         public static IEnumerable<TVertex> TopologicalSort<TVertex>(
             this IDictionary<TVertex, IList<TVertex>> graph
-            ) => from vertex in graph.Keys
+            )
+        {
+            var longestPaths = new Dictionary<TVertex, int>();
+            return
+                from vertex in graph.Keys
                 orderby graph.LongestPath(
-                    new Dictionary<TVertex, int>(),
+                    longestPaths,
                     vertex)
-                select vertex;
+                    select vertex;
+        }
 
         public static IEnumerable<TVertex> TopologicalSort<TVertex, TAdjacent>(
             this IDictionary<TVertex, TAdjacent> graph
             ) where TAdjacent : IEnumerable<TVertex>
-                => from vertex in graph.Keys
-                 orderby graph.LongestPath(
-                     new Dictionary<TVertex, int>(),
-                     vertex)
-                 select vertex;
+        {
+            var longestPaths = new Dictionary<TVertex, int>();
+            return
+                from vertex in graph.Keys
+                orderby graph.LongestPath(
+                    longestPaths,
+                    vertex)
+                select vertex;
+        }
 
         public static IDictionary<TVertex, IList<TVertex>> Transpose<TVertex>(
             this IDictionary<TVertex, IList<TVertex>> graph
