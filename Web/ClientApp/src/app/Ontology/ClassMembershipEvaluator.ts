@@ -1,5 +1,6 @@
 import { IClass } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
+import { ClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
@@ -40,6 +41,26 @@ function Group<T, TKey, TValue>(
                 [value])
     }
     return map;
+}
+
+class ClassVisitor extends ClassExpressionVisitor
+{
+    private readonly _action: (class$: IClass) => { };
+
+    constructor(
+        action: (class$: IClass) => {}
+        )
+    {
+        super();
+        this._action = action;
+    }
+
+    Visit(
+        class$: IClass
+        )
+    {
+        this._action(class$);
+    }
 }
 
 export class ClassMembershipEvaluator implements IClassMembershipEvaluator
