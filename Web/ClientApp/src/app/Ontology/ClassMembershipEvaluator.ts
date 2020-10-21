@@ -5,7 +5,8 @@ import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
 import { IDataHasValue } from "./IDataHasValue";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
-import { IDataPropertyAssertion, INamedIndividual, IObjectPropertyAssertion, IClassAssertion } from "./INamedIndividual";
+import { IHasKey } from "./IHasKey";
+import { IDataPropertyAssertion, INamedIndividual, IObjectPropertyAssertion } from "./INamedIndividual";
 import { IObjectAllValuesFrom } from "./IObjectAllValuesFrom";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectComplementOf } from "./IObjectComplementOf";
@@ -17,18 +18,40 @@ import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
-import { IHasKey } from "./IHasKey";
+
+function Group<T, TKey, TValue>(
+    iterable     : Iterable<T>,
+    keyAccessor  : (t: T) => TKey,
+    valueAccessor: (t: T) => TValue
+    ): Map<TKey, TValue[]>
+{
+    let map = new Map<TKey, TValue[]>();
+    for(let t of iterable)
+    {
+        let key    = keyAccessor(t);
+        let value  = valueAccessor(t);
+        let values = map.get(key);
+        if(values)
+            values.push(value);
+
+        else
+            map.set(
+                key,
+                [value])
+    }
+    return map;
+}
 
 export class ClassMembershipEvaluator implements IClassMembershipEvaluator
 {
     private _ontology                 : IOntology;
     private _classes                  = new Map<string, IClass>();
-    private _classAssertions          = new Map<INamedIndividual, IClassExpression[]>();
-    private _objectPropertyAssertions = new Map<INamedIndividual, IObjectPropertyAssertion[]>()
-    private _dataPropertyAssertions   = new Map<INamedIndividual, IDataPropertyAssertion[]>();
-    private _hasKeys                  = new Map<IClassExpression, IHasKey[]>();
-    private _superClassExpressions    = new Map<IClassExpression, IClassExpression[]>();
-    private _subClassExpressions      = new Map<IClassExpression, IClassExpression[]>();
+    private _classAssertions          : Map<INamedIndividual, IClassExpression[]>;
+    private _objectPropertyAssertions : Map<INamedIndividual, IObjectPropertyAssertion[]>;
+    private _dataPropertyAssertions   : Map<INamedIndividual, IDataPropertyAssertion[]>;
+    private _hasKeys                  : Map<IClassExpression, IHasKey[]>;
+    private _superClassExpressions    : Map<IClassExpression, IClassExpression[]>;
+    private _subClassExpressions      : Map<IClassExpression, IClassExpression[]>;
     private _disjointClassExpressions = new Map<IClassExpression, IClassExpression[]>();
     private _functionalDataProperties = new Set<IDataPropertyExpression>();
     private _classifications          : Map<object, Set<IClassExpression>>;
@@ -46,74 +69,30 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                 class$.Iri,
                 class$);
 
-        for(let classAssertion of ontology.Get(ontology.IsAxiom.IClassAssertion))
-        {
-            let classExpressions = this._classAssertions.get(classAssertion.NamedIndividual);
-            if(classExpressions)
-                classExpressions.push(classAssertion.ClassExpression);
-
-            else
-                this._classAssertions.set(
-                    classAssertion.NamedIndividual,
-                    [classAssertion.ClassExpression]);
-        }
-
-        for(let objectPropertyAssertion of ontology.Get(ontology.IsAxiom.IObjectPropertyAssertion))
-        {
-            let objectPropertyAssertions = this._objectPropertyAssertions.get(objectPropertyAssertion.SourceIndividual);
-            if(objectPropertyAssertions)
-                objectPropertyAssertions.push(objectPropertyAssertion);
-
-            else
-                this._objectPropertyAssertions.set(
-                    objectPropertyAssertion.SourceIndividual,
-                    [objectPropertyAssertion]);
-        }
-
-        for(let dataPropertyAssertion of ontology.Get(ontology.IsAxiom.IDataPropertyAssertion))
-        {
-            let dataPropertyAssertions = this._dataPropertyAssertions.get(dataPropertyAssertion.SourceIndividual);
-            if(dataPropertyAssertions)
-                dataPropertyAssertions.push(dataPropertyAssertion);
-
-            else
-                this._dataPropertyAssertions.set(
-                    dataPropertyAssertion.SourceIndividual,
-                    [dataPropertyAssertion]);
-        }
-
-        for(let hasKey of ontology.Get(ontology.IsAxiom.IHasKey))
-        {
-            let hasKeys = this._hasKeys.get(hasKey.ClassExpression);
-            if(hasKeys)
-                hasKeys.push(hasKey);
-
-            else
-                this._hasKeys.set(
-                    hasKey.ClassExpression,
-                    [hasKey]);
-        }
-
-        for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
-        {
-            let superClassExpressions = this._superClassExpressions.get(subClassOf.SubClassExpression);
-            if(superClassExpressions)
-                superClassExpressions.push(subClassOf.SuperClassExpression);
-
-            else
-                this._superClassExpressions.set(
-                    subClassOf.SubClassExpression,
-                    [subClassOf.SuperClassExpression]);
-
-            let subClassExpressions = this._superClassExpressions.get(subClassOf.SuperClassExpression);
-            if(subClassExpressions)
-                subClassExpressions.push(subClassOf.SubClassExpression);
-
-           else
-                this._subClassExpressions.set(
-                    subClassOf.SuperClassExpression,
-                    [subClassOf.SubClassExpression]);
-        }
+        this._classAssertions = Group(
+            ontology.Get(ontology.IsAxiom.IClassAssertion),
+            classAssertion => classAssertion.NamedIndividual,
+            classAssertion => classAssertion.ClassExpression);
+        this._objectPropertyAssertions = Group(
+            ontology.Get(ontology.IsAxiom.IObjectPropertyAssertion),
+            objectPropertyAssertion => objectPropertyAssertion.SourceIndividual,
+            objectPropertyAssertion => objectPropertyAssertion);
+        this._dataPropertyAssertions = Group(
+            ontology.Get(ontology.IsAxiom.IDataPropertyAssertion),
+            dataPropertyAssertion => dataPropertyAssertion.SourceIndividual,
+            dataPropertyAssertion => dataPropertyAssertion);
+        this._hasKeys = Group(
+            ontology.Get(ontology.IsAxiom.IHasKey),
+            hasKey => hasKey.ClassExpression,
+            hasKey => hasKey);
+        this._superClassExpressions = Group(
+            ontology.Get(ontology.IsAxiom.ISubClassOf),
+            subClassOf => subClassOf.SubClassExpression,
+            subClassOf => subClassOf.SuperClassExpression);
+        this._superClassExpressions = Group(
+            ontology.Get(ontology.IsAxiom.ISubClassOf),
+            subClassOf => subClassOf.SuperClassExpression,
+            subClassOf => subClassOf.SubClassExpression);
 
         let disjointPairs: [IClassExpression, IClassExpression][] = [];
         for(let disjointClasses of ontology.Get(ontology.IsAxiom.IDisjointClasses))
@@ -137,17 +116,10 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                     ]));
         }
 
-        for(let [classExpression1, classExpression2] of disjointPairs)
-        {
-            let disjointClassExpressions = this._disjointClassExpressions.get(classExpression1);
-            if(disjointClassExpressions)
-                disjointClassExpressions.push(classExpression2);
-
-            else
-                this._disjointClassExpressions.set(
-                    classExpression1,
-                    [classExpression2]);
-        }
+        this._disjointClassExpressions = Group(
+            disjointPairs,
+            disjointPair => disjointPair[0],
+            disjointPair => disjointPair[1]);
     }
 
     Class(
