@@ -26,7 +26,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     private _classAssertions          = new Map<INamedIndividual, IClassExpression[]>();
     private _objectPropertyAssertions = new Map<INamedIndividual, IObjectPropertyAssertion[]>()
     private _dataPropertyAssertions   = new Map<INamedIndividual, IDataPropertyAssertion[]>();
-    private _hasKeys                  : Map<IClassExpression, IHasKey[]>;
+    private _hasKeys                  = new Map<IClassExpression, IHasKey[]>();
     private _superClassExpressions    : Map<IClassExpression, IClassExpression[]>;
     private _subClassExpressions      : Map<IClassExpression, IClassExpression[]>;
     private _disjointClassExpressions : Map<IClassExpression, IClassExpression[]>;
@@ -37,16 +37,16 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         ontology: IOntology
         )
     {
-        for(let class$ of ontology.Get<IClass>(ontology.IsAxiom.IClass))
+        for(let class$ of ontology.Get(ontology.IsAxiom.IClass))
             this._classes.set(
                 class$.Iri,
                 class$);
 
-        for(let classAssertion of ontology.Get<IClassAssertion>(ontology.IsAxiom.IClassAssertion))
+        for(let classAssertion of ontology.Get(ontology.IsAxiom.IClassAssertion))
         {
-            let classAssertions = this._classAssertions.get(classAssertion.NamedIndividual);
-            if(classAssertions)
-                classAssertions.push(classAssertion.ClassExpression);
+            let classExpressions = this._classAssertions.get(classAssertion.NamedIndividual);
+            if(classExpressions)
+                classExpressions.push(classAssertion.ClassExpression);
 
             else
                 this._classAssertions.set(
@@ -54,7 +54,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                     [classAssertion.ClassExpression]);
         }
 
-        for(let objectPropertyAssertion of ontology.Get<IObjectPropertyAssertion>(ontology.IsAxiom.IObjectPropertyAssertion))
+        for(let objectPropertyAssertion of ontology.Get(ontology.IsAxiom.IObjectPropertyAssertion))
         {
             let objectPropertyAssertions = this._objectPropertyAssertions.get(objectPropertyAssertion.SourceIndividual);
             if(objectPropertyAssertions)
@@ -66,7 +66,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                     [objectPropertyAssertion]);
         }
 
-        for(let dataPropertyAssertion of ontology.Get<IDataPropertyAssertion>(ontology.IsAxiom.IDataPropertyAssertion))
+        for(let dataPropertyAssertion of ontology.Get(ontology.IsAxiom.IDataPropertyAssertion))
         {
             let dataPropertyAssertions = this._dataPropertyAssertions.get(dataPropertyAssertion.SourceIndividual);
             if(dataPropertyAssertions)
@@ -76,6 +76,18 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                 this._dataPropertyAssertions.set(
                     dataPropertyAssertion.SourceIndividual,
                     [dataPropertyAssertion]);
+        }
+
+        for(let hasKey of ontology.Get(ontology.IsAxiom.IHasKey))
+        {
+            let hasKeys = this._hasKeys.get(hasKey.ClassExpression);
+            if(hasKeys)
+                hasKeys.push(hasKey);
+
+            else
+                this._hasKeys.set(
+                    hasKey.ClassExpression,
+                    [hasKey]);
         }
     }
 
