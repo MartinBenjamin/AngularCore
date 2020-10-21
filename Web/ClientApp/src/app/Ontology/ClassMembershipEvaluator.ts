@@ -44,17 +44,17 @@ function Group<T, TKey, TValue>(
 
 export class ClassMembershipEvaluator implements IClassMembershipEvaluator
 {
-    private _ontology                 : IOntology;
-    private _classes                  = new Map<string, IClass>();
-    private _classAssertions          : Map<INamedIndividual, IClassExpression[]>;
-    private _objectPropertyAssertions : Map<INamedIndividual, IObjectPropertyAssertion[]>;
-    private _dataPropertyAssertions   : Map<INamedIndividual, IDataPropertyAssertion[]>;
-    private _hasKeys                  : Map<IClassExpression, IHasKey[]>;
-    private _superClassExpressions    : Map<IClassExpression, IClassExpression[]>;
-    private _subClassExpressions      : Map<IClassExpression, IClassExpression[]>;
-    private _disjointClassExpressions : Map<IClassExpression, IClassExpression[]>;
-    private _functionalDataProperties = new Set<IDataPropertyExpression>();
-    private _classifications          : Map<object, Set<IClassExpression>>;
+    private readonly _ontology                 : IOntology;
+    private readonly _classes                  = new Map<string, IClass>();
+    private readonly _classAssertions          : Map<INamedIndividual, IClassExpression[]>;
+    private readonly _objectPropertyAssertions : Map<INamedIndividual, IObjectPropertyAssertion[]>;
+    private readonly _dataPropertyAssertions   : Map<INamedIndividual, IDataPropertyAssertion[]>;
+    private readonly _hasKeys                  : Map<IClassExpression, IHasKey[]>;
+    private readonly _superClassExpressions    : Map<IClassExpression, IClassExpression[]>;
+    private readonly _subClassExpressions      : Map<IClassExpression, IClassExpression[]>;
+    private readonly _disjointClassExpressions : Map<IClassExpression, IClassExpression[]>;
+    private readonly _functionalDataProperties = new Set<IDataPropertyExpression>();
+    private readonly _classifications          : Map<object, Set<IClassExpression>>;
 
     constructor(
         ontology       : IOntology,
