@@ -66,6 +66,7 @@
     <None Remove="ClientApp\src\app\Ontology\Axiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\BuiltIn.ts" />
     <None Remove="ClientApp\src\app\Ontology\Class.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ClassExpressionNavigator.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassMembershipEvaluator.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataAllValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataCardinality.ts" />
@@ -226,6 +227,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Axiom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\BuiltIn.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Class.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassExpressionNavigator.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassMembershipEvaluator.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataCardinality.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataComplementOf.ts" />

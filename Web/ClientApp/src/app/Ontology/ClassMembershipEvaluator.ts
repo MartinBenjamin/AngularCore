@@ -1,4 +1,5 @@
 import { LongestPaths } from "./AdjacencyList";
+import { ClassExpressionNavigator } from "./ClassExpressionNavigator";
 import { IClass } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
 import { ClassExpressionVisitor } from "./IClassExpressionVisitor";
@@ -161,32 +162,29 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
             definitions,
             definition => definition[0],
             definition => definition[1]);
-        // Should be topologically sorted.
-        this._definedClasses = Array.from(this._classDefinitions.keys());
 
+        let adjacent: Set<IClass> = null;
+        let empty = new Set<IClass>();
+        var adjacencyList = new Map<IClass, Set<IClass>>();
+        for(let class$ of ontology.Get(ontology.IsAxiom.IClass))
+            adjacencyList.set(
+                class$,
+                empty);
 
-        //let adjacent: Set<IClass> = null;
-        //let empty = new Set<IClass>();
-        //var adjacencyList = new Map<IClass, Set<IClass>>();
-        //for(let class$ of ontology.Get(ontology.IsAxiom.IClass))
-        //    adjacencyList.set(
-        //        class$,
-        //        empty);
+        let classVisitor = new ClassExpressionNavigator(new ClassVisitor(class$ => adjacent.add(class$)));
 
-        //let classVisitor: ClassVisitor;// = new ClassExpressionNavigator(new ClassVisitor(class$ => adjacent.add(class$)));
+        for(let [class$, classExpression] of this._classDefinitions)
+        {
+            adjacent = new Set<IClass>();
+            classExpression[0].Accept(classVisitor);
+            adjacencyList.set(
+                class$,
+                adjacent);
+        }
 
-        //for(let [class$, classExpression] of this._classDefinitions)
-        //{
-        //    adjacent = new Set<IClass>();
-        //    classExpression[0].Accept(classVisitor);
-        //    adjacencyList.set(
-        //        class$,
-        //        adjacent);
-        //}
-
-        //let longestPaths = LongestPaths(adjacencyList);
-        //this._definedClasses = Array.from(this._classDefinitions.keys())
-        //    .sort((a, b) => longestPaths.get(b) - longestPaths.get(a));
+        let longestPaths = LongestPaths(adjacencyList);
+        this._definedClasses = Array.from(this._classDefinitions.keys())
+            .sort((a, b) => longestPaths.get(b) - longestPaths.get(a));
     }
 
     Class(
