@@ -139,14 +139,108 @@ export class ClassExpressionNavigator implements IClassExpressionVisitor
             this._exit.ObjectHasSelf(objectHasSelf);
     }
 
-    ObjectMinCardinality(objectMinCardinality: IObjectMinCardinality) { }
-    ObjectMaxCardinality(objectMaxCardinality: IObjectMaxCardinality) { }
-    ObjectExactCardinality(objectExactCardinality: IObjectExactCardinality) { }
-    DataSomeValuesFrom(dataSomeValuesFrom: IDataSomeValuesFrom) { }
-    DataAllValuesFrom(dataAllValuesFrom: IDataAllValuesFrom) { }
-    DataHasValue(dataHasValue: IDataHasValue) { }
-    DataMinCardinality(dataMinCardinality: IDataMinCardinality) { }
-    DataMaxCardinality(dataMaxCardinality: IDataMaxCardinality) { }
-    DataExactCardinality(dataExactCardinality: IDataExactCardinality) { }
+    ObjectMinCardinality(
+        objectMinCardinality: IObjectMinCardinality
+        )
+    {
+        if(this._enter)
+            this._enter.ObjectMinCardinality(objectMinCardinality);
 
+        objectMinCardinality.ClassExpression.Accept(this);
+
+        if(this._exit)
+            this._exit.ObjectMinCardinality(objectMinCardinality);
+    }
+
+    ObjectMaxCardinality(
+        objectMaxCardinality: IObjectMaxCardinality
+        )
+    {
+        if(this._enter)
+            this._enter.ObjectMaxCardinality(objectMaxCardinality);
+
+        objectMaxCardinality.ClassExpression.Accept(this);
+
+        if(this._exit)
+            this._exit.ObjectMaxCardinality(objectMaxCardinality);
+    }
+
+    ObjectExactCardinality(
+        objectExactCardinality: IObjectExactCardinality
+        )
+    {
+        if(this._enter)
+            this._enter.ObjectExactCardinality(objectExactCardinality);
+
+        objectExactCardinality.ClassExpression.Accept(this);
+
+        if(this._exit)
+            this._exit.ObjectExactCardinality(objectExactCardinality);
+    }
+
+    DataSomeValuesFrom(
+        dataSomeValuesFrom: IDataSomeValuesFrom
+        )
+    {
+        if(this._enter)
+            this._enter.DataSomeValuesFrom(dataSomeValuesFrom);
+
+        if(this._exit)
+            this._exit.DataSomeValuesFrom(dataSomeValuesFrom);
+    }
+
+    DataAllValuesFrom(
+        dataAllValuesFrom: IDataAllValuesFrom
+        )
+    {
+        if(this._enter)
+            this._enter.DataAllValuesFrom(dataAllValuesFrom);
+
+        if(this._exit)
+            this._exit.DataAllValuesFrom(dataAllValuesFrom);
+    }
+
+    DataHasValue(
+        dataHasValue: IDataHasValue
+        )
+    {
+        if(this._enter)
+            this._enter.DataHasValue(dataHasValue);
+
+        if(this._exit)
+            this._exit.DataHasValue(dataHasValue);
+    }
+
+    DataMinCardinality(
+        dataMinCardinality: IDataMinCardinality
+        )
+    {
+        if(this._enter)
+            this._enter.DataMinCardinality(dataMinCardinality);
+
+        if(this._exit)
+            this._exit.DataMinCardinality(dataMinCardinality);
+    }
+
+    DataMaxCardinality(
+        dataMaxCardinality: IDataMaxCardinality
+        )
+    {
+        if(this._enter)
+            this._enter.DataMaxCardinality(dataMaxCardinality);
+
+        if(this._exit)
+            this._exit.DataMaxCardinality(dataMaxCardinality);
+    }
+
+    DataExactCardinality(
+        dataExactCardinality: IDataExactCardinality
+        )
+    {
+        if(this._enter)
+            this._enter.DataExactCardinality(dataExactCardinality);
+
+        if(this._exit)
+            this._exit.DataExactCardinality(dataExactCardinality);
+    }
 }
