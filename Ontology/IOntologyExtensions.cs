@@ -378,8 +378,8 @@ namespace Ontology
             (
                 from classExpression in evaluator.Classify(individual)
                 join objectPropertyDomain in ontology.Get<IObjectPropertyDomain>() on classExpression equals objectPropertyDomain.Domain
-                from value in objectPropertyDomain.ObjectPropertyExpression.Values(
-                    ontology,
+                from value in evaluator.ObjectPropertyValues(
+                    objectPropertyDomain.ObjectPropertyExpression,
                     individual)
                 select value
             ).ForEach(value => ontology.Classify(

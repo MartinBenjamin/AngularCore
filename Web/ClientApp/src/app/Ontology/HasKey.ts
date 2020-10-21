@@ -16,16 +16,4 @@ export class HasKey
     {
         super(ontology);
     }
-
-    AreEqual(
-        context: IOntology,
-        lhs    : object,
-        rhs    : object
-        ): boolean
-    {
-        return this.DataPropertyExpressions.every(dataPropertyExpression => dataPropertyExpression.AreEqual(
-            context,
-            lhs,
-            rhs));
-    }
 }

@@ -22,24 +22,9 @@ namespace Ontology
             _property = property;
         }
 
-        public virtual IEnumerable<object> Values(
-            IOntology context,
-            object    individual
-            )
-        {
-            switch(individual)
-            {
-                case T t                             : return _property(t).Cast<object>();
-                case INamedIndividual namedIndividual: return Values(
-                    context,
-                    namedIndividual);
-                default                              : return Enumerable.Empty<object>();
-            }
-        }
-
-        protected abstract IEnumerable<object> Values(
-            IOntology        context,
-            INamedIndividual namedIndividual);
+        IEnumerable<object> IPropertyExpression.Values(
+            object individual
+            ) => individual is T t ? _property(t).Cast<object>() : Enumerable.Empty<object>();
     }
 
     public abstract class FunctionalProperty<T, TProperty>:
@@ -60,30 +45,8 @@ namespace Ontology
         }
 
         IEnumerable<object> IPropertyExpression.Values(
-            IOntology context,
-            object    individual
-            ) => Value(
-                context,
-                individual).ToEnumerable();
-
-        protected object Value(
-            IOntology context,
-            object    individual
-            )
-        {
-            switch(individual)
-            {
-                case T t                             : return _property(t);
-                case INamedIndividual namedIndividual: return Value(
-                    context,
-                    namedIndividual);
-                default                              : return null;
-            }
-        }
-
-        protected abstract object Value(
-            IOntology        context,
-            INamedIndividual namedIndividual);
+            object individual
+            ) => individual is T t ? ((object)_property(t)).ToEnumerable() : Enumerable.Empty<object>();
     }
 
     public class ObjectProperty<T, TProperty>:
@@ -100,16 +63,6 @@ namespace Ontology
                 property)
         {
         }
-
-        protected override IEnumerable<object> Values(
-            IOntology        context,
-            INamedIndividual namedIndividual
-            ) => context
-                .Get<IObjectPropertyAssertion>()
-                .Where(objectPropertyAssertion =>
-                    objectPropertyAssertion.SourceIndividual         == namedIndividual &&
-                    objectPropertyAssertion.ObjectPropertyExpression == this)
-                .Select(objectPropertyAssertion => objectPropertyAssertion.TargetIndividual);
     }
 
     public class FunctionalObjectProperty<T, TProperty>:
@@ -126,17 +79,6 @@ namespace Ontology
                 property)
         {
         }
-
-        protected override object Value(
-            IOntology        context,
-            INamedIndividual namedIndividual
-            ) => context
-                .Get<IObjectPropertyAssertion>()
-                .Where(objectPropertyAssertion =>
-                    objectPropertyAssertion.SourceIndividual         == namedIndividual &&
-                    objectPropertyAssertion.ObjectPropertyExpression == this)
-                .Select(objectPropertyAssertion => objectPropertyAssertion.TargetIndividual)
-                .FirstOrDefault();
     }
 
     public class DataProperty<T, TProperty>:
@@ -153,27 +95,12 @@ namespace Ontology
                 property)
         {
         }
-
-        bool IDataPropertyExpression.AreEqual(
-            IOntology context,
-            object    lhs,
-            object    rhs
-            ) => Values(context, lhs).ToHashSet().SetEquals(Values(context, rhs));
-
-        protected override IEnumerable<object> Values(
-            IOntology        context,
-            INamedIndividual namedIndividual
-            ) => context
-                .Get<IDataPropertyAssertion>()
-                .Where(dataPropertyAssertion =>
-                    dataPropertyAssertion.SourceIndividual       == namedIndividual &&
-                    dataPropertyAssertion.DataPropertyExpression == this)
-                .Select(dataPropertyAssertion => dataPropertyAssertion.TargetValue);
     }
     
     public class FunctionalDataProperty<T, TProperty>:
         FunctionalProperty<T, TProperty>,
-        IDataPropertyExpression
+        IDataPropertyExpression,
+        IFunctionalDataProperty
     {
         public FunctionalDataProperty(
             IOntology          ontology,
@@ -186,24 +113,7 @@ namespace Ontology
         {
         }
 
-        bool IDataPropertyExpression.AreEqual(
-            IOntology context,
-            object    lhs,
-            object    rhs
-            ) => Equals(
-                Value(context, lhs),
-                Value(context, rhs));
-
-        protected override object Value(
-            IOntology        context,
-            INamedIndividual namedIndividual
-            ) => context
-                .Get<IDataPropertyAssertion>()
-                .Where(dataPropertyAssertion =>
-                    dataPropertyAssertion.SourceIndividual       == namedIndividual &&
-                    dataPropertyAssertion.DataPropertyExpression == this)
-                .Select(dataPropertyAssertion => dataPropertyAssertion.TargetValue)
-                .FirstOrDefault();
+        IDataPropertyExpression IDataPropertyAxiom.DataPropertyExpression => this;
     }
 
     public abstract class Property:
@@ -219,21 +129,7 @@ namespace Ontology
         {
         }
 
-        public virtual IEnumerable<object> Values(
-            IOntology context,
-            object    individual
-            )
-        {
-            switch(individual)
-            {
-                case INamedIndividual namedIndividual: return Values(
-                    context,
-                    namedIndividual);
-                default: return Values(individual);
-            }
-        }
-
-        protected IEnumerable<object> Values(
+        IEnumerable<object> IPropertyExpression.Values(
             object individual
             )
         {
@@ -248,10 +144,6 @@ namespace Ontology
 
             return value is IEnumerable<object> enumerable ? enumerable : value.ToEnumerable();
         }
-
-        protected abstract IEnumerable<object> Values(
-            IOntology        context,
-            INamedIndividual namedIndividual);
     }
 
     public class ObjectProperty:
@@ -266,16 +158,6 @@ namespace Ontology
                 localName)
         {
         }
-
-        protected override IEnumerable<object> Values(
-            IOntology        context,
-            INamedIndividual namedIndividual
-            ) => context
-                .Get<IObjectPropertyAssertion>()
-                .Where(objectPropertyAssertion =>
-                    objectPropertyAssertion.SourceIndividual         == namedIndividual &&
-                    objectPropertyAssertion.ObjectPropertyExpression == this)
-                .Select(objectPropertyAssertion => objectPropertyAssertion.TargetIndividual);
     }
 
     public class DataProperty:
@@ -290,21 +172,5 @@ namespace Ontology
                 localName)
         {
         }
-
-        bool IDataPropertyExpression.AreEqual(
-            IOntology context,
-            object    lhs,
-            object    rhs
-            ) => Values(context, lhs).ToHashSet().SetEquals(Values(context, rhs));
-
-        protected override IEnumerable<object> Values(
-            IOntology        context,
-            INamedIndividual namedIndividual
-            ) => context
-                .Get<IDataPropertyAssertion>()
-                .Where(dataPropertyAssertion =>
-                    dataPropertyAssertion.SourceIndividual       == namedIndividual &&
-                    dataPropertyAssertion.DataPropertyExpression == this)
-                .Select(dataPropertyAssertion => dataPropertyAssertion.TargetValue);
     }
 }

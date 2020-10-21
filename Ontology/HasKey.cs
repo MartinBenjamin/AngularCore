@@ -23,14 +23,5 @@ namespace Ontology
         IClassExpression IHasKey.ClassExpression => _classExpression;
 
         IList<IDataPropertyExpression> IHasKey.DataPropertyExpressions => _dataPropertyExpressions;
-
-        bool IHasKey.AreEqual(
-            IOntology context,
-            object    lhs,
-            object    rhs
-            ) => _dataPropertyExpressions.All(property => property.AreEqual(
-                context,
-                lhs,
-                rhs));
     }
 }

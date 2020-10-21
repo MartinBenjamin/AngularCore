@@ -6,10 +6,5 @@ namespace Ontology
     {
         IClassExpression               ClassExpression         { get; }
         IList<IDataPropertyExpression> DataPropertyExpressions { get; }
-
-        bool AreEqual(
-            IOntology context,
-            object    lhs,
-            object    rhs);
     }
 }
