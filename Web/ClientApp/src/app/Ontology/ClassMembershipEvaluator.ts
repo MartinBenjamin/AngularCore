@@ -29,14 +29,18 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     private _hasKeys                  = new Map<IClassExpression, IHasKey[]>();
     private _superClassExpressions    = new Map<IClassExpression, IClassExpression[]>();
     private _subClassExpressions      = new Map<IClassExpression, IClassExpression[]>();
-    private _disjointClassExpressions : Map<IClassExpression, IClassExpression[]>;
-    private _functionalDataProperties : Set<IDataPropertyExpression>;
+    private _disjointClassExpressions = new Map<IClassExpression, IClassExpression[]>();
+    private _functionalDataProperties = new Set<IDataPropertyExpression>();
     private _classifications          : Map<object, Set<IClassExpression>>;
 
     constructor(
-        ontology: IOntology
+        ontology       : IOntology,
+        classifications: Map<object, Set<IClassExpression>>
         )
     {
+        this._ontology        = ontology;
+        this._classifications = classifications;
+
         for(let class$ of ontology.Get(ontology.IsAxiom.IClass))
             this._classes.set(
                 class$.Iri,
