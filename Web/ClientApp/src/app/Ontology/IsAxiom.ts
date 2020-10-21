@@ -4,6 +4,7 @@ import { DataPropertyDomain } from "./DataPropertyDomain";
 import { DisjointClasses } from "./DisjointClasses";
 import { Entity } from "./Entity";
 import { EquivalentClasses } from "./EquivalentClasses";
+import { FunctionalDataProperty } from "./FunctionalDataProperty";
 import { HasKey } from "./HasKey";
 import { IAnnotationProperty } from "./IAnnotationProperty";
 import { IClass } from "./IClass";
@@ -39,4 +40,6 @@ export class IsAxiom implements IIsAxiom
     IDataPropertyAssertion   (axiom: object): axiom is IDataPropertyAssertion    { return axiom instanceof DataPropertyAssertion   ; }
     IObjectPropertyDomain    (axiom: object): axiom is IObjectPropertyDomain     { return axiom instanceof ObjectPropertyDomain    ; }
     IDataPropertyDomain      (axiom: object): axiom is IDataPropertyDomain       { return axiom instanceof DataPropertyDomain      ; }
+    IFunctionalDataProperty  (axiom: object): axiom is IDataPropertyDomain       { return axiom instanceof FunctionalDataProperty  ; }
+
 }

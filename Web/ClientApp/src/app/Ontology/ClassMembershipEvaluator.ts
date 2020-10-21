@@ -52,7 +52,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     private _hasKeys                  : Map<IClassExpression, IHasKey[]>;
     private _superClassExpressions    : Map<IClassExpression, IClassExpression[]>;
     private _subClassExpressions      : Map<IClassExpression, IClassExpression[]>;
-    private _disjointClassExpressions = new Map<IClassExpression, IClassExpression[]>();
+    private _disjointClassExpressions : Map<IClassExpression, IClassExpression[]>;
     private _functionalDataProperties = new Set<IDataPropertyExpression>();
     private _classifications          : Map<object, Set<IClassExpression>>;
 
@@ -120,6 +120,9 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
             disjointPairs,
             disjointPair => disjointPair[0],
             disjointPair => disjointPair[1]);
+
+        for(let functionalDataProperty of ontology.Get(ontology.IsAxiom.IFunctionalDataProperty))
+            this._functionalDataProperties.add(functionalDataProperty.DataPropertyExpression);
     }
 
     Class(
