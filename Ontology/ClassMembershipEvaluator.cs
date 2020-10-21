@@ -90,22 +90,22 @@ namespace Ontology
 
             var disjointPairs = (
                 from disjointClasses in _ontology.Get<IDisjointClasses>()
-                from ClassExpression1 in disjointClasses.ClassExpressions
-                from ClassExpression2 in disjointClasses.ClassExpressions
-                where ClassExpression1 != ClassExpression2
+                from classExpression1 in disjointClasses.ClassExpressions
+                from classExpression2 in disjointClasses.ClassExpressions
+                where classExpression1 != classExpression2
                 select
                 (
-                    ClassExpression1,
-                    ClassExpression2
+                    ClassExpression1: classExpression1,
+                    ClassExpression2: classExpression2
                 )).ToList();
 
             for(var index = 0;index < disjointPairs.Count;++index)
             {
-                var (ClassExpression1, ClassExpression2) = disjointPairs[index];
-                _subClassExpressions[ClassExpression2].ForEach(
+                var (classExpression1, classExpression2) = disjointPairs[index];
+                _subClassExpressions[classExpression2].ForEach(
                     subclassExpression => disjointPairs.Add(
                         (
-                            ClassExpression1,
+                            ClassExpression1: classExpression1,
                             ClassExpression2: subclassExpression
                         )));
             }

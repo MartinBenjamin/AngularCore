@@ -110,6 +110,40 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                     subClassOf.SuperClassExpression,
                     [subClassOf.SubClassExpression]);
         }
+
+        let disjointPairs: [IClassExpression, IClassExpression][] = [];
+        for(let disjointClasses of ontology.Get(ontology.IsAxiom.IDisjointClasses))
+            for(let classExpression1 of disjointClasses.ClassExpressions)
+                for(let classExpression2 of disjointClasses.ClassExpressions)
+                    if(classExpression1 !== classExpression2)
+                        disjointPairs.push(
+                            [
+                                classExpression1,
+                                classExpression2
+                            ]);
+
+        for(let index = 0; index < disjointPairs.length; ++index)
+        {
+            let [classExpression1, classExpression2] = disjointPairs[index];
+            this._subClassExpressions.get(classExpression2).forEach(
+                subclassExpression => disjointPairs.push(
+                    [
+                        classExpression1,
+                        subclassExpression
+                    ]));
+        }
+
+        for(let [classExpression1, classExpression2] of disjointPairs)
+        {
+            let disjointClassExpressions = this._disjointClassExpressions.get(classExpression1);
+            if(disjointClassExpressions)
+                disjointClassExpressions.push(classExpression2);
+
+            else
+                this._disjointClassExpressions.set(
+                    classExpression1,
+                    [classExpression2]);
+        }
     }
 
     Class(
