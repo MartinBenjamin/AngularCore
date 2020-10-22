@@ -454,10 +454,10 @@ let parseNumberFormatPattern;
 let formatNumber;
 (function()
 {
-    let syntaxCharacters = /[\^$\\.*+?()[\]{}|]/g;
+    const syntaxCharacters = /[\^$\\.*+?()[\]{}|]/g;
 
-    let escapeSymbol = "'";
-    let escapedEscapeSymbol = escapeSymbol + escapeSymbol;
+    const escapeSymbol = "'";
+    const escapedEscapeSymbol = escapeSymbol + escapeSymbol;
 
     let affixSymbols =
     {
@@ -471,20 +471,7 @@ let formatNumber;
     for(let symbol in affixSymbols)
         symbols.push(symbol);
 
-    symbols.sort(
-        function(
-            x,
-            y
-            )
-        {
-            if(x.length > y.length)
-                return -1;
-
-            else if(x.length < y.length)
-                return 1;
-
-            return 0;
-        });
+    symbols.sort((x, y) => y.length - x.length);
 
     let escapedSymbols = symbols.map(
         function(
