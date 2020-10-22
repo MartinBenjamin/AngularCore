@@ -1,47 +1,25 @@
-import { dayKeys, dateFieldSymbols, formatDate, formatUTCDate, parseDate, parseUTCDate } from "./Date";
+import * as dateModule from "./Date";
 import { calendar } from "./Cldr";
-Date.dayKeys = dayKeys;
 
-let assert =
+let dayKeys          = dateModule.dayKeys;
+let dateFieldSymbols = dateModule.dateFieldSymbols;
+let formatDate       = dateModule.formatDate;
+let formatUTCDate    = dateModule.formatUTCDate;
+let parseDate        = dateModule.parseDate;
+let parseUTCDate     = dateModule.parseUTCDate;
+
+var assert =
 {
     strictEquals: function(
         lhs,
         rhs
-        )
+    )
     {
         it(
             lhs + ' === ' + rhs,
             function()
             {
-                let lhsFunction = new Function(
-                    'dayKeys',
-                    'dateFieldSymbols',
-                    'formatDate',
-                    'formatUTCDate',
-                    'parseDate',
-                    'parseUTCDate',
-                    'return ' + lhs);
-                let rhsFunction = new Function(
-                    'dayKeys',
-                    'dateFieldSymbols',
-                    'formatDate',
-                    'formatUTCDate',
-                    'parseDate',
-                    'parseUTCDate',
-                    'return ' + rhs);
-                expect(lhsFunction(
-                    dayKeys,
-                    dateFieldSymbols,
-                    formatDate,
-                    formatUTCDate,
-                    parseDate,
-                    parseUTCDate)).toBe(rhsFunction(
-                    dayKeys,
-                    dateFieldSymbols,
-                    formatDate,
-                    formatUTCDate,
-                    parseDate,
-                    parseUTCDate));
+                expect(eval(lhs)).toBe(eval(rhs));
             });
     }
 };
