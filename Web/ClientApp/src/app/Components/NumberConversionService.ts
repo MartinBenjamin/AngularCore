@@ -1,5 +1,5 @@
-/// <reference path="Number.d.ts"/>
 import { IConversionService } from './IConversionService';
+import { formatNumber, parseNumber } from './Number';
 import { NumberInputDefinition } from './NumberInputDefinition';
 
 export class NumberConversionService implements IConversionService<number>

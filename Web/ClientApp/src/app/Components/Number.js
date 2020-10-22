@@ -720,34 +720,31 @@ let formatNumber;
     };
 
     
-    let numberFormatPatternRules;
-
-    with(parser)
-        numberFormatPatternRules =
-        {
-            pattern       : new sequence(['subpattern', new optional(new sequence([new terminal(';'), 'subpattern'])), new eos()]),
-            subpattern    : new sequence(['prefix', 'number', 'suffix']),
-            prefix        : new optional('affix'),
-            suffix        : new optional('affix'),
-            affix         : new oneOrMore(new choice(['escapedEscape', 'escaped', new terminal(/^[^#0.,;]$/)])),
-            number        : new sequence(['integer', new optional(new sequence(['decimal', 'fraction']))]),
-            integer       : new sequence([new optional('padding'), 'minimumDigits']),
-            padding       : new sequence(['firstHashGroup', new zeroOrMore('hashGroup'), new optional('hashes')]),
-            minimumDigits : new sequence([new zeroOrMore('zeroGroup'), 'zeros']),
-            fraction      : new choice([new sequence([new optional('zeros'), 'hashes']), 'zeros']),
-            firstHashGroup: new sequence(['hash', 'group']),
-            hashGroup     : new sequence(['hashes', 'group']),
-            zeroGroup     : new sequence(['zeros', 'group']),
-            hashes        : new oneOrMore('hash'),
-            zeros         : new oneOrMore('zero'),
-            hash          : new terminal('#'),
-            zero          : new terminal('0'),
-            group         : new terminal(','),
-            decimal       : new terminal('.'),
-            escape        : new terminal("'"),
-            escapedEscape : new sequence(['escape', 'escape']),
-            escaped       : new sequence(['escape', new oneOrMore(new choice([new terminal(/^[^']$/), 'escapedEscape'])), 'escape'])
-        };
+    let numberFormatPatternRules =
+    {
+        pattern       : new parser.sequence(['subpattern', new parser.optional(new parser.sequence([new parser.terminal(';'), 'subpattern'])), new parser.eos()]),
+        subpattern    : new parser.sequence(['prefix', 'number', 'suffix']),
+        prefix        : new parser.optional('affix'),
+        suffix        : new parser.optional('affix'),
+        affix         : new parser.oneOrMore(new parser.choice(['escapedEscape', 'escaped', new parser.terminal(/^[^#0.,;]$/)])),
+        number        : new parser.sequence(['integer', new parser.optional(new parser.sequence(['decimal', 'fraction']))]),
+        integer       : new parser.sequence([new parser.optional('padding'), 'minimumDigits']),
+        padding       : new parser.sequence(['firstHashGroup', new parser.zeroOrMore('hashGroup'), new parser.optional('hashes')]),
+        minimumDigits : new parser.sequence([new parser.zeroOrMore('zeroGroup'), 'zeros']),
+        fraction      : new parser.choice([new parser.sequence([new parser.optional('zeros'), 'hashes']), 'zeros']),
+        firstHashGroup: new parser.sequence(['hash', 'group']),
+        hashGroup     : new parser.sequence(['hashes', 'group']),
+        zeroGroup     : new parser.sequence(['zeros', 'group']),
+        hashes        : new parser.oneOrMore('hash'),
+        zeros         : new parser.oneOrMore('zero'),
+        hash          : new parser.terminal('#'),
+        zero          : new parser.terminal('0'),
+        group         : new parser.terminal(','),
+        decimal       : new parser.terminal('.'),
+        escape        : new parser.terminal("'"),
+        escapedEscape : new parser.sequence(['escape', 'escape']),
+        escaped       : new parser.sequence(['escape', new parser.oneOrMore(new parser.choice([new parser.terminal(/^[^']$/), 'escapedEscape'])), 'escape'])
+    };
 
     for(let ruleName in numberFormatPatternRules)
     {
@@ -974,7 +971,7 @@ function parseNumber(
         )
     {
         let match;
-        for(polarity in regexes)
+        for(let polarity in regexes)
         {
             regexes[polarity].lastIndex = 0;
             if(match = regexes[polarity].exec(value))
@@ -989,6 +986,8 @@ function parseNumber(
 
 export
 {
+    numberFormatPattern,
+    numberFormatSubpattern,
     parseNumberFormatPattern,
     formatNumber,
     parseNumber

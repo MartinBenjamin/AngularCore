@@ -1,3 +1,11 @@
+import * as numberModule from "./Number";
+import { numberSymbols } from "./Cldr";
+
+let numberFormatSubpattern   = numberModule.numberFormatSubpattern;
+var parseNumberFormatPattern = numberModule.parseNumberFormatPattern;
+var formatNumber             = numberModule.formatNumber;
+var parseNumber              = numberModule.parseNumber;
+
 var assert =
 {
     strictEquals: function(
@@ -18,10 +26,10 @@ var transform;
 (function()
 {
     var localizedReplacements = {
-        '+': Number.symbols.plusSign,
-        '-': Number.symbols.minusSign,
-        ',': Number.symbols.group,
-        '.': Number.symbols.decimal
+        '+': numberSymbols.plusSign,
+        '-': numberSymbols.minusSign,
+        ',': numberSymbols.group,
+        '.': numberSymbols.decimal
     };
 
     var symbols = [];
@@ -329,7 +337,6 @@ describe(
     function()
     {
         assert.strictEquals("typeof parseNumberFormatPattern", "'function'");
-        assert.strictEquals("typeof Number.symbols", "'object'");
 
         ['positive', 'negative'].map(
             function(
@@ -419,8 +426,8 @@ describe(
             });
             
 
-        if(Number.symbols.decimal == '.' &&
-           Number.symbols.group == ',')
+        if(numberSymbols.decimal == '.' &&
+           numberSymbols.group == ',')
             describe(
                 'regexes()',
                 function()
