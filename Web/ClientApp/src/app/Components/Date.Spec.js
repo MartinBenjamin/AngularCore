@@ -13,7 +13,7 @@ var assert =
     strictEquals: function(
         lhs,
         rhs
-    )
+        )
     {
         it(
             lhs + ' === ' + rhs,
