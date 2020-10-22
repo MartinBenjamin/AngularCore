@@ -2,11 +2,11 @@ import * as numberModule from "./Number";
 import { numberSymbols } from "./Cldr";
 
 let numberFormatSubpattern   = numberModule.numberFormatSubpattern;
-var parseNumberFormatPattern = numberModule.parseNumberFormatPattern;
-var formatNumber             = numberModule.formatNumber;
-var parseNumber              = numberModule.parseNumber;
+let parseNumberFormatPattern = numberModule.parseNumberFormatPattern;
+let formatNumber             = numberModule.formatNumber;
+let parseNumber              = numberModule.parseNumber;
 
-var assert =
+let assert =
 {
     strictEquals: function(
         lhs,
@@ -17,27 +17,28 @@ var assert =
             lhs + ' === ' + rhs,
             function()
             {
+              
                 expect(eval(lhs)).toBe(eval(rhs));
             });
     }
 };
 
-var transform;
+let transform;
 (function()
 {
-    var localizedReplacements = {
+    let localizedReplacements = {
         '+': numberSymbols.plusSign,
         '-': numberSymbols.minusSign,
         ',': numberSymbols.group,
         '.': numberSymbols.decimal
     };
 
-    var symbols = [];
+    let symbols = [];
 
-    for(var symbol in localizedReplacements)
+    for(let symbol in localizedReplacements)
         symbols.push(symbol);
 
-    var escapedSymbols = symbols.map(
+    let escapedSymbols = symbols.map(
         function(
             symbol
             )
@@ -45,7 +46,7 @@ var transform;
             return '[' + symbol + ']';
         });
 
-    var symbolRegex = new RegExp(
+    let symbolRegex = new RegExp(
         '(' + escapedSymbols.join('|') + ')',
         'g');
 
@@ -64,7 +65,7 @@ var transform;
     }
 })();
 
-var testData =
+let testData =
     [
         [        '0', new numberFormatSubpattern(1, 0, 0      )],
         [      '#,0', new numberFormatSubpattern(1, 0, 0, 1   )],
@@ -175,7 +176,7 @@ var testData =
         ['0.000', new numberFormatSubpattern(1, 3, 3)]
     ];
 
-var positiveSubpatternRegexTestData =
+let positiveSubpatternRegexTestData =
     [
         [                   '0', /^(([1-9]\d*)?\d{1})$/g                                                   ],
         [                  '00', /^(([1-9]\d*)?\d{2})$/g                                                   ],
@@ -253,7 +254,7 @@ var positiveSubpatternRegexTestData =
         [               '0.00A', /^(([1-9]\d*)?\d{1}\.\d{2})A$/g                                           ],
     ];
 
-    var negativeSubpatternRegexTestData =
+    let negativeSubpatternRegexTestData =
     [
         [                     '0', /^-(([1-9]\d*)?\d{1})$/g                                                  ],
         [                    '00', /^-(([1-9]\d*)?\d{2})$/g                                                  ],
@@ -455,7 +456,7 @@ describe(
     {
         assert.strictEquals("typeof formatNumber", "'function'");
 
-        var testData =
+        let testData =
         [
             [       '0'      ,      0    ,                         '0'      ],
             [      '00'      ,      0    ,                        '00'      ],
@@ -611,7 +612,7 @@ describe(
 
         assert.strictEquals("parseNumber(parseNumberFormatPattern('#,##0'), '" + transform('1,234') + "')", 1234);
 
-        var testNumbers =
+        let testNumbers =
             [
                 0
             ].concat(
@@ -632,11 +633,11 @@ describe(
                     })
             );
                         
-        var maximumDigits = 6;
+        let maximumDigits = 6;
 
-        var patterns = [];
+        let patterns = [];
 
-        for(var minimumDigits = 1;minimumDigits <= maximumDigits;++minimumDigits)
+        for(let minimumDigits = 1;minimumDigits <= maximumDigits;++minimumDigits)
         {
             patterns.push(new numberFormatSubpattern(minimumDigits, 0, 0).toString());
 

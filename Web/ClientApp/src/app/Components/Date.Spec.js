@@ -2,7 +2,7 @@ import { dayKeys, dateFieldSymbols, formatDate, formatUTCDate, parseDate, parseU
 import { calendar } from "./Cldr";
 Date.dayKeys = dayKeys;
 
-var assert =
+let assert =
 {
     strictEquals: function(
         lhs,
@@ -61,19 +61,19 @@ describe(
     'Date',
     function()
     {
-        var testYears1 = [
+        let testYears1 = [
             1, 2, 3, 4, 5, 6, 7, 8, 9,
             10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
             100, 101, 102, 103, 104, 105, 106, 107, 108, 109,
             1000, 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009
         ];
-        var testYears2 = [
+        let testYears2 = [
             1, 2, 3, 4, 5, 6, 7, 8, 9,
             90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
             990, 991, 992, 993, 994, 995, 996, 997, 998, 999,
             9990, 9991, 9992, 9993, 9994, 9995, 9996, 9997, 9998, 9999
         ];
-        var testYears = testYears2;
+        let testYears = testYears2;
 
         describe(
             'formatDate(dateFormatPattern, date)',
@@ -100,7 +100,7 @@ describe(
                     'Symbol: yy',
                     function()
                     {
-                        for(var year = 2000;year <= 2010;++year)
+                        for(let year = 2000;year <= 2010;++year)
                             assert.strictEquals(
                                 "formatDate('yy', new Date(new Date(0).setFullYear(" + year.toString() + ")))",
                                 "'" + (year % 100).toString().padStart(2, '0') + "'");
@@ -125,7 +125,7 @@ describe(
                     'Symbol: M',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatDate('M', new Date(2000, " + (month - 1).toString() + "))",
                                 "'" + month.toString() + "'");
@@ -135,7 +135,7 @@ describe(
                     'Symbol: MM',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatDate('MM', new Date(2000, " + (month - 1).toString() + "))",
                                 "'" + month.toString().padStart(2, '0') + "'");
@@ -145,7 +145,7 @@ describe(
                     'Symbol: MMM',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatDate('MMM', new Date(2000, " + (month - 1).toString() + "))",
                                 "'" + calendar.months.format.abbreviated[month] + "'");
@@ -155,7 +155,7 @@ describe(
                     'Symbol: MMMM',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatDate('MMMM', new Date(2000, " + (month - 1).toString() + "))",
                                 "'" + calendar.months.format.wide[month] + "'");
@@ -165,7 +165,7 @@ describe(
                     'Symbol: MMMMM',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatDate('MMMMM', new Date(2000, " + (month - 1).toString() + "))",
                                 "'" + calendar.months.format.narrow[month] + "'");
@@ -175,7 +175,7 @@ describe(
                     'Symbol: L',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatDate('L', new Date(2000, " + (month - 1).toString() + "))",
                                 "'" + month.toString() + "'");
@@ -185,7 +185,7 @@ describe(
                     'Symbol: LL',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatDate('LL', new Date(2000, " + (month - 1).toString() + "))",
                                 "'" + month.toString().padStart(2, '0') + "'");
@@ -195,7 +195,7 @@ describe(
                     'Symbol: LLL',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatDate('LLL', new Date(2000, " + (month - 1).toString() + "))",
                                 "'" + calendar.months['stand-alone'].abbreviated[month] + "'");
@@ -205,7 +205,7 @@ describe(
                     'Symbol: LLLL',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatDate('LLLL', new Date(2000, " + (month - 1).toString() + "))",
                                 "'" + calendar.months['stand-alone'].wide[month] + "'");
@@ -215,7 +215,7 @@ describe(
                     'Symbol: LLLLL',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatDate('LLLLL', new Date(2000, " + (month - 1).toString() + "))",
                                 "'" + calendar.months['stand-alone'].narrow[month] + "'");
@@ -225,7 +225,7 @@ describe(
                     'Symbol: d',
                     function()
                     {
-                        for(var day = 1;day <= 31;++day)
+                        for(let day = 1;day <= 31;++day)
                             assert.strictEquals(
                                 "formatDate('d', new Date(2000, 0, " + day.toString() + "))",
                                 "'" + day.toString() + "'");
@@ -235,7 +235,7 @@ describe(
                     'Symbol: dd',
                     function()
                     {
-                        for(var day = 1;day <= 31;++day)
+                        for(let day = 1;day <= 31;++day)
                             assert.strictEquals(
                                 "formatDate('dd', new Date(2000, 0, " + day.toString() + "))",
                                 "'" + day.toString().padStart(2, '0') + "'");
@@ -245,7 +245,7 @@ describe(
                     'Symbol: H',
                     function()
                     {
-                        for(var hour = 0;hour < 24;++hour)
+                        for(let hour = 0;hour < 24;++hour)
                             assert.strictEquals(
                                 "formatDate('H', new Date(2000, 0, 1, " + hour.toString() + "))",
                                 "'" + hour.toString() + "'");
@@ -255,7 +255,7 @@ describe(
                     'Symbol: HH',
                     function()
                     {
-                        for(var hour = 0;hour < 24;++hour)
+                        for(let hour = 0;hour < 24;++hour)
                             assert.strictEquals(
                                 "formatDate('HH', new Date(2000, 0, 1, " + hour.toString() + "))",
                                 "'" + hour.toString().padStart(2, '0') + "'");
@@ -265,7 +265,7 @@ describe(
                     'Symbol: m',
                     function()
                     {
-                        for(var minute = 0;minute < 60;++minute)
+                        for(let minute = 0;minute < 60;++minute)
                             assert.strictEquals(
                                 "formatDate('m', new Date(2000, 0, 1, 0, " + minute.toString() + "))",
                                 "'" + minute.toString() + "'");
@@ -275,7 +275,7 @@ describe(
                     'Symbol: mm',
                     function()
                     {
-                        for(var minute = 0;minute < 60;++minute)
+                        for(let minute = 0;minute < 60;++minute)
                             assert.strictEquals(
                                 "formatDate('mm', new Date(2000, 0, 1, 0, " + minute.toString() + "))",
                                 "'" + minute.toString().padStart(2, '0') + "'");
@@ -285,7 +285,7 @@ describe(
                     'Symbol: s',
                     function()
                     {
-                        for(var second = 0;second < 60;++second)
+                        for(let second = 0;second < 60;++second)
                             assert.strictEquals(
                                 "formatDate('s', new Date(2000, 0, 1, 0, 0, " + second.toString() + "))",
                                 "'" + second.toString() + "'");
@@ -295,7 +295,7 @@ describe(
                     'Symbol: ss',
                     function()
                     {
-                        for(var second = 0;second < 60;++second)
+                        for(let second = 0;second < 60;++second)
                             assert.strictEquals(
                                 "formatDate('ss', new Date(2000, 0, 1, 0, 0, " + second.toString() + "))",
                                 "'" + second.toString().padStart(2, '0') + "'");
@@ -320,9 +320,9 @@ describe(
                     "Symbol: EEE",
                     function()
                     {
-                        for(var day = 1;day <= 7;++day)
+                        for(let day = 1;day <= 7;++day)
                         {
-                            var date = new Date(2000, 0, day);
+                            let date = new Date(2000, 0, day);
                             assert.strictEquals(
                                 "formatDate('EEE', new Date(2000, 0, " + day.toString() + "))",
                                 "'" + calendar.days.format.abbreviated[dayKeys[date.getDay()]] + "'");
@@ -333,9 +333,9 @@ describe(
                     "Symbol: EEEE",
                     function()
                     {
-                        for(var day = 1;day <= 7;++day)
+                        for(let day = 1;day <= 7;++day)
                         {
-                            var date = new Date(2000, 0, day);
+                            let date = new Date(2000, 0, day);
                             assert.strictEquals(
                                 "formatDate('EEEE', new Date(2000, 0, " + day.toString() + "))",
                                 "'" + calendar.days.format.wide[dayKeys[date.getDay()]] + "'");
@@ -346,9 +346,9 @@ describe(
                     "Symbol: EEEEE",
                     function()
                     {
-                        for(var day = 1;day <= 7;++day)
+                        for(let day = 1;day <= 7;++day)
                         {
-                            var date = new Date(2000, 0, day);
+                            let date = new Date(2000, 0, day);
                             assert.strictEquals(
                                 "formatDate('EEEEE', new Date(2000, 0, " + day.toString() + "))",
                                 "'" + calendar.days.format.narrow[dayKeys[date.getDay()]] + "'");
@@ -359,9 +359,9 @@ describe(
                     "Symbol: EEEEEE",
                     function()
                     {
-                        for(var day = 1;day <= 7;++day)
+                        for(let day = 1;day <= 7;++day)
                         {
-                            var date = new Date(2000, 0, day);
+                            let date = new Date(2000, 0, day);
                             assert.strictEquals(
                                 "formatDate('EEEEEE', new Date(2000, 0, " + day.toString() + "))",
                                 "'" + calendar.days.format.short[dayKeys[date.getDay()]] + "'");
@@ -382,7 +382,7 @@ describe(
                                 date
                                 )
                             {
-                                var offset = -eval(date).getTimezoneOffset();
+                                let offset = -eval(date).getTimezoneOffset();
                                 assert.strictEquals(
                                     "formatDate('xx', " + date +")",
                                     "'" +(offset >= 0 ? '+' : '-') +
@@ -400,7 +400,7 @@ describe(
                                 date
                                 )
                             {
-                                var offset = -eval(date).getTimezoneOffset();
+                                let offset = -eval(date).getTimezoneOffset();
                                 assert.strictEquals(
                                     "formatDate('xxx', " + date + ")",
                                     "'" + (offset >= 0 ? '+' : '-') +
@@ -419,7 +419,7 @@ describe(
                                 date
                                 )
                             {
-                                var offset = -eval(date).getTimezoneOffset();
+                                let offset = -eval(date).getTimezoneOffset();
                                 assert.strictEquals(
                                     "formatDate('XX', " + date + ")",
                                      offset === 0 ? "'Z'" : "'" + (offset >= 0 ? '+' : '-') +
@@ -437,7 +437,7 @@ describe(
                                 date
                                 )
                             {
-                                var offset = -eval(date).getTimezoneOffset();
+                                let offset = -eval(date).getTimezoneOffset();
                                 assert.strictEquals(
                                     "formatDate('XXX', " + date + ")",
                                      offset === 0 ? "'Z'" : "'" + (offset >= 0 ? '+' : '-') +
@@ -511,7 +511,7 @@ describe(
                     'Symbol: yy',
                     function()
                     {
-                        for(var year = 2000;year <= 2010;++year)
+                        for(let year = 2000;year <= 2010;++year)
                             assert.strictEquals(
                                 "formatUTCDate('yy', new Date(new Date(0).setUTCFullYear(" + year.toString() + ")))",
                                 "'" + (year % 100).toString().padStart(2, '0') + "'");
@@ -536,7 +536,7 @@ describe(
                     'Symbol: M',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatUTCDate('M', new Date(Date.UTC(2000, " + (month - 1).toString() + ")))",
                                 "'" + month.toString() + "'");
@@ -546,7 +546,7 @@ describe(
                     'Symbol: MM',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatUTCDate('MM', new Date(Date.UTC(2000, " + (month - 1).toString() + ")))",
                                 "'" + month.toString().padStart(2, '0') + "'");
@@ -556,7 +556,7 @@ describe(
                     'Symbol: MMM',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatUTCDate('MMM', new Date(Date.UTC(2000, " + (month - 1).toString() + ")))",
                                 "'" + calendar.months.format.abbreviated[month] + "'");
@@ -566,7 +566,7 @@ describe(
                     'Symbol: MMMM',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatUTCDate('MMMM', new Date(Date.UTC(2000, " + (month - 1).toString() + ")))",
                                 "'" + calendar.months.format.wide[month] + "'");
@@ -576,7 +576,7 @@ describe(
                     'Symbol: MMMMM',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatUTCDate('MMMMM', new Date(Date.UTC(2000, " + (month - 1).toString() + ")))",
                                 "'" + calendar.months.format.narrow[month] + "'");
@@ -586,7 +586,7 @@ describe(
                     'Symbol: L',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatUTCDate('L', new Date(Date.UTC(2000, " + (month - 1).toString() + ")))",
                                 "'" + month.toString() + "'");
@@ -596,7 +596,7 @@ describe(
                     'Symbol: LL',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatUTCDate('LL', new Date(Date.UTC(2000, " + (month - 1).toString() + ")))",
                                 "'" + month.toString().padStart(2, '0') + "'");
@@ -606,7 +606,7 @@ describe(
                     'Symbol: LLL',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatUTCDate('LLL', new Date(Date.UTC(2000, " + (month - 1).toString() + ")))",
                                 "'" + calendar.months['stand-alone'].abbreviated[month] + "'");
@@ -616,7 +616,7 @@ describe(
                     'Symbol: LLLL',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatUTCDate('LLLL', new Date(Date.UTC(2000, " + (month - 1).toString() + ")))",
                                 "'" + calendar.months['stand-alone'].wide[month] + "'");
@@ -626,7 +626,7 @@ describe(
                     'Symbol: LLLLL',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "formatUTCDate('LLLLL', new Date(Date.UTC(2000, " + (month - 1).toString() + ")))",
                                 "'" + calendar.months['stand-alone'].narrow[month] + "'");
@@ -636,7 +636,7 @@ describe(
                     'Symbol: d',
                     function()
                     {
-                        for(var day = 1;day <= 31;++day)
+                        for(let day = 1;day <= 31;++day)
                             assert.strictEquals(
                                 "formatUTCDate('d', new Date(Date.UTC(2000, 0, " + day.toString() + ")))",
                                 "'" + day.toString() + "'");
@@ -646,7 +646,7 @@ describe(
                     'Symbol: dd',
                     function()
                     {
-                        for(var day = 1;day <= 31;++day)
+                        for(let day = 1;day <= 31;++day)
                             assert.strictEquals(
                                 "formatUTCDate('dd', new Date(Date.UTC(2000, 0, " + day.toString() + ")))",
                                 "'" + day.toString().padStart(2, '0') + "'");
@@ -656,7 +656,7 @@ describe(
                     'Symbol: H',
                     function()
                     {
-                        for(var hour = 0;hour < 24;++hour)
+                        for(let hour = 0;hour < 24;++hour)
                             assert.strictEquals(
                                 "formatUTCDate('H', new Date(Date.UTC(2000, 6, 1, " + hour.toString() + ")))",
                                 "'" + hour.toString() + "'");
@@ -666,7 +666,7 @@ describe(
                     'Symbol: HH',
                     function()
                     {
-                        for(var hour = 0;hour < 24;++hour)
+                        for(let hour = 0;hour < 24;++hour)
                             assert.strictEquals(
                                 "formatUTCDate('HH', new Date(Date.UTC(2000, 6, 1, " + hour.toString() + ")))",
                                 "'" + hour.toString().padStart(2, '0') + "'");
@@ -676,7 +676,7 @@ describe(
                     'Symbol: m',
                     function()
                     {
-                        for(var minute = 0;minute < 60;++minute)
+                        for(let minute = 0;minute < 60;++minute)
                             assert.strictEquals(
                                 "formatUTCDate('m', new Date(Date.UTC(2000, 0, 1, 0, " + minute.toString() + ")))",
                                 "'" + minute.toString() + "'");
@@ -686,7 +686,7 @@ describe(
                     'Symbol: mm',
                     function()
                     {
-                        for(var minute = 0;minute < 60;++minute)
+                        for(let minute = 0;minute < 60;++minute)
                             assert.strictEquals(
                                 "formatUTCDate('mm', new Date(Date.UTC(2000, 0, 1, 0, " + minute.toString() + ")))",
                                 "'" + minute.toString().padStart(2, '0') + "'");
@@ -696,7 +696,7 @@ describe(
                     'Symbol: s',
                     function()
                     {
-                        for(var second = 0;second < 60;++second)
+                        for(let second = 0;second < 60;++second)
                             assert.strictEquals(
                                 "formatUTCDate('s', new Date(Date.UTC(2000, 0, 1, 0, 0, " + second.toString() + ")))",
                                 "'" + second.toString() + "'");
@@ -706,7 +706,7 @@ describe(
                     'Symbol: ss',
                     function()
                     {
-                        for(var second = 0;second < 60;++second)
+                        for(let second = 0;second < 60;++second)
                             assert.strictEquals(
                                 "formatUTCDate('ss', new Date(Date.UTC(2000, 0, 1, 0, 0, " + second.toString() + ")))",
                                 "'" + second.toString().padStart(2, '0') + "'");
@@ -731,9 +731,9 @@ describe(
                     "Symbol: EEE",
                     function()
                     {
-                        for(var day = 1;day <= 7;++day)
+                        for(let day = 1;day <= 7;++day)
                         {
-                            var date = new Date(2000, 0, day);
+                            let date = new Date(2000, 0, day);
                             assert.strictEquals(
                                 "formatUTCDate('EEE', new Date(Date.UTC(2000, 0, " + day.toString() + ")))",
                                 "'" + calendar.days.format.abbreviated[dayKeys[date.getDay()]] + "'");
@@ -744,9 +744,9 @@ describe(
                     "Symbol: EEEE",
                     function()
                     {
-                        for(var day = 1;day <= 7;++day)
+                        for(let day = 1;day <= 7;++day)
                         {
-                            var date = new Date(2000, 0, day);
+                            let date = new Date(2000, 0, day);
                             assert.strictEquals(
                                 "formatUTCDate('EEEE', new Date(Date.UTC(2000, 0, " + day.toString() + ")))",
                                 "'" + calendar.days.format.wide[dayKeys[date.getDay()]] + "'");
@@ -757,9 +757,9 @@ describe(
                     "Symbol: EEEEE",
                     function()
                     {
-                        for(var day = 1;day <= 7;++day)
+                        for(let day = 1;day <= 7;++day)
                         {
-                            var date = new Date(2000, 0, day);
+                            let date = new Date(2000, 0, day);
                             assert.strictEquals(
                                 "formatUTCDate('EEEEE', new Date(Date.UTC(2000, 0, " + day.toString() + ")))",
                                 "'" + calendar.days.format.narrow[dayKeys[date.getDay()]] + "'");
@@ -770,9 +770,9 @@ describe(
                     "Symbol: EEEEEE",
                     function()
                     {
-                        for(var day = 1;day <= 7;++day)
+                        for(let day = 1;day <= 7;++day)
                         {
-                            var date = new Date(2000, 0, day);
+                            let date = new Date(2000, 0, day);
                             assert.strictEquals(
                                 "formatUTCDate('EEEEEE', new Date(Date.UTC(2000, 0, " + day.toString() + ")))",
                                 "'" + calendar.days.format.short[dayKeys[date.getDay()]] + "'");
@@ -867,7 +867,7 @@ describe(
                     'Symbol: yy',
                     function()
                     {
-                        for(var year = 1;year <= 10;++year)
+                        for(let year = 1;year <= 10;++year)
                             assert.strictEquals(
                                 "parseDate('yy', '" + year.toString().padStart(2, '0') + "').valueOf()",
                                 "new Date(new Date(0).setFullYear(" + (2000 + year).toString() + ")).setHours(0)");
@@ -913,7 +913,7 @@ describe(
                     'Symbol: M',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-M', '2000-" + month.toString() + "').valueOf()",
                                 "new Date(2000, " + (month - 1).toString() + ").valueOf()");
@@ -933,7 +933,7 @@ describe(
                     'Symbol: MM',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-MM', '2000-" + month.toString().padStart(2, '0') + "').valueOf()",
                                 "new Date(2000, " + (month - 1).toString() + ").valueOf()");
@@ -953,17 +953,17 @@ describe(
                     'Symbol: MMM',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-MMM', '2000-" + calendar.months.format.abbreviated[month] + "').valueOf()",
                                 "new Date(2000, " + (month - 1).toString() + ").valueOf()");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-MMM', '2000-" + calendar.months.format.abbreviated[month].toLowerCase() + "').valueOf()",
                                 "new Date(2000, " + (month - 1).toString() + ").valueOf()");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-MMM', '2000-" + calendar.months.format.abbreviated[month].toUpperCase() + "').valueOf()",
                                 "new Date(2000, " + (month - 1).toString() + ").valueOf()");
@@ -983,17 +983,17 @@ describe(
                     'Symbol: MMMM',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-MMMM', '2000-" + calendar.months.format.wide[month] + "').valueOf()",
                                 "new Date(2000, " + (month - 1).toString() + ").valueOf()");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-MMMM', '2000-" + calendar.months.format.wide[month].toLowerCase() + "').valueOf()",
                                 "new Date(2000, " + (month - 1).toString() + ").valueOf()");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-MMMM', '2000-" + calendar.months.format.wide[month].toUpperCase() + "').valueOf()",
                                 "new Date(2000, " + (month - 1).toString() + ").valueOf()");
@@ -1013,7 +1013,7 @@ describe(
                     'Symbol: L',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-L', '2000-" + month.toString() + "').valueOf()",
                                 "new Date(2000, " + (month - 1).toString() + ").valueOf()");
@@ -1033,7 +1033,7 @@ describe(
                     'Symbol: LL',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-LL', '2000-" + month.toString().padStart(2, '0') + "').valueOf()",
                                 "new Date(2000, " + (month - 1).toString() + ").valueOf()");
@@ -1053,17 +1053,17 @@ describe(
                     'Symbol: LLL',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-LLL', '2000-" + calendar.months['stand-alone'].abbreviated[month] + "').valueOf()",
                                 "new Date(2000, " + (month - 1).toString() + ").valueOf()");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-LLL', '2000-" + calendar.months['stand-alone'].abbreviated[month].toLowerCase() + "').valueOf()",
                                 "new Date(2000, " + (month - 1).toString() + ").valueOf()");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-LLL', '2000-" + calendar.months['stand-alone'].abbreviated[month].toUpperCase() + "').valueOf()",
                                 "new Date(2000, " + (month - 1).toString() + ").valueOf()");
@@ -1084,17 +1084,17 @@ describe(
                     'Symbol: LLLL',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-LLLL', '2000-" + calendar.months['stand-alone'].wide[month] + "').valueOf()",
                                 "new Date(2000, " + (month - 1).toString() + ").valueOf()");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-LLLL', '2000-" + calendar.months['stand-alone'].wide[month].toLowerCase() + "').valueOf()",
                                 "new Date(2000, " + (month - 1).toString() + ").valueOf()");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-LLLL', '2000-" + calendar.months['stand-alone'].wide[month].toUpperCase() + "').valueOf()",
                                 "new Date(2000, " + (month - 1).toString() + ").valueOf()");
@@ -1114,7 +1114,7 @@ describe(
                     'Symbol: d',
                     function()
                     {
-                        for(var day = 1;day <= 31;++day)
+                        for(let day = 1;day <= 31;++day)
                             assert.strictEquals(
                                 "parseDate('y-M-d', '2000-1-" + day.toString() + "').valueOf()",
                                 "new Date(2000, 0, " + day.toString() + ").valueOf()");
@@ -1129,7 +1129,7 @@ describe(
                                     "null");
                             });
 
-                        var daysInMonth =
+                        let daysInMonth =
                             [
                                 31,//January
                                 28,//February
@@ -1145,12 +1145,12 @@ describe(
                                 31 //December
                             ];
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-M-d', '2001-" + (month - 1).toString() + "-0')",
                                 "null");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-M-d', '2001-" + month.toString() + "-" + daysInMonth[month - 1].toString() + "').valueOf()",
                                 "new Date(2001, " + (month - 1).toString() + ", " + daysInMonth[month - 1].toString() + ").valueOf()");
@@ -1159,7 +1159,7 @@ describe(
                             "parseDate('y-M-d', '2004-2-29').valueOf()",
                             "new Date(2004, 1, 29).valueOf()");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-M-d', '2001-" + month.toString() + "-" + (daysInMonth[month - 1] + 1).toString() + "')",
                                 "null");
@@ -1169,7 +1169,7 @@ describe(
                     'Symbol: dd',
                     function()
                     {
-                        for(var day = 1;day <= 31;++day)
+                        for(let day = 1;day <= 31;++day)
                             assert.strictEquals(
                                 "parseDate('y-M-dd', '2000-1-" + day.toString().padStart(2, '0') + "').valueOf()",
                                 "new Date(2000, 0, " + day.toString() + ").valueOf()");
@@ -1184,7 +1184,7 @@ describe(
                                     "null");
                             });
 
-                        var daysInMonth =
+                        let daysInMonth =
                             [
                                 31,//January
                                 28,//February
@@ -1200,12 +1200,12 @@ describe(
                                 31 //December
                             ];
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-M-dd', '2001-" + (month - 1).toString() + "-00')",
                                 "null");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-M-dd', '2001-" + month.toString() + "-" + daysInMonth[month - 1].toString().padStart(2, '0') + "').valueOf()",
                                 "new Date(2001, " + (month - 1).toString() + ", " + daysInMonth[month - 1].toString() + ").valueOf()");
@@ -1214,7 +1214,7 @@ describe(
                             "parseDate('y-M-dd', '2004-2-29').valueOf()",
                             "new Date(2004, 1, 29).valueOf()");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseDate('y-M-dd', '2001-" + month.toString() + "-" + (daysInMonth[month - 1] + 1).toString() + "')",
                                 "null");
@@ -1224,7 +1224,7 @@ describe(
                     'Symbol: H',
                     function()
                     {
-                        for(var hour = 0;hour < 24;++hour)
+                        for(let hour = 0;hour < 24;++hour)
                             assert.strictEquals(
                                 "parseDate('y-M-d H', '2000-1-1 " + hour.toString() + "').valueOf()",
                                 "new Date(2000, 0, 1, " + hour.toString() + ").valueOf()");
@@ -1244,7 +1244,7 @@ describe(
                     'Symbol: HH',
                     function()
                     {
-                        for(var hour = 0;hour < 24;++hour)
+                        for(let hour = 0;hour < 24;++hour)
                             assert.strictEquals(
                                 "parseDate('y-M-d HH', '2000-1-1 " + hour.toString().padStart(2, '0') + "').valueOf()",
                                 "new Date(2000, 0, 1, " + hour.toString() + ").valueOf()");
@@ -1264,7 +1264,7 @@ describe(
                     'Symbol: m',
                     function()
                     {
-                        for(var minute = 0;minute < 60;++minute)
+                        for(let minute = 0;minute < 60;++minute)
                             assert.strictEquals(
                                 "parseDate('y-M-d H:m', '2000-1-1 0:" + minute.toString() + "').valueOf()",
                                 "new Date(2000, 0, 1, 0, " + minute.toString() + ").valueOf()");
@@ -1284,7 +1284,7 @@ describe(
                     'Symbol: mm',
                     function()
                     {
-                        for(var minute = 0;minute < 60;++minute)
+                        for(let minute = 0;minute < 60;++minute)
                             assert.strictEquals(
                                 "parseDate('y-M-d H:mm', '2000-1-1 0:" + minute.toString().padStart(2, '0') + "').valueOf()",
                                 "new Date(2000, 0, 1, 0, " + minute.toString() + ").valueOf()");
@@ -1304,7 +1304,7 @@ describe(
                     'Symbol: s',
                     function()
                     {
-                        for(var second = 0;second < 60;++second)
+                        for(let second = 0;second < 60;++second)
                             assert.strictEquals(
                                 "parseDate('y-M-d H:m:s', '2000-1-1 0:0:" + second.toString() + "').valueOf()",
                                 "new Date(2000, 0, 1, 0, 0, " + second.toString() + ").valueOf()");
@@ -1324,7 +1324,7 @@ describe(
                     'Symbol: ss',
                     function()
                     {
-                        for(var second = 0;second < 60;++second)
+                        for(let second = 0;second < 60;++second)
                             assert.strictEquals(
                                 "parseDate('y-M-d H:m:ss', '2000-1-1 0:0:" + second.toString().padStart(2, '0') + "').valueOf()",
                                 "new Date(2000, 0, 1, 0, 0, " + second.toString() + ").valueOf()");
@@ -1359,24 +1359,24 @@ describe(
                     'Symbol: xx',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                         {
-                            for(var minute = 0;minute < 60;++minute)
+                            for(let minute = 0;minute < 60;++minute)
                                 assert.strictEquals(
                                     "parseDate('y-Mxx', '2000-" + month.toString() + "+00" + minute.toString().padStart(2, '0') + "').valueOf()",
                                     "Date.UTC(2000, " + (month - 1).toString() + ") - " + minute.toString() + " * 60 * 1000");
 
-                            for(var minute = 0;minute < 60;++minute)
+                            for(let minute = 0;minute < 60;++minute)
                                 assert.strictEquals(
                                     "parseDate('y-Mxx', '2000-" + month.toString() + "-00" + minute.toString().padStart(2, '0') + "').valueOf()",
                                     "Date.UTC(2000, " + (month - 1).toString() + ") + " + minute.toString() + " * 60 * 1000");
 
-                            for(var hour = 0;hour <= 12;++hour)
+                            for(let hour = 0;hour <= 12;++hour)
                                 assert.strictEquals(
                                     "parseDate('y-Mxx', '2000-" + month.toString() + "+" + hour.toString().padStart(2, '0') + "00').valueOf()",
                                     "Date.UTC(2000, " + (month - 1).toString() + ") - " + hour.toString() + " * 60 * 60 * 1000");
 
-                            for(var hour = 0;hour <= 12;++hour)
+                            for(let hour = 0;hour <= 12;++hour)
                                 assert.strictEquals(
                                     "parseDate('y-Mxx', '2000-" + month.toString() + "-" + hour.toString().padStart(2, '0') + "00').valueOf()",
                                     "Date.UTC(2000, " + (month - 1).toString() + ") + " + hour.toString() + " * 60 * 60 * 1000");
@@ -1387,22 +1387,22 @@ describe(
                     'Symbol: xxx',
                     function()
                     {
-                        for(var minute = 0;minute < 60;++minute)
+                        for(let minute = 0;minute < 60;++minute)
                             assert.strictEquals(
                                 "parseDate('y-Mxxx', '2000-7+00:" + minute.toString().padStart(2, '0') + "').valueOf()",
                                 "Date.UTC(2000, 6) - " + minute.toString() + " * 60 * 1000");
 
-                        for(var minute = 0;minute < 60;++minute)
+                        for(let minute = 0;minute < 60;++minute)
                             assert.strictEquals(
                                 "parseDate('y-Mxxx', '2000-7-00:" + minute.toString().padStart(2, '0') + "').valueOf()",
                                 "Date.UTC(2000, 6) + " + minute.toString() + " * 60 * 1000");
 
-                        for(var hour = 0;hour <= 12;++hour)
+                        for(let hour = 0;hour <= 12;++hour)
                             assert.strictEquals(
                                 "parseDate('y-Mxxx', '2000-7+" + hour.toString().padStart(2, '0') + ":00').valueOf()",
                                 "Date.UTC(2000, 6) - " + hour.toString() + " * 60 * 60 * 1000");
 
-                        for(var hour = 0;hour <= 12;++hour)
+                        for(let hour = 0;hour <= 12;++hour)
                             assert.strictEquals(
                                 "parseDate('y-Mxxx', '2000-7-" + hour.toString().padStart(2, '0') + ":00').valueOf()",
                                 "Date.UTC(2000, 6) + " + hour.toString() + " * 60 * 60 * 1000");
@@ -1416,22 +1416,22 @@ describe(
                             "parseDate('y-MXX', '2000-7Z').valueOf()",
                             "Date.UTC(2000, 6)");
 
-                        for(var minute = 1;minute < 60;++minute)
+                        for(let minute = 1;minute < 60;++minute)
                             assert.strictEquals(
                                 "parseDate('y-MXX', '2000-7+00" + minute.toString().padStart(2, '0') + "').valueOf()",
                                 "Date.UTC(2000, 6) - " + minute.toString() + " * 60 * 1000");
 
-                        for(var minute = 1;minute < 60;++minute)
+                        for(let minute = 1;minute < 60;++minute)
                             assert.strictEquals(
                                 "parseDate('y-MXX', '2000-7-00" + minute.toString().padStart(2, '0') + "').valueOf()",
                                 "Date.UTC(2000, 6) + " + minute.toString() + " * 60 * 1000");
 
-                        for(var hour = 1;hour <= 12;++hour)
+                        for(let hour = 1;hour <= 12;++hour)
                             assert.strictEquals(
                                 "parseDate('y-MXX', '2000-7+" + hour.toString().padStart(2, '0') + "00').valueOf()",
                                 "Date.UTC(2000, 6) - " + hour.toString() + " * 60 * 60 * 1000");
 
-                        for(var hour = 1;hour <= 12;++hour)
+                        for(let hour = 1;hour <= 12;++hour)
                             assert.strictEquals(
                                 "parseDate('y-MXX', '2000-7-" + hour.toString().padStart(2, '0') + "00').valueOf()",
                                 "Date.UTC(2000, 6) + " + hour.toString() + " * 60 * 60 * 1000");
@@ -1445,22 +1445,22 @@ describe(
                             "parseDate('y-MXXX', '2000-7Z').valueOf()",
                             "Date.UTC(2000, 6)");
 
-                        for(var minute = 1;minute < 60;++minute)
+                        for(let minute = 1;minute < 60;++minute)
                             assert.strictEquals(
                                 "parseDate('y-MXXX', '2000-7+00:" + minute.toString().padStart(2, '0') + "').valueOf()",
                                 "Date.UTC(2000, 6) - " + minute.toString() + " * 60 * 1000");
 
-                        for(var minute = 1;minute < 60;++minute)
+                        for(let minute = 1;minute < 60;++minute)
                             assert.strictEquals(
                                 "parseDate('y-MXXX', '2000-7-00:" + minute.toString().padStart(2, '0') + "').valueOf()",
                                 "Date.UTC(2000, 6) + " + minute.toString() + " * 60 * 1000");
 
-                        for(var hour = 1;hour <= 12;++hour)
+                        for(let hour = 1;hour <= 12;++hour)
                             assert.strictEquals(
                                 "parseDate('y-MXXX', '2000-7+" + hour.toString().padStart(2, '0') + ":00').valueOf()",
                                 "Date.UTC(2000, 6) - " + hour.toString() + " * 60 * 60 * 1000");
 
-                        for(var hour = 1;hour <= 12;++hour)
+                        for(let hour = 1;hour <= 12;++hour)
                             assert.strictEquals(
                                 "parseDate('y-MXXX', '2000-7-" + hour.toString().padStart(2, '0') + ":00').valueOf()",
                                 "Date.UTC(2000, 6) + " + hour.toString() + " * 60 * 60 * 1000");
@@ -1610,7 +1610,7 @@ describe(
                     'Symbol: yy',
                     function()
                     {
-                        for(var year = 1;year <= 10;++year)
+                        for(let year = 1;year <= 10;++year)
                             assert.strictEquals(
                                 "parseUTCDate('yy', '" + year.toString().padStart(2, '0') + "').valueOf()",
                                 "new Date(0).setUTCFullYear(" + (2000 + year).toString() + ")");
@@ -1656,7 +1656,7 @@ describe(
                     'Symbol: M',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-M', '2000-" + month.toString() + "').valueOf()",
                                 "Date.UTC(2000, " + (month - 1).toString() + ")");
@@ -1676,7 +1676,7 @@ describe(
                     'Symbol: MM',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-MM', '2000-" + month.toString().padStart(2, '0') + "').valueOf()",
                                 "Date.UTC(2000, " + (month - 1).toString() + ")");
@@ -1696,17 +1696,17 @@ describe(
                     'Symbol: MMM',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-MMM', '2000-" + calendar.months.format.abbreviated[month] + "').valueOf()",
                                 "Date.UTC(2000, " + (month - 1).toString() + ")");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-MMM', '2000-" + calendar.months.format.abbreviated[month].toLowerCase() + "').valueOf()",
                                 "Date.UTC(2000, " + (month - 1).toString() + ")");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-MMM', '2000-" + calendar.months.format.abbreviated[month].toUpperCase() + "').valueOf()",
                                 "Date.UTC(2000, " + (month - 1).toString() + ")");
@@ -1726,17 +1726,17 @@ describe(
                     'Symbol: MMMM',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-MMMM', '2000-" + calendar.months.format.wide[month] + "').valueOf()",
                                 "Date.UTC(2000, " + (month - 1).toString() + ")");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-MMMM', '2000-" + calendar.months.format.wide[month].toLowerCase() + "').valueOf()",
                                 "Date.UTC(2000, " + (month - 1).toString() + ")");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-MMMM', '2000-" + calendar.months.format.wide[month].toUpperCase() + "').valueOf()",
                                 "Date.UTC(2000, " + (month - 1).toString() + ")");
@@ -1756,7 +1756,7 @@ describe(
                     'Symbol: L',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-L', '2000-" + month.toString() + "').valueOf()",
                                 "Date.UTC(2000, " + (month - 1).toString() + ")");
@@ -1776,7 +1776,7 @@ describe(
                     'Symbol: LL',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-LL', '2000-" + month.toString().padStart(2, '0') + "').valueOf()",
                                 "Date.UTC(2000, " + (month - 1).toString() + ")");
@@ -1796,17 +1796,17 @@ describe(
                     'Symbol: LLL',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-LLL', '2000-" + calendar.months['stand-alone'].abbreviated[month] + "').valueOf()",
                                 "Date.UTC(2000, " + (month - 1).toString() + ")");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-LLL', '2000-" + calendar.months['stand-alone'].abbreviated[month].toLowerCase() + "').valueOf()",
                                 "Date.UTC(2000, " + (month - 1).toString() + ")");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-LLL', '2000-" + calendar.months['stand-alone'].abbreviated[month].toUpperCase() + "').valueOf()",
                                 "Date.UTC(2000, " + (month - 1).toString() + ")");
@@ -1827,17 +1827,17 @@ describe(
                     'Symbol: LLLL',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-LLLL', '2000-" + calendar.months['stand-alone'].wide[month] + "').valueOf()",
                                 "Date.UTC(2000, " + (month - 1).toString() + ")");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-LLLL', '2000-" + calendar.months['stand-alone'].wide[month].toLowerCase() + "').valueOf()",
                                 "Date.UTC(2000, " + (month - 1).toString() + ")");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-LLLL', '2000-" + calendar.months['stand-alone'].wide[month].toUpperCase() + "').valueOf()",
                                 "Date.UTC(2000, " + (month - 1).toString() + ")");
@@ -1857,7 +1857,7 @@ describe(
                     'Symbol: d',
                     function()
                     {
-                        for(var day = 1;day <= 31;++day)
+                        for(let day = 1;day <= 31;++day)
                             assert.strictEquals(
                                 "parseUTCDate('y-M-d', '2000-1-" + day.toString() + "').valueOf()",
                                 "Date.UTC(2000, 0, " + day.toString() + ")");
@@ -1872,7 +1872,7 @@ describe(
                                     "null");
                             });
 
-                        var daysInMonth =
+                        let daysInMonth =
                             [
                                 31,//January
                                 28,//February
@@ -1888,12 +1888,12 @@ describe(
                                 31 //December
                             ];
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-M-d', '2001-" + (month - 1).toString() + "-0')",
                                 "null");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-M-d', '2001-" + month.toString() + "-" + daysInMonth[month - 1].toString() + "').valueOf()",
                                 "Date.UTC(2001, " + (month - 1).toString() + ", " + daysInMonth[month - 1].toString() + ")");
@@ -1902,7 +1902,7 @@ describe(
                             "parseUTCDate('y-M-d', '2004-2-29').valueOf()",
                             "Date.UTC(2004, 1, 29).valueOf()");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-M-d', '2001-" + month.toString() + "-" + (daysInMonth[month - 1] + 1).toString() + "')",
                                 "null");
@@ -1912,7 +1912,7 @@ describe(
                     'Symbol: dd',
                     function()
                     {
-                        for(var day = 1;day <= 31;++day)
+                        for(let day = 1;day <= 31;++day)
                             assert.strictEquals(
                                 "parseUTCDate('y-M-dd', '2000-1-" + day.toString().padStart(2, '0') + "').valueOf()",
                                 "Date.UTC(2000, 0, " + day.toString() + ")");
@@ -1927,7 +1927,7 @@ describe(
                                     "null");
                             });
 
-                        var daysInMonth =
+                        let daysInMonth =
                             [
                                 31,//January
                                 28,//February
@@ -1943,12 +1943,12 @@ describe(
                                 31 //December
                             ];
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-M-dd', '2001-" + (month - 1).toString() + "-00')",
                                 "null");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-M-dd', '2001-" + month.toString() + "-" + daysInMonth[month - 1].toString().padStart(2, '0') + "').valueOf()",
                                 "Date.UTC(2001, " + (month - 1).toString() + ", " + daysInMonth[month - 1].toString() + ")");
@@ -1957,7 +1957,7 @@ describe(
                             "parseUTCDate('y-M-dd', '2004-2-29').valueOf()",
                             "Date.UTC(2004, 1, 29)");
 
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                             assert.strictEquals(
                                 "parseUTCDate('y-M-dd', '2001-" + month.toString() + "-" + (daysInMonth[month - 1] + 1).toString() + "')",
                                 "null");
@@ -1967,7 +1967,7 @@ describe(
                     'Symbol: H',
                     function()
                     {
-                        for(var hour = 0;hour < 24;++hour)
+                        for(let hour = 0;hour < 24;++hour)
                             assert.strictEquals(
                                 "parseUTCDate('y-M-d H', '2000-1-1 " + hour.toString() + "').valueOf()",
                                 "Date.UTC(2000, 0, 1, " + hour.toString() + ")");
@@ -1987,7 +1987,7 @@ describe(
                     'Symbol: HH',
                     function()
                     {
-                        for(var hour = 0;hour < 24;++hour)
+                        for(let hour = 0;hour < 24;++hour)
                             assert.strictEquals(
                                 "parseUTCDate('y-M-d HH', '2000-1-1 " + hour.toString().padStart(2, '0') + "').valueOf()",
                                 "Date.UTC(2000, 0, 1, " + hour.toString() + ")");
@@ -2007,7 +2007,7 @@ describe(
                     'Symbol: m',
                     function()
                     {
-                        for(var minute = 0;minute < 60;++minute)
+                        for(let minute = 0;minute < 60;++minute)
                             assert.strictEquals(
                                 "parseUTCDate('y-M-d H:m', '2000-1-1 0:" + minute.toString() + "').valueOf()",
                                 "Date.UTC(2000, 0, 1, 0, " + minute.toString() + ")");
@@ -2027,7 +2027,7 @@ describe(
                     'Symbol: mm',
                     function()
                     {
-                        for(var minute = 0;minute < 60;++minute)
+                        for(let minute = 0;minute < 60;++minute)
                             assert.strictEquals(
                                 "parseUTCDate('y-M-d H:mm', '2000-1-1 0:" + minute.toString().padStart(2, '0') + "').valueOf()",
                                 "Date.UTC(2000, 0, 1, 0, " + minute.toString() + ")");
@@ -2047,7 +2047,7 @@ describe(
                     'Symbol: s',
                     function()
                     {
-                        for(var second = 0;second < 60;++second)
+                        for(let second = 0;second < 60;++second)
                             assert.strictEquals(
                                 "parseUTCDate('y-M-d H:m:s', '2000-1-1 0:0:" + second.toString() + "').valueOf()",
                                 "Date.UTC(2000, 0, 1, 0, 0, " + second.toString() + ")");
@@ -2067,7 +2067,7 @@ describe(
                     'Symbol: ss',
                     function()
                     {
-                        for(var second = 0;second < 60;++second)
+                        for(let second = 0;second < 60;++second)
                             assert.strictEquals(
                                 "parseUTCDate('y-M-d H:m:ss', '2000-1-1 0:0:" + second.toString().padStart(2, '0') + "').valueOf()",
                                 "Date.UTC(2000, 0, 1, 0, 0, " + second.toString() + ")");
@@ -2102,24 +2102,24 @@ describe(
                     'Symbol: xx',
                     function()
                     {
-                        for(var month = 1;month <= 12;++month)
+                        for(let month = 1;month <= 12;++month)
                         {
-                            for(var minute = 0;minute < 60;++minute)
+                            for(let minute = 0;minute < 60;++minute)
                                 assert.strictEquals(
                                     "parseUTCDate('y-Mxx', '2000-" + month.toString() + "+00" + minute.toString().padStart(2, '0') + "').valueOf()",
                                     "Date.UTC(2000, " + (month - 1).toString() + ") - " + minute.toString() + " * 60 * 1000");
 
-                            for(var minute = 0;minute < 60;++minute)
+                            for(let minute = 0;minute < 60;++minute)
                                 assert.strictEquals(
                                     "parseUTCDate('y-Mxx', '2000-" + month.toString() + "-00" + minute.toString().padStart(2, '0') + "').valueOf()",
                                     "Date.UTC(2000, " + (month - 1).toString() + ") + " + minute.toString() + " * 60 * 1000");
 
-                            for(var hour = 0;hour <= 12;++hour)
+                            for(let hour = 0;hour <= 12;++hour)
                                 assert.strictEquals(
                                     "parseUTCDate('y-Mxx', '2000-" + month.toString() + "+" + hour.toString().padStart(2, '0') + "00').valueOf()",
                                     "Date.UTC(2000, " + (month - 1).toString() + ") - " + hour.toString() + " * 60 * 60 * 1000");
 
-                            for(var hour = 0;hour <= 12;++hour)
+                            for(let hour = 0;hour <= 12;++hour)
                                 assert.strictEquals(
                                     "parseUTCDate('y-Mxx', '2000-" + month.toString() + "-" + hour.toString().padStart(2, '0') + "00').valueOf()",
                                     "Date.UTC(2000, " + (month - 1).toString() + ") + " + hour.toString() + " * 60 * 60 * 1000");
@@ -2130,22 +2130,22 @@ describe(
                     'Symbol: xxx',
                     function()
                     {
-                        for(var minute = 0;minute < 60;++minute)
+                        for(let minute = 0;minute < 60;++minute)
                             assert.strictEquals(
                                 "parseUTCDate('y-Mxxx', '2000-7+00:" + minute.toString().padStart(2, '0') + "').valueOf()",
                                 "Date.UTC(2000, 6) - " + minute.toString() + " * 60 * 1000");
 
-                        for(var minute = 0;minute < 60;++minute)
+                        for(let minute = 0;minute < 60;++minute)
                             assert.strictEquals(
                                 "parseUTCDate('y-Mxxx', '2000-7-00:" + minute.toString().padStart(2, '0') + "').valueOf()",
                                 "Date.UTC(2000, 6) + " + minute.toString() + " * 60 * 1000");
 
-                        for(var hour = 0;hour <= 12;++hour)
+                        for(let hour = 0;hour <= 12;++hour)
                             assert.strictEquals(
                                 "parseUTCDate('y-Mxxx', '2000-7+" + hour.toString().padStart(2, '0') + ":00').valueOf()",
                                 "Date.UTC(2000, 6) - " + hour.toString() + " * 60 * 60 * 1000");
 
-                        for(var hour = 0;hour <= 12;++hour)
+                        for(let hour = 0;hour <= 12;++hour)
                             assert.strictEquals(
                                 "parseUTCDate('y-Mxxx', '2000-7-" + hour.toString().padStart(2, '0') + ":00').valueOf()",
                                 "Date.UTC(2000, 6) + " + hour.toString() + " * 60 * 60 * 1000");
@@ -2159,22 +2159,22 @@ describe(
                             "parseUTCDate('y-MXX', '2000-7Z').valueOf()",
                             "Date.UTC(2000, 6)");
 
-                        for(var minute = 1;minute < 60;++minute)
+                        for(let minute = 1;minute < 60;++minute)
                             assert.strictEquals(
                                 "parseUTCDate('y-MXX', '2000-7+00" + minute.toString().padStart(2, '0') + "').valueOf()",
                                 "Date.UTC(2000, 6) - " + minute.toString() + " * 60 * 1000");
 
-                        for(var minute = 1;minute < 60;++minute)
+                        for(let minute = 1;minute < 60;++minute)
                             assert.strictEquals(
                                 "parseUTCDate('y-MXX', '2000-7-00" + minute.toString().padStart(2, '0') + "').valueOf()",
                                 "Date.UTC(2000, 6) + " + minute.toString() + " * 60 * 1000");
 
-                        for(var hour = 1;hour <= 12;++hour)
+                        for(let hour = 1;hour <= 12;++hour)
                             assert.strictEquals(
                                 "parseUTCDate('y-MXX', '2000-7+" + hour.toString().padStart(2, '0') + "00').valueOf()",
                                 "Date.UTC(2000, 6) - " + hour.toString() + " * 60 * 60 * 1000");
 
-                        for(var hour = 1;hour <= 12;++hour)
+                        for(let hour = 1;hour <= 12;++hour)
                             assert.strictEquals(
                                 "parseUTCDate('y-MXX', '2000-7-" + hour.toString().padStart(2, '0') + "00').valueOf()",
                                 "Date.UTC(2000, 6) + " + hour.toString() + " * 60 * 60 * 1000");
@@ -2188,22 +2188,22 @@ describe(
                             "parseUTCDate('y-MXXX', '2000-7Z').valueOf()",
                             "Date.UTC(2000, 6)");
 
-                        for(var minute = 1;minute < 60;++minute)
+                        for(let minute = 1;minute < 60;++minute)
                             assert.strictEquals(
                                 "parseUTCDate('y-MXXX', '2000-7+00:" + minute.toString().padStart(2, '0') + "').valueOf()",
                                 "Date.UTC(2000, 6) - " + minute.toString() + " * 60 * 1000");
 
-                        for(var minute = 1;minute < 60;++minute)
+                        for(let minute = 1;minute < 60;++minute)
                             assert.strictEquals(
                                 "parseUTCDate('y-MXXX', '2000-7-00:" + minute.toString().padStart(2, '0') + "').valueOf()",
                                 "Date.UTC(2000, 6) + " + minute.toString() + " * 60 * 1000");
 
-                        for(var hour = 1;hour <= 12;++hour)
+                        for(let hour = 1;hour <= 12;++hour)
                             assert.strictEquals(
                                 "parseUTCDate('y-MXXX', '2000-7+" + hour.toString().padStart(2, '0') + ":00').valueOf()",
                                 "Date.UTC(2000, 6) - " + hour.toString() + " * 60 * 60 * 1000");
 
-                        for(var hour = 1;hour <= 12;++hour)
+                        for(let hour = 1;hour <= 12;++hour)
                             assert.strictEquals(
                                 "parseUTCDate('y-MXXX', '2000-7-" + hour.toString().padStart(2, '0') + ":00').valueOf()",
                                 "Date.UTC(2000, 6) + " + hour.toString() + " * 60 * 60 * 1000");
