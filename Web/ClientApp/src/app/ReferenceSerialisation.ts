@@ -1,4 +1,4 @@
-/// <reference path="Components/Date.d.ts"/>
+import { parseUTCDate } from "./Components/Date";
 
 let dateParser = parseUTCDate('yyyy-MM-ddTHH:mm:ss.SSSZ');
 

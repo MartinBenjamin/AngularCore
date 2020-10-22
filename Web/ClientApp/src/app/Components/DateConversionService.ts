@@ -1,5 +1,5 @@
-/// <reference path="Date.d.ts"/>
 import { Inject, Injectable } from '@angular/core';
+import { formatUTCDate, parseUTCDate } from './Date';
 import { DatePatternsToken } from './DatePatterns';
 import { IConversionService } from './IConversionService';
 import { Patterns } from './Patterns';

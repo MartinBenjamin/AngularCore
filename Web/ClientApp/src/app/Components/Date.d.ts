@@ -1,8 +1,8 @@
-﻿declare function parseDate(dateFormatPattern: string, value: string): Date;
-declare function parseDate(dateFormatPattern: string): (value: string) => Date;
-declare function parseUTCDate(dateFormatPattern: string, value: string): Date;
-declare function parseUTCDate(dateFormatPattern: string): (value: string) => Date;
-declare function formatDate(dateFormatPattern: string, date: Date): string;
-declare function formatDate(dateFormatPattern: string): (date: Date) => string;
-declare function formatUTCDate(dateFormatPattern: string, date: Date): string;
-declare function formatUTCDate(dateFormatPattern: string): (date: Date) => string;
+export function parseDate(dateFormatPattern: string, value: string): Date;
+export function parseDate(dateFormatPattern: string): (value: string) => Date;
+export function parseUTCDate(dateFormatPattern: string, value: string): Date;
+export function parseUTCDate(dateFormatPattern: string): (value: string) => Date;
+export function formatDate(dateFormatPattern: string, date: Date): string;
+export function formatDate(dateFormatPattern: string): (date: Date) => string;
+export function formatUTCDate(dateFormatPattern: string, date: Date): string;
+export function formatUTCDate(dateFormatPattern: string): (date: Date) => string;

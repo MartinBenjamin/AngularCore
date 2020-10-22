@@ -1,5 +1,5 @@
-/// <reference path="Date.d.ts"/>
 import { Component, ElementRef, EventEmitter, Inject, OnInit, Output } from '@angular/core';
+import { formatUTCDate } from './Date';
 import { DatePatternsToken } from './DatePatterns';
 import { makeDraggable } from './Draggable';
 import { Patterns } from './Patterns';

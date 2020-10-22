@@ -1,4 +1,5 @@
 import { Inject, Pipe, PipeTransform } from '@angular/core';
+import { formatUTCDate } from './Date';
 import { DatePatternsToken } from './DatePatterns';
 import { Patterns } from './Patterns';
 
