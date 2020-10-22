@@ -1,12 +1,6 @@
-import * as dateModule from "./Date";
+import { dayKeys, dateFieldSymbols, formatDate, formatUTCDate, parseDate, parseUTCDate } from "./Date";
 import { calendar } from "./Cldr";
-
-Date.dayKeys         = dateModule.dayKeys;
-var dateFieldSymbols = dateModule.dateFieldSymbols;
-var formatDate       = dateModule.formatDate;
-var formatUTCDate    = dateModule.formatUTCDate;
-var parseDate        = dateModule.parseDate;
-var parseUTCDate     = dateModule.parseUTCDate;
+Date.dayKeys = dayKeys;
 
 var assert =
 {
@@ -19,7 +13,35 @@ var assert =
             lhs + ' === ' + rhs,
             function()
             {
-                expect(eval(lhs)).toBe(eval(rhs));
+                let lhsFunction = new Function(
+                    'dayKeys',
+                    'dateFieldSymbols',
+                    'formatDate',
+                    'formatUTCDate',
+                    'parseDate',
+                    'parseUTCDate',
+                    'return ' + lhs);
+                let rhsFunction = new Function(
+                    'dayKeys',
+                    'dateFieldSymbols',
+                    'formatDate',
+                    'formatUTCDate',
+                    'parseDate',
+                    'parseUTCDate',
+                    'return ' + rhs);
+                expect(lhsFunction(
+                    dayKeys,
+                    dateFieldSymbols,
+                    formatDate,
+                    formatUTCDate,
+                    parseDate,
+                    parseUTCDate)).toBe(rhsFunction(
+                    dayKeys,
+                    dateFieldSymbols,
+                    formatDate,
+                    formatUTCDate,
+                    parseDate,
+                    parseUTCDate));
             });
     }
 };
@@ -303,7 +325,7 @@ describe(
                             var date = new Date(2000, 0, day);
                             assert.strictEquals(
                                 "formatDate('EEE', new Date(2000, 0, " + day.toString() + "))",
-                                "'" + calendar.days.format.abbreviated[Date.dayKeys[date.getDay()]] + "'");
+                                "'" + calendar.days.format.abbreviated[dayKeys[date.getDay()]] + "'");
                         }
                     });
 
@@ -316,7 +338,7 @@ describe(
                             var date = new Date(2000, 0, day);
                             assert.strictEquals(
                                 "formatDate('EEEE', new Date(2000, 0, " + day.toString() + "))",
-                                "'" + calendar.days.format.wide[Date.dayKeys[date.getDay()]] + "'");
+                                "'" + calendar.days.format.wide[dayKeys[date.getDay()]] + "'");
                         }
                     });
 
@@ -329,7 +351,7 @@ describe(
                             var date = new Date(2000, 0, day);
                             assert.strictEquals(
                                 "formatDate('EEEEE', new Date(2000, 0, " + day.toString() + "))",
-                                "'" + calendar.days.format.narrow[Date.dayKeys[date.getDay()]] + "'");
+                                "'" + calendar.days.format.narrow[dayKeys[date.getDay()]] + "'");
                         }
                     });
 
@@ -342,7 +364,7 @@ describe(
                             var date = new Date(2000, 0, day);
                             assert.strictEquals(
                                 "formatDate('EEEEEE', new Date(2000, 0, " + day.toString() + "))",
-                                "'" + calendar.days.format.short[Date.dayKeys[date.getDay()]] + "'");
+                                "'" + calendar.days.format.short[dayKeys[date.getDay()]] + "'");
                         }
                     });
 
@@ -714,7 +736,7 @@ describe(
                             var date = new Date(2000, 0, day);
                             assert.strictEquals(
                                 "formatUTCDate('EEE', new Date(Date.UTC(2000, 0, " + day.toString() + ")))",
-                                "'" + calendar.days.format.abbreviated[Date.dayKeys[date.getDay()]] + "'");
+                                "'" + calendar.days.format.abbreviated[dayKeys[date.getDay()]] + "'");
                         }
                     });
 
@@ -727,7 +749,7 @@ describe(
                             var date = new Date(2000, 0, day);
                             assert.strictEquals(
                                 "formatUTCDate('EEEE', new Date(Date.UTC(2000, 0, " + day.toString() + ")))",
-                                "'" + calendar.days.format.wide[Date.dayKeys[date.getDay()]] + "'");
+                                "'" + calendar.days.format.wide[dayKeys[date.getDay()]] + "'");
                         }
                     });
 
@@ -740,7 +762,7 @@ describe(
                             var date = new Date(2000, 0, day);
                             assert.strictEquals(
                                 "formatUTCDate('EEEEE', new Date(Date.UTC(2000, 0, " + day.toString() + ")))",
-                                "'" + calendar.days.format.narrow[Date.dayKeys[date.getDay()]] + "'");
+                                "'" + calendar.days.format.narrow[dayKeys[date.getDay()]] + "'");
                         }
                     });
 
@@ -753,7 +775,7 @@ describe(
                             var date = new Date(2000, 0, day);
                             assert.strictEquals(
                                 "formatUTCDate('EEEEEE', new Date(Date.UTC(2000, 0, " + day.toString() + ")))",
-                                "'" + calendar.days.format.short[Date.dayKeys[date.getDay()]] + "'");
+                                "'" + calendar.days.format.short[dayKeys[date.getDay()]] + "'");
                         }
                     });
 
