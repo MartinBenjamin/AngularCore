@@ -1,14 +1,12 @@
 import { } from 'jasmine';
+import { Class } from './Class';
 import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
 import { IClassExpression } from './IClassExpression';
 import { IOntology } from "./IOntology";
+import { ClassAssertion, NamedIndividual } from './NamedIndividual';
 import { ObjectIntersectionOf } from './ObjectIntersectionOf';
-import { Ontology } from "./Ontology";
-import { ReservedVocabulary } from './ReservedVocabulary';
-import { ObjectOneOf } from './ObjectOneOf';
-import { NamedIndividual, ClassAssertion } from './NamedIndividual';
-import { Class } from './Class';
 import { ObjectUnionOf } from './ObjectUnionOf';
+import { Ontology } from "./Ontology";
 
 describe(
     'ObjectIntersectionOf/ObjectUnionOf',
