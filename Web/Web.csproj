@@ -155,6 +155,8 @@
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectSomeValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectUnionOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\Ontology.Spec.ts" />
+    <None Remove="ClientApp\src\app\Ontology\Ontology.ts" />
     <None Remove="ClientApp\src\app\Ontology\Property.ts" />
     <None Remove="ClientApp\src\app\Ontology\PropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\ReservedVocabulary.ts" />
@@ -316,6 +318,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectPropertyRestriction.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectSomeValuesFrom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectUnionOf.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\Ontology.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\Ontology.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Property.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\PropertyRestriction.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ReservedVocabulary.ts" />

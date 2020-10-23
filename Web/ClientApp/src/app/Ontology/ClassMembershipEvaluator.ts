@@ -192,7 +192,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual: object
         ): boolean
     {
-        return [...this.Classify(individual)].indexOf(class$) != -1;
+        return [...this.Classify(individual)].includes(class$);
     }
 
     ObjectIntersectionOf(
@@ -363,7 +363,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     {
         return this.DataPropertyValues(
             dataHasValue.DataPropertyExpression,
-            individual).indexOf(dataHasValue.Value) != -1;
+            individual).includes(dataHasValue.Value);
     }
 
     DataMinCardinality(
