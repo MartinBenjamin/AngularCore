@@ -1,35 +1,8 @@
+import { } from 'jasmine';
 import { Ontology } from "./Ontology";
 import { IOntology } from "./IOntology";
 import { Class } from "./Class";
 import { IClass } from "./IClass";
-
-let Assert =
-{
-    True: function(
-        booleanExpression: string
-        )
-    {
-        it(
-            booleanExpression,
-            () =>
-            {
-                expect(eval(booleanExpression)).toBe(true);
-            });
-    }
-
-    StrictEquals: function(
-        lhs,
-        rhs
-        )
-    {
-        it(
-            lhs + ' === ' + rhs,
-            () =>
-            {
-                expect(eval(lhs)).toBe(eval(rhs));
-            });
-    }
-};
 
 describe(
     'Ontology',
