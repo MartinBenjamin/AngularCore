@@ -5,7 +5,7 @@ import { IsAxiom } from "./IsAxiom";
 export class Ontology implements IOntology
 {
     Imports : IOntology[];
-    Axioms  : IAxiom[];
+    Axioms  = [];
     IsAxiom = new IsAxiom();
 
     constructor(
@@ -25,8 +25,19 @@ export class Ontology implements IOntology
         return new Set(ontologies);
     }
 
-    Get<TAxiom extends import("./IAxiom").IAxiom>(typeGuard: (axiom: object) => axiom is TAxiom): Iterable<TAxiom>
+    Get<TAxiom extends import("./IAxiom").IAxiom>(
+        typeGuard: (axiom: object) => axiom is TAxiom
+        ): Iterable<TAxiom>
     {
-        throw new Error("Method not implemented.");
+        let current = this;
+        return {
+            *[Symbol.iterator]()
+            {
+                for(let ontology of current.GetOntologies())
+                    for(let axiom of ontology.Axioms)
+                        if(typeGuard(axiom))
+                            yield axiom;
+            }
+        };
     }
 }
