@@ -100,7 +100,7 @@ describe(
                         let c1: IClass = new Class(o1, 'c1');
                         it(
                             'Array.from(o1.Get<IClass>(o1.IsAxiom.IClass)).filter(c => c === c1).length === 1',
-                            () => expect(Array.from(o1.Get<IClass>(o1.IsAxiom.IClass)).filter(c => c === c1).length).toBe(1);
+                            () => expect(Array.from(o1.Get<IClass>(o1.IsAxiom.IClass)).filter(c => c === c1).length).toBe(1));
                     })
             });
     });

@@ -25,7 +25,7 @@ export class Ontology implements IOntology
         return new Set(ontologies);
     }
 
-    Get<TAxiom extends import("./IAxiom").IAxiom>(
+    Get<TAxiom extends IAxiom>(
         typeGuard: (axiom: object) => axiom is TAxiom
         ): Iterable<TAxiom>
     {
