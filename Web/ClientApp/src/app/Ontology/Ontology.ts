@@ -1,6 +1,5 @@
-import { IOntology } from "./IOntology";
 import { IAxiom } from "./IAxiom";
-import { IIsAxiom } from "./IIsAxiom";
+import { IOntology } from "./IOntology";
 import { IsAxiom } from "./IsAxiom";
 
 export class Ontology implements IOntology
