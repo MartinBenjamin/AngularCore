@@ -72,6 +72,9 @@ describe(
                     {
                         let c1: IClass = new Class(o1, 'c1');
                         it(
+                            'c1.Ontology === o1',
+                            () => expect(c1.Ontology).toBe(o1));
+                        it(
                             'o1.Axioms.includes(c1)',
                             () => expect(o1.Axioms.includes(c1)).toBe(true));
                         it(

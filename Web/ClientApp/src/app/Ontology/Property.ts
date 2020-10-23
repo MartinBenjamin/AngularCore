@@ -1,5 +1,4 @@
 import { Entity } from "./Entity";
-import { INamedIndividual } from "./INamedIndividual";
 import { IOntology } from "./IOntology";
 import { IObjectPropertyExpression } from "./IPropertyExpression";
 

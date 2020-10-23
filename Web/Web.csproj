@@ -151,6 +151,7 @@
     <None Remove="ClientApp\src\app\Ontology\ObjectOneOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyDomain.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectPropertyExpression.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyRange.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectSomeValuesFrom.ts" />
@@ -314,6 +315,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectOneOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectPropertyAxiom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectPropertyDomain.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectPropertyExpression.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectPropertyRange.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectPropertyRestriction.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectSomeValuesFrom.ts" />
