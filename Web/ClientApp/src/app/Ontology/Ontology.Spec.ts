@@ -61,8 +61,8 @@ describe(
                             {
                                 let o3: IOntology = new Ontology('', o1, o2);
                                 it(
-                                    `Array.from(o3.GetOntologies()).filter(o => o === o1).length === 1`,
-                                    () => expect(Array.from(o3.GetOntologies()).filter(o => o === o1).length).toBe(1));
+                                    `Array.from(o3.GetOntologies()).includes(o1)`,
+                                    () => expect(Array.from(o3.GetOntologies()).includes(o1)).toBe(true));
                             });
                     });
 
@@ -72,8 +72,11 @@ describe(
                     {
                         let c1: IClass = new Class(o1, 'c1');
                         it(
-                            'Array.from(o1.Get<IClass>(o1.IsAxiom.IClass)).filter(c => c === c1).length === 1',
-                            () => expect(Array.from(o1.Get<IClass>(o1.IsAxiom.IClass)).filter(c => c === c1).length).toBe(1));
+                            'o1.Axioms.includes(c1)',
+                            () => expect(o1.Axioms.includes(c1)).toBe(true));
+                        it(
+                            'Array.from(o1.Get<IClass>(o1.IsAxiom.IClass)).includes(c1)',
+                            () => expect(Array.from(o1.Get<IClass>(o1.IsAxiom.IClass)).includes(c1)).toBe(true));
 
 
                         describe(
@@ -82,8 +85,8 @@ describe(
                             {
                                 let o2: IOntology = new Ontology('o2', o1);
                                 it(
-                                    'Array.from(o2.Get<IClass>(o1.IsAxiom.IClass)).filter(c => c === c1).length === 1',
-                                    () => expect(Array.from(o2.Get<IClass>(o1.IsAxiom.IClass)).filter(c => c === c1).length).toBe(1));
+                                    'Array.from(o2.Get<IClass>(o1.IsAxiom.IClass)).includes(c1)',
+                                    () => expect(Array.from(o2.Get<IClass>(o1.IsAxiom.IClass)).includes(c1)).toBe(true));
 
                                 describe(
                                     'Given an Ontology o3 which directly imports o2:',
@@ -91,8 +94,8 @@ describe(
                                     {
                                         let o3 = new Ontology('o3', o2);
                                         it(
-                                            'Array.from(o3.Get<IClass>(o1.IsAxiom.IClass)).filter(c => c === c1).length === 1',
-                                            () => expect(Array.from(o3.Get<IClass>(o1.IsAxiom.IClass)).filter(c => c === c1).length).toBe(1));
+                                            'Array.from(o3.Get<IClass>(o1.IsAxiom.IClass)).includes(c1)',
+                                            () => expect(Array.from(o3.Get<IClass>(o1.IsAxiom.IClass)).includes(c1)).toBe(true));
                                     });
                             });
                     })
