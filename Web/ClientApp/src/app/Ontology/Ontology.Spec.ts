@@ -70,6 +70,7 @@ describe(
                             {
                                 expect(Array.from(o2.GetOntologies()).includes(o1)).toBe(true);
                             });
+                    });
 
             });
     });
