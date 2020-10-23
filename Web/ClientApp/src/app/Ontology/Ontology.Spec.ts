@@ -70,7 +70,28 @@ describe(
                             {
                                 expect(Array.from(o2.GetOntologies()).includes(o1)).toBe(true);
                             });
+
+                        describe(
+                            'Given an Ontology o3 which imports o2:',
+                            () =>
+                            {
+                                let o3 = new Ontology('', o2);
+                                it(
+                                    `Array.from(o3.GetOntologies()).includes(o2)`,
+                                    () =>
+                                    {
+                                        expect(Array.from(o3.GetOntologies()).includes(o2)).toBe(true);
+                                    });
+
+                                it(
+                                    `Array.from(o3.GetOntologies()).includes(o1)`,
+                                    () =>
+                                    {
+                                        expect(Array.from(o3.GetOntologies()).includes(o1)).toBe(true);
+                                    });
+                            });
                     });
+
 
             });
     });
