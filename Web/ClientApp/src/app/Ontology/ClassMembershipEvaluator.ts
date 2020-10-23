@@ -455,6 +455,8 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                     candidates,
                     individual,
                     definedClass);
+
+        return classExpressions;
     }
 
     private ApplyClassExpression(

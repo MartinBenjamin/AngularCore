@@ -1,6 +1,5 @@
 import { Component, TemplateRef } from '@angular/core';
 import { RouteConfigLoadEnd, RouteConfigLoadStart, Router } from '@angular/router';
-import { Ontology } from './Ontology/IOntology';
 
 @Component(
     {
@@ -15,19 +14,6 @@ export class DealTracker
         router: Router
         )
     {
-        console.log("Before");
-        let o = new Ontology();
-        for(let x of o.GetOntologies())
-        {
-            console.log("In loop");
-            if(x === o)
-                console.log("Equal");
-            else
-                console.log("Not Equal");
-        }
-        var x = o.GetOntologies();
-        console.log(typeof x);
-        console.log("After");
         router.events.subscribe(
             event =>
             {
