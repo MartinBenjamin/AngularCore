@@ -101,6 +101,27 @@ describe(
                         it(
                             'Array.from(o1.Get<IClass>(o1.IsAxiom.IClass)).filter(c => c === c1).length === 1',
                             () => expect(Array.from(o1.Get<IClass>(o1.IsAxiom.IClass)).filter(c => c === c1).length).toBe(1));
+
+
+                        describe(
+                            'Given an Ontology o2 which imports o1:',
+                            () =>
+                            {
+                                let o2: IOntology = new Ontology('o2', o1);
+                                it(
+                                    'Array.from(o2.Get<IClass>(o1.IsAxiom.IClass)).filter(c => c === c1).length === 1',
+                                    () => expect(Array.from(o2.Get<IClass>(o1.IsAxiom.IClass)).filter(c => c === c1).length).toBe(1));
+
+                                describe(
+                                    'Given an Ontology o3 which imports o2:',
+                                    () =>
+                                    {
+                                        let o3 = new Ontology('o3', o2);
+                                        it(
+                                            'Array.from(o3.Get<IClass>(o1.IsAxiom.IClass)).filter(c => c === c1).length === 1',
+                                            () => expect(Array.from(o3.Get<IClass>(o1.IsAxiom.IClass)).filter(c => c === c1).length).toBe(1));
+                                    });
+                            });
                     })
             });
     });
