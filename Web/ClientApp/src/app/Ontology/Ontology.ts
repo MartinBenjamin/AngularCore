@@ -23,7 +23,7 @@ export class Ontology implements IOntology
         for(let imported of this.Imports)
             ontologies.push(...imported.GetOntologies());
 
-        return ontologies;
+        return new Set(ontologies);
     }
 
     Get<TAxiom extends import("./IAxiom").IAxiom>(typeGuard: (axiom: object) => axiom is TAxiom): Iterable<TAxiom>

@@ -90,8 +90,20 @@ describe(
                                         expect(Array.from(o3.GetOntologies()).includes(o1)).toBe(true);
                                     });
                             });
+
+
+                        describe(
+                            'Given an Ontology o3 which imports o1 and o2:',
+                            () =>
+                            {
+                                let o3 = new Ontology('', o1, o2);
+                                it(
+                                    `Array.from(o3.GetOntologies()).filter(o => o === o1).length === 1`,
+                                    () =>
+                                    {
+                                        expect(Array.from(o3.GetOntologies()).filter(o => o === o1).length).toBe(1);
+                                    });
+                            });
                     });
-
-
             });
     });
