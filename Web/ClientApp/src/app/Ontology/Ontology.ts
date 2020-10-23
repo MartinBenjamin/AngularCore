@@ -19,8 +19,11 @@ export class Ontology implements IOntology
 
     GetOntologies(): Iterable<IOntology>
     {
-        return [this];
-        throw new Error("Method not implemented.");
+        let ontologies: IOntology[] = [this];
+        for(let imported of this.Imports)
+            ontologies.push(...imported.GetOntologies());
+
+        return ontologies;
     }
 
     Get<TAxiom extends import("./IAxiom").IAxiom>(typeGuard: (axiom: object) => axiom is TAxiom): Iterable<TAxiom>

@@ -42,18 +42,34 @@ describe(
 
         for(let iri of ontologyIris)
             describe(
-                `Given an Ontology O constructed with IRI: '${iri}'.`,
+                `Given an Ontology o constructed with IRI: '${iri}':`,
                 () => it(
-                    `O.Iri === '${iri}'`,
+                    `o.Iri === '${iri}'`,
                     () => expect(new Ontology(iri).Iri).toBe(iri)));
 
         describe(
-            'Given an Ontology O',
-            () => it(
-                `Array.from(O.GetOntologies()).includes(O)`,
-                () =>
-                {
-                    let ontology = new Ontology('');
-                    expect(Array.from(ontology.GetOntologies()).includes(ontology)).toBe(true);
-                });
+            'Given an Ontology o1:',
+            () =>
+            {
+                let o1 = new Ontology('');
+                it(
+                    `Array.from(o1.GetOntologies()).includes(o1)`,
+                    () =>
+                    {
+                        expect(Array.from(o1.GetOntologies()).includes(o1)).toBe(true);
+                    });
+
+                describe(
+                    'Given an Ontology o2 which imports o1:',
+                    () =>
+                    {
+                        let o2 = new Ontology('', o1);
+                        it(
+                            `Array.from(o2.GetOntologies()).includes(o1)`,
+                            () =>
+                            {
+                                expect(Array.from(o2.GetOntologies()).includes(o1)).toBe(true);
+                            });
+
+            });
     });
