@@ -59,7 +59,7 @@ describe(
                     () => expect(Array.from(o1.GetOntologies()).includes(o1)).toBe(true));
 
                 describe(
-                    'Given an Ontology o2 which imports o1:',
+                    'Given an Ontology o2 which directly imports o1:',
                     () =>
                     {
                         let o2: IOntology = new Ontology('o2', o1);
@@ -68,7 +68,7 @@ describe(
                             () => expect(Array.from(o2.GetOntologies()).includes(o1)).toBe(true));
 
                         describe(
-                            'Given an Ontology o3 which imports o2:',
+                            'Given an Ontology o3 which directly imports o2:',
                             () =>
                             {
                                 let o3 = new Ontology('o3', o2);
@@ -83,7 +83,7 @@ describe(
 
 
                         describe(
-                            'Given an Ontology o3 which imports o1 and o2:',
+                            'Given an Ontology o3 which directly imports o1 and o2:',
                             () =>
                             {
                                 let o3: IOntology = new Ontology('', o1, o2);
@@ -104,7 +104,7 @@ describe(
 
 
                         describe(
-                            'Given an Ontology o2 which imports o1:',
+                            'Given an Ontology o2 which directly imports o1:',
                             () =>
                             {
                                 let o2: IOntology = new Ontology('o2', o1);
@@ -113,7 +113,7 @@ describe(
                                     () => expect(Array.from(o2.Get<IClass>(o1.IsAxiom.IClass)).filter(c => c === c1).length).toBe(1));
 
                                 describe(
-                                    'Given an Ontology o3 which imports o2:',
+                                    'Given an Ontology o3 which directly imports o2:',
                                     () =>
                                     {
                                         let o3 = new Ontology('o3', o2);
