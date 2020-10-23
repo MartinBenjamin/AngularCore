@@ -1,11 +1,10 @@
 import { } from 'jasmine';
-import { Ontology } from "./Ontology";
 import { IOntology } from "./IOntology";
-import { Class } from "./Class";
-import { IClass } from "./IClass";
 import { IObjectPropertyExpression } from './IPropertyExpression';
-import { ObjectPropertyAssertion } from './NamedIndividual';
+import { Ontology } from "./Ontology";
 import { ObjectPropertyExpression } from './Property';
+import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
+import { IClassExpression } from './IClassExpression';
 
 describe(
     'ObjectPropertyExpression',
@@ -31,6 +30,33 @@ describe(
                         it(
                             'Array.from(o1.Get<IObjectPropertyExpression>(o1.IsAxiom.IObjectPropertyExpression)).includes(ope1)',
                             () => expect(Array.from(o1.Get<IObjectPropertyExpression>(o1.IsAxiom.IObjectPropertyExpression)).includes(ope1)).toBe(true));
+
+                        let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
+                        it(
+                            'Array.from(evaluator.ObjectPropertyValues(ope1, {})).length === 0',
+                            () => expect(Array.from(evaluator.ObjectPropertyValues(ope1, {})).length).toBe(0));
+                        it(
+                            'Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: null })).length === 0',
+                            () => expect(Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: null })).length).toBe(0));
+                        it(
+                            'Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: 6 })).length === 1',
+                            () => expect(Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: 6 })).length).toBe(1));
+                        it(
+                            'Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: [1, 2] })).length === 2',
+                            () => expect(Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: [1, 2] })).length).toBe(2));
+                        it(
+                            'Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: new Set([1, 2]) })).length === 2',
+                            () => expect(Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: new Set([1, 2]) })).length).toBe(2));
+
+                        //describe(
+                        //    'Given an object o with no key ope1 set to null:',
+                        //    () =>
+                        //    {
+                        //        let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
+                        //        it(
+                        //            'Array.from(evaluator.ObjectPropertyValues(ope1, {})).length === 0',
+                        //            () => expect(Array.from(evaluator.ObjectPropertyValues(ope1, {})).length).toBe(0));
+                        //    });
                     });
             });
     });

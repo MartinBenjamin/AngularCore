@@ -20,7 +20,7 @@ import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from "./IOntology";
-import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
+import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
 
 function Group<T, TKey, TValue>(
     iterable     : Iterable<T>,
@@ -498,7 +498,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         //            componentClassExpression));
     }
 
-    private ObjectPropertyValues(
+    public ObjectPropertyValues(
         objectPropertyExpression: IObjectPropertyExpression,
         individual              : object
         ): object[]
@@ -508,16 +508,12 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                 objectPropertyExpression,
                 individual);
 
-        if(objectPropertyExpression.LocalName in individual)
-        {
-            let value = individual[objectPropertyExpression.LocalName];
-            return Array.isArray(value) ? value : value !== null ? [value] : [];
-        }
-
-        return [];
+        return this.PropertyValues(
+            objectPropertyExpression,
+            individual);
     }
 
-    private DataPropertyValues(
+    public DataPropertyValues(
         dataPropertyExpression: IDataPropertyExpression,
         individual            : object
         ): object[]
@@ -527,10 +523,22 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                 dataPropertyExpression,
                 individual);
 
-        if(dataPropertyExpression.LocalName in individual)
+        return this.PropertyValues(
+            objectPropertyExpression,
+            individual);
+    }
+
+    public PropertyValues(
+        propertyExpression: IPropertyExpression,
+        individual        : object
+        ): object[]
+    {
+        if(propertyExpression.LocalName in individual)
         {
-            let value = individual[dataPropertyExpression.LocalName];
-            return Array.isArray(value) ? value : value !== null ? [value] : [];
+            let value = individual[propertyExpression.LocalName];
+            return Array.isArray(value) ?
+                value : value !== null ?
+                    (typeof value[Symbol.iterator] != 'undefined' ? [...value] : [value]) : [];
         }
 
         return [];
