@@ -47,16 +47,6 @@ describe(
                         it(
                             'Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: new Set([1, 2]) })).length === 2',
                             () => expect(Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: new Set([1, 2]) })).length).toBe(2));
-
-                        //describe(
-                        //    'Given an object o with no key ope1 set to null:',
-                        //    () =>
-                        //    {
-                        //        let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
-                        //        it(
-                        //            'Array.from(evaluator.ObjectPropertyValues(ope1, {})).length === 0',
-                        //            () => expect(Array.from(evaluator.ObjectPropertyValues(ope1, {})).length).toBe(0));
-                        //    });
                     });
             });
     });

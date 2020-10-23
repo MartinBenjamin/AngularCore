@@ -78,6 +78,7 @@
     <None Remove="ClientApp\src\app\Ontology\DataMinCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataPropertyAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataPropertyDomain.ts" />
+    <None Remove="ClientApp\src\app\Ontology\DataPropertyExpression.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataPropertyRange.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataPropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataRange.ts" />
@@ -241,6 +242,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataMinCardinality.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataPropertyAxiom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataPropertyDomain.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataPropertyExpression.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataPropertyRange.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataPropertyRestriction.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataRange.ts" />

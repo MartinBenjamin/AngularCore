@@ -524,7 +524,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                 individual);
 
         return this.PropertyValues(
-            objectPropertyExpression,
+            dataPropertyExpression,
             individual);
     }
 
