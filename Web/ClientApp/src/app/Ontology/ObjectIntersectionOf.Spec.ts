@@ -1,3 +1,4 @@
+import { Type } from '@angular/core';
 import { } from 'jasmine';
 import { Class } from './Class';
 import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
@@ -5,8 +6,39 @@ import { IClassExpression } from './IClassExpression';
 import { IOntology } from "./IOntology";
 import { ClassAssertion, NamedIndividual } from './NamedIndividual';
 import { ObjectIntersectionOf } from './ObjectIntersectionOf';
-import { ObjectUnionOf } from './ObjectUnionOf';
 import { Ontology } from "./Ontology";
+
+function assertBuilder(
+    evaluator,
+    objectIntersectionOf,
+    c1,
+    c2,
+    i1,
+    i2,
+    i3
+    ): (assertion: string) => void
+{
+    return (
+        assertion: string
+    ): void => it(
+        assertion,
+        () => expect(new Function(
+            'evaluator',
+            'ObjectIntersectionOf',
+            'c1',
+            'c2',
+            'i1',
+            'i2',
+            'i3',
+            'return ' + assertion)(
+                evaluator,
+                objectIntersectionOf,
+                c1,
+                c2,
+                i1,
+                i2,
+                i3)).toBe(true));
+}
 
 describe(
     'ObjectIntersectionOf',
@@ -31,43 +63,16 @@ describe(
                         new ClassAssertion(o1, c2, i2);
                         new ClassAssertion(o1, c2, i3);
                         let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
-                        it(
-                            'c1.Evaluate(evaluator, i1)',
-                            () => expect(c1.Evaluate(evaluator, i1)).toBe(true));
-                        it(
-                            'c1.Evaluate(evaluator, i2)',
-                            () => expect(c1.Evaluate(evaluator, i1)).toBe(true));
-                        it(
-                            'c1.Evaluate(evaluator, i3) === false',
-                            () => expect(c1.Evaluate(evaluator, i3)).toBe(false));
-                        it(
-                            'c2.Evaluate(evaluator, i1) === false',
-                            () => expect(c1.Evaluate(evaluator, i1)).toBe(true));
-                        it(
-                            'c2.Evaluate(evaluator, i2)',
-                            () => expect(c1.Evaluate(evaluator, i1)).toBe(true));
-                        it(
-                            'c2.Evaluate(evaluator, i3)',
-                            () => expect(c1.Evaluate(evaluator, i3)).toBe(false));
-                        it(
-                            'new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i1) === false',
-                            () => expect(new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i1)).toBe(false));
-                        it(
-                            'new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i2)',
-                            () => expect(new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i2)).toBe(true));
-                        it(
-                            'new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i3) === false',
-                            () => expect(new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i3)).toBe(false));
-                        it(
-                            'new ObjectUnionOf([c1, c2]).Evaluate(evaluator, i1)',
-                            () => expect(new ObjectUnionOf([c1, c2]).Evaluate(evaluator, i1)).toBe(true));
-                        it(
-                            'new ObjectUnionOf([c1, c2]).Evaluate(evaluator, i2)',
-                            () => expect(new ObjectUnionOf([c1, c2]).Evaluate(evaluator, i2)).toBe(true));
-                        it(
-                            'new ObjectUnionOf([c1, c2]).Evaluate(evaluator, i3)',
-                            () => expect(new ObjectUnionOf([c1, c2]).Evaluate(evaluator, i3)).toBe(true));
-
+                        let assert = assertBuilder(evaluator, ObjectIntersectionOf, c1, c2, i1, i2, i3);
+                        assert('c1.Evaluate(evaluator, i1)');
+                        assert('c1.Evaluate(evaluator, i2)');
+                        assert('c1.Evaluate(evaluator, i3) === false');
+                        assert('c2.Evaluate(evaluator, i1) === false');
+                        assert('c2.Evaluate(evaluator, i2)');
+                        assert('c2.Evaluate(evaluator, i3)');
+                        assert('new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i1) === false');
+                        assert('new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i2)');
+                        assert('new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i3) === false');
                     });
             });
     });
