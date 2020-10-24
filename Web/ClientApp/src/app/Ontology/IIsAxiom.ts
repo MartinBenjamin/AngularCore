@@ -10,11 +10,13 @@ import { IClassAssertion, IDataPropertyAssertion, INamedIndividual, IObjectPrope
 import { IObjectPropertyDomain } from "./IObjectPropertyDomain";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
 import { ISubClassOf } from "./ISubClassOf";
+import { IAxiom } from "./IAxiom";
 
 type TypeGuard<T extends object> = (o: object) => o is T;
 
 export interface IIsAxiom
 {
+    IAxiom                   : TypeGuard<IAxiom                   >;
     IEntity                  : TypeGuard<IEntity                  >;
     IClass                   : TypeGuard<IClass                   >;
     IObjectPropertyExpression: TypeGuard<IObjectPropertyExpression>;

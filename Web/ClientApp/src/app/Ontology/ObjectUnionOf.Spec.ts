@@ -9,7 +9,7 @@ import { ObjectUnionOf } from './ObjectUnionOf';
 import { Ontology } from "./Ontology";
 
 describe(
-    'ObjectIntersectionOf',
+    'ObjectUnionOf',
     () =>
     {
         describe(
@@ -49,15 +49,6 @@ describe(
                         it(
                             'c2.Evaluate(evaluator, i3)',
                             () => expect(c1.Evaluate(evaluator, i3)).toBe(false));
-                        it(
-                            'new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i1) === false',
-                            () => expect(new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i1)).toBe(false));
-                        it(
-                            'new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i2)',
-                            () => expect(new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i2)).toBe(true));
-                        it(
-                            'new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i3) === false',
-                            () => expect(new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i3)).toBe(false));
                         it(
                             'new ObjectUnionOf([c1, c2]).Evaluate(evaluator, i1)',
                             () => expect(new ObjectUnionOf([c1, c2]).Evaluate(evaluator, i1)).toBe(true));
