@@ -1,4 +1,3 @@
-import { Type } from '@angular/core';
 import { } from 'jasmine';
 import { Class } from './Class';
 import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
