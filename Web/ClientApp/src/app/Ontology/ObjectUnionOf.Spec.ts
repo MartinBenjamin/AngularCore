@@ -4,9 +4,40 @@ import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
 import { IClassExpression } from './IClassExpression';
 import { IOntology } from "./IOntology";
 import { ClassAssertion, NamedIndividual } from './NamedIndividual';
-import { ObjectIntersectionOf } from './ObjectIntersectionOf';
 import { ObjectUnionOf } from './ObjectUnionOf';
 import { Ontology } from "./Ontology";
+
+function assertBuilder(
+    evaluator,
+    objectUnionOf,
+    c1,
+    c2,
+    i1,
+    i2,
+    i3
+    ): (assertion: string) => void
+{
+    return (
+        assertion: string
+    ): void => it(
+        assertion,
+        () => expect(new Function(
+            'evaluator',
+            'ObjectUnionOf',
+            'c1',
+            'c2',
+            'i1',
+            'i2',
+            'i3',
+            'return ' + assertion)(
+                evaluator,
+                objectUnionOf,
+                c1,
+                c2,
+                i1,
+                i2,
+                i3)).toBe(true));
+}
 
 describe(
     'ObjectUnionOf',
@@ -27,38 +58,21 @@ describe(
                         let i2 = new NamedIndividual(o1, 'i2');
                         let i3 = new NamedIndividual(o1, 'i3');
                         new ClassAssertion(o1, c1, i1);
-                        new ClassAssertion(o1, c1, i2);
+                        new ClassAssertion(o1, c1, i3);
                         new ClassAssertion(o1, c2, i2);
                         new ClassAssertion(o1, c2, i3);
                         let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
-                        it(
-                            'c1.Evaluate(evaluator, i1)',
-                            () => expect(c1.Evaluate(evaluator, i1)).toBe(true));
-                        it(
-                            'c1.Evaluate(evaluator, i2)',
-                            () => expect(c1.Evaluate(evaluator, i1)).toBe(true));
-                        it(
-                            'c1.Evaluate(evaluator, i3) === false',
-                            () => expect(c1.Evaluate(evaluator, i3)).toBe(false));
-                        it(
-                            'c2.Evaluate(evaluator, i1) === false',
-                            () => expect(c1.Evaluate(evaluator, i1)).toBe(true));
-                        it(
-                            'c2.Evaluate(evaluator, i2)',
-                            () => expect(c1.Evaluate(evaluator, i1)).toBe(true));
-                        it(
-                            'c2.Evaluate(evaluator, i3)',
-                            () => expect(c1.Evaluate(evaluator, i3)).toBe(false));
-                        it(
-                            'new ObjectUnionOf([c1, c2]).Evaluate(evaluator, i1)',
-                            () => expect(new ObjectUnionOf([c1, c2]).Evaluate(evaluator, i1)).toBe(true));
-                        it(
-                            'new ObjectUnionOf([c1, c2]).Evaluate(evaluator, i2)',
-                            () => expect(new ObjectUnionOf([c1, c2]).Evaluate(evaluator, i2)).toBe(true));
-                        it(
-                            'new ObjectUnionOf([c1, c2]).Evaluate(evaluator, i3)',
-                            () => expect(new ObjectUnionOf([c1, c2]).Evaluate(evaluator, i3)).toBe(true));
+                        let assert = assertBuilder(evaluator, ObjectUnionOf, c1, c2, i1, i2, i3);
 
+                        assert('c1.Evaluate(evaluator, i1)');
+                        assert('c1.Evaluate(evaluator, i2) === false');
+                        assert('c1.Evaluate(evaluator, i3)');
+                        assert('c2.Evaluate(evaluator, i1) === false');
+                        assert('c2.Evaluate(evaluator, i2)');
+                        assert('c2.Evaluate(evaluator, i3)');
+                        assert('new ObjectUnionOf([c1, c2]).Evaluate(evaluator, i1)');
+                        assert('new ObjectUnionOf([c1, c2]).Evaluate(evaluator, i2)');
+                        assert('new ObjectUnionOf([c1, c2]).Evaluate(evaluator, i3)');
                     });
             });
     });
