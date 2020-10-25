@@ -43,9 +43,22 @@ namespace Test
                 .As<IModelMapperFactory>()
                 .SingleInstance();
             builder
-                .RegisterModule(new SQLiteModule("Test"));
+                .RegisterModule(new SQLiteInMemoryModule("Test"));
 
             _container = builder.Build();
+
+            new SchemaExport(_container.Resolve<IConfigurationFactory>().Build()).Execute(
+                false,
+                true,
+                false,
+                _container.Resolve<ISession>().Connection, // Creates in memory database.
+                null);
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            _container.Dispose();
         }
 
         [SetUp]
@@ -100,11 +113,6 @@ namespace Test
         [Test]
         public void Persist()
         {
-            var schemaUpdate = new SchemaUpdate(_container.Resolve<IConfigurationFactory>().Build());
-            schemaUpdate.Execute(
-                scriptAction => Trace.WriteLine(scriptAction),
-                true);
-
             var taxonomy = new Taxonomy<char>(
                 new Dictionary<char, IList<char>>
                 {
