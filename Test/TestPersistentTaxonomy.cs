@@ -69,8 +69,6 @@ namespace Test
                     new TextWriterTraceListener(
                         TestContext.Out,
                         _listenerName));
-
-            File.Delete(SQLiteModule.DatabasePath);
         }
 
         [Test]
