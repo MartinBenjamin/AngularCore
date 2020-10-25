@@ -9,7 +9,6 @@ using NUnit.Framework;
 using Service;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -39,17 +38,24 @@ namespace Test
                 .As<IModelMapperFactory>()
                 .SingleInstance();
             builder
-                .RegisterModule(new SQLiteModule("Test"));
+                .RegisterModule(new SQLiteInMemoryModule("Test"));
             builder
                 .RegisterModule<Service.Module>();
 
             _container = builder.Build();
 
-            File.Delete(SQLiteModule.DatabasePath);
-            var schemaExport = new SchemaExport(_container.Resolve<IConfigurationFactory>().Build());
-            schemaExport.Create(
-                scriptAction => { },
-                true);
+            new SchemaExport(_container.Resolve<IConfigurationFactory>().Build()).Execute(
+                false,
+                true,
+                false,
+                _container.Resolve<ISession>().Connection, // Creates in memory database.
+                null);
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            _container.Dispose();
         }
 
         [SetUp]
