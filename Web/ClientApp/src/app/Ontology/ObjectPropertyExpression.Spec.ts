@@ -54,7 +54,11 @@ describe(
                         assert('Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: null })).length === 0');
                         assert('Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: 6 })).length === 1');
                         assert('Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: [1, 2] })).length === 2');
+                        assert('Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: [1, 2] })).includes(1)');
+                        assert('Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: [1, 2] })).includes(2)');
                         assert('Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: new Set([1, 2]) })).length === 2');
+                        assert('Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: new Set([1, 2]) })).includes(1)');
+                        assert('Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: new Set([1, 2]) })).includes(2)');
                     });
             });
     });

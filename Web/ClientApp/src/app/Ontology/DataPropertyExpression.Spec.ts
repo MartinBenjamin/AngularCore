@@ -54,8 +54,13 @@ describe(
                         assert('evaluator.DataPropertyValues(dpe1, {}).length === 0');
                         assert('evaluator.DataPropertyValues(dpe1, { dpe1: null }).length === 0');
                         assert('evaluator.DataPropertyValues(dpe1, { dpe1: 6 }).length === 1');
+                        assert('evaluator.DataPropertyValues(dpe1, { dpe1: 6 }).includes(6)');
                         assert('evaluator.DataPropertyValues(dpe1, { dpe1: [1, 2] }).length === 2');
+                        assert('evaluator.DataPropertyValues(dpe1, { dpe1: [1, 2] }).includes(1)');
+                        assert('evaluator.DataPropertyValues(dpe1, { dpe1: [1, 2] }).includes(2)');
                         assert('evaluator.DataPropertyValues(dpe1, { dpe1: new Set([1, 2]) }).length === 2');
+                        assert('evaluator.DataPropertyValues(dpe1, { dpe1: new Set([1, 2]) }).includes(1)');
+                        assert('evaluator.DataPropertyValues(dpe1, { dpe1: new Set([1, 2]) }).includes(2)');
                     });
             });
     });
