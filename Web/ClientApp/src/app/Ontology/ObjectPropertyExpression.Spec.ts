@@ -50,15 +50,15 @@ describe(
                         it(
                             'Array.from(o1.Get<IObjectPropertyExpression>(o1.IsAxiom.IObjectPropertyExpression)).includes(ope1)',
                             () => expect(Array.from(o1.Get<IObjectPropertyExpression>(o1.IsAxiom.IObjectPropertyExpression)).includes(ope1)).toBe(true));
-                        assert('Array.from(evaluator.ObjectPropertyValues(ope1, {})).length === 0');
-                        assert('Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: null })).length === 0');
-                        assert('Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: 6 })).length === 1');
-                        assert('Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: [1, 2] })).length === 2');
-                        assert('Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: [1, 2] })).includes(1)');
-                        assert('Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: [1, 2] })).includes(2)');
-                        assert('Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: new Set([1, 2]) })).length === 2');
-                        assert('Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: new Set([1, 2]) })).includes(1)');
-                        assert('Array.from(evaluator.ObjectPropertyValues(ope1, { ope1: new Set([1, 2]) })).includes(2)');
+                        assert('evaluator.ObjectPropertyValues(ope1, {}).length === 0');
+                        assert('evaluator.ObjectPropertyValues(ope1, { ope1: null }).length === 0');
+                        assert('evaluator.ObjectPropertyValues(ope1, { ope1: 6 }).length === 1');
+                        assert('evaluator.ObjectPropertyValues(ope1, { ope1: [1, 2] }).length === 2');
+                        assert('evaluator.ObjectPropertyValues(ope1, { ope1: [1, 2] }).includes(1)');
+                        assert('evaluator.ObjectPropertyValues(ope1, { ope1: [1, 2] }).includes(2)');
+                        assert('evaluator.ObjectPropertyValues(ope1, { ope1: new Set([1, 2]) }).length === 2');
+                        assert('evaluator.ObjectPropertyValues(ope1, { ope1: new Set([1, 2]) }).includes(1)');
+                        assert('evaluator.ObjectPropertyValues(ope1, { ope1: new Set([1, 2]) }).includes(2)');
                     });
             });
     });
