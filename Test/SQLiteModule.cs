@@ -29,7 +29,7 @@ namespace Test
             { "connection.release_mode"     , "on_close"                         }
         };
 
-        private string _name;
+        private readonly string _name;
 
         public SQLiteInMemoryModule(
             string name
