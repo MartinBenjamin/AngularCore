@@ -158,6 +158,7 @@
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyExpression.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyRange.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyRestriction.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectSomeValuesFrom.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectSomeValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectUnionOf.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectUnionOf.ts" />
@@ -327,6 +328,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectPropertyExpression.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectPropertyRange.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectPropertyRestriction.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectSomeValuesFrom.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectSomeValuesFrom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectUnionOf.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectUnionOf.ts" />
