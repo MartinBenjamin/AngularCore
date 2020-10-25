@@ -141,6 +141,7 @@
     <None Remove="ClientApp\src\app\Ontology\ISubClassOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\NamedIndividual.ts" />
     <None Remove="ClientApp\src\app\Ontology\Nothing.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectAllValuesFrom.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectAllValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectComplementOf.Spec.ts" />
@@ -311,6 +312,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ISubClassOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\NamedIndividual.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Nothing.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectAllValuesFrom.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectAllValuesFrom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectCardinality.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectComplementOf.Spec.ts" />
