@@ -7,7 +7,6 @@ using NHibernateIntegration;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 
