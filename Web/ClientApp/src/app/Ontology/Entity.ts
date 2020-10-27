@@ -16,6 +16,6 @@ export class Entity
 
     get Iri(): string
     {
-        return `${this.Ontology}.${this.LocalName}`;
+        return `${this.Ontology.Iri}.${this.LocalName}`;
     }
 }

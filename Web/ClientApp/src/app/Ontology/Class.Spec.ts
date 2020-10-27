@@ -57,6 +57,9 @@ describe(
                         assert('c1.Evaluate(evaluator, i2) === false');
                         assert('c2.Evaluate(evaluator, i1) === false');
                         assert('c2.Evaluate(evaluator, i2)');
+                        assert('c1.Evaluate(evaluator, {}) === false');
+                        assert('c1.Evaluate(evaluator, { ClassIri: "abc"}) === false');
+                        assert('c1.Evaluate(evaluator, { ClassIri: "o1.c1"})');
                     });
             });
     });
