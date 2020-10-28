@@ -6,27 +6,20 @@ import { ObjectPropertyExpression } from './Property';
 import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
 import { IClassExpression } from './IClassExpression';
 
-function expressionEvaluatorBuilder<TResult>(
+function assertBuilder(
     ...argNames
-    ): (...args) => (expression: string) => TResult
+    ): (...args) => (assertion: string) => void
 {
     return function(
         ...args
         )
     {
-        return (expression: string) => new Function(
-            ...argNames,
-            'return ' + expression)(...args);
+        return (assertion: string): void => it(
+            assertion,
+            () => expect(new Function(
+                ...argNames,
+                'return ' + assertion)(...args)).toBe(true));
     }
-}
-
-function assertBuilder(
-    assertionEvaluator: (assertion: string) => boolean
-    ): (assertion: string) => void
-{
-    return (assertion: string): void => it(
-        assertion,
-        () => expect(assertionEvaluator(assertion)).toBe(true));
 }
 
 describe(
@@ -45,10 +38,7 @@ describe(
                     {
                         let ope1: IObjectPropertyExpression = new ObjectPropertyExpression(o1, 'ope1');
                         let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
-                        let assert = assertBuilder(expressionEvaluatorBuilder<boolean>('o1', 'evaluator', 'ope1')(
-                            o1,
-                            evaluator,
-                            ope1));
+                        let assert = assertBuilder('o1', 'evaluator', 'ope1')(o1, evaluator, ope1);
                         assert('ope1.Ontology === o1');
                         assert('o1.Axioms.includes(ope1)');
                         it(
@@ -63,7 +53,7 @@ describe(
                             () =>
                             {
                                 let result = evaluator.ObjectPropertyValues(ope1, { ope1: [1, 2] });
-                                let assert = assertBuilder(expressionEvaluatorBuilder<boolean>('result')(result));
+                                let assert = assertBuilder('result')(result);
                                 assert('result.length === 2');
                                 assert('!result.includes(0)');
                                 assert('result.includes(1)');
@@ -76,7 +66,7 @@ describe(
                             () =>
                             {
                                 let result = evaluator.ObjectPropertyValues(ope1, { ope1: new Set([1, 2]) });
-                                let assert = assertBuilder(expressionEvaluatorBuilder<boolean>('result')(result));
+                                let assert = assertBuilder('result')(result);
                                 assert('result.length === 2');
                                 assert('!result.includes(0)');
                                 assert('result.includes(1)');
