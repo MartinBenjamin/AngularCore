@@ -14,4 +14,7 @@ describe(
         assert('new DataOneOf([ 0, 1 ]).HasMember(0)');
         assert('new DataOneOf([ 0, 1 ]).HasMember(1)');
         assert('!new DataOneOf([ 0, 1 ]).HasMember("0")');
+        assert('!new DataOneOf([]).HasMember("")');
+        assert('new DataOneOf([ "" ]).HasMember("")');
+        assert('!new DataOneOf([ "" ]).HasMember("A")');
     });
