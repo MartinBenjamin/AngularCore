@@ -19,5 +19,5 @@ describe(
                 let dpe1 = new DataPropertyExpression(o1, 'dpe1');
                 new DataPropertyAssertion(o1, dpe1, i1, 1);
 
-            }
+            });
     });

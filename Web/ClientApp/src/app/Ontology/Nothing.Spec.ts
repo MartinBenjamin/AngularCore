@@ -6,6 +6,6 @@ describe(
     "Nothing",
     () =>
     {
-        let assert = assertBuilder('ReservedVocabulary')(ReservedVocabulary);
-        assert('!ReservedVocabulary.Nothing.Evaluate(null, {})');
+        let assert = assertBuilder('Nothing')(ReservedVocabulary.Nothing);
+        assert('!Nothing.Evaluate(null, {})');
     });

@@ -518,7 +518,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     public DataPropertyValues(
         dataPropertyExpression: IDataPropertyExpression,
         individual            : object
-        ): object[]
+        ): any[]
     {
         if(this._ontology.IsAxiom.INamedIndividual(individual))
             return this.NamedIndividualDataPropertyValues(
@@ -533,7 +533,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     public PropertyValues(
         propertyExpression: IPropertyExpression,
         individual        : object
-        ): object[]
+        ): any[]
     {
         if(propertyExpression.LocalName in individual)
         {
@@ -549,7 +549,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     private DataPropertyValue(
         dataPropertyExpression: IDataPropertyExpression,
         individual            : object
-        ): object
+        ): any
     {
         if(this._ontology.IsAxiom.INamedIndividual(individual))
             return this.NamedIndividualDataPropertyValue(
@@ -575,7 +575,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     private NamedIndividualDataPropertyValues(
         dataPropertyExpression: IDataPropertyExpression,
         namedIndividual       : INamedIndividual
-        ): object[]
+        ): any[]
     {
         let dataPropertyAssertions = this._dataPropertyAssertions.get(namedIndividual);
         return dataPropertyAssertions ?
@@ -587,7 +587,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     private NamedIndividualDataPropertyValue(
         dataPropertyExpression: IDataPropertyExpression,
         namedIndividual       : INamedIndividual
-        ): object
+        ): any
     {
         let values = this.NamedIndividualDataPropertyValues(
             dataPropertyExpression,
