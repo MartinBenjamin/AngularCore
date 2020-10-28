@@ -32,5 +32,5 @@ export interface IObjectPropertyAssertion extends IPropertyAssertion
 export interface IDataPropertyAssertion extends IPropertyAssertion
 {
     DataPropertyExpression: IDataPropertyExpression;
-    TargetValue           : object;
+    TargetValue           : any;
 }

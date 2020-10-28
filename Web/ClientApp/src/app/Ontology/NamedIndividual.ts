@@ -74,7 +74,7 @@ export class DataPropertyAssertion
         ontology                     : IOntology,
         public DataPropertyExpression: IDataPropertyExpression,
         public SourceIndividual      : INamedIndividual,
-        public TargetValue           : object
+        public TargetValue           : any
         )
     {
         super(

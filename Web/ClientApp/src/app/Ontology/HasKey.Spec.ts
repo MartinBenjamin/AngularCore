@@ -1,10 +1,7 @@
 import { } from 'jasmine';
-import { assertBuilder } from './assertBuilder';
-import { ReservedVocabulary } from './ReservedVocabulary';
-import { IOntology } from './IOntology';
-import { Ontology } from './Ontology';
 import { Class } from './Class';
-import { NamedIndividual, ClassAssertion } from './NamedIndividual';
+import { ClassAssertion, NamedIndividual, DataPropertyAssertion } from './NamedIndividual';
+import { Ontology } from './Ontology';
 import { DataPropertyExpression } from './Property';
 
 describe(
@@ -20,6 +17,7 @@ describe(
                 let i1 = new NamedIndividual(o1, 'i1');
                 new ClassAssertion(o1, c1, i1);
                 let dpe1 = new DataPropertyExpression(o1, 'dpe1');
+                new DataPropertyAssertion(o1, dpe1, i1, 1);
 
             }
     });

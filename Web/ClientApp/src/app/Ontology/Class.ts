@@ -24,6 +24,7 @@ export class Class
     {
         visitor.Class(this);
     }
+
     Evaluate(
         evaluator : IClassMembershipEvaluator,
         individual: object
