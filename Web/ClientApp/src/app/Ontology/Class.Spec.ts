@@ -7,29 +7,19 @@ import { ClassAssertion, NamedIndividual } from './NamedIndividual';
 import { Ontology } from "./Ontology";
 
 function assertBuilder(
-    evaluator,
-    c1,
-    c2,
-    i1,
-    i2
-    ): (assertion: string) => void
+    ...argNames
+    ): (...args) => (assertion: string) => void
 {
-    return (
-        assertion: string
-        ): void => it(
+    return function(
+        ...args
+        )
+    {
+        return (assertion: string): void => it(
             assertion,
             () => expect(new Function(
-                'evaluator',
-                'c1',
-                'c2',
-                'i1',
-                'i2',
-                'return ' + assertion)(
-                    evaluator,
-                    c1,
-                    c2,
-                    i1,
-                    i2)).toBe(true));
+                ...argNames,
+                'return ' + assertion)(...args)).toBe(true));
+    }
 }
 
 describe(
@@ -52,7 +42,11 @@ describe(
                         new ClassAssertion(o1, c1, i1);
                         new ClassAssertion(o1, c2, i2);
                         let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
-                        let assert = assertBuilder(evaluator, c1, c2, i1, i2);
+                        let assert = assertBuilder('o1', 'evaluator', 'c1', 'c2', 'i1', 'i2')(o1, evaluator, c1, c2, i1, i2);
+                        assert('c1.Ontology === o1');
+                        assert('o1.Axioms.includes(c1)');
+                        assert('c2.Ontology === o1');
+                        assert('o1.Axioms.includes(c2)');
                         assert('c1.Evaluate(evaluator, i1)');
                         assert('c1.Evaluate(evaluator, i2) === false');
                         assert('c2.Evaluate(evaluator, i1) === false');
