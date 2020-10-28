@@ -76,6 +76,7 @@
     <None Remove="ClientApp\src\app\Ontology\DataComplementOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataExactCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataHasValue.ts" />
+    <None Remove="ClientApp\src\app\Ontology\DataIntersectionOf.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataIntersectionOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMaxCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMinCardinality.ts" />
@@ -253,6 +254,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataComplementOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataExactCardinality.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataHasValue.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataIntersectionOf.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataIntersectionOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataMaxCardinality.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataMinCardinality.ts" />
