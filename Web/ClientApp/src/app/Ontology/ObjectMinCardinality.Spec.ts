@@ -41,7 +41,6 @@ describe(
                         assert('new ObjectMinCardinality(ope1, 2).Evaluate(evaluator, { ope1: [ {} ] }) === false');
                         assert('new ObjectMinCardinality(ope1, 1, c1).Evaluate(evaluator, { ope1: [ {} ] }) === false');
                         assert('new ObjectMinCardinality(ope1, 1, c1).Evaluate(evaluator, { ope1: [ i1 ] })');
-                        assert('new ObjectMinCardinality(ope1, 1, c1).Evaluate(evaluator, { ope1: [ i1 ] })');
                         assert('new ObjectMinCardinality(ope1, 2, c1).Evaluate(evaluator, { ope1: [ i1 ] }) === false');
                         assert('new ObjectMinCardinality(ope1, 2, c1).Evaluate(evaluator, { ope1: [ i1, {} ] }) === false');
                         assert('new ObjectMinCardinality(ope1, 2, c1).Evaluate(evaluator, { ope1: [ i1, i2 ] })');
