@@ -89,6 +89,7 @@
     <None Remove="ClientApp\src\app\Ontology\DataPropertyRange.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataPropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataRange.ts" />
+    <None Remove="ClientApp\src\app\Ontology\DataSomeValuesFrom.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataSomeValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\Datatype.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataUnionOf.Spec.ts" />
@@ -269,6 +270,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataPropertyRange.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataPropertyRestriction.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataRange.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataSomeValuesFrom.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataSomeValuesFrom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataAllValuesFrom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Datatype.ts" />
