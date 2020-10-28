@@ -33,7 +33,6 @@ describe(
                         let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
                         let assert = assertBuilder('evaluator', 'ObjectMinCardinality', 'ope1', 'c1', 'i1', 'i2')
                             (evaluator, ObjectMinCardinality, ope1, c1, i1, i2);
-                        new ObjectSomeValuesFrom(ope1, c1).Evaluate(evaluator, { ope1: [i1] })
                         assert('new ObjectMinCardinality(ope1, 0).Evaluate(evaluator, { ope1: [] })');
                         assert('new ObjectMinCardinality(ope1, 1).Evaluate(evaluator, { ope1: [] }) === false');
                         assert('new ObjectMinCardinality(ope1, 0).Evaluate(evaluator, { ope1: [ {} ] })');
