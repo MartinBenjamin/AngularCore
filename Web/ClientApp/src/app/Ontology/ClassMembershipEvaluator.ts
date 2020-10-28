@@ -343,7 +343,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     {
         return this.DataPropertyValues(
             dataSomeValuesFrom.DataPropertyExpression,
-            individual).some(dataSomeValuesFrom.DataRange.HasMember);
+            individual).some(value => dataSomeValuesFrom.DataRange.HasMember(value));
     }
 
     DataAllValuesFrom(
@@ -353,7 +353,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     {
         return this.DataPropertyValues(
             dataAllValuesFrom.DataPropertyExpression,
-            individual).every(dataAllValuesFrom.DataRange.HasMember);
+            individual).every(value => dataAllValuesFrom.DataRange.HasMember(value));
     }
 
     DataHasValue(
