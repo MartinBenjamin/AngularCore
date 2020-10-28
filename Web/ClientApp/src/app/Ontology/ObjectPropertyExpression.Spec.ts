@@ -6,24 +6,27 @@ import { ObjectPropertyExpression } from './Property';
 import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
 import { IClassExpression } from './IClassExpression';
 
+function expressionEvaluatorBuilder<TResult>(
+    ...argNames
+    ): (...args) => (expression: string) => TResult
+{
+    return function(
+        ...args
+        )
+    {
+        return (expression: string) => new Function(
+            ...argNames,
+            'return ' + expression)(...args);
+    }
+}
+
 function assertBuilder(
-    o1,
-    evaluator,
-    ope1
+    assertionEvaluator: (assertion: string) => boolean
     ): (assertion: string) => void
 {
-    return (
-        assertion: string
-    ): void => it(
+    return (assertion: string): void => it(
         assertion,
-        () => expect(new Function(
-            'o1',
-            'evaluator',
-            'ope1',
-            'return ' + assertion)(
-                o1,
-                evaluator,
-                ope1)).toBe(true));
+        () => expect(assertionEvaluator(assertion)).toBe(true));
 }
 
 describe(
@@ -41,10 +44,11 @@ describe(
                     () =>
                     {
                         let ope1: IObjectPropertyExpression = new ObjectPropertyExpression(o1, 'ope1');
-                        let assert = assertBuilder(
+                        let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
+                        let assert = assertBuilder(expressionEvaluatorBuilder<boolean>('o1', 'evaluator', 'ope1')(
                             o1,
-                            new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>()),
-                            ope1);
+                            evaluator,
+                            ope1));
                         assert('ope1.Ontology === o1');
                         assert('o1.Axioms.includes(ope1)');
                         it(
@@ -53,12 +57,32 @@ describe(
                         assert('evaluator.ObjectPropertyValues(ope1, {}).length === 0');
                         assert('evaluator.ObjectPropertyValues(ope1, { ope1: null }).length === 0');
                         assert('evaluator.ObjectPropertyValues(ope1, { ope1: 6 }).length === 1');
-                        assert('evaluator.ObjectPropertyValues(ope1, { ope1: [1, 2] }).length === 2');
-                        assert('evaluator.ObjectPropertyValues(ope1, { ope1: [1, 2] }).includes(1)');
-                        assert('evaluator.ObjectPropertyValues(ope1, { ope1: [1, 2] }).includes(2)');
-                        assert('evaluator.ObjectPropertyValues(ope1, { ope1: new Set([1, 2]) }).length === 2');
-                        assert('evaluator.ObjectPropertyValues(ope1, { ope1: new Set([1, 2]) }).includes(1)');
-                        assert('evaluator.ObjectPropertyValues(ope1, { ope1: new Set([1, 2]) }).includes(2)');
+
+                        describe(
+                            'Given result = evaluator.ObjectPropertyValues(ope1, { ope1: [1, 2] })',
+                            () =>
+                            {
+                                let result = evaluator.ObjectPropertyValues(ope1, { ope1: [1, 2] });
+                                let assert = assertBuilder(expressionEvaluatorBuilder<boolean>('result')(result));
+                                assert('result.length === 2');
+                                assert('!result.includes(0)');
+                                assert('result.includes(1)');
+                                assert('result.includes(2)');
+                                assert('!result.includes(3)');
+                            });
+
+                        describe(
+                            'Given result = evaluator.ObjectPropertyValues(ope1, { ope1: new Set([1, 2]) })',
+                            () =>
+                            {
+                                let result = evaluator.ObjectPropertyValues(ope1, { ope1: new Set([1, 2]) });
+                                let assert = assertBuilder(expressionEvaluatorBuilder<boolean>('result')(result));
+                                assert('result.length === 2');
+                                assert('!result.includes(0)');
+                                assert('result.includes(1)');
+                                assert('result.includes(2)');
+                                assert('!result.includes(3)');
+                            });
                     });
             });
     });
