@@ -7,7 +7,7 @@ export class DataRange implements IDataRange
     }
 
     HasMember(
-        value: object
+        value: any
         ): boolean
     {
         throw new Error("Method not implemented.");

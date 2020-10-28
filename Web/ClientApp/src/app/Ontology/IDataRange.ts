@@ -1,4 +1,4 @@
 export interface IDataRange
 {
-    HasMember(value: object): boolean;
+    HasMember(value: any): boolean;
 }

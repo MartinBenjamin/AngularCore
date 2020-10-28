@@ -6,7 +6,7 @@ export class DataOneOf
     implements IDataOneOf
 {
     constructor(
-        public Values: object[]
+        public Values: any[]
         )
     {
         super();
@@ -14,9 +14,9 @@ export class DataOneOf
 
 
     HasMember(
-        value: object
+        value: any
         ): boolean
     {
-        return this.Values.contains(value);
+        return this.Values.includes(value);
     }
 }

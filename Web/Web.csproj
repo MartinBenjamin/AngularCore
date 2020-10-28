@@ -78,6 +78,7 @@
     <None Remove="ClientApp\src\app\Ontology\DataIntersectionOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMaxCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMinCardinality.ts" />
+    <None Remove="ClientApp\src\app\Ontology\DataOneOf.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataOneOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataPropertyAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataPropertyDomain.ts" />
@@ -253,6 +254,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataIntersectionOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataMaxCardinality.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataMinCardinality.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataOneOf.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataOneOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataPropertyAxiom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataPropertyDomain.ts" />
