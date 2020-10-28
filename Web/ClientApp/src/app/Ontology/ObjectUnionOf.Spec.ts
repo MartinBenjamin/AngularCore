@@ -1,4 +1,5 @@
 import { } from 'jasmine';
+import { assertBuilder } from './assertBuilder';
 import { Class } from './Class';
 import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
 import { IClassExpression } from './IClassExpression';
@@ -6,38 +7,6 @@ import { IOntology } from "./IOntology";
 import { ClassAssertion, NamedIndividual } from './NamedIndividual';
 import { ObjectUnionOf } from './ObjectUnionOf';
 import { Ontology } from "./Ontology";
-
-function assertBuilder(
-    evaluator,
-    objectUnionOf,
-    c1,
-    c2,
-    i1,
-    i2,
-    i3
-    ): (assertion: string) => void
-{
-    return (
-        assertion: string
-    ): void => it(
-        assertion,
-        () => expect(new Function(
-            'evaluator',
-            'ObjectUnionOf',
-            'c1',
-            'c2',
-            'i1',
-            'i2',
-            'i3',
-            'return ' + assertion)(
-                evaluator,
-                objectUnionOf,
-                c1,
-                c2,
-                i1,
-                i2,
-                i3)).toBe(true));
-}
 
 describe(
     'ObjectUnionOf',
@@ -62,7 +31,8 @@ describe(
                         new ClassAssertion(o1, c2, i2);
                         new ClassAssertion(o1, c2, i3);
                         let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
-                        let assert = assertBuilder(evaluator, ObjectUnionOf, c1, c2, i1, i2, i3);
+                        let assert = assertBuilder('evaluator', 'ObjectUnionOf', 'c1', 'c2', 'i1', 'i2', 'i3')
+                            (evaluator, ObjectUnionOf, c1, c2, i1, i2, i3);
 
                         assert('c1.Evaluate(evaluator, i1)');
                         assert('c1.Evaluate(evaluator, i2) === false');

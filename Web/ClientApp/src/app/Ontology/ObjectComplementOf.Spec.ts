@@ -1,4 +1,5 @@
 import { } from 'jasmine';
+import { assertBuilder } from './assertBuilder';
 import { Class } from "./Class";
 import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
 import { IClassExpression } from './IClassExpression';
@@ -6,35 +7,6 @@ import { IOntology } from "./IOntology";
 import { ClassAssertion, NamedIndividual } from './NamedIndividual';
 import { Ontology } from "./Ontology";
 import { ObjectComplementOf } from './ObjectComplementOf';
-
-function assertBuilder(
-    evaluator,
-    objectComplementOf,
-    c1,
-    c2,
-    i1,
-    i2
-    ): (assertion: string) => void
-{
-    return (
-        assertion: string
-    ): void => it(
-        assertion,
-        () => expect(new Function(
-            'evaluator',
-            'ObjectComplementOf',
-            'c1',
-            'c2',
-            'i1',
-            'i2',
-            'return ' + assertion)(
-                evaluator,
-                objectComplementOf,
-                c1,
-                c2,
-                i1,
-                i2)).toBe(true));
-}
 
 describe(
     'ObjectComplementOf',
@@ -56,7 +28,8 @@ describe(
                         new ClassAssertion(o1, c1, i1);
                         new ClassAssertion(o1, c2, i2);
                         let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
-                        let assert = assertBuilder(evaluator, ObjectComplementOf, c1, c2, i1, i2);
+                        let assert = assertBuilder('evaluator', 'ObjectComplementOf', 'c1', 'c2', 'i1', 'i2')
+                            (evaluator, ObjectComplementOf, c1, c2, i1, i2);
                         assert('c1.Evaluate(evaluator, i1)');
                         assert('new ObjectComplementOf(c1).Evaluate(evaluator, i1) === false');
 

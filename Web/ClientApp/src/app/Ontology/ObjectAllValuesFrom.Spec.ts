@@ -1,4 +1,5 @@
 import { } from 'jasmine';
+import { assertBuilder } from './assertBuilder';
 import { Class } from './Class';
 import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
 import { IClassExpression } from './IClassExpression';
@@ -9,41 +10,6 @@ import { ObjectAllValuesFrom } from './ObjectAllValuesFrom';
 import { ObjectSomeValuesFrom } from './ObjectSomeValuesFrom';
 import { Ontology } from "./Ontology";
 import { ObjectPropertyExpression } from './Property';
-
-function assertBuilder(
-    evaluator,
-    objectAllValuesFrom,
-    ope1,
-    c1,
-    c2,
-    i1,
-    i2,
-    i3
-    ): (assertion: string) => void
-{
-    return (
-        assertion: string
-    ): void => it(
-        assertion,
-        () => expect(new Function(
-            'evaluator',
-            'ObjectAllValuesFrom',
-            'ope1',
-            'c1',
-            'c2',
-            'i1',
-            'i2',
-            'i3',
-            'return ' + assertion)(
-                evaluator,
-                objectAllValuesFrom,
-                ope1,
-                c1,
-                c2,
-                i1,
-                i2,
-                i3)).toBe(true));
-}
 
 describe(
     'ObjectAllValuesFrom',
@@ -68,7 +34,8 @@ describe(
                         new ClassAssertion(o1, c2, i2);
                         new ClassAssertion(o1, c1, i3);
                         let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
-                        let assert = assertBuilder(evaluator, ObjectAllValuesFrom, ope1, c1, c2, i1, i2, i3);
+                        let assert = assertBuilder('evaluator', 'ObjectAllValuesFrom', 'ope1', 'c1', 'c2', 'i1', 'i2', 'i3')
+                            (evaluator, ObjectAllValuesFrom, ope1, c1, c2, i1, i2, i3);
                         new ObjectSomeValuesFrom(ope1, c1).Evaluate(evaluator, { ope1: [i1] })
                         assert('new ObjectAllValuesFrom(ope1, c1).Evaluate(evaluator, { ope1: []})');
                         assert('new ObjectAllValuesFrom(ope1, c1).Evaluate(evaluator, { ope1: [ i1 ] })');
