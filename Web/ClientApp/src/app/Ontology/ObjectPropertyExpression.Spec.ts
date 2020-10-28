@@ -1,26 +1,11 @@
 import { } from 'jasmine';
+import { assertBuilder } from './assertBuilder';
 import { IOntology } from "./IOntology";
 import { IObjectPropertyExpression } from './IPropertyExpression';
 import { Ontology } from "./Ontology";
 import { ObjectPropertyExpression } from './Property';
 import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
 import { IClassExpression } from './IClassExpression';
-
-function assertBuilder(
-    ...argNames
-    ): (...args) => (assertion: string) => void
-{
-    return function(
-        ...args
-        )
-    {
-        return (assertion: string): void => it(
-            assertion,
-            () => expect(new Function(
-                ...argNames,
-                'return ' + assertion)(...args)).toBe(true));
-    }
-}
 
 describe(
     'ObjectPropertyExpression',

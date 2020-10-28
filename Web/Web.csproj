@@ -63,6 +63,7 @@
     <None Remove="ClientApp\src\app\Ontology\AdjacencyList.ts" />
     <None Remove="ClientApp\src\app\Ontology\Annotated.ts" />
     <None Remove="ClientApp\src\app\Ontology\AnnotationProperty.ts" />
+    <None Remove="ClientApp\src\app\Ontology\assertBuilder.ts" />
     <None Remove="ClientApp\src\app\Ontology\Axiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\BuiltIn.ts" />
     <None Remove="ClientApp\src\app\Ontology\Class.Spec.ts" />
@@ -238,6 +239,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AdjacencyList.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Annotated.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AnnotationProperty.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\assertBuilder.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Axiom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\BuiltIn.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Class.Spec.ts" />
