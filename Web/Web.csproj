@@ -151,6 +151,7 @@
     <None Remove="ClientApp\src\app\Ontology\IsAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\ISubClassOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\NamedIndividual.ts" />
+    <None Remove="ClientApp\src\app\Ontology\Nothing.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Nothing.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectAllValuesFrom.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectAllValuesFrom.ts" />
@@ -183,6 +184,7 @@
     <None Remove="ClientApp\src\app\Ontology\PropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\ReservedVocabulary.ts" />
     <None Remove="ClientApp\src\app\Ontology\SubClassOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\Thing.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Thing.ts" />
     <None Remove="ClientApp\src\app\Organisations.ts" />
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
@@ -336,6 +338,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IsAxiom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ISubClassOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\NamedIndividual.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\Nothing.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Nothing.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectAllValuesFrom.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectAllValuesFrom.ts" />
@@ -368,6 +371,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\PropertyRestriction.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ReservedVocabulary.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\SubClassOf.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\Thing.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Thing.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Organisations.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />

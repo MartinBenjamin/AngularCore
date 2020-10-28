@@ -7,7 +7,6 @@ import { IOntology } from "./IOntology";
 import { IObjectPropertyExpression } from './IPropertyExpression';
 import { ClassAssertion, NamedIndividual } from './NamedIndividual';
 import { ObjectMaxCardinality } from './ObjectMaxCardinality';
-import { ObjectSomeValuesFrom } from './ObjectSomeValuesFrom';
 import { Ontology } from "./Ontology";
 import { ObjectPropertyExpression } from './Property';
 
