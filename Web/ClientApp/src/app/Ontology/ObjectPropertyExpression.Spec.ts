@@ -46,7 +46,16 @@ describe(
                             () => expect(Array.from(o1.Get<IObjectPropertyExpression>(o1.IsAxiom.IObjectPropertyExpression)).includes(ope1)).toBe(true));
                         assert('evaluator.ObjectPropertyValues(ope1, {}).length === 0');
                         assert('evaluator.ObjectPropertyValues(ope1, { ope1: null }).length === 0');
-                        assert('evaluator.ObjectPropertyValues(ope1, { ope1: 6 }).length === 1');
+
+                        describe(
+                            'Given result = evaluator.ObjectPropertyValues(ope1, { ope1: 6 })',
+                            () =>
+                            {
+                                let result = evaluator.ObjectPropertyValues(ope1, { ope1: 6 });
+                                let assert = assertBuilder('result')(result);
+                                assert('result.length === 1');
+                                assert('result.includes(6)');
+                            });
 
                         describe(
                             'Given result = evaluator.ObjectPropertyValues(ope1, { ope1: [1, 2] })',

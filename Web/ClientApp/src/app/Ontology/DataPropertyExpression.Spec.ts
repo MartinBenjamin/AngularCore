@@ -7,23 +7,19 @@ import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
 import { IClassExpression } from './IClassExpression';
 
 function assertBuilder(
-    o1,
-    evaluator,
-    dpe1
-    ): (assertion: string) => void
+    ...argNames
+    ): (...args) => (assertion: string) => void
 {
-    return (
-        assertion: string
-    ): void => it(
-        assertion,
-        () => expect(new Function(
-            'o1',
-            'evaluator',
-            'dpe1',
-            'return ' + assertion)(
-                o1,
-                evaluator,
-                dpe1)).toBe(true));
+    return function(
+        ...args
+    )
+    {
+        return (assertion: string): void => it(
+            assertion,
+            () => expect(new Function(
+                ...argNames,
+                'return ' + assertion)(...args)).toBe(true));
+    }
 }
 
 describe(
@@ -41,10 +37,8 @@ describe(
                     () =>
                     {
                         let dpe1: IDataPropertyExpression = new DataPropertyExpression(o1, 'dpe1');
-                        let assert = assertBuilder(
-                            o1,
-                            new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>()),
-                            dpe1);
+                        let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
+                        let assert = assertBuilder('o1', 'evaluator', 'dpe1')(o1, evaluator, dpe1);
                         assert('dpe1.Ontology === o1');
                         assert('o1.Axioms.includes(dpe1)');
                         it(
@@ -53,14 +47,42 @@ describe(
                         assert('Array.isArray(evaluator.DataPropertyValues(dpe1, {}))');
                         assert('evaluator.DataPropertyValues(dpe1, {}).length === 0');
                         assert('evaluator.DataPropertyValues(dpe1, { dpe1: null }).length === 0');
-                        assert('evaluator.DataPropertyValues(dpe1, { dpe1: 6 }).length === 1');
-                        assert('evaluator.DataPropertyValues(dpe1, { dpe1: 6 }).includes(6)');
-                        assert('evaluator.DataPropertyValues(dpe1, { dpe1: [1, 2] }).length === 2');
-                        assert('evaluator.DataPropertyValues(dpe1, { dpe1: [1, 2] }).includes(1)');
-                        assert('evaluator.DataPropertyValues(dpe1, { dpe1: [1, 2] }).includes(2)');
-                        assert('evaluator.DataPropertyValues(dpe1, { dpe1: new Set([1, 2]) }).length === 2');
-                        assert('evaluator.DataPropertyValues(dpe1, { dpe1: new Set([1, 2]) }).includes(1)');
-                        assert('evaluator.DataPropertyValues(dpe1, { dpe1: new Set([1, 2]) }).includes(2)');
+
+                        describe(
+                            'Given result = evaluator.DataPropertyValues(dpe1, { dpe1: 6 })',
+                            () =>
+                            {
+                                let result = evaluator.DataPropertyValues(dpe1, { dpe1: 6 });
+                                let assert = assertBuilder('result')(result);
+                                assert('result.length === 1');
+                                assert('result.includes(6)');
+                            });
+
+                        describe(
+                            'Given result = evaluator.DataPropertyValues(dpe1, { dpe1: [1, 2] })',
+                            () =>
+                            {
+                                let result = evaluator.DataPropertyValues(dpe1, { dpe1: [1, 2] });
+                                let assert = assertBuilder('result')(result);
+                                assert('result.length === 2');
+                                assert('!result.includes(0)');
+                                assert('result.includes(1)');
+                                assert('result.includes(2)');
+                                assert('!result.includes(3)');
+                            });
+
+                        describe(
+                            'Given result = evaluator.DataPropertyValues(dpe1, { dpe1: new Set([1, 2]) })',
+                            () =>
+                            {
+                                let result = evaluator.DataPropertyValues(dpe1, { dpe1: new Set([1, 2]) });
+                                let assert = assertBuilder('result')(result);
+                                assert('result.length === 2');
+                                assert('!result.includes(0)');
+                                assert('result.includes(1)');
+                                assert('result.includes(2)');
+                                assert('!result.includes(3)');
+                            });
                     });
             });
     });
