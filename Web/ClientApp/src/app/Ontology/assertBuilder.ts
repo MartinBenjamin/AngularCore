@@ -4,7 +4,7 @@ export function assertBuilder(
 {
     return function(
         ...args
-    )
+        )
     {
         return (assertion: string): void => it(
             assertion,
