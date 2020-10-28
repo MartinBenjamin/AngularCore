@@ -4,8 +4,6 @@ import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
 import { DataExactCardinality } from './DataExactCardinality';
 import { DataOneOf } from './DataOneOf';
 import { IClassExpression } from './IClassExpression';
-import { IOntology } from "./IOntology";
-import { IDataPropertyExpression, IObjectPropertyExpression } from './IPropertyExpression';
 import { Ontology } from "./Ontology";
 import { DataPropertyExpression, ObjectPropertyExpression } from './Property';
 
@@ -17,14 +15,14 @@ describe(
             'Given an Ontology o1 which declares DataPropertyExpression dpe1:',
             () =>
             {
-                let o1: IOntology = new Ontology('o1');
-                let ope1: IObjectPropertyExpression = new ObjectPropertyExpression(o1, 'ope1');
+                let o1 = new Ontology('o1');
+                let ope1 = new ObjectPropertyExpression(o1, 'ope1');
                 describe(
                     `Given o1 declares Class c1 with members i1 and i2:`,
                     () =>
                     {
-                        let o1: IOntology = new Ontology('o1');
-                        let dpe1: IDataPropertyExpression = new DataPropertyExpression(o1, 'dpe1');
+                        let o1 = new Ontology('o1');
+                        let dpe1 = new DataPropertyExpression(o1, 'dpe1');
                         let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
                         let assert = assertBuilder('evaluator', 'DataExactCardinality', 'DataOneOf', 'dpe1')
                             (evaluator, DataExactCardinality, DataOneOf, dpe1);

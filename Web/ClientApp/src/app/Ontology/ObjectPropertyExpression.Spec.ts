@@ -1,11 +1,10 @@
 import { } from 'jasmine';
 import { assertBuilder } from './assertBuilder';
-import { IOntology } from "./IOntology";
+import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
+import { IClassExpression } from './IClassExpression';
 import { IObjectPropertyExpression } from './IPropertyExpression';
 import { Ontology } from "./Ontology";
 import { ObjectPropertyExpression } from './Property';
-import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
-import { IClassExpression } from './IClassExpression';
 
 describe(
     'ObjectPropertyExpression',
@@ -15,13 +14,13 @@ describe(
             'Given an Ontology o1:',
             () =>
             {
-                let o1: IOntology = new Ontology('o1');
+                let o1 = new Ontology('o1');
 
                 describe(
                     'Given o1 declares ObjectPropertyExpression ope1:',
                     () =>
                     {
-                        let ope1: IObjectPropertyExpression = new ObjectPropertyExpression(o1, 'ope1');
+                        let ope1 = new ObjectPropertyExpression(o1, 'ope1');
                         let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
                         let assert = assertBuilder('o1', 'evaluator', 'ope1')(o1, evaluator, ope1);
                         assert('ope1.Ontology === o1');

@@ -3,7 +3,6 @@ import { assertBuilder } from './assertBuilder';
 import { Class } from "./Class";
 import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
 import { IClassExpression } from './IClassExpression';
-import { IOntology } from "./IOntology";
 import { ClassAssertion, NamedIndividual } from './NamedIndividual';
 import { Ontology } from "./Ontology";
 
@@ -15,7 +14,7 @@ describe(
             'Given an Ontology o1:',
             () =>
             {
-                let o1: IOntology = new Ontology('o1');
+                let o1 = new Ontology('o1');
                 describe(
                     `Given o1 declares Class c1 with member i1 and Class c2 with member i2:`,
                     () =>

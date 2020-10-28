@@ -1,9 +1,7 @@
 import { } from 'jasmine';
-import { Ontology } from "./Ontology";
-import { IOntology } from "./IOntology";
 import { Class } from "./Class";
-import { IClass } from "./IClass";
 import { IAxiom } from './IAxiom';
+import { Ontology } from "./Ontology";
 
 describe(
     'Ontology',
@@ -27,7 +25,7 @@ describe(
             'Given an Ontology o1:',
             () =>
             {
-                let o1: IOntology = new Ontology('o1');
+                let o1 = new Ontology('o1');
                 it(
                     `Array.from(o1.GetOntologies()).includes(o1)`,
                     () => expect(Array.from(o1.GetOntologies()).includes(o1)).toBe(true));
@@ -36,7 +34,7 @@ describe(
                     'Given an Ontology o2 which directly imports o1:',
                     () =>
                     {
-                        let o2: IOntology = new Ontology('o2', o1);
+                        let o2 = new Ontology('o2', o1);
                         it(
                             `Array.from(o2.GetOntologies()).includes(o1)`,
                             () => expect(Array.from(o2.GetOntologies()).includes(o1)).toBe(true));
@@ -60,7 +58,7 @@ describe(
                             'Given an Ontology o3 which directly imports o1 and o2:',
                             () =>
                             {
-                                let o3: IOntology = new Ontology('', o1, o2);
+                                let o3 = new Ontology('', o1, o2);
                                 it(
                                     `Array.from(o3.GetOntologies()).includes(o1)`,
                                     () => expect(Array.from(o3.GetOntologies()).includes(o1)).toBe(true));
@@ -87,7 +85,7 @@ describe(
                             'Given an Ontology o2 which directly imports o1:',
                             () =>
                             {
-                                let o2: IOntology = new Ontology('o2', o1);
+                                let o2 = new Ontology('o2', o1);
                                 it(
                                     'Array.from(o2.Get<IAxiom>(o1.IsAxiom.IAxiom)).includes(a1)',
                                     () => expect(Array.from(o2.Get<IAxiom>(o1.IsAxiom.IAxiom)).includes(a1)).toBe(true));
