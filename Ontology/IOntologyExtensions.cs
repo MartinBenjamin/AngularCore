@@ -354,12 +354,12 @@ namespace Ontology
             return annotation;
         }
 
-        public static IDictionary<object, ISet<IClassExpression>> Classify(
+        public static IDictionary<object, ISet<IClass>> Classify(
             this IOntology ontology,
             object         individual
             )
         {
-            var classifications = new Dictionary<object, ISet<IClassExpression>>();
+            var classifications = new Dictionary<object, ISet<IClass>>();
             var evaluator = new ClassMembershipEvaluator(
                 ontology,
                 classifications);
@@ -376,8 +376,8 @@ namespace Ontology
             )
         {
             (
-                from classExpression in evaluator.Classify(individual)
-                join objectPropertyDomain in ontology.Get<IObjectPropertyDomain>() on classExpression equals objectPropertyDomain.Domain
+                from @class in evaluator.Classify(individual)
+                join objectPropertyDomain in ontology.Get<IObjectPropertyDomain>() on @class equals objectPropertyDomain.Domain
                 from value in evaluator.ObjectPropertyValues(
                     objectPropertyDomain.ObjectPropertyExpression,
                     individual)

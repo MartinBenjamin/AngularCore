@@ -17,7 +17,7 @@ namespace Ontology
         private readonly ILookup<IClassExpression, IClassExpression>         _superClassExpressions;
         private readonly ILookup<IClassExpression, IClassExpression>         _subClassExpressions;
         private readonly ILookup<IClassExpression, IClassExpression>         _disjointClassExpressions;
-        private readonly IDictionary<object, ISet<IClassExpression>>         _classifications;
+        private readonly IDictionary<object, ISet<IClass>>                   _classifications;
 
         private class ClassVisitor: ClassExpressionVisitor
         {
@@ -52,8 +52,8 @@ namespace Ontology
         }
 
         public ClassMembershipEvaluator(
-            IOntology                                   ontology,
-            IDictionary<object, ISet<IClassExpression>> classifications
+            IOntology                         ontology,
+            IDictionary<object, ISet<IClass>> classifications
             )
         {
             _ontology                 = ontology;
@@ -324,33 +324,33 @@ namespace Ontology
                 lhsValues.ToHashSet().SetEquals(lhsValues.ToHashSet());
         }
 
-        public ISet<IClassExpression> Classify(
+        public ISet<IClass> Classify(
             object individual
             )
         {
             if(_classifications.TryGetValue(
                 individual,
-                out ISet<IClassExpression> classExpressions))
-                return classExpressions;
+                out ISet<IClass> classes))
+                return classes;
 
-            _classifications[individual] = classExpressions = new HashSet<IClassExpression>();
+            _classifications[individual] = classes = new HashSet<IClass>();
             var candidates = _definedClasses.ToHashSet();
 
             switch(individual)
             {
                 case INamedIndividual namedIndividual:
                     _classAssertions[namedIndividual].ForEach(classExpression => Classify(
-                            classExpressions,
-                            candidates,
-                            individual,
-                            classExpression));
+                        classes,
+                        candidates,
+                        individual,
+                        classExpression));
                     break;
                 case IIndividual iindividual:
                     if(_classes.TryGetValue(
                         iindividual.ClassIri,
                         out IClass @class))
                         Classify(
-                            classExpressions,
+                            classes,
                             candidates,
                             individual,
                             @class);
@@ -361,7 +361,7 @@ namespace Ontology
                         join type in individual.GetTypes() on @class1.Iri equals type.FullName
                         select @class1
                     ).ForEach(@class1 => Classify(
-                        classExpressions,
+                        classes,
                         candidates,
                         individual,
                         @class1));
@@ -374,40 +374,41 @@ namespace Ontology
                     this,
                     individual))
                     Classify(
-                        classExpressions,
+                        classes,
                         candidates,
                         individual,
                         definedClass);
 
-            return classExpressions;
+            return classes;
         }
 
         private void Classify(
-            ISet<IClassExpression> classExpressions,
-            ISet<IClass>           candidates,
-            object                 individual,
-            IClassExpression       classExpression
+            ISet<IClass>     classes,
+            ISet<IClass>     candidates,
+            object           individual,
+            IClassExpression classExpression
             )
         {
-            if(!classExpressions.Add(classExpression))
-                // Class Expression already processed.
-                return;
-
-            // Prune candidates.
             if(classExpression is IClass @class)
-                candidates.Remove(@class);
-            candidates.ExceptWith(_disjointClassExpressions[classExpression].OfType<IClass>());
+            {
+                if(!classes.Add(@class))
+                    // Class Expression already processed.
+                    return;
 
-            _superClassExpressions[classExpression].ForEach(superClassExpression => Classify(
-                    classExpressions,
+                // Prune candidates.
+                candidates.Remove(@class);
+                candidates.ExceptWith(_disjointClassExpressions[classExpression].OfType<IClass>());
+
+                _superClassExpressions[classExpression].ForEach(superClassExpression => Classify(
+                    classes,
                     candidates,
                     individual,
                     superClassExpression));
-
-            if(classExpression is IObjectIntersectionOf objectIntersectionOf)
+            }
+            else if(classExpression is IObjectIntersectionOf objectIntersectionOf)
                 objectIntersectionOf.ClassExpressions
                     .ForEach(componentClassExpression => Classify(
-                        classExpressions,
+                        classes,
                         candidates,
                         individual,
                         componentClassExpression));

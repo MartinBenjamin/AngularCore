@@ -388,8 +388,8 @@ namespace Deals
     public static class ClassificationsExtensions
     {
         public static IDictionary<object, ILookup<IPropertyExpression, ISubClassOf>> Validate(
-            this IOntology                              ontology,
-            IDictionary<object, ISet<IClassExpression>> classifications
+            this IOntology                    ontology,
+            IDictionary<object, ISet<IClass>> classifications
             )
         {
             var evaluator = new ClassMembershipEvaluator(
