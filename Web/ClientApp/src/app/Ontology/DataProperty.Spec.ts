@@ -6,7 +6,7 @@ import { Ontology } from "./Ontology";
 import { DataProperty } from './Property';
 
 describe(
-    'DataPropertyExpression',
+    'DataProperty',
     () =>
     {
         describe(

@@ -86,9 +86,9 @@
     <None Remove="ClientApp\src\app\Ontology\DataMinCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataOneOf.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataOneOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\DataProperty.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataPropertyAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataPropertyDomain.ts" />
-    <None Remove="ClientApp\src\app\Ontology\DataPropertyExpression.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataPropertyRange.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataPropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataRange.ts" />
@@ -170,9 +170,9 @@
     <None Remove="ClientApp\src\app\Ontology\ObjectMinCardinality.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMinCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectOneOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectProperty.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyDomain.ts" />
-    <None Remove="ClientApp\src\app\Ontology\ObjectPropertyExpression.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyRange.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectSomeValuesFrom.Spec.ts" />
@@ -275,7 +275,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataOneOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataPropertyAxiom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataPropertyDomain.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataPropertyExpression.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataProperty.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataPropertyRange.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataPropertyRestriction.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataRange.ts" />
@@ -360,7 +360,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectOneOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectPropertyAxiom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectPropertyDomain.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectPropertyExpression.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectProperty.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectPropertyRange.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectPropertyRestriction.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectSomeValuesFrom.Spec.ts" />
