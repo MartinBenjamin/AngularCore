@@ -601,7 +601,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         return values.length ? values[0] : null;
     }
 
-    private AreEqual(
+    public AreEqual(
         lhs: object,
         rhs: object
         ): boolean
