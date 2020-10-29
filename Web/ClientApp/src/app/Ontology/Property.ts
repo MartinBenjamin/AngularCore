@@ -2,7 +2,7 @@ import { Entity } from "./Entity";
 import { IOntology } from "./IOntology";
 import { IObjectPropertyExpression } from "./IPropertyExpression";
 
-export class ObjectPropertyExpression
+export class ObjectProperty
     extends Entity
     implements IObjectPropertyExpression
 {
@@ -17,7 +17,7 @@ export class ObjectPropertyExpression
     }
 }
 
-export class DataPropertyExpression
+export class DataProperty
     extends Entity
     implements IObjectPropertyExpression
 {

@@ -29,7 +29,7 @@ describe(
                         new ClassAssertion(o1, c1, i3);
                         new ClassAssertion(o1, c2, i2);
                         new ClassAssertion(o1, c2, i3);
-                        let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
+                        let evaluator = new ClassMembershipEvaluator(o1);
                         let assert = assertBuilder('evaluator', 'ObjectIntersectionOf', 'c1', 'c2', 'i1', 'i2', 'i3')
                             (evaluator, ObjectIntersectionOf, c1, c2, i1, i2, i3);
                         assert('c1.Evaluate(evaluator, i1)');

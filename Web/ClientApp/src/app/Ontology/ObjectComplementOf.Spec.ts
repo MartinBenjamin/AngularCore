@@ -26,7 +26,7 @@ describe(
                         let i2 = new NamedIndividual(o1, 'i2');
                         new ClassAssertion(o1, c1, i1);
                         new ClassAssertion(o1, c2, i2);
-                        let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
+                        let evaluator = new ClassMembershipEvaluator(o1);
                         let assert = assertBuilder('evaluator', 'ObjectComplementOf', 'c1', 'c2', 'i1', 'i2')
                             (evaluator, ObjectComplementOf, c1, c2, i1, i2);
                         assert('c1.Evaluate(evaluator, i1)');

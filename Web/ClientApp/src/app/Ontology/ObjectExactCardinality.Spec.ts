@@ -6,18 +6,18 @@ import { IClassExpression } from './IClassExpression';
 import { ClassAssertion, NamedIndividual } from './NamedIndividual';
 import { ObjectExactCardinality } from './ObjectExactCardinality';
 import { Ontology } from "./Ontology";
-import { ObjectPropertyExpression } from './Property';
+import { ObjectProperty } from './Property';
 
 describe(
     'ObjectExactCardinality',
     () =>
     {
         describe(
-            'Given an Ontology o1 which declares ObjectPropertyExpression ope1:',
+            'Given an Ontology o1 which declares ObjectProperty op1:',
             () =>
             {
                 let o1 = new Ontology('o1');
-                let ope1 = new ObjectPropertyExpression(o1, 'ope1');
+                let op1 = new ObjectProperty(o1, 'op1');
                 describe(
                     `Given o1 declares Class c1 with members i1 and i2:`,
                     () =>
@@ -27,16 +27,16 @@ describe(
                         let i2 = new NamedIndividual(o1, 'i2');
                         new ClassAssertion(o1, c1, i1);
                         new ClassAssertion(o1, c1, i2);
-                        let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
-                        let assert = assertBuilder('evaluator', 'ObjectExactCardinality', 'ope1', 'c1', 'i1', 'i2')
-                            (evaluator, ObjectExactCardinality, ope1, c1, i1, i2);
-                        assert('new ObjectExactCardinality(ope1, 0).Evaluate(evaluator, { ope1: [ {} ] }) === false');
-                        assert('new ObjectExactCardinality(ope1, 1).Evaluate(evaluator, { ope1: [ {} ] })');
-                        assert('new ObjectExactCardinality(ope1, 2).Evaluate(evaluator, { ope1: [ {} ] }) === false');
-                        assert('new ObjectExactCardinality(ope1, 0, c1).Evaluate(evaluator, { ope1: [ {}, i1 ] }) === false');
-                        assert('new ObjectExactCardinality(ope1, 1, c1).Evaluate(evaluator, { ope1: [ {}, i1 ] })');
-                        assert('new ObjectExactCardinality(ope1, 2, c1).Evaluate(evaluator, { ope1: [ {}, i1 ] }) === false');
-                        assert('new ObjectExactCardinality(ope1, 2, c1).Evaluate(evaluator, { ope1: [ {}, i1, i2 ] })');
+                        let evaluator = new ClassMembershipEvaluator(o1);
+                        let assert = assertBuilder('evaluator', 'ObjectExactCardinality', 'op1', 'c1', 'i1', 'i2')
+                            (evaluator, ObjectExactCardinality, op1, c1, i1, i2);
+                        assert('new ObjectExactCardinality(op1, 0).Evaluate(evaluator, { op1: [ {} ] }) === false');
+                        assert('new ObjectExactCardinality(op1, 1).Evaluate(evaluator, { op1: [ {} ] })');
+                        assert('new ObjectExactCardinality(op1, 2).Evaluate(evaluator, { op1: [ {} ] }) === false');
+                        assert('new ObjectExactCardinality(op1, 0, c1).Evaluate(evaluator, { op1: [ {}, i1 ] }) === false');
+                        assert('new ObjectExactCardinality(op1, 1, c1).Evaluate(evaluator, { op1: [ {}, i1 ] })');
+                        assert('new ObjectExactCardinality(op1, 2, c1).Evaluate(evaluator, { op1: [ {}, i1 ] }) === false');
+                        assert('new ObjectExactCardinality(op1, 2, c1).Evaluate(evaluator, { op1: [ {}, i1, i2 ] })');
                     });
             });
     });

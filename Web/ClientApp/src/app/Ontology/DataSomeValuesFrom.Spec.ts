@@ -3,26 +3,25 @@ import { assertBuilder } from './assertBuilder';
 import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
 import { DataOneOf } from './DataOneOf';
 import { DataSomeValuesFrom } from './DataSomeValuesFrom';
-import { IClassExpression } from './IClassExpression';
 import { Ontology } from "./Ontology";
-import { DataPropertyExpression } from './Property';
+import { DataProperty } from './Property';
 
 describe(
     'DataSomeValuesFrom',
     () =>
     {
         describe(
-            'Given an Ontology o1 which declares DataPropertyExpression dpe1:',
+            'Given an Ontology o1 which declares DataProperty dp1:',
             () =>
             {
                 let o1 = new Ontology('o1');
-                let dpe1 = new DataPropertyExpression(o1, 'dpe1');
-                let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
-                let assert = assertBuilder('evaluator', 'DataSomeValuesFrom', 'DataOneOf', 'dpe1')
-                    (evaluator, DataSomeValuesFrom, DataOneOf, dpe1);
-                assert('!new DataSomeValuesFrom(dpe1, new DataOneOf([ 1 ])).Evaluate(evaluator, { dpe1: [] })');
-                assert('new DataSomeValuesFrom(dpe1, new DataOneOf([ 1 ])).Evaluate(evaluator, { dpe1: [ 1 ] })');
-                assert('new DataSomeValuesFrom(dpe1, new DataOneOf([ 1 ])).Evaluate(evaluator, { dpe1: [ 1, 2 ] })');
-                assert('!new DataSomeValuesFrom(dpe1, new DataOneOf([ 1 ])).Evaluate(evaluator, { dpe1: [ 2 ] })');
+                let dp1 = new DataProperty(o1, 'dp1');
+                let evaluator = new ClassMembershipEvaluator(o1);
+                let assert = assertBuilder('evaluator', 'DataSomeValuesFrom', 'DataOneOf', 'dp1')
+                    (evaluator, DataSomeValuesFrom, DataOneOf, dp1);
+                assert('!new DataSomeValuesFrom(dp1, new DataOneOf([ 1 ])).Evaluate(evaluator, { dp1: [] })');
+                assert('new DataSomeValuesFrom(dp1, new DataOneOf([ 1 ])).Evaluate(evaluator, { dp1: [ 1 ] })');
+                assert('new DataSomeValuesFrom(dp1, new DataOneOf([ 1 ])).Evaluate(evaluator, { dp1: [ 1, 2 ] })');
+                assert('!new DataSomeValuesFrom(dp1, new DataOneOf([ 1 ])).Evaluate(evaluator, { dp1: [ 2 ] })');
             });
     });
