@@ -200,7 +200,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual: object
         ): boolean
     {
-        return [...this.Classify(individual)].includes(class$);
+        return this.Classify(individual).has(class$);
     }
 
     ObjectIntersectionOf(
