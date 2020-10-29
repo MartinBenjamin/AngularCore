@@ -26,21 +26,21 @@ describe(
                         let i2 = new NamedIndividual(o1, 'i2');
                         let i3 = new NamedIndividual(o1, 'i3');
                         new ClassAssertion(o1, c1, i1);
-                        new ClassAssertion(o1, c1, i3);
+                        new ClassAssertion(o1, c1, i2);
                         new ClassAssertion(o1, c2, i2);
                         new ClassAssertion(o1, c2, i3);
                         let evaluator = new ClassMembershipEvaluator(o1);
                         let assert = assertBuilder('evaluator', 'ObjectIntersectionOf', 'c1', 'c2', 'i1', 'i2', 'i3')
                             (evaluator, ObjectIntersectionOf, c1, c2, i1, i2, i3);
                         assert('c1.Evaluate(evaluator, i1)');
-                        assert('c1.Evaluate(evaluator, i2) === false');
-                        assert('c1.Evaluate(evaluator, i3)');
+                        assert('c1.Evaluate(evaluator, i2)');
+                        assert('c1.Evaluate(evaluator, i3) === false');
                         assert('c2.Evaluate(evaluator, i1) === false');
                         assert('c2.Evaluate(evaluator, i2)');
                         assert('c2.Evaluate(evaluator, i3)');
                         assert('new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i1) === false');
-                        assert('new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i2) === false');
-                        assert('new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i3)');
+                        assert('new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i2)');
+                        assert('new ObjectIntersectionOf([c1, c2]).Evaluate(evaluator, i3) === false');
                     });
             });
     });
