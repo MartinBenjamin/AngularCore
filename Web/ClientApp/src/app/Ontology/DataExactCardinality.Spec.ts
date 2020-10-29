@@ -3,7 +3,6 @@ import { assertBuilder } from './assertBuilder';
 import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
 import { DataExactCardinality } from './DataExactCardinality';
 import { DataOneOf } from './DataOneOf';
-import { IClassExpression } from './IClassExpression';
 import { Ontology } from "./Ontology";
 import { DataPropertyExpression, ObjectPropertyExpression } from './Property';
 
@@ -23,7 +22,7 @@ describe(
                     {
                         let o1 = new Ontology('o1');
                         let dpe1 = new DataPropertyExpression(o1, 'dpe1');
-                        let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
+                        let evaluator = new ClassMembershipEvaluator(o1);
                         let assert = assertBuilder('evaluator', 'DataExactCardinality', 'DataOneOf', 'dpe1')
                             (evaluator, DataExactCardinality, DataOneOf, dpe1);
                         assert('new DataExactCardinality(dpe1, 0).Evaluate(evaluator, { dpe1: [ 1 ] }) === false');

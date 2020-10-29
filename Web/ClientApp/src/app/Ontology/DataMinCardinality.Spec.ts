@@ -3,7 +3,6 @@ import { assertBuilder } from './assertBuilder';
 import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
 import { DataMinCardinality } from './DataMinCardinality';
 import { DataOneOf } from './DataOneOf';
-import { IClassExpression } from './IClassExpression';
 import { Ontology } from "./Ontology";
 import { DataPropertyExpression } from './Property';
 
@@ -17,7 +16,7 @@ describe(
             {
                 let o1 = new Ontology('o1');
                 let dpe1 = new DataPropertyExpression(o1, 'dpe1');
-                let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
+                let evaluator = new ClassMembershipEvaluator(o1);
                 let assert = assertBuilder('evaluator', 'DataMinCardinality', 'DataOneOf', 'dpe1')
                     (evaluator, DataMinCardinality, DataOneOf, dpe1);
                 assert('new DataMinCardinality(dpe1, 0).Evaluate(evaluator, { dpe1: [] })');

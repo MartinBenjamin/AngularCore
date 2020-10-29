@@ -1,7 +1,6 @@
 import { } from 'jasmine';
 import { assertBuilder } from './assertBuilder';
 import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
-import { IClassExpression } from './IClassExpression';
 import { IDataPropertyExpression } from './IPropertyExpression';
 import { Ontology } from "./Ontology";
 import { DataPropertyExpression } from './Property';
@@ -21,7 +20,7 @@ describe(
                     () =>
                     {
                         let dpe1 = new DataPropertyExpression(o1, 'dpe1');
-                        let evaluator = new ClassMembershipEvaluator(o1, new Map<object, Set<IClassExpression>>());
+                        let evaluator = new ClassMembershipEvaluator(o1);
                         let assert = assertBuilder('o1', 'evaluator', 'dpe1')(o1, evaluator, dpe1);
                         assert('dpe1.Ontology === o1');
                         assert('o1.Axioms.includes(dpe1)');
