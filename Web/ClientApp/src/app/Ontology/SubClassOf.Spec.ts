@@ -1,8 +1,8 @@
 import { } from 'jasmine';
-import { Ontology } from './Ontology';
-import { Class } from './Class';
-import { NamedIndividual, ClassAssertion } from './NamedIndividual';
 import { assertBuilder } from './assertBuilder';
+import { Class } from './Class';
+import { ClassAssertion, NamedIndividual } from './NamedIndividual';
+import { Ontology } from './Ontology';
 import { SubClassOf } from './SubClassOf';
 
 describe(
