@@ -184,6 +184,7 @@
     <None Remove="ClientApp\src\app\Ontology\Property.ts" />
     <None Remove="ClientApp\src\app\Ontology\PropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\ReservedVocabulary.ts" />
+    <None Remove="ClientApp\src\app\Ontology\SubClassOf.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\SubClassOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\Thing.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Thing.ts" />
@@ -372,6 +373,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Property.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\PropertyRestriction.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ReservedVocabulary.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\SubClassOf.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\SubClassOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Thing.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Thing.ts" />

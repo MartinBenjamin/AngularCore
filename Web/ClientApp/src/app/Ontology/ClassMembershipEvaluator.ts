@@ -118,7 +118,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
             ontology.Get(ontology.IsAxiom.ISubClassOf),
             subClassOf => subClassOf.SubClassExpression,
             subClassOf => subClassOf.SuperClassExpression);
-        this._superClassExpressions = Group(
+        this._subClassExpressions = Group(
             ontology.Get(ontology.IsAxiom.ISubClassOf),
             subClassOf => subClassOf.SuperClassExpression,
             subClassOf => subClassOf.SubClassExpression);
