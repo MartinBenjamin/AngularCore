@@ -79,6 +79,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     private readonly _functionalDataProperties = new Set<IDataPropertyExpression>();
     private readonly _classDefinitions         : Map<IClass, IClassExpression[]>;
     private readonly _definedClasses           : IClass[];
+    private readonly _objectPropertyExpressions: Map<IClassExpression, IObjectPropertyExpression[]>;
     private readonly _classifications          : Map<object, Set<IClass>>;
 
     constructor(
@@ -121,6 +122,10 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
             ontology.Get(ontology.IsAxiom.ISubClassOf),
             subClassOf => subClassOf.SuperClassExpression,
             subClassOf => subClassOf.SubClassExpression);
+        this._objectPropertyExpressions = Group(
+            ontology.Get(ontology.IsAxiom.IObjectPropertyDomain),
+            objectPropertyDomain => objectPropertyDomain.Domain,
+            objectPropertyDomain => objectPropertyDomain.ObjectPropertyExpression);
 
         let disjointPairs: [IClassExpression, IClassExpression][] = [];
         for(let disjointClasses of ontology.Get(ontology.IsAxiom.IDisjointClasses))
@@ -503,6 +508,22 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         //            candidates,
         //            individual,
         //            componentClassExpression));
+    }
+
+    public ClassifyAll(
+        individual: object,
+        ): void
+    {
+        for(let class$ of this.Classify(individual))
+        {
+            let objectPropertyExpressions = this._objectPropertyExpressions.get(class$);
+            if(objectPropertyExpressions)
+                for(let objectPropertyExpression of objectPropertyExpressions)
+                    for(let value of this.ObjectPropertyValues(
+                        objectPropertyExpression,
+                        individual))
+                        this.ClassifyAll(value);
+        }
     }
 
     public ObjectPropertyValues(

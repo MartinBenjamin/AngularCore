@@ -49,30 +49,10 @@ export class Ontology implements IOntology
         ) : Map<object, Set<IClass>>
     {
         let classifications = new Map<object, Set<IClass>>()
-        let evaluator = new ClassMembershipEvaluator(
+        new ClassMembershipEvaluator(
             this,
-            classifications);
-
-        this.Classify_(
-            evaluator,
-            individual);
+            classifications).ClassifyAll(individual);
 
         return classifications;
-    }
-
-    private Classify_(
-        evaluator : ClassMembershipEvaluator,
-        individual: object,
-        ): void
-    {
-        for(let class$ of evaluator.Classify(individual))
-            for(let objectPropertyDomain of this.Get(this.IsAxiom.IObjectPropertyDomain))
-                if(objectPropertyDomain.Domain === class$)
-                    for(let value of evaluator.ObjectPropertyValues(
-                        objectPropertyDomain.ObjectPropertyExpression,
-                        individual))
-                        this.Classify_(
-                            evaluator,
-                            value);
     }
 }

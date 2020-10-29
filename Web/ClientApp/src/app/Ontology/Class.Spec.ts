@@ -37,6 +37,17 @@ describe(
                         assert('c1.Evaluate(evaluator, {}) === false');
                         assert('c1.Evaluate(evaluator, { ClassIri: "abc"}) === false');
                         assert('c1.Evaluate(evaluator, { ClassIri: "o1.c1"})');
+
+                        describe(
+                            'Given result = o1.Classify(i1)',
+                            () =>
+                            {
+                                let result = o1.Classify(i1);
+                                let assert = assertBuilder('result', 'c1', 'c2', 'i1')(result, c1, c2, i1);
+                                assert('result.has(i1)')
+                                assert('result.get(i1).size === 1');
+                                assert('result.get(i1).has(c1)');
+                            });
                     });
             });
     });
