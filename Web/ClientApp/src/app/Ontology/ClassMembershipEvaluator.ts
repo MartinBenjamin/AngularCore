@@ -429,7 +429,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
             individual,
             classes);
 
-        let candidates = new Set<IClass>();
+        let candidates = new Set<IClass>(this._definedClasses);
 
         if(this._ontology.IsAxiom.INamedIndividual(individual))
         {

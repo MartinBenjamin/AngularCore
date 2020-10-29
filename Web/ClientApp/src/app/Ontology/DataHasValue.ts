@@ -10,7 +10,7 @@ export class DataHasValue
 {
     public constructor(
         dataPropertyExpression: IDataPropertyExpression,
-        public Value          : object
+        public Value          : any
         )
     {
         super(dataPropertyExpression)
