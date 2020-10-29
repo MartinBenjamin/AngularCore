@@ -48,7 +48,6 @@ describe(
                         assert('!evaluator.AreEqual({ ClassIri: "o1.c1", dp1: 1 }, { ClassIri: "o1.c1", dp1: 2 })');
                         assert('!evaluator.AreEqual({ ClassIri: "o1.c1", dp1: 1 }, { ClassIri: "o1.c2", dp1: 1 })');
                         assert('!evaluator.AreEqual({ ClassIri: "o1.c1", dp1: 1 }, { ClassIri: "o1.c1", dp1: [ 1, 2 ] })');
-                        assert('!evaluator.AreEqual({ ClassIri: "o1.c1", dp1: 1 }, { ClassIri: "o1.c1", dp1: [ 1, 2 ] })');
                         assert('evaluator.AreEqual({ ClassIri: "o1.c1", dp1: [ 1, 2 ] }, { ClassIri: "o1.c1", dp1: [ 1, 2 ] })');
                         assert('evaluator.AreEqual({ ClassIri: "o1.c1", dp1: [ 2, 1 ] }, { ClassIri: "o1.c1", dp1: [ 1, 2 ] })');
                         assert('evaluator.AreEqual({ ClassIri: "o1.c1", dp1: [ 2, 1 ] }, { ClassIri: "o1.c1", dp1: [ 2, 1 ] })');
