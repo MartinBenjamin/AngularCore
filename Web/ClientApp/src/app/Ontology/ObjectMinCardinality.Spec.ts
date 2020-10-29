@@ -2,7 +2,6 @@ import { } from 'jasmine';
 import { assertBuilder } from './assertBuilder';
 import { Class } from './Class';
 import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
-import { IClassExpression } from './IClassExpression';
 import { ClassAssertion, NamedIndividual } from './NamedIndividual';
 import { ObjectMinCardinality } from './ObjectMinCardinality';
 import { Ontology } from "./Ontology";
