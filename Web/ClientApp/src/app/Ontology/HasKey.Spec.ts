@@ -26,7 +26,7 @@ describe(
                 assert('!evaluator.AreEqual(i1, i1)');
 
                 describe(
-                    'Given additional declarations HasKey(c1, [ dpe1 ]): ',
+                    'Given additional declaration HasKey(c1, [ dpe1 ]): ',
                     () =>
                     {
                         new HasKey(o1, c1, [dpe1]);
@@ -37,6 +37,19 @@ describe(
                         assert('!evaluator.AreEqual(i1, { ClassIri: "o1.c1", dpe1: 0 })');
                         assert('evaluator.AreEqual(i1, { ClassIri: "o1.c1", dpe1: 1 })');
                         assert('evaluator.AreEqual(i1, { ClassIri: "o1.c1", dpe1: [ 1 ] })');
+                        assert('!evaluator.AreEqual(i1, { ClassIri: "o1.c1", dpe1: [ 1, 2 ] })');
+
+                        describe(
+                            'Given additional declaration DataPropertyAssertion(dpe1, i1, 2):',
+                            () =>
+                            {
+                                new DataPropertyAssertion(o1, dpe1, i1, 2);
+                                evaluator = new ClassMembershipEvaluator(o1);
+                                let assert = assertBuilder('evaluator', 'i1')(evaluator, i1);
+                                assert('!evaluator.AreEqual(i1, { ClassIri: "o1.c1", dpe1: [ 1 ] })');
+                                assert('evaluator.AreEqual(i1, { ClassIri: "o1.c1", dpe1: [ 1, 2 ] })');
+                                assert('evaluator.AreEqual(i1, { ClassIri: "o1.c1", dpe1: [ 2, 1 ] })');
+                            });
                     });
             });
     });
