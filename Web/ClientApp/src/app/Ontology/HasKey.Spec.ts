@@ -12,7 +12,7 @@ describe(
     () =>
     {
         describe(
-            'Given an Ontology o1 with declarations Class(c1), NamedIndividual(i1), ClassAssertion(c1, i1), DataPropertyExpression(dpe1)) and DataPropertyAssertion(dpe1, i1, 1): ',
+            'Given an Ontology o1 with declarations Class(c1), NamedIndividual(i1), ClassAssertion(c1, i1), DataPropertyExpression(dpe1) and DataPropertyAssertion(dpe1, i1, 1): ',
             () =>
             {
                 let o1 = new Ontology('o1');
