@@ -69,7 +69,7 @@ describe(
             });
 
         describe(
-            'Given an Ontology o1 with declarations Class(c1), DataProperty(dp1), FunctionalDataProperty(dp1) and HasKey(c1, [ dp1 ]: ',
+            'Given an Ontology o1 with declarations Class(c1), DataProperty(dp1), FunctionalDataProperty(dp1) and HasKey(c1, [ dp1 ]): ',
             () =>
             {
                 let o1 = new Ontology('o1');
