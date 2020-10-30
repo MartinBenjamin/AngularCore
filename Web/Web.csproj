@@ -60,6 +60,7 @@
     <None Remove="ClientApp\src\app\NamedFinder.ts" />
     <None Remove="ClientApp\src\app\ObservableDomainObjectStore.ts" />
     <None Remove="ClientApp\src\app\ObservableNamedStore.ts" />
+    <None Remove="ClientApp\src\app\Ontologies\CommonDomainObjects.ts" />
     <None Remove="ClientApp\src\app\Ontology\AdjacencyList.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\AdjacencyList.ts" />
     <None Remove="ClientApp\src\app\Ontology\Annotated.ts" />
@@ -251,6 +252,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\NamedFinder.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\ObservableDomainObjectStore.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\ObservableNamedStore.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontologies\CommonDomainObjects.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AdjacencyList.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AdjacencyList.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Annotated.ts" />

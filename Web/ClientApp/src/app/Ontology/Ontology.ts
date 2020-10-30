@@ -1,9 +1,12 @@
+import { Class } from "./Class";
 import { ClassMembershipEvaluator } from "./ClassMembershipEvaluator";
+import { FunctionalDataProperty } from "./FunctionalDataProperty";
 import { IAxiom } from "./IAxiom";
-import { IOntology } from "./IOntology";
-import { IsAxiom } from "./IsAxiom";
 import { IClass } from "./IClass";
-import { IObjectPropertyDomain } from "./IObjectPropertyDomain";
+import { IOntology } from "./IOntology";
+import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
+import { IsAxiom } from "./IsAxiom";
+import { DataProperty, ObjectProperty } from "./Property";
 
 export class Ontology implements IOntology
 {
@@ -54,5 +57,42 @@ export class Ontology implements IOntology
             classifications).ClassifyAll(individual);
 
         return classifications;
+    }
+
+    DeclareClass(
+        localName: string
+        ): IClass
+    {
+        return new Class(
+            this,
+            localName);
+    }
+
+    DeclareObjectProperty(
+        localName: string
+        ): IObjectPropertyExpression
+    {
+        return new ObjectProperty(
+            this,
+            localName);
+    }
+
+    DeclareDataProperty(
+        localName: string
+        ): IDataPropertyExpression
+    {
+        return new DataProperty(
+            this,
+            localName);
+    }
+
+    DeclareFunctionalDataProperty(
+        localName: string
+        ): IDataPropertyExpression
+    {
+        let dataProperty = this.DeclareDataProperty(localName);
+        new FunctionalDataProperty(this,
+            dataProperty);
+        return dataProperty;
     }
 }
