@@ -4,11 +4,11 @@ import { IDataPropertyExpression } from "../Ontology/IPropertyExpression";
 
 export class CommonDomainObjects extends Ontology
 {
-    DomainObject: IClass;
-    Id          : IDataPropertyExpression;
-    Named       : IClass                 
-    Name        : IDataPropertyExpression;
-    Classifier  : IClass                 
+    readonly DomainObject: IClass;
+    readonly Id          : IDataPropertyExpression;
+    readonly Named       : IClass                 
+    readonly Name        : IDataPropertyExpression;
+    readonly Classifier  : IClass                 
 
     constructor()
     {
@@ -26,3 +26,5 @@ export class CommonDomainObjects extends Ontology
         this.Classifier.SubClassOf(this.Named);
     }
 }
+
+export let commonDomainObjects = new CommonDomainObjects();
