@@ -61,6 +61,7 @@
     <None Remove="ClientApp\src\app\ObservableDomainObjectStore.ts" />
     <None Remove="ClientApp\src\app\ObservableNamedStore.ts" />
     <None Remove="ClientApp\src\app\Ontologies\CommonDomainObjects.ts" />
+    <None Remove="ClientApp\src\app\Ontologies\LegalEntities.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Organisations.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Roles.ts" />
     <None Remove="ClientApp\src\app\Ontology\AdjacencyList.Spec.ts" />
@@ -255,6 +256,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\ObservableDomainObjectStore.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\ObservableNamedStore.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\CommonDomainObjects.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontologies\LegalEntities.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Organisations.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Roles.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AdjacencyList.Spec.ts" />

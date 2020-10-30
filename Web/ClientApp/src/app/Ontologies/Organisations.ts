@@ -13,3 +13,5 @@ export class Organisations extends Ontology
         this.Organisation.SubClassOf(commonDomainObjects.Named);
     }
 }
+
+export let organisations = new Organisations();
