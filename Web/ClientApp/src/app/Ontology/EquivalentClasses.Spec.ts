@@ -11,7 +11,7 @@ describe(
     () =>
     {
         describe(
-            'Given ontology o1 ...:',
+            'Given ontology o1:',
             () =>
             {
                 let o1 = new Ontology('o1');
