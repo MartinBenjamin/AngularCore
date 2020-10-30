@@ -13,7 +13,7 @@ export function LongestPath<TVertex, TAdjacent extends Iterable<TVertex>>(
                 LongestPath(
                     graph,
                     longestPaths,
-                    adjacentVertex));
+                    adjacentVertex) + 1);
         longestPaths.set(
             vertex,
             longestPath);
