@@ -6,32 +6,32 @@ describe(
     () =>
     {
         describe(
-            'Given A is adjacent to B and C and B is adjacent to D:',
+            'Given A is adjacent to B, A is adjacent to C and B is adjacent to D:',
             () =>
             {
-                let a = {};
-                let b = {};
-                let c = {};
-                let d = {};
-                let adjacencyList = new Map<object, object[]>();
-                adjacencyList.set(a, [b, c]);
-                adjacencyList.set(b, [d]);
-                adjacencyList.set(c, []);
-                adjacencyList.set(d, []);
+                let A = 1;
+                let B = 2;
+                let C = 3;
+                let D = 4;
+                let adjacencyList = new Map<number, number[]>();
+                adjacencyList.set(A, [B, C]);
+                adjacencyList.set(B, [D]);
+                adjacencyList.set(C, []);
+                adjacencyList.set(D, []);
 
                 let longestPaths = LongestPaths(adjacencyList);
                 it(
                     'The longest path of A is 2',
-                    () => expect(longestPaths.get(a)).toBe(2));
+                    () => expect(longestPaths.get(A)).toBe(2));
                 it(
                     'The longest path of B is 1',
-                    () => expect(longestPaths.get(b)).toBe(1));
+                    () => expect(longestPaths.get(B)).toBe(1));
                 it(
                     'The longest path of C is 0',
-                    () => expect(longestPaths.get(c)).toBe(0));
+                    () => expect(longestPaths.get(C)).toBe(0));
                 it(
                     'The longest path of D is 0',
-                    () => expect(longestPaths.get(d)).toBe(0));
+                    () => expect(longestPaths.get(D)).toBe(0));
             });
 
 
