@@ -17,7 +17,7 @@ export interface IOntology
         individual: object,
         evaluator?: ClassMembershipEvaluator): Map<object, Set<IClass>>;
 
-    // Provided tp assist programatic construction of ontologies.
+    // Provided to assist programatic construction of ontologies.
     DeclareClass(localName: string): IClass;
     DeclareObjectProperty(localName: string): IObjectPropertyExpression;
     DeclareDataProperty(localName: string): IDataPropertyExpression;
