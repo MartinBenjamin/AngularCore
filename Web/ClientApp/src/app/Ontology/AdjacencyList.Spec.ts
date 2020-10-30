@@ -39,16 +39,13 @@ describe(
             'Given A is adjacent to B and B is adjacent to C:',
             () =>
             {
-                let a = {};
-                let b = {};
-                let c = {};
-                let adjacencyList = new Map<object, object[]>();
-                adjacencyList.set(a, [b]);
-                adjacencyList.set(b, [c]);
-                adjacencyList.set(c, []);
+                let adjacencyList = new Map<number, number[]>();
+                adjacencyList.set(1, [2]);
+                adjacencyList.set(2, [3]);
+                adjacencyList.set(3, []);
 
                 it(
-                    'Topological sorting of A, B and C should yield [A, B, C]',
-                    () => expect([...TopologicalSort(adjacencyList)]).toEqual([a, b, c]));
+                    'Topological sorting of A, B and C should yield [C, B, A]',
+                    () => expect(Array.from(TopologicalSort(adjacencyList))).toEqual([3, 2, 1]));
             });
     });

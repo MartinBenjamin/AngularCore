@@ -41,5 +41,5 @@ export function TopologicalSort<TVertex, TAdjacent extends Iterable<TVertex>>(
 {
     let longestPaths = LongestPaths(graph);
     return Array.from(graph.keys()).sort(
-        (a, b) => longestPaths.get(b) - longestPaths.get(a));
+        (a, b) => longestPaths.get(a) - longestPaths.get(b));
 }
