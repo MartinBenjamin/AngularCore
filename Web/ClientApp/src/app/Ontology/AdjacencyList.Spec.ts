@@ -1,5 +1,5 @@
 import { } from 'jasmine';
-import { LongestPaths } from './AdjacencyList';
+import { LongestPaths, TopologicalSort } from './AdjacencyList';
 
 describe(
     'Adjacency List',
@@ -32,5 +32,23 @@ describe(
                 it(
                     'The longest path of D is 0',
                     () => expect(longestPaths.get(d)).toBe(0));
+            });
+
+
+        describe(
+            'Given A is adjacent to B and B is adjacent to C:',
+            () =>
+            {
+                let a = {};
+                let b = {};
+                let c = {};
+                let adjacencyList = new Map<object, object[]>();
+                adjacencyList.set(a, [b]);
+                adjacencyList.set(b, [c]);
+                adjacencyList.set(c, []);
+
+                it(
+                    'Topological sorting of A, B and C should yield [A, B, C]',
+                    () => expect([...TopologicalSort(adjacencyList)]).toEqual([a, b, c]));
             });
     });
