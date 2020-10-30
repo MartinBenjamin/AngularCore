@@ -40,18 +40,18 @@ namespace Ontology
             this IClassExpression classExpression
             ) => new ObjectComplementOf(classExpression);
 
-        public static IClass Class(
+        public static IClass DeclareClass(
             this IOntology ontology,
             string         className
             ) => new Class(
                 ontology,
                 className);
 
-        public static IClass Class<T>(
+        public static IClass DeclareClass<T>(
             this IOntology ontology
-            ) => ontology.Class(typeof(T).Name);
+            ) => ontology.DeclareClass(typeof(T).Name);
 
-        public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
+        public static IObjectPropertyExpression DeclareObjectProperty<T, TProperty>(
             this IOntology                  ontology,
             string                          localName,
             Func<T, IEnumerable<TProperty>> property
@@ -60,14 +60,14 @@ namespace Ontology
                 localName,
                 property);
 
-        public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
+        public static IObjectPropertyExpression DeclareObjectProperty<T, TProperty>(
             this IOntology                              ontology,
             Expression<Func<T, IEnumerable<TProperty>>> property
-            ) => ontology.ObjectProperty(
+            ) => ontology.DeclareObjectProperty(
                 property.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TProperty).Name,
                 property.Compile());
 
-        public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
+        public static IObjectPropertyExpression DeclareObjectProperty<T, TProperty>(
             this IOntology     ontology,
             string             localName,
             Func<T, TProperty> property
@@ -76,14 +76,14 @@ namespace Ontology
                 localName,
                 property);
 
-        public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
+        public static IObjectPropertyExpression DeclareObjectProperty<T, TProperty>(
             this IOntology                 ontology,
             Expression<Func<T, TProperty>> property
-            ) => ontology.ObjectProperty(
+            ) => ontology.DeclareObjectProperty(
                 property.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TProperty).Name,
                 property.Compile());
 
-        public static IDataPropertyExpression DataProperty<T, TProperty>(
+        public static IDataPropertyExpression DeclareDataProperty<T, TProperty>(
             this IOntology                  ontology,
             string                          localName,
             Func<T, IEnumerable<TProperty>> property
@@ -92,14 +92,14 @@ namespace Ontology
                 localName,
                 property);
 
-        public static IDataPropertyExpression DataProperty<T, TProperty>(
+        public static IDataPropertyExpression DeclareDataProperty<T, TProperty>(
             this IOntology                              ontology,
             Expression<Func<T, IEnumerable<TProperty>>> property
-            ) => ontology.DataProperty(
+            ) => ontology.DeclareDataProperty(
                 property.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TProperty).Name,
                 property.Compile());
 
-        public static IDataPropertyExpression DataProperty<T, TProperty>(
+        public static IDataPropertyExpression DeclareDataProperty<T, TProperty>(
             this IOntology     ontology,
             string             localName,
             Func<T, TProperty> property
@@ -108,20 +108,20 @@ namespace Ontology
                 localName,
                 property);
 
-        public static IDataPropertyExpression DataProperty<T, TProperty>(
+        public static IDataPropertyExpression DeclareDataProperty<T, TProperty>(
             this IOntology                 ontology,
             Expression<Func<T, TProperty>> property
-            ) => ontology.DataProperty(
+            ) => ontology.DeclareDataProperty(
                 property.Body is MemberExpression memberExpression ? memberExpression.Member.Name : typeof(TProperty).Name,
                 property.Compile());
 
-        public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
+        public static IObjectPropertyExpression DeclareObjectProperty<T, TProperty>(
             this IClass                     domain,
             string                          localName,
             Func<T, IEnumerable<TProperty>> property
             )
         {
-            var objectPropertyExpression = domain.Ontology.ObjectProperty(
+            var objectPropertyExpression = domain.Ontology.DeclareObjectProperty(
                 localName,
                 property);
 
@@ -133,12 +133,12 @@ namespace Ontology
             return objectPropertyExpression;
         }
 
-        public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
+        public static IObjectPropertyExpression DeclareObjectProperty<T, TProperty>(
             this IClass                                 domain,
             Expression<Func<T, IEnumerable<TProperty>>> property
             )
         {
-            var objectPropertyExpression = domain.Ontology.ObjectProperty(property);
+            var objectPropertyExpression = domain.Ontology.DeclareObjectProperty(property);
 
             new ObjectPropertyDomain(
                 domain.Ontology,
@@ -148,13 +148,13 @@ namespace Ontology
             return objectPropertyExpression;
         }
 
-        public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
+        public static IObjectPropertyExpression DeclareObjectProperty<T, TProperty>(
             this IClass        domain,
             string             localName,
             Func<T, TProperty> property
             )
         {
-            var objectPropertyExpression = domain.Ontology.ObjectProperty(
+            var objectPropertyExpression = domain.Ontology.DeclareObjectProperty(
                 localName,
                 property);
 
@@ -166,12 +166,12 @@ namespace Ontology
             return objectPropertyExpression;
         }
 
-        public static IObjectPropertyExpression ObjectProperty<T, TProperty>(
+        public static IObjectPropertyExpression DeclareObjectProperty<T, TProperty>(
             this IClass                    domain,
             Expression<Func<T, TProperty>> property
             )
         {
-            var objectPropertyExpression = domain.Ontology.ObjectProperty(property);
+            var objectPropertyExpression = domain.Ontology.DeclareObjectProperty(property);
 
             new ObjectPropertyDomain(
                 domain.Ontology,
@@ -181,12 +181,12 @@ namespace Ontology
             return objectPropertyExpression;
         }
 
-        public static IDataPropertyExpression DataProperty<T, TProperty>(
+        public static IDataPropertyExpression DeclareDataProperty<T, TProperty>(
             this IClass                                 domain,
             Expression<Func<T, IEnumerable<TProperty>>> property
             )
         {
-            var dataPropertyExpression = domain.Ontology.DataProperty(property);
+            var dataPropertyExpression = domain.Ontology.DeclareDataProperty(property);
 
             new DataPropertyDomain(
                 domain.Ontology,
@@ -196,12 +196,12 @@ namespace Ontology
             return dataPropertyExpression;
         }
 
-        public static IDataPropertyExpression DataProperty<T, TProperty>(
+        public static IDataPropertyExpression DeclareDataProperty<T, TProperty>(
             this IClass                    domain,
             Expression<Func<T, TProperty>> property
             )
         {
-            var dataPropertyExpression = domain.Ontology.DataProperty(property);
+            var dataPropertyExpression = domain.Ontology.DeclareDataProperty(property);
 
             new DataPropertyDomain(
                 domain.Ontology,

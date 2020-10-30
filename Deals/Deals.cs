@@ -26,15 +26,15 @@ namespace Deals
 
         public CommonDomainObjects() : base("CommonDomainObjects")
         {
-            DomainObject = this.Class<DomainObject<Guid>>();
-            Id = DomainObject.DataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
+            DomainObject = this.DeclareClass<DomainObject<Guid>>();
+            Id = DomainObject.DeclareDataProperty<DomainObject<Guid>, Guid>(domainObject => domainObject.Id);
             DomainObject.HasKey(Id);
 
-            Named = this.Class<Named<Guid>>();
+            Named = this.DeclareClass<Named<Guid>>();
             Named.SubClassOf(DomainObject);
-            Name = Named.DataProperty<Named<Guid>, string>(named => named.Name);
+            Name = Named.DeclareDataProperty<Named<Guid>, string>(named => named.Name);
 
-            Classifier = this.Class<Classifier>();
+            Classifier = this.DeclareClass<Classifier>();
             Classifier.SubClassOf(Named);
         }
     }
@@ -69,7 +69,7 @@ namespace Deals
                 "Roles",
                 commonDomainObjects)
         {
-            Role = this.Class<Role>();
+            Role = this.DeclareClass<Role>();
             Role.SubClassOf(commonDomainObjects.Named);
         }
     }
@@ -84,7 +84,7 @@ namespace Deals
                 "Organisations",
                 commonDomainObjects)
         {
-            Organisation = this.Class<Organisation>();
+            Organisation = this.DeclareClass<Organisation>();
             Organisation.SubClassOf(commonDomainObjects.Named);
         }
     }
@@ -99,7 +99,7 @@ namespace Deals
                 "LegalEntities",
                 organisations)
         {
-            LegalEntity = this.Class<LegalEntity>();
+            LegalEntity = this.DeclareClass<LegalEntity>();
             LegalEntity.SubClassOf(organisations.Organisation);
         }
     }
@@ -117,11 +117,11 @@ namespace Deals
                 "Parties",
                 commonDomainObjects)
         {
-            PartyInRole = this.Class<PartyInRole>();
+            PartyInRole = this.DeclareClass<PartyInRole>();
             PartyInRole.SubClassOf(commonDomainObjects.DomainObject);
-            Role         = PartyInRole.ObjectProperty<PartyInRole, Role        >(partyInRole => partyInRole.Role        );
-            Organisation = PartyInRole.ObjectProperty<PartyInRole, Organisation>(partyInRole => partyInRole.Organisation);
-            Person       = PartyInRole.ObjectProperty<PartyInRole, Person      >(partyInRole => partyInRole.Person      );
+            Role         = PartyInRole.DeclareObjectProperty<PartyInRole, Role        >(partyInRole => partyInRole.Role        );
+            Organisation = PartyInRole.DeclareObjectProperty<PartyInRole, Organisation>(partyInRole => partyInRole.Organisation);
+            Person       = PartyInRole.DeclareObjectProperty<PartyInRole, Person      >(partyInRole => partyInRole.Person      );
         }
     }
 
@@ -201,21 +201,21 @@ namespace Deals
                 parties,
                 validation)
         {
-            DealType    = this.Class<DealType>();
+            DealType    = this.DeclareClass<DealType>();
             DealType.SubClassOf(commonDomainObjects.Named);
-            Deal        = this.Class<Deal>();
+            Deal        = this.DeclareClass<Deal>();
             Deal.SubClassOf(commonDomainObjects.Named);
-            Type        = Deal.ObjectProperty<Deal, DealType  >(deal => deal.Type       );
-            Parties     = Deal.ObjectProperty<Deal, DealParty >(deal => deal.Parties    );
-            Classifiers = Deal.ObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
-            Commitments = Deal.ObjectProperty<Deal, Commitment>(deal => deal.Commitments);
-            Borrowers   = Deal.ObjectProperty<Deal, DealParty >(
+            Type        = Deal.DeclareObjectProperty<Deal, DealType  >(deal => deal.Type       );
+            Parties     = Deal.DeclareObjectProperty<Deal, DealParty >(deal => deal.Parties    );
+            Classifiers = Deal.DeclareObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
+            Commitments = Deal.DeclareObjectProperty<Deal, Commitment>(deal => deal.Commitments);
+            Borrowers   = Deal.DeclareObjectProperty<Deal, DealParty >(
                 "Borrowers",
                 deal => deal.Parties.Where(dealParty => dealParty.Role.Id == DealRoleIdentifier.Borrower));
-            Sponsors    = Deal.ObjectProperty<Deal, Sponsor   >(
+            Sponsors    = Deal.DeclareObjectProperty<Deal, Sponsor   >(
                 "Sponsors",
                 deal => deal.Parties.Where(dealParty => dealParty.Role.Id == DealRoleIdentifier.Sponsor).Cast<Sponsor>());
-            this.Exclusivity = Deal.ObjectProperty<Deal, ExclusivityClassifier>(
+            this.Exclusivity = Deal.DeclareObjectProperty<Deal, ExclusivityClassifier>(
                 "Exclusivity",
                 deal => deal.Classifiers.OfType<ExclusivityClassifier>().FirstOrDefault());
 
@@ -231,12 +231,12 @@ namespace Deals
                     validation.Restriction,
                     0);
 
-            DealParty = this.Class<DealParty>();
+            DealParty = this.DeclareClass<DealParty>();
             DealParty.SubClassOf(parties.PartyInRole);
-            LenderParty   = this.Class("LenderParty"  );
-            AdvisorParty  = this.Class("AdvisorParty" );
-            BorrowerParty = this.Class("BorrowerParty");
-            SponsorParty  = this.Class("SponsorParty" );
+            LenderParty   = this.DeclareClass("LenderParty"  );
+            AdvisorParty  = this.DeclareClass("AdvisorParty" );
+            BorrowerParty = this.DeclareClass("BorrowerParty");
+            SponsorParty  = this.DeclareClass("SponsorParty" );
 
             LenderParty.SubClassOf(DealParty);
             AdvisorParty.SubClassOf(DealParty);
@@ -248,9 +248,9 @@ namespace Deals
             BorrowerParty.Define(parties.Role.HasValue(roleIndividuals.Borrower));
             SponsorParty.Define(parties.Role.HasValue(roleIndividuals.Sponsor));;
 
-            Sponsor = this.Class<Sponsor>();
+            Sponsor = this.DeclareClass<Sponsor>();
             Sponsor.SubClassOf(SponsorParty);
-            Equity = Sponsor.DataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
+            Equity = Sponsor.DeclareDataProperty<Sponsor, decimal?>(sponsor => sponsor.Equity);
             Sponsor
                 .SubClassOf(Equity.ExactCardinality(1))
                 .Annotate(
@@ -258,9 +258,9 @@ namespace Deals
                     0);
 
             Bank             = legalEntities.LegalEntity.NamedIndividual("Bank");
-            BankParty        = this.Class("BankParty");
-            BankLenderParty  = this.Class("BankLenderParty");
-            BankAdvisorParty = this.Class("BankAdvisorParty");
+            BankParty        = this.DeclareClass("BankParty");
+            BankLenderParty  = this.DeclareClass("BankLenderParty");
+            BankAdvisorParty = this.DeclareClass("BankAdvisorParty");
             BankParty.Define(parties.Organisation.HasValue(Bank));
             BankLenderParty.Define(LenderParty.Intersect(BankParty));
             BankAdvisorParty.Define(AdvisorParty.Intersect(BankParty));
@@ -269,12 +269,12 @@ namespace Deals
             BankLenderParty.SubClassOf(DealParty);
             BankAdvisorParty.SubClassOf(DealParty);
 
-            KeyCounterpartyRole = this.Class("KeyCounterpartyRole");
-            KeyCounterparty     = this.Class("KeyCounterparty");
+            KeyCounterpartyRole = this.DeclareClass("KeyCounterpartyRole");
+            KeyCounterparty     = this.DeclareClass("KeyCounterparty");
             KeyCounterparty.SubClassOf(DealParty);
             KeyCounterparty.Define(new ObjectSomeValuesFrom(parties.Role, KeyCounterpartyRole));
 
-            Debt = this.Class("Debt");
+            Debt = this.DeclareClass("Debt");
             Debt.SubClassOf(Deal);
             Debt.SubClassOf(Parties.ExactCardinality(1, BankLenderParty));
             Debt.SubClassOf(Borrowers.MinCardinality(1))
@@ -289,7 +289,7 @@ namespace Deals
                 DealParty,
                 commonDomainObjects.Classifier);
 
-            var ExclusivityClassifier = this.Class<ExclusivityClassifier>();
+            var ExclusivityClassifier = this.DeclareClass<ExclusivityClassifier>();
             ExclusivityClassifier.SubClassOf(commonDomainObjects.Classifier);
             Deal.SubClassOf(Classifiers.ExactCardinality(1, ExclusivityClassifier))
                 .Annotate(
@@ -303,14 +303,14 @@ namespace Deals
             NotExclusive.Value(commonDomainObjects.Id, ExclusivityClassifierIdentifier.No);
             var Exclusive = ExclusivityClassifier.Intersect(new ObjectOneOf(NotExclusive).Complement());
 
-            var ExclusiveDeal = this.Class("ExclusiveDeal");
+            var ExclusiveDeal = this.DeclareClass("ExclusiveDeal");
             ExclusiveDeal.SubClassOf(Deal);
-            var intermediate = this.Class("Intermediate");
+            var intermediate = this.DeclareClass("Intermediate");
             intermediate.Define(new ObjectSomeValuesFrom(Classifiers, Exclusive));
             ExclusiveDeal.Define(new ObjectIntersectionOf(intermediate));
 
-            var Exclusivity = this.Class<Exclusivity>();
-            var Date = Exclusivity.DataProperty<Exclusivity, DateTime?>(exclusivity => exclusivity.Date);
+            var Exclusivity = this.DeclareClass<Exclusivity>();
+            var Date = Exclusivity.DeclareDataProperty<Exclusivity, DateTime?>(exclusivity => exclusivity.Date);
             Date.Range(ReservedVocabulary.DateTime)
                 .Annotate(
                     validation.RangeValidated,
@@ -344,7 +344,7 @@ namespace Deals
                 commonDomainObjects.Id,
                 DealTypeIdentifier.Advisory);
 
-            Deal = this.Class("Deal");
+            Deal = this.DeclareClass("Deal");
             Deal.SubClassOf(deals.Deal);
             Deal.SubClassOf(deals.Parties.ExactCardinality(1, deals.BankAdvisorParty));
             Deal.SubClassOf(deals.Sponsors.MaxCardinality(0))
@@ -375,7 +375,7 @@ namespace Deals
                 commonDomainObjects.Id,
                 DealTypeIdentifier.ProjectFinance);
 
-            Deal = this.Class("Deal");
+            Deal = this.DeclareClass("Deal");
             Deal.SubClassOf(deals.Debt);
             Deal.SubClassOf(deals.Type.HasValue(dealType));
             Deal.SubClassOf(deals.Sponsors.MinCardinality(1))
