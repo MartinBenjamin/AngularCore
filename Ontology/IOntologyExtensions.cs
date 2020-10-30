@@ -211,6 +211,23 @@ namespace Ontology
             return dataPropertyExpression;
         }
 
+        public static INamedIndividual DeclareNamedIndividual(
+            this IOntology ontology,
+            string         localName
+            ) => new NamedIndividual(
+                ontology,
+                localName);
+
+        public static INamedIndividual DeclareNamedIndividual(
+            this IClass @class,
+            string      localName
+            ) => ((IClassAssertion)new ClassAssertion(
+                @class.Ontology,
+                @class,
+                new NamedIndividual(
+                    @class.Ontology,
+                    localName))).NamedIndividual;
+
         public static IDataPropertyRange Range(
             this IDataPropertyExpression dataPropertyExpression,
             IDatatype                    datatype
@@ -303,23 +320,6 @@ namespace Ontology
                 dataPropertyExpression,
                 cardinality,
                 dataRange);
-
-        public static INamedIndividual NamedIndividual(
-            this IOntology ontology,
-            string         localName
-            ) => new NamedIndividual(
-                ontology,
-                localName);
-
-        public static INamedIndividual NamedIndividual(
-            this IClass @class,
-            string      localName
-            ) => ((IClassAssertion)new ClassAssertion(
-                @class.Ontology,
-                @class,
-                new NamedIndividual(
-                    @class.Ontology,
-                    localName))).NamedIndividual;
 
         public static IObjectPropertyAssertion Value(
             this INamedIndividual     sourceIndividual,

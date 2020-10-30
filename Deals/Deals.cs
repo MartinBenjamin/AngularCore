@@ -142,10 +142,10 @@ namespace Deals
         {
             var role = roles.Role;
             var id = commonDomainObjects.Id;
-            Sponsor  = role.NamedIndividual("Sponsor" );
-            Borrower = role.NamedIndividual("Borrower");
-            Lender   = role.NamedIndividual("Lender"  );
-            Advisor  = role.NamedIndividual("Advisor" );
+            Sponsor  = role.DeclareNamedIndividual("Sponsor" );
+            Borrower = role.DeclareNamedIndividual("Borrower");
+            Lender   = role.DeclareNamedIndividual("Lender"  );
+            Advisor  = role.DeclareNamedIndividual("Advisor" );
             Sponsor.Value(id, DealRoleIdentifier.Sponsor);
             Borrower.Value(id, DealRoleIdentifier.Borrower);
             Lender.Value(id, DealRoleIdentifier.Lender);
@@ -257,7 +257,7 @@ namespace Deals
                     validation.Restriction,
                     0);
 
-            Bank             = legalEntities.LegalEntity.NamedIndividual("Bank");
+            Bank             = legalEntities.LegalEntity.DeclareNamedIndividual("Bank");
             BankParty        = this.DeclareClass("BankParty");
             BankLenderParty  = this.DeclareClass("BankLenderParty");
             BankAdvisorParty = this.DeclareClass("BankAdvisorParty");
@@ -299,7 +299,7 @@ namespace Deals
                     validation.SubPropertyName,
                     "Exclusivity");
 
-            var NotExclusive = ExclusivityClassifier.NamedIndividual("NotExclusive");
+            var NotExclusive = ExclusivityClassifier.DeclareNamedIndividual("NotExclusive");
             NotExclusive.Value(commonDomainObjects.Id, ExclusivityClassifierIdentifier.No);
             var Exclusive = ExclusivityClassifier.Intersect(new ObjectOneOf(NotExclusive).Complement());
 
@@ -339,7 +339,7 @@ namespace Deals
                 validation,
                 deals)
         {
-            var dealType = deals.DealType.NamedIndividual("Advisory");
+            var dealType = deals.DealType.DeclareNamedIndividual("Advisory");
             dealType.Value(
                 commonDomainObjects.Id,
                 DealTypeIdentifier.Advisory);
@@ -370,7 +370,7 @@ namespace Deals
                 deals,
                 validation)
         {
-            var dealType = deals.DealType.NamedIndividual("ProjectFinance");
+            var dealType = deals.DealType.DeclareNamedIndividual("ProjectFinance");
             dealType.Value(
                 commonDomainObjects.Id,
                 DealTypeIdentifier.ProjectFinance);
