@@ -6,9 +6,11 @@ import { IClassExpression } from "./IClassExpression";
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IHasKey } from "./IHasKey";
+import { INamedIndividual } from "./INamedIndividual";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
 import { ISubClassOf } from "./ISubClassOf";
+import { ClassAssertion, NamedIndividual } from "./NamedIndividual";
 import { ObjectPropertyDomain } from "./ObjectPropertyDomain";
 import { SubClassOf } from "./SubClassOf";
 
@@ -48,35 +50,30 @@ export class Class
         localName: string
         ): IObjectPropertyExpression
     {
-        let objectProperty = this.Ontology.DeclareObjectProperty(localName);
-        new ObjectPropertyDomain(
+        return new ObjectPropertyDomain(
             this.Ontology,
-            objectProperty,
-            this);
-        return objectProperty;
+            this.Ontology.DeclareObjectProperty(localName),
+            this).ObjectPropertyExpression;
     }
 
     DeclareDataProperty(
         localName: string
         ): IDataPropertyExpression
     {
-        let dataProperty = this.Ontology.DeclareDataProperty(localName);
-        new DataPropertyDomain(
+        return new DataPropertyDomain(
             this.Ontology,
-            dataProperty,
-            this);
-        return dataProperty;
+            this.Ontology.DeclareDataProperty(localName),
+            this).DataPropertyExpression;
     }
 
     DeclareFunctionalDataProperty(
         localName: string
         ): IDataPropertyExpression
     {
-        let functionalDataProperty = this.Ontology.DeclareFunctionalDataProperty(localName); new DataPropertyDomain(
+        return new DataPropertyDomain(
             this.Ontology,
-            functionalDataProperty,
-            this);
-        return functionalDataProperty;
+            this.Ontology.DeclareFunctionalDataProperty(localName),
+            this).DataPropertyExpression;
     }
 
     HasKey(
@@ -97,5 +94,19 @@ export class Class
             this.Ontology,
             this,
             superClassExpression);
+    }
+
+    NamedIndividual(
+        localName: string
+        ): INamedIndividual
+    {
+        let namedIndividual = new NamedIndividual(
+            this.Ontology,
+            localName);
+        new ClassAssertion(
+            this.Ontology,
+            this,
+            namedIndividual);
+        return namedIndividual;
     }
 }
