@@ -44,7 +44,6 @@ export class Class
             this,
             individual);
     }
-    
 
     DeclareObjectProperty(
         localName: string
@@ -76,6 +75,16 @@ export class Class
             this).DataPropertyExpression;
     }
 
+    DeclareNamedIndividual(
+        localName: string
+        ): INamedIndividual
+    {
+        return new ClassAssertion(
+            this.Ontology,
+            this,
+            this.Ontology.DeclareNamedIndividual(localName)).NamedIndividual;
+    }
+
     HasKey(
         dataPropertyExpressions: IDataPropertyExpression[]
         ): IHasKey
@@ -94,19 +103,5 @@ export class Class
             this.Ontology,
             this,
             superClassExpression);
-    }
-
-    NamedIndividual(
-        localName: string
-        ): INamedIndividual
-    {
-        let namedIndividual = new NamedIndividual(
-            this.Ontology,
-            localName);
-        new ClassAssertion(
-            this.Ontology,
-            this,
-            namedIndividual);
-        return namedIndividual;
     }
 }

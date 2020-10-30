@@ -2,6 +2,7 @@ import { ClassMembershipEvaluator } from "./ClassMembershipEvaluator";
 import { IAxiom } from "./IAxiom";
 import { IClass } from "./IClass";
 import { IIsAxiom } from './IIsAxiom';
+import { INamedIndividual } from "./INamedIndividual";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
 
 export interface IOntology
@@ -22,4 +23,5 @@ export interface IOntology
     DeclareObjectProperty(localName: string): IObjectPropertyExpression;
     DeclareDataProperty(localName: string): IDataPropertyExpression;
     DeclareFunctionalDataProperty(localName: string): IDataPropertyExpression;
+    DeclareNamedIndividual(localName: string): INamedIndividual;
 }

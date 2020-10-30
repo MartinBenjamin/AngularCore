@@ -3,9 +3,11 @@ import { ClassMembershipEvaluator } from "./ClassMembershipEvaluator";
 import { FunctionalDataProperty } from "./FunctionalDataProperty";
 import { IAxiom } from "./IAxiom";
 import { IClass } from "./IClass";
+import { INamedIndividual } from "./INamedIndividual";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
 import { IsAxiom } from "./IsAxiom";
+import { NamedIndividual } from "./NamedIndividual";
 import { DataProperty, ObjectProperty } from "./Property";
 
 export class Ontology implements IOntology
@@ -94,5 +96,14 @@ export class Ontology implements IOntology
         new FunctionalDataProperty(this,
             dataProperty);
         return dataProperty;
+    }
+
+    DeclareNamedIndividual(
+        localName: string
+        ): INamedIndividual
+    {
+        return new NamedIndividual(
+            this,
+            localName);
     }
 }

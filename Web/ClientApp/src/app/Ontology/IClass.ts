@@ -13,7 +13,7 @@ export interface IClass extends
     DeclareObjectProperty(localName: string): IObjectPropertyExpression;
     DeclareDataProperty(localName: string): IDataPropertyExpression;
     DeclareFunctionalDataProperty(localName: string): IDataPropertyExpression;
+    DeclareNamedIndividual(localName: string): INamedIndividual;
     HasKey(dataPropertyExpressions: IDataPropertyExpression[]): IHasKey
     SubClassOf(superClassExpression: IClassExpression): ISubClassOf;
-    NamedIndividual(localName: string): INamedIndividual;
 }
