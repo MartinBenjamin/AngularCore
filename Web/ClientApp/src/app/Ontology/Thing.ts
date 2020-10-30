@@ -1,29 +1,26 @@
-import { BuiltIn } from "./BuiltIn";
+import { Class } from "./Class";
 import { IClass } from "./IClass";
-import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { ReservedVocabulary } from "./ReservedVocabulary";
 
 export class Thing
-    extends BuiltIn
+    extends Class
     implements IClass
 {
     constructor()
     {
         super(
-            ReservedVocabulary.StandardPrefixNames.owl,
+            null,
             'Thing')
     }
 
-    Accept(
-        visitor: IClassExpressionVisitor
-        )
+    get Iri(): string
     {
-        visitor.Class(this);
+        return ReservedVocabulary.StandardPrefixNames.owl + this.LocalName;
     }
-    
+
     Evaluate(
-        evaluator : IClassMembershipEvaluator,
+        evaluator: IClassMembershipEvaluator,
         individual: object
         ): boolean
     {
