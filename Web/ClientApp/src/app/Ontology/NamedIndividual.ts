@@ -18,6 +18,30 @@ export class NamedIndividual
             ontology,
             localName);
     }
+
+    ObjectPropertyValue(
+        objectPropertyExpression: IObjectPropertyExpression,
+        targetIndividual        : object
+        ): IObjectPropertyAssertion
+    {
+        return new ObjectPropertyAssertion(
+            this.Ontology,
+            objectPropertyExpression,
+            this,
+            targetIndividual);
+    }
+
+    DataPropertyValue(
+        dataPropertyExpression: IDataPropertyExpression,
+        targetValue           : any
+        ): IDataPropertyAssertion
+    {
+        return new DataPropertyAssertion(
+            this.Ontology,
+            dataPropertyExpression,
+            this,
+            targetValue);
+    }
 }
 
 export class ClassAssertion
