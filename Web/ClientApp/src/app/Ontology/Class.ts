@@ -10,7 +10,7 @@ import { INamedIndividual } from "./INamedIndividual";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
 import { ISubClassOf } from "./ISubClassOf";
-import { ClassAssertion, NamedIndividual } from "./NamedIndividual";
+import { ClassAssertion } from "./NamedIndividual";
 import { ObjectPropertyDomain } from "./ObjectPropertyDomain";
 import { SubClassOf } from "./SubClassOf";
 

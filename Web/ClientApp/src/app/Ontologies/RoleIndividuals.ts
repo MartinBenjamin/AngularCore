@@ -20,10 +20,10 @@ export class RoleIndividuals extends Ontology
             roles);
         let role = roles.Role;
         let id = commonDomainObjects.Id;
-        this.Sponsor  = role.NamedIndividual("Sponsor");
-        this.Borrower = role.NamedIndividual("Borrower");
-        this.Lender   = role.NamedIndividual("Lender");
-        this.Advisor  = role.NamedIndividual("Advisor");
+        this.Sponsor  = role.DeclareNamedIndividual("Sponsor");
+        this.Borrower = role.DeclareNamedIndividual("Borrower");
+        this.Lender   = role.DeclareNamedIndividual("Lender");
+        this.Advisor  = role.DeclareNamedIndividual("Advisor");
         //this.Sponsor.Value(id, DealRoleIdentifier.Sponsor);
         //this.Borrower.Value(id, DealRoleIdentifier.Borrower);
         //this.Lender.Value(id, DealRoleIdentifier.Lender);
