@@ -1,12 +1,12 @@
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
-import { IObjectPropertyExpression } from "./IPropertyExpression";
+import { IPropertyExpression } from "./IPropertyExpression";
 import { IPropertyRestriction } from "./IPropertyRestriction";
 
 export class PropertyRestriction implements IPropertyRestriction
 {
     protected constructor(
-        public PropertyExpression: IObjectPropertyExpression
+        public PropertyExpression: IPropertyExpression
         )
     {
     }
