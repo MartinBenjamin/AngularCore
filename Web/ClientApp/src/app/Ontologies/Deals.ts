@@ -85,12 +85,12 @@ export class Deals extends Ontology {
         this.Equity = this.Sponsor.DeclareDataProperty("Equity");
 
         this.Bank = legalEntities.LegalEntity.DeclareNamedIndividual("Bank");
-        this.BankParty = this.DeclareClass("BankParty");
+        this.BankParty        = this.DeclareClass("BankParty");
+        this.BankLenderParty  = this.DeclareClass("BankLenderParty");
+        this.BankAdvisorParty = this.DeclareClass("BankAdvisorParty");
         this.BankParty.SubClassOf(this.DealParty);
         this.BankParty.Define(parties.Organisation.HasValue(this.Bank));
 
-        this.BankLenderParty = this.DeclareClass("BankLenderParty");
-        this.BankAdvisorParty = this.DeclareClass("BankAdvisorParty");
         //this.BankLenderParty.Define(this.LenderParty.Intersect(this.BankParty));
         //this.BankAdvisorParty.Define(this.AdvisorParty.Intersect(this.BankParty));
         //this.BankLenderParty.SubClassOf(this.DealParty);  // Should be able to infer this.
