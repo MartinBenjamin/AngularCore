@@ -266,8 +266,6 @@ namespace Deals
             BankAdvisorParty.Define(AdvisorParty.Intersect(BankParty));
 
             BankParty.SubClassOf(DealParty);
-            BankLenderParty.SubClassOf(DealParty);
-            BankAdvisorParty.SubClassOf(DealParty);
 
             KeyCounterpartyRole = this.DeclareClass("KeyCounterpartyRole");
             KeyCounterparty     = this.DeclareClass("KeyCounterparty");
