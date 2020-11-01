@@ -29,7 +29,6 @@ export class Deals extends Ontology {
     AdvisorParty       : IClass;
     SponsorParty       : IClass;
     BorrowerParty      : IClass;
-    MufgParty          : IClass;
     Sponsor            : IClass;
     Equity             : IDataPropertyExpression;
     Bank               : INamedIndividual;
@@ -41,17 +40,26 @@ export class Deals extends Ontology {
     
     public constructor()
     {
-        super("Deals", commonDomainObjects, roles, roleIndividuals, legalEntities, parties)
+        super(
+            "Deals",
+            commonDomainObjects,
+            roles,
+            roleIndividuals,
+            legalEntities,
+            parties)
+
         this.DealType = this.DeclareClass("DealType");
         this.DealType.SubClassOf(commonDomainObjects.Named);
+
         this.Deal = this.DeclareClass("Deal");
         this.Deal.SubClassOf(commonDomainObjects.Named);
-        this.Type = this.Deal.DeclareObjectProperty("Type");
-        this.Parties = this.Deal.DeclareObjectProperty("Parties");
+
+        this.Type        = this.Deal.DeclareObjectProperty("Type");
+        this.Parties     = this.Deal.DeclareObjectProperty("Parties");
         this.Classifiers = this.Deal.DeclareObjectProperty("Classifiers");
         this.Commitments = this.Deal.DeclareObjectProperty("Commitments");
-        this.Borrowers = this.Deal.DeclareObjectProperty("Borrowers");
-        this.Sponsors = this.Deal.DeclareObjectProperty("Sponsors");
+        this.Borrowers   = this.Deal.DeclareObjectProperty("Borrowers");
+        this.Sponsors    = this.Deal.DeclareObjectProperty("Sponsors");
         this.Exclusivity = this.Deal.DeclareObjectProperty("Exclusivity");
 
         this.DealParty = this.DeclareClass("DealParty");
@@ -66,25 +74,27 @@ export class Deals extends Ontology {
         this.AdvisorParty.SubClassOf(this.DealParty);
         this.BorrowerParty.SubClassOf(this.DealParty);
         this.SponsorParty.SubClassOf(this.DealParty);
+
         this.LenderParty.Define(parties.Role.HasValue(roleIndividuals.Lender));
         this.AdvisorParty.Define(parties.Role.HasValue(roleIndividuals.Advisor));
         this.BorrowerParty.Define(parties.Role.HasValue(roleIndividuals.Borrower));
         this.SponsorParty.Define(parties.Role.HasValue(roleIndividuals.Sponsor));
         
-        //this.Sponsor = this.DeclareClass();
-        //this.Sponsor.SubClassOf(this.SponsorParty);
-        //this.Equity = this.Sponsor.DeclareDataProperty<Sponsor, decimal?>(() => {  }, sponsor.Equity);
-        //this.Sponsor.SubClassOf(this.Equity.ExactCardinality(1)).Annotate(validation.Restriction, 0);
-        //this.Bank = legalEntities.LegalEntity.DeclareNamedIndividual("Bank");
-        //this.BankParty = this.DeclareClass("BankParty");
-        //this.BankLenderParty = this.DeclareClass("BankLenderParty");
-        //this.BankAdvisorParty = this.DeclareClass("BankAdvisorParty");
-        //this.BankParty.Define(parties.Organisation.HasValue(this.Bank));
+        this.Sponsor = this.DeclareClass("Sponsor");
+        this.Sponsor.SubClassOf(this.SponsorParty);
+        this.Equity = this.Sponsor.DeclareDataProperty("Equity");
+
+        this.Bank = legalEntities.LegalEntity.DeclareNamedIndividual("Bank");
+        this.BankParty = this.DeclareClass("BankParty");
+        this.BankParty.SubClassOf(this.DealParty);
+        this.BankParty.Define(parties.Organisation.HasValue(this.Bank));
+
+        this.BankLenderParty = this.DeclareClass("BankLenderParty");
+        this.BankAdvisorParty = this.DeclareClass("BankAdvisorParty");
         //this.BankLenderParty.Define(this.LenderParty.Intersect(this.BankParty));
         //this.BankAdvisorParty.Define(this.AdvisorParty.Intersect(this.BankParty));
-        //this.BankParty.SubClassOf(this.DealParty);
-        //this.BankLenderParty.SubClassOf(this.DealParty);
-        //this.BankAdvisorParty.SubClassOf(this.DealParty);
+        //this.BankLenderParty.SubClassOf(this.DealParty);  // Should be able to infer this.
+        //this.BankAdvisorParty.SubClassOf(this.DealParty);  // Should be able to infer this.
         //this.KeyCounterpartyRole = this.DeclareClass("KeyCounterpartyRole");
         //this.KeyCounterparty = this.DeclareClass("KeyCounterparty");
         //this.KeyCounterparty.SubClassOf(this.DealParty);
