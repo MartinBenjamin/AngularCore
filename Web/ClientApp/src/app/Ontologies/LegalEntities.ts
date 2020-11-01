@@ -4,7 +4,7 @@ import { organisations } from "./Organisations";
 
 export class LegalEntities extends Ontology
 {
-    LegalEntity: IClass;
+    readonly LegalEntity: IClass;
 
     public constructor()
     {

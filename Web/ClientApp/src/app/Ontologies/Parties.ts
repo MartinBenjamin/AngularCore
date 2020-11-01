@@ -6,10 +6,10 @@ import { commonDomainObjects } from "./CommonDomainObjects";
 export class Parties extends Ontology
 {
 
-    PartyInRole : IClass;
-    Role        : IObjectPropertyExpression;
-    Organisation: IObjectPropertyExpression;
-    Person      : IObjectPropertyExpression;
+    readonly PartyInRole : IClass;
+    readonly Role        : IObjectPropertyExpression;
+    readonly Organisation: IObjectPropertyExpression;
+    readonly Person      : IObjectPropertyExpression;
 
     constructor()
     {

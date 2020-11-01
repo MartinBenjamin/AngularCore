@@ -7,10 +7,10 @@ import { roles } from "./Roles";
 export class RoleIndividuals extends Ontology
 {
 
-    public Sponsor : INamedIndividual;
-    public Borrower: INamedIndividual;
-    public Lender  : INamedIndividual;
-    public Advisor : INamedIndividual;
+    readonly Sponsor : INamedIndividual;
+    readonly Borrower: INamedIndividual;
+    readonly Lender  : INamedIndividual;
+    readonly Advisor : INamedIndividual;
 
     public constructor()
     {
@@ -30,3 +30,5 @@ export class RoleIndividuals extends Ontology
         this.Advisor.DataPropertyValue(id, DealRoleIdentifier.Advisor);
     }
 }
+
+export let roleIndividuals = new RoleIndividuals();

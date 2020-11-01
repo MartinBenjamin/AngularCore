@@ -13,6 +13,8 @@ import { ISubClassOf } from "./ISubClassOf";
 import { ClassAssertion } from "./NamedIndividual";
 import { ObjectPropertyDomain } from "./ObjectPropertyDomain";
 import { SubClassOf } from "./SubClassOf";
+import { IEquivalentClasses } from "./IEquivalentClasses";
+import { EquivalentClasses } from "./EquivalentClasses";
 
 export class Class
     extends Entity
@@ -103,5 +105,14 @@ export class Class
             this.Ontology,
             this,
             superClassExpression);
+    }
+
+    Define(
+        definition: IClassExpression
+        ): IEquivalentClasses
+    {
+        return new EquivalentClasses(
+            this.Ontology,
+            [this, definition]);
     }
 }
