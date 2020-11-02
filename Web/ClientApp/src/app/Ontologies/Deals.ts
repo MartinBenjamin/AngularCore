@@ -1,3 +1,4 @@
+import { LegalEntityIdentifier } from "../LegalEntities";
 import { DataComplementOf } from "../Ontology/DataComplementOf";
 import { DataOneOf } from "../Ontology/DataOneOf";
 import { DataSomeValuesFrom } from "../Ontology/DataSomeValuesFrom";
@@ -15,7 +16,6 @@ import { roles } from "./Roles";
 
 export class Deals extends Ontology
 {
-    Accessor           : IAnnotationProperty;
     RestrictedfromStage: IAnnotationProperty;
     SubPropertyName    : IAnnotationProperty;
     DealType           : IClass;
@@ -53,7 +53,6 @@ export class Deals extends Ontology
             legalEntities,
             parties)
 
-        this.Accessor            = this.DeclareAnnotationProperty("Accessor"           );
         this.RestrictedfromStage = this.DeclareAnnotationProperty("RestrictedFromStage");
         this.SubPropertyName     = this.DeclareAnnotationProperty("SubPropertyName"    );
 
@@ -109,14 +108,17 @@ export class Deals extends Ontology
             .Annotate(this.RestrictedfromStage, 0);
 
         this.Bank = legalEntities.LegalEntity.DeclareNamedIndividual("Bank");
+        this.Bank.DataPropertyValue(commonDomainObjects.Id, LegalEntityIdentifier.Bank);
+
         this.BankParty        = this.DeclareClass("BankParty");
-        this.BankLenderParty  = this.DeclareClass("BankLenderParty");
-        this.BankAdvisorParty = this.DeclareClass("BankAdvisorParty");
         this.BankParty.SubClassOf(this.DealParty);
         this.BankParty.Define(parties.Organisation.HasValue(this.Bank));
 
+        this.BankLenderParty  = this.DeclareClass("BankLenderParty");
+        this.BankAdvisorParty = this.DeclareClass("BankAdvisorParty");
         this.BankLenderParty.Define(this.LenderParty.Intersect(this.BankParty));
         this.BankAdvisorParty.Define(this.AdvisorParty.Intersect(this.BankParty));
+
         //this.KeyCounterpartyRole = this.DeclareClass("KeyCounterpartyRole");
         //this.KeyCounterparty = this.DeclareClass("KeyCounterparty");
         //this.KeyCounterparty.SubClassOf(this.DealParty);
