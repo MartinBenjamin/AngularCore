@@ -67,7 +67,7 @@ export class Deals extends Ontology
         this.Sponsors    = this.Deal.DeclareObjectProperty("Sponsors"   );
         this.Exclusivity = this.Deal.DeclareObjectProperty("Exclusivity");
 
-        let axiom = this.Deal.SubClassOf(
+        this.Deal.SubClassOf(
             new DataSomeValuesFrom(
                 commonDomainObjects.Name,
                 new DataComplementOf(new DataOneOf([""]))))
@@ -125,7 +125,7 @@ export class Deals extends Ontology
 
         this.Deal.SubClassOf(
             this.Classifiers.ExactCardinality(1, ExclusivityClassifier))
-            .Annotate(this.RestrictedfromStage, 0));
+            .Annotate(this.RestrictedfromStage, 0);
         //.Annotate(validation.SubPropertyName, "Exclusivity");
         //let NotExclusive = ExclusivityClassifier.DeclareNamedIndividual("NotExclusive");
         //NotExclusive.Value(commonDomainObjects.Id, ExclusivityClassifierIdentifier.No);
