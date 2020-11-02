@@ -1,15 +1,14 @@
-import { Ontology } from "../Ontology/Ontology";
+import { DisjointClasses } from "../Ontology/DisjointClasses";
 import { IClass } from "../Ontology/IClass";
-import { IObjectPropertyExpression, IDataPropertyExpression } from "../Ontology/IPropertyExpression";
 import { INamedIndividual } from "../Ontology/INamedIndividual";
+import { IDataPropertyExpression, IObjectPropertyExpression } from "../Ontology/IPropertyExpression";
+import { ObjectIntersectionOf } from "../Ontology/ObjectIntersectionOf";
+import { Ontology } from "../Ontology/Ontology";
 import { commonDomainObjects } from "./CommonDomainObjects";
-import { roles } from "./Roles";
 import { legalEntities } from "./LegalEntities";
 import { parties } from "./Parties";
 import { roleIndividuals } from "./RoleIndividuals";
-import { DataSomeValuesFrom } from "../Ontology/DataSomeValuesFrom";
-import { DataComplementOf } from "../Ontology/DataComplementOf";
-import { DataOneOf } from "../Ontology/DataOneOf";
+import { roles } from "./Roles";
 
 export class Deals extends Ontology {
     
@@ -91,21 +90,20 @@ export class Deals extends Ontology {
         this.BankParty.SubClassOf(this.DealParty);
         this.BankParty.Define(parties.Organisation.HasValue(this.Bank));
 
-        //this.BankLenderParty.Define(this.LenderParty.Intersect(this.BankParty));
-        //this.BankAdvisorParty.Define(this.AdvisorParty.Intersect(this.BankParty));
-        //this.BankLenderParty.SubClassOf(this.DealParty);  // Should be able to infer this.
-        //this.BankAdvisorParty.SubClassOf(this.DealParty);  // Should be able to infer this.
+        this.BankLenderParty.Define(new ObjectIntersectionOf([this.LenderParty, this.BankParty]));
+        this.BankAdvisorParty.Define(new ObjectIntersectionOf([this.AdvisorParty, this.BankParty]));
         //this.KeyCounterpartyRole = this.DeclareClass("KeyCounterpartyRole");
         //this.KeyCounterparty = this.DeclareClass("KeyCounterparty");
         //this.KeyCounterparty.SubClassOf(this.DealParty);
         //this.KeyCounterparty.Define(new ObjectSomeValuesFrom(parties.Role, this.KeyCounterpartyRole));
-        //this.Debt = this.DeclareClass("Debt");
-        //this.Debt.SubClassOf(this.Deal);
-        //this.Debt.SubClassOf(this.Parties.ExactCardinality(1, this.BankLenderParty));
+
+        this.Debt = this.DeclareClass("Debt");
+        this.Debt.SubClassOf(this.Deal);
+        this.Debt.SubClassOf(this.Parties.ExactCardinality(1, this.BankLenderParty));
         //this.Debt.SubClassOf(this.Borrowers.MinCardinality(1)).Annotate(validation.Restriction, 0);
-        //new DisjointClasses(this, this.Deal, this.DealType, this.DealParty, commonDomainObjects.Classifier);
-        //let ExclusivityClassifier = this.DeclareClass();
-        //ExclusivityClassifier.SubClassOf(commonDomainObjects.Classifier);
+        new DisjointClasses(this, [this.Deal, this.DealType, this.DealParty, commonDomainObjects.Classifier]);
+        let ExclusivityClassifier = this.DeclareClass("ExclusivityClassifier");
+        ExclusivityClassifier.SubClassOf(commonDomainObjects.Classifier);
         //this.Deal.SubClassOf(this.Classifiers.ExactCardinality(1, ExclusivityClassifier)).Annotate(validation.Restriction, 0).Annotate(validation.SubPropertyName, "Exclusivity");
         //let NotExclusive = ExclusivityClassifier.DeclareNamedIndividual("NotExclusive");
         //NotExclusive.Value(commonDomainObjects.Id, ExclusivityClassifierIdentifier.No);

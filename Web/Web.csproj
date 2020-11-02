@@ -76,6 +76,7 @@
     <None Remove="ClientApp\src\app\Ontology\BuiltIn.ts" />
     <None Remove="ClientApp\src\app\Ontology\Class.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Class.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ClassExpression.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassExpressionNavigator.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassMembershipEvaluator.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataAllValuesFrom.Spec.ts" />
@@ -274,6 +275,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\BuiltIn.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Class.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Class.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassExpression.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassExpressionNavigator.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassMembershipEvaluator.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataAllValuesFrom.Spec.ts" />
