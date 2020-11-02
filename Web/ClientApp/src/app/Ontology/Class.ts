@@ -1,20 +1,26 @@
 import { DataPropertyDomain } from "./DataPropertyDomain";
 import { Entity } from "./Entity";
+import { EquivalentClasses } from "./EquivalentClasses";
 import { HasKey } from "./HasKey";
 import { IClass } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
+import { IEquivalentClasses } from "./IEquivalentClasses";
 import { IHasKey } from "./IHasKey";
 import { INamedIndividual } from "./INamedIndividual";
+import { IObjectComplementOf } from "./IObjectComplementOf";
+import { IObjectIntersectionOf } from "./IObjectIntersectionOf";
+import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
 import { ISubClassOf } from "./ISubClassOf";
 import { ClassAssertion } from "./NamedIndividual";
+import { ObjectComplementOf } from "./ObjectComplementOf";
+import { ObjectIntersectionOf } from "./ObjectIntersectionOf";
 import { ObjectPropertyDomain } from "./ObjectPropertyDomain";
+import { ObjectUnionOf } from "./ObjectUnionOf";
 import { SubClassOf } from "./SubClassOf";
-import { IEquivalentClasses } from "./IEquivalentClasses";
-import { EquivalentClasses } from "./EquivalentClasses";
 
 export class Class
     extends Entity
@@ -114,5 +120,26 @@ export class Class
         return new EquivalentClasses(
             this.Ontology,
             [this, definition]);
+    }
+
+    Intersect(
+        classExpression: IClassExpression
+        ): IObjectIntersectionOf
+    {
+        return new ObjectIntersectionOf([this, classExpression]);
+    }
+
+    Union(
+        classExpression: IClassExpression
+        ): IObjectUnionOf
+    {
+        return new ObjectUnionOf([this, classExpression]);
+    }
+
+    Complement(
+        classExpression: IClassExpression
+        ): IObjectComplementOf
+    {
+        return new ObjectComplementOf(classExpression);
     }
 }

@@ -101,8 +101,8 @@ export class Deals extends Ontology
         this.BankParty.SubClassOf(this.DealParty);
         this.BankParty.Define(parties.Organisation.HasValue(this.Bank));
 
-        this.BankLenderParty.Define(new ObjectIntersectionOf([this.LenderParty, this.BankParty]));
-        this.BankAdvisorParty.Define(new ObjectIntersectionOf([this.AdvisorParty, this.BankParty]));
+        this.BankLenderParty.Define(this.LenderParty.Intersect(this.BankParty));
+        this.BankAdvisorParty.Define(this.AdvisorParty.Intersect(this.BankParty));
         //this.KeyCounterpartyRole = this.DeclareClass("KeyCounterpartyRole");
         //this.KeyCounterparty = this.DeclareClass("KeyCounterparty");
         //this.KeyCounterparty.SubClassOf(this.DealParty);
