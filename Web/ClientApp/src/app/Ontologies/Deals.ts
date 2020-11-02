@@ -12,7 +12,6 @@ import { legalEntities } from "./LegalEntities";
 import { parties } from "./Parties";
 import { roleIndividuals } from "./RoleIndividuals";
 import { roles } from "./Roles";
-import { Deal } from "../Deals";
 
 export class Deals extends Ontology
 {
@@ -151,3 +150,5 @@ export class Deals extends Ontology
         //Date.Range(ReservedVocabulary.DateTime).Annotate(validation.RangeValidated, null);
     }
 }
+
+export let deals = new Deals();

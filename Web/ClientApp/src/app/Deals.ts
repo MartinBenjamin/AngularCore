@@ -1,7 +1,7 @@
-import { PartyInRole } from "./Parties";
-import { Guid, Named } from "./CommonDomainObjects";
 import { Classifier } from "./ClassificationScheme";
+import { Guid, Named } from "./CommonDomainObjects";
 import { GeographicRegion } from "./Locations";
+import { PartyInRole } from "./Parties";
 
 export class DealRoleIdentifier
 {
@@ -10,6 +10,12 @@ export class DealRoleIdentifier
     static readonly Guarantor   = '6e4eacfb-27cd-4c83-8ce1-b3bf4043dc37';
     static readonly Advisor     = '32076ce7-7219-48c9-8be1-9e6754b034a6';
     static readonly Sponsor     = '00119e8c-e136-4aa8-a554-db0fcc09850a';
+}
+
+export class DealTypeIdentifier
+{
+    static readonly Advisory       = 'db033bfe-091e-481c-a5c3-abd2c1eda302';
+    static readonly ProjectFinance = 'db1b30e1-435b-414f-bff0-1e17954144f7';
 }
 
 export class ClassificationSchemeIdentifier
