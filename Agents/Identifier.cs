@@ -24,9 +24,8 @@
         public override bool Equals(
             object obj
             ) => obj is Identifier identifier &&
-                identifier != null &&
-                Scheme     == identifier.Scheme &&
-                Value      == identifier.Value;
+                Scheme == identifier.Scheme &&
+                Value  == identifier.Value;
 
         public override int GetHashCode()
             => Value.GetHashCode();
