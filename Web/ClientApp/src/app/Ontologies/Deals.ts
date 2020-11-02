@@ -12,10 +12,13 @@ import { legalEntities } from "./LegalEntities";
 import { parties } from "./Parties";
 import { roleIndividuals } from "./RoleIndividuals";
 import { roles } from "./Roles";
+import { Deal } from "../Deals";
 
 export class Deals extends Ontology
 {
+    Accessor           : IAnnotationProperty;
     RestrictedfromStage: IAnnotationProperty;
+    SubPropertyName    : IAnnotationProperty;
     DealType           : IClass;
     Deal               : IClass;
     Debt               : IClass;
@@ -51,7 +54,9 @@ export class Deals extends Ontology
             legalEntities,
             parties)
 
+        this.Accessor            = this.DeclareAnnotationProperty("Accessor"           );
         this.RestrictedfromStage = this.DeclareAnnotationProperty("RestrictedFromStage");
+        this.SubPropertyName     = this.DeclareAnnotationProperty("SubPropertyName"    );
 
         this.DealType = this.DeclareClass("DealType");
         this.DealType.SubClassOf(commonDomainObjects.Named);
@@ -71,6 +76,11 @@ export class Deals extends Ontology
             new DataSomeValuesFrom(
                 commonDomainObjects.Name,
                 new DataComplementOf(new DataOneOf([""]))))
+            .Annotate(
+                this.RestrictedfromStage,
+                0);
+
+        this.Deal.SubClassOf(this.Exclusivity.ExactCardinality(1))
             .Annotate(
                 this.RestrictedfromStage,
                 0);
@@ -96,6 +106,8 @@ export class Deals extends Ontology
         this.Sponsor = this.DeclareClass("Sponsor");
         this.Sponsor.SubClassOf(this.SponsorParty);
         this.Equity = this.Sponsor.DeclareDataProperty("Equity");
+        this.Sponsor.SubClassOf(this.Equity.ExactCardinality(1))
+            .Annotate(this.RestrictedfromStage, 0);
 
         this.Bank = legalEntities.LegalEntity.DeclareNamedIndividual("Bank");
         this.BankParty        = this.DeclareClass("BankParty");
@@ -113,10 +125,8 @@ export class Deals extends Ontology
 
         this.Debt = this.DeclareClass("Debt");
         this.Debt.SubClassOf(this.Deal);
-        this.Debt.SubClassOf(
-            this.Parties.ExactCardinality(1, this.BankLenderParty));
-        this.Debt.SubClassOf(
-            this.Borrowers.MinCardinality(1))
+        this.Debt.SubClassOf(this.Parties.ExactCardinality(1, this.BankLenderParty));
+        this.Debt.SubClassOf(this.Borrowers.MinCardinality(1))
             .Annotate(this.RestrictedfromStage, 0);
         new DisjointClasses(this, [this.Deal, this.DealType, this.DealParty, commonDomainObjects.Classifier]);
 
@@ -125,8 +135,9 @@ export class Deals extends Ontology
 
         this.Deal.SubClassOf(
             this.Classifiers.ExactCardinality(1, ExclusivityClassifier))
-            .Annotate(this.RestrictedfromStage, 0);
-        //.Annotate(validation.SubPropertyName, "Exclusivity");
+            .Annotate(this.RestrictedfromStage, 0)
+            .Annotate(this.SubPropertyName, "Exclusivity");
+
         //let NotExclusive = ExclusivityClassifier.DeclareNamedIndividual("NotExclusive");
         //NotExclusive.Value(commonDomainObjects.Id, ExclusivityClassifierIdentifier.No);
         //let Exclusive = ExclusivityClassifier.Intersect((new ObjectOneOf(NotExclusive) + Complement()));
