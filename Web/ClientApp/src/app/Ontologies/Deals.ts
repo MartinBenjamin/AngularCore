@@ -129,7 +129,7 @@ export class Deals extends Ontology
         //intermediate.Define(new ObjectSomeValuesFrom(this.Classifiers, Exclusive));
         //ExclusiveDeal.Define(new ObjectIntersectionOf(intermediate));
 
-        let Date = this.Exclusivity.DeclareDataProperty("Date");
+        //let Date = this.Exclusivity.DeclareDataProperty("Date");
         //Date.Range(ReservedVocabulary.DateTime).Annotate(validation.RangeValidated, null);
     }
 }
