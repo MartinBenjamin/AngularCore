@@ -1,6 +1,8 @@
+import { AnnotationProperty } from "./AnnotationProperty";
 import { Class } from "./Class";
 import { ClassMembershipEvaluator } from "./ClassMembershipEvaluator";
 import { FunctionalDataProperty } from "./FunctionalDataProperty";
+import { IAnnotationProperty } from "./IAnnotationProperty";
 import { IAxiom } from "./IAxiom";
 import { IClass } from "./IClass";
 import { INamedIndividual } from "./INamedIndividual";
@@ -93,9 +95,19 @@ export class Ontology implements IOntology
         ): IDataPropertyExpression
     {
         let dataProperty = this.DeclareDataProperty(localName);
-        new FunctionalDataProperty(this,
+        new FunctionalDataProperty(
+            this,
             dataProperty);
         return dataProperty;
+    }
+
+    DeclareAnnotationProperty(
+        localName: string
+        ): IAnnotationProperty
+    {
+        return new AnnotationProperty(
+            this,
+            localName);
     }
 
     DeclareNamedIndividual(

@@ -4,6 +4,7 @@ import { IClass } from "./IClass";
 import { IIsAxiom } from './IIsAxiom';
 import { INamedIndividual } from "./INamedIndividual";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
+import { IAnnotationProperty } from "./IAnnotationProperty";
 
 export interface IOntology
 {
@@ -23,5 +24,6 @@ export interface IOntology
     DeclareObjectProperty(localName: string): IObjectPropertyExpression;
     DeclareDataProperty(localName: string): IDataPropertyExpression;
     DeclareFunctionalDataProperty(localName: string): IDataPropertyExpression;
+    DeclareAnnotationProperty(localName: string): IAnnotationProperty;
     DeclareNamedIndividual(localName: string): INamedIndividual;
 }
