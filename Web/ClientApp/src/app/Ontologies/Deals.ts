@@ -1,4 +1,3 @@
-import { Annotation } from "../Ontology/Annotation";
 import { DataComplementOf } from "../Ontology/DataComplementOf";
 import { DataOneOf } from "../Ontology/DataOneOf";
 import { DataSomeValuesFrom } from "../Ontology/DataSomeValuesFrom";
@@ -7,7 +6,6 @@ import { IAnnotationProperty } from "../Ontology/IAnnotationProperty";
 import { IClass } from "../Ontology/IClass";
 import { INamedIndividual } from "../Ontology/INamedIndividual";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "../Ontology/IPropertyExpression";
-import { ObjectIntersectionOf } from "../Ontology/ObjectIntersectionOf";
 import { Ontology } from "../Ontology/Ontology";
 import { commonDomainObjects } from "./CommonDomainObjects";
 import { legalEntities } from "./LegalEntities";
@@ -69,8 +67,13 @@ export class Deals extends Ontology
         this.Sponsors    = this.Deal.DeclareObjectProperty("Sponsors"   );
         this.Exclusivity = this.Deal.DeclareObjectProperty("Exclusivity");
 
-        let axiom = this.Deal.SubClassOf(new DataSomeValuesFrom(commonDomainObjects.Name, new DataComplementOf(new DataOneOf([""]))));
-        axiom.Annotations.push(new Annotation(this.RestrictedfromStage, 0));
+        let axiom = this.Deal.SubClassOf(
+            new DataSomeValuesFrom(
+                commonDomainObjects.Name,
+                new DataComplementOf(new DataOneOf([""]))))
+            .Annotate(
+                this.RestrictedfromStage,
+                0);
 
         this.DealParty = this.DeclareClass("DealParty");
         this.DealParty.SubClassOf(parties.PartyInRole);
@@ -110,15 +113,19 @@ export class Deals extends Ontology
 
         this.Debt = this.DeclareClass("Debt");
         this.Debt.SubClassOf(this.Deal);
-        this.Debt.SubClassOf(this.Parties.ExactCardinality(1, this.BankLenderParty));
-        //this.Debt.SubClassOf(this.Borrowers.MinCardinality(1)).Annotate(validation.Restriction, 0);
+        this.Debt.SubClassOf(
+            this.Parties.ExactCardinality(1, this.BankLenderParty));
+        this.Debt.SubClassOf(
+            this.Borrowers.MinCardinality(1))
+            .Annotate(this.RestrictedfromStage, 0);
         new DisjointClasses(this, [this.Deal, this.DealType, this.DealParty, commonDomainObjects.Classifier]);
 
         let ExclusivityClassifier = this.DeclareClass("ExclusivityClassifier");
         ExclusivityClassifier.SubClassOf(commonDomainObjects.Classifier);
 
-        axiom = this.Deal.SubClassOf(this.Classifiers.ExactCardinality(1, ExclusivityClassifier));
-        axiom.Annotations.push(new Annotation(this.RestrictedfromStage, 0));
+        this.Deal.SubClassOf(
+            this.Classifiers.ExactCardinality(1, ExclusivityClassifier))
+            .Annotate(this.RestrictedfromStage, 0));
         //.Annotate(validation.SubPropertyName, "Exclusivity");
         //let NotExclusive = ExclusivityClassifier.DeclareNamedIndividual("NotExclusive");
         //NotExclusive.Value(commonDomainObjects.Id, ExclusivityClassifierIdentifier.No);
