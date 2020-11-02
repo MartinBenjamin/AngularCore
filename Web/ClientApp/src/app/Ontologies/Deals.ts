@@ -1,4 +1,9 @@
+import { Annotation } from "../Ontology/Annotation";
+import { DataComplementOf } from "../Ontology/DataComplementOf";
+import { DataOneOf } from "../Ontology/DataOneOf";
+import { DataSomeValuesFrom } from "../Ontology/DataSomeValuesFrom";
 import { DisjointClasses } from "../Ontology/DisjointClasses";
+import { IAnnotationProperty } from "../Ontology/IAnnotationProperty";
 import { IClass } from "../Ontology/IClass";
 import { INamedIndividual } from "../Ontology/INamedIndividual";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "../Ontology/IPropertyExpression";
@@ -10,8 +15,9 @@ import { parties } from "./Parties";
 import { roleIndividuals } from "./RoleIndividuals";
 import { roles } from "./Roles";
 
-export class Deals extends Ontology {
-    
+export class Deals extends Ontology
+{
+    RestrictedfromStage: IAnnotationProperty;
     DealType           : IClass;
     Deal               : IClass;
     Debt               : IClass;
@@ -47,19 +53,24 @@ export class Deals extends Ontology {
             legalEntities,
             parties)
 
+        this.RestrictedfromStage = this.DeclareAnnotationProperty("RestrictedFromStage");
+
         this.DealType = this.DeclareClass("DealType");
         this.DealType.SubClassOf(commonDomainObjects.Named);
 
         this.Deal = this.DeclareClass("Deal");
         this.Deal.SubClassOf(commonDomainObjects.Named);
 
-        this.Type        = this.Deal.DeclareObjectProperty("Type");
-        this.Parties     = this.Deal.DeclareObjectProperty("Parties");
+        this.Type        = this.Deal.DeclareObjectProperty("Type"       );
+        this.Parties     = this.Deal.DeclareObjectProperty("Parties"    );
         this.Classifiers = this.Deal.DeclareObjectProperty("Classifiers");
         this.Commitments = this.Deal.DeclareObjectProperty("Commitments");
-        this.Borrowers   = this.Deal.DeclareObjectProperty("Borrowers");
-        this.Sponsors    = this.Deal.DeclareObjectProperty("Sponsors");
+        this.Borrowers   = this.Deal.DeclareObjectProperty("Borrowers"  );
+        this.Sponsors    = this.Deal.DeclareObjectProperty("Sponsors"   );
         this.Exclusivity = this.Deal.DeclareObjectProperty("Exclusivity");
+
+        let axiom = this.Deal.SubClassOf(new DataSomeValuesFrom(commonDomainObjects.Name, new DataComplementOf(new DataOneOf([""]))));
+        axiom.Annotations.push(new Annotation(this.RestrictedfromStage, 0));
 
         this.DealParty = this.DeclareClass("DealParty");
         this.DealParty.SubClassOf(parties.PartyInRole);
@@ -102,9 +113,13 @@ export class Deals extends Ontology {
         this.Debt.SubClassOf(this.Parties.ExactCardinality(1, this.BankLenderParty));
         //this.Debt.SubClassOf(this.Borrowers.MinCardinality(1)).Annotate(validation.Restriction, 0);
         new DisjointClasses(this, [this.Deal, this.DealType, this.DealParty, commonDomainObjects.Classifier]);
+
         let ExclusivityClassifier = this.DeclareClass("ExclusivityClassifier");
         ExclusivityClassifier.SubClassOf(commonDomainObjects.Classifier);
-        //this.Deal.SubClassOf(this.Classifiers.ExactCardinality(1, ExclusivityClassifier)).Annotate(validation.Restriction, 0).Annotate(validation.SubPropertyName, "Exclusivity");
+
+        axiom = this.Deal.SubClassOf(this.Classifiers.ExactCardinality(1, ExclusivityClassifier));
+        axiom.Annotations.push(new Annotation(this.RestrictedfromStage, 0));
+        //.Annotate(validation.SubPropertyName, "Exclusivity");
         //let NotExclusive = ExclusivityClassifier.DeclareNamedIndividual("NotExclusive");
         //NotExclusive.Value(commonDomainObjects.Id, ExclusivityClassifierIdentifier.No);
         //let Exclusive = ExclusivityClassifier.Intersect((new ObjectOneOf(NotExclusive) + Complement()));
@@ -113,8 +128,8 @@ export class Deals extends Ontology {
         //let intermediate = this.DeclareClass("Intermediate");
         //intermediate.Define(new ObjectSomeValuesFrom(this.Classifiers, Exclusive));
         //ExclusiveDeal.Define(new ObjectIntersectionOf(intermediate));
-        //let Exclusivity = this.DeclareClass();
-        //let Date = this.Exclusivity.DeclareDataProperty<Exclusivity, DateTime?>(() => {  }, exclusivity.Date);
+
+        let Date = this.Exclusivity.DeclareDataProperty("Date");
         //Date.Range(ReservedVocabulary.DateTime).Annotate(validation.RangeValidated, null);
     }
 }

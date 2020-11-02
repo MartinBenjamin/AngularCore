@@ -8,7 +8,7 @@ export class Annotation
 {
     constructor(
         public Property: IAnnotationProperty,
-        public Value   : object
+        public Value   : any
         )
     {
         super();
