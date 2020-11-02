@@ -3,7 +3,7 @@ import { IAnnotation } from "./IAnnotation";
 
 export class Annotated implements IAnnotated
 {
-    Annotations: IAnnotation[]
+    readonly Annotations: IAnnotation[] = [];
 
     protected constructor()
     {
