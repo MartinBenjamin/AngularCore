@@ -60,6 +60,7 @@
     <None Remove="ClientApp\src\app\NamedFinder.ts" />
     <None Remove="ClientApp\src\app\ObservableDomainObjectStore.ts" />
     <None Remove="ClientApp\src\app\ObservableNamedStore.ts" />
+    <None Remove="ClientApp\src\app\Ontologies\Advisory.ts" />
     <None Remove="ClientApp\src\app\Ontologies\CommonDomainObjects.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Deals.ts" />
     <None Remove="ClientApp\src\app\Ontologies\IDealOntology.ts" />
@@ -262,6 +263,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\NamedFinder.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\ObservableDomainObjectStore.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\ObservableNamedStore.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Advisory.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\CommonDomainObjects.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Deals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\IDealOntology.ts" />
