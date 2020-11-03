@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <None Remove="Branch.csv" />
+    <None Remove="DealType.csv" />
     <None Remove="Exclusivity.csv" />
     <None Remove="ISO3166-1.csv" />
     <None Remove="ISO3166-2-AE.csv" />
@@ -20,6 +21,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Branch.csv" />
+    <EmbeddedResource Include="DealType.csv" />
     <EmbeddedResource Include="Exclusivity.csv" />
     <EmbeddedResource Include="ISO3166-1.csv" />
     <EmbeddedResource Include="ISO3166-2-AE.csv" />

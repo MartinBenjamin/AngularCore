@@ -56,6 +56,11 @@ namespace Data
                 .RegisterType<ExclusivityLoader>()
                 .As<IEtl<ClassificationScheme>>()
                 .SingleInstance();
+
+            builder
+                .RegisterType<DealTypeLoader>()
+                .As<IEtl<ClassificationScheme>>()
+                .SingleInstance();
         }
     }
 }

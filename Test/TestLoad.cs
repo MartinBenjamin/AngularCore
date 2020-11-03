@@ -143,15 +143,22 @@ namespace Test
         }
 
         [Test]
-        public async Task Exclusivity()
+        public async Task ClassificationScheme()
         {
-            var classificationScheme = await _container.Resolve<IEtl<ClassificationScheme>>().ExecuteAsync();
+            var loaders = _container.Resolve<IEnumerable<IEtl<ClassificationScheme>>>();
 
-            using(var scope = _container.BeginLifetimeScope())
+            Assert.That(loaders.Count(), Is.EqualTo(2));
+
+            foreach(var loader in loaders)
             {
-                var service = scope.Resolve<IDomainObjectService<Guid, ClassificationScheme>>();
-                var loaded = await service.GetAsync(classificationScheme.Id);
-                Assert.That(loaded, Is.Not.Null);
+                var classificationScheme = await loader.ExecuteAsync();
+
+                using(var scope = _container.BeginLifetimeScope())
+                {
+                    var service = scope.Resolve<IDomainObjectService<Guid, ClassificationScheme>>();
+                    var loaded = await service.GetAsync(classificationScheme.Id);
+                    Assert.That(loaded, Is.Not.Null);
+                }
             }
         }
 
@@ -173,7 +180,7 @@ namespace Test
             await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
             await _container.Resolve<IEtl<IEnumerable<Currency>>>().ExecuteAsync();
             await _container.Resolve<IEtl<IEnumerable<(Branch, Identifier)>>>().ExecuteAsync();
-            await _container.Resolve<IEtl<ClassificationScheme>>().ExecuteAsync();
+            await _container.Resolve<IEnumerable<IEtl<ClassificationScheme>>>().ForEachAsync(loader => loader.ExecuteAsync());
             //await new LegalEntityLoader(
             //    _container.Resolve<ISessionFactory>(),
             //    100).LoadAsync();

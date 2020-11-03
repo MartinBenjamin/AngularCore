@@ -5,23 +5,23 @@ using System;
 
 namespace Data
 {
-    public class ExclusivityLoader: ClassificationSchemeLoader
+    public class DealTypeLoader: ClassificationSchemeLoader
     {
-        public ExclusivityLoader(
+        public DealTypeLoader(
             ICsvExtractor   csvExtractor,
             ISessionFactory sessionFactory
             ) : base(
                 csvExtractor,
                 sessionFactory,
-                new Guid("f7c20b62-ffe8-4c20-86b4-e5c68ba2469d"),
-                "Exclusivity.csv")
+                new Guid("e28b89e1-97e4-4820-aabc-af31e6959888"),
+                "DealType.csv")
         {
         }
 
         protected override Classifier NewClassifier(
             Guid   id,
             string name
-            ) => new ExclusivityClassifier(
+            ) => new DealType(
                 id,
                 name);
     }
