@@ -71,8 +71,8 @@ export class Deals extends Ontology
         this.Exclusivity = this.Deal.DeclareObjectProperty("Exclusivity");
 
         this.Deal.SubClassOf(
-            new DataSomeValuesFrom(
-                commonDomainObjects.Name,
+            commonDomainObjects.Name.MinCardinality(
+                1,
                 new DataComplementOf(new DataOneOf([""]))))
             .Annotate(
                 this.RestrictedfromStage,
