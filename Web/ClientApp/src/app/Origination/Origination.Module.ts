@@ -30,6 +30,11 @@ const routes: Routes =
                         path: 'Advisory',
                         loadChildren: () => import('./Advisory/Advisory.Module').then(
                             module => module.AdvisoryModule)
+                    },
+                    {
+                        path: 'Deal/:Ontology',
+                        loadChildren: () => import('./Deal/DealComponent.Module').then(
+                            module => module.DealComponentModule)
                     }
                 ]
         }

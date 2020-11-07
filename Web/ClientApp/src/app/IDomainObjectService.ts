@@ -9,7 +9,6 @@ export interface IDomainObjectService<TId, TDomainObject extends DomainObject<TI
     Get(id: TId): Observable<TDomainObject>;
 }
 
-
 @Injectable()
 export class DomainObjectService<TId, TDomainObject extends DomainObject<TId>> implements IDomainObjectService<TId, TDomainObject>
 {

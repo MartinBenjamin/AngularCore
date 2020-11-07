@@ -63,6 +63,7 @@
     <None Remove="ClientApp\src\app\Ontologies\Advisory.ts" />
     <None Remove="ClientApp\src\app\Ontologies\CommonDomainObjects.ts" />
     <None Remove="ClientApp\src\app\Ontologies\DealOntologyService.ts" />
+    <None Remove="ClientApp\src\app\Ontologies\DealOntologyServiceProvider.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Deals.ts" />
     <None Remove="ClientApp\src\app\Ontologies\IDealOntology.ts" />
     <None Remove="ClientApp\src\app\Ontologies\IDealOntologyService.ts" />
@@ -268,6 +269,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Advisory.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\CommonDomainObjects.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\DealOntologyService.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontologies\DealOntologyServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Deals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\IDealOntology.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\IDealOntologyService.ts" />

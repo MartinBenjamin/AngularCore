@@ -35,4 +35,4 @@ export class ProjectFinance
     }
 }
 
-export let projectfinance = new ProjectFinance();
+export let projectFinance = new ProjectFinance();

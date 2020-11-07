@@ -70,6 +70,9 @@
             <tr *ngFor="let dealType of DealTypes">
               <td><a [routerLink]="[dealType.Advisory ? 'Advisory' : 'ProjectFinance']">{{dealType.Name}}</a></td>
             </tr>
+            <tr>
+              <td><a [routerLink]="['Deal', 'ProjectFinance']">Project Finance</a></td>
+            </tr>
           </table>
         </div>
       </span>
