@@ -15,8 +15,6 @@ import { TransactionDetails } from '../TransactionDetails';
 import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServiceProvider';
 import { DealOntologyService } from '../../Ontologies/DealOntologyService';
 
-export let DealOntologyToken = new InjectionToken<IDealOntology>("IDealOntology");
-
 @Component(
     {
         templateUrl: './Deal.html',
@@ -31,15 +29,14 @@ export let DealOntologyToken = new InjectionToken<IDealOntology>("IDealOntology"
 export class DealComponent extends DealProvider implements AfterViewInit
 {
     private _subscription: Subscription;
+    private _ontology    : IDealOntology;
+    private _deal        : Deal;
 
     @ViewChild('title')
     private _title: TemplateRef<any>;
 
-    private _deal: Deal;
 
     constructor(
-        @Inject(DealOntologyToken)
-        private _ontology           : IDealOntology,
         @Inject(DealOntologyServiceToken)
         private _dealOntologyService: DealOntologyService,
         private _origination        : Origination,

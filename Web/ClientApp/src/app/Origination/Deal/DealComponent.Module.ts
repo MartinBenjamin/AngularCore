@@ -5,7 +5,7 @@ import { TabbedViewModule } from '../../Components/TabbedView';
 import { DealOntologyServiceProvider } from '../../Ontologies/DealOntologyServiceProvider';
 import { projectFinance } from '../../Ontologies/ProjectFinance';
 import { DealModule } from '../Deal.Module';
-import { DealComponent, DealOntologyToken } from './DealComponent';
+import { DealComponent } from './DealComponent';
 
 const routes: Routes =
     [
@@ -31,10 +31,6 @@ const routes: Routes =
             ],
         providers:
             [
-                {
-                    provide: DealOntologyToken,
-                    useValue: projectFinance
-                },
                 DealOntologyServiceProvider
             ]
     })
