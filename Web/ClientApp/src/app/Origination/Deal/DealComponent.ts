@@ -7,9 +7,10 @@ import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
 import { DealOntologyService } from '../../Ontologies/DealOntologyService';
 import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServiceProvider';
-import { DealComponentBuilder } from '../../Ontologies/IDealComponentBuilder';
+import { DealComponentBuilder, IDealComponentBuilder } from '../../Ontologies/IDealComponentBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
 import { Origination } from '../Origination';
+import { deals } from '../../Ontologies/Deals';
 
 @Component(
     {
@@ -42,12 +43,15 @@ export class DealComponent extends DealProvider implements AfterViewInit
     {
         super();
         //this._subscription = this._behaviourSubject.subscribe(deal => this._deal = deal)
-        //alert(this._ontology.Deal.Iri);
-        //alert(this._activatedRoute.snapshot.params.Ontology);
         this._ontology = _dealOntologyService.Get(this._activatedRoute.snapshot.params.Ontology);
-        alert(this._ontology.Deal.Iri);
 
-        new DealComponentBuilder().BuildDebtTabs(this);
+        let dealComponentBuilder = new DealComponentBuilder();
+
+        let superClasses = this._ontology.SuperClasses(this._ontology.Deal);
+        for(let superClass of superClasses)
+            for(let annotation of superClass.Annotations)
+                if(annotation.Property == deals.ComponentBuildAction)
+                    dealComponentBuilder[<keyof IDealComponentBuilder>annotation.Value](this);
 
         if(typeof this._activatedRoute.snapshot.data.id == 'undefined')
         {
