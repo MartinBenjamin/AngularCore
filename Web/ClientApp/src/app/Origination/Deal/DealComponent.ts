@@ -58,12 +58,12 @@ export class DealComponent extends DealProvider implements AfterViewInit
                             dealComponentBuilder[<keyof IDealComponentBuilder>annotation.Value](this);
 
                 this._behaviourSubject.next(<Deal>{
-                    Id: EmptyGuid,
-                    Name: null,
-                    Agreements: [],
+                    Id         : EmptyGuid,
+                    Name       : null,
+                    Agreements : [],
                     Commitments: [],
-                    Parties: [],
-                    Restricted: false,
+                    Parties    : [],
+                    Restricted : false,
                     ProjectName: null,
                     Classifiers: []
                 });
