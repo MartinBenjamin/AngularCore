@@ -1,7 +1,6 @@
 import { LegalEntityIdentifier } from "../LegalEntities";
 import { DataComplementOf } from "../Ontology/DataComplementOf";
 import { DataOneOf } from "../Ontology/DataOneOf";
-import { DataSomeValuesFrom } from "../Ontology/DataSomeValuesFrom";
 import { DisjointClasses } from "../Ontology/DisjointClasses";
 import { IAnnotationProperty } from "../Ontology/IAnnotationProperty";
 import { IClass } from "../Ontology/IClass";

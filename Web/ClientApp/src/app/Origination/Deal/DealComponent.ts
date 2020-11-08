@@ -1,19 +1,15 @@
-import { AfterViewInit, Component, forwardRef, Inject, InjectionToken, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, forwardRef, Inject, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { EmptyGuid } from '../../CommonDomainObjects';
 import { Tab } from '../../Components/TabbedView';
 import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
-import { IDealOntology } from '../../Ontologies/IDealOntology';
-import { KeyCounterparties } from '../KeyCounterparties';
-import { KeyDealData } from '../KeyDealData';
-import { MoreTabs } from '../MoreTabs';
-import { Origination } from '../Origination';
-import { OriginationTab } from '../OriginationTab';
-import { TransactionDetails } from '../TransactionDetails';
-import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServiceProvider';
 import { DealOntologyService } from '../../Ontologies/DealOntologyService';
+import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServiceProvider';
+import { DealComponentBuilder } from '../../Ontologies/IDealComponentBuilder';
+import { IDealOntology } from '../../Ontologies/IDealOntology';
+import { Origination } from '../Origination';
 
 @Component(
     {
@@ -35,6 +31,7 @@ export class DealComponent extends DealProvider implements AfterViewInit
     @ViewChild('title')
     private _title: TemplateRef<any>;
 
+    public Tabs: Tab[];
 
     constructor(
         @Inject(DealOntologyServiceToken)
@@ -49,6 +46,8 @@ export class DealComponent extends DealProvider implements AfterViewInit
         //alert(this._activatedRoute.snapshot.params.Ontology);
         this._ontology = _dealOntologyService.Get(this._activatedRoute.snapshot.params.Ontology);
         alert(this._ontology.Deal.Iri);
+
+        new DealComponentBuilder().BuildDebtTabs(this);
 
         if(typeof this._activatedRoute.snapshot.data.id == 'undefined')
         {
@@ -70,20 +69,6 @@ export class DealComponent extends DealProvider implements AfterViewInit
         {
         }
     }
-
-    public Tabs =
-    [
-        new Tab('Key Deal<br/>Data'     , KeyDealData       ),
-        new Tab('Transaction<br>Details', TransactionDetails),
-        new Tab('Security'              , OriginationTab    ),
-        new Tab('Fees &<br/>Income'     , OriginationTab    ),
-        new Tab('Key<br/>Dates'         , OriginationTab    ),
-        new Tab('Deal<br/>Team'         , OriginationTab    ),
-        new Tab('Key<br/>Counterparties', KeyCounterparties ),
-        new Tab('Syndicate<br/>Info'    , OriginationTab    ),
-        new Tab('Key Risks &<br/>Events', OriginationTab    ),
-        new Tab('More'                  , MoreTabs          )
-    ];
 
     ngAfterViewInit()
     {
