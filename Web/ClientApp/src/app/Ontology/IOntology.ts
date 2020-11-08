@@ -19,6 +19,8 @@ export interface IOntology
         individual: object,
         evaluator?: ClassMembershipEvaluator): Map<object, Set<IClass>>;
 
+    SuperClasses(class$: IClass): Set<IClass>;
+
     // Provided to assist programatic construction of ontologies.
     DeclareClass(localName: string): IClass;
     DeclareObjectProperty(localName: string): IObjectPropertyExpression;

@@ -15,32 +15,33 @@ import { roles } from "./Roles";
 
 export class Deals extends Ontology
 {
-    RestrictedfromStage: IAnnotationProperty;
-    SubPropertyName    : IAnnotationProperty;
-    DealType           : IClass;
-    Deal               : IClass;
-    Debt               : IClass;
-    Advisory           : IClass;
-    Type               : IObjectPropertyExpression;
-    Parties            : IObjectPropertyExpression;
-    Commitments        : IObjectPropertyExpression;
-    Classifiers        : IObjectPropertyExpression;
-    Borrowers          : IObjectPropertyExpression;
-    Sponsors           : IObjectPropertyExpression;
-    Exclusivity        : IObjectPropertyExpression;
-    DealParty          : IClass;
-    LenderParty        : IClass;
-    AdvisorParty       : IClass;
-    SponsorParty       : IClass;
-    BorrowerParty      : IClass;
-    Sponsor            : IClass;
-    Equity             : IDataPropertyExpression;
-    Bank               : INamedIndividual;
-    BankParty          : IClass;
-    BankLenderParty    : IClass;
-    BankAdvisorParty   : IClass;
-    KeyCounterpartyRole: IClass;
-    KeyCounterparty    : IClass;
+    RestrictedfromStage : IAnnotationProperty;
+    SubPropertyName     : IAnnotationProperty;
+    ComponentBuildAction: IAnnotationProperty;
+    DealType            : IClass;
+    Deal                : IClass;
+    Debt                : IClass;
+    Advisory            : IClass;
+    Type                : IObjectPropertyExpression;
+    Parties             : IObjectPropertyExpression;
+    Commitments         : IObjectPropertyExpression;
+    Classifiers         : IObjectPropertyExpression;
+    Borrowers           : IObjectPropertyExpression;
+    Sponsors            : IObjectPropertyExpression;
+    Exclusivity         : IObjectPropertyExpression;
+    DealParty           : IClass;
+    LenderParty         : IClass;
+    AdvisorParty        : IClass;
+    SponsorParty        : IClass;
+    BorrowerParty       : IClass;
+    Sponsor             : IClass;
+    Equity              : IDataPropertyExpression;
+    Bank                : INamedIndividual;
+    BankParty           : IClass;
+    BankLenderParty     : IClass;
+    BankAdvisorParty    : IClass;
+    KeyCounterpartyRole : IClass;
+    KeyCounterparty     : IClass;
     
     public constructor()
     {
@@ -52,8 +53,9 @@ export class Deals extends Ontology
             legalEntities,
             parties)
 
-        this.RestrictedfromStage = this.DeclareAnnotationProperty("RestrictedFromStage");
-        this.SubPropertyName     = this.DeclareAnnotationProperty("SubPropertyName"    );
+        this.RestrictedfromStage  = this.DeclareAnnotationProperty("RestrictedFromStage");
+        this.SubPropertyName      = this.DeclareAnnotationProperty("SubPropertyName");
+        this.ComponentBuildAction = this.DeclareAnnotationProperty("ComponentBuildAction");
 
         this.DealType = this.DeclareClass("DealType");
         this.DealType.SubClassOf(commonDomainObjects.Named);
@@ -128,6 +130,7 @@ export class Deals extends Ontology
         this.Debt.SubClassOf(this.Parties.ExactCardinality(1, this.BankLenderParty));
         this.Debt.SubClassOf(this.Borrowers.MinCardinality(1))
             .Annotate(this.RestrictedfromStage, 0);
+        this.Debt.Annotate(this.ComponentBuildAction, "BuildDebtTabs");
         new DisjointClasses(this, [this.Deal, this.DealType, this.DealParty, commonDomainObjects.Classifier]);
 
         let ExclusivityClassifier = this.DeclareClass("ExclusivityClassifier");

@@ -63,6 +63,25 @@ export class Ontology implements IOntology
         return classifications;
     }
 
+    SuperClasses(
+        class$: IClass
+        ): Set<IClass>
+    {
+        let superClasses = new Set<IClass>();
+        superClasses.add(class$);
+
+        for(let subClassOf of this.Get(this.IsAxiom.ISubClassOf))
+            if(subClassOf.SubClassExpression === class$)
+            {
+                let superClassExpression = subClassOf.SuperClassExpression;
+                if(this.IsAxiom.IClass(superClassExpression))
+                    for(let superClass of this.SuperClasses(superClassExpression))
+                        superClasses.add(superClass);
+            }
+
+        return superClasses;
+    }
+
     DeclareClass(
         localName: string
         ): IClass

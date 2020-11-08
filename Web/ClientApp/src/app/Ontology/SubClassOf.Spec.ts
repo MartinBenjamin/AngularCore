@@ -23,6 +23,42 @@ describe(
                 new ClassAssertion(o1, c1, i1);
 
                 describe(
+                    'Given result = o1.SuperClasses(c1)',
+                    () =>
+                    {
+                        let result = o1.SuperClasses(c1);
+                        let assert = assertBuilder('result', 'c1', 'c2', 'c3')(result, c1, c2, c3);
+                        assert('result.size === 3')
+                        assert('result.has(c1)');
+                        assert('result.has(c2)');
+                        assert('result.has(c3)');
+                    });
+
+                describe(
+                    'Given result = o1.SuperClasses(c2)',
+                    () =>
+                    {
+                        let result = o1.SuperClasses(c2);
+                        let assert = assertBuilder('result', 'c1', 'c2', 'c3')(result, c1, c2, c3);
+                        assert('result.size === 2')
+                        assert('!result.has(c1)');
+                        assert('result.has(c2)');
+                        assert('result.has(c3)');
+                    });
+
+                describe(
+                    'Given result = o1.SuperClasses(c3)',
+                    () =>
+                    {
+                        let result = o1.SuperClasses(c3);
+                        let assert = assertBuilder('result', 'c1', 'c2', 'c3')(result, c1, c2, c3);
+                        assert('result.size === 1')
+                        assert('!result.has(c1)');
+                        assert('!result.has(c2)');
+                        assert('result.has(c3)');
+                    });
+
+                describe(
                     'Given result = o1.Classify(i1)',
                     () =>
                     {
