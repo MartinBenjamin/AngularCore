@@ -32,7 +32,7 @@ const routes: Routes =
                             module => module.AdvisoryModule)
                     },
                     {
-                        path: 'Deal/:Ontology',
+                        path: 'Deal',
                         loadChildren: () => import('./Deal/DealComponent.Module').then(
                             module => module.DealComponentModule)
                     }

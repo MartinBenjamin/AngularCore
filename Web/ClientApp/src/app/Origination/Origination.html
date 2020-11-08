@@ -71,10 +71,10 @@
               <td><a [routerLink]="[dealType.Advisory ? 'Advisory' : 'ProjectFinance']">{{dealType.Name}}</a></td>
             </tr>
             <tr>
-              <td><a [routerLink]="['Deal', 'Advisory']">Advisory</a></td>
+              <td><a [routerLink]="['Deal']" [queryParams]="{ Ontology: 'Advisory' }">Advisory</a></td>
             </tr>
             <tr>
-              <td><a [routerLink]="['Deal', 'ProjectFinance']">Project Finance</a></td>
+              <td><a [routerLink]="['Deal']" [queryParams]="{ Ontology: 'ProjectFinance' }">Project Finance</a></td>
             </tr>
           </table>
         </div>
