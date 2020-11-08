@@ -57,28 +57,19 @@ export class DealComponent extends DealProvider implements AfterViewInit
                         if(annotation.Property == deals.ComponentBuildAction)
                             dealComponentBuilder[<keyof IDealComponentBuilder>annotation.Value](this);
 
+                this._behaviourSubject.next(<Deal>{
+                    Id: EmptyGuid,
+                    Name: null,
+                    Agreements: [],
+                    Commitments: [],
+                    Parties: [],
+                    Restricted: false,
+                    ProjectName: null,
+                    Classifiers: []
+                });
+
             });
         //this._subscription = this._behaviourSubject.subscribe(deal => this._deal = deal)
-
-        if(typeof this._activatedRoute.snapshot.data.id == 'undefined')
-        {
-            // Create Project Finance Deal.
-            // Need to get stages.
-            // Need to set up MUFG Bank, Ltd. as Lender.
-            this._behaviourSubject.next(<Deal>{
-                Id         : EmptyGuid,
-                Name       : null,
-                Agreements : [],
-                Commitments: [],
-                Parties    : [],
-                Restricted : false,
-                ProjectName: null,
-                Classifiers: []
-            });
-        }
-        else
-        {
-        }
     }
 
     ngAfterViewInit()
