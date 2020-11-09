@@ -44,7 +44,7 @@
 </style>
 <deal-tracker-layout>
   <area-title>Asset Management</area-title>
-  <feature-title [ngTemplateOutlet]="Title"></feature-title>
+  <feature-title [ngTemplateOutlet]="Title|async"></feature-title>
   <menu-container>
     <span style="white-space: nowrap">
       <span style="display: inline-block;"><span class="MenuTitle"><a [routerLink]="['/Home']">Home</a></span></span>

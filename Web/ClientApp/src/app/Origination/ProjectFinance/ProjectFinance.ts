@@ -77,6 +77,6 @@ export class ProjectFinance extends DealProvider implements AfterViewInit
 
     ngAfterViewInit()
     {
-        setTimeout(() => this._origination.Title = this._title);
+        this._origination.Title.next(this._title);
     }
 }

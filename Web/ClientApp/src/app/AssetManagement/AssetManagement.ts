@@ -1,4 +1,5 @@
 import { Component, TemplateRef } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Component(
     {
@@ -7,16 +8,9 @@ import { Component, TemplateRef } from '@angular/core';
     })
 export class AssetManagement
 {
-    private _title: TemplateRef<any>
+    private readonly _title = new BehaviorSubject<TemplateRef<any>>(null);
 
-    set Title(
-        title: TemplateRef<any>
-        )
-    {
-        this._title = title;
-    }
-
-    get Title(): TemplateRef<any>
+    get Title(): BehaviorSubject<TemplateRef<any>>
     {
         return this._title;
     }
