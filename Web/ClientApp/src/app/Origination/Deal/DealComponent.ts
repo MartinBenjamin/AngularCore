@@ -47,7 +47,7 @@ export class DealComponent extends DealProvider implements AfterViewInit
         this._activatedRoute.queryParamMap.subscribe(
             params =>
             {
-                this._ontology = _dealOntologyService.Get(params.get('Ontology'));
+                this._ontology = _dealOntologyService.Get(params.get('originate'));
                 if(!this._ontology)
                     return;
 
