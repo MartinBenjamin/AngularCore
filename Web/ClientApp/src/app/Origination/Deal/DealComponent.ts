@@ -1,16 +1,20 @@
 import { AfterViewInit, Component, forwardRef, Inject, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { EmptyGuid } from '../../CommonDomainObjects';
+import { EmptyGuid, Guid } from '../../CommonDomainObjects';
 import { Tab } from '../../Components/TabbedView';
 import { DealProvider } from '../../DealProvider';
-import { Deal } from '../../Deals';
+import { Deal, ClassificationSchemeIdentifier } from '../../Deals';
 import { DealOntologyService } from '../../Ontologies/DealOntologyService';
 import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServiceProvider';
 import { DealComponentBuilder, IDealComponentBuilder } from '../../Ontologies/IDealComponentBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
 import { Origination } from '../Origination';
 import { deals } from '../../Ontologies/Deals';
+import { IDomainObjectService } from '../../IDomainObjectService';
+import { ClassificationScheme } from '../../ClassificationScheme';
+import { ClassificationSchemeServiceToken } from '../../ClassificationSchemeServiceProvider';
+import { commonDomainObjects } from '../../Ontologies/CommonDomainObjects';
 
 @Component(
     {
@@ -37,6 +41,8 @@ export class DealComponent extends DealProvider implements AfterViewInit
     constructor(
         @Inject(DealOntologyServiceToken)
         private _dealOntologyService: DealOntologyService,
+        @Inject(ClassificationSchemeServiceToken)
+        classificationSchemeService : IDomainObjectService<Guid, ClassificationScheme>,
         private _origination        : Origination,
         private _activatedRoute     : ActivatedRoute
         )
@@ -57,16 +63,34 @@ export class DealComponent extends DealProvider implements AfterViewInit
                         if(annotation.Property == deals.ComponentBuildAction)
                             dealComponentBuilder[<keyof IDealComponentBuilder>annotation.Value](this);
 
-                this._behaviourSubject.next(<Deal>{
-                    Id         : EmptyGuid,
-                    Name       : null,
-                    Agreements : [],
-                    Commitments: [],
-                    Parties    : [],
-                    Restricted : false,
-                    ProjectName: null,
-                    Classifiers: []
-                });
+                let dealTypeId: string = null;
+                for(let dataPropertyAssertion of this._ontology.Get(this._ontology.IsAxiom.IDataPropertyAssertion))
+                    if(dataPropertyAssertion.DataPropertyExpression === commonDomainObjects.Id &&
+                        dataPropertyAssertion.SourceIndividual === this._ontology.DealType)
+                    {
+                        dealTypeId = dataPropertyAssertion.TargetValue;
+                        break;
+                    }
+
+                classificationSchemeService
+                    .Get(ClassificationSchemeIdentifier.DealType)
+                    .subscribe(
+                        classificationScheme =>
+                        {
+                            for(let classificationSchemeClassifier of classificationScheme.Classifiers)
+                                if(classificationSchemeClassifier.Classifier.Id === dealTypeId)
+                                    this._behaviourSubject.next(<Deal>{
+                                        Id         : EmptyGuid,
+                                        Type       : classificationSchemeClassifier.Classifier,
+                                        Name       : null,
+                                        Agreements : [],
+                                        Commitments: [],
+                                        Parties    : [],
+                                        Restricted : false,
+                                        ProjectName: null,
+                                        Classifiers: []
+                                    });
+                        });
 
             });
         //this._subscription = this._behaviourSubject.subscribe(deal => this._deal = deal)
@@ -75,5 +99,10 @@ export class DealComponent extends DealProvider implements AfterViewInit
     ngAfterViewInit()
     {
         this._origination.Title.next(this._title);
+    }
+
+    get Deal(): Deal
+    {
+        return this._behaviourSubject.getValue();
     }
 }
