@@ -63,6 +63,17 @@ export class DealComponent extends DealProvider implements AfterViewInit
                         if(annotation.Property == deals.ComponentBuildAction)
                             dealComponentBuilder[<keyof IDealComponentBuilder>annotation.Value](this);
 
+                this._behaviourSubject.next(<Deal>{
+                    Id         : EmptyGuid,
+                    Name       : null,
+                    Agreements : [],
+                    Commitments: [],
+                    Parties    : [],
+                    Restricted : false,
+                    ProjectName: null,
+                    Classifiers: []
+                });
+
                 let dealTypeId: string = null;
                 for(let dataPropertyAssertion of this._ontology.Get(this._ontology.IsAxiom.IDataPropertyAssertion))
                     if(dataPropertyAssertion.DataPropertyExpression === commonDomainObjects.Id &&
@@ -75,22 +86,9 @@ export class DealComponent extends DealProvider implements AfterViewInit
                 classificationSchemeService
                     .Get(ClassificationSchemeIdentifier.DealType)
                     .subscribe(
-                        classificationScheme =>
-                        {
-                            for(let classificationSchemeClassifier of classificationScheme.Classifiers)
-                                if(classificationSchemeClassifier.Classifier.Id === dealTypeId)
-                                    this._behaviourSubject.next(<Deal>{
-                                        Id         : EmptyGuid,
-                                        Type       : classificationSchemeClassifier.Classifier,
-                                        Name       : null,
-                                        Agreements : [],
-                                        Commitments: [],
-                                        Parties    : [],
-                                        Restricted : false,
-                                        ProjectName: null,
-                                        Classifiers: []
-                                    });
-                        });
+                        classificationScheme => this.Deal.Type = classificationScheme.Classifiers
+                            .map(classificationSchemeClassifier => classificationSchemeClassifier.Classifier)
+                            .find(classifier => classifier.Id === dealTypeId));
 
             });
         //this._subscription = this._behaviourSubject.subscribe(deal => this._deal = deal)
