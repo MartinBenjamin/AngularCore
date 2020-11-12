@@ -29,7 +29,7 @@ export class Advisory
         this.Deal.SubClassOf(deals.Deal);
         this.Deal.SubClassOf(deals.Type.HasValue(this.DealType));
         this.Deal.SubClassOf(deals.Sponsors.MaxCardinality(0));
-        this.Deal.Annotate(deals.ComponentBuildAction, "BuildAdvisoryTabs");
+        this.Deal.Annotate(deals.ComponentBuildAction, "AddAdvisoryTabs");
     }
 }
 

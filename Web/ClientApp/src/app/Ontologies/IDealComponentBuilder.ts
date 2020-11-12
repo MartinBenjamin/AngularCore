@@ -8,13 +8,13 @@ import { TransactionDetails } from "../Origination/TransactionDetails";
 
 export interface IDealComponentBuilder
 {
-    BuildAdvisoryTabs(dealComponent: DealComponent);
-    BuildDebtTabs(dealComponent: DealComponent);
+    AddAdvisoryTabs(dealComponent: DealComponent);
+    AddDebtTabs(dealComponent: DealComponent);
 }
 
 export class DealComponentBuilder implements IDealComponentBuilder
 {
-    BuildAdvisoryTabs(
+    AddAdvisoryTabs(
         dealComponent: DealComponent
         )
     {
@@ -28,7 +28,7 @@ export class DealComponentBuilder implements IDealComponentBuilder
             ];
     }
 
-    BuildDebtTabs(
+    AddDebtTabs(
         dealComponent: DealComponent
         )
     {

@@ -130,7 +130,7 @@ export class Deals extends Ontology
         this.Debt.SubClassOf(this.Parties.ExactCardinality(1, this.BankLenderParty));
         this.Debt.SubClassOf(this.Borrowers.MinCardinality(1))
             .Annotate(this.RestrictedfromStage, 0);
-        this.Debt.Annotate(this.ComponentBuildAction, "BuildDebtTabs");
+        this.Debt.Annotate(this.ComponentBuildAction, "AddDebtTabs");
         new DisjointClasses(this, [this.Deal, this.DealType, this.DealParty, commonDomainObjects.Classifier]);
 
         let ExclusivityClassifier = this.DeclareClass("ExclusivityClassifier");
