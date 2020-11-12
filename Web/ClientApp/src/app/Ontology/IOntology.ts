@@ -5,13 +5,16 @@ import { IIsAxiom } from './IIsAxiom';
 import { INamedIndividual } from "./INamedIndividual";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
 import { IAnnotationProperty } from "./IAnnotationProperty";
+import { IIsClassExpression} from 'IIsClassExpression';
 
 export interface IOntology
 {
-    readonly Iri    : string;
-    readonly Imports: IOntology[];
-    readonly Axioms : IAxiom[];
-    readonly IsAxiom: IIsAxiom;
+    readonly Iri              : string;
+    readonly Imports          : IOntology[];
+    readonly Axioms           : IAxiom[];
+    readonly IsAxiom          : IIsAxiom;
+    readonly IsClassExpression: IIsClassExpression;
+
     GetOntologies(): Iterable<IOntology>;
     Get<TAxiom extends IAxiom>(typeGuard: (axiom: object) => axiom is TAxiom): Iterable<TAxiom>;
 

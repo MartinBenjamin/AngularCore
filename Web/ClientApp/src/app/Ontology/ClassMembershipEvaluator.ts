@@ -501,13 +501,13 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                     superClassExpression));
         }
 
-        //if(this._ontology.IsAxiom.IclassExpression is IObjectIntersectionOf objectIntersectionOf)
-        //    objectIntersectionOf.ClassExpressions
-        //        .ForEach(componentClassExpression => Classify(
-        //            classExpressions,
-        //            candidates,
-        //            individual,
-        //            componentClassExpression));
+        if(this._ontology.IsClassExpression.IObjectIntersectionOf(classExpression))
+            classExpression.ClassExpressions
+                .forEach(componentClassExpression => this.ApplyClassExpression(
+                    classes,
+                    candidates,
+                    individual,
+                    componentClassExpression));
     }
 
     public ClassifyAll(
