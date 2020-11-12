@@ -1,6 +1,7 @@
 import { Classifier } from "./ClassificationScheme";
 import { Guid, Named } from "./CommonDomainObjects";
 import { GeographicRegion } from "./Locations";
+import { IDealOntology } from "./Ontologies/IDealOntology";
 import { PartyInRole } from "./Parties";
 
 export class DealRoleIdentifier
@@ -51,6 +52,7 @@ export interface Deal extends Named<Guid>
     ProjectName     : string;
     Classifiers     : Classifier[];
     GeographicRegion: GeographicRegion;
+    Ontology?       : IDealOntology;
 }
 
 export interface DealParty extends PartyInRole

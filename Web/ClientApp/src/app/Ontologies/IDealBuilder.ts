@@ -42,6 +42,11 @@ export class DealBuilder implements IDealBuilder
             GeographicRegion: null
         };
 
+        Object.defineProperty(
+            deal,
+            'Ontology',
+            { get: () => ontology });
+
         let dealTypeId: string = null;
         for(let dataPropertyAssertion of ontology.Get(ontology.IsAxiom.IDataPropertyAssertion))
             if(dataPropertyAssertion.DataPropertyExpression === commonDomainObjects.Id &&
