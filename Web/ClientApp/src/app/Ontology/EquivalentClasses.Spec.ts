@@ -11,7 +11,7 @@ describe(
     () =>
     {
         describe(
-            'Given ontology o1:',
+            'Given ontology o1 with declarations Class(c1), DataProperty(dp1) and axiom EquivalentClasses(c1, DataHasValue(dp1, 1)):',
             () =>
             {
                 let o1 = new Ontology('o1');

@@ -5,7 +5,7 @@ import { IIsAxiom } from './IIsAxiom';
 import { INamedIndividual } from "./INamedIndividual";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
 import { IAnnotationProperty } from "./IAnnotationProperty";
-import { IIsClassExpression} from 'IIsClassExpression';
+import { IIsClassExpression } from './IIsClassExpression';
 
 export interface IOntology
 {
