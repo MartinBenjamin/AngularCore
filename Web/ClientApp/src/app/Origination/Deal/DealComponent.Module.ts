@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TabbedViewModule } from '../../Components/TabbedView';
 import { DealOntologyServiceProvider } from '../../Ontologies/DealOntologyServiceProvider';
-import { projectFinance } from '../../Ontologies/ProjectFinance';
+import { DealBuilderProvider } from '../../Ontologies/IDealBuilder';
 import { DealModule } from '../Deal.Module';
 import { DealComponent } from './DealComponent';
 
@@ -31,7 +31,8 @@ const routes: Routes =
             ],
         providers:
             [
-                DealOntologyServiceProvider
+                DealOntologyServiceProvider,
+                DealBuilderProvider
             ]
     })
 export class DealComponentModule

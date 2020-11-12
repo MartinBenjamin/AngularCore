@@ -76,10 +76,10 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     private readonly _superClassExpressions    : Map<IClassExpression, IClassExpression[]>;
     private readonly _subClassExpressions      : Map<IClassExpression, IClassExpression[]>;
     private readonly _disjointClassExpressions : Map<IClassExpression, IClassExpression[]>;
+    private readonly _objectPropertyExpressions: Map<IClassExpression, IObjectPropertyExpression[]>;
     private readonly _functionalDataProperties = new Set<IDataPropertyExpression>();
     private readonly _classDefinitions         : Map<IClass, IClassExpression[]>;
     private readonly _definedClasses           : IClass[];
-    private readonly _objectPropertyExpressions: Map<IClassExpression, IObjectPropertyExpression[]>;
     private readonly _classifications          : Map<object, Set<IClass>>;
 
     constructor(
