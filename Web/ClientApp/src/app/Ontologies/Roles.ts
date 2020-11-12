@@ -17,4 +17,4 @@ export class Roles extends Ontology
     }
 }
 
-export let roles = new Roles();
+export const roles = new Roles();

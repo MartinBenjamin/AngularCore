@@ -27,4 +27,4 @@ export class CommonDomainObjects extends Ontology
     }
 }
 
-export let commonDomainObjects = new CommonDomainObjects();
+export const commonDomainObjects = new CommonDomainObjects();

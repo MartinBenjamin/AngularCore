@@ -26,4 +26,4 @@ export class Parties extends Ontology
     }
 }
 
-export let parties = new Parties();
+export const parties = new Parties();

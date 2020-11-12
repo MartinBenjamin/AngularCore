@@ -31,4 +31,4 @@ export class RoleIndividuals extends Ontology
     }
 }
 
-export let roleIndividuals = new RoleIndividuals();
+export const roleIndividuals = new RoleIndividuals();

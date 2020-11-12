@@ -33,4 +33,4 @@ export class Advisory
     }
 }
 
-export let advisory = new Advisory();
+export const advisory: IDealOntology = new Advisory();

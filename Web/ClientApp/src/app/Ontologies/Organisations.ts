@@ -14,4 +14,4 @@ export class Organisations extends Ontology
     }
 }
 
-export let organisations = new Organisations();
+export const organisations = new Organisations();

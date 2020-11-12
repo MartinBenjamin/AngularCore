@@ -35,4 +35,4 @@ export class ProjectFinance
     }
 }
 
-export let projectFinance = new ProjectFinance();
+export const projectFinance: IDealOntology = new ProjectFinance();

@@ -155,4 +155,4 @@ export class Deals extends Ontology
     }
 }
 
-export let deals = new Deals();
+export const deals = new Deals();

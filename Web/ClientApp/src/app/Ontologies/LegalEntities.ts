@@ -14,4 +14,4 @@ export class LegalEntities extends Ontology
     }
 }
 
-export let legalEntities = new LegalEntities();
+export const legalEntities = new LegalEntities();
