@@ -8,9 +8,14 @@ import { DealOntologyService } from '../../Ontologies/DealOntologyService';
 import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServiceProvider';
 import { deals } from '../../Ontologies/Deals';
 import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
-import { DealComponentBuilder, IDealComponentBuilder } from '../../Ontologies/IDealComponentBuilder';
+import { DealComponentBuilder } from '../../Ontologies/IDealComponentBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
+import { KeyCounterparties } from '../KeyCounterparties';
+import { KeyDealData } from '../KeyDealData';
+import { MoreTabs } from '../MoreTabs';
 import { Origination } from '../Origination';
+import { OriginationTab } from '../OriginationTab';
+import { TransactionDetails } from '../TransactionDetails';
 
 @Component(
     {
@@ -25,9 +30,7 @@ import { Origination } from '../Origination';
     })
 export class DealComponent extends DealProvider implements AfterViewInit
 {
-    private _subscription: Subscription;
-    private _ontology    : IDealOntology;
-    private _deal        : Deal;
+    private _ontology: IDealOntology;
 
     @ViewChild('title')
     private _title: TemplateRef<any>;
@@ -45,7 +48,6 @@ export class DealComponent extends DealProvider implements AfterViewInit
     {
         super();
 
-        let dealComponentBuilder = new DealComponentBuilder();
         this._activatedRoute.queryParamMap.subscribe(
             params =>
             {
@@ -56,12 +58,12 @@ export class DealComponent extends DealProvider implements AfterViewInit
                 let superClasses = this._ontology.SuperClasses(this._ontology.Deal);
                 for(let superClass of superClasses)
                     for(let annotation of superClass.Annotations)
-                        if(annotation.Property == deals.ComponentBuildAction)
-                            dealComponentBuilder[<keyof IDealComponentBuilder>annotation.Value](this);
+                        if(annotation.Property == deals.ComponentBuildAction &&
+                           annotation.Value in this)
+                            this[annotation.Value]();
 
                 this._behaviourSubject.next(dealBuilder.Build(this._ontology));
             });
-        //this._subscription = this._behaviourSubject.subscribe(deal => this._deal = deal)
     }
 
     ngAfterViewInit()
@@ -72,5 +74,34 @@ export class DealComponent extends DealProvider implements AfterViewInit
     get Deal(): Deal
     {
         return this._behaviourSubject.getValue();
+    }
+
+    AddAdvisoryTabs()
+    {
+        this.Tabs =
+            [
+                new Tab('Key Deal<br/>Data'     , KeyDealData   ),
+                new Tab('Fees &<br/>Income'     , OriginationTab),
+                new Tab('Key<br/>Dates'         , OriginationTab),
+                new Tab('Deal<br/>Team'         , OriginationTab),
+                new Tab('Key<br/>Counterparties', OriginationTab)
+            ];
+    }
+
+    AddDebtTabs()
+    {
+        this.Tabs =
+            [
+                new Tab('Key Deal<br/>Data'     , KeyDealData       ),
+                new Tab('Transaction<br>Details', TransactionDetails),
+                new Tab('Security'              , OriginationTab    ),
+                new Tab('Fees &<br/>Income'     , OriginationTab    ),
+                new Tab('Key<br/>Dates'         , OriginationTab    ),
+                new Tab('Deal<br/>Team'         , OriginationTab    ),
+                new Tab('Key<br/>Counterparties', KeyCounterparties ),
+                new Tab('Syndicate<br/>Info'    , OriginationTab    ),
+                new Tab('Key Risks &<br/>Events', OriginationTab    ),
+                new Tab('More'                  , MoreTabs          )
+            ];
     }
 }
