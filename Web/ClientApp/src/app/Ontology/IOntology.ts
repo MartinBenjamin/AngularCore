@@ -1,11 +1,11 @@
 import { ClassMembershipEvaluator } from "./ClassMembershipEvaluator";
+import { IAnnotationProperty } from "./IAnnotationProperty";
 import { IAxiom } from "./IAxiom";
 import { IClass } from "./IClass";
 import { IIsAxiom } from './IIsAxiom';
+import { IIsClassExpression } from './IIsClassExpression';
 import { INamedIndividual } from "./INamedIndividual";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
-import { IAnnotationProperty } from "./IAnnotationProperty";
-import { IIsClassExpression } from './IIsClassExpression';
 
 export interface IOntology
 {
