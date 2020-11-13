@@ -34,6 +34,8 @@ export class KeyCounterparties implements OnDestroy
         ontology: IDealOntology
         ): void
     {
+        this.Reset();
+
         let superClasses = ontology.SuperClasses(ontology.Deal);
         for(let superClass of superClasses)
             for(let annotation of superClass.Annotations)

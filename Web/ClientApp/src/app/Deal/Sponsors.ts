@@ -1,12 +1,14 @@
-import { Component, Inject, ViewChild, Input, OnDestroy } from '@angular/core';
+import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { EmptyGuid } from '../CommonDomainObjects';
-import { Deal, DealParty, DealRoleIdentifier, Sponsor, percentage } from '../Deals';
+import { DealProvider } from '../DealProvider';
+import { Deal, DealParty, DealRoleIdentifier, percentage, Sponsor } from '../Deals';
 import { LegalEntityFinder } from '../LegalEntityFinder';
+import { deals } from '../Ontologies/Deals';
+import { IDealOntology } from '../Ontologies/IDealOntology';
+import { Sort } from '../Parties';
 import { Role } from '../Roles';
 import { RolesToken } from '../RoleServiceProvider';
-import { DealProvider } from '../DealProvider';
-import { Sort } from '../Parties';
 
 @Component(
     {
@@ -15,6 +17,7 @@ import { Sort } from '../Parties';
     })
 export class Sponsors implements OnDestroy
 {
+    private _naEnabled    = false;
     private _subscriptions: Subscription[] = [];
     private _sponsorRole  : Role;
     private _deal         : Deal;
@@ -39,6 +42,7 @@ export class Sponsors implements OnDestroy
             dealProvider.subscribe(
                 deal =>
                 {
+                    this.Build(deal.Ontology);
                     this._deal = deal;
                     this.ComputeSponsors();
                 }));
@@ -47,6 +51,11 @@ export class Sponsors implements OnDestroy
     ngOnDestroy(): void
     {
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
+    }
+
+    get NaEnabled(): boolean
+    {
+        return this._naEnabled;
     }
 
     get Initialised(): boolean
@@ -148,5 +157,29 @@ export class Sponsors implements OnDestroy
                     return previousValue + currentValue;
                 },
                 0);
+    }
+
+    Build(
+        ontology: IDealOntology
+        ): void
+    {
+        this.Reset();
+
+        let superClasses = ontology.SuperClasses(ontology.Deal);
+        for(let superClass of superClasses)
+            for(let annotation of superClass.Annotations)
+                if(annotation.Property == deals.ComponentBuildAction &&
+                    annotation.Value in this)
+                    this[annotation.Value]();
+    }
+
+    Reset(): void
+    {
+        this._naEnabled = false;
+    }
+
+    AddSponsorsNA(): void
+    {
+        this._naEnabled = true;
     }
 }
