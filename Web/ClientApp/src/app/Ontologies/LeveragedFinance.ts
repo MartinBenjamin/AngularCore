@@ -11,10 +11,10 @@ export class LeveragedFinance
     extends Ontology
     implements IDealOntology
 {
-    Deal      : IClass;
-    DealType  : INamedIndividual;
-    Sponsored : IClass;
-    SponsorsNA: IDataPropertyExpression
+    Deal              : IClass;
+    DealType          : INamedIndividual;
+    SponsorsApplicable: IClass;
+    SponsorsNA        : IDataPropertyExpression
 
     constructor()
     {
@@ -33,9 +33,9 @@ export class LeveragedFinance
         this.Deal.SubClassOf(deals.Type.HasValue(this.DealType));
 
         this.SponsorsNA = this.Deal.DeclareDataProperty("SponsorsNA");
-        this.Sponsored = this.DeclareClass("Sponsored");
-        this.Sponsored.Define(this.SponsorsNA.HasValue(false));
-        this.Sponsored.SubClassOf(deals.Sponsored);
+        this.SponsorsApplicable = this.DeclareClass("SponsorsApplicable");
+        this.SponsorsApplicable.Define(this.SponsorsNA.HasValue(false));
+        this.SponsorsApplicable.SubClassOf(deals.Sponsored);
 
         this.Deal.Annotate(deals.ComponentBuildAction, "AddSponsors"  );
         this.Deal.Annotate(deals.ComponentBuildAction, "AddSponsorsNA")
