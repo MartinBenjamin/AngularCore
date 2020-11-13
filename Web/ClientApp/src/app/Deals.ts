@@ -51,6 +51,7 @@ export interface DealType extends Named<Guid>
 
 export interface Deal extends Named<Guid>
 {
+    ClassIri        : string;
     Type            : DealType;
     Agreements      : Agreement[];
     Parties         : DealParty[];

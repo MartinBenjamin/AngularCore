@@ -141,12 +141,14 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         for(let index = 0; index < disjointPairs.length; ++index)
         {
             let [classExpression1, classExpression2] = disjointPairs[index];
-            this._subClassExpressions.get(classExpression2).forEach(
-                subclassExpression => disjointPairs.push(
-                    [
-                        classExpression1,
-                        subclassExpression
-                    ]));
+            let subClassExpressions = this._subClassExpressions.get(classExpression2);
+            if(subClassExpressions)
+                subClassExpressions.forEach(
+                    subclassExpression => disjointPairs.push(
+                        [
+                            classExpression1,
+                            subclassExpression
+                        ]));
         }
 
         this._disjointClassExpressions = Group(

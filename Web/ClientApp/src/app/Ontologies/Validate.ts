@@ -77,7 +77,7 @@ export function Validate2(
                     if(ontology.IsClassExpression.IPropertyRestriction(superClassExpression))
                         for(let annotation of subClassOf.Annotations)
                             if(annotation.Property === deals.RestrictedfromStage &&
-                                subClassOf.SuperClassExpression.Evaluate(
+                                !subClassOf.SuperClassExpression.Evaluate(
                                     evaluator,
                                     individual))
                             {
