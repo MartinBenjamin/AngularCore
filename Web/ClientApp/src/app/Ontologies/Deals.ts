@@ -12,6 +12,7 @@ import { legalEntities } from "./LegalEntities";
 import { parties } from "./Parties";
 import { roleIndividuals } from "./RoleIndividuals";
 import { roles } from "./Roles";
+import { ObjectSomeValuesFrom } from "../Ontology/ObjectSomeValuesFrom";
 
 export class Deals extends Ontology
 {
@@ -40,6 +41,8 @@ export class Deals extends Ontology
     BankParty           : IClass;
     BankLenderParty     : IClass;
     BankAdvisorParty    : IClass;
+    Sponsored           : IClass;
+    NotSponsored        : IClass;
     KeyCounterpartyRole : IClass;
     KeyCounterparty     : IClass;
     
@@ -119,6 +122,14 @@ export class Deals extends Ontology
         this.BankAdvisorParty = this.DeclareClass("BankAdvisorParty");
         this.BankLenderParty.Define(this.LenderParty.Intersect(this.BankParty));
         this.BankAdvisorParty.Define(this.AdvisorParty.Intersect(this.BankParty));
+
+        this.Sponsored = this.DeclareClass("Sponsored");
+        this.Sponsored.SubClassOf(this.Deal);
+        this.Sponsored.Define(new ObjectSomeValuesFrom(this.Parties, this.SponsorParty));
+        this.NotSponsored = this.DeclareClass("NotSponsored");
+        this.NotSponsored.SubClassOf(this.Deal);
+        new DisjointClasses(this, [this.Sponsored, this.NotSponsored]);
+        this.NotSponsored.Define(this.Sponsored.Complement());
 
         //this.KeyCounterpartyRole = this.DeclareClass("KeyCounterpartyRole");
         //this.KeyCounterparty = this.DeclareClass("KeyCounterparty");

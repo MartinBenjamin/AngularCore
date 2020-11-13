@@ -28,17 +28,13 @@ export class ProjectFinance
         this.Deal = this.DeclareClass("Deal");
         this.Deal.SubClassOf(deals.Debt);
         this.Deal.SubClassOf(deals.Type.HasValue(this.DealType));
-        this.Deal.SubClassOf(deals.Parties.MinCardinality(1, deals.SponsorParty))
+        this.Deal.SubClassOf(deals.Sponsored)
             .Annotate(
                 deals.RestrictedfromStage,
                 0)
             .Annotate(
                 deals.SubPropertyName,
                 "Sponsors");
-        //this.Deal.SubClassOf(deals.Sponsors.MinCardinality(1))
-        //    .Annotate(
-        //        deals.RestrictedfromStage,
-        //        0);
     }
 }
 

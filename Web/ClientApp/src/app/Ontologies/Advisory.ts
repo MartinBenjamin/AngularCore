@@ -28,7 +28,13 @@ export class Advisory
         this.Deal = this.DeclareClass("Deal");
         this.Deal.SubClassOf(deals.Deal);
         this.Deal.SubClassOf(deals.Type.HasValue(this.DealType));
-        this.Deal.SubClassOf(deals.Sponsors.MaxCardinality(0));
+        this.Deal.SubClassOf(deals.Sponsored)
+            .Annotate(
+                deals.RestrictedfromStage,
+                0)
+            .Annotate(
+                deals.SubPropertyName,
+                "Sponsors");
         this.Deal.Annotate(deals.ComponentBuildAction, "AddAdvisoryTabs");
     }
 }

@@ -36,11 +36,9 @@ export class ClassExpression implements IClassExpression
         return new ObjectUnionOf([this, classExpression]);
     }
 
-    Complement(
-        classExpression: IClassExpression
-        ): IObjectComplementOf
+    Complement(): IObjectComplementOf
     {
-        return new ObjectComplementOf(classExpression);
+        return new ObjectComplementOf(this);
     }
 }
 

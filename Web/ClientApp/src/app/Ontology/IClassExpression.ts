@@ -16,5 +16,5 @@ export interface IClassExpression
     // Provided to assist programatic construction of ontologies.
     Intersect(classExpression: IClassExpression): IObjectIntersectionOf
     Union(classExpression: IClassExpression): IObjectUnionOf;
-    Complement(classExpression: IClassExpression): IObjectComplementOf;
+    Complement(): IObjectComplementOf;
 }
