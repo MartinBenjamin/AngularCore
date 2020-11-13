@@ -36,6 +36,9 @@ export class LeveragedFinance
         this.Sponsored = this.DeclareClass("Sponsored");
         this.Sponsored.Define(this.SponsorsNA.HasValue(false));
         this.Sponsored.SubClassOf(deals.Sponsored);
+
+        this.Deal.Annotate(deals.ComponentBuildAction, "AddSponsors"  );
+        this.Deal.Annotate(deals.ComponentBuildAction, "AddSponsorsNA")
     }
 }
 
