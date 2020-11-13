@@ -76,6 +76,15 @@ export class DealComponent extends DealProvider implements AfterViewInit
         return this._behaviourSubject.getValue();
     }
 
+    Save(): void
+    {
+        alert('Save');
+    }
+
+    Cancel(): void
+    {
+    }
+
     AddAdvisoryTabs()
     {
         this.Tabs =

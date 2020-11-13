@@ -8,6 +8,11 @@
   {
     text-align: right;
   }
+
+  div.Buttons input[type=button]
+  {
+    margin-right: 2px;
+  }
 </style>
 <ng-template #title>{{Deal?.Type?.Name}}</ng-template>
 <div>
@@ -44,4 +49,8 @@
     </tr>
   </table>
   <dt-tabbed-view [Tabs]="Tabs" class="FullWidth"></dt-tabbed-view>
+  <div class="Buttons" style="padding-top: 5px;"
+    ><input type="button" value="Save" (click)="Save()"
+    /><input type="button" value="Cancel" (click)="Cancel()" />
+  </div>
 </div>
