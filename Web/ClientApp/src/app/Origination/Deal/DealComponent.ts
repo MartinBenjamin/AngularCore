@@ -80,11 +80,11 @@ export class DealComponent extends DealProvider implements AfterViewInit
     {
         this.Tabs =
             [
-                new Tab('Key Deal<br/>Data'     , KeyDealData   ),
-                new Tab('Fees &<br/>Income'     , OriginationTab),
-                new Tab('Key<br/>Dates'         , OriginationTab),
-                new Tab('Deal<br/>Team'         , OriginationTab),
-                new Tab('Key<br/>Counterparties', OriginationTab)
+                new Tab('Key Deal<br/>Data'     , KeyDealData      ),
+                new Tab('Fees &<br/>Income'     , OriginationTab   ),
+                new Tab('Key<br/>Dates'         , OriginationTab   ),
+                new Tab('Deal<br/>Team'         , OriginationTab   ),
+                new Tab('Key<br/>Counterparties', KeyCounterparties)
             ];
     }
 
