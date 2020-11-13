@@ -1,9 +1,11 @@
 import { DataExactCardinality } from "./DataExactCardinality";
+import { DataHasValue } from "./DataHasValue";
 import { DataMaxCardinality } from "./DataMaxCardinality";
 import { DataMinCardinality } from "./DataMinCardinality";
 import { Entity } from "./Entity";
 import { IClassExpression } from "./IClassExpression";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
+import { IDataHasValue } from "./IDataHasValue";
 import { IDataRange } from "./IDataRange";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectHasValue } from "./IObjectHasValue";
@@ -83,6 +85,15 @@ export class DataProperty
         super(
             ontology,
             localName);
+    }
+
+    HasValue(
+        value: any
+        ): IDataHasValue
+    {
+        return new DataHasValue(
+            this,
+            value);
     }
 
     MinCardinality(

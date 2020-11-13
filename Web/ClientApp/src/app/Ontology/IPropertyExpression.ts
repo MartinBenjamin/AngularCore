@@ -1,5 +1,6 @@
 import { IClassExpression } from "./IClassExpression";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
+import { IDataHasValue } from "./IDataHasValue";
 import { IDataRange } from "./IDataRange";
 import { IEntity } from "./IEntity";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
@@ -27,6 +28,7 @@ export interface IObjectPropertyExpression extends IPropertyExpression
 export interface IDataPropertyExpression extends IPropertyExpression
 {
     // Provided to assist construction of ontologies.
+    HasValue(value: any): IDataHasValue;
     MinCardinality(
         cardinality: number,
         dataRange?: IDataRange): IDataMinCardinality;

@@ -1,23 +1,20 @@
+import { DealTypeIdentifier } from "../Deals";
 import { IClass } from "../Ontology/IClass";
 import { INamedIndividual } from "../Ontology/INamedIndividual";
+import { IDataPropertyExpression } from "../Ontology/IPropertyExpression";
 import { Ontology } from "../Ontology/Ontology";
 import { commonDomainObjects } from "./CommonDomainObjects";
 import { deals } from "./Deals";
 import { IDealOntology } from "./IDealOntology";
-import { DealTypeIdentifier } from "../Deals";
-import { IDataPropertyExpression } from "../Ontology/IPropertyExpression";
-import { DataHasValue } from "../Ontology/DataHasValue";
 
 export class LeveragedFinance
     extends Ontology
     implements IDealOntology
 {
-    Deal    : IClass;
-    DealType: INamedIndividual;
-
-    SponsoredWhenApplicable: IClass;
-    Sponsored              : IClass;
-    SponsorsNA             : IDataPropertyExpression
+    Deal      : IClass;
+    DealType  : INamedIndividual;
+    Sponsored : IClass;
+    SponsorsNA: IDataPropertyExpression
 
     constructor()
     {
@@ -35,19 +32,10 @@ export class LeveragedFinance
         this.Deal.SubClassOf(deals.Debt);
         this.Deal.SubClassOf(deals.Type.HasValue(this.DealType));
 
-        this.SponsoredWhenApplicable = this.DeclareClass("SponsoredWhenApplicable");
         this.SponsorsNA = this.Deal.DeclareDataProperty("SponsorsNA");
         this.Sponsored = this.DeclareClass("Sponsored");
-        this.Sponsored.Define(new DataHasValue(this.SponsorsNA, true));
-        this.Sponsored.SubClassOf(this.Deal);
-
-        this.Deal.SubClassOf(deals.Sponsored)
-            .Annotate(
-                deals.RestrictedfromStage,
-                0)
-            .Annotate(
-                deals.SubPropertyName,
-                "Sponsors");
+        this.Sponsored.Define(this.SponsorsNA.HasValue(false));
+        this.Sponsored.SubClassOf(deals.Sponsored);
     }
 }
 
