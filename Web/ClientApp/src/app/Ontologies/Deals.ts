@@ -6,13 +6,13 @@ import { IAnnotationProperty } from "../Ontology/IAnnotationProperty";
 import { IClass } from "../Ontology/IClass";
 import { INamedIndividual } from "../Ontology/INamedIndividual";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "../Ontology/IPropertyExpression";
+import { ObjectSomeValuesFrom } from "../Ontology/ObjectSomeValuesFrom";
 import { Ontology } from "../Ontology/Ontology";
 import { commonDomainObjects } from "./CommonDomainObjects";
 import { legalEntities } from "./LegalEntities";
 import { parties } from "./Parties";
 import { roleIndividuals } from "./RoleIndividuals";
 import { roles } from "./Roles";
-import { ObjectSomeValuesFrom } from "../Ontology/ObjectSomeValuesFrom";
 
 export class Deals extends Ontology
 {
