@@ -125,7 +125,13 @@ export class Deals extends Ontology
 
         this.Sponsored = this.DeclareClass("Sponsored");
         this.Sponsored.SubClassOf(this.Deal);
-        this.Sponsored.Define(new ObjectSomeValuesFrom(this.Parties, this.SponsorParty));
+        this.Sponsored.SubClassOf(new ObjectSomeValuesFrom(this.Parties, this.SponsorParty))
+            .Annotate(
+                this.RestrictedfromStage,
+                0)
+            .Annotate(
+                this.SubPropertyName,
+                "Sponsors");
         this.Sponsored.Annotate(this.ComponentBuildAction, "AddSponsors");
 
         this.NotSponsored = this.DeclareClass("NotSponsored");
