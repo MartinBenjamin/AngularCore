@@ -1,4 +1,3 @@
-import { ClassMembershipEvaluator } from "./ClassMembershipEvaluator";
 import { IAnnotationProperty } from "./IAnnotationProperty";
 import { IAxiom } from "./IAxiom";
 import { IClass } from "./IClass";
@@ -17,9 +16,7 @@ export interface IOntology
 
     GetOntologies(): Iterable<IOntology>;
     Get<TAxiom extends IAxiom>(typeGuard: (axiom: object) => axiom is TAxiom): Iterable<TAxiom>;
-
     Classify(individual: object): Map<object, Set<IClass>>;
-
     SuperClasses(class$: IClass): Set<IClass>;
 
     // Provided to assist construction of ontologies.
