@@ -35,7 +35,13 @@ export class LeveragedFinance
         this.SponsorsNA = this.Deal.DeclareDataProperty("SponsorsNA");
         this.SponsorsApplicable = this.DeclareClass("SponsorsApplicable");
         this.SponsorsApplicable.Define(this.SponsorsNA.HasValue(false));
-        this.SponsorsApplicable.SubClassOf(deals.Sponsored);
+        this.SponsorsApplicable.SubClassOf(deals.Sponsored)
+            .Annotate(
+                deals.RestrictedfromStage,
+                0)
+            .Annotate(
+                deals.SubPropertyName,
+                "Sponsors");
 
         this.Deal.Annotate(deals.ComponentBuildAction, "AddSponsors"  );
         this.Deal.Annotate(deals.ComponentBuildAction, "AddSponsorsNA")
