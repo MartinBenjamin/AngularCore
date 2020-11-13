@@ -10,7 +10,7 @@ export interface IClass extends
     IEntity,
     IClassExpression
 {
-    // Provided to assist programatic construction of ontologies.
+    // Provided to assist construction of ontologies.
     DeclareObjectProperty(localName: string): IObjectPropertyExpression;
     DeclareDataProperty(localName: string): IDataPropertyExpression;
     DeclareFunctionalDataProperty(localName: string): IDataPropertyExpression;

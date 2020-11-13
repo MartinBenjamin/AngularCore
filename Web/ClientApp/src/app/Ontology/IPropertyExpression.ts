@@ -11,7 +11,7 @@ export interface IPropertyExpression extends IEntity
 
 export interface IObjectPropertyExpression extends IPropertyExpression
 {
-    // Provided to assist programatic construction of ontologies.
+    // Provided to assist construction of ontologies.
     HasValue(individual: object): IObjectHasValue;
     MinCardinality(
         cardinality     : number,
@@ -26,7 +26,7 @@ export interface IObjectPropertyExpression extends IPropertyExpression
 
 export interface IDataPropertyExpression extends IPropertyExpression
 {
-    // Provided to assist programatic construction of ontologies.
+    // Provided to assist construction of ontologies.
     MinCardinality(
         cardinality: number,
         dataRange?: IDataRange): IDataMinCardinality;

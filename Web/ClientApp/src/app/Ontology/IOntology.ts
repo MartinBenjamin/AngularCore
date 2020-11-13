@@ -24,7 +24,7 @@ export interface IOntology
 
     SuperClasses(class$: IClass): Set<IClass>;
 
-    // Provided to assist programatic construction of ontologies.
+    // Provided to assist construction of ontologies.
     DeclareClass(localName: string): IClass;
     DeclareObjectProperty(localName: string): IObjectPropertyExpression;
     DeclareDataProperty(localName: string): IDataPropertyExpression;

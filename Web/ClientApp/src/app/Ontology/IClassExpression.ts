@@ -13,7 +13,7 @@ export interface IClassExpression
         evaluator : IClassMembershipEvaluator,
         individual: object): boolean;
 
-    // Provided to assist programatic construction of ontologies.
+    // Provided to assist construction of ontologies.
     Intersect(classExpression: IClassExpression): IObjectIntersectionOf
     Union(classExpression: IClassExpression): IObjectUnionOf;
     Complement(): IObjectComplementOf;

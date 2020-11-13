@@ -5,7 +5,7 @@ import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression
 
 export interface INamedIndividual extends IEntity
 {
-    // Provided to assist programatic construction of ontologies.
+    // Provided to assist construction of ontologies.
     ObjectPropertyValue(
         objectPropertyExpression: IObjectPropertyExpression,
         targetIndividual        : object): IObjectPropertyAssertion;
