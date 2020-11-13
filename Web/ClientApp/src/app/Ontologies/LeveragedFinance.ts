@@ -31,20 +31,7 @@ export class LeveragedFinance
         this.Deal = this.DeclareClass("Deal");
         this.Deal.SubClassOf(deals.Debt);
         this.Deal.SubClassOf(deals.Type.HasValue(this.DealType));
-
-        this.SponsorsNA = this.Deal.DeclareDataProperty("SponsorsNA");
-        this.SponsorsApplicable = this.DeclareClass("SponsorsApplicable");
-        this.SponsorsApplicable.Define(this.SponsorsNA.HasValue(false));
-        this.SponsorsApplicable.SubClassOf(deals.Sponsored)
-            .Annotate(
-                deals.RestrictedfromStage,
-                0)
-            .Annotate(
-                deals.SubPropertyName,
-                "Sponsors");
-
-        this.Deal.Annotate(deals.ComponentBuildAction, "AddSponsors"  );
-        this.Deal.Annotate(deals.ComponentBuildAction, "AddSponsorsNA")
+        this.Deal.SubClassOf(deals.SponsoredWhenApplicable);
     }
 }
 

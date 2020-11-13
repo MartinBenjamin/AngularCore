@@ -16,35 +16,37 @@ import { roles } from "./Roles";
 
 export class Deals extends Ontology
 {
-    RestrictedfromStage : IAnnotationProperty;
-    SubPropertyName     : IAnnotationProperty;
-    ComponentBuildAction: IAnnotationProperty;
-    DealType            : IClass;
-    Deal                : IClass;
-    Debt                : IClass;
-    Advisory            : IClass;
-    Type                : IObjectPropertyExpression;
-    Parties             : IObjectPropertyExpression;
-    Commitments         : IObjectPropertyExpression;
-    Classifiers         : IObjectPropertyExpression;
-    Borrowers           : IObjectPropertyExpression;
-    Sponsors            : IObjectPropertyExpression;
-    Exclusivity         : IObjectPropertyExpression;
-    DealParty           : IClass;
-    LenderParty         : IClass;
-    AdvisorParty        : IClass;
-    SponsorParty        : IClass;
-    BorrowerParty       : IClass;
-    Sponsor             : IClass;
-    Equity              : IDataPropertyExpression;
-    Bank                : INamedIndividual;
-    BankParty           : IClass;
-    BankLenderParty     : IClass;
-    BankAdvisorParty    : IClass;
-    Sponsored           : IClass;
-    NotSponsored        : IClass;
-    KeyCounterpartyRole : IClass;
-    KeyCounterparty     : IClass;
+    RestrictedfromStage    : IAnnotationProperty;
+    SubPropertyName        : IAnnotationProperty;
+    ComponentBuildAction   : IAnnotationProperty;
+    DealType               : IClass;
+    Deal                   : IClass;
+    Debt                   : IClass;
+    Advisory               : IClass;
+    Type                   : IObjectPropertyExpression;
+    Parties                : IObjectPropertyExpression;
+    Commitments            : IObjectPropertyExpression;
+    Classifiers            : IObjectPropertyExpression;
+    Borrowers              : IObjectPropertyExpression;
+    Sponsors               : IObjectPropertyExpression;
+    Exclusivity            : IObjectPropertyExpression;
+    DealParty              : IClass;
+    LenderParty            : IClass;
+    AdvisorParty           : IClass;
+    SponsorParty           : IClass;
+    BorrowerParty          : IClass;
+    Sponsor                : IClass;
+    Equity                 : IDataPropertyExpression;
+    Bank                   : INamedIndividual;
+    BankParty              : IClass;
+    BankLenderParty        : IClass;
+    BankAdvisorParty       : IClass;
+    Sponsored              : IClass;
+    SponsoredWhenApplicable: IClass;
+    SponsorsApplicable     : IClass;
+    SponsorsNA             : IDataPropertyExpression;
+    KeyCounterpartyRole    : IClass;
+    KeyCounterparty        : IClass;
     
     public constructor()
     {
@@ -134,10 +136,20 @@ export class Deals extends Ontology
                 "Sponsors");
         this.Sponsored.Annotate(this.ComponentBuildAction, "AddSponsors");
 
-        this.NotSponsored = this.DeclareClass("NotSponsored");
-        this.NotSponsored.SubClassOf(this.Deal);
-        new DisjointClasses(this, [this.Sponsored, this.NotSponsored]);
-        this.NotSponsored.Define(this.Sponsored.Complement());
+        this.SponsoredWhenApplicable = this.DeclareClass("SponsoredWhenApplicable");
+        this.SponsoredWhenApplicable.Annotate(this.ComponentBuildAction, "AddSponsors");
+        this.SponsoredWhenApplicable.Annotate(this.ComponentBuildAction, "AddSponsorsNA");
+        this.SponsorsNA = this.Deal.DeclareDataProperty("SponsorsNA");
+        this.SponsorsApplicable = this.DeclareClass("SponsorsApplicable");
+        this.SponsorsApplicable.Define(this.SponsorsNA.HasValue(false));
+        this.SponsorsApplicable.SubClassOf(this.Deal);
+        this.SponsorsApplicable.SubClassOf(new ObjectSomeValuesFrom(this.Parties, this.SponsorParty))
+            .Annotate(
+                this.RestrictedfromStage,
+                0)
+            .Annotate(
+                this.SubPropertyName,
+                "Sponsors");
 
         //this.KeyCounterpartyRole = this.DeclareClass("KeyCounterpartyRole");
         //this.KeyCounterparty = this.DeclareClass("KeyCounterparty");
