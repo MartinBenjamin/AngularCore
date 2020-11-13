@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, forwardRef, Inject, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { Tab } from '../../Components/TabbedView';
 import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
@@ -8,8 +7,8 @@ import { DealOntologyService } from '../../Ontologies/DealOntologyService';
 import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServiceProvider';
 import { deals } from '../../Ontologies/Deals';
 import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
-import { DealComponentBuilder } from '../../Ontologies/IDealComponentBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
+import { Validate2 } from '../../Ontologies/Validate';
 import { KeyCounterparties } from '../KeyCounterparties';
 import { KeyDealData } from '../KeyDealData';
 import { MoreTabs } from '../MoreTabs';
@@ -79,6 +78,10 @@ export class DealComponent extends DealProvider implements AfterViewInit
     Save(): void
     {
         alert('Save');
+        let classifications = this.Deal.Ontology.Classify(this.Deal);
+        let result = Validate2(
+            this.Deal.Ontology,
+            classifications);
     }
 
     Cancel(): void

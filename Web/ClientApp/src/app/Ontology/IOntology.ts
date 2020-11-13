@@ -18,9 +18,7 @@ export interface IOntology
     GetOntologies(): Iterable<IOntology>;
     Get<TAxiom extends IAxiom>(typeGuard: (axiom: object) => axiom is TAxiom): Iterable<TAxiom>;
 
-    Classify(
-        individual: object,
-        evaluator?: ClassMembershipEvaluator): Map<object, Set<IClass>>;
+    Classify(individual: object): Map<object, Set<IClass>>;
 
     SuperClasses(class$: IClass): Set<IClass>;
 
