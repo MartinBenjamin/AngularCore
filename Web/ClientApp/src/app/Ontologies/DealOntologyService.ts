@@ -4,6 +4,7 @@ import { IDealOntology } from "./IDealOntology";
 import { IDealOntologyService } from "./IDealOntologyService";
 import { leveragedFinance } from "./LeveragedFinance";
 import { projectFinance } from "./ProjectFinance";
+import { structuredTradeFinance } from "./StructuredTradeFinance";
 
 @Injectable()
 export class DealOntologyService implements IDealOntologyService
@@ -12,7 +13,8 @@ export class DealOntologyService implements IDealOntologyService
         [
             advisory,
             leveragedFinance,
-            projectFinance
+            projectFinance,
+            structuredTradeFinance
         ];
 
     Get(

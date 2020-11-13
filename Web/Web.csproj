@@ -77,6 +77,7 @@
     <None Remove="ClientApp\src\app\Ontologies\ProjectFinance.ts" />
     <None Remove="ClientApp\src\app\Ontologies\RoleIndividuals.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Roles.ts" />
+    <None Remove="ClientApp\src\app\Ontologies\StructuredTradeFinance.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Validate.ts" />
     <None Remove="ClientApp\src\app\Ontology\AdjacencyList.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\AdjacencyList.ts" />
@@ -290,6 +291,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\ProjectFinance.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\RoleIndividuals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Roles.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontologies\StructuredTradeFinance.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Validate.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AdjacencyList.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AdjacencyList.ts" />
