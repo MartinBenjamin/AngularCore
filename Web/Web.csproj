@@ -71,6 +71,7 @@
     <None Remove="ClientApp\src\app\Ontologies\IDealOntologyService.ts" />
     <None Remove="ClientApp\src\app\Ontologies\IDomainObjectBuilder.ts" />
     <None Remove="ClientApp\src\app\Ontologies\LegalEntities.ts" />
+    <None Remove="ClientApp\src\app\Ontologies\LeveragedFinance.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Organisations.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Parties.ts" />
     <None Remove="ClientApp\src\app\Ontologies\ProjectFinance.ts" />
@@ -283,6 +284,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\IDealOntologyService.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\IDomainObjectBuilder.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\LegalEntities.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontologies\LeveragedFinance.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Organisations.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Parties.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\ProjectFinance.ts" />

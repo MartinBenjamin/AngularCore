@@ -15,8 +15,16 @@ export class DealRoleIdentifier
 
 export class DealTypeIdentifier
 {
-    static readonly Advisory       = 'db033bfe-091e-481c-a5c3-abd2c1eda302';
-    static readonly ProjectFinance = 'db1b30e1-435b-414f-bff0-1e17954144f7';
+    static readonly Advisory               = 'db033bfe-091e-481c-a5c3-abd2c1eda302';
+    static readonly ProjectFinance         = 'db1b30e1-435b-414f-bff0-1e17954144f7';
+    static readonly Aviation               = '1bc5767a-3e01-4e19-b12e-0d1adb6465e9';
+    static readonly LeveragedFinance       = '89388279-d127-4e7a-b7e0-e6b96c19a340';
+    static readonly Corporate              = '23ac45d7-ddee-44c4-aa91-aeae00d82867';
+    static readonly Shipping               = 'd2eddbfc-5e6c-4ca1-9274-e15e2d70497d';
+    static readonly ECA                    = '09ee6467-9253-41f6-9f9d-7ba33ec503ae';
+    static readonly StructuredTradeFinance = '42dce82e-2be8-40bf-8ec6-628150e654d9';
+    static readonly CommodityFinance       = 'e051f245-385b-4587-9af1-0354308ccbbc';
+    static readonly Securitisation         = '7f132ed7-d8f0-4443-9cee-cbe10acdcdea';
 }
 
 export class ClassificationSchemeIdentifier
