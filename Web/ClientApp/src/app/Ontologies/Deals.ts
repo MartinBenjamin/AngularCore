@@ -105,12 +105,11 @@ export class Deals extends Ontology
         this.AdvisorParty.Define(parties.Role.HasValue(roleIndividuals.Advisor));
         this.BorrowerParty.Define(parties.Role.HasValue(roleIndividuals.Borrower));
         this.SponsorParty.Define(parties.Role.HasValue(roleIndividuals.Sponsor));
-        
-        this.Sponsor = this.DeclareClass("Sponsor");
-        this.Sponsor.SubClassOf(this.SponsorParty);
-        this.Equity = this.Sponsor.DeclareDataProperty("Equity");
-        this.Sponsor.SubClassOf(this.Equity.ExactCardinality(1))
-            .Annotate(this.RestrictedfromStage, 0);
+        this.Equity = this.SponsorParty.DeclareDataProperty("Equity");
+        this.SponsorParty.SubClassOf(this.Equity.ExactCardinality(1))
+            .Annotate(
+                this.RestrictedfromStage,
+                0);
 
         this.Bank = legalEntities.LegalEntity.DeclareNamedIndividual("Bank");
         this.Bank.DataPropertyValue(commonDomainObjects.Id, LegalEntityIdentifier.Bank);
