@@ -27,15 +27,11 @@ export class Deals extends Ontology
     Parties                : IObjectPropertyExpression;
     Commitments            : IObjectPropertyExpression;
     Classifiers            : IObjectPropertyExpression;
-    Borrowers              : IObjectPropertyExpression;
-    Sponsors               : IObjectPropertyExpression;
-    Exclusivity            : IObjectPropertyExpression;
     DealParty              : IClass;
     LenderParty            : IClass;
     AdvisorParty           : IClass;
     SponsorParty           : IClass;
     BorrowerParty          : IClass;
-    Sponsor                : IClass;
     Equity                 : IDataPropertyExpression;
     Bank                   : INamedIndividual;
     BankParty              : IClass;
@@ -57,8 +53,8 @@ export class Deals extends Ontology
             legalEntities,
             parties)
 
-        this.RestrictedfromStage  = this.DeclareAnnotationProperty("RestrictedFromStage");
-        this.NominalProperty      = this.DeclareAnnotationProperty("NominalProperty");
+        this.RestrictedfromStage  = this.DeclareAnnotationProperty("RestrictedFromStage" );
+        this.NominalProperty      = this.DeclareAnnotationProperty("NominalProperty"     );
         this.ComponentBuildAction = this.DeclareAnnotationProperty("ComponentBuildAction");
 
         this.DealType = this.DeclareClass("DealType");
@@ -71,19 +67,11 @@ export class Deals extends Ontology
         this.Parties     = this.Deal.DeclareObjectProperty("Parties"    );
         this.Classifiers = this.Deal.DeclareObjectProperty("Classifiers");
         this.Commitments = this.Deal.DeclareObjectProperty("Commitments");
-        this.Borrowers   = this.Deal.DeclareObjectProperty("Borrowers"  );
-        this.Sponsors    = this.Deal.DeclareObjectProperty("Sponsors"   );
-        this.Exclusivity = this.Deal.DeclareObjectProperty("Exclusivity");
 
         this.Deal.SubClassOf(
             commonDomainObjects.Name.MinCardinality(
                 1,
                 new DataComplementOf(new DataOneOf([""]))))
-            .Annotate(
-                this.RestrictedfromStage,
-                0);
-
-        this.Deal.SubClassOf(this.Exclusivity.ExactCardinality(1))
             .Annotate(
                 this.RestrictedfromStage,
                 0);
