@@ -74,41 +74,44 @@ export function Validate2(
                 if(subClassOf.SubClassExpression === class$)
                 {
                     let superClassExpression = subClassOf.SuperClassExpression;
-                    if(ontology.IsClassExpression.IPropertyRestriction(superClassExpression))
-                        for(let annotation of subClassOf.Annotations)
-                            if(annotation.Property === deals.RestrictedfromStage &&
-                                !subClassOf.SuperClassExpression.Evaluate(
-                                    evaluator,
-                                    individual))
+                    for(let annotation of subClassOf.Annotations)
+                        if(annotation.Property === deals.RestrictedfromStage &&
+                            !subClassOf.SuperClassExpression.Evaluate(
+                                evaluator,
+                                individual))
+                        {
+                            let propertyName;
+                            for(let annotationAnnotation of annotation.Annotations)
+                                if(annotationAnnotation.Property === deals.SubPropertyName)
+                                {
+                                    propertyName = annotationAnnotation.Value;
+                                    break;
+                                }
+
+                            if(!propertyName &&
+                                ontology.IsClassExpression.IPropertyRestriction(superClassExpression))
+                                    propertyName = superClassExpression.PropertyExpression.LocalName;
+
+                            let individualErrors = errors.get(individual);
+                            if(!individualErrors)
                             {
-                                let propertyName = superClassExpression.PropertyExpression.LocalName;
-                                for(let annotationAnnotation of annotation.Annotations)
-                                    if(annotationAnnotation.Property === deals.SubPropertyName)
-                                    {
-                                        propertyName = annotationAnnotation.Value;
-                                        break;
-                                    }
-
-                                let individualErrors = errors.get(individual);
-                                if(!individualErrors)
-                                {
-                                    individualErrors = new Map<string, ISubClassOf[]>();
-                                    errors.set(
-                                        individual,
-                                        individualErrors);
-                                }
-
-                                let propertyErrors = individualErrors.get(propertyName);
-                                if(!propertyErrors)
-                                {
-                                    propertyErrors = [];
-                                    individualErrors.set(
-                                        propertyName,
-                                        propertyErrors);
-                                }
-
-                                propertyErrors.push(subClassOf);
+                                individualErrors = new Map<string, ISubClassOf[]>();
+                                errors.set(
+                                    individual,
+                                    individualErrors);
                             }
+
+                            let propertyErrors = individualErrors.get(propertyName);
+                            if(!propertyErrors)
+                            {
+                                propertyErrors = [];
+                                individualErrors.set(
+                                    propertyName,
+                                    propertyErrors);
+                            }
+
+                            propertyErrors.push(subClassOf);
+                        }
                 }
     }
 
