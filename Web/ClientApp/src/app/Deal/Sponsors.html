@@ -12,7 +12,7 @@
   }
 </style>
 <table *ngIf="Sponsors as sponsors" class="DataGrid Sponsors">
-  <caption style="white-space: nowrap;">Sponsors<span *ngIf="NaEnabled" style="font-size: smaller;"> (N/A: <input type="checkbox" />)</span><span *ngIf="!Initialised"> [Initialising]</span></caption>
+  <caption style="white-space: nowrap;">Sponsors<span *ngIf="NAEnabled" style="font-size: smaller;"> (N/A: <input type="checkbox" [(ngModel)]="NA" [disabled]="Sponsors.length > 0" />)</span><span *ngIf="!Initialised"> [Initialising]</span></caption>
   <tr>
     <th>Name</th>
     <th>Country</th>

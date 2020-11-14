@@ -56,7 +56,7 @@ export class Sponsors implements OnDestroy
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
-    get NaEnabled(): boolean
+    get NAEnabled(): boolean
     {
         return this._naEnabled;
     }
@@ -69,6 +69,18 @@ export class Sponsors implements OnDestroy
     get Sponsors(): Sponsor[]
     {
         return this._sponsors;
+    }
+
+    get NA(): boolean
+    {
+        return this._deal.SponsorsNA;
+    }
+
+    set NA(
+        na: boolean
+        )
+    {
+        this._deal.SponsorsNA = na;
     }
 
     get TotalEquity(): number
@@ -143,6 +155,9 @@ export class Sponsors implements OnDestroy
         this._sponsors = <Sponsor[]>this._deal.Parties
             .filter(party => party.Role.Id == DealRoleIdentifier.Sponsor)
             .sort(Sort);
+
+        if(this._sponsors.length > 0)
+            this._deal.SponsorsNA = false;
 
         this.ComputeTotalEquity();
     }

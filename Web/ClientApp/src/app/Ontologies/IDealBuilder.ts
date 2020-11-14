@@ -40,7 +40,8 @@ export class DealBuilder implements IDealBuilder
             Restricted      : false,
             ProjectName     : null,
             Classifiers     : [],
-            GeographicRegion: null
+            GeographicRegion: null,
+            SponsorsNA      : false
         };
 
         Object.defineProperty(

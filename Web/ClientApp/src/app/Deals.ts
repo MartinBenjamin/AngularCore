@@ -61,6 +61,7 @@ export interface Deal extends Named<Guid>
     ProjectName     : string;
     Classifiers     : Classifier[];
     GeographicRegion: GeographicRegion;
+    SponsorsNA      : boolean;
     Ontology?       : IDealOntology;
 }
 
