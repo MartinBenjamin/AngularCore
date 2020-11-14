@@ -77,7 +77,6 @@ export class DealComponent extends DealProvider implements AfterViewInit
 
     Save(): void
     {
-        alert('Save');
         let classifications = this.Deal.Ontology.Classify(this.Deal);
         let result = Validate2(
             this.Deal.Ontology,
