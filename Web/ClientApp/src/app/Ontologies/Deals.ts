@@ -19,6 +19,7 @@ export class Deals extends Ontology
     RestrictedfromStage    : IAnnotationProperty;
     NominalProperty        : IAnnotationProperty;
     ComponentBuildAction   : IAnnotationProperty;
+    $type                  : IDataPropertyExpression;
     DealType               : IClass;
     Deal                   : IClass;
     Debt                   : IClass;
@@ -57,6 +58,8 @@ export class Deals extends Ontology
         this.NominalProperty      = this.DeclareAnnotationProperty("NominalProperty"     );
         this.ComponentBuildAction = this.DeclareAnnotationProperty("ComponentBuildAction");
 
+        this.$type = this.DeclareDataProperty("$type")
+
         this.DealType = this.DeclareClass("DealType");
         this.DealType.SubClassOf(commonDomainObjects.Named);
 
@@ -68,13 +71,8 @@ export class Deals extends Ontology
         this.Classifiers = this.Deal.DeclareObjectProperty("Classifiers");
         this.Commitments = this.Deal.DeclareObjectProperty("Commitments");
 
-        this.Deal.SubClassOf(
-            commonDomainObjects.Name.MinCardinality(
-                1,
-                new DataComplementOf(new DataOneOf([""]))))
-            .Annotate(
-                this.RestrictedfromStage,
-                0);
+        this.Deal.SubClassOf(commonDomainObjects.Name.MinCardinality(1, new DataComplementOf(new DataOneOf([""]))))
+            .Annotate(this.RestrictedfromStage, 0);
 
         this.DealParty = this.DeclareClass("DealParty");
         this.DealParty.SubClassOf(parties.PartyInRole);
@@ -95,9 +93,7 @@ export class Deals extends Ontology
         this.SponsorParty.Define(parties.Role.HasValue(roleIndividuals.Sponsor));
         this.Equity = this.SponsorParty.DeclareDataProperty("Equity");
         this.SponsorParty.SubClassOf(this.Equity.ExactCardinality(1))
-            .Annotate(
-                this.RestrictedfromStage,
-                0);
+            .Annotate(this.RestrictedfromStage, 0);
 
         this.Bank = legalEntities.LegalEntity.DeclareNamedIndividual("Bank");
         this.Bank.DataPropertyValue(commonDomainObjects.Id, LegalEntityIdentifier.Bank);
@@ -114,24 +110,16 @@ export class Deals extends Ontology
         this.Sponsored = this.DeclareClass("Sponsored");
         this.Sponsored.SubClassOf(this.Deal);
         this.Sponsored.SubClassOf(new ObjectSomeValuesFrom(this.Parties, this.SponsorParty))
-            .Annotate(
-                this.RestrictedfromStage,
-                0)
-            .Annotate(
-                this.NominalProperty,
-                "Sponsors");
+            .Annotate(this.RestrictedfromStage, 0)
+            .Annotate(this.NominalProperty, "Sponsors");
         this.Sponsored.Annotate(this.ComponentBuildAction, "AddSponsors");
 
         this.SponsoredWhenApplicable = this.DeclareClass("SponsoredWhenApplicable");
         this.SponsoredWhenApplicable.SubClassOf(this.Deal);
         this.SponsorsNA = this.SponsoredWhenApplicable.DeclareDataProperty("SponsorsNA");
         this.SponsoredWhenApplicable.SubClassOf(new ObjectSomeValuesFrom(this.Parties, this.SponsorParty).Union(this.SponsorsNA.HasValue(true)))
-            .Annotate(
-                this.RestrictedfromStage,
-                0)
-            .Annotate(
-                this.NominalProperty,
-                "Sponsors");
+            .Annotate(this.RestrictedfromStage, 0)
+            .Annotate(this.NominalProperty, "Sponsors");
         this.SponsoredWhenApplicable.Annotate(this.ComponentBuildAction, "AddSponsors");
         this.SponsoredWhenApplicable.Annotate(this.ComponentBuildAction, "AddSponsorsNA");
 
@@ -143,18 +131,15 @@ export class Deals extends Ontology
         this.Debt = this.DeclareClass("Debt");
         this.Debt.SubClassOf(this.Deal);
         this.Debt.SubClassOf(this.Parties.MinCardinality(1, this.BorrowerParty))
-            .Annotate(
-                this.RestrictedfromStage,
-                0)
-            .Annotate(
-                this.NominalProperty,
-                "Borrowers");
+            .Annotate(this.RestrictedfromStage, 0)
+            .Annotate(this.NominalProperty, "Borrowers");
         this.Debt.Annotate(this.ComponentBuildAction, "AddDebtTabs");
 
         new DisjointClasses(this, [this.Deal, this.DealType, this.DealParty, commonDomainObjects.Classifier]);
 
         let ExclusivityClassifier = this.DeclareClass("ExclusivityClassifier");
         ExclusivityClassifier.SubClassOf(commonDomainObjects.Classifier);
+        ExclusivityClassifier.Define(this.$type.HasValue('Web.Model.ExclusivityClassifier, Web'));
 
         this.Deal.SubClassOf(
             this.Classifiers.ExactCardinality(1, ExclusivityClassifier))
