@@ -82,7 +82,7 @@ export function Validate2(
                         {
                             let propertyName;
                             for(let annotationAnnotation of annotation.Annotations)
-                                if(annotationAnnotation.Property === deals.SubPropertyName)
+                                if(annotationAnnotation.Property === deals.NominalProperty)
                                 {
                                     propertyName = annotationAnnotation.Value;
                                     break;

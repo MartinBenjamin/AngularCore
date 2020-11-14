@@ -17,7 +17,7 @@ import { roles } from "./Roles";
 export class Deals extends Ontology
 {
     RestrictedfromStage    : IAnnotationProperty;
-    SubPropertyName        : IAnnotationProperty;
+    NominalProperty        : IAnnotationProperty;
     ComponentBuildAction   : IAnnotationProperty;
     DealType               : IClass;
     Deal                   : IClass;
@@ -58,7 +58,7 @@ export class Deals extends Ontology
             parties)
 
         this.RestrictedfromStage  = this.DeclareAnnotationProperty("RestrictedFromStage");
-        this.SubPropertyName      = this.DeclareAnnotationProperty("SubPropertyName");
+        this.NominalProperty      = this.DeclareAnnotationProperty("NominalProperty");
         this.ComponentBuildAction = this.DeclareAnnotationProperty("ComponentBuildAction");
 
         this.DealType = this.DeclareClass("DealType");
@@ -131,7 +131,7 @@ export class Deals extends Ontology
                 this.RestrictedfromStage,
                 0)
             .Annotate(
-                this.SubPropertyName,
+                this.NominalProperty,
                 "Sponsors");
         this.Sponsored.Annotate(this.ComponentBuildAction, "AddSponsors");
 
@@ -143,7 +143,7 @@ export class Deals extends Ontology
                 this.RestrictedfromStage,
                 0)
             .Annotate(
-                this.SubPropertyName,
+                this.NominalProperty,
                 "Sponsors");
         this.SponsoredWhenApplicable.Annotate(this.ComponentBuildAction, "AddSponsors");
         this.SponsoredWhenApplicable.Annotate(this.ComponentBuildAction, "AddSponsorsNA");
@@ -160,7 +160,7 @@ export class Deals extends Ontology
                 this.RestrictedfromStage,
                 0)
             .Annotate(
-                this.SubPropertyName,
+                this.NominalProperty,
                 "Borrowers");
         this.Debt.Annotate(this.ComponentBuildAction, "AddDebtTabs");
 
@@ -172,7 +172,7 @@ export class Deals extends Ontology
         this.Deal.SubClassOf(
             this.Classifiers.ExactCardinality(1, ExclusivityClassifier))
             .Annotate(this.RestrictedfromStage, 0)
-            .Annotate(this.SubPropertyName, "Exclusivity");
+            .Annotate(this.NominalProperty, "Exclusivity");
 
         //let NotExclusive = ExclusivityClassifier.DeclareNamedIndividual("NotExclusive");
         //NotExclusive.Value(commonDomainObjects.Id, ExclusivityClassifierIdentifier.No);
