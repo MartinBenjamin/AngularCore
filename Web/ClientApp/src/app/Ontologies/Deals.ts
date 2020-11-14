@@ -43,7 +43,6 @@ export class Deals extends Ontology
     BankAdvisorParty       : IClass;
     Sponsored              : IClass;
     SponsoredWhenApplicable: IClass;
-    SponsorsApplicable     : IClass;
     SponsorsNA             : IDataPropertyExpression;
     KeyCounterpartyRole    : IClass;
     KeyCounterparty        : IClass;
@@ -137,19 +136,17 @@ export class Deals extends Ontology
         this.Sponsored.Annotate(this.ComponentBuildAction, "AddSponsors");
 
         this.SponsoredWhenApplicable = this.DeclareClass("SponsoredWhenApplicable");
-        this.SponsoredWhenApplicable.Annotate(this.ComponentBuildAction, "AddSponsors");
-        this.SponsoredWhenApplicable.Annotate(this.ComponentBuildAction, "AddSponsorsNA");
-        this.SponsorsNA = this.Deal.DeclareDataProperty("SponsorsNA");
-        this.SponsorsApplicable = this.DeclareClass("SponsorsApplicable");
-        this.SponsorsApplicable.Define(this.SponsorsNA.HasValue(false));
-        this.SponsorsApplicable.SubClassOf(this.Deal);
-        this.SponsorsApplicable.SubClassOf(new ObjectSomeValuesFrom(this.Parties, this.SponsorParty))
+        this.SponsoredWhenApplicable.SubClassOf(this.Deal);
+        this.SponsorsNA = this.SponsoredWhenApplicable.DeclareDataProperty("SponsorsNA");
+        this.SponsoredWhenApplicable.SubClassOf(new ObjectSomeValuesFrom(this.Parties, this.SponsorParty).Union(this.SponsorsNA.HasValue(true)))
             .Annotate(
                 this.RestrictedfromStage,
                 0)
             .Annotate(
                 this.SubPropertyName,
                 "Sponsors");
+        this.SponsoredWhenApplicable.Annotate(this.ComponentBuildAction, "AddSponsors");
+        this.SponsoredWhenApplicable.Annotate(this.ComponentBuildAction, "AddSponsorsNA");
 
         //this.KeyCounterpartyRole = this.DeclareClass("KeyCounterpartyRole");
         //this.KeyCounterparty = this.DeclareClass("KeyCounterparty");
@@ -158,10 +155,15 @@ export class Deals extends Ontology
 
         this.Debt = this.DeclareClass("Debt");
         this.Debt.SubClassOf(this.Deal);
-        this.Debt.SubClassOf(this.Parties.ExactCardinality(1, this.BankLenderParty));
-        this.Debt.SubClassOf(this.Borrowers.MinCardinality(1))
-            .Annotate(this.RestrictedfromStage, 0);
+        this.Debt.SubClassOf(this.Parties.MinCardinality(1, this.BorrowerParty))
+            .Annotate(
+                this.RestrictedfromStage,
+                0)
+            .Annotate(
+                this.SubPropertyName,
+                "Borrowers");
         this.Debt.Annotate(this.ComponentBuildAction, "AddDebtTabs");
+
         new DisjointClasses(this, [this.Deal, this.DealType, this.DealParty, commonDomainObjects.Classifier]);
 
         let ExclusivityClassifier = this.DeclareClass("ExclusivityClassifier");

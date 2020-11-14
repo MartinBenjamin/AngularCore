@@ -42,6 +42,9 @@ export class Sponsors implements OnDestroy
             dealProvider.subscribe(
                 deal =>
                 {
+                    if(!deal)
+                        return;
+
                     this.Build(deal.Ontology);
                     this._deal = deal;
                     this.ComputeSponsors();

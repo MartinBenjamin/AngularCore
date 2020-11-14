@@ -17,7 +17,12 @@ export class KeyCounterparties implements OnDestroy
         dealProvider: DealProvider
         )
     {
-        this._subscriptions.push(dealProvider.subscribe(deal => this.Build(deal.Ontology)));
+        this._subscriptions.push(dealProvider.subscribe(
+            deal =>
+            {
+                if(deal)
+                    this.Build(deal.Ontology);
+            }));
     }
 
     ngOnDestroy(): void
