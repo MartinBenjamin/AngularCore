@@ -20,6 +20,8 @@ export class Ontology implements IOntology
     IsAxiom           = new IsAxiom();
     IsClassExpression = new IsClassExpression();
 
+    private readonly _superClasses = new Map<IClass, Set<IClass>>();
+
     constructor(
         public Iri: string,
         ...imports: IOntology[]
@@ -69,7 +71,16 @@ export class Ontology implements IOntology
         class$: IClass
         ): Set<IClass>
     {
-        let superClasses = new Set<IClass>();
+        let superClasses = this._superClasses.get(class$);
+
+        if(superClasses)
+            return superClasses;
+
+        superClasses = new Set<IClass>();
+        this._superClasses.set(
+            class$,
+            superClasses);
+
         superClasses.add(class$);
 
         for(let subClassOf of this.Get(this.IsAxiom.ISubClassOf))
