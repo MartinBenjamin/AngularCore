@@ -216,6 +216,7 @@
     <None Remove="ClientApp\src\app\Organisations.ts" />
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.ts" />
+    <None Remove="ClientApp\src\app\Origination\Common.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\DealGeographicRegion.ts" />
     <None Remove="ClientApp\src\app\Origination\Exclusivity.ts" />
@@ -430,6 +431,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Organisations.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Common.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\DealGeographicRegion.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Exclusivity.ts" />

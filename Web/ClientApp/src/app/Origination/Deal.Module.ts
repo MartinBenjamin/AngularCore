@@ -9,6 +9,7 @@ import { Borrowers } from '../Deal/Borrowers';
 import { GeographicRegionSelector } from '../Deal/GeographicRegionSelector';
 import { Sponsors } from '../Deal/Sponsors';
 import { LegalEntityFinder, LegalEntityFinderButtons } from '../LegalEntityFinder';
+import { Common } from './Common';
 import { DealGeographicRegion } from './DealGeographicRegion';
 import { Exclusivity } from './Exclusivity';
 import { Facilities } from './Facilities';
@@ -23,6 +24,7 @@ import { TransactionDetails } from './TransactionDetails';
         declarations:
             [
                 Borrowers,
+                Common,
                 DealGeographicRegion,
                 Exclusivity,
                 Facilities,
@@ -44,6 +46,10 @@ import { TransactionDetails } from './TransactionDetails';
                 FormsModule,
                 NumberModule,
                 TabbedViewModule
+            ],
+        exports:
+            [
+                Common
             ],
         entryComponents:
             [

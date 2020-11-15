@@ -16,38 +16,7 @@
 </style>
 <ng-template #title>{{Deal?.Type?.Name}}</ng-template>
 <div>
-  <table class="GridLayout" style="padding-bottom: 5px;">
-    <tr>
-      <td class="RowHeading">Deal ID:</td>
-      <td><span class="Field DealID">000001</span></td>
-    </tr>
-    <tr>
-      <td class="RowHeading">Stage:</td>
-      <td>
-        <select>
-          <option></option>
-          <option>Prospect</option>
-          <option>Business Screened</option>
-          <option>Submitted to Credit</option>
-          <option>Approved</option>
-          <option>Mandated</option>
-          <option>Signed</option>
-          <option>Financial Close</option>
-          <option>On Hold</option>
-          <option>Lost</option>
-          <option>Declined</option>
-        </select>
-      </td>
-    </tr>
-    <tr>
-      <td class="RowHeading">Bid Status:</td>
-      <td><select></select></td>
-    </tr>
-    <tr>
-      <td class="RowHeading">Restricted:</td>
-      <td><input type="checkbox" /></td>
-    </tr>
-  </table>
+  <common></common>
   <dt-tabbed-view [Tabs]="Tabs" class="FullWidth"></dt-tabbed-view>
   <div class="Buttons" style="padding-top: 5px;"
     ><input type="button" value="Save" (click)="Save()"
