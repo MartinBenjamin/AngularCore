@@ -77,6 +77,8 @@ export class Deals extends Ontology
             .Annotate(this.RestrictedfromStage, 0);
         this.Deal.SubClassOf(this.Deal.DeclareObjectProperty("GeographicRegion").MinCardinality(1))
             .Annotate(this.RestrictedfromStage, 0);
+        this.Deal.SubClassOf(this.Deal.DeclareObjectProperty("Currency").MinCardinality(1))
+            .Annotate(this.RestrictedfromStage, 0);
         this.Deal.SubClassOf(this.Deal.DeclareFunctionalDataProperty("Introducer").MinCardinality(1, nonEmptyString))
             .Annotate(this.RestrictedfromStage, 0);
         this.Deal.SubClassOf(this.Deal.DeclareFunctionalDataProperty("TransactionDetails").MinCardinality(1, nonEmptyString))

@@ -1,5 +1,6 @@
 import { Classifier } from "./ClassificationScheme";
 import { Guid, Named } from "./CommonDomainObjects";
+import { Currency } from "./Iso4217";
 import { GeographicRegion } from "./Locations";
 import { IDealOntology } from "./Ontologies/IDealOntology";
 import { PartyInRole } from "./Parties";
@@ -61,6 +62,7 @@ export interface Deal extends Named<Guid>
     ProjectName       : string;
     Classifiers       : Classifier[];
     GeographicRegion  : GeographicRegion;
+    Currency          : Currency;
     Introducer        : string;
     SponsorsNA        : boolean;
     TransactionDetails: string;

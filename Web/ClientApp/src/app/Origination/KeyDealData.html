@@ -54,9 +54,12 @@
           <tr>
             <td class="RowHeading">Base Currency:</td>
             <td *ngIf="Currencies|async as currencies; else Loading">
-              <select>
+              <select
+                [ngModel]="Deal?.Currency"
+                (ngModelChange)="Deal.Currency = $event"
+                [dtModelErrors]="Errors?.Currency">
                 <option [value]="null"></option>
-                <option *ngFor="let currency of currencies" [value]="currency.Id">{{currency.Name}}</option>
+                <option *ngFor="let currency of currencies" [ngValue]="currency">{{currency.Name}}</option>
               </select>
             </td>
             <ng-template #Loading>
