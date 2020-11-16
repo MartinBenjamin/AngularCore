@@ -86,6 +86,15 @@ export class Deals extends Ontology
         this.Deal.SubClassOf(this.Deal.DeclareFunctionalDataProperty("CurrentStatus").MinCardinality(1, nonEmptyString))
             .Annotate(this.RestrictedfromStage, 0);
 
+
+        let ExclusivityClassifier = this.DeclareClass("ExclusivityClassifier");
+        ExclusivityClassifier.SubClassOf(commonDomainObjects.Classifier);
+        ExclusivityClassifier.Define(this.$type.HasValue('Web.Model.ExclusivityClassifier, Web'));
+
+        this.Deal.SubClassOf(this.Classifiers.ExactCardinality(1, ExclusivityClassifier))
+            .Annotate(this.RestrictedfromStage, 0)
+            .Annotate(this.NominalProperty, "Exclusivity");
+
         this.DealParty = this.DeclareClass("DealParty");
         this.DealParty.SubClassOf(parties.PartyInRole);
 
@@ -148,15 +157,6 @@ export class Deals extends Ontology
         this.Debt.Annotate(this.ComponentBuildAction, "AddDebtTabs");
 
         new DisjointClasses(this, [this.Deal, this.DealType, this.DealParty, commonDomainObjects.Classifier]);
-
-        let ExclusivityClassifier = this.DeclareClass("ExclusivityClassifier");
-        ExclusivityClassifier.SubClassOf(commonDomainObjects.Classifier);
-        ExclusivityClassifier.Define(this.$type.HasValue('Web.Model.ExclusivityClassifier, Web'));
-
-        this.Deal.SubClassOf(
-            this.Classifiers.ExactCardinality(1, ExclusivityClassifier))
-            .Annotate(this.RestrictedfromStage, 0)
-            .Annotate(this.NominalProperty, "Exclusivity");
 
         //let NotExclusive = ExclusivityClassifier.DeclareNamedIndividual("NotExclusive");
         //NotExclusive.Value(commonDomainObjects.Id, ExclusivityClassifierIdentifier.No);
