@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DateModule } from '../Components/DateModule';
 import { DialogModule } from '../Components/Dialog';
+import { ErrorModule } from '../Components/ErrorModule';
 import { NumberModule } from '../Components/NumberModule';
 import { TabbedViewModule } from '../Components/TabbedView';
 import { Borrowers } from '../Deal/Borrowers';
@@ -43,6 +44,7 @@ import { TransactionDetails } from './TransactionDetails';
                 CommonModule,
                 DateModule,
                 DialogModule,
+                ErrorModule,
                 FormsModule,
                 NumberModule,
                 TabbedViewModule

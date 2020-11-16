@@ -178,3 +178,9 @@ div.OriginationTab
   fill: #b60000;
   opacity: 0.6;
 }
+
+input.ValidationError
+{
+  color: red;
+  border-color: red;
+}

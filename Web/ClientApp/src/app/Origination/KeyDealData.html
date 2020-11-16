@@ -16,7 +16,11 @@
         <table class="GridLayout">
           <tr>
             <td class="RowHeading">Deal Name:</td>
-            <td><input type="text" [ngModel]="Deal?.Name" (ngModelChange)="Deal.Name = $event"/></td>
+            <td><input
+              type="text"
+              [ngModel]="Deal?.Name"
+              (ngModelChange)="Deal.Name = $event"
+              [dtModelErrors]="Errors?.Name"/></td>
           </tr>
           <tr>
             <td class="RowHeading">MUFG Roles:</td>
