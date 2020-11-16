@@ -30,23 +30,27 @@ export class Advisory extends DealProvider implements AfterViewInit
         )
     {
          super();
-        //this._subscription = this._behaviourSubject.subscribe(deal => this._deal = deal)
+        //this._subscription = this._deal.subscribe(deal => this._deal = deal)
 
         if(typeof this._activatedRoute.snapshot.data.id == 'undefined')
         {
             // Create Advisory Deal.
             // Need to get stages.
             // Need to set up MUFG Bank, Ltd. as Advisor.
-            this._behaviourSubject.next(<Deal>{
-                Id         : EmptyGuid,
-                Name       : null,
-                Agreements : [],
-                Commitments: [],
-                Parties    : [],
-                Restricted : false,
-                ProjectName: null,
-                Classifiers: []
-            });
+            this._deal.next(
+                [
+                    <Deal>{
+                        Id         : EmptyGuid,
+                        Name       : null,
+                        Agreements : [],
+                        Commitments: [],
+                        Parties    : [],
+                        Restricted : false,
+                        ProjectName: null,
+                        Classifiers: []
+                    },
+                    null
+                ]);
         }
         else
         {

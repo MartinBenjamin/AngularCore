@@ -66,7 +66,7 @@ export function Validate2(
         classifications);
 
     let errors = new Map<object, Map<string, ISubClassOf[]>>();
-    for(let keyValuePair of classifications.entries())
+    for(let keyValuePair of classifications)
     {
         let individual = keyValuePair[0];
         for(let class$ of keyValuePair[1])
@@ -118,3 +118,58 @@ export function Validate2(
     return errors;
 }
 
+export function Validate3(
+    ontology       : IOntology,
+    classifications: Map<object, Set<IClass>>
+    ): Map<object, object>
+{
+    var evaluator = new ClassMembershipEvaluator(
+        ontology,
+        classifications);
+
+    let errors = new Map<object, object>();
+    for(let keyValuePair of classifications)
+    {
+        let individual = keyValuePair[0];
+        for(let class$ of keyValuePair[1])
+            for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
+                if(subClassOf.SubClassExpression === class$)
+                {
+                    let superClassExpression = subClassOf.SuperClassExpression;
+                    for(let annotation of subClassOf.Annotations)
+                        if(annotation.Property === deals.RestrictedfromStage &&
+                            !subClassOf.SuperClassExpression.Evaluate(
+                                evaluator,
+                                individual))
+                        {
+                            let propertyName;
+                            for(let annotationAnnotation of annotation.Annotations)
+                                if(annotationAnnotation.Property === deals.NominalProperty)
+                                {
+                                    propertyName = annotationAnnotation.Value;
+                                    break;
+                                }
+
+                            if(!propertyName &&
+                                ontology.IsClassExpression.IPropertyRestriction(superClassExpression))
+                                    propertyName = superClassExpression.PropertyExpression.LocalName;
+
+                            let individualErrors = errors.get(individual);
+                            if(!individualErrors)
+                            {
+                                individualErrors = {};
+                                errors.set(
+                                    individual,
+                                    individualErrors);
+                            }
+
+                            if(!individualErrors[propertyName])
+                                individualErrors[propertyName] = [];
+
+                            individualErrors[propertyName].push(subClassOf);
+                        }
+                }
+    }
+
+    return errors;
+}

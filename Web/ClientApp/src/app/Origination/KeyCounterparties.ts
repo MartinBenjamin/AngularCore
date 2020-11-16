@@ -21,7 +21,7 @@ export class KeyCounterparties implements OnDestroy
             deal =>
             {
                 if(deal)
-                    this.Build(deal.Ontology);
+                    this.Build(deal[0].Ontology);
             }));
     }
 

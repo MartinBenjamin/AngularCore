@@ -45,8 +45,8 @@ export class Sponsors implements OnDestroy
                     if(!deal)
                         return;
 
-                    this.Build(deal.Ontology);
-                    this._deal = deal;
+                    this.Build(deal[0].Ontology);
+                    this._deal = deal[0];
                     this.ComputeSponsors();
                 }));
     }

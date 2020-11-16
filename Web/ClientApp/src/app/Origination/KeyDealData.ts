@@ -22,7 +22,7 @@ export class KeyDealData implements OnDestroy
         dealProvider       : DealProvider
         )
     {
-        this._subscriptions.push(dealProvider.subscribe(deal => this._deal = deal));
+        this._subscriptions.push(dealProvider.subscribe(deal => this._deal = deal[0]));
 
     }
 

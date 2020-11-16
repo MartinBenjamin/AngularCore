@@ -30,31 +30,33 @@ export class ProjectFinance extends DealProvider implements AfterViewInit
     @ViewChild('title')
     private _title: TemplateRef<any>;
 
-    private _deal: Deal;
-
     constructor(
         private _origination   : Origination,
         private _activatedRoute: ActivatedRoute
         )
     {
         super();
-        //this._subscription = this._behaviourSubject.subscribe(deal => this._deal = deal)
+        //this._subscription = this._deal.subscribe(deal => this._deal = deal)
 
         if(typeof this._activatedRoute.snapshot.data.id == 'undefined')
         {
             // Create Project Finance Deal.
             // Need to get stages.
             // Need to set up MUFG Bank, Ltd. as Lender.
-            this._behaviourSubject.next(<Deal>{
-                Id         : EmptyGuid,
-                Name       : null,
-                Agreements : [],
-                Commitments: [],
-                Parties    : [],
-                Restricted : false,
-                ProjectName: null,
-                Classifiers: []
-            });
+            this._deal.next(
+                [
+                    <Deal>{
+                        Id         : EmptyGuid,
+                        Name       : null,
+                        Agreements : [],
+                        Commitments: [],
+                        Parties    : [],
+                        Restricted : false,
+                        ProjectName: null,
+                        Classifiers: []
+                    },
+                    null
+                ]);
         }
         else
         {

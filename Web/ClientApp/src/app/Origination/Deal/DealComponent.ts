@@ -1,13 +1,14 @@
-import { AfterViewInit, Component, forwardRef, Inject, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, forwardRef, Inject, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription, BehaviorSubject } from 'rxjs';
 import { Tab } from '../../Components/TabbedView';
 import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
-import { DealOntologyService } from '../../Ontologies/DealOntologyService';
 import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServiceProvider';
 import { deals } from '../../Ontologies/Deals';
 import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
+import { IDealOntologyService } from '../../Ontologies/IDealOntologyService';
 import { Validate2 } from '../../Ontologies/Validate';
 import { KeyCounterparties } from '../KeyCounterparties';
 import { KeyDealData } from '../KeyDealData';
@@ -27,9 +28,14 @@ import { TransactionDetails } from '../TransactionDetails';
                 }
             ]
     })
-export class DealComponent extends DealProvider implements AfterViewInit
+export class DealComponent
+    extends DealProvider
+    implements AfterViewInit, OnDestroy
 {
-    private _ontology: IDealOntology;
+    private _subscriptions: Subscription[] = [];
+    private _ontology     : IDealOntology;
+    private _errors       : BehaviorSubject<Map<object, object>>;
+
 
     @ViewChild('title')
     private _title: TemplateRef<any>;
@@ -38,31 +44,37 @@ export class DealComponent extends DealProvider implements AfterViewInit
 
     constructor(
         @Inject(DealOntologyServiceToken)
-        private _dealOntologyService: DealOntologyService,
+        dealOntologyService    : IDealOntologyService,
         @Inject(DealBuilderToken)
-        dealBuilder                 : IDealBuilder,
-        private _origination        : Origination,
-        private _activatedRoute     : ActivatedRoute
+        dealBuilder            : IDealBuilder,
+        private _origination   : Origination,
+        private _activatedRoute: ActivatedRoute
         )
     {
         super();
 
-        this._activatedRoute.queryParamMap.subscribe(
-            params =>
-            {
-                this._ontology = _dealOntologyService.Get(params.get('originate'));
-                if(!this._ontology)
-                    return;
+        this._subscriptions.push(
+            this._activatedRoute.queryParamMap.subscribe(
+                params =>
+                {
+                    this._ontology = dealOntologyService.Get(params.get('originate'));
+                    if(!this._ontology)
+                        return;
 
-                let superClasses = this._ontology.SuperClasses(this._ontology.Deal);
-                for(let superClass of superClasses)
-                    for(let annotation of superClass.Annotations)
-                        if(annotation.Property == deals.ComponentBuildAction &&
-                           annotation.Value in this)
-                            this[annotation.Value]();
+                    let superClasses = this._ontology.SuperClasses(this._ontology.Deal);
+                    for(let superClass of superClasses)
+                        for(let annotation of superClass.Annotations)
+                            if(annotation.Property == deals.ComponentBuildAction &&
+                               annotation.Value in this)
+                                this[annotation.Value]();
 
-                this._behaviourSubject.next(dealBuilder.Build(this._ontology));
-            });
+                    if(this._errors)
+                        this._errors.complete();
+
+                    this._errors = new BehaviorSubject<Map<object, object>>(null);
+
+                    this._deal.next([dealBuilder.Build(this._ontology), this._errors]);
+                }));
     }
 
     ngAfterViewInit()
@@ -70,17 +82,35 @@ export class DealComponent extends DealProvider implements AfterViewInit
         this._origination.Title.next(this._title);
     }
 
+    ngOnDestroy(): void
+    {
+        this._subscriptions.forEach(subscription => subscription.unsubscribe());
+    }
+
     get Deal(): Deal
     {
-        return this._behaviourSubject.getValue();
+        return this._deal.getValue()[0];
     }
 
     Save(): void
     {
         let classifications = this.Deal.Ontology.Classify(this.Deal);
-        let result = Validate2(
+        let errors = Validate2(
             this.Deal.Ontology,
             classifications);
+
+        let transformedErrors = new Map<object, object>();
+        for(let individualErrors of errors)
+        {
+            let transformedPropertyErrors = {};
+            transformedErrors.set(
+                individualErrors[0],
+                transformedPropertyErrors);
+            for(let propertyErrors of individualErrors[1])
+                transformedPropertyErrors[propertyErrors[0]] = propertyErrors[1];
+        }
+
+        this._errors.next(transformedErrors);
     }
 
     Cancel(): void
