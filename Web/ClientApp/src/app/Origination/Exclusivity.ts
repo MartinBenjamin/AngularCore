@@ -22,6 +22,7 @@ export class Exclusivity implements OnDestroy
     private _exclusive                      : boolean;
     private _map                            = new Map<Guid, ClassificationSchemeClassifier>();
     private _yes                            : ClassificationSchemeClassifier;
+    private _errors                         : object;
 
     constructor(
         @Inject(ClassificationSchemeServiceToken)
@@ -51,11 +52,18 @@ export class Exclusivity implements OnDestroy
             dealProvider.subscribe(
                 deal =>
                 {
-                    if(deal)
+                    if(!deal)
+                    {
+                        this._deal   = null;
+                        this._errors = null;
+                    }
+                    else
                     {
                         this._deal = deal[0];
-                        this.ComputeClassifier();
+                        deal[1].subscribe(errors => this._errors = errors ? errors.get(this._deal) : null);
                     }
+
+                    this.ComputeClassifier();
                 }));
     }
 
@@ -82,14 +90,22 @@ export class Exclusivity implements OnDestroy
             this._deal.Classifiers.splice(
                 this._deal.Classifiers.indexOf(this._classifier),
                 1);
+
         this._classifier = classifier;
-        this._deal.Classifiers.push(this._classifier);
+        if(this._classifier)
+            this._deal.Classifiers.push(this._classifier);
+
         this.ComputeExclusive();
     }
 
     get Exclusive(): boolean
     {
         return this._exclusive;
+    }
+
+    get Errors(): object
+    {
+        return this._errors;
     }
 
     private ComputeClassifier(): void

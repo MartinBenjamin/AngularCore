@@ -2,7 +2,8 @@
   <td class="RowHeading">Exclusivity:</td>
   <td *ngIf="ClassificationSchemeClassifiers; else Loading">
     <select
-      [(ngModel)]="Classifier">
+      [(ngModel)]="Classifier"
+      [dtModelErrors]="Errors?.Exclusivity">
       <option [ngValue]="null"></option>
       <ng-container *ngFor="let classificationSchemeClassifier of ClassificationSchemeClassifiers">
         <optgroup *ngIf="classificationSchemeClassifier.Sub.length;else Option"
