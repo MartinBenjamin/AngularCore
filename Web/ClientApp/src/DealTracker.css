@@ -179,7 +179,8 @@ div.OriginationTab
   opacity: 0.6;
 }
 
-input.ValidationError
+input.ValidationError,
+span.ValidationError
 {
   color: red;
   border-color: red;

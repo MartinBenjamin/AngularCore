@@ -22,6 +22,7 @@ export class DealGeographicRegion implements OnDestroy
     private _region       : GeographicRegion;
     private _country      : GeographicRegion;
     private _subdivision  : Subdivision;
+    private _errors       : object;
 
     @ViewChild('geographicRegionSelector')
     private _geographicRegionSelector: GeographicRegionSelector;
@@ -46,9 +47,18 @@ export class DealGeographicRegion implements OnDestroy
             dealProvider.subscribe(
                 deal =>
                 {
-                    if(deal)
+                    if(!deal)
+                    {
+                        this._deal        = null;
+                        this._region      = null;
+                        this._country     = null;
+                        this._subdivision = null;
+                        this._errors      = null;
+                    }
+                    else
                     {
                         this._deal = deal[0];
+                        deal[1].subscribe(errors => this._errors = errors ? errors.get(this._deal) : null);
                         this.ComputeSubdivision();
                     }
                 }));
@@ -78,6 +88,11 @@ export class DealGeographicRegion implements OnDestroy
     {
         return this._subdivision != null ? this._subdivision.Category
             .replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase()) : null;
+    }
+
+    get Errors(): object
+    {
+        return this._errors;
     }
 
     Find(): void
