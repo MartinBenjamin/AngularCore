@@ -76,11 +76,21 @@
           <table class="GridLayout">
             <tr>
               <td class="RowHeading">Description:</td>
-              <td><textarea maxlength="100" rows="5"></textarea></td>
+              <td><textarea
+                [ngModel]="Deal?.TransactionDetails"
+                (ngModelChange)="Deal.TransactionDetails = $event"
+                [dtModelErrors]="Errors?.TransactionDetails"
+                maxlength="100"
+                rows="5"></textarea></td>
             </tr>
             <tr>
               <td class="RowHeading">Status:</td>
-              <td><textarea maxlength="100" rows="5"></textarea></td>
+              <td><textarea
+                [ngModel]="Deal?.CurrentStatus"
+                (ngModelChange)="Deal.CurrentStatus = $event"
+                [dtModelErrors]="Errors?.CurrentStatus"
+                maxlength="100"
+                rows="5"></textarea></td>
             </tr>
             <tr>
               <td class="RowHeading">Last Updated:</td>

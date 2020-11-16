@@ -29,20 +29,22 @@ export class DealBuilder implements IDealBuilder
         ): Deal
     {
         let deal: Deal = {
-            Id              : EmptyGuid,
-            Name            : null,
-            ClassIri        : ontology.Deal.Iri,
-            Type            : null,
-            Stage           : null,
-            Agreements      : [],
-            Commitments     : [],
-            Parties         : [],
-            Restricted      : false,
-            ProjectName     : null,
-            Classifiers     : [],
-            GeographicRegion: null,
-            Introducer      : null,
-            SponsorsNA      : false
+            Id                : EmptyGuid,
+            Name              : null,
+            ClassIri          : ontology.Deal.Iri,
+            Type              : null,
+            Stage             : null,
+            Agreements        : [],
+            Commitments       : [],
+            Parties           : [],
+            Restricted        : false,
+            ProjectName       : null,
+            Classifiers       : [],
+            GeographicRegion  : null,
+            Introducer        : null,
+            TransactionDetails: null,
+            CurrentStatus     : null,
+            SponsorsNA        : false
         };
 
         Object.defineProperty(
