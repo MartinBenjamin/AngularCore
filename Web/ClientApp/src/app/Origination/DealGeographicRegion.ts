@@ -42,14 +42,15 @@ export class DealGeographicRegion implements OnDestroy
                             geographicRegionHierarchyMember));
                     this._regions = result.Members
                         .filter(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Member.Type == GeographicRegionType.UnsdM49SubRegion);
-                }));
-
-        this._subscriptions.push(
+                }),
             dealProvider.subscribe(
                 deal =>
                 {
-                    this._deal = deal[0];
-                    this.ComputeSubdivision();
+                    if(deal)
+                    {
+                        this._deal = deal[0];
+                        this.ComputeSubdivision();
+                    }
                 }));
     }
 

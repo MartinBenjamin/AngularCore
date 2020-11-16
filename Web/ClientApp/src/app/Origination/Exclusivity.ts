@@ -51,8 +51,11 @@ export class Exclusivity implements OnDestroy
             dealProvider.subscribe(
                 deal =>
                 {
-                    this._deal = deal[0];
-                    this.ComputeClassifier();
+                    if(deal)
+                    {
+                        this._deal = deal[0];
+                        this.ComputeClassifier();
+                    }
                 }));
     }
 
