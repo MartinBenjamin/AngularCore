@@ -45,7 +45,11 @@
           </tr>
           <tr>
             <td class="RowHeading">Introducer:</td>
-            <td><input type="text" /></td>
+            <td><input
+              type="text"
+              [ngModel]="Deal?.Introducer"
+              (ngModelChange)="Deal.Introducer = $event"
+              [dtModelErrors]="Errors?.Introducer"/></td>
           </tr>
           <tr>
             <td class="RowHeading">Base Currency:</td>

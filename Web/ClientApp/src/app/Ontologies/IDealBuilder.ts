@@ -41,6 +41,7 @@ export class DealBuilder implements IDealBuilder
             ProjectName     : null,
             Classifiers     : [],
             GeographicRegion: null,
+            Introducer      : null,
             SponsorsNA      : false
         };
 

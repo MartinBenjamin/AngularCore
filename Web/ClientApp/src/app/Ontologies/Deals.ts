@@ -74,6 +74,9 @@ export class Deals extends Ontology
         this.Deal.SubClassOf(commonDomainObjects.Name.MinCardinality(1, new DataComplementOf(new DataOneOf([""]))))
             .Annotate(this.RestrictedfromStage, 0);
 
+        this.Deal.SubClassOf(this.Deal.DeclareFunctionalDataProperty("Introducer").MinCardinality(1, new DataComplementOf(new DataOneOf([""]))))
+            .Annotate(this.RestrictedfromStage, 0);
+
         this.DealParty = this.DeclareClass("DealParty");
         this.DealParty.SubClassOf(parties.PartyInRole);
 
