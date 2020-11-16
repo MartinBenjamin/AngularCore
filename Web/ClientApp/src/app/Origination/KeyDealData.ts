@@ -5,6 +5,7 @@ import { CurrenciesToken } from '../CurrencyServiceProvider';
 import { DealProvider } from '../DealProvider';
 import { Deal } from '../Deals';
 import { Currency } from '../Iso4217';
+import { DomainObject, Guid } from '../CommonDomainObjects';
 
 @Component(
     {
@@ -59,5 +60,13 @@ export class KeyDealData implements OnDestroy
     get Errors(): object
     {
         return this._errors;
+    }
+
+    CompareById(
+        lhs: DomainObject<Guid>,
+        rhs: DomainObject<Guid>
+        )
+    {
+        return lhs === rhs || (lhs && rhs && lhs.Id === rhs.Id);
     }
 }

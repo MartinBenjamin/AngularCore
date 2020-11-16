@@ -55,6 +55,7 @@
             <td class="RowHeading">Base Currency:</td>
             <td *ngIf="Currencies|async as currencies; else Loading">
               <select
+                [compareWith]="CompareById"
                 [ngModel]="Deal?.Currency"
                 (ngModelChange)="Deal.Currency = $event"
                 [dtModelErrors]="Errors?.Currency">
