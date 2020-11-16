@@ -49,18 +49,16 @@ export class DealGeographicRegion implements OnDestroy
                 {
                     if(!deal)
                     {
-                        this._deal        = null;
-                        this._region      = null;
-                        this._country     = null;
-                        this._subdivision = null;
-                        this._errors      = null;
+                        this._deal   = null;
+                        this._errors = null;
                     }
                     else
                     {
                         this._deal = deal[0];
                         deal[1].subscribe(errors => this._errors = errors ? errors.get(this._deal) : null);
-                        this.ComputeSubdivision();
                     }
+
+                    this.ComputeSubdivision();
                 }));
     }
 

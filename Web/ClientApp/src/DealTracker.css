@@ -180,8 +180,15 @@ div.OriginationTab
 }
 
 input.ValidationError,
+select.ValidationError,
+textarea.ValidationError,
 span.ValidationError
 {
   color: red;
   border-color: red;
+}
+
+table.ValidationError caption
+{
+  color: red;
 }

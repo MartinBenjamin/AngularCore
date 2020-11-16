@@ -23,6 +23,7 @@ export class Sponsors implements OnDestroy
     private _deal         : Deal;
     private _sponsors     : Sponsor[];
     private _totalEquity  : number;
+    private _errors       : object;
 
     @ViewChild('legalEntityFinder')
     private _legalEntityFinder: LegalEntityFinder;
@@ -43,10 +44,17 @@ export class Sponsors implements OnDestroy
                 deal =>
                 {
                     if(!deal)
-                        return;
+                    {
+                        this._deal = null;
+                        this._errors = null;
+                    }
+                    else
+                    {
+                        this.Build(deal[0].Ontology);
+                        this._deal = deal[0];
+                        deal[1].subscribe(errors => this._errors = errors ? errors.get(this._deal) : null);
+                    }
 
-                    this.Build(deal[0].Ontology);
-                    this._deal = deal[0];
                     this.ComputeSponsors();
                 }));
     }
@@ -86,6 +94,11 @@ export class Sponsors implements OnDestroy
     get TotalEquity(): number
     {
         return this._totalEquity;
+    }
+
+    get Errors(): object
+    {
+        return this._errors;
     }
 
     Add(): void

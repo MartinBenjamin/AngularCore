@@ -11,7 +11,10 @@
     color: red;
   }
 </style>
-<table *ngIf="Sponsors as sponsors" class="DataGrid Sponsors">
+<table
+  *ngIf="Sponsors as sponsors"
+  [dtModelErrors]="Errors?.Sponsors"
+  class="DataGrid Sponsors">
   <caption style="white-space: nowrap;">Sponsors<span *ngIf="NAEnabled" style="font-size: smaller;"> (N/A: <input type="checkbox" [(ngModel)]="NA" [disabled]="Sponsors.length > 0" />)</span><span *ngIf="!Initialised"> [Initialising]</span></caption>
   <tr>
     <th>Name</th>
