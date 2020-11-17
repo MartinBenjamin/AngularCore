@@ -4,6 +4,7 @@ using CommonDomainObjects;
 using Iso3166._1;
 using Iso3166._2;
 using Iso4217;
+using LifeCycles;
 using Locations;
 using Organisations;
 using Roles;
@@ -65,6 +66,11 @@ namespace Data
             builder
                 .RegisterType<DealStageLoader>()
                 .As<IEtl<ClassificationScheme>>()
+                .SingleInstance();
+
+            builder
+                .RegisterType<LifeCycleLoader>()
+                .As<IEtl<IEnumerable<LifeCycle>>>()
                 .SingleInstance();
         }
     }

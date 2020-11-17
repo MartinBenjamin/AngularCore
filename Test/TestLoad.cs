@@ -5,6 +5,7 @@ using Data;
 using Iso3166._1;
 using Iso3166._2;
 using Iso4217;
+using LifeCycles;
 using Locations;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
@@ -160,6 +161,26 @@ namespace Test
                     Assert.That(loaded, Is.Not.Null);
                 }
             }
+        }
+
+        [Test]
+        public async Task LifeCycles()
+        {
+            await _container.Resolve<IEnumerable<IEtl<ClassificationScheme>>>().ForEachAsync(loader => loader.ExecuteAsync());
+            var lifeCycles = await _container.Resolve<IEtl<IEnumerable<LifeCycle>>>().ExecuteAsync();
+            Assert.That(lifeCycles.Count, Is.EqualTo(2));
+
+            //using(var scope = _container.BeginLifetimeScope())
+            //{
+            //    var service = scope.Resolve<IDomainObjectService<Guid, LifeCycle>>();
+            //    var loaded = await service.FindAsync(new NamedFilters());
+            //    Assert.That(loaded.ToHashSet().SetEquals(branches.Select(t => t.Item1)), Is.True);
+
+            //    var session = scope.Resolve<ISession>();
+
+            //    foreach(var (branch, identifier) in branches)
+            //        Assert.That(session.Get<Identifier>(identifier).Identifies, Is.EqualTo(branch));
+            //}
         }
 
         //[Test]

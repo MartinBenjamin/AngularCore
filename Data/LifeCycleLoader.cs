@@ -31,11 +31,11 @@ namespace Data
                     .ListAsync();
 
                 var records = await _csvExtractor.ExtractAsync(
-                    "LifeCycles.csv",
+                    "DealLifeCycles.csv",
                     record =>
                     (
                         LifeCycleId   : new Guid(record[0]),
-                        LifeCycleStage: session.Get<LifeCycleStage>(record[1])
+                        LifeCycleStage: session.Get<LifeCycleStage>(new Guid(record[1]))
                     ));
 
                 var lifeCycles = (

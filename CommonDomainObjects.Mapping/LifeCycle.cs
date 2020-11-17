@@ -13,6 +13,7 @@ namespace CommonDomainObjects.Mapping
                     listPropertiesMapper.Table("LifeCycleLifeCycleStage");
                     listPropertiesMapper.Key(keyMapper => keyMapper.Column("LifeCycleId"));
                     listPropertiesMapper.Index(listIndexMapper => listIndexMapper.Column("StageIndex"));
+                    listPropertiesMapper.Inverse(false);
                 },
                 collectionElementRelation => collectionElementRelation.ManyToMany(manyToManyMapper => manyToManyMapper.Column("LifeCycleStageId")));
         }
