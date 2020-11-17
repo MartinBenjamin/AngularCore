@@ -6,7 +6,7 @@ namespace LifeCycles
 {
     public class LifeCycle: DomainObject<Guid>
     {
-        public IList<LifeCycleStage> Stages { get; protected set; }
+        public virtual IList<LifeCycleStage> Stages { get; protected set; }
 
         protected LifeCycle(): base()
         {

@@ -64,6 +64,7 @@ namespace CommonDomainObjects.Mapping
             mapper.AddMapping<AutonomousAgentInRole          >();
             mapper.AddMapping<PartyInRole                    >();
             mapper.AddMapping<OrganisationMember             >();
+            mapper.AddMapping<LifeCycle                      >();
             mapper.AddMapping<DealType                       >();
         }
 
