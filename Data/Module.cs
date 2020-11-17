@@ -61,6 +61,11 @@ namespace Data
                 .RegisterType<DealTypeLoader>()
                 .As<IEtl<ClassificationScheme>>()
                 .SingleInstance();
+
+            builder
+                .RegisterType<DealStageLoader>()
+                .As<IEtl<ClassificationScheme>>()
+                .SingleInstance();
         }
     }
 }
