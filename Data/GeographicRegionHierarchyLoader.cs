@@ -8,15 +8,12 @@ namespace Data
 {
     public class GeographicRegionHierarchyLoader: IEtl<GeographicRegionHierarchy>
     {
-        private readonly ICsvExtractor   _csvExtractor;
         private readonly ISessionFactory _sessionFactory;
 
         public GeographicRegionHierarchyLoader(
-            ICsvExtractor   csvExtractor,
             ISessionFactory sessionFactory
             )
         {
-            _csvExtractor   = csvExtractor;
             _sessionFactory = sessionFactory;
         }
 

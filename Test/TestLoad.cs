@@ -167,20 +167,26 @@ namespace Test
         public async Task LifeCycles()
         {
             await _container.Resolve<IEnumerable<IEtl<ClassificationScheme>>>().ForEachAsync(loader => loader.ExecuteAsync());
-            var lifeCycles = await _container.Resolve<IEtl<IEnumerable<LifeCycle>>>().ExecuteAsync();
-            Assert.That(lifeCycles.Count, Is.EqualTo(2));
+            await _container.Resolve<IEtl<IEnumerable<LifeCycle>>>().ExecuteAsync();
 
-            //using(var scope = _container.BeginLifetimeScope())
-            //{
-            //    var service = scope.Resolve<IDomainObjectService<Guid, LifeCycle>>();
-            //    var loaded = await service.FindAsync(new NamedFilters());
-            //    Assert.That(loaded.ToHashSet().SetEquals(branches.Select(t => t.Item1)), Is.True);
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var session = scope.Resolve<ISession>();
+                var csvExtractor = scope.Resolve<ICsvExtractor>();
+                var records = await csvExtractor.ExtractAsync("DealLifeCycles.csv");
 
-            //    var session = scope.Resolve<ISession>();
-
-            //    foreach(var (branch, identifier) in branches)
-            //        Assert.That(session.Get<Identifier>(identifier).Identifies, Is.EqualTo(branch));
-            //}
+                (
+                    from record in records
+                    group record by record[0] into recordsGroupedByLifeCycleId
+                    select recordsGroupedByLifeCycleId
+                ).ForEach(
+                    async extracted =>
+                    {
+                        var lifeCycle = await session.GetAsync<LifeCycle>(new Guid(extracted.Key));
+                        Assert.IsNotNull(lifeCycle);
+                        Assert.That(lifeCycle.Stages.Select(stage => stage.Id).SequenceEqual(extracted.Select(record => new Guid(record[1]))), Is.True);
+                    });
+            }
         }
 
         //[Test]

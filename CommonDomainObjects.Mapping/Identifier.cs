@@ -4,7 +4,7 @@ namespace CommonDomainObjects.Mapping
 {
     public class Identifier: ClassMapping<Agents.Identifier>
     {
-        private static string _uniqueKeyName = "IdentificationScheme_Identifier";
+        private static readonly string _uniqueKeyName = "IdentificationScheme_Identifier";
 
         public Identifier()
         {
