@@ -3,13 +3,13 @@ using System;
 
 namespace LifeCycles
 {
-    public class Stage: Classifier
+    public class LifeCycleStage: Classifier
     {
-        protected Stage() : base()
+        protected LifeCycleStage() : base()
         {
         }
 
-        public Stage(
+        public LifeCycleStage(
             Guid   id,
             string name
             ) : base(

@@ -6,15 +6,15 @@ namespace LifeCycles
 {
     public class LifeCycle: DomainObject<Guid>
     {
-        public IList<Stage> Stages { get; protected set; }
+        public IList<LifeCycleStage> Stages { get; protected set; }
 
         protected LifeCycle(): base()
         {
         }
 
         public LifeCycle(
-            Guid         id,
-            IList<Stage> stages
+            Guid                  id,
+            IList<LifeCycleStage> stages
             ) : base(id)
         {
             Stages = stages;
