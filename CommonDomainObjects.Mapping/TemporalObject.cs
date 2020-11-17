@@ -15,11 +15,11 @@ namespace CommonDomainObjects.Mapping
             Table((typeName ?? typeof(TObject).Name));
             List(
                 temporalObject => temporalObject.Versions,
-                collectionMapping => collectionMapping.Index(
-                    listIndexMapping =>
+                listPropertiesMapper => listPropertiesMapper.Index(
+                    listIndexMapper =>
                     {
-                        listIndexMapping.Column("Number");
-                        listIndexMapping.Base(1);
+                        listIndexMapper.Column("Number");
+                        listIndexMapper.Base(1);
                     }));
         }
     }

@@ -12,11 +12,11 @@ namespace CommonDomainObjects.Mapping
         {
             ManyToOne(
                 geographicRegionHierarchyMember => geographicRegionHierarchyMember.Member,
-                manyToOneMapping => manyToOneMapping.Column(columnMapping => columnMapping.SqlType(GeographicRegion.IdSqlType)));
+                manyToOneMapper => manyToOneMapper.Column(columnMapper => columnMapper.SqlType(GeographicRegion.IdSqlType)));
 
             Bag(
                 geographicRegionHierarchyMember => geographicRegionHierarchyMember.Children,
-                collectionMapping =>collectionMapping.OrderBy("IntervalStart"));
+                bagPropertiesMapper => bagPropertiesMapper.OrderBy("IntervalStart"));
         }
     }
 }

@@ -12,7 +12,7 @@ namespace CommonDomainObjects.Mapping
         {
             Bag(
                 hierarchyMember => hierarchyMember.Children,
-                collectionMapping => collectionMapping.Key(keyMapping => keyMapping.Column("ParentId")));
+                bagPropertiesMapper => bagPropertiesMapper.Key(keyMapper => keyMapper.Column("ParentId")));
 
             ManyToOne(
                 hierarchyMember => hierarchyMember.Hierarchy,

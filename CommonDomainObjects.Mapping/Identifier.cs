@@ -9,12 +9,12 @@ namespace CommonDomainObjects.Mapping
         public Identifier()
         {
             ComposedId(
-                composedIdmapper =>
+                composedIdMapper =>
                 {
-                    composedIdmapper.ManyToOne(
+                    composedIdMapper.ManyToOne(
                         identifier => identifier.Scheme,
                         manyToOneMapper => manyToOneMapper.UniqueKey(_uniqueKeyName));
-                    composedIdmapper.Property(identifier => identifier.Value);
+                    composedIdMapper.Property(identifier => identifier.Value);
                 });
 
             ManyToOne(

@@ -15,8 +15,8 @@ namespace CommonDomainObjects.Mapping
             Table((typeName ?? typeof(TTerm).Name) + "TaxonomyTerm");
             Bag(
                 taxonomyTerm => taxonomyTerm.Narrower,
-                collectionMapping => collectionMapping.Key(
-                    keyMapping => keyMapping.Column("BroaderId")));
+                bagPropertiesMapper => bagPropertiesMapper.Key(
+                    keyMapper => keyMapper.Column("BroaderId")));
         }
     }
 }

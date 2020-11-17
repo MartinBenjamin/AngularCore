@@ -8,10 +8,10 @@ namespace CommonDomainObjects.Mapping
         {
             Bag(
                 classificationSchemeClassifier => classificationSchemeClassifier.Sub,
-                collectionMapping =>
+                bagPropertiesMapper =>
                 {
-                    collectionMapping.Key(keyMapping => keyMapping.Column("SuperId"));
-                    collectionMapping.OrderBy("IntervalStart");
+                    bagPropertiesMapper.Key(keyMapper => keyMapper.Column("SuperId"));
+                    bagPropertiesMapper.OrderBy("IntervalStart");
                 });
         }
     }
