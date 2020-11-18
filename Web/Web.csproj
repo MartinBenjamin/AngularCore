@@ -49,6 +49,7 @@
     <None Remove="ClientApp\src\app\Hierarchy.ts" />
     <None Remove="ClientApp\src\app\Home\Aircraft.ts" />
     <None Remove="ClientApp\src\app\Home\Globe.ts" />
+    <None Remove="ClientApp\src\app\IDealLifeCycleService.ts" />
     <None Remove="ClientApp\src\app\IDomainObjectService.ts" />
     <None Remove="ClientApp\src\app\INamedService.ts" />
     <None Remove="ClientApp\src\app\Iso3166.ts" />
@@ -56,6 +57,7 @@
     <None Remove="ClientApp\src\app\LegalEntities.ts" />
     <None Remove="ClientApp\src\app\LegalEntityFinder.ts" />
     <None Remove="ClientApp\src\app\LegalEntityServiceProvider.ts" />
+    <None Remove="ClientApp\src\app\LifeCycles.ts" />
     <None Remove="ClientApp\src\app\Locations.ts" />
     <None Remove="ClientApp\src\app\NamedFinder.ts" />
     <None Remove="ClientApp\src\app\ObservableDomainObjectStore.ts" />
@@ -264,12 +266,14 @@
     <TypeScriptCompile Include="ClientApp\src\app\Hierarchy.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Home\Aircraft.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Home\Globe.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\IDealLifeCycleService.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\IDomainObjectService.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\INamedService.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Iso3166.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Iso4217.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\LegalEntities.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\LegalEntityServiceProvider.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\LifeCycles.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Locations.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\LegalEntityFinder.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\NamedFinder.ts" />
