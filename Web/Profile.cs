@@ -5,6 +5,7 @@ using Iso3166._1;
 using Iso3166._2;
 using Iso4217;
 using LegalEntities;
+using LifeCycles;
 using Locations;
 using Organisations;
 using Roles;
@@ -38,8 +39,12 @@ namespace Web
             CreateMap<ClassificationScheme           , Model.ClassificationScheme           >().PreserveReferences();
             CreateMap<ClassificationSchemeClassifier , Model.ClassificationSchemeClassifier >().PreserveReferences();
             CreateMap<Classifier                     , Model.Classifier                     >()
-                .Include<ExclusivityClassifier       , Model.ExclusivityClassifier          >().PreserveReferences();
+                .Include<ExclusivityClassifier       , Model.ExclusivityClassifier          >()
+                .Include<LifeCycleStage              , Model.LifeCycleStage                 >()
+                .Include<DealType                    , Model.DealType                       >().PreserveReferences();
             CreateMap<ExclusivityClassifier          , Model.ExclusivityClassifier          >().PreserveReferences();
+            CreateMap<LifeCycleStage                 , Model.LifeCycleStage                 >().PreserveReferences();
+            CreateMap<DealType                       , Model.DealType                       >().PreserveReferences();
             CreateMap<Currency                       , Model.Currency                       >().PreserveReferences();
             CreateMap<GeographicRegion               , Model.GeographicRegion               >()
                 .ForMember(
@@ -59,6 +64,7 @@ namespace Web
             CreateMap<Branch                         , Model.Branch                         >().PreserveReferences();
             CreateMap<LegalEntity                    , Model.LegalEntity                    >().PreserveReferences();
             CreateMap<Role                           , Model.Role                           >().PreserveReferences();
+            CreateMap<LifeCycle                      , Model.LifeCycle                      >().PreserveReferences();
         }
     }
 }
