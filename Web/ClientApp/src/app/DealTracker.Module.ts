@@ -8,7 +8,8 @@ import { Gallery } from './Components/Gallery';
 import { GalleryModule } from './Components/GalleryModule';
 import { CurrenciesProvider, CurrencyServiceProvider, CurrencyServiceUrlToken } from './CurrencyServiceProvider';
 import { DealTracker } from './DealTracker';
-import { GeographicRegionHierarchyServiceProvider, GeographicRegionHierarchyServiceUrlToken, GeographicRegionHierarchyProvider } from './GeographicRegionHierarchyProvider';
+import { GeographicRegionHierarchyProvider, GeographicRegionHierarchyServiceProvider, GeographicRegionHierarchyServiceUrlToken } from './GeographicRegionHierarchyProvider';
+import { DealLifeCycleServiceProvider, DealLifeCycleServiceUrlToken } from './IDealLifeCycleService';
 import { LegalEntityServiceProvider, LegalEntityServiceUrlToken } from './LegalEntityServiceProvider';
 import { RoleServiceProvider, RoleServiceUrlToken, RolesProvider } from './RoleServiceProvider';
 
@@ -79,7 +80,12 @@ import { RoleServiceProvider, RoleServiceUrlToken, RolesProvider } from './RoleS
                 useValue: '/api/geographicregionhierarchies'
             },
             GeographicRegionHierarchyServiceProvider,
-            GeographicRegionHierarchyProvider
+            GeographicRegionHierarchyProvider,
+            {
+                provide: DealLifeCycleServiceUrlToken,
+                useValue: '/api/deallifecycles'
+            },
+            DealLifeCycleServiceProvider
         ],
     bootstrap: [DealTracker]
 })

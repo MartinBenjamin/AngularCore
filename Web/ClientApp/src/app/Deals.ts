@@ -1,6 +1,7 @@
 import { Classifier } from "./ClassificationScheme";
 import { Guid, Named } from "./CommonDomainObjects";
 import { Currency } from "./Iso4217";
+import { LifeCycleStage } from "./LifeCycles";
 import { GeographicRegion } from "./Locations";
 import { IDealOntology } from "./Ontologies/IDealOntology";
 import { PartyInRole } from "./Parties";
@@ -39,11 +40,19 @@ export class ExclusivityClassifierIdentifier
     static readonly Yes = '846a9c20-2971-47ab-bc2d-6e6ed6ef137d';
 }
 
-export type percentage = number;
-
-export interface Stage extends Named<Guid>
+export class DealLifeCycleIdentifier
 {
+    static readonly Debt     = 'f8f4136c-0a82-4191-b01b-e0184a2d86bb';
+    static readonly Advisory = 'a72c74af-3724-45c3-94f0-8d2c49d110d1';
 }
+
+export class DealLifeCyclePhaseIdentifier
+{
+    static readonly Origination = '7a08488a-40b9-41c8-ba72-96daadccca25';
+    static readonly Portfolio   = '312c009f-f13b-420b-8d16-17154ad1e859';
+}
+
+export type percentage = number;
 
 export interface DealType extends Named<Guid>
 {
@@ -57,7 +66,7 @@ export interface Deal extends Named<Guid>
     Agreements        : Agreement[];
     Parties           : DealParty[];
     Commitments       : Commitment[];
-    Stage             : Stage;
+    Stage             : LifeCycleStage;
     Restricted        : boolean;
     ProjectName       : string;
     Classifiers       : Classifier[];

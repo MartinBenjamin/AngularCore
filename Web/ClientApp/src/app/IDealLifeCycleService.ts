@@ -1,6 +1,6 @@
-import { InjectionToken, Provider } from "@angular/core";
+import { HttpClient } from '@angular/common/http';
+import { Injectable, InjectionToken, Provider } from "@angular/core";
 import { Observable } from "rxjs";
-import { HttpClient } from "selenium-webdriver/http";
 import { Guid } from "./CommonDomainObjects";
 import { DomainObjectService, IDomainObjectService } from "./IDomainObjectService";
 import { LifeCycle, LifeCycleStage } from "./LifeCycles";
@@ -25,9 +25,10 @@ export interface IDealLifeCycleService extends IDomainObjectService<Guid, LifeCy
 {
     GetStages(
         id     : Guid,
-        phaseId: Guid): Observable<LifeCycle[]>;
+        phaseId: Guid): Observable<LifeCycleStage[]>;
 }
 
+@Injectable()
 export class DealLifeCycleService
     extends DomainObjectService<Guid, LifeCycle>
     implements IDealLifeCycleService
@@ -45,7 +46,7 @@ export class DealLifeCycleService
     GetStages(
         id     : Guid,
         phaseId: Guid
-        ): Observable<LifeCycle[]>
+        ): Observable<LifeCycleStage[]>
     {
         return this._http.get<LifeCycleStage[]>(`${this._url}/${id.toString()}/phase/${phaseId.toString()}`)
             .map(newReferenceDeserialiser());
