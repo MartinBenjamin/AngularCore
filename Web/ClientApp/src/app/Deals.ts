@@ -1,7 +1,7 @@
 import { Classifier } from "./ClassificationScheme";
 import { Guid, Named } from "./CommonDomainObjects";
 import { Currency } from "./Iso4217";
-import { LifeCycleStage } from "./LifeCycles";
+import { LifeCycle, LifeCycleStage } from "./LifeCycles";
 import { GeographicRegion } from "./Locations";
 import { IDealOntology } from "./Ontologies/IDealOntology";
 import { PartyInRole } from "./Parties";
@@ -77,6 +77,7 @@ export interface Deal extends Named<Guid>
     TransactionDetails: string;
     CurrentStatus     : string;
     Ontology?         : IDealOntology;
+    LifeCycle?        : LifeCycle;
 }
 
 export interface DealParty extends PartyInRole

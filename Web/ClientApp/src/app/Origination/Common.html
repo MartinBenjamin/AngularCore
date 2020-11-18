@@ -16,11 +16,11 @@
   </tr>
   <tr>
     <td class="RowHeading">Stage:</td>
-    <td *ngIf="Deal?.Stage && LifeCycleStages; else Loading">
+    <td *ngIf="Deal?.Stage && Deal?.LifeCycle; else Loading">
       <select [compareWith]="CompareById"
               [ngModel]="Deal?.Stage"
               (ngModelChange)="Deal.Stage = $event">
-        <option *ngFor="let lifeCycleStage of LifeCycleStages" [ngValue]="lifeCycleStage">{{lifeCycleStage.Name}}</option>
+        <option *ngFor="let lifeCycleStage of Deal.LifeCycle.Stages" [ngValue]="lifeCycleStage">{{lifeCycleStage.Name}}</option>
       </select>
     </td>
     <ng-template #Loading>

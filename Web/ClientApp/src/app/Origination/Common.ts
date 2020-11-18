@@ -13,14 +13,11 @@ import { LifeCycleStage } from '../LifeCycles';
     })
 export class Common implements OnDestroy
 {
-    private _subscriptions  : Subscription[] = [];
-    private _deal           : Deal;
-    private _lifeCycleStages: LifeCycleStage[];
+    private _subscriptions: Subscription[] = [];
+    private _deal         : Deal;
 
     constructor(
-        @Inject(DealLifeCycleServiceToken)
-        dealLifeCycleService: IDealLifeCycleService,
-        dealProvider        : DealProvider
+        dealProvider: DealProvider
         )
     {
         this._subscriptions.push(
@@ -28,19 +25,10 @@ export class Common implements OnDestroy
                 deal =>
                 {
                     if(!deal)
-                    {
-                        this._deal            = null;
-                        this._lifeCycleStages = null;
-                    }
-                    else
-                    {
-                        this._deal = deal[0];
+                        this._deal = null;
 
-                        dealLifeCycleService.GetStages(
-                            this._deal.Ontology.DealLifeCycleId,
-                            DealLifeCyclePhaseIdentifier.Origination
-                            ).subscribe(lifeCycleStages => this._lifeCycleStages = lifeCycleStages);
-                    }
+                    else
+                        this._deal = deal[0];
                 }));
     }
 
@@ -54,15 +42,10 @@ export class Common implements OnDestroy
         return this._deal;
     }
 
-    get LifeCycleStages(): LifeCycleStage[]
-    {
-        return this._lifeCycleStages;
-    }
-
     CompareById(
         lhs: DomainObject<Guid>,
         rhs: DomainObject<Guid>
-    )
+        )
     {
         return lhs === rhs || (lhs && rhs && lhs.Id === rhs.Id);
     }

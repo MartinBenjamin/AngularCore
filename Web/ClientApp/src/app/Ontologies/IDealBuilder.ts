@@ -74,7 +74,15 @@ export class DealBuilder implements IDealBuilder
 
         this._dealLifeCycleService
             .Get(ontology.DealLifeCycleId)
-            .subscribe(dealLifeCycle => deal.Stage = dealLifeCycle.Stages[0]);
+            .subscribe(
+                dealLifeCycle =>
+                {
+                    deal.Stage = dealLifeCycle.Stages[0];
+                    Object.defineProperty(
+                        deal,
+                        'LifeCycle',
+                        { get: () => dealLifeCycle });
+                });
         return deal;
     }
 }
