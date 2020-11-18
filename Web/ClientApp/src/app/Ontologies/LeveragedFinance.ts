@@ -1,7 +1,6 @@
-import { DealTypeIdentifier } from "../Deals";
+import { DealLifeCycleIdentifier, DealTypeIdentifier } from "../Deals";
 import { IClass } from "../Ontology/IClass";
 import { INamedIndividual } from "../Ontology/INamedIndividual";
-import { IDataPropertyExpression } from "../Ontology/IPropertyExpression";
 import { Ontology } from "../Ontology/Ontology";
 import { commonDomainObjects } from "./CommonDomainObjects";
 import { deals } from "./Deals";
@@ -11,10 +10,9 @@ export class LeveragedFinance
     extends Ontology
     implements IDealOntology
 {
-    Deal              : IClass;
-    DealType          : INamedIndividual;
-    SponsorsApplicable: IClass;
-    SponsorsNA        : IDataPropertyExpression
+    Deal            : IClass;
+    DealType        : INamedIndividual;
+    DealLifeCycleId = DealLifeCycleIdentifier.Debt;
 
     constructor()
     {

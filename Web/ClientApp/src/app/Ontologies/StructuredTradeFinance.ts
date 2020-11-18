@@ -1,4 +1,4 @@
-import { DealTypeIdentifier } from "../Deals";
+import { DealLifeCycleIdentifier, DealTypeIdentifier } from "../Deals";
 import { IClass } from "../Ontology/IClass";
 import { INamedIndividual } from "../Ontology/INamedIndividual";
 import { Ontology } from "../Ontology/Ontology";
@@ -10,8 +10,9 @@ export class StructuredTradeFinance
     extends Ontology
     implements IDealOntology
 {
-    Deal              : IClass;
-    DealType          : INamedIndividual;
+    Deal            : IClass;
+    DealType        : INamedIndividual;
+    DealLifeCycleId = DealLifeCycleIdentifier.Debt;
 
     constructor()
     {

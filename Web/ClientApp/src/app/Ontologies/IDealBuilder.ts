@@ -73,7 +73,7 @@ export class DealBuilder implements IDealBuilder
                     .find(classifier => classifier.Id === dealTypeId));
 
         this._dealLifeCycleService
-            .Get(DealLifeCycleIdentifier.Debt)
+            .Get(ontology.DealLifeCycleId)
             .subscribe(dealLifeCycle => deal.Stage = dealLifeCycle.Stages[0]);
         return deal;
     }

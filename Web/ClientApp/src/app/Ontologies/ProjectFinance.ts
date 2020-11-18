@@ -1,17 +1,18 @@
+import { DealLifeCycleIdentifier, DealTypeIdentifier } from "../Deals";
 import { IClass } from "../Ontology/IClass";
 import { INamedIndividual } from "../Ontology/INamedIndividual";
 import { Ontology } from "../Ontology/Ontology";
 import { commonDomainObjects } from "./CommonDomainObjects";
 import { deals } from "./Deals";
 import { IDealOntology } from "./IDealOntology";
-import { DealTypeIdentifier } from "../Deals";
 
 export class ProjectFinance
     extends Ontology
     implements IDealOntology
 {
-    Deal    : IClass;
-    DealType: INamedIndividual;
+    Deal            : IClass;
+    DealType        : INamedIndividual;
+    DealLifeCycleId = DealLifeCycleIdentifier.Debt;
 
     constructor()
     {

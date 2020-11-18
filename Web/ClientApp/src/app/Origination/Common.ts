@@ -37,7 +37,7 @@ export class Common implements OnDestroy
                         this._deal = deal[0];
 
                         dealLifeCycleService.GetStages(
-                            DealLifeCycleIdentifier.Debt,
+                            this._deal.Ontology.DealLifeCycleId,
                             DealLifeCyclePhaseIdentifier.Origination
                             ).subscribe(lifeCycleStages => this._lifeCycleStages = lifeCycleStages);
                     }
