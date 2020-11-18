@@ -1,5 +1,5 @@
 <style type="text/css">
-  select, span.Field
+  select, span.Field, span.Loading
   {
     width: 200px;
   }
@@ -16,11 +16,10 @@
   </tr>
   <tr>
     <td class="RowHeading">Stage:</td>
-    <td *ngIf="LifeCycleStages; else Loading">
+    <td *ngIf="Deal?.Stage && LifeCycleStages; else Loading">
       <select [compareWith]="CompareById"
               [ngModel]="Deal?.Stage"
               (ngModelChange)="Deal.Stage = $event">
-        <option [ngValue]="null"></option>
         <option *ngFor="let lifeCycleStage of LifeCycleStages" [ngValue]="lifeCycleStage">{{lifeCycleStage.Name}}</option>
       </select>
     </td>

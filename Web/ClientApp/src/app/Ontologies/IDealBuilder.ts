@@ -2,7 +2,8 @@ import { Inject, Injectable, InjectionToken, Provider } from '@angular/core';
 import { ClassificationScheme } from "../ClassificationScheme";
 import { ClassificationSchemeServiceToken } from "../ClassificationSchemeServiceProvider";
 import { EmptyGuid, Guid } from "../CommonDomainObjects";
-import { ClassificationSchemeIdentifier, Deal } from "../Deals";
+import { ClassificationSchemeIdentifier, Deal, DealLifeCycleIdentifier } from "../Deals";
+import { DealLifeCycleServiceToken, IDealLifeCycleService } from '../IDealLifeCycleService';
 import { IDomainObjectService } from "../IDomainObjectService";
 import { commonDomainObjects } from './CommonDomainObjects';
 import { IDealOntology } from "./IDealOntology";
@@ -20,6 +21,8 @@ export class DealBuilder implements IDealBuilder
     constructor(
         @Inject(ClassificationSchemeServiceToken)
         private _classificationSchemeService: IDomainObjectService<Guid, ClassificationScheme>,
+        @Inject(DealLifeCycleServiceToken)
+        private _dealLifeCycleService: IDealLifeCycleService
         )
     {
     }
@@ -69,6 +72,9 @@ export class DealBuilder implements IDealBuilder
                     .map(classificationSchemeClassifier => classificationSchemeClassifier.Classifier)
                     .find(classifier => classifier.Id === dealTypeId));
 
+        this._dealLifeCycleService
+            .Get(DealLifeCycleIdentifier.Debt)
+            .subscribe(dealLifeCycle => deal.Stage = dealLifeCycle.Stages[0]);
         return deal;
     }
 }
