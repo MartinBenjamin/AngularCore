@@ -208,6 +208,7 @@ namespace Test
             await _container.Resolve<IEtl<IEnumerable<Currency>>>().ExecuteAsync();
             await _container.Resolve<IEtl<IEnumerable<(Branch, Identifier)>>>().ExecuteAsync();
             await _container.Resolve<IEnumerable<IEtl<ClassificationScheme>>>().ForEachAsync(loader => loader.ExecuteAsync());
+            await _container.Resolve<IEtl<IEnumerable<LifeCycle>>>().ExecuteAsync();
             //await new LegalEntityLoader(
             //    _container.Resolve<ISessionFactory>(),
             //    100).LoadAsync();

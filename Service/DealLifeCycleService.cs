@@ -20,7 +20,7 @@ namespace Service
         {
         }
 
-        async Task<IList<LifeCycleStage>> IDealLifeCycleService.GetStages(
+        async Task<IList<LifeCycleStage>> IDealLifeCycleService.GetStagesAsync(
             Guid dealLifeCycleId,
             Guid phaseId
             )

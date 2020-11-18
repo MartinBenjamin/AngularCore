@@ -28,6 +28,10 @@ namespace Service
                 .As<IDomainObjectService<Guid, GeographicRegionHierarchy>>()
                 .InstancePerLifetimeScope();
             builder
+                .RegisterType<DealLifeCycleService>()
+                .As<IDealLifeCycleService>()
+                .InstancePerLifetimeScope();
+            builder
                 .RegisterType<NamedService<string, GeographicRegion, NamedFilters>>()
                 .As<INamedService<string, GeographicRegion, NamedFilters>>()
                 .InstancePerLifetimeScope();
