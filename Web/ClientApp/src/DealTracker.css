@@ -200,5 +200,10 @@ table.ValidationError
 
 .ValidationError.Highlight
 {
-  border-color: blue;
+  border-width: 2px;
+}
+
+table.ValidationError.Highlight
+{
+  border-width: 3px;
 }
