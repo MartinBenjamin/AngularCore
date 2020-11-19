@@ -11,7 +11,10 @@
 </style>
 <ng-template #title>{{Deal?.Type?.Name}}</ng-template>
 <div>
-  <errors [Errors]="DealErrors"></errors>
+  <div *ngIf="DealErrors" style="color: red;">
+    Save was unsuccessful.  Please fix the errors and try again.
+    <errors [Errors]="DealErrors"></errors>
+  </div>
   <common></common>
   <dt-tabbed-view [Tabs]="Tabs" class="FullWidth"></dt-tabbed-view>
   <div class="Buttons" style="padding-top: 5px;"
