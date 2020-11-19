@@ -19,6 +19,7 @@ export class Borrowers implements OnDestroy
     private _borrowerRole  : Role;
     private _deal          : Deal;
     private _borrowers     : DealParty[];
+    private _errors        : object;
 
     @ViewChild('legalEntityFinder')
     private _legalEntityFinder: LegalEntityFinder;
@@ -38,7 +39,17 @@ export class Borrowers implements OnDestroy
             dealProvider.subscribe(
                 deal =>
                 {
-                    this._deal = deal[0];
+                    if(!deal)
+                    {
+                        this._deal = null;
+                        this._errors = null;
+                    }
+                    else
+                    {
+                        this._deal = deal[0];
+                        deal[1].subscribe(errors => this._errors = errors ? errors.get(this._deal) : null);
+                    }
+
                     this.ComputeBorrowers();
                 }));
     }
@@ -56,6 +67,11 @@ export class Borrowers implements OnDestroy
     get Borrowers(): DealParty[]
     {
         return this._borrowers;
+    }
+
+    get Errors(): object
+    {
+        return this._errors;
     }
 
     Add(): void
