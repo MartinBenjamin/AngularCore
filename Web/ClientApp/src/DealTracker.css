@@ -197,3 +197,12 @@ table.ValidationError
 {
   border: 2px solid red;
 }
+
+input.Highlight,
+select.Highlight,
+textarea.Highlight,
+span.Highlight,
+table.Highlight
+{
+  border-color: blue;
+}
