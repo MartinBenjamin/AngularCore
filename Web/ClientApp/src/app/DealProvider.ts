@@ -1,9 +1,9 @@
 import { Deal } from "./Deals";
 import { Observable, BehaviorSubject } from "rxjs";
 
-export abstract class DealProvider extends Observable<[Deal, Observable<Map<object, object>>]>
+export abstract class DealProvider extends Observable<[Deal, Observable<Map<any, any>>]>
 {
-    protected _deal = new BehaviorSubject<[Deal, Observable<Map<object, object>>]>(null);
+    protected _deal = new BehaviorSubject<[Deal, Observable<Map<any, any>>]>(null);
 
     protected constructor()
     {

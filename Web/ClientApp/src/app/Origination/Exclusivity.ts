@@ -22,7 +22,7 @@ export class Exclusivity implements OnDestroy
     private _exclusive                      : boolean;
     private _map                            = new Map<Guid, ClassificationSchemeClassifier>();
     private _yes                            : ClassificationSchemeClassifier;
-    private _errors                         : object;
+    private _errors                         : any;
 
     constructor(
         @Inject(ClassificationSchemeServiceToken)
@@ -103,7 +103,7 @@ export class Exclusivity implements OnDestroy
         return this._exclusive;
     }
 
-    get Errors(): object
+    get Errors(): any
     {
         return this._errors;
     }

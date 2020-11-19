@@ -121,13 +121,13 @@ export function Validate2(
 export function Validate3(
     ontology       : IOntology,
     classifications: Map<object, Set<IClass>>
-    ): Map<object, object>
+    ): Map<any, any>
 {
     var evaluator = new ClassMembershipEvaluator(
         ontology,
         classifications);
 
-    let errors = new Map<object, object>();
+    let errors = new Map<any, any>();
     for(let keyValuePair of classifications)
     {
         let individual = keyValuePair[0];

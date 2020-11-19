@@ -19,7 +19,7 @@ export class Borrowers implements OnDestroy
     private _borrowerRole  : Role;
     private _deal          : Deal;
     private _borrowers     : DealParty[];
-    private _errors        : object;
+    private _errors        : any;
 
     @ViewChild('legalEntityFinder')
     private _legalEntityFinder: LegalEntityFinder;
@@ -69,7 +69,7 @@ export class Borrowers implements OnDestroy
         return this._borrowers;
     }
 
-    get Errors(): object
+    get Errors(): any
     {
         return this._errors;
     }
