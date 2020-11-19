@@ -35,7 +35,7 @@ export class DealComponent
     private _subscriptions: Subscription[] = [];
     private _ontology     : IDealOntology;
     private _errors       : BehaviorSubject<Map<object, object>>;
-
+    private _dealErrors   : any;
 
     @ViewChild('title')
     private _title: TemplateRef<any>;
@@ -92,6 +92,11 @@ export class DealComponent
         return this._deal.getValue()[0];
     }
 
+    get DealErrors(): any
+    {
+        return this._dealErrors;
+    }
+
     Save(): void
     {
         let classifications = this.Deal.Ontology.Classify(this.Deal);
@@ -110,6 +115,7 @@ export class DealComponent
                 transformedPropertyErrors[propertyErrors[0]] = propertyErrors[1];
         }
 
+        this._dealErrors = transformedErrors.get(this.Deal);
         this._errors.next(transformedErrors);
     }
 

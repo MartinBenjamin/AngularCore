@@ -1,10 +1,8 @@
-import { Component, Inject, OnDestroy } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DomainObject, Guid } from '../CommonDomainObjects';
 import { DealProvider } from '../DealProvider';
-import { Deal, DealLifeCycleIdentifier, DealLifeCyclePhaseIdentifier } from '../Deals';
-import { DealLifeCycleServiceToken, IDealLifeCycleService } from '../IDealLifeCycleService';
-import { LifeCycleStage } from '../LifeCycles';
+import { Deal } from '../Deals';
 
 @Component(
     {
