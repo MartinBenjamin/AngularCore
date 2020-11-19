@@ -1,3 +1,4 @@
+import { DealLifeCycleIdentifier } from "../Deals";
 import { LegalEntityIdentifier } from "../LegalEntities";
 import { DataComplementOf } from "../Ontology/DataComplementOf";
 import { DataOneOf } from "../Ontology/DataOneOf";
@@ -10,6 +11,7 @@ import { ObjectSomeValuesFrom } from "../Ontology/ObjectSomeValuesFrom";
 import { Ontology } from "../Ontology/Ontology";
 import { commonDomainObjects } from "./CommonDomainObjects";
 import { legalEntities } from "./LegalEntities";
+import { lifeCycles } from "./LifeCycles";
 import { parties } from "./Parties";
 import { roleIndividuals } from "./RoleIndividuals";
 import { roles } from "./Roles";
@@ -20,10 +22,10 @@ export class Deals extends Ontology
     NominalProperty        : IAnnotationProperty;
     ComponentBuildAction   : IAnnotationProperty;
     $type                  : IDataPropertyExpression;
+    LifeCycle              : IObjectPropertyExpression;
     DealType               : IClass;
     Deal                   : IClass;
     Debt                   : IClass;
-    Advisory               : IClass;
     Type                   : IObjectPropertyExpression;
     Parties                : IObjectPropertyExpression;
     Commitments            : IObjectPropertyExpression;
@@ -43,8 +45,9 @@ export class Deals extends Ontology
     SponsorsNA             : IDataPropertyExpression;
     KeyCounterpartyRole    : IClass;
     KeyCounterparty        : IClass;
-    
-    public constructor()
+    DebtLifeCycle          : INamedIndividual;
+
+    constructor()
     {
         super(
             "Deals",
@@ -52,7 +55,8 @@ export class Deals extends Ontology
             roles,
             roleIndividuals,
             legalEntities,
-            parties)
+            parties,
+            lifeCycles)
 
         this.RestrictedfromStage  = this.DeclareAnnotationProperty("RestrictedFromStage" );
         this.NominalProperty      = this.DeclareAnnotationProperty("NominalProperty"     );
@@ -61,15 +65,18 @@ export class Deals extends Ontology
         this.$type = this.DeclareDataProperty("$type")
 
         this.DealType = this.DeclareClass("DealType");
-        this.DealType.SubClassOf(commonDomainObjects.Named);
+        this.DealType.SubClassOf(commonDomainObjects.Classifier);
 
         this.Deal = this.DeclareClass("Deal");
         this.Deal.SubClassOf(commonDomainObjects.Named);
 
+        this.LifeCycle   = this.Deal.DeclareObjectProperty("LifeCycle"  );
         this.Type        = this.Deal.DeclareObjectProperty("Type"       );
         this.Parties     = this.Deal.DeclareObjectProperty("Parties"    );
         this.Classifiers = this.Deal.DeclareObjectProperty("Classifiers");
         this.Commitments = this.Deal.DeclareObjectProperty("Commitments");
+
+        this.Deal.SubClassOf(this.Type.ExactCardinality(1));
 
         let nonEmptyString = new DataComplementOf(new DataOneOf([""]));
 
@@ -156,7 +163,11 @@ export class Deals extends Ontology
             .Annotate(this.NominalProperty, "Borrowers");
         this.Debt.Annotate(this.ComponentBuildAction, "AddDebtTabs");
 
-        new DisjointClasses(this, [this.Deal, this.DealType, this.DealParty, commonDomainObjects.Classifier]);
+        this.DebtLifeCycle = lifeCycles.LifeCycle.DeclareNamedIndividual("DebtLifeCycle");
+        this.DebtLifeCycle.DataPropertyValue(commonDomainObjects.Id, DealLifeCycleIdentifier.Debt);
+        this.Debt.SubClassOf(this.LifeCycle.HasValue(this.DebtLifeCycle));
+
+        new DisjointClasses(this, [this.Deal, this.DealParty, commonDomainObjects.Classifier]);
 
         //let NotExclusive = ExclusivityClassifier.DeclareNamedIndividual("NotExclusive");
         //NotExclusive.Value(commonDomainObjects.Id, ExclusivityClassifierIdentifier.No);

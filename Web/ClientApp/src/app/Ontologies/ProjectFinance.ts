@@ -1,4 +1,4 @@
-import { DealLifeCycleIdentifier, DealTypeIdentifier } from "../Deals";
+import { DealTypeIdentifier } from "../Deals";
 import { IClass } from "../Ontology/IClass";
 import { INamedIndividual } from "../Ontology/INamedIndividual";
 import { Ontology } from "../Ontology/Ontology";
@@ -10,9 +10,7 @@ export class ProjectFinance
     extends Ontology
     implements IDealOntology
 {
-    Deal            : IClass;
-    DealType        : INamedIndividual;
-    DealLifeCycleId = DealLifeCycleIdentifier.Debt;
+    Deal: IClass;
 
     constructor()
     {
@@ -21,14 +19,12 @@ export class ProjectFinance
             commonDomainObjects,
             deals);
 
-        this.DealType = deals.DealType.DeclareNamedIndividual("ProjectFinance");
-        this.DealType.DataPropertyValue(
-            commonDomainObjects.Id,
-            DealTypeIdentifier.ProjectFinance);
+        let dealType = deals.DealType.DeclareNamedIndividual("ProjectFinance");
+        dealType.DataPropertyValue(commonDomainObjects.Id, DealTypeIdentifier.ProjectFinance);
 
         this.Deal = this.DeclareClass("Deal");
         this.Deal.SubClassOf(deals.Debt);
-        this.Deal.SubClassOf(deals.Type.HasValue(this.DealType));
+        this.Deal.SubClassOf(deals.Type.HasValue(dealType));
         this.Deal.SubClassOf(deals.Sponsored);
     }
 }

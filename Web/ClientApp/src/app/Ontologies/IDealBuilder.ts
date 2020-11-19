@@ -2,10 +2,11 @@ import { Inject, Injectable, InjectionToken, Provider } from '@angular/core';
 import { ClassificationScheme } from "../ClassificationScheme";
 import { ClassificationSchemeServiceToken } from "../ClassificationSchemeServiceProvider";
 import { EmptyGuid, Guid } from "../CommonDomainObjects";
-import { ClassificationSchemeIdentifier, Deal, DealLifeCycleIdentifier } from "../Deals";
+import { ClassificationSchemeIdentifier, Deal } from "../Deals";
 import { DealLifeCycleServiceToken, IDealLifeCycleService } from '../IDealLifeCycleService';
 import { IDomainObjectService } from "../IDomainObjectService";
 import { commonDomainObjects } from './CommonDomainObjects';
+import { deals } from './Deals';
 import { IDealOntology } from "./IDealOntology";
 
 export const DealBuilderToken = new InjectionToken<IDealBuilder>('DealBuilder');
@@ -56,10 +57,26 @@ export class DealBuilder implements IDealBuilder
             'Ontology',
             { get: () => ontology });
 
+        let dealType = null;
+        let classes = ontology.SuperClasses(ontology.Deal);
+        for(let class$ of classes)
+            for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
+                if(subClassOf.SubClassExpression === class$)
+                {
+                    let superClassExpression = subClassOf.SuperClassExpression;
+                    if(ontology.IsClassExpression.IObjectHasValue(superClassExpression) &&
+                       superClassExpression.ObjectPropertyExpression === deals.Type)
+                    {
+                        dealType = superClassExpression.Individual;
+                        break;
+                    }
+
+                }
+
         let dealTypeId: string = null;
         for(let dataPropertyAssertion of ontology.Get(ontology.IsAxiom.IDataPropertyAssertion))
             if(dataPropertyAssertion.DataPropertyExpression === commonDomainObjects.Id &&
-                dataPropertyAssertion.SourceIndividual === ontology.DealType)
+               dataPropertyAssertion.SourceIndividual === dealType)
             {
                 dealTypeId = dataPropertyAssertion.TargetValue;
                 break;
@@ -72,8 +89,32 @@ export class DealBuilder implements IDealBuilder
                     .map(classificationSchemeClassifier => classificationSchemeClassifier.Classifier)
                     .find(classifier => classifier.Id === dealTypeId));
 
+        let lifeCycle = null;
+        for(let class$ of classes)
+            for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
+                if(subClassOf.SubClassExpression === class$)
+                {
+                    let superClassExpression = subClassOf.SuperClassExpression;
+                    if(ontology.IsClassExpression.IObjectHasValue(superClassExpression) &&
+                        superClassExpression.ObjectPropertyExpression === deals.LifeCycle)
+                    {
+                        lifeCycle = superClassExpression.Individual;
+                        break;
+                    }
+
+                }
+
+        let lifeCycleId: string = null;
+        for(let dataPropertyAssertion of ontology.Get(ontology.IsAxiom.IDataPropertyAssertion))
+            if(dataPropertyAssertion.DataPropertyExpression === commonDomainObjects.Id &&
+                dataPropertyAssertion.SourceIndividual === lifeCycle)
+            {
+                lifeCycleId = dataPropertyAssertion.TargetValue;
+                break;
+            }
+
         this._dealLifeCycleService
-            .Get(ontology.DealLifeCycleId)
+            .Get(lifeCycleId)
             .subscribe(
                 dealLifeCycle =>
                 {
