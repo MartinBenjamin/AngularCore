@@ -35,8 +35,8 @@ export class DealComponent
 {
     private _subscriptions: Subscription[] = [];
     private _ontology     : IDealOntology;
-    private _errors       : BehaviorSubject<Map<any, any>>;
-    private _dealErrors   : any;
+    private _errors       : BehaviorSubject<Map<object, object>>;
+    private _dealErrors   : object;
 
     @ViewChild('title')
     private _title: TemplateRef<any>;
@@ -115,7 +115,7 @@ export class DealComponent
             classifications,
             applicableStages);
 
-        let transformedErrors = new Map<any, any>();
+        let transformedErrors = new Map<object, object>();
         for(let individualErrors of errors)
         {
             let transformedPropertyErrors = {};

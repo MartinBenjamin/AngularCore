@@ -61,13 +61,13 @@ export function Validate2(
     ontology        : IOntology,
     classifications : Map<object, Set<IClass>>,
     applicableStages: Set<Guid>
-    ): Map<any, Map<string, ISubClassOf[]>>
+    ): Map<object, Map<string, ISubClassOf[]>>
 {
     var evaluator = new ClassMembershipEvaluator(
         ontology,
         classifications);
 
-    let errors = new Map<any, Map<string, ISubClassOf[]>>();
+    let errors = new Map<object, Map<string, ISubClassOf[]>>();
     for(let keyValuePair of classifications)
     {
         let individual = keyValuePair[0];
@@ -125,13 +125,13 @@ export function Validate3(
     ontology        : IOntology,
     classifications : Map<object, Set<IClass>>,
     applicableStages: Set<Guid>
-    ): Map<any, any>
+    ): Map<object, object>
 {
     var evaluator = new ClassMembershipEvaluator(
         ontology,
         classifications);
 
-    let errors = new Map<any, any>();
+    let errors = new Map<object, object>();
     for(let keyValuePair of classifications)
     {
         let individual = keyValuePair[0];
