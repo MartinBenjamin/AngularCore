@@ -52,11 +52,33 @@ export class DealLifeCyclePhaseIdentifier
     static readonly Portfolio   = '312c009f-f13b-420b-8d16-17154ad1e859';
 }
 
+export class DealStageIdentifier
+{
+    static readonly OriginationPhase        = '7a08488a-40b9-41c8-ba72-96daadccca25';
+    static readonly PortfolioPhase          = '312c009f-f13b-420b-8d16-17154ad1e859';
+    static readonly Prospect                = 'dc99f690-352e-4b9c-86e6-2a5d69a2446c';
+    static readonly BusinessScreened        = '803cc380-d5d9-46b0-af8e-04d725c40492';
+    static readonly SubmittedToCredit       = '29f43eee-cb63-4a3b-9fab-e0dc46ee191b';
+    static readonly CreditApproved          = '544d253e-b126-4a26-bbde-4ea3abd57eaa';
+    static readonly Mandated                = '8a93ae15-45e5-4e13-860c-c5e78cd055e5';
+    static readonly Signed                  = 'ad4aa809-92d1-4926-a0ba-80353650ea0b';
+    static readonly FinancialClose          = '052adecb-8ebc-44e0-a813-c270ab6819b2';
+    static readonly OnHold                  = '00f62dcb-f084-4bd9-ae7c-2207c38befc9';
+    static readonly Lost                    = 'e1755070-eecd-4ab5-9306-f20824ab2143';
+    static readonly Declined                = 'c5656736-84db-45a8-9bf7-a41e8d975e89';
+    static readonly Handover                = '3796cc25-8b2f-4db2-b2d0-251743e0d0d0';
+    static readonly Portfolio               = '5c37e0ab-a3ac-483f-b916-34afd4409c08';
+    static readonly RepaidPrepaid           = '049fd845-3c52-4c3c-919e-1ab23b5f90fa';
+    static readonly ProposalSubmitted       = 'c67e176f-09cd-459e-9b3c-ba3924ae69a3';
+    static readonly MandatedBidSubmitted    = '428aecea-a47e-4e43-8db6-3f728020139d';
+    static readonly MandatedPreferredBidder = '1abce8b1-8e09-42a2-a62c-a83b57eca902';
+    static readonly MandateSuspended        = '58384555-077b-4521-8a4f-871475dc3530';
+}
+
 export type percentage = number;
 
 export interface DealType extends Named<Guid>
 {
-    Advisory?: boolean;
 }
 
 export interface Deal extends Named<Guid>

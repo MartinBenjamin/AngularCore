@@ -1,3 +1,4 @@
+import { Guid } from "../CommonDomainObjects";
 import { ClassMembershipEvaluator } from "../Ontology/ClassMembershipEvaluator";
 import { IClass } from "../Ontology/IClass";
 import { IOntology } from "../Ontology/IOntology";
@@ -57,15 +58,16 @@ export function Validate(
 }
 
 export function Validate2(
-    ontology       : IOntology,
-    classifications: Map<object, Set<IClass>>
-    ): Map<object, Map<string, ISubClassOf[]>>
+    ontology        : IOntology,
+    classifications : Map<object, Set<IClass>>,
+    applicableStages: Set<Guid>
+    ): Map<any, Map<string, ISubClassOf[]>>
 {
     var evaluator = new ClassMembershipEvaluator(
         ontology,
         classifications);
 
-    let errors = new Map<object, Map<string, ISubClassOf[]>>();
+    let errors = new Map<any, Map<string, ISubClassOf[]>>();
     for(let keyValuePair of classifications)
     {
         let individual = keyValuePair[0];
@@ -76,6 +78,7 @@ export function Validate2(
                     let superClassExpression = subClassOf.SuperClassExpression;
                     for(let annotation of subClassOf.Annotations)
                         if(annotation.Property === deals.RestrictedfromStage &&
+                            applicableStages.has(annotation.Value) &&
                             !subClassOf.SuperClassExpression.Evaluate(
                                 evaluator,
                                 individual))
@@ -119,8 +122,9 @@ export function Validate2(
 }
 
 export function Validate3(
-    ontology       : IOntology,
-    classifications: Map<object, Set<IClass>>
+    ontology        : IOntology,
+    classifications : Map<object, Set<IClass>>,
+    applicableStages: Set<Guid>
     ): Map<any, any>
 {
     var evaluator = new ClassMembershipEvaluator(
@@ -138,6 +142,7 @@ export function Validate3(
                     let superClassExpression = subClassOf.SuperClassExpression;
                     for(let annotation of subClassOf.Annotations)
                         if(annotation.Property === deals.RestrictedfromStage &&
+                            applicableStages.has(annotation.Value) &&
                             !subClassOf.SuperClassExpression.Evaluate(
                                 evaluator,
                                 individual))

@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, forwardRef, Inject, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { Guid } from '../../CommonDomainObjects';
 import { Tab } from '../../Components/TabbedView';
 import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
@@ -101,9 +102,18 @@ export class DealComponent
     Save(): void
     {
         let classifications = this.Deal.Ontology.Classify(this.Deal);
+        let applicableStages = new Set<Guid>();
+        for(let lifeCycleStage of this.Deal.LifeCycle.Stages)
+        {
+            applicableStages.add(lifeCycleStage.Id);
+            if(lifeCycleStage.Id === this.Deal.Stage.Id)
+                break;
+        }
+
         let errors = Validate2(
             this.Deal.Ontology,
-            classifications);
+            classifications,
+            applicableStages);
 
         let transformedErrors = new Map<any, any>();
         for(let individualErrors of errors)
