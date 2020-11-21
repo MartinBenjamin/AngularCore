@@ -194,9 +194,12 @@ span.ValidationError
   color: red;
 }*/
 
-table.ValidationError
+table.ValidationError,
+table.ValidationError th,
+table.ValidationError td
 {
-  border: 2px solid red;
+  color: red;
+  border: 1px solid red;
 }
 
 .ValidationError.Highlight
@@ -206,5 +209,5 @@ table.ValidationError
 
 table.ValidationError.Highlight
 {
-  border-width: 3px;
+  border-width: 2px;
 }
