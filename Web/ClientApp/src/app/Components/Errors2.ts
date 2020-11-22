@@ -16,7 +16,7 @@ export class Errors2
     private _map =
         {
             GeographicRegion: 'Country',
-            Currency        : 'BaseCurrency',
+            Currency        : 'Base Currency',
             Sponsor         : (party: any) => `${party.Role.Name} (${party.Organisation.Name})`
         }
 
