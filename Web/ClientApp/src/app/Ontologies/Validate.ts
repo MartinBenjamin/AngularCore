@@ -6,6 +6,9 @@ import { IPropertyExpression } from "../Ontology/IPropertyExpression";
 import { ISubClassOf } from "../Ontology/ISubClassOf";
 import { deals } from "./Deals";
 
+export type PathSegment = [string, object];
+export type Path = [object, PathSegment[]];
+
 export function Validate(
     ontology       : IOntology,
     classifications: Map<object, Set<IClass>>

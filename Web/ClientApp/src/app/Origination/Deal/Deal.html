@@ -11,9 +11,9 @@
 </style>
 <ng-template #title>{{Deal?.Type?.Name}}</ng-template>
 <div>
-  <div *ngIf="DealErrors" style="color: red;">
+  <div *ngIf="Errors" style="color: red;">
     Save was unsuccessful.  Please fix the errors and try again.
-    <errors [Errors]="DealErrors"></errors>
+    <errors [Errors]="Errors"></errors>
   </div>
   <common></common>
   <dt-tabbed-view [Tabs]="Tabs" class="FullWidth"></dt-tabbed-view>

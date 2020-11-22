@@ -4,13 +4,13 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { Guid } from '../../CommonDomainObjects';
 import { Tab } from '../../Components/TabbedView';
 import { DealProvider } from '../../DealProvider';
-import { Deal } from '../../Deals';
+import { Deal, DealRoleIdentifier } from '../../Deals';
 import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServiceProvider';
 import { deals } from '../../Ontologies/Deals';
 import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
 import { IDealOntologyService } from '../../Ontologies/IDealOntologyService';
-import { Validate2 } from '../../Ontologies/Validate';
+import { Path, Validate2 } from '../../Ontologies/Validate';
 import { KeyCounterparties } from '../KeyCounterparties';
 import { KeyDealData } from '../KeyDealData';
 import { MoreTabs } from '../MoreTabs';
@@ -94,7 +94,7 @@ export class DealComponent
         return this._deal.getValue()[0];
     }
 
-    get DealErrors(): any
+    get Errors(): any
     {
         return this._dealErrors;
     }
@@ -128,6 +128,22 @@ export class DealComponent
 
         this._dealErrors = transformedErrors.get(this.Deal);
         this._errors.next(transformedErrors);
+
+        let errorPaths: Path[] = [];
+
+        let dealErrors = errors.get(this.Deal);
+        if(dealErrors)
+            for(let entry of dealErrors)
+                errorPaths.push([this.Deal, [entry]]);
+
+        // Include Sponsor errors.
+        for(let sponsor of this.Deal.Parties.filter(party => party.Role.Id === DealRoleIdentifier.Sponsor))
+        {
+            let sponsorErrors = errors.get(sponsor);
+            if(sponsorErrors)
+                for(let entry of sponsorErrors)
+                    errorPaths.push([this.Deal, [["Sponsor", sponsor], entry]]);
+        }
     }
 
     Cancel(): void
