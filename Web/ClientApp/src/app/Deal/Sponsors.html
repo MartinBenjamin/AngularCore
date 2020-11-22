@@ -31,6 +31,7 @@
       type="text"
       [dtPercentageModel]="sponsor.Equity"
       (dtPercentageModelChange)="UpdateEquity(sponsor, $event)"
+      [dtModelErrors]="SponsorErrors(sponsor)?.Equity"
       class="Percentage Equity"/></td>
     <td><a (click)="Delete(sponsor)">delete</a></td>
   </tr>

@@ -126,7 +126,6 @@ export class DealComponent
                 transformedPropertyErrors[propertyErrors[0]] = propertyErrors[1];
         }
 
-        this._dealErrors = transformedErrors.get(this.Deal);
         this._errors.next(transformedErrors);
 
         let errorPaths: Path[] = [];
