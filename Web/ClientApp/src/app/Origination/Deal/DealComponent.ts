@@ -144,6 +144,8 @@ export class DealComponent
                 for(let entry of sponsorErrors)
                     errorPaths.push([this.Deal, [["Sponsor", sponsor], entry]]);
         }
+
+        this._dealErrors = errorPaths;
     }
 
     Cancel(): void

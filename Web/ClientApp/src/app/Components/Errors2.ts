@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Path } from '../Ontologies/Validate';
 
 @Component(
     {
@@ -16,6 +17,21 @@ export class Errors2
         object: any
         )
     {
+        if(Array.isArray(object))
+        {
+            let errorpaths: Path[] = object;
+            for(let [,errorPath] of errorpaths)
+            {
+                let [propertyName, error] = errorPath[errorPath.length - 1];
+                this._errors.push(
+                    {
+                        Error: `${propertyName}: Mandatory`,
+                        Property: error
+                    })
+            }
+            return;
+        }
+
         for(var propertyName in object)
             if(Array.isArray(object[propertyName]))
                 object[propertyName].forEach(() => this._errors.push(
