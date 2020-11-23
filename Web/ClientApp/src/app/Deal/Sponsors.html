@@ -38,6 +38,7 @@
   <tr *ngIf="sponsors.length; else NoSponsors">
     <td colspan="3">Total Equity:</td>
     <td
+      [dtModelErrors]="Errors?.TotalSponsorEquity"
       [ngClass]="{ 'EquityError': TotalEquity != 100 }"
       class="Percentage">{{TotalEquity|percentage}}</td>
     <td></td>
