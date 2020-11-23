@@ -152,11 +152,11 @@ export class Deals extends Ontology
         this.SponsoredWhenApplicable.Annotate(this.ComponentBuildAction, "AddSponsors");
         this.SponsoredWhenApplicable.Annotate(this.ComponentBuildAction, "AddSponsorsNA");
 
-        let sponsoredDeal = this.DeclareClass("SponsoredDeal");
-        sponsoredDeal.Define(new ObjectSomeValuesFrom(this.Parties, this.SponsorParty));
-        sponsoredDeal.SubClassOf(this.Deal);
-        sponsoredDeal.SubClassOf(new DataAllValuesFrom(this.DeclareFunctionalDataProperty("TotalSponsorEquity"), new DataOneOf([100])))
-            .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect);
+        //let sponsoredDeal = this.DeclareClass("SponsoredDeal");
+        //sponsoredDeal.Define(new ObjectSomeValuesFrom(this.Parties, this.SponsorParty));
+        //sponsoredDeal.SubClassOf(this.Deal);
+        //sponsoredDeal.SubClassOf(new DataAllValuesFrom(this.DeclareFunctionalDataProperty("TotalSponsorEquity"), new DataOneOf([100])))
+        //    .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect);
 
         //this.KeyCounterpartyRole = this.DeclareClass("KeyCounterpartyRole");
         //this.KeyCounterparty = this.DeclareClass("KeyCounterparty");
