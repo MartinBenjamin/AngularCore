@@ -15,9 +15,10 @@ export class Errors2
 
     private _map =
         {
-            GeographicRegion: 'Country',
-            Currency        : 'Base Currency',
-            Sponsor         : (party: any) => `${party.Role.Name} (${party.Organisation.Name})`
+            GeographicRegion  : 'Country',
+            Currency          : 'Base Currency',
+            Sponsor           : (party: any) => `${party.Role.Name} (${party.Organisation.Name})`,
+            TotalSponsorEquity: 'Total Sponsor Equity'
         }
 
     private flatten(

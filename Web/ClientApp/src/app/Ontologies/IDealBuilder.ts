@@ -2,7 +2,7 @@ import { Inject, Injectable, InjectionToken, Provider } from '@angular/core';
 import { ClassificationScheme } from "../ClassificationScheme";
 import { ClassificationSchemeServiceToken } from "../ClassificationSchemeServiceProvider";
 import { EmptyGuid, Guid } from "../CommonDomainObjects";
-import { ClassificationSchemeIdentifier, Deal } from "../Deals";
+import { ClassificationSchemeIdentifier, Deal, DealRoleIdentifier, Sponsor } from "../Deals";
 import { DealLifeCycleServiceToken, IDealLifeCycleService } from '../IDealLifeCycleService';
 import { IDomainObjectService } from "../IDomainObjectService";
 import { commonDomainObjects } from './CommonDomainObjects';
@@ -56,6 +56,25 @@ export class DealBuilder implements IDealBuilder
             deal,
             'Ontology',
             { get: () => ontology });
+
+        Object.defineProperty(
+            deal,
+            'TotalSponsorEquity',
+            {
+                get: () =>
+                    deal.Parties
+                        .filter(party => party.Role.Id === DealRoleIdentifier.Sponsor)
+                        .map(party => (<Sponsor>party).Equity)
+                        .reduce(
+                            (previousValue, currentValue) =>
+                            {
+                                if(!(typeof currentValue == 'number' && isFinite(currentValue)))
+                                    return Number.NaN;
+
+                                return previousValue + currentValue;
+                            },
+                            0)
+            });
 
         let dealType = null;
         let classes = ontology.SuperClasses(ontology.Deal);

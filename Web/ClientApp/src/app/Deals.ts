@@ -83,23 +83,24 @@ export interface DealType extends Named<Guid>
 
 export interface Deal extends Named<Guid>
 {
-    ClassIri          : string;
-    Type              : DealType;
-    Agreements        : Agreement[];
-    Parties           : DealParty[];
-    Commitments       : Commitment[];
-    Stage             : LifeCycleStage;
-    Restricted        : boolean;
-    ProjectName       : string;
-    Classifiers       : Classifier[];
-    GeographicRegion  : GeographicRegion;
-    Currency          : Currency;
-    Introducer        : string;
-    SponsorsNA        : boolean;
-    TransactionDetails: string;
-    CurrentStatus     : string;
-    Ontology?         : IDealOntology;
-    LifeCycle?        : LifeCycle;
+    ClassIri           : string;
+    Type               : DealType;
+    Agreements         : Agreement[];
+    Parties            : DealParty[];
+    Commitments        : Commitment[];
+    Stage              : LifeCycleStage;
+    Restricted         : boolean;
+    ProjectName        : string;
+    Classifiers        : Classifier[];
+    GeographicRegion   : GeographicRegion;
+    Currency           : Currency;
+    Introducer         : string;
+    SponsorsNA         : boolean;
+    TransactionDetails : string;
+    TotalSponsorEquity?: number;
+    CurrentStatus      : string;
+    Ontology?          : IDealOntology;
+    LifeCycle?         : LifeCycle;
 }
 
 export interface DealParty extends PartyInRole

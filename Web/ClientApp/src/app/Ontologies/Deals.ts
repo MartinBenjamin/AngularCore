@@ -1,5 +1,6 @@
 import { DealLifeCycleIdentifier, DealStageIdentifier } from "../Deals";
 import { LegalEntityIdentifier } from "../LegalEntities";
+import { DataAllValuesFrom } from "../Ontology/DataAllValuesFrom";
 import { DataComplementOf } from "../Ontology/DataComplementOf";
 import { DataOneOf } from "../Ontology/DataOneOf";
 import { DisjointClasses } from "../Ontology/DisjointClasses";
@@ -150,6 +151,12 @@ export class Deals extends Ontology
             .Annotate(this.NominalProperty, "Sponsors");
         this.SponsoredWhenApplicable.Annotate(this.ComponentBuildAction, "AddSponsors");
         this.SponsoredWhenApplicable.Annotate(this.ComponentBuildAction, "AddSponsorsNA");
+
+        let sponsoredDeal = this.DeclareClass("SponsoredDeal");
+        sponsoredDeal.Define(new ObjectSomeValuesFrom(this.Parties, this.SponsorParty));
+        sponsoredDeal.SubClassOf(this.Deal);
+        sponsoredDeal.SubClassOf(new DataAllValuesFrom(this.DeclareFunctionalDataProperty("TotalSponsorEquity"), new DataOneOf([100])))
+            .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect);
 
         //this.KeyCounterpartyRole = this.DeclareClass("KeyCounterpartyRole");
         //this.KeyCounterparty = this.DeclareClass("KeyCounterparty");
