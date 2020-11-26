@@ -2,6 +2,7 @@ import { AnnotationProperty } from "./AnnotationProperty";
 import { Axiom } from "./Axiom";
 import { Class } from "./Class";
 import { DataPropertyDomain } from "./DataPropertyDomain";
+import { DataPropertyRange } from "./DataPropertyRange";
 import { DisjointClasses } from "./DisjointClasses";
 import { Entity } from "./Entity";
 import { EquivalentClasses } from "./EquivalentClasses";
@@ -11,6 +12,7 @@ import { IAnnotationProperty } from "./IAnnotationProperty";
 import { IAxiom } from "./IAxiom";
 import { IClass } from "./IClass";
 import { IDataPropertyDomain } from "./IDataPropertyDomain";
+import { IDataPropertyRange } from "./IDataPropertyRange";
 import { IDisjointClasses } from "./IDisjointClasses";
 import { IEntity } from "./IEntity";
 import { IEquivalentClasses } from "./IEquivalentClasses";
@@ -18,10 +20,12 @@ import { IHasKey } from "./IHasKey";
 import { IIsAxiom } from "./IIsAxiom";
 import { IClassAssertion, IDataPropertyAssertion, INamedIndividual, IObjectPropertyAssertion } from "./INamedIndividual";
 import { IObjectPropertyDomain } from "./IObjectPropertyDomain";
+import { IObjectPropertyRange } from "./IObjectPropertyRange";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
 import { ISubClassOf } from "./ISubClassOf";
 import { ClassAssertion, DataPropertyAssertion, NamedIndividual, ObjectPropertyAssertion } from "./NamedIndividual";
 import { ObjectPropertyDomain } from "./ObjectPropertyDomain";
+import { ObjectPropertyRange } from "./ObjectPropertyRange";
 import { DataProperty, ObjectProperty } from "./Property";
 import { SubClassOf } from "./SubClassOf";
 
@@ -42,7 +46,9 @@ export class IsAxiom implements IIsAxiom
     IObjectPropertyAssertion (axiom: object): axiom is IObjectPropertyAssertion  { return axiom instanceof ObjectPropertyAssertion; }
     IDataPropertyAssertion   (axiom: object): axiom is IDataPropertyAssertion    { return axiom instanceof DataPropertyAssertion  ; }
     IObjectPropertyDomain    (axiom: object): axiom is IObjectPropertyDomain     { return axiom instanceof ObjectPropertyDomain   ; }
+    IObjectPropertyRange     (axiom: object): axiom is IObjectPropertyRange      { return axiom instanceof ObjectPropertyRange    ; }
     IDataPropertyDomain      (axiom: object): axiom is IDataPropertyDomain       { return axiom instanceof DataPropertyDomain     ; }
+    IDataPropertyRange       (axiom: object): axiom is IDataPropertyRange        { return axiom instanceof DataPropertyRange      ; }
     IFunctionalDataProperty  (axiom: object): axiom is IDataPropertyDomain       { return axiom instanceof FunctionalDataProperty ; }
 
 }

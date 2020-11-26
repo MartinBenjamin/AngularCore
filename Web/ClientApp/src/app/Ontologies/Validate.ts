@@ -1,6 +1,7 @@
 import { Guid } from "../CommonDomainObjects";
 import { ClassMembershipEvaluator } from "../Ontology/ClassMembershipEvaluator";
 import { IClass } from "../Ontology/IClass";
+import { IDataRange } from "../Ontology/IDataRange";
 import { IOntology } from "../Ontology/IOntology";
 import { IPropertyExpression } from "../Ontology/IPropertyExpression";
 import { ISubClassOf } from "../Ontology/ISubClassOf";
@@ -180,4 +181,19 @@ export function Validate3(
     }
 
     return errors;
+}
+
+export function ValidateProperties(
+    ontology  : IOntology,
+    individual: object
+    ): Map<string, IDataRange[]>
+{
+    let errors = new Map<string, IDataRange[]>();
+    for(let dataPropertyRange of ontology.Get(ontology.IsAxiom.IDataPropertyRange))
+        if(dataPropertyRange.DataPropertyExpression.LocalName in individual)
+            if(!dataPropertyRange.Range.HasMember(individual[dataPropertyRange.DataPropertyExpression.LocalName]))
+            {
+
+            }
+    return null;
 }
