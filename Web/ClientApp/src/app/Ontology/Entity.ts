@@ -14,8 +14,13 @@ export class Entity
         super(ontology);
     }
 
+    get PrefixIri(): string
+    {
+        return `${this.Ontology.Iri}.`;
+    }
+
     get Iri(): string
     {
-        return `${this.Ontology.Iri}.${this.LocalName}`;
+        return `${this.PrefixIri}${this.LocalName}`;
     }
 }

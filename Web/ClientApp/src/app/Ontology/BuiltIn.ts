@@ -8,7 +8,7 @@ export class BuiltIn
     Iri: string;
 
     protected constructor(
-        prefixIri: string,
+        prefixIri       : string,
         public LocalName: string
         )
     {

@@ -1,9 +1,9 @@
 import { Class } from "./Class";
 import { IClass } from "./IClass";
 import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
-import { ReservedVocabulary } from "./ReservedVocabulary";
+import { PrefixIris } from "./PrefixIris";
 
-export class Thing
+class Thing
     extends Class
     implements IClass
 {
@@ -14,9 +14,9 @@ export class Thing
             'Thing')
     }
 
-    get Iri(): string
+    get PrefixIri(): string
     {
-        return ReservedVocabulary.StandardPrefixNames.owl + this.LocalName;
+        return PrefixIris.owl;
     }
 
     Evaluate(
@@ -27,3 +27,6 @@ export class Thing
         return true;
     }
 }
+
+const instance = new Thing();
+export { instance as Thing };
