@@ -1,8 +1,8 @@
 import { DealLifeCycleIdentifier, DealStageIdentifier } from "../Deals";
 import { LegalEntityIdentifier } from "../LegalEntities";
-import { DataAllValuesFrom } from "../Ontology/DataAllValuesFrom";
 import { DataComplementOf } from "../Ontology/DataComplementOf";
 import { DataOneOf } from "../Ontology/DataOneOf";
+import { DataPropertyRange } from "../Ontology/DataPropertyRange";
 import { DisjointClasses } from "../Ontology/DisjointClasses";
 import { IAnnotationProperty } from "../Ontology/IAnnotationProperty";
 import { IClass } from "../Ontology/IClass";
@@ -10,6 +10,7 @@ import { INamedIndividual } from "../Ontology/INamedIndividual";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "../Ontology/IPropertyExpression";
 import { ObjectSomeValuesFrom } from "../Ontology/ObjectSomeValuesFrom";
 import { Ontology } from "../Ontology/Ontology";
+import { Decimal } from "../Ontology/Xsd";
 import { commonDomainObjects } from "./CommonDomainObjects";
 import { legalEntities } from "./LegalEntities";
 import { lifeCycles } from "./LifeCycles";
@@ -121,6 +122,7 @@ export class Deals extends Ontology
         this.BorrowerParty.Define(parties.Role.HasValue(roleIndividuals.Borrower));
         this.SponsorParty.Define(parties.Role.HasValue(roleIndividuals.Sponsor));
         this.Equity = this.SponsorParty.DeclareDataProperty("Equity");
+        //new DataPropertyRange(this, this.Equity, Decimal);
         this.SponsorParty.SubClassOf(this.Equity.ExactCardinality(1))
             .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect);
 

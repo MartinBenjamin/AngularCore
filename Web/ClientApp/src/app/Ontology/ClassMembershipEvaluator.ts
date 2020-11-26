@@ -568,7 +568,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
             let value = individual[propertyExpression.LocalName];
             return Array.isArray(value) ?
                 value : value !== null ?
-                    (typeof value[Symbol.iterator] !== 'undefined' && typeof value !== 'string' ? [...value] : [value]) : [];
+                    (typeof value[Symbol.iterator] !== 'undefined' && typeof value === 'object' ? [...value] : [value]) : [];
         }
 
         return [];

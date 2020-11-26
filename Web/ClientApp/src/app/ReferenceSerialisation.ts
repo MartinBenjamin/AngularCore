@@ -1,4 +1,5 @@
 import { parseUTCDate } from "./Components/Date";
+import { Date } from "core-js";
 
 let dateParser = parseUTCDate('yyyy-MM-ddTHH:mm:ss.SSSZ');
 
@@ -9,20 +10,20 @@ export function newReferenceDeserialiser()
         object: any
         )
     {
-        if(object == null)
+        if(object === null)
             return object;
 
-        if(typeof object == 'string')
+        if(typeof object === 'string')
         {
             let date = dateParser(object);
             if(date)
                 return date;
         }
 
-        if(typeof object != 'object')
+        if(typeof object !== 'object')
             return object;
 
-        if(Object.prototype.toString.call(object) === '[object Array]')
+        if(Array.isArray(object))
             return (<Array<any>>object).map(deserialiser);
 
         if('$ref' in object)
@@ -51,21 +52,21 @@ export function newReferenceSerialiser()
         object: any
         )
     {
-        if(object == null)
+        if(object === null)
             return object;
 
-        if(Object.prototype.toString.call(object) === '[object Date]')
+        if(object instanceof Date)
             return (<Date>object).toISOString();
 
-        if(typeof object != 'object')
+        if(typeof object !== 'object')
             return object;
 
-        if(Object.prototype.toString.call(object) === '[object Array]')
+        if(Array.isArray(object))
             return (<Array<any>>object).map(serialiser);
 
         let index = objects.indexOf(object);
 
-        if(index != -1)
+        if(index !== -1)
             return {
                 $ref: String(index + 1)
             };
