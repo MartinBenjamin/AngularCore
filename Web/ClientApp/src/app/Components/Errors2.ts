@@ -77,7 +77,7 @@ export class Errors2
     }
 
     private MapPath(
-        [object, pathSegments]: Path
+        [, pathSegments]: Path
         )
     {
         return pathSegments.map(pathSegment => this.MapPathSegment(pathSegment)).join(' ');
