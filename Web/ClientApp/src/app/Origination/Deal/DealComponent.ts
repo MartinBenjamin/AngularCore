@@ -10,7 +10,7 @@ import { deals } from '../../Ontologies/Deals';
 import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
 import { IDealOntologyService } from '../../Ontologies/IDealOntologyService';
-import { Path, Validate2 } from '../../Ontologies/Validate';
+import { Path, Validate4 } from '../../Ontologies/Validate';
 import { KeyCounterparties } from '../KeyCounterparties';
 import { KeyDealData } from '../KeyDealData';
 import { MoreTabs } from '../MoreTabs';
@@ -110,7 +110,7 @@ export class DealComponent
                 break;
         }
 
-        let errors = Validate2(
+        let errors = Validate4(
             this.Deal.Ontology,
             classifications,
             applicableStages);

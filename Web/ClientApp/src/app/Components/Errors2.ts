@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Path, PathSegment } from '../Ontologies/Validate';
+import { Path, PathSegment, IErrors } from '../Ontologies/Validate';
 
 @Component(
     {
@@ -31,12 +31,13 @@ export class Errors2
             for(let path of paths)
             {
                 let [, pathSegments] = path;
-                let [, error] = pathSegments[pathSegments.length - 1];
-                this._errors.push(
-                    {
-                        Error: `${this.MapPath(path)}: Mandatory`,
-                        Property: error
-                    })
+                let [, errors] = pathSegments[pathSegments.length - 1];
+                (<Set<keyof IErrors>>errors).forEach(error =>
+                    this._errors.push(
+                        {
+                            Error: `${this.MapPath(path)}: ${error}.`,
+                            Property: errors
+                        }));
             }
             return;
         }

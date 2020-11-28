@@ -122,7 +122,7 @@ export class Deals extends Ontology
         this.BorrowerParty.Define(parties.Role.HasValue(roleIndividuals.Borrower));
         this.SponsorParty.Define(parties.Role.HasValue(roleIndividuals.Sponsor));
         this.Equity = this.SponsorParty.DeclareDataProperty("Equity");
-        //new DataPropertyRange(this, this.Equity, Decimal);
+        new DataPropertyRange(this, this.Equity, Decimal);
         this.SponsorParty.SubClassOf(this.Equity.ExactCardinality(1))
             .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect);
 

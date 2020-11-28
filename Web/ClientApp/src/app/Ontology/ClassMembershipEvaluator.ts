@@ -512,30 +512,6 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                     componentClassExpression));
     }
 
-    public ClassifyAll(
-        individual: object,
-        ): void
-    {
-        if(typeof individual !== "object" || individual === null || this._classifications.get(individual))
-            return;
-
-        this.Classify(individual);
-
-        for(let propertyName in individual)
-            this.ClassifyAll(individual[propertyName]);
-
-        //for(let class$ of this.Classify(individual))
-        //{
-        //    let objectPropertyExpressions = this._objectPropertyExpressions.get(class$);
-        //    if(objectPropertyExpressions)
-        //        for(let objectPropertyExpression of objectPropertyExpressions)
-        //            for(let value of this.ObjectPropertyValues(
-        //                objectPropertyExpression,
-        //                individual))
-        //                this.ClassifyAll(value);
-        //}
-    }
-
     public ObjectPropertyValues(
         objectPropertyExpression: IObjectPropertyExpression,
         individual              : object

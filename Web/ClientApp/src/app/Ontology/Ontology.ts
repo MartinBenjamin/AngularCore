@@ -13,6 +13,26 @@ import { IsAxiom } from "./IsAxiom";
 import { NamedIndividual } from "./NamedIndividual";
 import { DataProperty, ObjectProperty } from "./Property";
 
+export function Individuals(
+    individual  : object,
+    individuals?: Set<object>
+    ): Set<object>
+{
+    individuals = individuals ? individuals : new Set<object>();
+
+    if(typeof individual !== "object" || individual === null || individuals.has(individual))
+        return;
+
+    individuals.add(individual);
+
+    for(let propertyName in individual)
+        Individuals(
+            individual[propertyName],
+            individuals);
+
+    return individuals;
+}
+
 export class Ontology implements IOntology
 {
     Imports           : IOntology[];
@@ -60,9 +80,11 @@ export class Ontology implements IOntology
         ) : Map<object, Set<IClass>>
     {
         let classifications = new Map<object, Set<IClass>>()
-        new ClassMembershipEvaluator(
+        let classMembershipEvaluator = new ClassMembershipEvaluator(
             this,
-            classifications).ClassifyAll(individual);
+            classifications);
+
+        Individuals(individual).forEach(individual => classMembershipEvaluator.Classify(individual));
 
         return classifications;
     }
