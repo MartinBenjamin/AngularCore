@@ -66,12 +66,14 @@ export class DealBuilder implements IDealBuilder
                         .filter(party => party.Role.Id === DealRoleIdentifier.Sponsor)
                         .map(party => (<Sponsor>party).Equity)
                         .reduce(
-                            (previousValue, currentValue) =>
+                            (total, currentValue) =>
                             {
-                                if(!(typeof currentValue == 'number' && isFinite(currentValue)))
-                                    return Number.NaN;
+                                if(typeof total === 'number' &&
+                                    typeof currentValue == 'number' &&
+                                    !isNaN(currentValue))
+                                    return total + currentValue;
 
-                                return previousValue + currentValue;
+                                return null;
                             },
                             0)
             });
