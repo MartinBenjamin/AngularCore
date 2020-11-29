@@ -5,7 +5,7 @@ import { IOntology } from "../Ontology/IOntology";
 import { deals } from "./Deals";
 
 export type PathSegment = [string, object];
-export type Path = [object, PathSegment[]];
+export type Path = PathSegment[];
 
 export interface IErrors
 {

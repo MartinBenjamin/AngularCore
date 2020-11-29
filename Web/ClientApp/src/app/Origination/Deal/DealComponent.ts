@@ -133,7 +133,7 @@ export class DealComponent
         let dealErrors = errors.get(this.Deal);
         if(dealErrors)
             for(let entry of dealErrors)
-                errorPaths.push([this.Deal, [entry]]);
+                errorPaths.push([entry]);
 
         // Include Sponsor errors.
         for(let sponsor of this.Deal.Parties.filter(party => party.Role.Id === DealRoleIdentifier.Sponsor))
@@ -141,7 +141,7 @@ export class DealComponent
             let sponsorErrors = errors.get(sponsor);
             if(sponsorErrors)
                 for(let entry of sponsorErrors)
-                    errorPaths.push([this.Deal, [["Sponsor", sponsor], entry]]);
+                    errorPaths.push([["Sponsor", sponsor], entry]]);
         }
 
         this._dealErrors = errorPaths;

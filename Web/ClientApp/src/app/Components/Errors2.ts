@@ -36,8 +36,7 @@ export class Errors2
             let paths: Path[] = object;
             for(let path of paths)
             {
-                let [, pathSegments] = path;
-                let [, errors] = pathSegments[pathSegments.length - 1];
+                let [, errors] = path[path.length - 1];
                 (<Set<keyof IErrors>>errors).forEach(error =>
                     this._errors.push(
                         {
@@ -83,10 +82,10 @@ export class Errors2
     }
 
     private MapPath(
-        [, pathSegments]: Path
+        path: Path
         )
     {
-        return pathSegments.map(pathSegment => this.MapPathSegment(pathSegment)).join(' ');
+        return path.map(pathSegment => this.MapPathSegment(pathSegment)).join(' ');
     }
 
     private MapPathSegment(
