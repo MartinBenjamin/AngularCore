@@ -52,7 +52,25 @@ export class Sponsors implements OnDestroy
                     {
                         this.Build(deal[0].Ontology);
                         this._deal = deal[0];
-                        deal[1].subscribe(errors => this._errors = errors);
+                        deal[1].subscribe(
+                            errors =>
+                            {
+                                this._errors = null;
+                                if(errors)
+                                {
+                                    this._errors = new Map<object, object>();
+
+                                    for(let individualErrors of errors)
+                                    {
+                                        let transformedPropertyErrors = {};
+                                        this._errors.set(
+                                            individualErrors[0],
+                                            transformedPropertyErrors);
+                                        for(let propertyErrors of individualErrors[1])
+                                            transformedPropertyErrors[propertyErrors[0]] = propertyErrors[1];
+                                    }
+                                }
+                            });
                     }
 
                     this.ComputeSponsors();

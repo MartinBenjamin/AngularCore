@@ -1,12 +1,12 @@
-import { Component, Inject, ViewChild, Input, OnDestroy } from '@angular/core';
+import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { EmptyGuid } from '../CommonDomainObjects';
+import { DealProvider } from '../DealProvider';
 import { Deal, DealParty, DealRoleIdentifier } from '../Deals';
 import { LegalEntityFinder } from '../LegalEntityFinder';
+import { Sort } from '../Parties';
 import { Role } from '../Roles';
 import { RolesToken } from '../RoleServiceProvider';
-import { DealProvider } from '../DealProvider';
-import { Sort } from '../Parties';
 
 @Component(
     {
@@ -47,7 +47,20 @@ export class Borrowers implements OnDestroy
                     else
                     {
                         this._deal = deal[0];
-                        deal[1].subscribe(errors => this._errors = errors ? errors.get(this._deal) : null);
+                        deal[1].subscribe(
+                            errors =>
+                            {
+                                this._errors = null;
+                                if(errors)
+                                {
+                                    let dealErrors = errors.get(this._deal);
+                                    if(dealErrors)
+                                    {
+                                        this._errors = {};
+                                        [...errors.get(this._deal)].forEach(propertyErrors => this._errors[propertyErrors[0]] = propertyErrors[1]);
+                                    }
+                                }
+                            });
                     }
 
                     this.ComputeBorrowers();

@@ -1,9 +1,10 @@
+import { BehaviorSubject, Observable } from "rxjs";
 import { Deal } from "./Deals";
-import { Observable, BehaviorSubject } from "rxjs";
+import { IErrors } from "./Ontologies/Validate";
 
-export abstract class DealProvider extends Observable<[Deal, Observable<Map<object, object>>]>
+export abstract class DealProvider extends Observable<[Deal, Observable<Map<object, Map<string, Set<keyof IErrors>>>>]>
 {
-    protected _deal = new BehaviorSubject<[Deal, Observable<Map<object, object>>]>(null);
+    protected _deal = new BehaviorSubject<[Deal, Observable<Map<object, Map<string, Set<keyof IErrors>>>>]>(null);
 
     protected constructor()
     {

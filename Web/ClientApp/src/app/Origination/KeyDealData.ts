@@ -37,7 +37,20 @@ export class KeyDealData implements OnDestroy
                     else
                     {
                         this._deal = deal[0];
-                        deal[1].subscribe(errors => this._errors = errors ? errors.get(this._deal) : null);
+                        deal[1].subscribe(
+                            errors =>
+                            {
+                                this._errors = null;
+                                if(errors)
+                                {
+                                    let dealErrors = errors.get(this._deal);
+                                    if(dealErrors)
+                                    {
+                                        this._errors = {};
+                                        [...errors.get(this._deal)].forEach(propertyErrors => this._errors[propertyErrors[0]] = propertyErrors[1]);
+                                    }
+                                }
+                            });
                     }
                 }));
     }

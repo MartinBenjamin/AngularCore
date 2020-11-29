@@ -10,7 +10,7 @@ import { deals } from '../../Ontologies/Deals';
 import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
 import { IDealOntologyService } from '../../Ontologies/IDealOntologyService';
-import { Path, Validate } from '../../Ontologies/Validate';
+import { IErrors, Path, Validate } from '../../Ontologies/Validate';
 import { KeyCounterparties } from '../KeyCounterparties';
 import { KeyDealData } from '../KeyDealData';
 import { MoreTabs } from '../MoreTabs';
@@ -35,7 +35,7 @@ export class DealComponent
 {
     private _subscriptions: Subscription[] = [];
     private _ontology     : IDealOntology;
-    private _errors       : BehaviorSubject<Map<object, object>>;
+    private _errors       : BehaviorSubject<Map<object, Map<string, Set<keyof IErrors>>>>;
     private _dealErrors   : object;
 
     @ViewChild('title')
@@ -72,7 +72,7 @@ export class DealComponent
                     if(this._errors)
                         this._errors.complete();
 
-                    this._errors = new BehaviorSubject<Map<any, any>>(null);
+                    this._errors = new BehaviorSubject<Map<object, Map<string, Set<keyof IErrors>>>>(null);
                     this._dealErrors = null;
 
                     this._deal.next([dealBuilder.Build(this._ontology), this._errors]);
@@ -115,18 +115,7 @@ export class DealComponent
             classifications,
             applicableStages);
 
-        let transformedErrors = new Map<object, object>();
-        for(let individualErrors of errors)
-        {
-            let transformedPropertyErrors = {};
-            transformedErrors.set(
-                individualErrors[0],
-                transformedPropertyErrors);
-            for(let propertyErrors of individualErrors[1])
-                transformedPropertyErrors[propertyErrors[0]] = propertyErrors[1];
-        }
-
-        this._errors.next(transformedErrors);
+        this._errors.next(errors);
 
         let errorPaths: Path[] = [];
 
@@ -141,7 +130,7 @@ export class DealComponent
             let sponsorErrors = errors.get(sponsor);
             if(sponsorErrors)
                 for(let entry of sponsorErrors)
-                    errorPaths.push([["Sponsor", sponsor], entry]]);
+                    errorPaths.push([["Sponsor", sponsor], entry]);
         }
 
         this._dealErrors = errorPaths;
