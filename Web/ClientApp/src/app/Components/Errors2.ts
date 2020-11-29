@@ -19,7 +19,7 @@ export class Errors2
             MustBe100Percent: "Must be 100%"
         };
 
-    private _map =
+    private _pathSegmentMap =
         {
             GeographicRegion  : 'Country',
             Currency          : 'Base Currency',
@@ -93,12 +93,12 @@ export class Errors2
         [propertyName, object]: PathSegment
         ): string
     {
-        let mapType = typeof this._map[propertyName];
+        let mapType = typeof this._pathSegmentMap[propertyName];
         if(mapType === 'string')
-            return this._map[propertyName];
+            return this._pathSegmentMap[propertyName];
 
         else if(mapType === 'function')
-            return this._map[propertyName](object);
+            return this._pathSegmentMap[propertyName](object);
 
         return propertyName; 
     }
