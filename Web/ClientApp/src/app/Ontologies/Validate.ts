@@ -9,8 +9,9 @@ export type Path = [object, PathSegment[]];
 
 export interface IErrors
 {
-    Mandatory: string,
-    Invalid  : string
+    Mandatory       : string,
+    Invalid         : string,
+    MustBe100Percent: string
 }
 
 export function Validate(
@@ -99,7 +100,8 @@ export function Validate(
                                     propertyErrors);
                             }
 
-                            propertyErrors.add("Mandatory");
+                            let errorAnnotation = annotation.Annotations.find(annotation => annotation.Property === deals.Error);
+                            propertyErrors.add(errorAnnotation ? errorAnnotation.Value : "Mandatory");
                         }
                 }
     }

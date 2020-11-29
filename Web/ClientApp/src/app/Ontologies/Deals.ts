@@ -23,6 +23,7 @@ export class Deals extends Ontology
 {
     RestrictedfromStage    : IAnnotationProperty;
     NominalProperty        : IAnnotationProperty;
+    Error                  : IAnnotationProperty;
     ComponentBuildAction   : IAnnotationProperty;
     $type                  : IDataPropertyExpression;
     LifeCycle              : IObjectPropertyExpression;
@@ -63,6 +64,7 @@ export class Deals extends Ontology
 
         this.RestrictedfromStage  = this.DeclareAnnotationProperty("RestrictedFromStage" );
         this.NominalProperty      = this.DeclareAnnotationProperty("NominalProperty"     );
+        this.Error                = this.DeclareAnnotationProperty("Error"               );
         this.ComponentBuildAction = this.DeclareAnnotationProperty("ComponentBuildAction");
 
         this.$type = this.DeclareDataProperty("$type")
@@ -159,7 +161,8 @@ export class Deals extends Ontology
         sponsoredDeal.Define(new ObjectSomeValuesFrom(this.Parties, this.SponsorParty));
         sponsoredDeal.SubClassOf(this.Deal);
         sponsoredDeal.SubClassOf(new DataAllValuesFrom(this.DeclareFunctionalDataProperty("TotalSponsorEquity"), new DataOneOf([100])))
-            .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect);
+            .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect)
+            .Annotate(this.Error, "MustBe100Percent");
 
         //this.KeyCounterpartyRole = this.DeclareClass("KeyCounterpartyRole");
         //this.KeyCounterparty = this.DeclareClass("KeyCounterparty");

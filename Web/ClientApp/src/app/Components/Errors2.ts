@@ -11,7 +11,13 @@ import { Path, PathSegment, IErrors } from '../Ontologies/Validate';
     })
 export class Errors2
 {
-    private _errors: any[];
+    private _errors: any[];    
+    private _errorMap: IErrors =
+        {
+            Mandatory       : "Mandatory",
+            Invalid         : "Invalid",
+            MustBe100Percent: "Must be 100%"
+        };
 
     private _map =
         {
@@ -35,7 +41,7 @@ export class Errors2
                 (<Set<keyof IErrors>>errors).forEach(error =>
                     this._errors.push(
                         {
-                            Error: `${this.MapPath(path)}: ${error}.`,
+                            Error: `${this.MapPath(path)}: ${this._errorMap[error]}.`,
                             Property: errors
                         }));
             }
