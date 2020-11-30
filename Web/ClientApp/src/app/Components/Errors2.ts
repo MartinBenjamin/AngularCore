@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Path, PathSegment, IErrors } from '../Ontologies/Validate';
+import { IErrors, Path, PathSegment } from '../Ontologies/Validate';
 
 @Component(
     {
@@ -21,56 +21,34 @@ export class Errors2
 
     private _pathSegmentMap =
         {
-            GeographicRegion  : 'Country',
-            Currency          : 'Base Currency',
-            Sponsor           : (party: any) => `${party.Role.Name} (${party.Organisation.Name})`,
-            TotalSponsorEquity: 'Total Sponsor Equity'
+            GeographicRegion  : "Country",
+            Currency          : "Base Currency",
+            Sponsor           : (party: any) => `${party.Role.Name} [${party.Organisation.Name}]`,
+            TotalSponsorEquity: "Total Sponsor Equity"
         }
-
-    private flatten(
-        object: any
-        )
-    {
-        if(Array.isArray(object))
-        {
-            let paths: Path[] = object;
-            for(let path of paths)
-            {
-                let [, errors] = path[path.length - 1];
-                (<Set<keyof IErrors>>errors).forEach(error =>
-                    this._errors.push(
-                        {
-                            Error: `${this.MapPath(path)}: ${this._errorMap[error]}.`,
-                            Property: errors
-                        }));
-            }
-            return;
-        }
-
-        for(var propertyName in object)
-            if(Array.isArray(object[propertyName]))
-                object[propertyName].forEach(() => this._errors.push(
-                    {
-                        Error   : `${propertyName}: Mandatory`,
-                        Property: object[propertyName]
-                    }));
-
-            else
-                this.flatten(object[propertyName]);
-    };
 
     @Input()
     set Errors(
-        errors: any
+        errorPaths: Path[]
         )
     {
         this._errors = null;
 
-        if(!errors)
+        if(!errorPaths)
             return;
 
         this._errors = [];
-        this.flatten(errors);
+        for(let errorPath of errorPaths)
+        {
+            let [, errors] = errorPath[errorPath.length - 1];
+            (<Set<keyof IErrors>>errors).forEach(error =>
+                this._errors.push(
+                    {
+                        Error: `${this.MapPath(errorPath)}: ${this._errorMap[error]}.`,
+                        Property: errors
+                    }));
+        }
+
         this._errors.forEach(error => error.Property.Highlight = 0);
     }
 
