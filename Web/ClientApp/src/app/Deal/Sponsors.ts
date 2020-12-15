@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { EmptyGuid } from '../CommonDomainObjects';
 import { DealProvider } from '../DealProvider';
-import { Deal, DealParty, DealRoleIdentifier, percentage, Sponsor } from '../Deals';
+import { Deal, DealRoleIdentifier, percentage, Sponsor } from '../Deals';
 import { LegalEntityFinder } from '../LegalEntityFinder';
 import { deals } from '../Ontologies/Deals';
 import { IDealOntology } from '../Ontologies/IDealOntology';
@@ -146,9 +146,8 @@ export class Sponsors implements OnDestroy
                 let today = new Date();
                 today.setUTCHours(0, 0, 0, 0);
                 this._deal.Parties.push(
-                    <DealParty>{
+                    <Sponsor>{
                         Id             : EmptyGuid,
-                        Deal           : this._deal,
                         AutonomousAgent: legalEntity,
                         Organisation   : legalEntity,
                         Person         : null,

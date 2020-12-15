@@ -1,3 +1,4 @@
+import { Agreement, Commitment } from "./Agreements";
 import { Classifier } from "./ClassificationScheme";
 import { Guid, Named } from "./CommonDomainObjects";
 import { Currency } from "./Iso4217";
@@ -86,7 +87,7 @@ export interface Deal extends Named<Guid>
     ClassIri           : string;
     Type               : DealType;
     Agreements         : Agreement[];
-    Parties            : DealParty[];
+    Parties            : PartyInRole[];
     Commitments        : Commitment[];
     Stage              : LifeCycleStage;
     Restricted         : boolean;
@@ -103,22 +104,7 @@ export interface Deal extends Named<Guid>
     LifeCycle?         : LifeCycle;
 }
 
-export interface DealParty extends PartyInRole
-{
-    Deal: Deal;
-}
-
-export interface Agreement
-{
-    Deal: Deal;
-}
-
-export interface Commitment
-{
-    Deal: Deal;
-}
-
-export interface Sponsor extends DealParty
+export interface Sponsor extends PartyInRole
 {
     Equity: percentage;
 }

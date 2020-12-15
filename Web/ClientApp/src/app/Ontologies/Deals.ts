@@ -35,7 +35,6 @@ export class Deals extends Ontology
     Commitments            : IObjectPropertyExpression;
     Classifiers            : IObjectPropertyExpression;
     SponsorsNA             : IDataPropertyExpression;
-    DealParty              : IClass;
     LenderParty            : IClass;
     AdvisorParty           : IClass;
     SponsorParty           : IClass;
@@ -110,18 +109,15 @@ export class Deals extends Ontology
             .Annotate(this.RestrictedfromStage, DealStageIdentifier.BusinessScreened)
             .Annotate(this.NominalProperty, "Exclusivity");
 
-        this.DealParty = this.DeclareClass("DealParty");
-        this.DealParty.SubClassOf(parties.PartyInRole);
-
         this.LenderParty   = this.DeclareClass("LenderParty"  );
         this.AdvisorParty  = this.DeclareClass("AdvisorParty" );
         this.BorrowerParty = this.DeclareClass("BorrowerParty");
         this.SponsorParty  = this.DeclareClass("SponsorParty" );
 
-        this.LenderParty.SubClassOf(this.DealParty);
-        this.AdvisorParty.SubClassOf(this.DealParty);
-        this.BorrowerParty.SubClassOf(this.DealParty);
-        this.SponsorParty.SubClassOf(this.DealParty);
+        this.LenderParty.SubClassOf(parties.PartyInRole);
+        this.AdvisorParty.SubClassOf(parties.PartyInRole);
+        this.BorrowerParty.SubClassOf(parties.PartyInRole);
+        this.SponsorParty.SubClassOf(parties.PartyInRole);
 
         this.LenderParty.Define(parties.Role.HasValue(roleIndividuals.Lender));
         this.AdvisorParty.Define(parties.Role.HasValue(roleIndividuals.Advisor));
@@ -136,7 +132,7 @@ export class Deals extends Ontology
         this.Bank.DataPropertyValue(commonDomainObjects.Id, LegalEntityIdentifier.Bank);
 
         this.BankParty        = this.DeclareClass("BankParty");
-        this.BankParty.SubClassOf(this.DealParty);
+        this.BankParty.SubClassOf(parties.PartyInRole);
         this.BankParty.Define(parties.Organisation.HasValue(this.Bank));
 
         this.BankLenderParty  = this.DeclareClass("BankLenderParty");
@@ -188,7 +184,7 @@ export class Deals extends Ontology
         this.DebtLifeCycle.DataPropertyValue(commonDomainObjects.Id, DealLifeCycleIdentifier.Debt);
         this.Debt.SubClassOf(this.LifeCycle.HasValue(this.DebtLifeCycle));
 
-        new DisjointClasses(this, [this.Deal, this.DealParty, commonDomainObjects.Classifier]);
+        new DisjointClasses(this, [this.Deal, parties.PartyInRole, commonDomainObjects.Classifier]);
 
         //let NotExclusive = ExclusivityClassifier.DeclareNamedIndividual("NotExclusive");
         //NotExclusive.Value(commonDomainObjects.Id, ExclusivityClassifierIdentifier.No);

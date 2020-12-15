@@ -2,9 +2,9 @@ import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { EmptyGuid } from '../CommonDomainObjects';
 import { DealProvider } from '../DealProvider';
-import { Deal, DealParty, DealRoleIdentifier } from '../Deals';
+import { Deal, DealRoleIdentifier } from '../Deals';
 import { LegalEntityFinder } from '../LegalEntityFinder';
-import { Sort } from '../Parties';
+import { PartyInRole, Sort } from '../Parties';
 import { Role } from '../Roles';
 import { RolesToken } from '../RoleServiceProvider';
 
@@ -18,7 +18,7 @@ export class Borrowers implements OnDestroy
     private _subscriptions : Subscription[] = [];
     private _borrowerRole  : Role;
     private _deal          : Deal;
-    private _borrowers     : DealParty[];
+    private _borrowers     : PartyInRole[];
     private _errors        : object;
 
     @ViewChild('legalEntityFinder')
@@ -77,7 +77,7 @@ export class Borrowers implements OnDestroy
         return this._borrowerRole != null;
     }
 
-    get Borrowers(): DealParty[]
+    get Borrowers(): PartyInRole[]
     {
         return this._borrowers;
     }
@@ -101,9 +101,8 @@ export class Borrowers implements OnDestroy
                 let today = new Date();
                 today.setUTCHours(0, 0, 0, 0);
                 this._deal.Parties.push(
-                    <DealParty>{
+                    <PartyInRole>{
                         Id             : EmptyGuid,
-                        Deal           : this._deal,
                         AutonomousAgent: legalEntity,
                         Organisation   : legalEntity,
                         Person         : null,
