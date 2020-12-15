@@ -34,7 +34,6 @@ namespace FacilityAgreements
             ) : base(
                 id,
                 facilityAgreement,
-                new List<AgreementParty>(),
                 null)
         {
             Name                      = name;

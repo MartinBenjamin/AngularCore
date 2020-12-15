@@ -1,7 +1,5 @@
-﻿using Agreements;
-using Contracts;
+﻿using Contracts;
 using System;
-using System.Collections.Generic;
 
 namespace FacilityAgreements
 {
@@ -15,27 +13,15 @@ namespace FacilityAgreements
         }
 
         protected FacilityCommitment(
-            Guid                  id,
-            Facility              facility,
-            IList<AgreementParty> obligors
+            Guid     id,
+            Facility facility
             ) : base(
                 id,
                 facility.Contract,
-                obligors,
                 facility)
         {
             Facility = facility;
             Facility.Commitments.Add(this);
-        }
-
-        protected FacilityCommitment(
-            Guid     id,
-            Facility facility
-            ) : this(
-                id,
-                facility,
-                new List<AgreementParty>())
-        {
         }
     }
 }

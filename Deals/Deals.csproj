@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Agreements\Agreements.csproj" />
     <ProjectReference Include="..\CommonDomainObjects\CommonDomainObjects.csproj" />
     <ProjectReference Include="..\LegalEntities\LegalEntities.csproj" />
     <ProjectReference Include="..\Ontology\Ontology.csproj" />

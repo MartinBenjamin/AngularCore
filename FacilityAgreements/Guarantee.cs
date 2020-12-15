@@ -1,6 +1,5 @@
 ﻿using Agreements;
 using System;
-using System.Collections.Generic;
 
 namespace FacilityAgreements
 {
@@ -25,8 +24,7 @@ namespace FacilityAgreements
             decimal?       politicalCover
             ) : base(
                 id,
-                facility,
-                new List<AgreementParty> { guarantor })
+                facility)
         {
             Guarantor       = guarantor;
             CommercialCover = commercialCover;

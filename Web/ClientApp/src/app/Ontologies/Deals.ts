@@ -1,5 +1,6 @@
 import { DealLifeCycleIdentifier, DealStageIdentifier } from "../Deals";
 import { LegalEntityIdentifier } from "../LegalEntities";
+import { DataAllValuesFrom } from "../Ontology/DataAllValuesFrom";
 import { DataComplementOf } from "../Ontology/DataComplementOf";
 import { DataOneOf } from "../Ontology/DataOneOf";
 import { DataPropertyRange } from "../Ontology/DataPropertyRange";
@@ -17,7 +18,6 @@ import { lifeCycles } from "./LifeCycles";
 import { parties } from "./Parties";
 import { roleIndividuals } from "./RoleIndividuals";
 import { roles } from "./Roles";
-import { DataAllValuesFrom } from "../Ontology/DataAllValuesFrom";
 
 export class Deals extends Ontology
 {
@@ -34,6 +34,7 @@ export class Deals extends Ontology
     Parties                : IObjectPropertyExpression;
     Commitments            : IObjectPropertyExpression;
     Classifiers            : IObjectPropertyExpression;
+    SponsorsNA             : IDataPropertyExpression;
     DealParty              : IClass;
     LenderParty            : IClass;
     AdvisorParty           : IClass;
@@ -46,7 +47,7 @@ export class Deals extends Ontology
     BankAdvisorParty       : IClass;
     Sponsored              : IClass;
     SponsoredWhenApplicable: IClass;
-    SponsorsNA             : IDataPropertyExpression;
+    NotSponsored           : IClass;
     KeyCounterpartyRole    : IClass;
     KeyCounterparty        : IClass;
     DebtLifeCycle          : INamedIndividual;
@@ -80,6 +81,8 @@ export class Deals extends Ontology
         this.Parties     = this.Deal.DeclareObjectProperty("Parties"    );
         this.Classifiers = this.Deal.DeclareObjectProperty("Classifiers");
         this.Commitments = this.Deal.DeclareObjectProperty("Commitments");
+
+        this.SponsorsNA = this.Deal.DeclareDataProperty("SponsorsNA");
 
         this.Deal.SubClassOf(this.Type.ExactCardinality(1));
 
@@ -146,16 +149,21 @@ export class Deals extends Ontology
         this.Sponsored.SubClassOf(new ObjectSomeValuesFrom(this.Parties, this.SponsorParty))
             .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect)
             .Annotate(this.NominalProperty, "Sponsors");
+        this.Sponsored.SubClassOf(this.SponsorsNA.ExactCardinality(0));
         this.Sponsored.Annotate(this.ComponentBuildAction, "AddSponsors");
 
         this.SponsoredWhenApplicable = this.DeclareClass("SponsoredWhenApplicable");
         this.SponsoredWhenApplicable.SubClassOf(this.Deal);
-        this.SponsorsNA = this.SponsoredWhenApplicable.DeclareDataProperty("SponsorsNA");
         this.SponsoredWhenApplicable.SubClassOf(new ObjectSomeValuesFrom(this.Parties, this.SponsorParty).Union(this.SponsorsNA.HasValue(true)))
             .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect)
             .Annotate(this.NominalProperty, "Sponsors");
         this.SponsoredWhenApplicable.Annotate(this.ComponentBuildAction, "AddSponsors");
         this.SponsoredWhenApplicable.Annotate(this.ComponentBuildAction, "AddSponsorsNA");
+
+        this.NotSponsored = this.DeclareClass("NotSponsored");
+        this.NotSponsored.SubClassOf(this.Deal);
+        this.NotSponsored.SubClassOf(this.Parties.ExactCardinality(0, this.SponsorParty));
+        this.NotSponsored.SubClassOf(this.SponsorsNA.ExactCardinality(0));
 
         let sponsoredDeal = this.DeclareClass("SponsoredDeal");
         sponsoredDeal.Define(new ObjectSomeValuesFrom(this.Parties, this.SponsorParty));

@@ -1,7 +1,6 @@
 ﻿using Agreements;
 using Expressions;
 using System;
-using System.Collections.Generic;
 
 namespace FacilityAgreements
 {
@@ -28,8 +27,7 @@ namespace FacilityAgreements
             decimal?       actualAllocation
             ): base(
                 id,
-                facility,
-                new List<AgreementParty> { lender })
+                facility)
         {
             Lender                = lender;
             UnderwriteAmount      = underwriteAmount;

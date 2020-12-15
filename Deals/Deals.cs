@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Parties;
 using People;
+using Agreements;
 
 namespace Deals
 {
@@ -168,7 +169,6 @@ namespace Deals
         public IObjectPropertyExpression Sponsors            { get; protected set; }
         public IObjectPropertyExpression Exclusivity         { get; protected set; }
         
-        public IClass                    DealParty           { get; protected set; }
         public IClass                    LenderParty         { get; protected set; }
         public IClass                    AdvisorParty        { get; protected set; }
         public IClass                    SponsorParty        { get; protected set; }
@@ -205,11 +205,11 @@ namespace Deals
             DealType.SubClassOf(commonDomainObjects.Named);
             Deal        = this.DeclareClass<Deal>();
             Deal.SubClassOf(commonDomainObjects.Named);
-            Type        = Deal.DeclareObjectProperty<Deal, DealType  >(deal => deal.Type       );
-            Parties     = Deal.DeclareObjectProperty<Deal, DealParty >(deal => deal.Parties    );
-            Classifiers = Deal.DeclareObjectProperty<Deal, Classifier>(deal => deal.Classifiers);
-            Commitments = Deal.DeclareObjectProperty<Deal, Commitment>(deal => deal.Commitments);
-            Borrowers   = Deal.DeclareObjectProperty<Deal, DealParty >(
+            Type        = Deal.DeclareObjectProperty<Deal, DealType   >(deal => deal.Type       );
+            Parties     = Deal.DeclareObjectProperty<Deal, PartyInRole>(deal => deal.Parties    );
+            Classifiers = Deal.DeclareObjectProperty<Deal, Classifier >(deal => deal.Classifiers);
+            Commitments = Deal.DeclareObjectProperty<Deal, Commitment >(deal => deal.Commitments);
+            Borrowers   = Deal.DeclareObjectProperty<Deal, PartyInRole>(
                 "Borrowers",
                 deal => deal.Parties.Where(dealParty => dealParty.Role.Id == DealRoleIdentifier.Borrower));
             Sponsors    = Deal.DeclareObjectProperty<Deal, Sponsor   >(
@@ -231,17 +231,15 @@ namespace Deals
                     validation.Restriction,
                     0);
 
-            DealParty = this.DeclareClass<DealParty>();
-            DealParty.SubClassOf(parties.PartyInRole);
             LenderParty   = this.DeclareClass("LenderParty"  );
             AdvisorParty  = this.DeclareClass("AdvisorParty" );
             BorrowerParty = this.DeclareClass("BorrowerParty");
             SponsorParty  = this.DeclareClass("SponsorParty" );
 
-            LenderParty.SubClassOf(DealParty);
-            AdvisorParty.SubClassOf(DealParty);
-            BorrowerParty.SubClassOf(DealParty);
-            SponsorParty.SubClassOf(DealParty);
+            LenderParty.SubClassOf(parties.PartyInRole);
+            AdvisorParty.SubClassOf(parties.PartyInRole);
+            BorrowerParty.SubClassOf(parties.PartyInRole);
+            SponsorParty.SubClassOf(parties.PartyInRole);
             
             LenderParty.Define(parties.Role.HasValue(roleIndividuals.Lender));
             AdvisorParty.Define(parties.Role.HasValue(roleIndividuals.Advisor));
@@ -265,11 +263,11 @@ namespace Deals
             BankLenderParty.Define(LenderParty.Intersect(BankParty));
             BankAdvisorParty.Define(AdvisorParty.Intersect(BankParty));
 
-            BankParty.SubClassOf(DealParty);
+            BankParty.SubClassOf(parties.PartyInRole);
 
             KeyCounterpartyRole = this.DeclareClass("KeyCounterpartyRole");
             KeyCounterparty     = this.DeclareClass("KeyCounterparty");
-            KeyCounterparty.SubClassOf(DealParty);
+            KeyCounterparty.SubClassOf(parties.PartyInRole);
             KeyCounterparty.Define(new ObjectSomeValuesFrom(parties.Role, KeyCounterpartyRole));
 
             Debt = this.DeclareClass("Debt");
@@ -284,7 +282,7 @@ namespace Deals
                 this,
                 Deal,
                 DealType,
-                DealParty,
+                parties.PartyInRole,
                 commonDomainObjects.Classifier);
 
             var ExclusivityClassifier = this.DeclareClass<ExclusivityClassifier>();

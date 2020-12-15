@@ -4,6 +4,7 @@ using Deals;
 using NUnit.Framework;
 using Ontology;
 using Organisations;
+using Parties;
 using Roles;
 using System;
 using System.Collections.Generic;
@@ -147,7 +148,6 @@ namespace Test
                 null);
 
             var sponsor = new Sponsor(
-                deal,
                 null,
                 new Role(
                     DealRoleIdentifier.Sponsor,
@@ -155,6 +155,7 @@ namespace Test
                 null,
                 equity);
 
+            deal.Parties.Add(sponsor);
             var classifications = _deals.Classify(deal);
             Assert.That(classifications.ContainsKey(deal));
             Assert.That(classifications.ContainsKey(sponsor));
@@ -184,13 +185,12 @@ namespace Test
                 null);
             Enumerable
                 .Range(0, sponsorCount)
-                .ForEach(i => new Sponsor(
+                .ForEach(i => deal.Parties.Add(new Sponsor(
                     Guid.NewGuid(),
-                    deal,
                     null,
                     role,
                     null,
-                    null));
+                    null)));
 
             var classifications = _projectFinance.Classify(deal);
             Assert.That(classifications.ContainsKey(deal));
@@ -247,12 +247,11 @@ namespace Test
                 null);
             Enumerable
                 .Range(0, borrowerCount)
-                .ForEach(i => new DealParty(
+                .ForEach(i => deal.Parties.Add(new PartyInRole(
                     Guid.NewGuid(),
-                    deal,
                     (Organisation)null,
                     role,
-                    null));
+                    null)));
 
             var classifications = _deals.Classify(deal);
             Assert.That(classifications.ContainsKey(deal));
@@ -321,7 +320,6 @@ namespace Test
 
             var exclusivity = new Exclusivity(
                 Guid.NewGuid(),
-                deal,
                 DateTime.Today);
 
             deal.Commitments.Add(exclusivity);

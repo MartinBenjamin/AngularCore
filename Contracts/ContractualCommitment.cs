@@ -19,12 +19,8 @@ namespace Contracts
         protected ContractualCommitment(
             Guid                  id,
             Contract              contract,
-            IList<AgreementParty> obligors,
             ContractualCommitment partOf
-            ) : base(
-                id,
-                contract,
-                obligors)
+            ) : base(id)
         {
             Contract = contract;
             PartOf   = partOf;

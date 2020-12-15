@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Agreements;
+using System;
 
 namespace Deals
 {
@@ -13,13 +13,8 @@ namespace Deals
 
         public Exclusivity(
             Guid     id,
-            Deal     deal,
             DateTime date
-            ) : base(
-                id,
-                deal,
-                new List<DealParty>(),
-                null)
+            ) : base(id)
         {
             Date = date;
         }
