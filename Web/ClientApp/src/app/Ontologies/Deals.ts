@@ -109,6 +109,13 @@ export class Deals extends Ontology
             .Annotate(this.RestrictedfromStage, DealStageIdentifier.BusinessScreened)
             .Annotate(this.NominalProperty, "Exclusivity");
 
+        let exclusivity = this.DeclareClass("Exclusivity");
+        exclusivity.Define(this.$type.HasValue('Web.Model.Exclusivity, Web'));
+        let endDate = exclusivity.DeclareFunctionalDataProperty("EndDate");
+        exclusivity.SubClassOf(endDate.MinCardinality(1))
+            .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect)
+            .Annotate(this.NominalProperty, "Date");
+
         this.LenderParty   = this.DeclareClass("LenderParty"  );
         this.AdvisorParty  = this.DeclareClass("AdvisorParty" );
         this.BorrowerParty = this.DeclareClass("BorrowerParty");

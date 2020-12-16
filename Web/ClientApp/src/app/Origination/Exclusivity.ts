@@ -152,7 +152,7 @@ export class Exclusivity implements OnDestroy
                     Id     : EmptyGuid,
                     EndDate: null
                 };
-            (<any>this._exclusivityCommitment).$type == 'Web.Model.Exclusivity, Web';
+            (<any>this._exclusivityCommitment).$type = 'Web.Model.Exclusivity, Web';
             this._deal.Commitments.push(this._exclusivityCommitment);
         }
         else if(!exclusive && this._exclusivityCommitment !== null)

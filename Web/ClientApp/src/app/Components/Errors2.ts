@@ -77,6 +77,6 @@ export class Errors2
         else if(mapType === 'function')
             return this._pathSegmentMap[propertyName](object);
 
-        return propertyName; 
+        return propertyName.replace(/\B[A-Z]/g, ' $&'); 
     }
 }

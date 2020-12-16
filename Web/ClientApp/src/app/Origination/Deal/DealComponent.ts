@@ -133,6 +133,16 @@ export class DealComponent
                     errorPaths.push([["Sponsor", sponsor], entry]);
         }
 
+        // Include Exclusivity errors.
+        let exclusivity = this.Deal.Commitments.find(commitment => (<any>commitment).$type == 'Web.Model.Exclusivity, Web');
+        if(exclusivity)
+        {
+            let exclusivityErrors = errors.get(exclusivity);
+            if(exclusivityErrors)
+                for(let entry of exclusivityErrors)
+                    errorPaths.push([["Exclusivity", exclusivity], entry]);
+        }
+
         this._dealErrors = errorPaths;
     }
 
