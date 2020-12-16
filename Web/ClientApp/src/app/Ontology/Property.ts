@@ -2,10 +2,12 @@ import { DataExactCardinality } from "./DataExactCardinality";
 import { DataHasValue } from "./DataHasValue";
 import { DataMaxCardinality } from "./DataMaxCardinality";
 import { DataMinCardinality } from "./DataMinCardinality";
+import { DataPropertyRange } from "./DataPropertyRange";
 import { Entity } from "./Entity";
 import { IClassExpression } from "./IClassExpression";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
 import { IDataHasValue } from "./IDataHasValue";
+import { IDataPropertyRange } from "./IDataPropertyRange";
 import { IDataRange } from "./IDataRange";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectHasValue } from "./IObjectHasValue";
@@ -126,6 +128,16 @@ export class DataProperty
         return new DataExactCardinality(
             this,
             cardinality,
+            dataRange);
+    }
+
+    Range(
+        dataRange: IDataRange
+        ): IDataPropertyRange
+    {
+        return new DataPropertyRange(
+            this.Ontology,
+            this,
             dataRange);
     }
 }

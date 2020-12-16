@@ -1,6 +1,7 @@
 import { IClassExpression } from "./IClassExpression";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
 import { IDataHasValue } from "./IDataHasValue";
+import { IDataPropertyRange } from "./IDataPropertyRange";
 import { IDataRange } from "./IDataRange";
 import { IEntity } from "./IEntity";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
@@ -37,5 +38,6 @@ export interface IDataPropertyExpression extends IPropertyExpression
         dataRange? : IDataRange): IDataMaxCardinality;
     ExactCardinality(
         cardinality: number,
-        dataRange? : IDataRange): IDataExactCardinality;
+        dataRange?: IDataRange): IDataExactCardinality;
+    Range(dataRange: IDataRange): IDataPropertyRange;
 }

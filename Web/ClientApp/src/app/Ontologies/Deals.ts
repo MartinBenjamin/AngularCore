@@ -3,7 +3,6 @@ import { LegalEntityIdentifier } from "../LegalEntities";
 import { DataAllValuesFrom } from "../Ontology/DataAllValuesFrom";
 import { DataComplementOf } from "../Ontology/DataComplementOf";
 import { DataOneOf } from "../Ontology/DataOneOf";
-import { DataPropertyRange } from "../Ontology/DataPropertyRange";
 import { DisjointClasses } from "../Ontology/DisjointClasses";
 import { IAnnotationProperty } from "../Ontology/IAnnotationProperty";
 import { IClass } from "../Ontology/IClass";
@@ -112,7 +111,7 @@ export class Deals extends Ontology
         let exclusivity = this.DeclareClass("Exclusivity");
         exclusivity.Define(this.$type.HasValue('Web.Model.Exclusivity, Web'));
         let endDate = exclusivity.DeclareFunctionalDataProperty("EndDate");
-        new DataPropertyRange(this, endDate, DateTime);
+        endDate.Range(DateTime);
         exclusivity.SubClassOf(endDate.MinCardinality(1))
             .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect);
 
@@ -132,7 +131,7 @@ export class Deals extends Ontology
         this.BorrowerParty.Define(parties.Role.HasValue(roleIndividuals.Borrower));
         this.SponsorParty.Define(parties.Role.HasValue(roleIndividuals.Sponsor));
         this.Equity = this.SponsorParty.DeclareDataProperty("Equity");
-        new DataPropertyRange(this, this.Equity, Decimal);
+        this.Equity.Range(Decimal);
         this.SponsorParty.SubClassOf(this.Equity.ExactCardinality(1))
             .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect);
 
