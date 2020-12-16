@@ -3,7 +3,7 @@
   <td *ngIf="ClassificationSchemeClassifiers; else Loading">
     <select
       [(ngModel)]="Classifier"
-      [dtModelErrors]="Errors?.Exclusivity">
+      [dtModelErrors]="DealErrors?.Exclusivity">
       <option [ngValue]="null"></option>
       <ng-container *ngFor="let classificationSchemeClassifier of ClassificationSchemeClassifiers">
         <optgroup *ngIf="classificationSchemeClassifier.Sub.length;else Option"
@@ -27,5 +27,8 @@
 </tr>
 <tr *ngIf="Commitment as commitment">
   <td class="RowHeading">Exclusivity Date:</td>
-  <td><input type="text" [dtDateModel2]="commitment.EndDate"/><dt-calendar></dt-calendar></td>
+  <td><input
+    type="text"
+    [(dtDateModel2)]="commitment.EndDate"
+    [dtModelErrors]="ExclusivityErrors?.EndDate"/><dt-calendar></dt-calendar></td>
 </tr>

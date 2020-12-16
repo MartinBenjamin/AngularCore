@@ -22,7 +22,8 @@ export class Exclusivity implements OnDestroy
     private _exclusivityCommitment          : ExclusivityCommitment;
     private _map                            = new Map<Guid, ClassificationSchemeClassifier>();
     private _yes                            : ClassificationSchemeClassifier;
-    private _errors                         : object;
+    private _dealErrors                     : object;
+    private _exclusivityErrors              : object;
 
     constructor(
         @Inject(ClassificationSchemeServiceToken)
@@ -54,8 +55,9 @@ export class Exclusivity implements OnDestroy
                 {
                     if(!deal)
                     {
-                        this._deal   = null;
-                        this._errors = null;
+                        this._deal              = null;
+                        this._dealErrors        = null;
+                        this._exclusivityErrors = null;
                     }
                     else
                     {
@@ -63,14 +65,22 @@ export class Exclusivity implements OnDestroy
                         deal[1].subscribe(
                             errors =>
                             {
-                                this._errors = null;
+                                this._dealErrors = null;
+                                this._exclusivityErrors = null;
                                 if(errors)
                                 {
                                     let dealErrors = errors.get(this._deal);
                                     if(dealErrors)
                                     {
-                                        this._errors = {};
-                                        [...errors.get(this._deal)].forEach(propertyErrors => this._errors[propertyErrors[0]] = propertyErrors[1]);
+                                        this._dealErrors = {};
+                                        [...dealErrors].forEach(propertyErrors => this._dealErrors[propertyErrors[0]] = propertyErrors[1]);
+                                    }
+
+                                    let exclusivityErrors = errors.get(this._exclusivityCommitment);
+                                    if(exclusivityErrors)
+                                    {
+                                        this._exclusivityErrors = {};
+                                        [...exclusivityErrors].forEach(propertyErrors => this._exclusivityErrors[propertyErrors[0]] = propertyErrors[1]);
                                     }
                                 }
                             });
@@ -116,9 +126,14 @@ export class Exclusivity implements OnDestroy
         return this._exclusivityCommitment;
     }
 
-    get Errors(): object
+    get DealErrors(): object
     {
-        return this._errors;
+        return this._dealErrors;
+    }
+
+    get ExclusivityErrors(): object
+    {
+        return this._exclusivityErrors;
     }
 
     private ComputeClassifier(): void

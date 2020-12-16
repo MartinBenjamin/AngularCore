@@ -101,11 +101,11 @@ export class Deals extends Ontology
             .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect);
 
 
-        let ExclusivityClassifier = this.DeclareClass("ExclusivityClassifier");
-        ExclusivityClassifier.SubClassOf(commonDomainObjects.Classifier);
-        ExclusivityClassifier.Define(this.$type.HasValue('Web.Model.ExclusivityClassifier, Web'));
+        let exclusivityClassifier = this.DeclareClass("ExclusivityClassifier");
+        exclusivityClassifier.SubClassOf(commonDomainObjects.Classifier);
+        exclusivityClassifier.Define(this.$type.HasValue('Web.Model.ExclusivityClassifier, Web'));
 
-        this.Deal.SubClassOf(this.Classifiers.ExactCardinality(1, ExclusivityClassifier))
+        this.Deal.SubClassOf(this.Classifiers.ExactCardinality(1, exclusivityClassifier))
             .Annotate(this.RestrictedfromStage, DealStageIdentifier.BusinessScreened)
             .Annotate(this.NominalProperty, "Exclusivity");
 
@@ -113,8 +113,9 @@ export class Deals extends Ontology
         exclusivity.Define(this.$type.HasValue('Web.Model.Exclusivity, Web'));
         let endDate = exclusivity.DeclareFunctionalDataProperty("EndDate");
         exclusivity.SubClassOf(endDate.MinCardinality(1))
-            .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect)
-            .Annotate(this.NominalProperty, "Date");
+            .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect);
+            //.Annotate(this.NominalProperty, "Date");
+
 
         this.LenderParty   = this.DeclareClass("LenderParty"  );
         this.AdvisorParty  = this.DeclareClass("AdvisorParty" );

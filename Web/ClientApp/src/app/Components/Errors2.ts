@@ -23,8 +23,8 @@ export class Errors2
         {
             GeographicRegion  : "Country",
             Currency          : "Base Currency",
-            Sponsor           : (party: any) => `${party.Role.Name} [${party.Organisation.Name}]`,
-            TotalSponsorEquity: "Total Sponsor Equity"
+            EndDate           : "Date",
+            Sponsor           : (party: any) => `${party.Role.Name} [${party.Organisation.Name}]`
         }
 
     @Input()
