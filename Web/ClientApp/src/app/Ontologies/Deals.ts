@@ -114,7 +114,6 @@ export class Deals extends Ontology
         let endDate = exclusivity.DeclareFunctionalDataProperty("EndDate");
         exclusivity.SubClassOf(endDate.MinCardinality(1))
             .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect);
-            //.Annotate(this.NominalProperty, "Date");
 
 
         this.LenderParty   = this.DeclareClass("LenderParty"  );
