@@ -130,7 +130,7 @@ export class DealComponent
             let sponsorErrors = errors.get(sponsor);
             if(sponsorErrors)
                 for(let entry of sponsorErrors)
-                    errorPaths.push([["Sponsor", sponsor], entry]);
+                    errorPaths.push([["PartyInRole", sponsor], entry]);
         }
 
         // Include Exclusivity errors.
