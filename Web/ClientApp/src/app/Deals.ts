@@ -108,3 +108,8 @@ export interface Sponsor extends PartyInRole
 {
     Equity: percentage;
 }
+
+export interface Exclusivity extends Commitment
+{
+    EndDate: Date
+}

@@ -2,9 +2,9 @@ import { Component, Inject, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ClassificationScheme, ClassificationSchemeClassifier, Classifier } from '../ClassificationScheme';
 import { ClassificationSchemeServiceToken } from '../ClassificationSchemeServiceProvider';
-import { Guid } from '../CommonDomainObjects';
+import { Guid, EmptyGuid } from '../CommonDomainObjects';
 import { DealProvider } from '../DealProvider';
-import { ClassificationSchemeIdentifier, Deal, ExclusivityClassifierIdentifier } from '../Deals';
+import { ClassificationSchemeIdentifier, Deal, ExclusivityClassifierIdentifier, Exclusivity as ExclusivityCommitment } from '../Deals';
 import { IDomainObjectService } from '../IDomainObjectService';
 
 @Component(
@@ -19,7 +19,7 @@ export class Exclusivity implements OnDestroy
     private _classificationSchemeClassifiers: ClassificationSchemeClassifier[];
     private _deal                           : Deal;
     private _classifier                     : Classifier;
-    private _exclusive                      : boolean;
+    private _exclusivityCommitment          : ExclusivityCommitment;
     private _map                            = new Map<Guid, ClassificationSchemeClassifier>();
     private _yes                            : ClassificationSchemeClassifier;
     private _errors                         : object;
@@ -111,9 +111,9 @@ export class Exclusivity implements OnDestroy
         this.ComputeExclusive();
     }
 
-    get Exclusive(): boolean
+    get Commitment(): ExclusivityCommitment
     {
-        return this._exclusive;
+        return this._exclusivityCommitment;
     }
 
     get Errors(): object
@@ -126,11 +126,12 @@ export class Exclusivity implements OnDestroy
         if(!this._deal)
         {
             this._classifier = null;
-            this._exclusive = false;
+            this._exclusivityCommitment = null;
             return;
         }
 
-        this._classifier = this._deal.Classifiers.find(classifer => (<any>classifer).$type == 'Web.Model.ExclusivityClassifier, Web');
+        this._classifier            = this._deal.Classifiers.find(classifer => (<any>classifer).$type == 'Web.Model.ExclusivityClassifier, Web');
+        this._exclusivityCommitment = <ExclusivityCommitment>this._deal.Commitments.find(commitment => (<any>commitment).$type == 'Web.Model.Exclusivity, Web');
         this.ComputeExclusive();
     }
 
@@ -138,11 +139,28 @@ export class Exclusivity implements OnDestroy
     {
         if(!(this._classificationSchemeClassifiers && this._classifier))
         {
-            this._exclusive = false;
+            this._exclusivityCommitment = null;
             return;
         }
 
         let current = this._map.get(this._classifier.Id);
-        this._exclusive = this._yes.Interval.Start <= current.Interval.Start && current.Interval.End <= this._yes.Interval.End;
+        let exclusive = this._yes.Interval.Start <= current.Interval.Start && current.Interval.End <= this._yes.Interval.End;
+        if(exclusive && this._exclusivityCommitment === null)
+        {
+            this._exclusivityCommitment =
+                <ExclusivityCommitment>{
+                    Id     : EmptyGuid,
+                    EndDate: null
+                };
+            (<any>this._exclusivityCommitment).$type == 'Web.Model.Exclusivity, Web';
+            this._deal.Commitments.push(this._exclusivityCommitment);
+        }
+        else if(!exclusive && this._exclusivityCommitment !== null)
+        {
+            this._deal.Commitments.splice(
+                this._deal.Commitments.indexOf(this._exclusivityCommitment),
+                1);
+            this._exclusivityCommitment = null;
+        }
     }
 }
