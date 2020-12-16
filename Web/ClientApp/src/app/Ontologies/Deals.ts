@@ -11,7 +11,7 @@ import { INamedIndividual } from "../Ontology/INamedIndividual";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "../Ontology/IPropertyExpression";
 import { ObjectSomeValuesFrom } from "../Ontology/ObjectSomeValuesFrom";
 import { Ontology } from "../Ontology/Ontology";
-import { Decimal } from "../Ontology/Xsd";
+import { DateTime, Decimal } from "../Ontology/Xsd";
 import { commonDomainObjects } from "./CommonDomainObjects";
 import { legalEntities } from "./LegalEntities";
 import { lifeCycles } from "./LifeCycles";
@@ -112,6 +112,7 @@ export class Deals extends Ontology
         let exclusivity = this.DeclareClass("Exclusivity");
         exclusivity.Define(this.$type.HasValue('Web.Model.Exclusivity, Web'));
         let endDate = exclusivity.DeclareFunctionalDataProperty("EndDate");
+        new DataPropertyRange(this, endDate, DateTime);
         exclusivity.SubClassOf(endDate.MinCardinality(1))
             .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect);
 
