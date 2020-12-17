@@ -10,34 +10,26 @@ export abstract class NumberModel
     {
     }
 
-    private Toggle(
-        token: string,
-        force: boolean
-        ): void
-    {
-        let classList: DOMTokenList = this._el.nativeElement.classList;
-        force ? classList.add(token) : classList.remove(token);
-    }
-
-    SetModel(
+    protected SetModel(
         model: number | string
         ): void
     {
         let valid = true;
+        let input: HTMLInputElement = this._el.nativeElement;
 
-        if(model == null)
-            this._el.nativeElement.value = '';
+        if(model === null)
+            input.value = '';
 
-        else if(typeof model == 'number')
-            this._el.nativeElement.value = this._numberConversionService.Format(model);
+        else if(typeof model === 'number')
+            input.value = this._numberConversionService.Format(model);
 
         else
         {
-            this._el.nativeElement.value = model;
+            input.value = model.toString();
             valid = false;
         }
 
-        this.Toggle(
+        input.classList.toggle(
             'InputError',
             !valid);
     }
@@ -46,8 +38,9 @@ export abstract class NumberModel
     onchange(): void
     {
         let valid = true;
-        const value: string = this._el.nativeElement.value.replace(/(^ +)|( +$)/g, '');
         let model: number = null;
+        let input: HTMLInputElement = this._el.nativeElement;
+        const value: string = input.value.replace(/(^ +)|( +$)/g, '');
 
         if(value != '')
         {
@@ -56,10 +49,10 @@ export abstract class NumberModel
                 valid = false;
 
             else
-                this._el.nativeElement.value = this._numberConversionService.Format(model);
+                input.value = this._numberConversionService.Format(model);
         }
 
-        this.Toggle(
+        input.classList.toggle(
             'InputError',
             !valid);
 

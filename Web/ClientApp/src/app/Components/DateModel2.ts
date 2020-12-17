@@ -14,36 +14,27 @@ export class DateModel2
     {
     }
 
-    private Toggle(
-        token: string,
-        force: boolean
-        ): void
-    {
-        let classList: DOMTokenList  = this._el.nativeElement.classList;
-        force ? classList.add(token) : classList.remove(token);
-    }
-
     @Input('dtDateModel2')
     set Model(
         model: Date | string
         )
     {
-        let value = '';
         let valid = true;
+        let input: HTMLInputElement = this._el.nativeElement;
 
-        if(typeof model == 'string')
+        if(model === null)
+            input.value = '';
+
+        else if(model instanceof Date)
+            input.value = this._dateConversionService.Format(model);
+
+        else
         {
-            value = model;
+            input.value = model.toString();
             valid = false;
         }
-        else if(model != null)
-        {
-            value = this._dateConversionService.Format(model);
-            valid = true;
-        }
 
-        this._el.nativeElement.value = value;
-        this.Toggle(
+        input.classList.toggle(
             'InputError',
             !valid);
 
@@ -55,30 +46,25 @@ export class DateModel2
     @HostListener('change')
     onchange(): void
     {
-        let value: string = this._el.nativeElement.value.replace(/(^ +)|( +$)/g, '');
-        let valueToEmit: Date | string = null;
         let valid = true;
+        let date: Date = null;
+        let input: HTMLInputElement = this._el.nativeElement;
+        const value: string = input.value.replace(/(^ +)|( +$)/g, '');
 
         if(value != '')
         {
-            let date = this._dateConversionService.Parse(value);
+            date = this._dateConversionService.Parse(value);
             if(date == null)
-            {
                 valid = false;
-                valueToEmit = value;
-            }
+
             else
-            {
-                this._el.nativeElement.value = this._dateConversionService.Format(date);
-                valid = true;
-                valueToEmit = date;
-            }
+                input.value = this._dateConversionService.Format(date);
         }
 
-        this.Toggle(
+        input.classList.toggle(
             'InputError',
             !valid);
 
-        this.ModelChange.emit(valueToEmit);
+        this.ModelChange.emit(valid ? date : value);
     }
 }
