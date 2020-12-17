@@ -1,4 +1,4 @@
-﻿import { Directive, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { DateConversionService } from './DateConversionService';
 
 @Directive(
@@ -14,51 +14,57 @@ export class DateModel
     {
     }
 
-    private Toggle(
-        token: string,
-        force: boolean
-        ): void
-    {
-        let classList: DOMTokenList  = this._el.nativeElement.classList;
-        force ? classList.add(token) : classList.remove(token);
-    }
-
-    private Validate(): void
-    {
-        let valid: boolean = true;
-        let value: string = this._el.nativeElement.value.replace(/(^ +)|( +$)/g, '');
-
-        if(value != '')
-        {
-            let date = this._dateConversionService.Parse(value);
-            if(date == null)
-                valid = false;
-
-            else
-                this._el.nativeElement.value = this._dateConversionService.Format(date);
-        }
-
-        this.Toggle(
-            'InputError',
-            !valid);
-    }
-
     @Input('dtDateModel')
     set Model(
-        model: string
+        model: Date | string
         )
     {
-        this._el.nativeElement.value = model;
-        this.Validate();
+        let valid = true;
+        let input: HTMLInputElement = this._el.nativeElement;
+
+        if(model === null)
+            input.value = '';
+
+        else if(model instanceof Date)
+            input.value = this._dateConversionService.Format(model);
+
+        else
+        {
+            input.value = model.toString();
+            valid = false;
+        }
+
+        input.classList.toggle(
+            'InputError',
+            !valid);
+
     }
 
     @Output('dtDateModelChange')
-    ModelChange = new EventEmitter<string>();
+    ModelChange = new EventEmitter<Date | string>();
 
     @HostListener('change')
     onchange(): void
     {
-        this.Validate();
-        this.ModelChange.emit(this._el.nativeElement.value);
+        let valid = true;
+        let date: Date = null;
+        let input: HTMLInputElement = this._el.nativeElement;
+        const value: string = input.value.replace(/(^ +)|( +$)/g, '');
+
+        if(value != '')
+        {
+            date = this._dateConversionService.Parse(value);
+            if(date == null)
+                valid = false;
+
+            else
+                input.value = this._dateConversionService.Format(date);
+        }
+
+        input.classList.toggle(
+            'InputError',
+            !valid);
+
+        this.ModelChange.emit(valid ? date : value);
     }
 }

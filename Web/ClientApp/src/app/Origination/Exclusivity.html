@@ -29,6 +29,6 @@
   <td class="RowHeading">Exclusivity Date:</td>
   <td><input
     type="text"
-    [(dtDateModel2)]="commitment.EndDate"
+    [(dtDateModel)]="commitment.EndDate"
     [dtModelErrors]="ExclusivityErrors?.EndDate"/><dt-calendar (dateSelected)="commitment.EndDate = $event"></dt-calendar></td>
 </tr>
