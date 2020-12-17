@@ -30,5 +30,5 @@
   <td><input
     type="text"
     [(dtDateModel2)]="commitment.EndDate"
-    [dtModelErrors]="ExclusivityErrors?.EndDate"/><dt-calendar></dt-calendar></td>
+    [dtModelErrors]="ExclusivityErrors?.EndDate"/><dt-calendar (dateSelected)="commitment.EndDate = $event"></dt-calendar></td>
 </tr>

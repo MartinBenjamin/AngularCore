@@ -1,8 +1,6 @@
-import { Component, ElementRef, EventEmitter, Inject, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output } from '@angular/core';
 import { formatUTCDate } from './Date';
-import { DatePatternsToken } from './DatePatterns';
 import { makeDraggable } from './Draggable';
-import { Patterns } from './Patterns';
 
 interface IDateCell
 {
@@ -58,15 +56,11 @@ export class Calendar implements OnInit
 
     private _currentMonth: Date;
     private _observers   : ((date: Date) => void)[] = [];
-    private _formatter   : (date: Date) => string;
 
     constructor(
-        @Inject(DatePatternsToken)
-        patterns   : Patterns,
         private _el: ElementRef
         )
     {
-        this._formatter = formatUTCDate(patterns.Output);
     }
 
     private NotifyObservers(): void
@@ -139,7 +133,7 @@ export class Calendar implements OnInit
                     var srcElement = <HTMLElement>event.srcElement;
                     if(srcElement.tagName.toLowerCase() == 'td')
                     {
-                        dateComponent.DateSelected.emit(dateComponent._formatter(new Date((<Element & IDateCell>event.srcElement).Date)));
+                        dateComponent.DateSelected.emit(new Date((<Element & IDateCell>event.srcElement).Date));
                         panel.style.display = 'none';
                     }
                 });
@@ -204,5 +198,5 @@ export class Calendar implements OnInit
     }
 
     @Output('dateSelected')
-    DateSelected = new EventEmitter<string>();
+    DateSelected = new EventEmitter<Date>();
 }
