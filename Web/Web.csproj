@@ -35,7 +35,6 @@
     <None Remove="ClientApp\src\app\ClassificationScheme.ts" />
     <None Remove="ClientApp\src\app\ClassificationSchemeServiceProvider.ts" />
     <None Remove="ClientApp\src\app\CommonDomainObjects.ts" />
-    <None Remove="ClientApp\src\app\Components\DateModel2.ts" />
     <None Remove="ClientApp\src\app\Components\Errors2.ts" />
     <None Remove="ClientApp\src\app\CurrencyServiceProvider.ts" />
     <None Remove="ClientApp\src\app\DealProvider.ts" />
@@ -258,7 +257,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\Agreements.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\ClassificationScheme.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\ClassificationSchemeServiceProvider.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Components\DateModel2.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Components\Errors2.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\CurrencyServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\DealProvider.ts" />
