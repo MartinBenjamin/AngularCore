@@ -1,9 +1,10 @@
-﻿using Expressions;
+﻿using Contracts;
+using Expressions;
 using System;
 
 namespace FacilityAgreements
 {
-    public abstract class Interest: FacilityCommitment
+    public abstract class Interest: ContractualCommitment
     {
         public virtual ReferenceRate             ReferenceRate   { get; protected set; }
         public virtual Expression<decimal?>      EstimatedMargin { get; protected set; }

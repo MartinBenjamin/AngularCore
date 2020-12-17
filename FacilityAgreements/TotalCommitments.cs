@@ -1,9 +1,10 @@
-﻿using Iso4217;
+﻿using Contracts;
+using Iso4217;
 using System;
 
 namespace FacilityAgreements
 {
-    public class TotalCommitments: FacilityCommitment
+    public class TotalCommitments: ContractualCommitment
     {
         public virtual MoneyAmount Value { get; protected set; }
 

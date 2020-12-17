@@ -1,9 +1,10 @@
-﻿using Expressions;
+﻿using Contracts;
+using Expressions;
 using System;
 
 namespace FacilityAgreements
 {
-    public abstract class CommitmentFee: FacilityCommitment
+    public abstract class CommitmentFee: ContractualCommitment
     {
         public virtual Expression<decimal?>      Estimated { get; protected set; }
         public virtual Enumerable<Guid, Ratchet> Actual    { get; protected set; }

@@ -17,8 +17,7 @@ namespace Contracts
             PartyInRole covenantor
             ) : base(
                 id,
-                contract,
-                null)
+                contract)
         {
             Covenantor = covenantor;
         }

@@ -16,7 +16,6 @@ namespace FacilityAgreements
         public virtual Expression<DateTime?>     MaturityDate              { get; protected set; }
         public virtual bool                      MultiCurrency             { get; protected set; }
         public virtual bool                      Committed                 { get; protected set; }
-        public virtual IList<FacilityCommitment> Commitments               { get; protected set; }
 
         protected Facility() : base()
         {
@@ -33,11 +32,9 @@ namespace FacilityAgreements
             bool                  committed
             ) : base(
                 id,
-                facilityAgreement,
-                null)
+                facilityAgreement)
         {
             Name                      = name;
-            Commitments               = new List<FacilityCommitment>();
             TotalCommitments          = new Variable<decimal?>(totalCommitments.Value);
             Currency                  = totalCommitments.Currency;
             AvailabilityPeriodEndDate = availabilityPeriodEndDate;

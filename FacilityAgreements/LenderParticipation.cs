@@ -1,10 +1,11 @@
 ﻿using Agreements;
+using Contracts;
 using Expressions;
 using System;
 
 namespace FacilityAgreements
 {
-    public class LenderParticipation: FacilityCommitment
+    public class LenderParticipation: ContractualCommitment
     {
         public virtual AgreementParty       Lender                { get; protected set; }
         public virtual Expression<decimal?> Amount                { get; protected set; }

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Contracts;
 
 namespace FacilityAgreements
 {
-    public class Repayment: FacilityCommitment
+    public class Repayment: ContractualCommitment
     {
     }
 }

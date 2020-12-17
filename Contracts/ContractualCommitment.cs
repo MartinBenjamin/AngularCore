@@ -18,13 +18,20 @@ namespace Contracts
 
         protected ContractualCommitment(
             Guid                  id,
-            Contract              contract,
-            ContractualCommitment partOf
+            Contract              contract
             ) : base(id)
         {
             Contract = contract;
+        }
+        
+        protected ContractualCommitment(
+            Guid                  id,
+            ContractualCommitment partOf
+            ) : base(id)
+        {
+            Contract = partOf.Contract;
             PartOf   = partOf;
-            PartOf?.Parts.Add(this);
+            PartOf.Parts.Add(this);
         }
     }
 }
