@@ -12,8 +12,8 @@ namespace Test
         }
 
         public TestDataList(
-            IEnumerable<T> collection
-            ) : base(collection)
+            IEnumerable<T> enumerable
+            ) : base(enumerable)
         {
         }
 
