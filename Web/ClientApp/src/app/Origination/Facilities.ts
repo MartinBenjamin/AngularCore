@@ -59,6 +59,7 @@ export class Facilities implements OnDestroy
                 Id                       : EmptyGuid,
                 Obligors                 : [],
                 Contract                 : null,
+                Name                     : '',
                 Currency                 : null,
                 TotalCommitments         : null,
                 AvailabilityPeriodEndDate: null,

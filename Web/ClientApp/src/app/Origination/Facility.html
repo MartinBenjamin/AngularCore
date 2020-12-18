@@ -1,8 +1,36 @@
+<style typeof="text/css">
+  .FacilityDialog input[type=text],
+  .FacilityDialog span.Field,
+  .FacilityDialog select
+  {
+      width: 200px;
+  }
+</style>
 <dt-dialog
   Title="Facility"
   [Open]="Facility">
   <dt-dialog-body>
-    Body
+    <table class="GridLayout FacilityDialog">
+      <tr>
+        <td style="vertical-align: top;">
+          <table>
+            <tr>
+              <td class="RowHeading">Facility Type:</td>
+              <td><span class="Field FacilityType"></span></td>
+            </tr>
+            <tr>
+              <td class="RowHeading">Facility Name:</td>
+              <td><input
+                type="text"
+                [value]="Facility?.Name"
+                (value)="Facility.Name = $event"
+                [dtModelErrors]="Errors?.Name"
+                class="FacilityType" /></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </dt-dialog-body>
   <dt-dialog-buttons
     ><input type="button" value="Save" (click)="Save()" class="Button"
