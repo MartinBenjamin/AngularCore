@@ -16,7 +16,7 @@ export const GeographicRegionHierarchyServiceProvider: Provider =
     useFactory: (
         http: HttpClient,
         url: string
-    ) => new DomainObjectService<Guid, GeographicRegionHierarchy>(
+        ) => new DomainObjectService<Guid, GeographicRegionHierarchy>(
         http,
         url),
     deps: [HttpClient, GeographicRegionHierarchyServiceUrlToken]

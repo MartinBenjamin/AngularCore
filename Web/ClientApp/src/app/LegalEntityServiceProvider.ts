@@ -13,7 +13,7 @@ export const LegalEntityServiceProvider: Provider =
     useFactory: (
         http: HttpClient,
         url: string
-    ) => new NamedService<Guid, LegalEntity, NamedFilters>(
+        ) => new NamedService<Guid, LegalEntity, NamedFilters>(
         http,
         url),
     deps: [HttpClient, LegalEntityServiceUrlToken]

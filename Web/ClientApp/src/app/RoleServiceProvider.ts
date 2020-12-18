@@ -16,7 +16,7 @@ export const RoleServiceProvider: Provider =
     useFactory: (
         http: HttpClient,
         url: string
-    ) => new NamedService<string, Role, NamedFilters>(
+        ) => new NamedService<string, Role, NamedFilters>(
         http,
         url),
     deps: [HttpClient, RoleServiceUrlToken]
@@ -27,6 +27,6 @@ export const RolesProvider: Provider =
     provide: RolesToken,
     useFactory: (
         roleService: INamedService<string, Role, NamedFilters>
-    ) => new ObservableNamedStore<Guid, Role>(roleService),
+        ) => new ObservableNamedStore<Guid, Role>(roleService),
     deps: [RoleServiceToken]
 };

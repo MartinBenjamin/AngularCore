@@ -29,4 +29,4 @@ export const CurrenciesProvider: Provider =
         currencyService: INamedService<string, Currency, NamedFilters>
         ) => new ObservableNamedStore<Guid, Currency>(currencyService),
     deps: [CurrencyServiceToken]
-}
+};

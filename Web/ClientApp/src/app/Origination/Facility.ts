@@ -8,6 +8,8 @@ import { DealProvider } from '../DealProvider';
 import { Deal } from '../Deals';
 import * as facilityAgreements from '../FacilityAgreements';
 import { Currency } from '../Iso4217';
+import { BranchesToken } from '../BranchServiceProvider';
+import { Branch } from '../Organisations';
 
 @Component(
     {
@@ -24,7 +26,9 @@ export class Facility implements OnDestroy
     constructor(
         @Inject(CurrenciesToken)
         private _currencies: Observable<Currency[]>,
-        dealProvider: DealProvider
+        @Inject(BranchesToken)
+        private _branches  : Observable<Branch[]>,
+        dealProvider       : DealProvider
         )
     {
         this._subscriptions.push(
@@ -50,6 +54,11 @@ export class Facility implements OnDestroy
     get Currencies(): Observable<Currency[]>
     {
         return this._currencies;
+    }
+
+    get Branches(): Observable<Branch[]>
+    {
+        return this._branches;
     }
 
     get Facility(): facilityAgreements.Facility

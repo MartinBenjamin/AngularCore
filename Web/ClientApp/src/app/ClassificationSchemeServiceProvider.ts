@@ -13,7 +13,7 @@ export const ClassificationSchemeServiceProvider: Provider =
     useFactory: (
         http: HttpClient,
         url: string
-    ) => new DomainObjectService<Guid, ClassificationScheme>(
+        ) => new DomainObjectService<Guid, ClassificationScheme>(
         http,
         url),
     deps: [HttpClient, ClassificationSchemeServiceUrlToken]

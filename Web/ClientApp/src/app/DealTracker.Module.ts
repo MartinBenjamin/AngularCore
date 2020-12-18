@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
+import { BranchesProvider, BranchServiceProvider, BranchServiceUrlToken } from './BranchServiceProvider';
 import { ClassificationSchemeServiceProvider, ClassificationSchemeServiceUrlToken } from './ClassificationSchemeServiceProvider';
 import { Gallery } from './Components/Gallery';
 import { GalleryModule } from './Components/GalleryModule';
@@ -75,6 +76,12 @@ import { RoleServiceProvider, RoleServiceUrlToken, RolesProvider } from './RoleS
                 useValue: '/api/classificationschemes'
             },
             ClassificationSchemeServiceProvider,
+            {
+                provide: BranchServiceUrlToken,
+                useValue: '/api/branches'
+            },
+            BranchServiceProvider,
+            BranchesProvider,
             {
                 provide: GeographicRegionHierarchyServiceUrlToken,
                 useValue: '/api/geographicregionhierarchies'
