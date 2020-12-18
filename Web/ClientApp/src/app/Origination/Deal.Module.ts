@@ -14,6 +14,7 @@ import { Common } from './Common';
 import { DealGeographicRegion } from './DealGeographicRegion';
 import { Exclusivity } from './Exclusivity';
 import { Facilities } from './Facilities';
+import { Facility } from './Facility';
 import { KeyCounterparties } from './KeyCounterparties';
 import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
@@ -29,6 +30,7 @@ import { TransactionDetails } from './TransactionDetails';
                 DealGeographicRegion,
                 Exclusivity,
                 Facilities,
+                Facility,
                 GeographicRegionSelector,
                 KeyCounterparties,
                 KeyDealData,
