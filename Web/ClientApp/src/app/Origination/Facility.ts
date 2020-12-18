@@ -1,9 +1,13 @@
-import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnDestroy, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+import { DomainObject, Guid } from '../CommonDomainObjects';
+import { ContractualCommitment } from '../Contracts';
+import { CurrenciesToken } from '../CurrencyServiceProvider';
 import { DealProvider } from '../DealProvider';
 import { Deal } from '../Deals';
 import * as facilityAgreements from '../FacilityAgreements';
-import { ContractualCommitment } from '../Contracts';
+import { Currency } from '../Iso4217';
 
 @Component(
     {
@@ -18,6 +22,8 @@ export class Facility implements OnDestroy
     private _facility        : facilityAgreements.Facility;
 
     constructor(
+        @Inject(CurrenciesToken)
+        private _currencies: Observable<Currency[]>,
         dealProvider: DealProvider
         )
     {
@@ -39,6 +45,11 @@ export class Facility implements OnDestroy
     ngOnDestroy(): void
     {
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
+    }
+
+    get Currencies(): Observable<Currency[]>
+    {
+        return this._currencies;
     }
 
     get Facility(): facilityAgreements.Facility
@@ -70,6 +81,14 @@ export class Facility implements OnDestroy
         this._originalFacility = null;
         this._facility = null;
         this.FacilityChange.emit(null);
+    }
+
+    CompareById(
+        lhs: DomainObject<Guid>,
+        rhs: DomainObject<Guid>
+        )
+    {
+        return lhs === rhs || (lhs && rhs && lhs.Id === rhs.Id);
     }
 
     private CopyCommitment(
