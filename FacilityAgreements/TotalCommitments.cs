@@ -6,7 +6,7 @@ namespace FacilityAgreements
 {
     public class TotalCommitments: ContractualCommitment
     {
-        public virtual MoneyAmount Value { get; protected set; }
+        public virtual MonetaryAmount Value { get; protected set; }
 
         protected TotalCommitments() : base()
         {
@@ -15,7 +15,7 @@ namespace FacilityAgreements
         public TotalCommitments(
             Guid        id,
             Facility    facility,
-            MoneyAmount totalCommitments
+            MonetaryAmount totalCommitments
             ): base(
                 id,
                 facility)

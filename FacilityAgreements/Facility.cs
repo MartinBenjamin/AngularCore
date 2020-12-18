@@ -8,8 +8,8 @@ namespace FacilityAgreements
     public class Facility: ContractualCommitment
     {
         public virtual string                    Name                      { get; protected set; }
-        public virtual Variable<decimal?>        TotalCommitments          { get; protected set; }
         public virtual Currency                  Currency                  { get; protected set; }
+        public virtual Variable<decimal?>        TotalCommitments          { get; protected set; }
         public virtual Expression<DateTime?>     AvailabilityPeriodEndDate { get; protected set; }
         public virtual Expression<DateTime?>     MaturityDate              { get; protected set; }
         public virtual bool                      MultiCurrency             { get; protected set; }
@@ -23,7 +23,7 @@ namespace FacilityAgreements
             Guid                  id,
             Contract              facilityAgreement,
             string                name,
-            MoneyAmount           totalCommitments,
+            MonetaryAmount        totalCommitments,
             Expression<DateTime?> availabilityPeriodEndDate,
             Expression<DateTime?> maturityDate,
             bool                  multiCurrency,
@@ -33,8 +33,8 @@ namespace FacilityAgreements
                 facilityAgreement)
         {
             Name                      = name;
-            TotalCommitments          = new Variable<decimal?>(totalCommitments.Value);
             Currency                  = totalCommitments.Currency;
+            TotalCommitments          = new Variable<decimal?>(totalCommitments.Amount);
             AvailabilityPeriodEndDate = availabilityPeriodEndDate;
             MaturityDate              = maturityDate;
             MultiCurrency             = multiCurrency;
