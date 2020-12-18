@@ -36,6 +36,7 @@
     <None Remove="ClientApp\src\app\ClassificationSchemeServiceProvider.ts" />
     <None Remove="ClientApp\src\app\CommonDomainObjects.ts" />
     <None Remove="ClientApp\src\app\Components\Errors2.ts" />
+    <None Remove="ClientApp\src\app\Contracts.ts" />
     <None Remove="ClientApp\src\app\CurrencyServiceProvider.ts" />
     <None Remove="ClientApp\src\app\DealProvider.ts" />
     <None Remove="ClientApp\src\app\Deals.ts" />
@@ -45,6 +46,7 @@
     <None Remove="ClientApp\src\app\DealTrackerLayout.ts" />
     <None Remove="ClientApp\src\app\Components\TestTab.ts" />
     <None Remove="ClientApp\src\app\Deal\GeographicRegionSelector.ts" />
+    <None Remove="ClientApp\src\app\FacilityAgreements.ts" />
     <None Remove="ClientApp\src\app\GeographicRegionHierarchy.ts" />
     <None Remove="ClientApp\src\app\GeographicRegionHierarchyProvider.ts" />
     <None Remove="ClientApp\src\app\Hierarchy.ts" />
@@ -258,6 +260,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\ClassificationScheme.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\ClassificationSchemeServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Components\Errors2.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Contracts.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\CurrencyServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\DealProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Deals.ts" />
@@ -268,6 +271,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\DealTrackerLayout.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Components\TestTab.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Deal\GeographicRegionSelector.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\FacilityAgreements.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\GeographicRegionHierarchy.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\GeographicRegionHierarchyProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Hierarchy.ts" />

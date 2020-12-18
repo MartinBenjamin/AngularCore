@@ -1,13 +1,14 @@
 ﻿using Agreements;
 using Contracts;
 using Expressions;
+using Parties;
 using System;
 
 namespace FacilityAgreements
 {
     public class LenderParticipation: ContractualCommitment
     {
-        public virtual AgreementParty       Lender                { get; protected set; }
+        public virtual PartyInRole          Lender                { get; protected set; }
         public virtual Expression<decimal?> Amount                { get; protected set; }
         public virtual decimal?             UnderwriteAmount      { get; protected set; }
         public virtual decimal?             CreditSoughtLimit     { get; protected set; }
@@ -19,13 +20,13 @@ namespace FacilityAgreements
         }
 
         public LenderParticipation(
-            Guid           id,
-            Facility       facility,
-            AgreementParty lender,
-            decimal?       underwriteAmount,
-            decimal?       creditSoughtLimit,
-            decimal?       anticipatedHoldAmount,
-            decimal?       actualAllocation
+            Guid        id,
+            Facility    facility,
+            PartyInRole lender,
+            decimal?    underwriteAmount,
+            decimal?    creditSoughtLimit,
+            decimal?    anticipatedHoldAmount,
+            decimal?    actualAllocation
             ): base(
                 id,
                 facility)

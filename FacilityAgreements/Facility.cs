@@ -1,9 +1,7 @@
-﻿using Agreements;
-using Contracts;
+﻿using Contracts;
 using Expressions;
 using Iso4217;
 using System;
-using System.Collections.Generic;
 
 namespace FacilityAgreements
 {

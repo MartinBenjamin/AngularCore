@@ -1,6 +1,7 @@
-import { Agreement, Commitment } from "./Agreements";
+import { Agreement } from "./Agreements";
 import { Classifier } from "./ClassificationScheme";
 import { Guid, Named } from "./CommonDomainObjects";
+import { ContractualCommitment } from "./Contracts";
 import { Currency } from "./Iso4217";
 import { LifeCycle, LifeCycleStage } from "./LifeCycles";
 import { GeographicRegion } from "./Locations";
@@ -88,7 +89,7 @@ export interface Deal extends Named<Guid>
     Type               : DealType;
     Agreements         : Agreement[];
     Parties            : PartyInRole[];
-    Commitments        : Commitment[];
+    Commitments        : ContractualCommitment[];
     Stage              : LifeCycleStage;
     Restricted         : boolean;
     ProjectName        : string;
@@ -109,7 +110,7 @@ export interface Sponsor extends PartyInRole
     Equity: percentage;
 }
 
-export interface Exclusivity extends Commitment
+export interface Exclusivity extends ContractualCommitment
 {
     EndDate: Date
 }
