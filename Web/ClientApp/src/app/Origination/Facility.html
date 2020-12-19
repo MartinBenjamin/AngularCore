@@ -34,7 +34,10 @@
             <tr>
               <td class="RowHeading">Booking Office:</td>
               <td *ngIf="Branches|async as branches; else Loading">
-                <select>
+                <select
+                  [compareWith]="CompareById"
+                  [(ngModel)]="BookingOffice"
+                  [dtModelErrors]="Errors?.BookingOffice">
                   <option [ngValue]="null"></option>
                   <option *ngFor="let branch of branches" [ngValue]="branch">{{branch.Name}}</option>
                 </select>

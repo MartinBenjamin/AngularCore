@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';
 import { BranchesToken } from '../BranchServiceProvider';
-import { DomainObject, Guid } from '../CommonDomainObjects';
+import { DomainObject, Guid, EmptyGuid } from '../CommonDomainObjects';
 import { ContractualCommitment } from '../Contracts';
 import { CurrenciesToken } from '../CurrencyServiceProvider';
 import { DealProvider } from '../DealProvider';
@@ -13,6 +13,7 @@ import { Currency } from '../Iso4217';
 import { Branch } from '../Organisations';
 import { Role } from '../Roles';
 import { RolesToken } from '../RoleServiceProvider';
+import { PartyInRole } from '../Parties';
 
 @Component(
     {
@@ -26,6 +27,7 @@ export class Facility implements OnDestroy
     private _deal             : Deal;
     private _originalFacility : facilityAgreements.Facility;
     private _facility         : facilityAgreements.Facility;
+    private _bookingOffice    : PartyInRole;
 
     constructor(
         @Inject(RolesToken)
@@ -38,11 +40,7 @@ export class Facility implements OnDestroy
         )
     {
         this._subscriptions.push(
-            roles.pipe(map(roles => roles.find(role => role.Id == DealRoleIdentifier.BookingOffice))).subscribe(
-                role =>
-                {
-                    //alert(role.Name);
-                }),
+            roles.subscribe(roles => this._bookingOfficeRole = roles.find(role => role.Id == DealRoleIdentifier.BookingOffice)),
             dealProvider.subscribe(
                 deal =>
                 {
@@ -86,16 +84,55 @@ export class Facility implements OnDestroy
 
         this._originalFacility = facility;
         this._facility = <facilityAgreements.Facility>this.CopyCommitment(this._originalFacility);
+        this.ComputeBookingOffice();
+    }
+
+    get BookingOffice(): Branch
+    {
+        return this._bookingOffice ? <Branch>this._bookingOffice.Organisation : null;
+    }
+
+    set BookingOffice(
+        bookingOffice: Branch
+        )
+    {
+        if(this._bookingOffice)
+            this._facility.Obligors.splice(
+                this._facility.Obligors.indexOf(this._bookingOffice));
+
+        this._facility.Obligors.push(
+            <PartyInRole>{
+                Id             : EmptyGuid,
+                AutonomousAgent: bookingOffice,
+                Organisation   : bookingOffice,
+                Person         : null,
+                Role           : this._bookingOfficeRole,
+                Period         : null
+            });
+
+        this.ComputeBookingOffice();
+    }
+
+    ComputeBookingOffice(): void
+    {
+        this._bookingOffice = this._facility.Obligors.find(obligor => obligor.Role.Id === DealRoleIdentifier.BookingOffice);
     }
 
     Save(): void
     {
+        this.Close();
     }
 
     Cancel(): void
     {
+        this.Close();
+    }
+
+    Close(): void
+    {
         this._originalFacility = null;
-        this._facility = null;
+        this._facility         = null;
+        this._bookingOffice    = null;
     }
 
     CompareById(
