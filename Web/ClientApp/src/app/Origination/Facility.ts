@@ -1,15 +1,18 @@
-import { Component, EventEmitter, Inject, Input, OnDestroy, Output } from '@angular/core';
+import { Component, Inject, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
+import { map } from 'rxjs/operators';
+import { BranchesToken } from '../BranchServiceProvider';
 import { DomainObject, Guid } from '../CommonDomainObjects';
 import { ContractualCommitment } from '../Contracts';
 import { CurrenciesToken } from '../CurrencyServiceProvider';
 import { DealProvider } from '../DealProvider';
-import { Deal } from '../Deals';
+import { Deal, DealRoleIdentifier } from '../Deals';
 import * as facilityAgreements from '../FacilityAgreements';
 import { Currency } from '../Iso4217';
-import { BranchesToken } from '../BranchServiceProvider';
 import { Branch } from '../Organisations';
+import { Role } from '../Roles';
+import { RolesToken } from '../RoleServiceProvider';
 
 @Component(
     {
@@ -18,12 +21,15 @@ import { Branch } from '../Organisations';
     })
 export class Facility implements OnDestroy
 {
-    private _subscriptions   : Subscription[] = [];
-    private _deal            : Deal;
-    private _originalFacility: facilityAgreements.Facility;
-    private _facility        : facilityAgreements.Facility;
+    private _subscriptions    : Subscription[] = [];
+    private _bookingOfficeRole: Role;
+    private _deal             : Deal;
+    private _originalFacility : facilityAgreements.Facility;
+    private _facility         : facilityAgreements.Facility;
 
     constructor(
+        @Inject(RolesToken)
+        roles              : Observable<Role[]>,
         @Inject(CurrenciesToken)
         private _currencies: Observable<Currency[]>,
         @Inject(BranchesToken)
@@ -32,6 +38,11 @@ export class Facility implements OnDestroy
         )
     {
         this._subscriptions.push(
+            roles.pipe(map(roles => roles.find(role => role.Id == DealRoleIdentifier.BookingOffice))).subscribe(
+                role =>
+                {
+                    //alert(role.Name);
+                }),
             dealProvider.subscribe(
                 deal =>
                 {
@@ -66,7 +77,6 @@ export class Facility implements OnDestroy
         return this._facility;
     }
 
-    @Input()
     set Facility(
         facility: facilityAgreements.Facility
         )
@@ -78,9 +88,6 @@ export class Facility implements OnDestroy
         this._facility = <facilityAgreements.Facility>this.CopyCommitment(this._originalFacility);
     }
 
-    @Output()
-    FacilityChange = new EventEmitter<facilityAgreements.Facility>();
-
     Save(): void
     {
     }
@@ -89,7 +96,6 @@ export class Facility implements OnDestroy
     {
         this._originalFacility = null;
         this._facility = null;
-        this.FacilityChange.emit(null);
     }
 
     CompareById(

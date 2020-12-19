@@ -1,9 +1,10 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { EmptyGuid } from '../CommonDomainObjects';
 import { DealProvider } from '../DealProvider';
 import { Deal } from '../Deals';
-import { Facility } from '../FacilityAgreements';
+import * as facilityAgreements from '../FacilityAgreements';
+import { Facility } from './Facility';
 
 @Component(
     {
@@ -14,8 +15,10 @@ export class Facilities implements OnDestroy
 {
     private _subscriptions: Subscription[] = [];
     private _deal         : Deal;
-    private _facilities   : Facility[]
-    private _selected     : Facility;
+    private _facilities   : facilityAgreements.Facility[]
+
+    @ViewChild('facility')
+    private _facility: Facility;
 
     constructor(
         dealProvider: DealProvider
@@ -40,21 +43,9 @@ export class Facilities implements OnDestroy
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
-    get Selected(): Facility
-    {
-        return this._selected;
-    }
-
-    set Selected(
-        selected: Facility
-        )
-    {
-        this._selected = selected;
-    }
-
     Add(): void
     {
-        this._selected = <Facility>
+        this._facility.Facility = <facilityAgreements.Facility>
             {
                 Id                       : EmptyGuid,
                 Obligors                 : [],
@@ -77,6 +68,6 @@ export class Facilities implements OnDestroy
             return;
         }
 
-        this._facilities = <Facility[]>this._deal.Commitments.filter(commitment => (<any>commitment).$type == 'Web.Model.Facility, Web');
+        this._facilities = <facilityAgreements.Facility[] > this._deal.Commitments.filter(commitment => (<any>commitment).$type == 'Web.Model.Facility, Web');
     }
 }
