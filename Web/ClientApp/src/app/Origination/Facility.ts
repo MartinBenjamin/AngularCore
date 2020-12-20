@@ -1,19 +1,88 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
-import { map } from 'rxjs/operators';
 import { BranchesToken } from '../BranchServiceProvider';
-import { DomainObject, Guid, EmptyGuid } from '../CommonDomainObjects';
+import { DomainObject, EmptyGuid, Guid } from '../CommonDomainObjects';
 import { ContractualCommitment } from '../Contracts';
-import { CurrenciesToken } from '../CurrencyServiceProvider';
+import { CurrenciesOrderedByCodeToken } from '../CurrencyServiceProvider';
 import { DealProvider } from '../DealProvider';
 import { Deal, DealRoleIdentifier } from '../Deals';
 import * as facilityAgreements from '../FacilityAgreements';
 import { Currency } from '../Iso4217';
 import { Branch } from '../Organisations';
+import { PartyInRole } from '../Parties';
 import { Role } from '../Roles';
 import { RolesToken } from '../RoleServiceProvider';
-import { PartyInRole } from '../Parties';
+
+enum PropertyAction
+{
+    Add    = 0,
+    Remove = 1
+}
+
+interface IPropertyEvent
+{
+    Domain  : object;
+    Range   : object;
+    Property: string;
+    Action  : PropertyAction;
+}
+
+interface IPropertyService
+{
+    Add(
+        domain  : object,
+        range   : object,
+        property: string): void;
+
+    Remove(
+        domain  : object,
+        range   : object,
+        property: string): void;
+
+    Events: Observable<IPropertyEvent>;
+}
+
+class PropertyService implements IPropertyService
+{
+    private _events = new Subject<IPropertyEvent>();
+    Events = this._events.asObservable();
+
+    Add(
+        domain  : object,
+        range   : object,
+        property: string
+        ): void
+    {
+        (<Array<object>>domain[property]).push(range);
+        this._events.next(<IPropertyEvent>
+            {
+                Domain  : domain,
+                Range   : range,
+                Property: property,
+                Action  : PropertyAction.Add
+            });
+    }
+
+    Remove(
+        domain  : object,
+        range   : object,
+        property: string
+        ): void
+    {
+        let properties = (<Array<object>>domain[property]);
+        properties.slice(
+            properties.indexOf(range),
+            1);
+        this._events.next(<IPropertyEvent>
+            {
+                Domain  : domain,
+                Range   : range,
+                Property: property,
+                Action  : PropertyAction.Remove
+            });
+    }
+}
 
 @Component(
     {
@@ -32,7 +101,7 @@ export class Facility implements OnDestroy
     constructor(
         @Inject(RolesToken)
         roles              : Observable<Role[]>,
-        @Inject(CurrenciesToken)
+        @Inject(CurrenciesOrderedByCodeToken)
         private _currencies: Observable<Currency[]>,
         @Inject(BranchesToken)
         private _branches  : Observable<Branch[]>,
@@ -98,7 +167,8 @@ export class Facility implements OnDestroy
     {
         if(this._bookingOffice)
             this._facility.Obligors.splice(
-                this._facility.Obligors.indexOf(this._bookingOffice));
+                this._facility.Obligors.indexOf(this._bookingOffice),
+                1);
 
         this._facility.Obligors.push(
             <PartyInRole>{
@@ -120,6 +190,17 @@ export class Facility implements OnDestroy
 
     Save(): void
     {
+        let propertyService = new PropertyService();
+        if(this._deal.Commitments.indexOf(this._originalFacility))
+            propertyService.Add(
+                this._deal,
+                this._facility,
+                'Commitments');
+        else
+        {
+
+        }
+
         this.Close();
     }
 

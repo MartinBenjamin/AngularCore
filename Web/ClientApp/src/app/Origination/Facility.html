@@ -55,7 +55,7 @@
                   (ngModelChange)="Facility.Currency = $event"
                   [dtModelErrors]="Errors?.Currency">
                   <option [ngValue]="null"></option>
-                  <option *ngFor="let currency of currencies" [ngValue]="currency">{{currency.Name}}</option>
+                  <option *ngFor="let currency of currencies" [ngValue]="currency">{{currency.Id}}</option>
                 </select>
               </td>
               <ng-template #Loading>

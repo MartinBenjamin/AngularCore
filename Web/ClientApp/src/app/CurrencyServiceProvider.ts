@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { InjectionToken, Provider } from "@angular/core";
 import { Observable } from 'rxjs';
 import { Guid } from './CommonDomainObjects';
-import { INamedService, NamedFilters, NamedService } from "./INamedService";
-import { Currency } from "./Iso4217";
+import { INamedService, NamedFilters, NamedService } from './INamedService';
+import { Currency } from './Iso4217';
 import { ObservableNamedStore } from './ObservableNamedStore';
 
 export const CurrencyServiceToken = new InjectionToken<INamedService<string, Currency, NamedFilters>>('CurrencyService');
 export const CurrencyServiceUrlToken = new InjectionToken<string>('CurrencyServiceUrl');
 export const CurrenciesToken = new InjectionToken<Observable<Currency[]>>('Currencies');
+export const CurrenciesOrderedByCodeToken = new InjectionToken<Observable<Currency[]>>('CurrenciesOrderedByCodeToken');
 
 export const CurrencyServiceProvider: Provider =
 {
@@ -29,4 +30,13 @@ export const CurrenciesProvider: Provider =
         currencyService: INamedService<string, Currency, NamedFilters>
         ) => new ObservableNamedStore<Guid, Currency>(currencyService),
     deps: [CurrencyServiceToken]
+};
+
+export const CurrenciesOrderedByCode: Provider =
+{
+    provide: CurrenciesOrderedByCodeToken,
+    useFactory: (
+        currencies: Observable<Currency[]>
+        ) => currencies.map(currencies => currencies.sort((lhs, rhs) => lhs.Id.localeCompare(rhs.Id))),
+    deps: [CurrenciesToken]
 };

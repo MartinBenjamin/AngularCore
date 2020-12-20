@@ -7,7 +7,7 @@ import { BranchesProvider, BranchServiceProvider, BranchServiceUrlToken } from '
 import { ClassificationSchemeServiceProvider, ClassificationSchemeServiceUrlToken } from './ClassificationSchemeServiceProvider';
 import { Gallery } from './Components/Gallery';
 import { GalleryModule } from './Components/GalleryModule';
-import { CurrenciesProvider, CurrencyServiceProvider, CurrencyServiceUrlToken } from './CurrencyServiceProvider';
+import { CurrenciesOrderedByCode, CurrenciesProvider, CurrencyServiceProvider, CurrencyServiceUrlToken } from './CurrencyServiceProvider';
 import { DealTracker } from './DealTracker';
 import { GeographicRegionHierarchyProvider, GeographicRegionHierarchyServiceProvider, GeographicRegionHierarchyServiceUrlToken } from './GeographicRegionHierarchyProvider';
 import { DealLifeCycleServiceProvider, DealLifeCycleServiceUrlToken } from './IDealLifeCycleService';
@@ -60,6 +60,7 @@ import { RoleServiceProvider, RoleServiceUrlToken, RolesProvider } from './RoleS
             },
             CurrencyServiceProvider,
             CurrenciesProvider,
+            CurrenciesOrderedByCode,
             {
                 provide: RoleServiceUrlToken,
                 useValue: '/api/roles'
