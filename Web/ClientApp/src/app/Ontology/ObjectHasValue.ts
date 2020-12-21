@@ -24,7 +24,7 @@ export class ObjectHasValue
     }
 
     Evaluate(
-        evaluator: IClassMembershipEvaluator,
+        evaluator : IClassMembershipEvaluator,
         individual: object
         ): boolean
     {
