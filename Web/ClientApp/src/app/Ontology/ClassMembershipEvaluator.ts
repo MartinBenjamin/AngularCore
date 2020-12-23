@@ -9,7 +9,7 @@ import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from 
 import { IDataHasValue } from "./IDataHasValue";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
 import { IHasKey } from "./IHasKey";
-import { IDataPropertyAssertion, INamedIndividual, IObjectPropertyAssertion } from "./INamedIndividual";
+import { INamedIndividual } from "./INamedIndividual";
 import { IObjectAllValuesFrom } from "./IObjectAllValuesFrom";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectComplementOf } from "./IObjectComplementOf";
@@ -20,9 +20,10 @@ import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from "./IOntology";
-import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
+import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
+import { IStore, Store, StoreDecorator } from "./IStore";
 
-function Group<T, TKey, TValue>(
+export function Group<T, TKey, TValue>(
     iterable     : Iterable<T>,
     keyAccessor  : (t: T) => TKey,
     valueAccessor: (t: T) => TValue
@@ -67,11 +68,10 @@ class ClassVisitor extends ClassExpressionVisitor
 
 export class ClassMembershipEvaluator implements IClassMembershipEvaluator
 {
+    public  readonly Store                     : IStore;
     private readonly _ontology                 : IOntology;
     private readonly _classes                  = new Map<string, IClass>();
     private readonly _classAssertions          : Map<INamedIndividual, IClassExpression[]>;
-    private readonly _objectPropertyAssertions : Map<INamedIndividual, IObjectPropertyAssertion[]>;
-    private readonly _dataPropertyAssertions   : Map<INamedIndividual, IDataPropertyAssertion[]>;
     private readonly _hasKeys                  : Map<IClassExpression, IHasKey[]>;
     private readonly _superClassExpressions    : Map<IClassExpression, IClassExpression[]>;
     private readonly _subClassExpressions      : Map<IClassExpression, IClassExpression[]>;
@@ -89,6 +89,9 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     {
         this._ontology        = ontology;
         this._classifications = classifications;
+        this.Store = new StoreDecorator(
+            ontology,
+            new Store());
 
         if(!this._classifications)
             this._classifications = new Map<object, Set<IClass>>();
@@ -102,14 +105,6 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
             ontology.Get(ontology.IsAxiom.IClassAssertion),
             classAssertion => classAssertion.NamedIndividual,
             classAssertion => classAssertion.ClassExpression);
-        this._objectPropertyAssertions = Group(
-            ontology.Get(ontology.IsAxiom.IObjectPropertyAssertion),
-            objectPropertyAssertion => objectPropertyAssertion.SourceIndividual,
-            objectPropertyAssertion => objectPropertyAssertion);
-        this._dataPropertyAssertions = Group(
-            ontology.Get(ontology.IsAxiom.IDataPropertyAssertion),
-            dataPropertyAssertion => dataPropertyAssertion.SourceIndividual,
-            dataPropertyAssertion => dataPropertyAssertion);
         this._hasKeys = Group(
             ontology.Get(ontology.IsAxiom.IHasKey),
             hasKey => hasKey.ClassExpression,
@@ -251,7 +246,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual          : object
         ): boolean
     {
-        return this.ObjectPropertyValues(
+        return this.Store.ObjectPropertyValues(
             objectSomeValuesFrom.ObjectPropertyExpression,
             individual).some(
                 value => objectSomeValuesFrom.ClassExpression.Evaluate(
@@ -264,7 +259,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual         : object
         ): boolean
     {
-        return this.ObjectPropertyValues(
+        return this.Store.ObjectPropertyValues(
             objectAllValuesFrom.ObjectPropertyExpression,
             individual).every(
                 value => objectAllValuesFrom.ClassExpression.Evaluate(
@@ -277,7 +272,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual    : object
         ): boolean
     {
-        return this.ObjectPropertyValues(
+        return this.Store.ObjectPropertyValues(
             objectHasValue.ObjectPropertyExpression,
             individual).some(
                 value => this.AreEqual(
@@ -290,7 +285,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual   : object
         ): boolean
     {
-        return this.ObjectPropertyValues(
+        return this.Store.ObjectPropertyValues(
             objectHasSelf.ObjectPropertyExpression,
             individual).some(
                 value => this.AreEqual(
@@ -303,7 +298,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual          : object
         ): boolean
     {
-        return this.ObjectPropertyValues(
+        return this.Store.ObjectPropertyValues(
             objectMinCardinality.ObjectPropertyExpression,
             individual).reduce(
                 (count: number, value: object) =>
@@ -319,7 +314,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual          : object
         ): boolean
     {
-        return this.ObjectPropertyValues(
+        return this.Store.ObjectPropertyValues(
             objectMaxCardinality.ObjectPropertyExpression,
             individual).reduce(
                 (count: number, value: object) =>
@@ -335,7 +330,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual            : object
         ): boolean
     {
-        return this.ObjectPropertyValues(
+        return this.Store.ObjectPropertyValues(
             objectExactCardinality.ObjectPropertyExpression,
             individual).reduce(
                 (count: number, value: object) =>
@@ -351,7 +346,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual        : object
         ): boolean
     {
-        return this.DataPropertyValues(
+        return this.Store.DataPropertyValues(
             dataSomeValuesFrom.DataPropertyExpression,
             individual).some(value => dataSomeValuesFrom.DataRange.HasMember(value));
     }
@@ -361,7 +356,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual       : object
         ): boolean
     {
-        return this.DataPropertyValues(
+        return this.Store.DataPropertyValues(
             dataAllValuesFrom.DataPropertyExpression,
             individual).every(value => dataAllValuesFrom.DataRange.HasMember(value));
     }
@@ -371,7 +366,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual  : object
         ): boolean
     {
-        return this.DataPropertyValues(
+        return this.Store.DataPropertyValues(
             dataHasValue.DataPropertyExpression,
             individual).includes(dataHasValue.Value);
     }
@@ -381,7 +376,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual        : object
         ): boolean
     {
-        return this.DataPropertyValues(
+        return this.Store.DataPropertyValues(
             dataMinCardinality.DataPropertyExpression,
             individual).reduce(
                 (count: number, value: object) =>
@@ -395,7 +390,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual        : object
         ): boolean
     {
-        return this.DataPropertyValues(
+        return this.Store.DataPropertyValues(
             dataMaxCardinality.DataPropertyExpression,
             individual).reduce(
                 (count: number, value: object) =>
@@ -409,7 +404,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         individual          : object
         ): boolean
     {
-        return this.DataPropertyValues(
+        return this.Store.DataPropertyValues(
             dataExactCardinality.DataPropertyExpression,
             individual).reduce(
                 (count: number, value: object) =>
@@ -512,102 +507,6 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                     componentClassExpression));
     }
 
-    public ObjectPropertyValues(
-        objectPropertyExpression: IObjectPropertyExpression,
-        individual              : object
-        ): object[]
-    {
-        if(this._ontology.IsAxiom.INamedIndividual(individual))
-            return this.NamedIndividualObjectPropertyValues(
-                objectPropertyExpression,
-                individual);
-
-        return this.PropertyValues(
-            objectPropertyExpression,
-            individual);
-    }
-
-    public DataPropertyValues(
-        dataPropertyExpression: IDataPropertyExpression,
-        individual            : object
-        ): any[]
-    {
-        if(this._ontology.IsAxiom.INamedIndividual(individual))
-            return this.NamedIndividualDataPropertyValues(
-                dataPropertyExpression,
-                individual);
-
-        return this.PropertyValues(
-            dataPropertyExpression,
-            individual);
-    }
-
-    public PropertyValues(
-        propertyExpression: IPropertyExpression,
-        individual        : object
-        ): any[]
-    {
-        if(propertyExpression.LocalName in individual)
-        {
-            let value = individual[propertyExpression.LocalName];
-            return Array.isArray(value) ?
-                value : value !== null ?
-                    (typeof value[Symbol.iterator] !== 'undefined' && typeof value === 'object' ? [...value] : [value]) : [];
-        }
-
-        return [];
-    }
-
-    private DataPropertyValue(
-        dataPropertyExpression: IDataPropertyExpression,
-        individual            : object
-        ): any
-    {
-        if(this._ontology.IsAxiom.INamedIndividual(individual))
-            return this.NamedIndividualDataPropertyValue(
-                dataPropertyExpression,
-                individual);
-
-        return dataPropertyExpression.LocalName in individual ?
-            individual[dataPropertyExpression.LocalName] : null;
-    }
-
-    private NamedIndividualObjectPropertyValues(
-        objectPropertyExpression: IObjectPropertyExpression,
-        namedIndividual         : INamedIndividual
-        ): object[]
-    {
-        let objectPropertyAssertions = this._objectPropertyAssertions.get(namedIndividual);
-        return objectPropertyAssertions ?
-            objectPropertyAssertions
-                .filter(objectPropertyAssertion => objectPropertyAssertion.ObjectPropertyExpression === objectPropertyExpression)
-                .map(objectPropertyAssertion => objectPropertyAssertion.TargetIndividual) : [];
-    }
-
-    private NamedIndividualDataPropertyValues(
-        dataPropertyExpression: IDataPropertyExpression,
-        namedIndividual       : INamedIndividual
-        ): any[]
-    {
-        let dataPropertyAssertions = this._dataPropertyAssertions.get(namedIndividual);
-        return dataPropertyAssertions ?
-            dataPropertyAssertions
-                .filter(dataPropertyAssertion => dataPropertyAssertion.DataPropertyExpression === dataPropertyExpression)
-                .map(dataPropertyAssertion => dataPropertyAssertion.TargetValue) : [];
-    }
-
-    private NamedIndividualDataPropertyValue(
-        dataPropertyExpression: IDataPropertyExpression,
-        namedIndividual       : INamedIndividual
-        ): any
-    {
-        let values = this.NamedIndividualDataPropertyValues(
-            dataPropertyExpression,
-            namedIndividual);
-
-        return values.length ? values[0] : null;
-    }
-
     public AreEqual(
         lhs: object,
         rhs: object
@@ -637,17 +536,17 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         ): boolean
     {
         if(this._functionalDataProperties.has(dataPropertyExpression))
-            return this.DataPropertyValue(
+            return this.Store.DataPropertyValue(
                 dataPropertyExpression,
-                lhs) === this.DataPropertyValue(
+                lhs) === this.Store.DataPropertyValue(
                     dataPropertyExpression,
                     rhs);
         else
         {
-            let lhsValues = new Set<object>(this.DataPropertyValues(
+            let lhsValues = new Set<object>(this.Store.DataPropertyValues(
                 dataPropertyExpression,
                 lhs));
-            let rhsValues = new Set<object>(this.DataPropertyValues(
+            let rhsValues = new Set<object>(this.Store.DataPropertyValues(
                 dataPropertyExpression,
                 rhs));
 

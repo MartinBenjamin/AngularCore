@@ -182,6 +182,7 @@
     <None Remove="ClientApp\src\app\Ontology\IPropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\IsAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IsClassExpression.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IStore.ts" />
     <None Remove="ClientApp\src\app\Ontology\ISubClassOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\NamedIndividual.ts" />
     <None Remove="ClientApp\src\app\Ontology\Nothing.Spec.ts" />
@@ -409,6 +410,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IPropertyRestriction.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IsAxiom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IsClassExpression.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IStore.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ISubClassOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\NamedIndividual.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Nothing.Spec.ts" />

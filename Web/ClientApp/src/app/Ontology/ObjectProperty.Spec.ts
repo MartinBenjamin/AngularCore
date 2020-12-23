@@ -27,24 +27,24 @@ describe(
                         it(
                             'Array.from(o1.Get<IObjectPropertyExpression>(o1.IsAxiom.IObjectPropertyExpression)).includes(op1)',
                             () => expect(Array.from(o1.Get<IObjectPropertyExpression>(o1.IsAxiom.IObjectPropertyExpression)).includes(op1)).toBe(true));
-                        assert('evaluator.ObjectPropertyValues(op1, {}).length === 0');
-                        assert('evaluator.ObjectPropertyValues(op1, { op1: null }).length === 0');
+                        assert('evaluator.Store.ObjectPropertyValues(op1, {}).length === 0');
+                        assert('evaluator.Store.ObjectPropertyValues(op1, { op1: null }).length === 0');
 
                         describe(
-                            'Given result = evaluator.ObjectPropertyValues(op1, { op1: 6 })',
+                            'Given result = evaluator.Store.ObjectPropertyValues(op1, { op1: 6 })',
                             () =>
                             {
-                                let result = evaluator.ObjectPropertyValues(op1, { op1: 6 });
+                                let result = evaluator.Store.ObjectPropertyValues(op1, { op1: 6 });
                                 let assert = assertBuilder('result')(result);
                                 assert('result.length === 1');
                                 assert('result.includes(6)');
                             });
 
                         describe(
-                            'Given result = evaluator.ObjectPropertyValues(op1, { op1: [1, 2] })',
+                            'Given result = evaluator.Store.ObjectPropertyValues(op1, { op1: [1, 2] })',
                             () =>
                             {
-                                let result = evaluator.ObjectPropertyValues(op1, { op1: [1, 2] });
+                                let result = evaluator.Store.ObjectPropertyValues(op1, { op1: [1, 2] });
                                 let assert = assertBuilder('result')(result);
                                 assert('result.length === 2');
                                 assert('!result.includes(0)');
@@ -54,10 +54,10 @@ describe(
                             });
 
                         describe(
-                            'Given result = evaluator.ObjectPropertyValues(op1, { op1: new Set([1, 2]) })',
+                            'Given result = evaluator.Store.ObjectPropertyValues(op1, { op1: new Set([1, 2]) })',
                             () =>
                             {
-                                let result = evaluator.ObjectPropertyValues(op1, { op1: new Set([1, 2]) });
+                                let result = evaluator.Store.ObjectPropertyValues(op1, { op1: new Set([1, 2]) });
                                 let assert = assertBuilder('result')(result);
                                 assert('result.length === 2');
                                 assert('!result.includes(0)');
