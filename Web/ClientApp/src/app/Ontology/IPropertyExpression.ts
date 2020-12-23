@@ -32,12 +32,12 @@ export interface IDataPropertyExpression extends IPropertyExpression
     HasValue(value: any): IDataHasValue;
     MinCardinality(
         cardinality: number,
-        dataRange?: IDataRange): IDataMinCardinality;
+        dataRange? : IDataRange): IDataMinCardinality;
     MaxCardinality(
         cardinality: number,
         dataRange? : IDataRange): IDataMaxCardinality;
     ExactCardinality(
         cardinality: number,
-        dataRange?: IDataRange): IDataExactCardinality;
+        dataRange? : IDataRange): IDataExactCardinality;
     Range(dataRange: IDataRange): IDataPropertyRange;
 }
