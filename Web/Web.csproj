@@ -99,6 +99,7 @@
     <None Remove="ClientApp\src\app\Ontology\ClassExpression.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassExpressionNavigator.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassMembershipEvaluator.ts" />
+    <None Remove="ClientApp\src\app\Ontology\CombineLatest.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataAllValuesFrom.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataAllValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataCardinality.ts" />
@@ -212,6 +213,7 @@
     <None Remove="ClientApp\src\app\Ontology\ObjectSomeValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectUnionOf.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectUnionOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObservableGenerator.ts" />
     <None Remove="ClientApp\src\app\Ontology\Ontology.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Ontology.ts" />
     <None Remove="ClientApp\src\app\Ontology\PrefixIris.ts" />
@@ -314,6 +316,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Roles.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\StructuredTradeFinance.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Validate.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\CombineLatest.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AdjacencyList.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AdjacencyList.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Annotated.ts" />
@@ -440,6 +443,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectSomeValuesFrom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectUnionOf.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectUnionOf.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObservableGenerator.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Ontology.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Ontology.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Property.ts" />
