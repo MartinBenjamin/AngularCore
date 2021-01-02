@@ -25,7 +25,7 @@ table.TabbedView th.Selected
     background-color: #000;
 }
 
-dt-tabbed-view.FullWidth table.TabbedView
+dt-tabbed-view.FullWidth>table.TabbedView
 {
     width: 100%;
 }

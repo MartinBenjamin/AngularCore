@@ -13,6 +13,8 @@ import { Branch } from '../Organisations';
 import { PartyInRole } from '../Parties';
 import { Role } from '../Roles';
 import { RolesToken } from '../RoleServiceProvider';
+import { Tab } from '../Components/TabbedView';
+import { OriginationTab } from './OriginationTab';
 
 enum PropertyAction
 {
@@ -98,6 +100,8 @@ export class Facility implements OnDestroy
     private _facility         : facilityAgreements.Facility;
     private _bookingOffice    : PartyInRole;
 
+    public Tabs: Tab[];
+
     constructor(
         @Inject(RolesToken)
         roles              : Observable<Role[]>,
@@ -108,6 +112,14 @@ export class Facility implements OnDestroy
         dealProvider       : DealProvider
         )
     {
+        this.Tabs =
+            [
+                new Tab('Tab 1' , OriginationTab),
+                new Tab('Tab 2' , OriginationTab),
+                new Tab('Tab 3' , OriginationTab),
+                new Tab('Tab 4' , OriginationTab)
+            ];
+
         this._subscriptions.push(
             roles.subscribe(roles => this._bookingOfficeRole = roles.find(role => role.Id == DealRoleIdentifier.BookingOffice)),
             dealProvider.subscribe(

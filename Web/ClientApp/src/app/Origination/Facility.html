@@ -20,12 +20,13 @@
             </tr>
             <tr>
               <td class="RowHeading">Facility Name:</td>
-              <td><input
-                type="text"
-                [value]="Facility?.Name"
-                (value)="Facility.Name = $event"
-                [dtModelErrors]="Errors?.Name"
-                class="FacilityType" /></td>
+              <td>
+                <input type="text"
+                       [value]="Facility?.Name"
+                       (value)="Facility.Name = $event"
+                       [dtModelErrors]="Errors?.Name"
+                       class="FacilityType" />
+              </td>
             </tr>
           </table>
         </td>
@@ -34,10 +35,9 @@
             <tr>
               <td class="RowHeading">Booking Office:</td>
               <td *ngIf="Branches|async as branches; else Loading">
-                <select
-                  [compareWith]="CompareById"
-                  [(ngModel)]="BookingOffice"
-                  [dtModelErrors]="Errors?.BookingOffice">
+                <select [compareWith]="CompareById"
+                        [(ngModel)]="BookingOffice"
+                        [dtModelErrors]="Errors?.BookingOffice">
                   <option [ngValue]="null"></option>
                   <option *ngFor="let branch of branches" [ngValue]="branch">{{branch.Name}}</option>
                 </select>
@@ -49,11 +49,10 @@
             <tr>
               <td class="RowHeading">Currency:</td>
               <td *ngIf="Currencies|async as currencies; else Loading">
-                <select
-                  [compareWith]="CompareById"
-                  [ngModel]="Facility?.Currency"
-                  (ngModelChange)="Facility.Currency = $event"
-                  [dtModelErrors]="Errors?.Currency">
+                <select [compareWith]="CompareById"
+                        [ngModel]="Facility?.Currency"
+                        (ngModelChange)="Facility.Currency = $event"
+                        [dtModelErrors]="Errors?.Currency">
                   <option [ngValue]="null"></option>
                   <option *ngFor="let currency of currencies" [ngValue]="currency">{{currency.Id}}</option>
                 </select>
@@ -66,6 +65,7 @@
         </td>
       </tr>
     </table>
+    <dt-tabbed-view [Tabs]="Tabs"></dt-tabbed-view>
   </dt-dialog-body>
   <dt-dialog-buttons
     ><input type="button" value="Save" (click)="Save()" class="Button"

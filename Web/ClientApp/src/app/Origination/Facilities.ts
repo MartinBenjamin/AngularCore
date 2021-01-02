@@ -45,19 +45,23 @@ export class Facilities implements OnDestroy
 
     Add(): void
     {
-        this._facility.Facility = <facilityAgreements.Facility>
-            {
-                Id                       : EmptyGuid,
-                Obligors                 : [],
-                Contract                 : null,
-                Name                     : '',
-                Currency                 : null,
-                TotalCommitments         : null,
-                AvailabilityPeriodEndDate: null,
-                MaturityDate             : null,
-                MultiCurrency            : null,
-                Committed                : null
-            };
+        let facility = <facilityAgreements.Facility>
+        {
+            Id                       : EmptyGuid,
+            Obligors                 : [],
+            Contract                 : null,
+            Name                     : '',
+            Currency                 : null,
+            TotalCommitments         : null,
+            AvailabilityPeriodEndDate: null,
+            MaturityDate             : null,
+            MultiCurrency            : null,
+            Committed                : null
+        };
+
+        (<any>facility).$type = 'Web.Model.Facility, Web';
+        this._facility.Facility = facility;
+
     }
 
     private ComputeFacilities(): void
