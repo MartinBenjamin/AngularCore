@@ -15,6 +15,7 @@ import { DealGeographicRegion } from './DealGeographicRegion';
 import { Exclusivity } from './Exclusivity';
 import { Facilities } from './Facilities';
 import { Facility } from './Facility';
+import { FacilityTab } from './FacilityTab';
 import { KeyCounterparties } from './KeyCounterparties';
 import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
@@ -31,6 +32,7 @@ import { TransactionDetails } from './TransactionDetails';
                 Exclusivity,
                 Facilities,
                 Facility,
+                FacilityTab,
                 GeographicRegionSelector,
                 KeyCounterparties,
                 KeyDealData,
@@ -57,6 +59,7 @@ import { TransactionDetails } from './TransactionDetails';
             ],
         entryComponents:
             [
+                FacilityTab,
                 KeyCounterparties,
                 KeyDealData,
                 MoreTabs,

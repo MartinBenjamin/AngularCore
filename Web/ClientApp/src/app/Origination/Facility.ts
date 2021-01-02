@@ -16,6 +16,7 @@ import { PartyInRole } from '../Parties';
 import { Role } from '../Roles';
 import { RolesToken } from '../RoleServiceProvider';
 import { OriginationTab } from './OriginationTab';
+import { FacilityTab } from './FacilityTab';
 
 enum PropertyAction
 {
@@ -118,10 +119,10 @@ export class Facility
 
         this.Tabs =
             [
-                new Tab('Tab 1' , OriginationTab),
-                new Tab('Tab 2' , OriginationTab),
-                new Tab('Tab 3' , OriginationTab),
-                new Tab('Tab 4' , OriginationTab)
+                new Tab('Tab 1', FacilityTab),
+                new Tab('Tab 2', FacilityTab),
+                new Tab('Tab 3', FacilityTab),
+                new Tab('Tab 4', FacilityTab)
             ];
 
         this._subscriptions.push(
