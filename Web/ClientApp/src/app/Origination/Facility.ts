@@ -3,17 +3,18 @@ import { Subject, Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { BranchesToken } from '../BranchServiceProvider';
 import { DomainObject, EmptyGuid, Guid } from '../CommonDomainObjects';
+import { Tab } from '../Components/TabbedView';
 import { ContractualCommitment } from '../Contracts';
 import { CurrenciesOrderedByCodeToken } from '../CurrencyServiceProvider';
 import { DealProvider } from '../DealProvider';
 import { Deal, DealRoleIdentifier } from '../Deals';
 import * as facilityAgreements from '../FacilityAgreements';
+import { FacilityProvider } from '../FacilityProvider';
 import { Currency } from '../Iso4217';
 import { Branch } from '../Organisations';
 import { PartyInRole } from '../Parties';
 import { Role } from '../Roles';
 import { RolesToken } from '../RoleServiceProvider';
-import { Tab } from '../Components/TabbedView';
 import { OriginationTab } from './OriginationTab';
 
 enum PropertyAction
@@ -91,13 +92,14 @@ class PropertyService implements IPropertyService
         selector: 'facility',
         templateUrl: './Facility.html'
     })
-export class Facility implements OnDestroy
+export class Facility
+    extends FacilityProvider
+    implements OnDestroy
 {
     private _subscriptions    : Subscription[] = [];
     private _bookingOfficeRole: Role;
     private _deal             : Deal;
     private _originalFacility : facilityAgreements.Facility;
-    private _facility         : facilityAgreements.Facility;
     private _bookingOffice    : PartyInRole;
 
     public Tabs: Tab[];
@@ -112,6 +114,8 @@ export class Facility implements OnDestroy
         dealProvider       : DealProvider
         )
     {
+        super();
+
         this.Tabs =
             [
                 new Tab('Tab 1' , OriginationTab),
@@ -132,7 +136,6 @@ export class Facility implements OnDestroy
                         this._deal = deal[0];
 
                     this._originalFacility = null;
-                    this._facility = null;
                 }));
     }
 
@@ -153,7 +156,7 @@ export class Facility implements OnDestroy
 
     get Facility(): facilityAgreements.Facility
     {
-        return this._facility;
+        return this._facility.getValue();
     }
 
     set Facility(
@@ -164,7 +167,7 @@ export class Facility implements OnDestroy
             return;
 
         this._originalFacility = facility;
-        this._facility = <facilityAgreements.Facility>this.CopyCommitment(this._originalFacility);
+        this._facility.next(<facilityAgreements.Facility>this.CopyCommitment(this._originalFacility));
         this.ComputeBookingOffice();
     }
 
@@ -178,11 +181,11 @@ export class Facility implements OnDestroy
         )
     {
         if(this._bookingOffice)
-            this._facility.Obligors.splice(
-                this._facility.Obligors.indexOf(this._bookingOffice),
+            this.Facility.Obligors.splice(
+                this.Facility.Obligors.indexOf(this._bookingOffice),
                 1);
 
-        this._facility.Obligors.push(
+        this.Facility.Obligors.push(
             <PartyInRole>{
                 Id             : EmptyGuid,
                 AutonomousAgent: bookingOffice,
@@ -197,7 +200,7 @@ export class Facility implements OnDestroy
 
     ComputeBookingOffice(): void
     {
-        this._bookingOffice = this._facility.Obligors.find(obligor => obligor.Role.Id === DealRoleIdentifier.BookingOffice);
+        this._bookingOffice = this.Facility.Obligors.find(obligor => obligor.Role.Id === DealRoleIdentifier.BookingOffice);
     }
 
     Save(): void
@@ -223,8 +226,8 @@ export class Facility implements OnDestroy
 
     Close(): void
     {
+        this._facility.next(null);
         this._originalFacility = null;
-        this._facility         = null;
         this._bookingOffice    = null;
     }
 
