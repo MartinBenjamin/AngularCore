@@ -12,60 +12,70 @@
   <dt-dialog-body>
     <table class="GridLayout FacilityDialog">
       <tr>
-        <td style="vertical-align: top;">
-          <table>
-            <tr>
-              <td class="RowHeading">Facility Type:</td>
-              <td><span class="Field FacilityType"></span></td>
-            </tr>
-            <tr>
-              <td class="RowHeading">Facility Name:</td>
-              <td>
-                <input type="text"
-                       [value]="Facility?.Name"
-                       (value)="Facility.Name = $event"
-                       [dtModelErrors]="Errors?.Name"
-                       class="FacilityType" />
-              </td>
-            </tr>
-          </table>
-        </td>
         <td>
-          <table>
+          <table class="GridLayout">
             <tr>
-              <td class="RowHeading">Booking Office:</td>
-              <td *ngIf="Branches|async as branches; else Loading">
-                <select [compareWith]="CompareById"
-                        [(ngModel)]="BookingOffice"
-                        [dtModelErrors]="Errors?.BookingOffice">
-                  <option [ngValue]="null"></option>
-                  <option *ngFor="let branch of branches" [ngValue]="branch">{{branch.Name}}</option>
-                </select>
+              <td style="vertical-align: top;">
+                <table>
+                  <tr>
+                    <td class="RowHeading">Facility Type:</td>
+                    <td><span class="Field FacilityType"></span></td>
+                  </tr>
+                  <tr>
+                    <td class="RowHeading">Facility Name:</td>
+                    <td>
+                      <input type="text"
+                             [value]="Facility?.Name"
+                             (value)="Facility.Name = $event"
+                             [dtModelErrors]="Errors?.Name"
+                             class="FacilityType" />
+                    </td>
+                  </tr>
+                </table>
               </td>
-              <ng-template #Loading>
-                <td><span class="Loading">Loading...</span></td>
-              </ng-template>
-            </tr>
-            <tr>
-              <td class="RowHeading">Currency:</td>
-              <td *ngIf="Currencies|async as currencies; else Loading">
-                <select [compareWith]="CompareById"
-                        [ngModel]="Facility?.Currency"
-                        (ngModelChange)="Facility.Currency = $event"
-                        [dtModelErrors]="Errors?.Currency">
-                  <option [ngValue]="null"></option>
-                  <option *ngFor="let currency of currencies" [ngValue]="currency">{{currency.Id}}</option>
-                </select>
+              <td>
+                <table>
+                  <tr>
+                    <td class="RowHeading">Booking Office:</td>
+                    <td *ngIf="Branches|async as branches; else Loading">
+                      <select [compareWith]="CompareById"
+                              [(ngModel)]="BookingOffice"
+                              [dtModelErrors]="Errors?.BookingOffice">
+                        <option [ngValue]="null"></option>
+                        <option *ngFor="let branch of branches" [ngValue]="branch">{{branch.Name}}</option>
+                      </select>
+                    </td>
+                    <ng-template #Loading>
+                      <td><span class="Loading">Loading...</span></td>
+                    </ng-template>
+                  </tr>
+                  <tr>
+                    <td class="RowHeading">Currency:</td>
+                    <td *ngIf="Currencies|async as currencies; else Loading">
+                      <select [compareWith]="CompareById"
+                              [ngModel]="Facility?.Currency"
+                              (ngModelChange)="Facility.Currency = $event"
+                              [dtModelErrors]="Errors?.Currency">
+                        <option [ngValue]="null"></option>
+                        <option *ngFor="let currency of currencies" [ngValue]="currency">{{currency.Id}}</option>
+                      </select>
+                    </td>
+                    <ng-template #Loading>
+                      <td><span class="Loading">Loading...</span></td>
+                    </ng-template>
+                  </tr>
+                </table>
               </td>
-              <ng-template #Loading>
-                <td><span class="Loading">Loading...</span></td>
-              </ng-template>
             </tr>
           </table>
         </td>
       </tr>
+      <tr>
+        <td>
+          <dt-tabbed-view [Tabs]="Tabs"></dt-tabbed-view>
+        </td>
+      </tr>
     </table>
-    <dt-tabbed-view [Tabs]="Tabs"></dt-tabbed-view>
   </dt-dialog-body>
   <dt-dialog-buttons
     ><input type="button" value="Save" (click)="Save()" class="Button"
