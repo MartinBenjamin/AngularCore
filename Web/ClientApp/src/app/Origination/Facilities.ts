@@ -68,6 +68,6 @@ export class Facilities implements OnDestroy
             return;
         }
 
-        this._facilities = <facilityAgreements.Facility[] > this._deal.Commitments.filter(commitment => (<any>commitment).$type == 'Web.Model.Facility, Web');
+        this._facilities = <facilityAgreements.Facility[]>this._deal.Confers.filter(commitment => (<any>commitment).$type == 'Web.Model.Facility, Web');
     }
 }

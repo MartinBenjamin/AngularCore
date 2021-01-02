@@ -191,11 +191,11 @@ export class Facility implements OnDestroy
     Save(): void
     {
         let propertyService = new PropertyService();
-        if(this._deal.Commitments.indexOf(this._originalFacility))
+        if(this._deal.Confers.indexOf(this._originalFacility) === -1)
             propertyService.Add(
                 this._deal,
                 this._facility,
-                'Commitments');
+                'Confers');
         else
         {
 

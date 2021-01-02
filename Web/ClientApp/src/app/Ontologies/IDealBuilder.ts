@@ -35,11 +35,11 @@ export class DealBuilder implements IDealBuilder
         let deal: Deal = {
             Id                : EmptyGuid,
             Name              : null,
+            Parties           : [],
+            Confers           : [],
             ClassIri          : ontology.Deal.Iri,
             Type              : null,
             Agreements        : [],
-            Commitments       : [],
-            Parties           : [],
             Stage             : null,
             Restricted        : false,
             ProjectName       : null,

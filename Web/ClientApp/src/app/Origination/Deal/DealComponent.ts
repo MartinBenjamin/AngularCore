@@ -134,7 +134,7 @@ export class DealComponent
         }
 
         // Include Exclusivity errors.
-        let exclusivity = this.Deal.Commitments.find(commitment => (<any>commitment).$type == 'Web.Model.Exclusivity, Web');
+        let exclusivity = this.Deal.Confers.find(commitment => (<any>commitment).$type == 'Web.Model.Exclusivity, Web');
         if(exclusivity)
         {
             let exclusivityErrors = errors.get(exclusivity);

@@ -42,9 +42,9 @@ export class Advisory extends DealProvider implements AfterViewInit
                     <Deal>{
                         Id         : EmptyGuid,
                         Name       : null,
-                        Agreements : [],
-                        Commitments: [],
                         Parties    : [],
+                        Confers    : [],
+                        Agreements : [],
                         Restricted : false,
                         ProjectName: null,
                         Classifiers: []

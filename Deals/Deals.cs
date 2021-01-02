@@ -163,7 +163,7 @@ namespace Deals
 
         public IObjectPropertyExpression Type                { get; protected set; }
         public IObjectPropertyExpression Parties             { get; protected set; }
-        public IObjectPropertyExpression Commitments         { get; protected set; }
+        public IObjectPropertyExpression Confers             { get; protected set; }
         public IObjectPropertyExpression Classifiers         { get; protected set; }
         public IObjectPropertyExpression Borrowers           { get; protected set; }
         public IObjectPropertyExpression Sponsors            { get; protected set; }
@@ -208,7 +208,7 @@ namespace Deals
             Type        = Deal.DeclareObjectProperty<Deal, DealType   >(deal => deal.Type       );
             Parties     = Deal.DeclareObjectProperty<Deal, PartyInRole>(deal => deal.Parties    );
             Classifiers = Deal.DeclareObjectProperty<Deal, Classifier >(deal => deal.Classifiers);
-            Commitments = Deal.DeclareObjectProperty<Deal, Commitment >(deal => deal.Commitments);
+            Confers     = Deal.DeclareObjectProperty<Deal, Commitment >(deal => deal.Confers    );
             Borrowers   = Deal.DeclareObjectProperty<Deal, PartyInRole>(
                 "Borrowers",
                 deal => deal.Parties.Where(dealParty => dealParty.Role.Id == DealRoleIdentifier.Borrower));

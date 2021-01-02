@@ -1,9 +1,8 @@
-import { DomainObject, Guid } from "./CommonDomainObjects";
+import { DomainObject, Guid, Named } from "./CommonDomainObjects";
 import { PartyInRole } from "./Parties";
 
-export interface Agreement extends DomainObject<Guid>
+export interface Agreement extends Named<Guid>
 {
-    Title  : string;
     Parties: PartyInRole[];
     Confers: Commitment[];
 }

@@ -322,7 +322,7 @@ namespace Test
                 Guid.NewGuid(),
                 DateTime.Today);
 
-            deal.Commitments.Add(exclusivity);
+            deal.Confers.Add(exclusivity);
 
             var classifications = _deals.Classify(deal);
             Assert.That(classifications.ContainsKey(exclusivity));

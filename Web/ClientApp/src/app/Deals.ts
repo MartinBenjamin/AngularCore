@@ -84,13 +84,11 @@ export interface DealType extends Named<Guid>
 {
 }
 
-export interface Deal extends Named<Guid>
+export interface Deal extends Agreement
 {
     ClassIri           : string;
     Type               : DealType;
     Agreements         : Agreement[];
-    Parties            : PartyInRole[];
-    Commitments        : ContractualCommitment[];
     Stage              : LifeCycleStage;
     Restricted         : boolean;
     ProjectName        : string;

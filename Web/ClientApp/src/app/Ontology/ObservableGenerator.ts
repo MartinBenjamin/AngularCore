@@ -133,6 +133,7 @@ export class ObservableGenerator implements IClassExpressionVisitor
         objectHasValue: IObjectHasValue
         )
     {
+        // Need Individual Interpretation Function.
         this._observableClassExpressions.set(
             objectHasValue,
             new BehaviorSubject<Set<object>>(new Set<object>().add(objectHasValue.Individual)));
