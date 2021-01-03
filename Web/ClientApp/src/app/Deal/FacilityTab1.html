@@ -67,7 +67,10 @@
         <tr>
           <td class="RowHeading">Expected 1<sup>st</sup> Drawndown Date:</td>
           <td>
-            <input type="text" /><dt-calendar></dt-calendar>
+            <input type="text"
+                   [dtDateModel]="Facility?.Expected1StDrawdownDate"
+                   (dtDateModelChange)="Facility.Expected1StDrawdownDate = $event"
+                   class="Date" /><dt-calendar (dateSelected)="Facility.Expected1StDrawdownDate = $event"></dt-calendar>
           </td>
         </tr>
         <tr>

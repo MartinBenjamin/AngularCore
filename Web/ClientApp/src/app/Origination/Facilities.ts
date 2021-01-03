@@ -56,6 +56,7 @@ export class Facilities implements OnDestroy
             TotalCommitments         : null,
             AvailabilityPeriodEndDate: null,
             MaturityDate             : null,
+            Expected1StDrawdownDate  : null,
             MultiCurrency            : null,
             Committed                : null
         };
