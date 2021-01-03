@@ -1,4 +1,4 @@
-import { Directive, ElementRef, EventEmitter, HostListener, Input, Output, Inject } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, Inject, Input, Output } from '@angular/core';
 import { AmountConversionServiceToken } from './AmountInputDefinition';
 import { IConversionService } from './IConversionService';
 import { NumberModel } from './NumberModel';
