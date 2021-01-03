@@ -34,4 +34,20 @@ export class FacilityTab1 implements OnDestroy
     {
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
+
+    get LenderShare(): number
+    {
+        if(this.Facility && this.LenderParticipation)
+            return this.LenderParticipationAmount * 100 / this.Facility.TotalCommitments;
+
+        return null;
+    }
+
+    private get LenderParticipationAmount(): number
+    {
+        if(this.LenderParticipation)
+            return this.LenderParticipation.ActualAllocation !== null ? this.LenderParticipation.ActualAllocation : this.LenderParticipation.AnticipatedHoldAmount;
+
+        return null;
+    }
 }

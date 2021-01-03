@@ -7,6 +7,7 @@
           <td>
             <input type="text"
                    [dtAmountModel]="Facility?.TotalCommitments"
+                   (dtAmountModelChange)="Facility.TotalCommitments = $event"
                    class="Amount" />
           </td>
         </tr>
@@ -15,6 +16,7 @@
           <td>
             <input type="text"
                    [dtAmountModel]="LenderParticipation?.UnderwriteAmount"
+                   (dtAmountModelChange)="LenderParticipation.UnderwriteAmount = $event"
                    class="Amount" />
           </td>
         </tr>
@@ -23,6 +25,7 @@
           <td>
             <input type="text"
                    [dtAmountModel]="LenderParticipation?.CreditSoughtLimit"
+                   (dtAmountModelChange)="LenderParticipation.CreditSoughtLimit = $event"
                    class="Amount" />
           </td>
         </tr>
@@ -31,6 +34,7 @@
           <td>
             <input type="text"
                    [dtAmountModel]="LenderParticipation?.AnticipatedHoldAmount"
+                   (dtAmountModelChange)="LenderParticipation.AnticipatedHoldAmount = $event"
                    class="Amount" />
           </td>
         </tr>
@@ -39,12 +43,13 @@
           <td>
             <input type="text"
                    [dtAmountModel]="LenderParticipation?.ActualAllocation"
+                   (dtAmountModelChange)="LenderParticipation.ActualAllocation = $event"
                    class="Amount" />
           </td>
         </tr>
         <tr>
           <td class="RowHeading">Bank Share (%):</td>
-          <td><input type="text" /></td>
+          <td><span class="Field Percentage">{{LenderShare|percentage}}</span></td>
         </tr>
       </table>
     </td>
