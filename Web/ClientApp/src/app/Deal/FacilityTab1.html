@@ -4,23 +4,43 @@
       <table class="GridLayout">
         <tr>
           <td class="RowHeading">Total Debt Size:</td>
-          <td><input type="text"  [dtAmountModel]="Facility?.TotalCommitments" class="Amount"/></td>
+          <td>
+            <input type="text"
+                   [dtAmountModel]="Facility?.TotalCommitments"
+                   class="Amount" />
+          </td>
         </tr>
         <tr>
           <td class="RowHeading">Bank Underwrite Amount:</td>
-          <td><input type="text"  [dtAmountModel]="LenderParticipation?.UnderwriteAmount" class="Amount"/></td>
+          <td>
+            <input type="text"
+                   [dtAmountModel]="LenderParticipation?.UnderwriteAmount"
+                   class="Amount" />
+          </td>
         </tr>
         <tr>
           <td class="RowHeading">Credit Sought Limit:</td>
-          <td><input type="text" /></td>
+          <td>
+            <input type="text"
+                   [dtAmountModel]="LenderParticipation?.CreditSoughtLimit"
+                   class="Amount" />
+          </td>
         </tr>
         <tr>
           <td class="RowHeading">Anticipated Hold Amount:</td>
-          <td><input type="text" /></td>
+          <td>
+            <input type="text"
+                   [dtAmountModel]="LenderParticipation?.AnticipatedHoldAmount"
+                   class="Amount" />
+          </td>
         </tr>
         <tr>
           <td class="RowHeading">Actual Allocation:</td>
-          <td><input type="text" /></td>
+          <td>
+            <input type="text"
+                   [dtAmountModel]="LenderParticipation?.ActualAllocation"
+                   class="Amount" />
+          </td>
         </tr>
         <tr>
           <td class="RowHeading">Bank Share (%):</td>
