@@ -67,7 +67,16 @@
         <tr>
           <td class="RowHeading">Expected 1<sup>st</sup> Drawndown Date:</td>
           <td>
-            <input type="text"/><dt-calendar></dt-calendar>
+            <input type="text" /><dt-calendar></dt-calendar>
+          </td>
+        </tr>
+        <tr>
+          <td class="RowHeading">Availability End Date:</td>
+          <td>
+            <input type="text"
+                   [dtDateModel]="Facility?.AvailabilityPeriodEndDate"
+                   (dtDateModelChange)="Facility.AvailabilityPeriodEndDate = $event"
+                   class="Date" /><dt-calendar (dateSelected)="Facility.AvailabilityPeriodEndDate = $event"></dt-calendar>
           </td>
         </tr>
       </table>
