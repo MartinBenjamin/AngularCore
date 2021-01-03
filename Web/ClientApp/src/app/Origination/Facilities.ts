@@ -50,6 +50,7 @@ export class Facilities implements OnDestroy
             Id                       : EmptyGuid,
             Obligors                 : [],
             Contract                 : null,
+            Parts                    : [],
             Name                     : '',
             Currency                 : null,
             TotalCommitments         : null,
@@ -60,6 +61,23 @@ export class Facilities implements OnDestroy
         };
 
         (<any>facility).$type = 'Web.Model.Facility, Web';
+
+        let lenderParticipation = <facilityAgreements.LenderParticipation>
+        {
+            Id                   : EmptyGuid,
+            Obligors             : [],
+            Contract             : null,
+            PartOf               : facility,
+            Lender               : null,
+            Amount               : null,
+            UnderwriteAmount     : null,
+            CreditSoughtLimit    : null,
+            AnticipatedHoldAmount: null,
+            ActualAllocation     : null
+        };
+        (<any>lenderParticipation).$type = 'Web.Model.LenderParticipation, Web';
+        facility.Parts.push(lenderParticipation);
+
         this._facility.Facility = facility;
 
     }

@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
-import { FacilityProvider } from '../FacilityProvider';
 import { Subscription } from 'rxjs';
-import { Facility } from '../FacilityAgreements';
+import { Facility, LenderParticipation } from '../FacilityAgreements';
+import { FacilityProvider } from '../FacilityProvider';
 
 @Component(
     {
@@ -11,13 +11,23 @@ export class FacilityTab1 implements OnDestroy
 {
     private _subscriptions: Subscription[] = [];
 
-    Facility: Facility;
+    Facility           : Facility;
+    LenderParticipation: LenderParticipation;
 
     constructor(
         facilityProvider: FacilityProvider
         )
     {
-        facilityProvider.subscribe(facility => this.Facility = facility);
+        facilityProvider.subscribe(
+            facility =>
+            {
+                this.Facility = facility;
+                if(!this.Facility)
+                    this.LenderParticipation = null;
+
+                else
+                    this.LenderParticipation = <LenderParticipation>this.Facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
+            });
     }
 
     ngOnDestroy(): void
