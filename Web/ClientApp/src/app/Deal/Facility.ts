@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy } from '@angular/core';
+import { Component, Inject, OnDestroy, forwardRef } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { BranchesToken } from '../BranchServiceProvider';
@@ -16,6 +16,7 @@ import { PartyInRole } from '../Parties';
 import { Role } from '../Roles';
 import { RolesToken } from '../RoleServiceProvider';
 import { FacilityTab } from './FacilityTab';
+import { FacilityTab1 } from './FacilityTab1';
 
 enum PropertyAction
 {
@@ -90,7 +91,14 @@ class PropertyService implements IPropertyService
 @Component(
     {
         selector: 'facility',
-        templateUrl: './Facility.html'
+        templateUrl: './Facility.html',
+        providers:
+            [
+                {
+                    provide: FacilityProvider,
+                    useExisting: forwardRef(() => Facility)
+                }
+            ]
     })
 export class Facility
     extends FacilityProvider
@@ -118,7 +126,7 @@ export class Facility
 
         this.Tabs =
             [
-                new Tab('Tab 1', FacilityTab),
+                new Tab('Tab 1', FacilityTab1),
                 new Tab('Tab 2', FacilityTab),
                 new Tab('Tab 3', FacilityTab),
                 new Tab('Tab 4', FacilityTab)

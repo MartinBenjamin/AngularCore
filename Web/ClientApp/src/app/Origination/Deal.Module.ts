@@ -9,6 +9,7 @@ import { TabbedViewModule } from '../Components/TabbedView';
 import { Borrowers } from '../Deal/Borrowers';
 import { Facility } from '../Deal/Facility';
 import { FacilityTab } from '../Deal/FacilityTab';
+import { FacilityTab1 } from '../Deal/FacilityTab1';
 import { GeographicRegionSelector } from '../Deal/GeographicRegionSelector';
 import { Sponsors } from '../Deal/Sponsors';
 import { LegalEntityFinder, LegalEntityFinderButtons } from '../LegalEntityFinder';
@@ -33,6 +34,7 @@ import { TransactionDetails } from './TransactionDetails';
                 Facilities,
                 Facility,
                 FacilityTab,
+                FacilityTab1,
                 GeographicRegionSelector,
                 KeyCounterparties,
                 KeyDealData,
@@ -60,6 +62,7 @@ import { TransactionDetails } from './TransactionDetails';
         entryComponents:
             [
                 FacilityTab,
+                FacilityTab1,
                 KeyCounterparties,
                 KeyDealData,
                 MoreTabs,
