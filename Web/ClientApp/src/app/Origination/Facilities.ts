@@ -1,10 +1,10 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { EmptyGuid } from '../CommonDomainObjects';
+import { Facility } from '../Deal/Facility';
 import { DealProvider } from '../DealProvider';
 import { Deal } from '../Deals';
 import * as facilityAgreements from '../FacilityAgreements';
-import { Facility } from './Facility';
 
 @Component(
     {

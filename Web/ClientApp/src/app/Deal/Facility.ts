@@ -15,7 +15,6 @@ import { Branch } from '../Organisations';
 import { PartyInRole } from '../Parties';
 import { Role } from '../Roles';
 import { RolesToken } from '../RoleServiceProvider';
-import { OriginationTab } from './OriginationTab';
 import { FacilityTab } from './FacilityTab';
 
 enum PropertyAction

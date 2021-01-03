@@ -234,8 +234,6 @@
     <None Remove="ClientApp\src\app\Origination\DealGeographicRegion.ts" />
     <None Remove="ClientApp\src\app\Origination\Exclusivity.ts" />
     <None Remove="ClientApp\src\app\Origination\Facilities.ts" />
-    <None Remove="ClientApp\src\app\Origination\Facility.ts" />
-    <None Remove="ClientApp\src\app\Origination\FacilityTab.ts" />
     <None Remove="ClientApp\src\app\Origination\Menu.ts" />
     <None Remove="ClientApp\src\app\Origination\MyDeals.ts" />
     <None Remove="ClientApp\src\app\Origination\MyDeals\MyDeals.Module.ts" />
@@ -466,8 +464,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\DealGeographicRegion.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Exclusivity.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Facilities.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Facility.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\FacilityTab.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\KeyCounterparties.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Menu.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\MyDeals\MyDeals.Module.ts" />
