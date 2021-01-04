@@ -218,8 +218,8 @@ export class Facility
 
     Apply(): void
     {
-        this.CreateUpdateCommitments(this.Facility);
-        this.DeleteCommitments(this._original.get(this.Facility));
+        this.CreateUpdateCommitment(this.Facility);
+        this.DeleteCommitment(this._original.get(this.Facility));
         this.Close();
     }
 
@@ -264,7 +264,7 @@ export class Facility
         return copy;
     }
 
-    private CreateUpdateCommitments(
+    private CreateUpdateCommitment(
         copy: ContractualCommitment
         )
     {
@@ -297,10 +297,10 @@ export class Facility
                 commitment[key] = copy[key];
 
         for(let partCopy of copy.Parts)
-            this.CreateUpdateCommitments(partCopy);
+            this.CreateUpdateCommitment(partCopy);
     }
 
-    private DeleteCommitments(
+    private DeleteCommitment(
         commitment: ContractualCommitment,
         copyMap  ?: Map<ContractualCommitment, ContractualCommitment>
         )
@@ -321,7 +321,7 @@ export class Facility
         }
 
         for(let part of commitment.Parts)
-            this.DeleteCommitments(
+            this.DeleteCommitment(
                 part,
                 copyMap);
 
