@@ -284,10 +284,10 @@ export class Facility
 
             if(commitment.PartOf)
                 commitment.PartOf.Parts.push(commitment);
-
-            if(commitment.Contract)
-                commitment.Contract.Confers.push(commitment);
         }
+
+        if(commitment.Contract && commitment.Contract.Confers.indexOf(commitment) === -1)
+            commitment.Contract.Confers.push(commitment);
 
         if(this._deal.Confers.indexOf(commitment) === -1)
             this._deal.Confers.push(commitment);
