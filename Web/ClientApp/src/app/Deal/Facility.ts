@@ -216,7 +216,7 @@ export class Facility
         this._bookingOffice = this.Facility.Obligors.find(obligor => obligor.Role.Id === DealRoleIdentifier.BookingOffice);
     }
 
-    Save(): void
+    Apply(): void
     {
         this.CreateUpdateCommitments(this.Facility);
         this.DeleteCommitments(this._original.get(this.Facility));
