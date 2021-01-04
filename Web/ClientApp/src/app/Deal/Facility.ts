@@ -88,6 +88,11 @@ class PropertyService implements IPropertyService
     }
 }
 
+interface Copy<T>
+{
+    Original: T;
+}
+
 @Component(
     {
         selector: 'facility',
@@ -175,7 +180,7 @@ export class Facility
             return;
 
         this._originalFacility = facility;
-        this._facility.next(<facilityAgreements.Facility>this.CopyCommitment(this._originalFacility));
+        this._facility.next(<facilityAgreements.Facility><unknown>this.CopyCommitment(this._originalFacility));
         this.ComputeBookingOffice();
     }
 
@@ -193,16 +198,21 @@ export class Facility
                 this.Facility.Obligors.indexOf(this._bookingOffice),
                 1);
 
-        this.Facility.Obligors.push(
-            <PartyInRole>{
-                Id             : EmptyGuid,
-                AutonomousAgent: bookingOffice,
-                Organisation   : bookingOffice,
-                Person         : null,
-                Role           : this._bookingOfficeRole,
-                Period         : null
-            });
+        let bookingOfficeParty = this._deal.Parties.find(
+            party => party.Organisation.Id === bookingOffice.Id && party.Role.Id === this._bookingOfficeRole.Id);
 
+        if(!bookingOfficeParty)
+            bookingOfficeParty = <PartyInRole>
+                {
+                    Id             : EmptyGuid,
+                    AutonomousAgent: bookingOffice,
+                    Organisation   : bookingOffice,
+                    Person         : null,
+                    Role           : this._bookingOfficeRole,
+                    Period         : null
+                };
+
+        this.Facility.Obligors.push(bookingOfficeParty);
         this.ComputeBookingOffice();
     }
 
@@ -213,16 +223,9 @@ export class Facility
 
     Save(): void
     {
-        let propertyService = new PropertyService();
-        if(this._deal.Confers.indexOf(this._originalFacility) === -1)
-            propertyService.Add(
-                this._deal,
-                this._facility,
-                'Confers');
-        else
-        {
-
-        }
+        this.SynchroniseCommitment(
+            this._originalFacility,
+            <ContractualCommitment & Copy<ContractualCommitment>><unknown>this.Facility)
 
         this.Close();
     }
@@ -250,14 +253,86 @@ export class Facility
     private CopyCommitment(
         commitment: ContractualCommitment,
         partOf   ?: ContractualCommitment
-        ): ContractualCommitment
+        ): ContractualCommitment & Copy<ContractualCommitment>
     {
-        let copy = <ContractualCommitment>{ ...commitment, PartOf: partOf };
+        let copy = <ContractualCommitment & Copy<ContractualCommitment>>{ ...commitment, PartOf: partOf, Original: commitment };
         if(commitment.Parts)
             copy.Parts = commitment.Parts.map(
                 part => this.CopyCommitment(
                     part,
                     copy));
         return copy;
+    }
+
+    private SynchroniseCommitment(
+        original: ContractualCommitment,
+        copy    : ContractualCommitment & Copy<ContractualCommitment>
+        ): void
+    {
+        this.CreateUpdateCommitment(copy);
+        this.DeleteCommitment(
+            original,
+            copy);
+    }
+
+    private CreateUpdateCommitment(
+        commitment: ContractualCommitment & Copy<ContractualCommitment>
+        )
+    {
+        if(!commitment.Original)
+        {
+            commitment.Original = <ContractualCommitment>
+            {
+                Id    : EmptyGuid,
+                Parts : [],
+                PartOf: commitment.PartOf ? (<ContractualCommitment & Copy<ContractualCommitment>>commitment.PartOf).Original : null
+            };
+
+            if(commitment.Original.PartOf)
+                commitment.Original.PartOf.Parts.push(commitment.Original);
+
+            if(commitment.Contract)
+                commitment.Contract.Confers.push(commitment);
+        }
+
+        if(this._deal.Confers.indexOf(commitment) === -1)
+            this._deal.Confers.push(commitment);
+
+        for(let key in commitment)
+            if(['Parts', 'PartOf'].indexOf(key) === -1)
+                commitment.Original[key] = commitment[key];
+
+        for(let part of commitment.Parts)
+            this.CreateUpdateCommitment(<ContractualCommitment & Copy<ContractualCommitment>>part);
+    }
+
+    private DeleteCommitment(
+        original: ContractualCommitment,
+        copy    : ContractualCommitment
+        )
+    {
+        for(let part of original.Parts)
+        {
+            let partCopy = null;
+            if(copy)
+                partCopy = copy.Parts.find(partCopy => (<ContractualCommitment & Copy<ContractualCommitment>>partCopy).Original === part)
+            this.DeleteCommitment(
+                part,
+                partCopy);
+        }
+
+        if(!copy)
+        {
+            if(original.PartOf)
+            {
+                original.PartOf.Parts.splice(
+                    original.PartOf.Parts.indexOf(original),
+                    1);
+            }
+
+            this._deal.Confers.splice(
+                this._deal.Confers.indexOf(original),
+                1);
+        }
     }
 }
