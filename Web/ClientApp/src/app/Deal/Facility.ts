@@ -88,11 +88,6 @@ class PropertyService implements IPropertyService
     }
 }
 
-interface Copy<T>
-{
-    Original: T;
-}
-
 @Component(
     {
         selector: 'facility',
@@ -112,8 +107,8 @@ export class Facility
     private _subscriptions    : Subscription[] = [];
     private _bookingOfficeRole: Role;
     private _deal             : Deal;
-    private _originalFacility : facilityAgreements.Facility;
     private _bookingOffice    : PartyInRole;
+    private _original         : Map<ContractualCommitment, ContractualCommitment;
 
     public Tabs: Tab[];
 
@@ -148,7 +143,7 @@ export class Facility
                     else
                         this._deal = deal[0];
 
-                    this._originalFacility = null;
+                    this._original = null;
                 }));
     }
 
@@ -179,8 +174,8 @@ export class Facility
         if(!facility)
             return;
 
-        this._originalFacility = facility;
-        this._facility.next(<facilityAgreements.Facility><unknown>this.CopyCommitment(this._originalFacility));
+        this._original = new Map<ContractualCommitment, ContractualCommitment>();
+        this._facility.next(<facilityAgreements.Facility>this.CopyCommitment(facility));
         this.ComputeBookingOffice();
     }
 
@@ -223,10 +218,8 @@ export class Facility
 
     Save(): void
     {
-        this.SynchroniseCommitment(
-            this._originalFacility,
-            <ContractualCommitment & Copy<ContractualCommitment>><unknown>this.Facility)
-
+        this.CreateUpdateCommitments(this.Facility);
+        this.DeleteCommitments(this._original.get(this.Facility));
         this.Close();
     }
 
@@ -238,8 +231,8 @@ export class Facility
     Close(): void
     {
         this._facility.next(null);
-        this._originalFacility = null;
-        this._bookingOffice    = null;
+        this._original      = null;
+        this._bookingOffice = null;
     }
 
     CompareById(
@@ -251,11 +244,18 @@ export class Facility
     }
 
     private CopyCommitment(
-        commitment: ContractualCommitment,
-        partOf   ?: ContractualCommitment
-        ): ContractualCommitment & Copy<ContractualCommitment>
+        commitment : ContractualCommitment,
+        partOfCopy?: ContractualCommitment
+        ): ContractualCommitment
     {
-        let copy = <ContractualCommitment & Copy<ContractualCommitment>>{ ...commitment, PartOf: partOf, Original: commitment };
+        let copy = <ContractualCommitment>{ ...commitment, PartOf: partOfCopy };
+        this._original.set(
+            copy,
+            commitment);
+
+        if(copy.PartOf)
+            copy.PartOf.Parts.push(copy);
+
         if(commitment.Parts)
             copy.Parts = commitment.Parts.map(
                 part => this.CopyCommitment(
@@ -264,32 +264,26 @@ export class Facility
         return copy;
     }
 
-    private SynchroniseCommitment(
-        original: ContractualCommitment,
-        copy    : ContractualCommitment & Copy<ContractualCommitment>
-        ): void
-    {
-        this.CreateUpdateCommitment(copy);
-        this.DeleteCommitment(
-            original,
-            copy);
-    }
-
-    private CreateUpdateCommitment(
-        commitment: ContractualCommitment & Copy<ContractualCommitment>
+    private CreateUpdateCommitments(
+        copy: ContractualCommitment
         )
     {
-        if(!commitment.Original)
+        let commitment = this._original.get(copy);
+        if(!commitment)
         {
-            commitment.Original = <ContractualCommitment>
+            commitment = <ContractualCommitment>
             {
                 Id    : EmptyGuid,
                 Parts : [],
-                PartOf: commitment.PartOf ? (<ContractualCommitment & Copy<ContractualCommitment>>commitment.PartOf).Original : null
+                PartOf: copy.PartOf ? this._original.get(copy.PartOf) : null
             };
 
-            if(commitment.Original.PartOf)
-                commitment.Original.PartOf.Parts.push(commitment.Original);
+            this._original.set(
+                copy,
+                commitment);
+
+            if(commitment.PartOf)
+                commitment.PartOf.Parts.push(commitment);
 
             if(commitment.Contract)
                 commitment.Contract.Confers.push(commitment);
@@ -298,40 +292,49 @@ export class Facility
         if(this._deal.Confers.indexOf(commitment) === -1)
             this._deal.Confers.push(commitment);
 
-        for(let key in commitment)
+        for(let key in copy)
             if(['Parts', 'PartOf'].indexOf(key) === -1)
-                commitment.Original[key] = commitment[key];
+                commitment[key] = copy[key];
 
-        for(let part of commitment.Parts)
-            this.CreateUpdateCommitment(<ContractualCommitment & Copy<ContractualCommitment>>part);
+        for(let partCopy of copy.Parts)
+            this.CreateUpdateCommitments(partCopy);
     }
 
-    private DeleteCommitment(
-        original: ContractualCommitment,
-        copy    : ContractualCommitment
+    private DeleteCommitments(
+        commitment: ContractualCommitment,
+        copyMap  ?: Map<ContractualCommitment, ContractualCommitment>
         )
     {
-        for(let part of original.Parts)
+        if(!copyMap)
         {
-            let partCopy = null;
-            if(copy)
-                partCopy = copy.Parts.find(partCopy => (<ContractualCommitment & Copy<ContractualCommitment>>partCopy).Original === part)
-            this.DeleteCommitment(
-                part,
-                partCopy);
+            copyMap = new Map<ContractualCommitment, ContractualCommitment>();
+            let populate = (commitment: ContractualCommitment) =>
+            {
+                copyMap.set(
+                    this._original.get(commitment),
+                    commitment);
+
+                if(commitment.Parts)
+                    commitment.Parts.forEach(populate)
+            };
+            populate(this.Facility);
         }
 
+        for(let part of commitment.Parts)
+            this.DeleteCommitments(
+                part,
+                copyMap);
+
+        let copy = copyMap.get(commitment);
         if(!copy)
         {
-            if(original.PartOf)
-            {
-                original.PartOf.Parts.splice(
-                    original.PartOf.Parts.indexOf(original),
+            if(commitment.PartOf)
+                commitment.PartOf.Parts.splice(
+                    commitment.PartOf.Parts.indexOf(commitment),
                     1);
-            }
 
             this._deal.Confers.splice(
-                this._deal.Confers.indexOf(original),
+                this._deal.Confers.indexOf(commitment),
                 1);
         }
     }
