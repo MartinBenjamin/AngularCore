@@ -1,5 +1,5 @@
 <style type="text/css">
-  input[type=text].Date
+  input[type=text].Date, span.Field.Date
   {
     width: 100px;
   }
@@ -87,6 +87,14 @@
                    (dtDateModelChange)="Facility.MaturityDate = $event"
                    class="Date" /><dt-calendar (dateSelected)="Facility.MaturityDate = $event"></dt-calendar>
           </td>
+        </tr>
+        <tr>
+          <td class="RowHeading">Signed Date:</td>
+          <td><span class="Field Date"></span></td>
+        </tr>
+        <tr>
+          <td class="RowHeading">Financial Close Date:</td>
+          <td><span class="Field Date"></span></td>
         </tr>
       </table>
     </td>
