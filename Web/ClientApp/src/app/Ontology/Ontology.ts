@@ -20,7 +20,10 @@ export function Individuals(
 {
     individuals = individuals ? individuals : new Set<object>();
 
-    if(typeof individual !== "object" || individual === null || individuals.has(individual))
+    if(typeof individual !== "object" ||
+        individual === null ||
+        individual instanceof Date ||
+        individuals.has(individual))
         return;
 
     individuals.add(individual);

@@ -88,6 +88,109 @@ class PropertyService implements IPropertyService
     }
 }
 
+function Flatten(
+    object  : object,
+    objects?: Set<object>
+    ): Set<object>
+{
+    objects = objects ? objects : new Set<object>();
+
+    if(typeof object !== "object" ||
+        object === null ||
+        object instanceof Date ||
+        objects.has(object))
+        return;
+
+    objects.add(object);
+
+    for(let propertyName in object)
+        Flatten(
+            object[propertyName],
+            objects);
+
+    return objects;
+}
+
+function Copy(
+    copy  : Map<object, object>,
+    object: any
+    ): any
+{
+    if(typeof object !== "object" || object === null )
+        return object;
+
+    let objectCopy = copy.get(object);
+    if(objectCopy)
+        return objectCopy;
+
+    if(object instanceof Date)
+        return new Date(object.valueOf());
+
+    if(object instanceof Array)
+        return object.map(element => Copy(
+            copy,
+            element));
+
+    objectCopy = {};
+    copy.set(
+        object,
+        objectCopy);
+
+    for(let key in object)
+        objectCopy[key] = Copy(
+            copy,
+            object[key]);
+}
+
+function Update(
+    original: Map<object, object>,
+    copy    : any,
+    updated?: Map<object, object>
+    ): any
+{
+    updated = updated ? updated : new Map<object, object>();
+
+    if(typeof copy !== "object"
+        || copy === null
+        || copy instanceof Date)
+        return copy;
+
+    if(copy instanceof Array)
+        return copy.map(element => Update(
+            original,
+            element,
+            updated));
+
+    let object = updated.get(copy);
+
+    if(object)
+        return object;
+
+    object = original.get(copy);
+    if(!object)
+    {
+        object = {};
+        original.set(
+            copy,
+            original);
+    }
+
+    // Prevent infinite recursion.
+    updated.set(
+        copy,
+        object);
+
+    for(let key in copy)
+        object[key] = Update(
+            original,
+            copy[key],
+            updated);
+
+    return object;
+}
+
+type ApplyCallback = () => void;
+
 @Component(
     {
         selector: 'facility',
@@ -108,7 +211,8 @@ export class Facility
     private _bookingOfficeRole: Role;
     private _deal             : Deal;
     private _bookingOffice    : PartyInRole;
-    private _original         : Map<ContractualCommitment, ContractualCommitment>;
+    private _copy             : Map<object, object>;
+    private _applyCallback    : ApplyCallback;
 
     public Tabs: Tab[];
 
@@ -143,7 +247,7 @@ export class Facility
                     else
                         this._deal = deal[0];
 
-                    this._original = null;
+                    this._copy = null;
                 }));
     }
 
@@ -165,18 +269,6 @@ export class Facility
     get Facility(): facilityAgreements.Facility
     {
         return this._facility.getValue();
-    }
-
-    set Facility(
-        facility: facilityAgreements.Facility
-        )
-    {
-        if(!facility)
-            return;
-
-        this._original = new Map<ContractualCommitment, ContractualCommitment>();
-        this._facility.next(<facilityAgreements.Facility>this.CopyCommitment(facility));
-        this.ComputeBookingOffice();
     }
 
     get BookingOffice(): Branch
@@ -216,10 +308,87 @@ export class Facility
         this._bookingOffice = this.Facility.Obligors.find(obligor => obligor.Role.Id === DealRoleIdentifier.BookingOffice);
     }
 
+    Create(
+        facility     : facilityAgreements.Facility,
+        applyCallback: ApplyCallback,
+        )
+    {
+        this._applyCallback = applyCallback;
+        this._facility.next(facility);
+        this.ComputeBookingOffice();
+    }
+
+    Update(
+        facility     : facilityAgreements.Facility,
+        applyCallback: ApplyCallback,
+        )
+    {
+        this._applyCallback = applyCallback;
+        this._copy = new Map<object, object>();
+        this._facility.next(<facilityAgreements.Facility>Copy(
+            this._copy,
+            facility));
+        this.ComputeBookingOffice();
+    }
+
     Apply(): void
     {
-        this.CreateUpdateCommitment(this.Facility);
-        this.DeleteCommitment(this._original.get(this.Facility));
+        let before = new Set<ContractualCommitment>();
+        let after  = new Set<ContractualCommitment>();
+        if(this._copy)
+        {
+            this.Flatten(
+                <ContractualCommitment>this._copy.get(this.Facility),
+                before);
+
+            let original = new Map<object, object>();
+            [...this._copy.entries()].forEach(
+                entry => original.set(
+                    entry[1],
+                    entry[0]));
+
+            Update(
+                original,
+                this.Facility);
+
+            this.Flatten(<
+                ContractualCommitment>this._copy.get(this.Facility),
+                after);
+        }
+        else
+            this.Flatten(
+                this.Facility,
+                after);
+
+        [...before]
+            .filter(commitment => !after.has(commitment))
+            .forEach(
+                commitment =>
+                {
+                    if(commitment.Contract)
+                        commitment.Contract.Confers.splice(
+                            commitment.Contract.Confers.indexOf(commitment),
+                            1);
+
+                    this._deal.Confers.splice(
+                        this._deal.Confers.indexOf(commitment),
+                        1);
+                });
+
+        [...after]
+            .filter(commitment => !before.has(commitment))
+            .forEach(
+                commitment =>
+                {
+                    if(commitment.Contract)
+                        commitment.Contract.Confers.push(commitment);
+
+                    this._deal.Confers.push(commitment);
+                });
+
+        if(this._applyCallback)
+            this._applyCallback();
+
         this.Close();
     }
 
@@ -231,7 +400,7 @@ export class Facility
     Close(): void
     {
         this._facility.next(null);
-        this._original      = null;
+        this._copy          = null;
         this._bookingOffice = null;
     }
 
@@ -243,99 +412,20 @@ export class Facility
         return lhs === rhs || (lhs && rhs && lhs.Id === rhs.Id);
     }
 
-    private CopyCommitment(
-        commitment : ContractualCommitment,
-        partOfCopy?: ContractualCommitment
-        ): ContractualCommitment
+    Flatten(
+        commitment  : ContractualCommitment,
+        commitments?: Set<ContractualCommitment>
+        ): Set<ContractualCommitment>
     {
-        let copy = <ContractualCommitment>{ ...commitment, PartOf: partOfCopy };
-        this._original.set(
-            copy,
-            commitment);
+        commitments = commitments ? commitments : new Set<ContractualCommitment>();
 
-        if(copy.PartOf)
-            copy.PartOf.Parts.push(copy);
+        commitments.add(commitment);
 
         if(commitment.Parts)
-            copy.Parts = commitment.Parts.map(
-                part => this.CopyCommitment(
-                    part,
-                    copy));
-        return copy;
-    }
-
-    private CreateUpdateCommitment(
-        copy: ContractualCommitment
-        )
-    {
-        let commitment = this._original.get(copy);
-        if(!commitment)
-        {
-            commitment = <ContractualCommitment>
-            {
-                Id    : EmptyGuid,
-                Parts : [],
-                PartOf: copy.PartOf ? this._original.get(copy.PartOf) : null
-            };
-
-            this._original.set(
-                copy,
-                commitment);
-
-            if(commitment.PartOf)
-                commitment.PartOf.Parts.push(commitment);
-        }
-
-        if(commitment.Contract && commitment.Contract.Confers.indexOf(commitment) === -1)
-            commitment.Contract.Confers.push(commitment);
-
-        if(this._deal.Confers.indexOf(commitment) === -1)
-            this._deal.Confers.push(commitment);
-
-        for(let key in copy)
-            if(['Parts', 'PartOf'].indexOf(key) === -1)
-                commitment[key] = copy[key];
-
-        for(let partCopy of copy.Parts)
-            this.CreateUpdateCommitment(partCopy);
-    }
-
-    private DeleteCommitment(
-        commitment: ContractualCommitment,
-        copyMap  ?: Map<ContractualCommitment, ContractualCommitment>
-        )
-    {
-        if(!copyMap)
-        {
-            copyMap = new Map<ContractualCommitment, ContractualCommitment>();
-            let populate = (commitment: ContractualCommitment) =>
-            {
-                copyMap.set(
-                    this._original.get(commitment),
-                    commitment);
-
-                if(commitment.Parts)
-                    commitment.Parts.forEach(populate)
-            };
-            populate(this.Facility);
-        }
-
-        for(let part of commitment.Parts)
-            this.DeleteCommitment(
+            commitment.Parts.forEach(part => this.Flatten(
                 part,
-                copyMap);
+                commitments));
 
-        let copy = copyMap.get(commitment);
-        if(!copy)
-        {
-            if(commitment.PartOf)
-                commitment.PartOf.Parts.splice(
-                    commitment.PartOf.Parts.indexOf(commitment),
-                    1);
-
-            this._deal.Confers.splice(
-                this._deal.Confers.indexOf(commitment),
-                1);
-        }
+        return commitments;
     }
 }

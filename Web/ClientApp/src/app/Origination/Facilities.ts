@@ -43,6 +43,11 @@ export class Facilities implements OnDestroy
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
+    get facilities(): facilityAgreements.Facility[]
+    {
+        return this._facilities;
+    }
+
     Add(): void
     {
         let facility = <facilityAgreements.Facility>
@@ -81,8 +86,9 @@ export class Facilities implements OnDestroy
         (<any>lenderParticipation).$type = 'Web.Model.LenderParticipation, Web';
         lenderParticipation.PartOf.Parts.push(lenderParticipation);
 
-        this._facility.Facility = facility;
-
+        this._facility.Create(
+            facility,
+            () => this.ComputeFacilities());
     }
 
     private ComputeFacilities(): void
