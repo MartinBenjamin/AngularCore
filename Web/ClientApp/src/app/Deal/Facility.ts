@@ -213,7 +213,7 @@ export class Facility
     private _bookingOfficeRole: Role;
     private _deal             : Deal;
     private _bookingOffice    : PartyInRole;
-    private _copy             : Map<object, object>;
+    private _copy             : Map<ContractualCommitment, ContractualCommitment>;
     private _applyCallback    : ApplyCallback;
 
     public Tabs: Tab[];
@@ -326,10 +326,8 @@ export class Facility
         )
     {
         this._applyCallback = applyCallback;
-        this._copy = new Map<object, object>();
-        this._facility.next(<facilityAgreements.Facility>Copy(
-            this._copy,
-            facility));
+        this._copy = new Map<ContractualCommitment, ContractualCommitment>;
+        this._facility.next(<facilityAgreements.Facility>this.CopyCommitment(facility));
         this.ComputeBookingOffice();
     }
 
@@ -339,7 +337,7 @@ export class Facility
         let after  = new Set<ContractualCommitment>();
         if(this._copy)
         {
-            let original = new Map<object, object>();
+            let original = new Map<ContractualCommitment, ContractualCommitment>();
             [...this._copy.entries()].forEach(
                 entry => original.set(
                     entry[1],
@@ -350,7 +348,7 @@ export class Facility
                 before);
 
 
-            Update(
+            this.UpdateCommitment(
                 original,
                 this.Facility);
 
@@ -413,6 +411,62 @@ export class Facility
         )
     {
         return lhs === rhs || (lhs && rhs && lhs.Id === rhs.Id);
+    }
+
+    private CopyCommitment(
+        commitment : ContractualCommitment
+        ): ContractualCommitment
+    {
+        let copy = this._copy.get(commitment);
+        if(copy)
+            return copy;
+
+        copy = <ContractualCommitment>{ ...commitment };
+
+        this._copy.set(
+            commitment,
+            copy);
+
+        if(commitment.PartOf)
+            copy.PartOf = this.CopyCommitment(commitment.PartOf);
+
+        if(commitment.Parts)
+            copy.Parts = commitment.Parts.map(
+                part => this.CopyCommitment(part));
+
+        return copy;
+    }
+
+    private UpdateCommitment(
+        original: Map<ContractualCommitment, ContractualCommitment>,
+        copy    : ContractualCommitment
+        ): ContractualCommitment
+    {
+        let commitment = original.get(copy);
+        if(!commitment)
+        {
+            commitment = <ContractualCommitment>
+                {
+                    Id    : EmptyGuid,
+                    Parts : [],
+                    PartOf: copy.PartOf ? original.get(copy.PartOf) : null
+                };
+
+            original.set(
+                copy,
+                commitment);
+        }
+
+        for(let key in copy)
+            if(['Parts', 'PartOf'].indexOf(key) === -1)
+                commitment[key] = copy[key];
+
+        if(copy.Parts)
+            commitment.Parts = copy.Parts.map(part => this.UpdateCommitment(
+                original,
+                part));
+
+        return commitment;
     }
 
     Flatten(
