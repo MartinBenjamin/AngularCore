@@ -108,7 +108,7 @@ export class Facility
     private _bookingOfficeRole: Role;
     private _deal             : Deal;
     private _bookingOffice    : PartyInRole;
-    private _original         : Map<ContractualCommitment, ContractualCommitment;
+    private _original         : Map<ContractualCommitment, ContractualCommitment>;
 
     public Tabs: Tab[];
 
