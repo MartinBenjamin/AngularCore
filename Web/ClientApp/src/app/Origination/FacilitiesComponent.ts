@@ -9,9 +9,9 @@ import * as facilityAgreements from '../FacilityAgreements';
 @Component(
     {
         selector: 'facilities',
-        templateUrl: './Facilities.html'
+        templateUrl: './FacilitiesComponent.html'
     })
-export class Facilities implements OnDestroy
+export class FacilitiesComponent implements OnDestroy
 {
     private _subscriptions: Subscription[] = [];
     private _deal         : Deal;
@@ -44,7 +44,7 @@ export class Facilities implements OnDestroy
     }
 
     // TODO add Component suffix to every component.
-    get facilities(): facilityAgreements.Facility[]
+    get Facilities(): facilityAgreements.Facility[]
     {
         return this._facilities;
     }

@@ -23,6 +23,6 @@ export class UtcDatePipe implements PipeTransform
         date: Date
         ): string
     {
-        return this._formatUTCDate(date);
+        return date instanceof Date ? this._formatUTCDate(date) : '';
     }
 }
