@@ -92,6 +92,15 @@ export class FacilitiesComponent implements OnDestroy
             () => this.ComputeFacilities());
     }
 
+    Update(
+        facility: facilityAgreements.Facility
+        )
+    {
+        this._facility.Update(
+            facility,
+            () => this.ComputeFacilities());
+    }
+
     private ComputeFacilities(): void
     {
         if(!this._deal)

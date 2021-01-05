@@ -140,6 +140,8 @@ function Copy(
         objectCopy[key] = Copy(
             copy,
             object[key]);
+
+    return objectCopy;
 }
 
 function Update(
@@ -337,22 +339,23 @@ export class Facility
         let after  = new Set<ContractualCommitment>();
         if(this._copy)
         {
-            this.Flatten(
-                <ContractualCommitment>this._copy.get(this.Facility),
-                before);
-
             let original = new Map<object, object>();
             [...this._copy.entries()].forEach(
                 entry => original.set(
                     entry[1],
                     entry[0]));
 
+            this.Flatten(
+                <ContractualCommitment>original.get(this.Facility),
+                before);
+
+
             Update(
                 original,
                 this.Facility);
 
             this.Flatten(<
-                ContractualCommitment>this._copy.get(this.Facility),
+                ContractualCommitment>original.get(this.Facility),
                 after);
         }
         else

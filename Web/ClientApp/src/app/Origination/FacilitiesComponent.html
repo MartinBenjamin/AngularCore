@@ -35,7 +35,7 @@
     <td></td>
     <td>{{facility.Expected1StDrawdownDate|utcDate}}</td>
     <td>{{facility.AvailabilityPeriodEndDate|utcDate}}</td>
-    <td></td>
+    <td><a (click)="Update(facility)">edit</a></td>
   </tr>
   <tr><td *ngIf="!Facilities.length" colspan="16" style="text-align: center;">No Credit Risk Tranches</td></tr>
 </table>
