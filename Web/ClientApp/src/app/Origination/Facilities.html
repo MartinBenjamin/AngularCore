@@ -30,11 +30,11 @@
     <td></td>
     <td></td>
     <td></td>
+    <td>{{facility.MaturityDate|utcDate}}</td>
     <td></td>
     <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td>{{facility.Expected1StDrawdownDate|utcDate}}</td>
+    <td>{{facility.AvailabilityPeriodEndDate|utcDate}}</td>
     <td></td>
   </tr>
   <tr><td *ngIf="!facilities.length" colspan="16" style="text-align: center;">No Credit Risk Tranches</td></tr>
