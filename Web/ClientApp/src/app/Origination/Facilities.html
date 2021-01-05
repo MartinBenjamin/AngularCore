@@ -8,7 +8,7 @@
     <th>Name</th>
     <th>Ccy</th>
     <th>Total&nbsp;Debt<br />Size</th>
-    <th>MUFG<br />Underwrite<br />Amount</th>
+    <th>Bank<br />Underwrite<br />Amount</th>
     <th>Credit Sought<br />Limit</th>
     <th>Anticipated<br />Hold<br />Amount</th>
     <th>Actual<br />Allocation</th>
@@ -24,8 +24,20 @@
     <td></td>
     <td></td>
     <td>{{facility.Name}}</td>
+    <td>{{facility.Currency?.Id}}</td>
+    <td>{{facility.TotalCommitments|amount}}</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
   </tr>
-  <tr><td colspan="16" style="text-align: center;">No Credit Risk Tranches</td></tr>
+  <tr><td *ngIf="!facilities.length" colspan="16" style="text-align: center;">No Credit Risk Tranches</td></tr>
 </table>
 <div style="margin-top: 5px;">
   <select>

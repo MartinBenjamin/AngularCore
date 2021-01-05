@@ -43,6 +43,7 @@ export class Facilities implements OnDestroy
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
+    // TODO add Component suffix to every component.
     get facilities(): facilityAgreements.Facility[]
     {
         return this._facilities;
