@@ -196,16 +196,16 @@ type ApplyCallback = () => void;
 @Component(
     {
         selector: 'facility',
-        templateUrl: './Facility.html',
+        templateUrl: './FacilityComponent.html',
         providers:
             [
                 {
                     provide: FacilityProvider,
-                    useExisting: forwardRef(() => Facility)
+                    useExisting: forwardRef(() => FacilityComponent)
                 }
             ]
     })
-export class Facility
+export class FacilityComponent
     extends FacilityProvider
     implements OnDestroy
 {
@@ -326,7 +326,7 @@ export class Facility
         )
     {
         this._applyCallback = applyCallback;
-        this._copy = new Map<ContractualCommitment, ContractualCommitment>;
+        this._copy = new Map<ContractualCommitment, ContractualCommitment>();
         this._facility.next(<facilityAgreements.Facility>this.CopyCommitment(facility));
         this.ComputeBookingOffice();
     }

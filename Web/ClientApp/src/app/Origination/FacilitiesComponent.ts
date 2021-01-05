@@ -1,10 +1,10 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { EmptyGuid } from '../CommonDomainObjects';
-import { Facility } from '../Deal/Facility';
+import { FacilityComponent } from '../Deal/FacilityComponent';
 import { DealProvider } from '../DealProvider';
 import { Deal } from '../Deals';
-import * as facilityAgreements from '../FacilityAgreements';
+import { Facility, LenderParticipation } from '../FacilityAgreements';
 
 @Component(
     {
@@ -15,10 +15,10 @@ export class FacilitiesComponent implements OnDestroy
 {
     private _subscriptions: Subscription[] = [];
     private _deal         : Deal;
-    private _facilities   : facilityAgreements.Facility[]
+    private _facilities   : Facility[]
 
     @ViewChild('facility')
-    private _facility: Facility;
+    private _facilityComponent: FacilityComponent;
 
     constructor(
         dealProvider: DealProvider
@@ -44,14 +44,14 @@ export class FacilitiesComponent implements OnDestroy
     }
 
     // TODO add Component suffix to every component.
-    get Facilities(): facilityAgreements.Facility[]
+    get Facilities(): Facility[]
     {
         return this._facilities;
     }
 
     Add(): void
     {
-        let facility = <facilityAgreements.Facility>
+        let facility = <Facility>
         {
             Id                       : EmptyGuid,
             Obligors                 : [],
@@ -70,7 +70,7 @@ export class FacilitiesComponent implements OnDestroy
 
         (<any>facility).$type = 'Web.Model.Facility, Web';
 
-        let lenderParticipation = <facilityAgreements.LenderParticipation>
+        let lenderParticipation = <LenderParticipation>
         {
             Id                   : EmptyGuid,
             Obligors             : [],
@@ -87,16 +87,16 @@ export class FacilitiesComponent implements OnDestroy
         (<any>lenderParticipation).$type = 'Web.Model.LenderParticipation, Web';
         lenderParticipation.PartOf.Parts.push(lenderParticipation);
 
-        this._facility.Create(
+        this._facilityComponent.Create(
             facility,
             () => this.ComputeFacilities());
     }
 
     Update(
-        facility: facilityAgreements.Facility
+        facility: Facility
         )
     {
-        this._facility.Update(
+        this._facilityComponent.Update(
             facility,
             () => this.ComputeFacilities());
     }
@@ -109,6 +109,6 @@ export class FacilitiesComponent implements OnDestroy
             return;
         }
 
-        this._facilities = <facilityAgreements.Facility[]>this._deal.Confers.filter(commitment => (<any>commitment).$type == 'Web.Model.Facility, Web');
+        this._facilities = <Facility[]>this._deal.Confers.filter(commitment => (<any>commitment).$type == 'Web.Model.Facility, Web');
     }
 }
