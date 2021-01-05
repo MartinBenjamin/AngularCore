@@ -16,7 +16,7 @@ import { LegalEntityFinder, LegalEntityFinderButtons } from '../LegalEntityFinde
 import { Common } from './Common';
 import { DealGeographicRegion } from './DealGeographicRegion';
 import { Exclusivity } from './Exclusivity';
-import { FacilitiesComponent } from './FacilitiesComponent';
+import { Facilities } from './Facilities';
 import { KeyCounterparties } from './KeyCounterparties';
 import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
@@ -31,7 +31,7 @@ import { TransactionDetails } from './TransactionDetails';
                 Common,
                 DealGeographicRegion,
                 Exclusivity,
-                FacilitiesComponent,
+                Facilities,
                 FacilityComponent,
                 FacilityTab,
                 FacilityTab1,

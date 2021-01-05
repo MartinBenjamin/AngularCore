@@ -10,9 +10,9 @@ import { ContractualCommitment } from '../Contracts';
 @Component(
     {
         selector: 'facilities',
-        templateUrl: './FacilitiesComponent.html'
+        templateUrl: './Facilities.html'
     })
-export class FacilitiesComponent implements OnDestroy
+export class Facilities implements OnDestroy
 {
     private _subscriptions: Subscription[] = [];
     private _deal         : Deal;
@@ -115,7 +115,7 @@ export class FacilitiesComponent implements OnDestroy
             .map(commitment => <[Facility, LenderParticipation]>
                 [
                     commitment,
-                    (<ContractualCommitment>commitment).Parts.find(commitment => (<any>commitment).$type = 'Web.Model.LenderParticipation, Web')
+                    (<ContractualCommitment>commitment).Parts.find(commitment => (<any>commitment).$type == 'Web.Model.LenderParticipation, Web')
                 ]);
     }
 }
