@@ -23,19 +23,19 @@
     <td></td>
     <td></td>
     <td></td>
-    <td>{{facility.Name}}</td>
-    <td>{{facility.Currency?.Id}}</td>
-    <td>{{facility.TotalCommitments|amount}}</td>
+    <td>{{facility[0].Name}}</td>
+    <td>{{facility[0].Currency?.Id}}</td>
+    <td class="Amount">{{facility[0].TotalCommitments|amount}}</td>
+    <td class="Amount">{{facility[1].UnderwriteAmount|amount}}</td>
+    <td class="Amount">{{facility[1].CreditSoughtLimit|amount}}</td>
+    <td class="Amount">{{facility[1].AnticipatedHoldAmount|amount}}</td>
+    <td class="Amount">{{facility[1].ActualAllocation|amount}}</td>
+    <td>{{facility[0].MaturityDate|utcDate}}</td>
     <td></td>
     <td></td>
-    <td></td>
-    <td></td>
-    <td>{{facility.MaturityDate|utcDate}}</td>
-    <td></td>
-    <td></td>
-    <td>{{facility.Expected1StDrawdownDate|utcDate}}</td>
-    <td>{{facility.AvailabilityPeriodEndDate|utcDate}}</td>
-    <td><a (click)="Update(facility)">edit</a></td>
+    <td>{{facility[0].Expected1StDrawdownDate|utcDate}}</td>
+    <td>{{facility[0].AvailabilityPeriodEndDate|utcDate}}</td>
+    <td><a (click)="Update(facility[0])">edit</a></td>
   </tr>
   <tr><td *ngIf="!Facilities.length" colspan="16" style="text-align: center;">No Credit Risk Tranches</td></tr>
 </table>

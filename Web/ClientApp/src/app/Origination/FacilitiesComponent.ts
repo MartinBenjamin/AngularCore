@@ -5,6 +5,7 @@ import { FacilityComponent } from '../Deal/FacilityComponent';
 import { DealProvider } from '../DealProvider';
 import { Deal } from '../Deals';
 import { Facility, LenderParticipation } from '../FacilityAgreements';
+import { ContractualCommitment } from '../Contracts';
 
 @Component(
     {
@@ -15,7 +16,7 @@ export class FacilitiesComponent implements OnDestroy
 {
     private _subscriptions: Subscription[] = [];
     private _deal         : Deal;
-    private _facilities   : Facility[]
+    private _facilities   : [Facility, LenderParticipation][]
 
     @ViewChild('facility')
     private _facilityComponent: FacilityComponent;
@@ -44,7 +45,7 @@ export class FacilitiesComponent implements OnDestroy
     }
 
     // TODO add Component suffix to every component.
-    get Facilities(): Facility[]
+    get Facilities(): [Facility, LenderParticipation][]
     {
         return this._facilities;
     }
@@ -109,6 +110,12 @@ export class FacilitiesComponent implements OnDestroy
             return;
         }
 
-        this._facilities = <Facility[]>this._deal.Confers.filter(commitment => (<any>commitment).$type == 'Web.Model.Facility, Web');
+        this._facilities = this._deal.Confers
+            .filter(commitment => (<any>commitment).$type == 'Web.Model.Facility, Web')
+            .map(commitment =>
+                [
+                    <Facility>commitment,
+                    <LenderParticipation>(<ContractualCommitment>commitment).Parts.find(commitment => (<any>commitment).$type = 'Web.Model.LenderParticipation, Web')
+                ]);
     }
 }
