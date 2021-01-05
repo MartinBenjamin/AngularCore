@@ -7,7 +7,7 @@ import { ErrorModule } from '../Components/ErrorModule';
 import { NumberModule } from '../Components/NumberModule';
 import { TabbedViewModule } from '../Components/TabbedView';
 import { Borrowers } from '../Deal/Borrowers';
-import { FacilityComponent } from '../Deal/FacilityComponent';
+import { Facility } from '../Deal/Facility';
 import { FacilityTab } from '../Deal/FacilityTab';
 import { FacilityTab1 } from '../Deal/FacilityTab1';
 import { GeographicRegionSelector } from '../Deal/GeographicRegionSelector';
@@ -32,7 +32,7 @@ import { TransactionDetails } from './TransactionDetails';
                 DealGeographicRegion,
                 Exclusivity,
                 Facilities,
-                FacilityComponent,
+                Facility,
                 FacilityTab,
                 FacilityTab1,
                 GeographicRegionSelector,

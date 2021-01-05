@@ -196,16 +196,16 @@ type ApplyCallback = () => void;
 @Component(
     {
         selector: 'facility',
-        templateUrl: './FacilityComponent.html',
+        templateUrl: './Facility.html',
         providers:
             [
                 {
                     provide: FacilityProvider,
-                    useExisting: forwardRef(() => FacilityComponent)
+                    useExisting: forwardRef(() => Facility)
                 }
             ]
     })
-export class FacilityComponent
+export class Facility
     extends FacilityProvider
     implements OnDestroy
 {

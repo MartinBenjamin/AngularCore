@@ -1,7 +1,7 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { EmptyGuid } from '../CommonDomainObjects';
-import { FacilityComponent } from '../Deal/FacilityComponent';
+import { Facility as FacilityComponent } from '../Deal/Facility';
 import { DealProvider } from '../DealProvider';
 import { Deal } from '../Deals';
 import { Facility, LenderParticipation } from '../FacilityAgreements';
