@@ -1,6 +1,6 @@
 import { } from 'jasmine';
 import { assertBuilder } from './Ontology/assertBuilder';
-import { Alternative, Empty, OneOrMore, Property, Query, Sequence, ZeroOrMore, ZeroOrOne } from './PathExpression';
+import { Any, Alternative, Empty, OneOrMore, Property, Query, Sequence, ZeroOrMore, ZeroOrOne } from './PathExpression';
 
 describe(
     'Path Expression',
@@ -12,10 +12,10 @@ describe(
             {
                 let o = { A: {}, B: [{}, { B: [{}] }], C: {} };
                 let assert = assertBuilder(
-                    'o', 'Alternative', 'Empty', 'OneOrMore', 'Property', 'Query', 'Sequence', 'ZeroOrMore', 'ZeroOrOne')
-                    (o, Alternative, Empty, OneOrMore, Property, Query, Sequence, ZeroOrMore, ZeroOrOne);
+                    'o', 'Any', 'Alternative', 'Empty', 'OneOrMore', 'Property', 'Query', 'Sequence', 'ZeroOrMore', 'ZeroOrOne')
+                    (o, Any, Alternative, Empty, OneOrMore, Property, Query, Sequence, ZeroOrMore, ZeroOrOne);
 
-                console.log(Query(o, new Property('Parts')).size);
+                console.log(Query(o,Any).size);
                 assert(`Query(o, Empty).size === 1`);
                 assert(`Query(o, Empty).has(o)`);
                 assert(`Query(o, new Property('A')).size === 1`);
@@ -41,5 +41,10 @@ describe(
                 assert(`Query(o, new OneOrMore(new Property('B'))).has(o.B[0])`);
                 assert(`Query(o, new OneOrMore(new Property('B'))).has(o.B[1])`);
                 assert(`Query(o, new OneOrMore(new Property('B'))).has(o.B[1].B[0])`);
+                assert(`Query(o, Any).size === 4`);
+                assert(`Query(o, Any).has(o.A)`);
+                assert(`Query(o, Any).has(o.B[0])`);
+                assert(`Query(o, Any).has(o.B[1])`);
+                assert(`Query(o, Any).has(o.C)`);
             });
     });
