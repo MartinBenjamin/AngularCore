@@ -16,12 +16,12 @@ export interface Nfa
     Final  : State;
 }
 
-export interface IPathExpression
+export interface IRegularPathExpression
 {
     Nfa(initialState?: State): Nfa;
 }
 
-export const Empty = <IPathExpression>
+export const Empty = <IRegularPathExpression>
 {
     Nfa: (
         initialState: State
@@ -39,7 +39,7 @@ export const Empty = <IPathExpression>
     }
 }
 
-export class Property implements IPathExpression
+export class Property implements IRegularPathExpression
 {
     constructor(
         private _property: string
@@ -65,10 +65,10 @@ export class Property implements IPathExpression
 
 export const Any = new Property('.');
 
-export class Alternative implements IPathExpression
+export class Alternative implements IRegularPathExpression
 {
     constructor(
-        private _pathExpressions: IPathExpression[]
+        private _regularPathExpressions: IRegularPathExpression[]
         )
     {
     }
@@ -83,17 +83,17 @@ export class Alternative implements IPathExpression
                 Final: <State>{}
             };
 
-        let innerNfas = this._pathExpressions.map(pathExpression => pathExpression.Nfa());
+        let innerNfas = this._regularPathExpressions.map(pathExpression => pathExpression.Nfa());
         nfa.Initial.EpsilonTransitions = innerNfas.map(innerNfa => innerNfa.Initial);
         innerNfas.forEach(innerNfa => innerNfa.Final.EpsilonTransitions = [nfa.Final]);
         return nfa;
     }
 }
 
-export class Sequence implements IPathExpression
+export class Sequence implements IRegularPathExpression
 {
     constructor(
-        private _pathExpressions: IPathExpression[]
+        private _regularPathExpressions: IRegularPathExpression[]
         )
     {
     }
@@ -102,17 +102,17 @@ export class Sequence implements IPathExpression
         initialState: State
         ): Nfa
     {
-        let nfa = this._pathExpressions[0].Nfa(initialState);
-        for(let index = 1; index < this._pathExpressions.length; ++index)
-            nfa.Final = this._pathExpressions[index].Nfa(nfa.Final).Final;
+        let nfa = this._regularPathExpressions[0].Nfa(initialState);
+        for(let index = 1; index < this._regularPathExpressions.length; ++index)
+            nfa.Final = this._regularPathExpressions[index].Nfa(nfa.Final).Final;
         return nfa;
     }
 }
 
-export class ZeroOrOne implements IPathExpression
+export class ZeroOrOne implements IRegularPathExpression
 {
     constructor(
-        private _pathExpression: IPathExpression
+        private _regularPathExpression: IRegularPathExpression
         )
     {
     }
@@ -127,17 +127,17 @@ export class ZeroOrOne implements IPathExpression
                 Final: <State>{}
             };
 
-        let innerNfa = this._pathExpression.Nfa();
+        let innerNfa = this._regularPathExpression.Nfa();
         nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         innerNfa.Final.EpsilonTransitions = [nfa.Final];
         return nfa;
     }
 }
 
-export class ZeroOrMore implements IPathExpression
+export class ZeroOrMore implements IRegularPathExpression
 {
     constructor(
-        private _pathExpression: IPathExpression
+        private _regularPathExpression: IRegularPathExpression
         )
     {
     }
@@ -152,17 +152,17 @@ export class ZeroOrMore implements IPathExpression
                 Final: <State>{}
             };
 
-        let innerNfa = this._pathExpression.Nfa();
+        let innerNfa = this._regularPathExpression.Nfa();
         nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         return nfa;
     }
 }
 
-export class OneOrMore implements IPathExpression
+export class OneOrMore implements IRegularPathExpression
 {
     constructor(
-        private _pathExpression: IPathExpression
+        private _regularPathExpression: IRegularPathExpression
         )
     {
     }
@@ -177,7 +177,7 @@ export class OneOrMore implements IPathExpression
                 Final: <State>{}
             };
 
-        let innerNfa = this._pathExpression.Nfa();
+        let innerNfa = this._regularPathExpression.Nfa();
         nfa.Initial.EpsilonTransitions = [innerNfa.Initial];
         innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         return nfa;
@@ -185,12 +185,12 @@ export class OneOrMore implements IPathExpression
 }
 
 export function Query(
-    object        : object,
-    pathExpression: IPathExpression
+    object               : object,
+    regularPathExpression: IRegularPathExpression
     ): Set<any>
 {
     let result = new Set<any>();
-    let nfa = pathExpression.Nfa();
+    let nfa = regularPathExpression.Nfa();
     let traversals: [State, object][] = [[nfa.Initial, object]];
 
     while(traversals.length)
@@ -230,12 +230,12 @@ export function Query(
 }
 
 export function QueryPaths(
-    object        : object,
-    pathExpression: IPathExpression
+    object               : object,
+    regularPathExpression: IRegularPathExpression
     ): Path[]
 {
     let paths: Path[] = [];
-    let nfa = pathExpression.Nfa();
+    let nfa = regularPathExpression.Nfa();
     let traversals: Traversal[] = [[nfa.Initial, [[null, object]]]];
 
     while(traversals.length)
