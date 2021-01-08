@@ -1,6 +1,6 @@
 import { } from 'jasmine';
 import { assertBuilder } from './Ontology/assertBuilder';
-import { Any, Alternative, Empty, OneOrMore, Property, Query, Sequence, ZeroOrMore, ZeroOrOne } from './PathExpression';
+import { Any, Alternative, Empty, OneOrMore, Property, Query, Sequence, ZeroOrMore, ZeroOrOne } from './RegularPathExpression';
 
 describe(
     'Path Expression',

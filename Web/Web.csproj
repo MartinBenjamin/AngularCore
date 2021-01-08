@@ -245,10 +245,10 @@
     <None Remove="ClientApp\src\app\Origination\Sponsors.ts" />
     <None Remove="ClientApp\src\app\Origination\TransactionDetails.ts" />
     <None Remove="ClientApp\src\app\Parties.ts" />
-    <None Remove="ClientApp\src\app\PathExpression.Spec.ts" />
-    <None Remove="ClientApp\src\app\PathExpression.ts" />
     <None Remove="ClientApp\src\app\People.ts" />
     <None Remove="ClientApp\src\app\ReferenceSerialisation.ts" />
+    <None Remove="ClientApp\src\app\RegularPathExpression.Spec.ts" />
+    <None Remove="ClientApp\src\app\RegularPathExpression.ts" />
     <None Remove="ClientApp\src\app\Roles.ts" />
     <None Remove="ClientApp\src\app\RoleServiceProvider.ts" />
     <None Remove="ClientApp\src\app\Time.ts" />
@@ -479,8 +479,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\Deal\Sponsors.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\TransactionDetails.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Parties.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\PathExpression.Spec.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\PathExpression.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\RegularPathExpression.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\RegularPathExpression.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\People.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\ReferenceSerialisation.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Roles.ts" />
