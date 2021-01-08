@@ -42,7 +42,7 @@ export const Empty = <IRegularPathExpression>
 export class Property implements IRegularPathExpression
 {
     constructor(
-        private _property: string
+        public Name: string
         )
     {
     }
@@ -57,7 +57,7 @@ export class Property implements IRegularPathExpression
                 Final  : <State>{}
             };
 
-        nfa.Initial.Transitions = [[this._property, nfa.Final]];
+        nfa.Initial.Transitions = [[this.Name, nfa.Final]];
 
         return nfa;
     }
@@ -68,7 +68,7 @@ export const Any = new Property('.');
 export class Alternative implements IRegularPathExpression
 {
     constructor(
-        private _regularPathExpressions: IRegularPathExpression[]
+        public RegularPathExpressions: IRegularPathExpression[]
         )
     {
     }
@@ -83,7 +83,7 @@ export class Alternative implements IRegularPathExpression
                 Final: <State>{}
             };
 
-        let innerNfas = this._regularPathExpressions.map(pathExpression => pathExpression.Nfa());
+        let innerNfas = this.RegularPathExpressions.map(pathExpression => pathExpression.Nfa());
         nfa.Initial.EpsilonTransitions = innerNfas.map(innerNfa => innerNfa.Initial);
         innerNfas.forEach(innerNfa => innerNfa.Final.EpsilonTransitions = [nfa.Final]);
         return nfa;
@@ -93,7 +93,7 @@ export class Alternative implements IRegularPathExpression
 export class Sequence implements IRegularPathExpression
 {
     constructor(
-        private _regularPathExpressions: IRegularPathExpression[]
+        public RegularPathExpressions: IRegularPathExpression[]
         )
     {
     }
@@ -102,9 +102,9 @@ export class Sequence implements IRegularPathExpression
         initialState: State
         ): Nfa
     {
-        let nfa = this._regularPathExpressions[0].Nfa(initialState);
-        for(let index = 1; index < this._regularPathExpressions.length; ++index)
-            nfa.Final = this._regularPathExpressions[index].Nfa(nfa.Final).Final;
+        let nfa = this.RegularPathExpressions[0].Nfa(initialState);
+        for(let index = 1; index < this.RegularPathExpressions.length; ++index)
+            nfa.Final = this.RegularPathExpressions[index].Nfa(nfa.Final).Final;
         return nfa;
     }
 }
@@ -112,7 +112,7 @@ export class Sequence implements IRegularPathExpression
 export class ZeroOrOne implements IRegularPathExpression
 {
     constructor(
-        private _regularPathExpression: IRegularPathExpression
+        public RegularPathExpression: IRegularPathExpression
         )
     {
     }
@@ -127,7 +127,7 @@ export class ZeroOrOne implements IRegularPathExpression
                 Final: <State>{}
             };
 
-        let innerNfa = this._regularPathExpression.Nfa();
+        let innerNfa = this.RegularPathExpression.Nfa();
         nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         innerNfa.Final.EpsilonTransitions = [nfa.Final];
         return nfa;
@@ -137,7 +137,7 @@ export class ZeroOrOne implements IRegularPathExpression
 export class ZeroOrMore implements IRegularPathExpression
 {
     constructor(
-        private _regularPathExpression: IRegularPathExpression
+        public RegularPathExpression: IRegularPathExpression
         )
     {
     }
@@ -152,7 +152,7 @@ export class ZeroOrMore implements IRegularPathExpression
                 Final: <State>{}
             };
 
-        let innerNfa = this._regularPathExpression.Nfa();
+        let innerNfa = this.RegularPathExpression.Nfa();
         nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         return nfa;
@@ -162,7 +162,7 @@ export class ZeroOrMore implements IRegularPathExpression
 export class OneOrMore implements IRegularPathExpression
 {
     constructor(
-        private _regularPathExpression: IRegularPathExpression
+        public RegularPathExpression: IRegularPathExpression
         )
     {
     }
@@ -177,7 +177,7 @@ export class OneOrMore implements IRegularPathExpression
                 Final: <State>{}
             };
 
-        let innerNfa = this._regularPathExpression.Nfa();
+        let innerNfa = this.RegularPathExpression.Nfa();
         nfa.Initial.EpsilonTransitions = [innerNfa.Initial];
         innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         return nfa;

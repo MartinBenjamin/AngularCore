@@ -1,4 +1,4 @@
-import { IRegularPathExpression, Property } from "./RegularPathExpression";
+import { IRegularPathExpression, Property, Alternative, Sequence, ZeroOrOne } from "./RegularPathExpression";
 
 enum InstructionType
 {
@@ -7,11 +7,8 @@ enum InstructionType
     Jump
 }
 
-type Label = number;
-
 interface Instruction
 {
-    Label: Label;
     Type : InstructionType
 }
 
@@ -22,12 +19,12 @@ interface Cmp extends Instruction
 
 interface Jump extends Instruction
 {
-    TargetLabel: Label;
+    TargetIndex: number;
 }
 
 interface Fork extends Instruction
 {
-    TargetLabel: Label;
+    TargetIndex: number;
 }
 
 type Program = Instruction[];
@@ -42,16 +39,6 @@ interface Thread
 function Query(): Set<object>
 {
     let program: Program;
-    let labeledInstructionIndex = new Map<Label, number>();
-    for(let instructionIndex = 0; instructionIndex < program.length; ++instructionIndex)
-    {
-        let instruction = program[instructionIndex];
-        if(instruction.Label !== null)
-            labeledInstructionIndex.set(
-                instruction.Label,
-                instructionIndex);
-    }
-
     let result = new Set<any>();
 
     let threads: Thread[] = [];
@@ -99,14 +86,14 @@ function Query(): Set<object>
 
             case InstructionType.Fork:
                 let fork = <Fork>instruction;
-                threads.push(<Thread>{ ...thread, InstructionIndex: labeledInstructionIndex.get(fork.TargetLabel) });
+                threads.push(<Thread>{ ...thread, InstructionIndex: fork.TargetIndex });
                 thread.InstructionIndex += 1;
                 threads.push(thread);
                 break;
 
             case InstructionType.Jump:
                 let jump = (<Jump>instruction);
-                thread.InstructionIndex = labeledInstructionIndex.get(jump.TargetLabel);
+                thread.InstructionIndex = jump.TargetIndex;
                 threads.push(thread);
                 break;
         }
@@ -117,18 +104,59 @@ function Query(): Set<object>
 
 function Compile(
     regularPathExpression: IRegularPathExpression,
-    program              : Program
+    program             ?: Program
     ): Program
 {
     program = program ? program : [];
 
     if(regularPathExpression instanceof Property)
-        program.push(<Cmp>
-            {
-                //Property: regularPathExpression.
-            });
+        program.push(<Cmp>{ Property: regularPathExpression.Name });
 
+    else if(regularPathExpression instanceof Alternative)
+    {
+        let forkToStartInstructions = new Map<IRegularPathExpression, Fork>();
 
+        for(let index = 1; index < regularPathExpression.RegularPathExpressions.length; ++index)
+        {
+            let fork = <Fork>{ TargetIndex: -1 };
+            forkToStartInstructions.set(regularPathExpression.RegularPathExpressions[index], fork);
+            program.push(fork);
+        }
+
+        Compile(
+            regularPathExpression.RegularPathExpressions[0],
+            program);
+
+        let jump = <Jump>{ TargetIndex: -1 };
+        program.push(jump);
+
+        for(let index = 1; index < regularPathExpression.RegularPathExpressions.length; ++index)
+        {
+            let alternative = regularPathExpression.RegularPathExpressions[index];
+            forkToStartInstructions.get(alternative).TargetIndex = program.length;
+            Compile(
+                alternative,
+                program);
+            program.push(jump)
+        }
+
+        jump.TargetIndex = program.length;
+    }
+    else if(regularPathExpression instanceof Sequence)
+        regularPathExpression.RegularPathExpressions.forEach(
+            regularPathExpression => Compile(
+                regularPathExpression,
+                program));
+
+    else if(regularPathExpression instanceof ZeroOrOne)
+    {
+        let fork = <Jump>{ TargetIndex: -1 };
+        program.push(fork);
+        Compile(
+            regularPathExpression.RegularPathExpression,
+            program);
+        fork.TargetIndex = program.length;
+    }
 
     return program;
 }
