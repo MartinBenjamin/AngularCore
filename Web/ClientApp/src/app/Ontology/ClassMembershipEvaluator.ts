@@ -76,7 +76,6 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     private readonly _superClassExpressions    : Map<IClassExpression, IClassExpression[]>;
     private readonly _subClassExpressions      : Map<IClassExpression, IClassExpression[]>;
     private readonly _disjointClassExpressions : Map<IClassExpression, IClassExpression[]>;
-    private readonly _objectPropertyExpressions: Map<IClassExpression, IObjectPropertyExpression[]>;
     private readonly _functionalDataProperties = new Set<IDataPropertyExpression>();
     private readonly _classDefinitions         : Map<IClass, IClassExpression[]>;
     private readonly _definedClasses           : IClass[];
@@ -117,10 +116,6 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
             ontology.Get(ontology.IsAxiom.ISubClassOf),
             subClassOf => subClassOf.SuperClassExpression,
             subClassOf => subClassOf.SubClassExpression);
-        this._objectPropertyExpressions = Group(
-            ontology.Get(ontology.IsAxiom.IObjectPropertyDomain),
-            objectPropertyDomain => objectPropertyDomain.Domain,
-            objectPropertyDomain => objectPropertyDomain.ObjectPropertyExpression);
 
         let disjointPairs: [IClassExpression, IClassExpression][] = [];
         for(let disjointClasses of ontology.Get(ontology.IsAxiom.IDisjointClasses))
