@@ -10,31 +10,51 @@ export interface State
     Transitions       ?: Transition[];
 }
 
-export interface Nfa
+export class Nfa
 {
     Initial: State;
-    Final  : State;
+    Final = <State>{};
+
+    constructor(
+        initial: State
+        )
+    {
+        this.Initial = initial ? initial : <State>{};
+    }
+}
+
+export interface Selector<TResult>
+{
+    Empty      (                                 ): TResult;
+    Property   (name: string                     ): TResult;
+    Alternative(regularPathExpressions: TResult[]): TResult;
+    Sequence   (regularPathExpressions: TResult[]): TResult;
+    ZeroOrOne  (regularPathExpression: TResult   ): TResult;
+    ZeroOrMore (regularPathExpression: TResult   ): TResult;
+    OneOrMore  (regularPathExpression: TResult   ): TResult;
 }
 
 export interface IRegularPathExpression
 {
+    Select<TResult>(selector: Selector<TResult>): TResult;
     Nfa(initialState?: State): Nfa;
 }
 
 export const Empty = <IRegularPathExpression>
 {
+    Select: function<TResult>(
+        selector: Selector<TResult>
+        ): TResult
+    {
+        return selector.Empty();
+    },
+
     Nfa: (
         initialState: State
         ): Nfa =>
     {
-        let nfa = <Nfa>
-            {
-                Initial: initialState ? initialState : <State>{},
-                Final  : <State>{}
-            };
-
+        let nfa = new Nfa(initialState);
         nfa.Initial.EpsilonTransitions = [nfa.Final];
-
         return nfa;
     }
 }
@@ -47,18 +67,19 @@ export class Property implements IRegularPathExpression
     {
     }
 
+    Select<TResult>(
+        selector: Selector<TResult>
+        ): TResult
+    {
+        return selector.Property(this.Name);
+    }
+
     Nfa(
         initialState: State
         ): Nfa
     {
-        let nfa = <Nfa>
-            {
-                Initial: initialState ? initialState : <State>{},
-                Final  : <State>{}
-            };
-
+        let nfa = new Nfa(initialState);
         nfa.Initial.Transitions = [[this.Name, nfa.Final]];
-
         return nfa;
     }
 }
@@ -73,17 +94,19 @@ export class Alternative implements IRegularPathExpression
     {
     }
 
+    Select<TResult>(
+        selector: Selector<TResult>
+        ): TResult
+    {
+        return selector.Alternative(this.RegularPathExpressions.map(regularPathExpression => regularPathExpression.Select(selector)));
+    }
+
     Nfa(
         initialState: State
         ): Nfa
     {
-        let nfa = <Nfa>
-            {
-                Initial: initialState ? initialState : <State>{},
-                Final: <State>{}
-            };
-
-        let innerNfas = this.RegularPathExpressions.map(pathExpression => pathExpression.Nfa());
+        let nfa = new Nfa(initialState);
+        let innerNfas = this.RegularPathExpressions.map(regularPathExpression => regularPathExpression.Nfa());
         nfa.Initial.EpsilonTransitions = innerNfas.map(innerNfa => innerNfa.Initial);
         innerNfas.forEach(innerNfa => innerNfa.Final.EpsilonTransitions = [nfa.Final]);
         return nfa;
@@ -98,14 +121,27 @@ export class Sequence implements IRegularPathExpression
     {
     }
 
+    Select<TResult>(
+        selector: Selector<TResult>
+        ): TResult
+    {
+        return selector.Sequence(this.RegularPathExpressions.map(regularPathExpression => regularPathExpression.Select(selector)));
+    }
+
     Nfa(
         initialState: State
         ): Nfa
     {
-        let nfa = this.RegularPathExpressions[0].Nfa(initialState);
-        for(let index = 1; index < this.RegularPathExpressions.length; ++index)
-            nfa.Final = this.RegularPathExpressions[index].Nfa(nfa.Final).Final;
-        return nfa;
+        return this.RegularPathExpressions.reduce(
+            (accumulator: Nfa, currentValue: IRegularPathExpression) =>
+            {
+                if(accumulator === null)
+                    return currentValue.Nfa(initialState);
+
+                accumulator.Final = currentValue.Nfa(accumulator.Final).Final;
+                return accumulator;
+            },
+            null);
     }
 }
 
@@ -117,16 +153,18 @@ export class ZeroOrOne implements IRegularPathExpression
     {
     }
 
+    Select<TResult>(
+        selector: Selector<TResult>
+        ): TResult
+    {
+        return selector.ZeroOrOne(this.RegularPathExpression.Select(selector));
+    }
+
     Nfa(
         initialState: State
         ): Nfa
     {
-        let nfa = <Nfa>
-            {
-                Initial: initialState ? initialState : <State>{},
-                Final: <State>{}
-            };
-
+        let nfa = new Nfa(initialState);
         let innerNfa = this.RegularPathExpression.Nfa();
         nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         innerNfa.Final.EpsilonTransitions = [nfa.Final];
@@ -142,16 +180,18 @@ export class ZeroOrMore implements IRegularPathExpression
     {
     }
 
+    Select<TResult>(
+        selector: Selector<TResult>
+        ): TResult
+    {
+        return selector.ZeroOrMore(this.RegularPathExpression.Select(selector));
+    }
+
     Nfa(
         initialState: State
         ): Nfa
     {
-        let nfa = <Nfa>
-            {
-                Initial: initialState ? initialState : <State>{},
-                Final: <State>{}
-            };
-
+        let nfa = new Nfa(initialState);
         let innerNfa = this.RegularPathExpression.Nfa();
         nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
@@ -167,20 +207,122 @@ export class OneOrMore implements IRegularPathExpression
     {
     }
 
+    Select<TResult>(
+        selector: Selector<TResult>
+        ): TResult
+    {
+        return selector.OneOrMore(this.RegularPathExpression.Select(selector));
+    }
+
     Nfa(
         initialState: State
         ): Nfa
     {
-        let nfa = <Nfa>
-            {
-                Initial: initialState ? initialState : <State>{},
-                Final: <State>{}
-            };
-
+        let nfa = new Nfa(initialState);
         let innerNfa = this.RegularPathExpression.Nfa();
         nfa.Initial.EpsilonTransitions = [innerNfa.Initial];
         innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         return nfa;
+    }
+}
+
+class NfaFactory implements Selector<(initialState?: State) => Nfa>
+{
+    Empty(): (initialState?: State) => Nfa
+    {
+        return (initialState?: State) =>
+        {
+            let nfa = new Nfa(initialState);
+            nfa.Initial.EpsilonTransitions = [nfa.Final];
+            return nfa;
+        };
+    }
+
+    Property(
+        name: string
+        ): (initialState?: State) => Nfa
+    {
+        return (initialState?: State) =>
+        {
+            let nfa = new Nfa(initialState);
+            nfa.Initial.Transitions = [[name, nfa.Final]];
+            return nfa;
+        };
+    }
+
+    Alternative(
+        nfaFactories: ((initialState?: State) => Nfa)[]
+        ): (initialState?: State) => Nfa
+    {
+        return (initialState?: State) =>
+        {
+            let nfa = new Nfa(initialState);
+            let innerNfas = nfaFactories.map(nfaFactory => nfaFactory());
+            nfa.Initial.EpsilonTransitions = innerNfas.map(innerNfa => innerNfa.Initial);
+            innerNfas.forEach(innerNfa => innerNfa.Final.EpsilonTransitions = [nfa.Final]);
+            return nfa;
+        };
+    }
+
+    Sequence(
+        nfaFactories: ((initialState?: State) => Nfa)[]
+        ): (initialState?: State) => Nfa
+    {
+        return (initialState?: State) =>
+        {
+            return nfaFactories.reduce(
+                (accumulator: Nfa, currentValue: (initialState: State) => Nfa) =>
+                {
+                    if(!accumulator)
+                        return currentValue(initialState);
+
+                    accumulator.Final = currentValue(accumulator.Final).Final;
+                    return accumulator;
+                },
+                null);
+        };
+    }
+
+    ZeroOrOne(
+        nfaFactory: (initialState?: State) => Nfa
+        ): (initialState?: State) => Nfa
+    {
+        return (initialState?: State) =>
+        {
+            let nfa = new Nfa(initialState);
+            let innerNfa = nfaFactory();
+            nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
+            innerNfa.Final.EpsilonTransitions = [nfa.Final];
+            return nfa;
+        };
+    }
+
+    ZeroOrMore(
+        nfaFactory: (initialState?: State) => Nfa
+        ): (initialState?: State) => Nfa
+    {
+        return (initialState?: State) =>
+        {
+            let nfa = new Nfa(initialState);
+            let innerNfa = nfaFactory();
+            nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
+            innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
+            return nfa;
+        };
+    }
+
+    OneOrMore(
+        nfaFactory: (initialState?: State) => Nfa
+        ): (initialState?: State) => Nfa
+    {
+        return (initialState?: State) =>
+        {
+            let nfa = new Nfa(initialState);
+            let innerNfa = nfaFactory();
+            nfa.Initial.EpsilonTransitions = [innerNfa.Initial];
+            innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
+            return nfa;
+        };
     }
 }
 
@@ -191,6 +333,7 @@ export function Query(
 {
     let result = new Set<any>();
     let nfa = regularPathExpression.Nfa();
+    //let nfa = regularPathExpression.Select(new NfaFactory())();
     let traversals: [State, object][] = [[nfa.Initial, object]];
 
     while(traversals.length)
