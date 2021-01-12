@@ -8,7 +8,7 @@ import { HighlighterServiceToken } from './ModelErrors';
         selector: 'errors',
         template: '\
 <ul>\
-    <li *ngFor="let error of _errors" [innerHTML]="error.Error" (click)="Highlight(error.Property)" style="cursor: pointer;"></li>\
+    <li *ngFor="let error of _errors" [innerHTML]="error.Message" (click)="Highlight(error.Errors)" style="cursor: pointer;"></li>\
 </ul>'
     })
 export class Errors2
@@ -53,19 +53,19 @@ export class Errors2
             (<Set<keyof IErrors>>errors).forEach(error =>
                 this._errors.push(
                     {
-                        Error: `${this.MapPath(errorPath)}: ${this._errorMap[error]}.`,
-                        Property: errors
+                        Message: `${this.MapPath(errorPath)}: ${this._errorMap[error]}.`,
+                        Errors : errors
                     }));
         }
 
-        this._errors.forEach(error => error.Property.Highlight = 0);
+        this._highlighterService.next(null);
     }
 
     Highlight(
-        property: any
+        errors: object
         ): void
     {
-        this._highlighterService.next(property);
+        this._highlighterService.next(errors);
     }
 
     private MapPath(
