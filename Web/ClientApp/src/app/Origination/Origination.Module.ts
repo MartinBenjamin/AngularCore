@@ -33,7 +33,7 @@ const routes: Routes =
                     },
                     {
                         path: 'Deal',
-                        loadChildren: () => import('./Deal/DealComponent.Module').then(
+                        loadChildren: () => import('./Deal/Deal.Module').then(
                             module => module.DealComponentModule)
                     }
                 ]

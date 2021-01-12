@@ -6,13 +6,13 @@ import { TabbedViewModule } from '../../Components/TabbedView';
 import { DealOntologyServiceProvider } from '../../Ontologies/DealOntologyServiceProvider';
 import { DealBuilderProvider } from '../../Ontologies/IDealBuilder';
 import { DealModule } from '../Deal.Module';
-import { DealComponent } from './DealComponent';
+import { Deal } from './Deal';
 
 const routes: Routes =
     [
         {
             path: '',
-            component: DealComponent,
+            component: Deal,
             outlet: 'feature'
         }
     ];
@@ -21,7 +21,7 @@ const routes: Routes =
     {
         declarations:
             [
-                DealComponent
+                Deal
             ],
         imports:
             [

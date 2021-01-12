@@ -4,7 +4,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { Guid } from '../../CommonDomainObjects';
 import { Tab } from '../../Components/TabbedView';
 import { DealProvider } from '../../DealProvider';
-import { Deal, DealRoleIdentifier } from '../../Deals';
+import { Deal as DealType, DealRoleIdentifier } from '../../Deals';
 import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServiceProvider';
 import { deals } from '../../Ontologies/Deals';
 import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
@@ -25,11 +25,11 @@ import { TransactionDetails } from '../TransactionDetails';
             [
                 {
                     provide: DealProvider,
-                    useExisting: forwardRef(() => DealComponent)
+                    useExisting: forwardRef(() => Deal)
                 }
             ]
     })
-export class DealComponent
+export class Deal
     extends DealProvider
     implements AfterViewInit, OnDestroy
 {
@@ -89,7 +89,7 @@ export class DealComponent
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
-    get Deal(): Deal
+    get Deal(): DealType
     {
         return this._deal.getValue()[0];
     }

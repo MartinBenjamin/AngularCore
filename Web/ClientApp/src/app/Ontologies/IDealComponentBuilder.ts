@@ -1,5 +1,5 @@
 import { Tab } from "../Components/TabbedView";
-import { DealComponent } from "../Origination/Deal/DealComponent";
+import { Deal } from "../Origination/Deal/Deal";
 import { KeyCounterparties } from "../Origination/KeyCounterparties";
 import { KeyDealData } from "../Origination/KeyDealData";
 import { MoreTabs } from "../Origination/MoreTabs";
@@ -8,14 +8,14 @@ import { TransactionDetails } from "../Origination/TransactionDetails";
 
 export interface IDealComponentBuilder
 {
-    AddAdvisoryTabs(dealComponent: DealComponent);
-    AddDebtTabs(dealComponent: DealComponent);
+    AddAdvisoryTabs(dealComponent: Deal);
+    AddDebtTabs(dealComponent: Deal);
 }
 
 export class DealComponentBuilder implements IDealComponentBuilder
 {
     AddAdvisoryTabs(
-        dealComponent: DealComponent
+        dealComponent: Deal
         )
     {
         dealComponent.Tabs =
@@ -29,7 +29,7 @@ export class DealComponentBuilder implements IDealComponentBuilder
     }
 
     AddDebtTabs(
-        dealComponent: DealComponent
+        dealComponent: Deal
         )
     {
         dealComponent.Tabs =
