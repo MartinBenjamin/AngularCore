@@ -1,5 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
+import { Subject } from "rxjs";
 import { IErrors, Path, PathSegment } from '../Ontologies/Validate';
+import { HighlighterServiceToken } from './ModelErrors';
 
 @Component(
     {
@@ -26,6 +28,13 @@ export class Errors2
             EndDate           : "Date",
             PartyInRole       : (partyInRole: any) => `${partyInRole.Role.Name} [${partyInRole.Organisation.Name}]`
         }
+
+    constructor(
+        @Inject(HighlighterServiceToken)
+        private _highlighterService: Subject<object>
+        )
+    {
+    }
 
     @Input()
     set Errors(
@@ -56,7 +65,7 @@ export class Errors2
         property: any
         ): void
     {
-        this._errors.forEach((error: any) => error.Property.Highlight = (error.Property == property ? error.Property.Highlight + 1 : 0));
+        this._highlighterService.next(property);
     }
 
     private MapPath(
