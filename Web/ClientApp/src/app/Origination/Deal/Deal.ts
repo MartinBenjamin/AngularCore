@@ -144,7 +144,7 @@ export class Deal
                     errorPaths.push([["Exclusivity", exclusivity], entry]);
         }
 
-        this._dealErrors = errorPaths;
+        this._dealErrors = errorPaths.length ? errorPaths : null;
 
         // Detect changes in all Deal Tabs (and nested Tabs).
         this._changeDetector.DetectChanges();
