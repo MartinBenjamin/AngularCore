@@ -12,7 +12,7 @@ export abstract class DealProvider extends Observable<[Deal, Observable<Map<obje
             subscriber =>
             {
                 const subscription = this._deal.subscribe(deal => subscriber.next(deal));
-                subscriber.add(() => subscription.unsubscribe);
+                subscriber.add(subscription);
             });
     }
 }

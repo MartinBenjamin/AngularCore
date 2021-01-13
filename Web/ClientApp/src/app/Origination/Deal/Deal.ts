@@ -2,7 +2,7 @@ import { AfterViewInit, Component, forwardRef, Inject, OnDestroy, TemplateRef, V
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Guid } from '../../CommonDomainObjects';
-import { Tab } from '../../Components/TabbedView';
+import { ChangeDetector, Tab } from '../../Components/TabbedView';
 import { DealProvider } from '../../DealProvider';
 import { Deal as DealType, DealRoleIdentifier } from '../../Deals';
 import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServiceProvider';
@@ -49,7 +49,8 @@ export class Deal
         @Inject(DealBuilderToken)
         dealBuilder            : IDealBuilder,
         private _origination   : Origination,
-        private _activatedRoute: ActivatedRoute
+        private _activatedRoute: ActivatedRoute,
+        private _changeDetector: ChangeDetector
         )
     {
         super();
@@ -144,6 +145,9 @@ export class Deal
         }
 
         this._dealErrors = errorPaths;
+
+        // Detect changes in all Deal Tabs (and nested Tabs).
+        this._changeDetector.DetectChanges();
     }
 
     Cancel(): void

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, ComponentFactoryResolver, Input, NgModule, Type, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ChangeDetectorRef, ComponentFactoryResolver, forwardRef, Input, NgModule, Type, ViewChild, ViewContainerRef, Injectable, OnDestroy } from '@angular/core';
+import { BehaviorSubject, Observable, Subject, Subscription } from "rxjs";
 
 export class Tab
 {
@@ -12,17 +13,63 @@ export class Tab
     }
 }
 
+const detectChanges = new Subject<void>();
+
+@Injectable()
+export class ChangeDetector
+{
+    DetectChanges(): void
+    {
+        detectChanges.next();
+    }
+}
+
+export abstract class SelectedTab extends Observable<Tab>
+{
+    protected _selected = new BehaviorSubject<Tab>(null);
+
+    protected constructor()
+    {
+        super(
+            subscriber =>
+            {
+                const subscription = this._selected.subscribe(tab => subscriber.next(tab));
+                subscriber.add(subscription);
+            });
+    }
+}
+
 @Component(
     {
         selector: 'dt-tab-container',
         template: '<div><ng-template #component></ng-template></div>'
     })
-export class TabContainer
+export class TabContainer implements OnDestroy
 {
+    private _subscriptions: Subscription[] = [];
+    private _tab          : Tab;
+    private _selectedTab  : Tab;
+
     constructor(
-        private _componentFactoryResolver: ComponentFactoryResolver
+        private _componentFactoryResolver: ComponentFactoryResolver,
+        private _changeDetector          : ChangeDetectorRef,
+        selectedTab                      : SelectedTab
         )
     {
+        this._subscriptions.push(
+            selectedTab.subscribe(
+                selectedTab =>
+                {
+                    this._selectedTab = selectedTab;
+                    this.DetachReattach();
+                }),
+            detectChanges.subscribe(
+                () => this._changeDetector.detectChanges()));
+    }
+
+    ngOnDestroy(): void
+    {
+        this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
     @ViewChild('component', { read: ViewContainerRef })
@@ -33,9 +80,21 @@ export class TabContainer
         tab: Tab
         )
     {
-        let componentFactory = this._componentFactoryResolver.resolveComponentFactory(tab.Component);
+        this._tab = tab;
+        let componentFactory = this._componentFactoryResolver.resolveComponentFactory(this._tab.Component);
         this._viewContainerRef.clear();
         this._viewContainerRef.createComponent(componentFactory);
+        this.DetachReattach();
+    }
+
+    private DetachReattach(): void
+    {
+        if(this._tab && this._selectedTab)
+            if(this._selectedTab !== this._tab)
+                this._changeDetector.detach();
+
+            else
+                this._changeDetector.reattach();
     }
 }
 
@@ -111,13 +170,24 @@ export class TabContainer
             </table>
         </td>
     </tr>
-</table>`
+</table>`,
+        providers:
+            [
+                {
+                    provide: SelectedTab,
+                    useExisting: forwardRef(() => TabbedView)
+                }
+            ]
     }
 )
-export class TabbedView
+export class TabbedView extends SelectedTab
 {
-    private _tabs    : Tab[];
-    private _selected: Tab;
+    private _tabs: Tab[];
+
+    constructor()
+    {
+        super();
+    }
 
     @Input()
     set Tabs(
@@ -145,18 +215,12 @@ export class TabbedView
         tab
         )
     {
-        if(this._selected)
-            this._selected.Selected = false;
-
-        this._selected = tab;
-
-        if(this._selected)
-            this._selected.Selected = true;
+        this._selected.next(tab);
     }
 
     get Selected(): Tab
     {
-        return this._selected;
+        return this._selected.getValue();
     }
 }
 
@@ -174,6 +238,10 @@ export class TabbedView
         exports:
         [
             TabbedView
+        ],
+        providers:
+        [
+            ChangeDetector
         ]
     })
 export class TabbedViewModule

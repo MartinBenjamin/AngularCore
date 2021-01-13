@@ -11,7 +11,7 @@ export abstract class FacilityProvider extends Observable<Facility>
             subscriber =>
             {
                 const subscription = this._facility.subscribe(facility => subscriber.next(facility));
-                subscriber.add(() => subscription.unsubscribe);
+                subscriber.add(subscription);
             });
     }
 }
