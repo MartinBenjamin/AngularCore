@@ -29,15 +29,17 @@ export interface IExpression
     Nfa(initialState?: State): Nfa;
 }
 
-export interface IAlternative<TExpression>
+export interface IComposite<TExpression>
 {
     Expressions: TExpression[];
 }
 
-export interface ISequence<TExpression>
-{
-    Expressions: TExpression[];
-}
+export interface IAlternative<TExpression> extends IComposite<TExpression>
+{ }
+
+
+export interface ISequence<TExpression> extends IComposite<TExpression>
+{ }
 
 export interface IQuantifier<TQuantified>
 {
@@ -46,7 +48,6 @@ export interface IQuantifier<TQuantified>
 
 export interface IZeroOrOne<TQuantified> extends IQuantifier<TQuantified>
 { }
-
 
 export interface IZeroOrMore<TQuantified> extends IQuantifier<TQuantified>
 { }
