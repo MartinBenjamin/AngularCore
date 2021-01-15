@@ -23,53 +23,27 @@ export class Nfa
     }
 }
 
-export interface IExpression
+export interface Selector<TResult>
 {
-    Select<TResult>(selector: ISelector<TResult>): TResult;
+    Empty      (                                 ): TResult;
+    Property   (name: string                     ): TResult;
+    Alternative(regularPathExpressions: TResult[]): TResult;
+    Sequence   (regularPathExpressions: TResult[]): TResult;
+    ZeroOrOne  (regularPathExpression: TResult   ): TResult;
+    ZeroOrMore (regularPathExpression: TResult   ): TResult;
+    OneOrMore  (regularPathExpression: TResult   ): TResult;
+}
+
+export interface IRegularPathExpression
+{
+    Select<TResult>(selector: Selector<TResult>): TResult;
     Nfa(initialState?: State): Nfa;
 }
 
-export interface IComposite<TExpression>
-{
-    Expressions: TExpression[];
-}
-
-export interface IAlternative<TExpression> extends IComposite<TExpression>
-{ }
-
-
-export interface ISequence<TExpression> extends IComposite<TExpression>
-{ }
-
-export interface IQuantifier<TQuantified>
-{
-    Quantified: TQuantified;
-}
-
-export interface IZeroOrOne<TQuantified> extends IQuantifier<TQuantified>
-{ }
-
-export interface IZeroOrMore<TQuantified> extends IQuantifier<TQuantified>
-{ }
-
-export interface IOneOrMore<TQuantified> extends IQuantifier<TQuantified>
-{ }
-
-export interface ISelector<TResult>
-{
-    Empty      (): TResult;
-    Property   (property: Property): TResult;
-    Alternative(): TResult & IAlternative<TResult>;
-    Sequence   (): TResult & ISequence<TResult>;
-    ZeroOrOne  (): TResult & IZeroOrOne<TResult>;
-    ZeroOrMore (): TResult & IZeroOrMore<TResult>;
-    OneOrMore  (): TResult & IOneOrMore<TResult>;
-}
-
-export const Empty = <IExpression>
+export const Empty = <IRegularPathExpression>
 {
     Select: function<TResult>(
-        selector: ISelector<TResult>
+        selector: Selector<TResult>
         ): TResult
     {
         return selector.Empty();
@@ -85,7 +59,7 @@ export const Empty = <IExpression>
     }
 }
 
-export class Property implements IExpression
+export class Property implements IRegularPathExpression
 {
     constructor(
         public Name: string
@@ -94,10 +68,10 @@ export class Property implements IExpression
     }
 
     Select<TResult>(
-        selector: ISelector<TResult>
+        selector: Selector<TResult>
         ): TResult
     {
-        return selector.Property(this);
+        return selector.Property(this.Name);
     }
 
     Nfa(
@@ -112,21 +86,19 @@ export class Property implements IExpression
 
 export const Any = new Property('.');
 
-export class Alternative implements IExpression
+export class Alternative implements IRegularPathExpression
 {
     constructor(
-        public Expressions: IExpression[]
+        public RegularPathExpressions: IRegularPathExpression[]
         )
     {
     }
 
     Select<TResult>(
-        selector: ISelector<TResult>
+        selector: Selector<TResult>
         ): TResult
     {
-        let alternative = selector.Alternative();
-        alternative.Expressions = this.Expressions.map(expression => expression.Select(selector));
-        return alternative;
+        return selector.Alternative(this.RegularPathExpressions.map(regularPathExpression => regularPathExpression.Select(selector)));
     }
 
     Nfa(
@@ -134,36 +106,34 @@ export class Alternative implements IExpression
         ): Nfa
     {
         let nfa = new Nfa(initialState);
-        let innerNfas = this.Expressions.map(expression => expression.Nfa());
+        let innerNfas = this.RegularPathExpressions.map(regularPathExpression => regularPathExpression.Nfa());
         nfa.Initial.EpsilonTransitions = innerNfas.map(innerNfa => innerNfa.Initial);
         innerNfas.forEach(innerNfa => innerNfa.Final.EpsilonTransitions = [nfa.Final]);
         return nfa;
     }
 }
 
-export class Sequence implements IExpression
+export class Sequence implements IRegularPathExpression
 {
     constructor(
-        public Expressions: IExpression[]
+        public RegularPathExpressions: IRegularPathExpression[]
         )
     {
     }
 
     Select<TResult>(
-        selector: ISelector<TResult>
+        selector: Selector<TResult>
         ): TResult
     {
-        let sequence = selector.Sequence();
-        sequence.Expressions = this.Expressions.map(expression => expression.Select(selector));
-        return sequence;
+        return selector.Sequence(this.RegularPathExpressions.map(regularPathExpression => regularPathExpression.Select(selector)));
     }
 
     Nfa(
         initialState: State
         ): Nfa
     {
-        return this.Expressions.reduce(
-            (accumulator: Nfa, currentValue: IExpression) =>
+        return this.RegularPathExpressions.reduce(
+            (accumulator: Nfa, currentValue: IRegularPathExpression) =>
             {
                 if(accumulator === null)
                     return currentValue.Nfa(initialState);
@@ -175,21 +145,19 @@ export class Sequence implements IExpression
     }
 }
 
-export class ZeroOrOne implements IExpression
+export class ZeroOrOne implements IRegularPathExpression
 {
     constructor(
-        public Expression: IExpression
+        public RegularPathExpression: IRegularPathExpression
         )
     {
     }
 
     Select<TResult>(
-        selector: ISelector<TResult>
+        selector: Selector<TResult>
         ): TResult
     {
-        let zeroOrOne = selector.ZeroOrOne();
-        zeroOrOne.Quantified = this.Expression.Select(selector);
-        return zeroOrOne;
+        return selector.ZeroOrOne(this.RegularPathExpression.Select(selector));
     }
 
     Nfa(
@@ -197,28 +165,26 @@ export class ZeroOrOne implements IExpression
         ): Nfa
     {
         let nfa = new Nfa(initialState);
-        let innerNfa = this.Expression.Nfa();
+        let innerNfa = this.RegularPathExpression.Nfa();
         nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         innerNfa.Final.EpsilonTransitions = [nfa.Final];
         return nfa;
     }
 }
 
-export class ZeroOrMore implements IExpression
+export class ZeroOrMore implements IRegularPathExpression
 {
     constructor(
-        public Expression: IExpression
+        public RegularPathExpression: IRegularPathExpression
         )
     {
     }
 
     Select<TResult>(
-        selector: ISelector<TResult>
+        selector: Selector<TResult>
         ): TResult
     {
-        let zeroOrMore = selector.ZeroOrMore();
-        zeroOrMore.Quantified = this.Expression.Select(selector);
-        return zeroOrMore;
+        return selector.ZeroOrMore(this.RegularPathExpression.Select(selector));
     }
 
     Nfa(
@@ -226,28 +192,26 @@ export class ZeroOrMore implements IExpression
         ): Nfa
     {
         let nfa = new Nfa(initialState);
-        let innerNfa = this.Expression.Nfa();
+        let innerNfa = this.RegularPathExpression.Nfa();
         nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         return nfa;
     }
 }
 
-export class OneOrMore implements IExpression
+export class OneOrMore implements IRegularPathExpression
 {
     constructor(
-        public Expression: IExpression
+        public RegularPathExpression: IRegularPathExpression
         )
     {
     }
 
     Select<TResult>(
-        selector: ISelector<TResult>
+        selector: Selector<TResult>
         ): TResult
     {
-        let oneOrMore = selector.OneOrMore();
-        oneOrMore.Quantified = this.Expression.Select(selector);
-        return oneOrMore;
+        return selector.OneOrMore(this.RegularPathExpression.Select(selector));
     }
 
     Nfa(
@@ -255,156 +219,121 @@ export class OneOrMore implements IExpression
         ): Nfa
     {
         let nfa = new Nfa(initialState);
-        let innerNfa = this.Expression.Nfa();
+        let innerNfa = this.RegularPathExpression.Nfa();
         nfa.Initial.EpsilonTransitions = [innerNfa.Initial];
         innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         return nfa;
     }
 }
 
-interface INfaFactory
+class NfaFactorySelector implements Selector<(initialState?: State) => Nfa>
 {
-    Build(initialState?: State): Nfa;
-}
-
-class NfaFactorySelector implements ISelector<INfaFactory>
-{
-    Empty(): INfaFactory
+    Empty(): (initialState?: State) => Nfa
     {
-        return {
-
-            Build(
-                initialState?: State
-                ): Nfa
-            {
-                let nfa = new Nfa(initialState);
-                nfa.Initial.EpsilonTransitions = [nfa.Final];
-                return nfa;
-            }
+        return (initialState?: State) =>
+        {
+            let nfa = new Nfa(initialState);
+            nfa.Initial.EpsilonTransitions = [nfa.Final];
+            return nfa;
         };
     }
 
     Property(
-        property: Property
-        ): INfaFactory
+        name: string
+        ): (initialState?: State) => Nfa
     {
-        return {
-
-            Build(
-                initialState?: State
-                ): Nfa
-            {
-                let nfa = new Nfa(initialState);
-                nfa.Initial.Transitions = [[property.Name, nfa.Final]];
-                return nfa;
-            }
+        return (initialState?: State) =>
+        {
+            let nfa = new Nfa(initialState);
+            nfa.Initial.Transitions = [[name, nfa.Final]];
+            return nfa;
         };
     }
 
-    Alternative(): INfaFactory & IAlternative<INfaFactory>
+    Alternative(
+        nfaFactories: ((initialState?: State) => Nfa)[]
+        ): (initialState?: State) => Nfa
     {
-        return {
-            Expressions: null,
-            Build(
-                this         : INfaFactory & IAlternative<INfaFactory>,
-                initialState?: State
-                ): Nfa
-            {
-                let nfa = new Nfa(initialState);
-                let innerNfas = this.Expressions.map(expression => expression.Build());
-                nfa.Initial.EpsilonTransitions = innerNfas.map(innerNfa => innerNfa.Initial);
-                innerNfas.forEach(innerNfa => innerNfa.Final.EpsilonTransitions = [nfa.Final]);
-                return nfa;
-            }
+        return (initialState?: State) =>
+        {
+            let nfa = new Nfa(initialState);
+            let innerNfas = nfaFactories.map(nfaFactory => nfaFactory());
+            nfa.Initial.EpsilonTransitions = innerNfas.map(innerNfa => innerNfa.Initial);
+            innerNfas.forEach(innerNfa => innerNfa.Final.EpsilonTransitions = [nfa.Final]);
+            return nfa;
         };
     }
 
-    Sequence(): INfaFactory & ISequence<INfaFactory>
+    Sequence(
+        nfaFactories: ((initialState?: State) => Nfa)[]
+        ): (initialState?: State) => Nfa
     {
-        return {
-            Expressions: null,
-            Build(
-                this         : INfaFactory & ISequence<INfaFactory>,
-                initialState?: State
-                ): Nfa
-            {
-                return this.Expressions.reduce(
-                    (accumulator: Nfa, currentValue: INfaFactory) =>
-                    {
-                        if(!accumulator)
-                            return currentValue.Build(initialState);
+        return (initialState?: State) =>
+        {
+            return nfaFactories.reduce(
+                (accumulator: Nfa, currentValue: (initialState: State) => Nfa) =>
+                {
+                    if(!accumulator)
+                        return currentValue(initialState);
 
-                        accumulator.Final = currentValue.Build(accumulator.Final).Final;
-                        return accumulator;
-                    },
-                    null);
-            }
+                    accumulator.Final = currentValue(accumulator.Final).Final;
+                    return accumulator;
+                },
+                null);
         };
     }
 
-    ZeroOrOne(): INfaFactory & IZeroOrOne<INfaFactory>
+    ZeroOrOne(
+        nfaFactory: (initialState?: State) => Nfa
+        ): (initialState?: State) => Nfa
     {
-        return {
-            Quantified: null,
-            Build(
-                this         : INfaFactory & IZeroOrOne<INfaFactory>,
-                initialState?: State
-                ): Nfa
-            {
-                let nfa = new Nfa(initialState);
-                let innerNfa = this.Quantified.Build();
-                nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
-                innerNfa.Final.EpsilonTransitions = [nfa.Final];
-                return nfa;
-            }
+        return (initialState?: State) =>
+        {
+            let nfa = new Nfa(initialState);
+            let innerNfa = nfaFactory();
+            nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
+            innerNfa.Final.EpsilonTransitions = [nfa.Final];
+            return nfa;
         };
     }
 
-    ZeroOrMore(): INfaFactory & IZeroOrMore<INfaFactory>
+    ZeroOrMore(
+        nfaFactory: (initialState?: State) => Nfa
+        ): (initialState?: State) => Nfa
     {
-        return {
-            Quantified: null,
-            Build(
-                this         : INfaFactory & IZeroOrMore<INfaFactory>,
-                initialState?: State
-                ): Nfa
-            {
-                let nfa = new Nfa(initialState);
-                let innerNfa = this.Quantified.Build();
-                nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
-                innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
-                return nfa;
-            }
+        return (initialState?: State) =>
+        {
+            let nfa = new Nfa(initialState);
+            let innerNfa = nfaFactory();
+            nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
+            innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
+            return nfa;
         };
     }
 
-    OneOrMore(): INfaFactory & IOneOrMore<INfaFactory>
+    OneOrMore(
+        nfaFactory: (initialState?: State) => Nfa
+        ): (initialState?: State) => Nfa
     {
-        return {
-            Quantified: null,
-            Build(
-                this         : INfaFactory & IOneOrMore<INfaFactory>,
-                initialState?: State
-                ): Nfa
-            {
-                let nfa = new Nfa(initialState);
-                let innerNfa = this.Quantified.Build();
-                nfa.Initial.EpsilonTransitions = [innerNfa.Initial];
-                innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
-                return nfa;
-            }
+        return (initialState?: State) =>
+        {
+            let nfa = new Nfa(initialState);
+            let innerNfa = nfaFactory();
+            nfa.Initial.EpsilonTransitions = [innerNfa.Initial];
+            innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
+            return nfa;
         };
     }
 }
 
 export function Query(
-    object    : object,
-    expression: IExpression
+    object               : object,
+    regularPathExpression: IRegularPathExpression
     ): Set<any>
 {
     let result = new Set<any>();
-    //let nfa = expression.Nfa();
-    let nfa = expression.Select(new NfaFactorySelector()).Build();
+    //let nfa = regularPathExpression.Nfa();
+    let nfa = regularPathExpression.Select(new NfaFactorySelector())();
     let traversals: [State, object][] = [[nfa.Initial, object]];
 
     while(traversals.length)
@@ -444,12 +373,12 @@ export function Query(
 }
 
 export function QueryPaths(
-    object    : object,
-    expression: IExpression
+    object               : object,
+    regularPathExpression: IRegularPathExpression
     ): Path[]
 {
     let paths: Path[] = [];
-    let nfa = expression.Nfa();
+    let nfa = regularPathExpression.Nfa();
     let traversals: Traversal[] = [[nfa.Initial, [[null, object]]]];
 
     while(traversals.length)
