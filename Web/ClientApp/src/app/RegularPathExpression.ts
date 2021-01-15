@@ -25,22 +25,22 @@ export class Nfa
 
 export interface Selector<TResult>
 {
-    Empty      (                                 ): TResult;
-    Property   (name: string                     ): TResult;
-    Alternative(regularPathExpressions: TResult[]): TResult;
-    Sequence   (regularPathExpressions: TResult[]): TResult;
-    ZeroOrOne  (regularPathExpression: TResult   ): TResult;
-    ZeroOrMore (regularPathExpression: TResult   ): TResult;
-    OneOrMore  (regularPathExpression: TResult   ): TResult;
+    Empty      (                      ): TResult;
+    Property   (name: string          ): TResult;
+    Alternative(expressions: TResult[]): TResult;
+    Sequence   (expressions: TResult[]): TResult;
+    ZeroOrOne  (expression: TResult   ): TResult;
+    ZeroOrMore (expression: TResult   ): TResult;
+    OneOrMore  (expression: TResult   ): TResult;
 }
 
-export interface IRegularPathExpression
+export interface IExpression
 {
     Select<TResult>(selector: Selector<TResult>): TResult;
     Nfa(initialState?: State): Nfa;
 }
 
-export const Empty = <IRegularPathExpression>
+export const Empty = <IExpression>
 {
     Select: function<TResult>(
         selector: Selector<TResult>
@@ -59,7 +59,7 @@ export const Empty = <IRegularPathExpression>
     }
 }
 
-export class Property implements IRegularPathExpression
+export class Property implements IExpression
 {
     constructor(
         public Name: string
@@ -86,10 +86,10 @@ export class Property implements IRegularPathExpression
 
 export const Any = new Property('.');
 
-export class Alternative implements IRegularPathExpression
+export class Alternative implements IExpression
 {
     constructor(
-        public RegularPathExpressions: IRegularPathExpression[]
+        public Expressions: IExpression[]
         )
     {
     }
@@ -98,7 +98,7 @@ export class Alternative implements IRegularPathExpression
         selector: Selector<TResult>
         ): TResult
     {
-        return selector.Alternative(this.RegularPathExpressions.map(regularPathExpression => regularPathExpression.Select(selector)));
+        return selector.Alternative(this.Expressions.map(expression => expression.Select(selector)));
     }
 
     Nfa(
@@ -106,17 +106,17 @@ export class Alternative implements IRegularPathExpression
         ): Nfa
     {
         let nfa = new Nfa(initialState);
-        let innerNfas = this.RegularPathExpressions.map(regularPathExpression => regularPathExpression.Nfa());
+        let innerNfas = this.Expressions.map(expression => expression.Nfa());
         nfa.Initial.EpsilonTransitions = innerNfas.map(innerNfa => innerNfa.Initial);
         innerNfas.forEach(innerNfa => innerNfa.Final.EpsilonTransitions = [nfa.Final]);
         return nfa;
     }
 }
 
-export class Sequence implements IRegularPathExpression
+export class Sequence implements IExpression
 {
     constructor(
-        public RegularPathExpressions: IRegularPathExpression[]
+        public Expressions: IExpression[]
         )
     {
     }
@@ -125,15 +125,15 @@ export class Sequence implements IRegularPathExpression
         selector: Selector<TResult>
         ): TResult
     {
-        return selector.Sequence(this.RegularPathExpressions.map(regularPathExpression => regularPathExpression.Select(selector)));
+        return selector.Sequence(this.Expressions.map(expression => expression.Select(selector)));
     }
 
     Nfa(
         initialState: State
         ): Nfa
     {
-        return this.RegularPathExpressions.reduce(
-            (accumulator: Nfa, currentValue: IRegularPathExpression) =>
+        return this.Expressions.reduce(
+            (accumulator: Nfa, currentValue: IExpression) =>
             {
                 if(accumulator === null)
                     return currentValue.Nfa(initialState);
@@ -145,10 +145,10 @@ export class Sequence implements IRegularPathExpression
     }
 }
 
-export class ZeroOrOne implements IRegularPathExpression
+export class ZeroOrOne implements IExpression
 {
     constructor(
-        public RegularPathExpression: IRegularPathExpression
+        public Expression: IExpression
         )
     {
     }
@@ -157,7 +157,7 @@ export class ZeroOrOne implements IRegularPathExpression
         selector: Selector<TResult>
         ): TResult
     {
-        return selector.ZeroOrOne(this.RegularPathExpression.Select(selector));
+        return selector.ZeroOrOne(this.Expression.Select(selector));
     }
 
     Nfa(
@@ -165,17 +165,17 @@ export class ZeroOrOne implements IRegularPathExpression
         ): Nfa
     {
         let nfa = new Nfa(initialState);
-        let innerNfa = this.RegularPathExpression.Nfa();
+        let innerNfa = this.Expression.Nfa();
         nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         innerNfa.Final.EpsilonTransitions = [nfa.Final];
         return nfa;
     }
 }
 
-export class ZeroOrMore implements IRegularPathExpression
+export class ZeroOrMore implements IExpression
 {
     constructor(
-        public RegularPathExpression: IRegularPathExpression
+        public Expression: IExpression
         )
     {
     }
@@ -184,7 +184,7 @@ export class ZeroOrMore implements IRegularPathExpression
         selector: Selector<TResult>
         ): TResult
     {
-        return selector.ZeroOrMore(this.RegularPathExpression.Select(selector));
+        return selector.ZeroOrMore(this.Expression.Select(selector));
     }
 
     Nfa(
@@ -192,17 +192,17 @@ export class ZeroOrMore implements IRegularPathExpression
         ): Nfa
     {
         let nfa = new Nfa(initialState);
-        let innerNfa = this.RegularPathExpression.Nfa();
+        let innerNfa = this.Expression.Nfa();
         nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         return nfa;
     }
 }
 
-export class OneOrMore implements IRegularPathExpression
+export class OneOrMore implements IExpression
 {
     constructor(
-        public RegularPathExpression: IRegularPathExpression
+        public Expression: IExpression
         )
     {
     }
@@ -211,7 +211,7 @@ export class OneOrMore implements IRegularPathExpression
         selector: Selector<TResult>
         ): TResult
     {
-        return selector.OneOrMore(this.RegularPathExpression.Select(selector));
+        return selector.OneOrMore(this.Expression.Select(selector));
     }
 
     Nfa(
@@ -219,7 +219,7 @@ export class OneOrMore implements IRegularPathExpression
         ): Nfa
     {
         let nfa = new Nfa(initialState);
-        let innerNfa = this.RegularPathExpression.Nfa();
+        let innerNfa = this.Expression.Nfa();
         nfa.Initial.EpsilonTransitions = [innerNfa.Initial];
         innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         return nfa;
@@ -327,13 +327,13 @@ class NfaFactorySelector implements Selector<(initialState?: State) => Nfa>
 }
 
 export function Query(
-    object               : object,
-    regularPathExpression: IRegularPathExpression
+    object    : object,
+    expression: IExpression
     ): Set<any>
 {
     let result = new Set<any>();
-    //let nfa = regularPathExpression.Nfa();
-    let nfa = regularPathExpression.Select(new NfaFactorySelector())();
+    //let nfa = expression.Nfa();
+    let nfa = expression.Select(new NfaFactorySelector())();
     let traversals: [State, object][] = [[nfa.Initial, object]];
 
     while(traversals.length)
@@ -373,12 +373,12 @@ export function Query(
 }
 
 export function QueryPaths(
-    object               : object,
-    regularPathExpression: IRegularPathExpression
+    object    : object,
+    expression: IExpression
     ): Path[]
 {
     let paths: Path[] = [];
-    let nfa = regularPathExpression.Nfa();
+    let nfa = expression.Nfa();
     let traversals: Traversal[] = [[nfa.Initial, [[null, object]]]];
 
     while(traversals.length)
