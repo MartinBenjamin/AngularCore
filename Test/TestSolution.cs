@@ -81,10 +81,6 @@ namespace Test
             var builder = new StringBuilder(10010);
 
             var n = 2;
-            primes.Add(n);
-            builder.Append(n.ToString());
-
-            n += 1;
             while(true)
             {
                 if(primes.All(prime => n % prime != 0))                   
