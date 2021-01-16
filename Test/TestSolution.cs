@@ -11,6 +11,21 @@ namespace Test
     [TestFixture]
     public class TestSolution: Test
     {
+        private static bool IsPrimeReference(
+            int n
+            )
+        {
+            if(n <= 1)
+                return false;
+
+            for(int divisor = 2;divisor < n;divisor++)
+                if(n % divisor == 0)
+                    return false;
+
+            return true;
+
+        }
+
         private bool IsPrime(
             int n
             )
@@ -98,6 +113,15 @@ namespace Test
         [TestCase(16, false)]
         [TestCase(17, true)]
         [TestCase(25, false)]
+        public void IsPrimeReference(
+            int  n,
+            bool expected
+            )
+        {
+            Assert.That(IsPrimeReference(n), Is.EqualTo(expected));
+        }
+
+        [TestCaseSource("IsPrimeTestCases")]
         public void IsPrime(
             int  n,
             bool expected
@@ -119,13 +143,26 @@ namespace Test
             Assert.That(GenerateId(index), Is.EqualTo(expected));
             stopwatch.Stop();
             TestContext.WriteLine(stopwatch.ElapsedTicks);
-            TestContext.WriteLine(stopwatch.ElapsedMilliseconds);
+            //TestContext.WriteLine(stopwatch.ElapsedMilliseconds);
             stopwatch.Reset();
             stopwatch.Start();
             Assert.That(GenerateId2(index), Is.EqualTo(expected));
             stopwatch.Stop();
             TestContext.WriteLine(stopwatch.ElapsedTicks);
-            TestContext.WriteLine(stopwatch.ElapsedMilliseconds);
+            //TestContext.WriteLine(stopwatch.ElapsedMilliseconds);
+        }
+
+        public static IEnumerable<object[]> IsPrimeTestCases
+        {
+            get
+            {
+                return Enumerable.Range(0, 100).Select(
+                    n => new object[]
+                    {
+                        n,
+                        IsPrimeReference(n)
+                    });
+            }
         }
     }
 }
