@@ -83,7 +83,8 @@ namespace Test
             var n = 2;
             while(true)
             {
-                if(primes.All(prime => n % prime != 0))                   
+                var maxPrime = n / 2;
+                if(primes.TakeWhile(prime => prime <= maxPrime).All(prime => n % prime != 0))                   
                 {
                     primes.Add(n);
                     builder.Append(n.ToString());
