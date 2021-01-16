@@ -7,7 +7,12 @@ using System.Linq;
 
 namespace Test
 {
-
+    // Approach:
+    // Build reference implementation.
+    // Test reference implementation with fixed (non generated) test cases.
+    // Build optimised implementation.
+    // Test optimised implemention against reference implementation.  Use reference implementation to build test cases for optimised implementation.
+    // Measure performance improvement.
     [TestFixture]
     public class TestSolution: Test
     {
@@ -142,14 +147,12 @@ namespace Test
             stopwatch.Start();
             Assert.That(GenerateId(index), Is.EqualTo(expected));
             stopwatch.Stop();
-            TestContext.WriteLine(stopwatch.ElapsedTicks);
-            //TestContext.WriteLine(stopwatch.ElapsedMilliseconds);
+            var firstRunTicks = stopwatch.ElapsedTicks;
             stopwatch.Reset();
             stopwatch.Start();
             Assert.That(GenerateId2(index), Is.EqualTo(expected));
             stopwatch.Stop();
-            TestContext.WriteLine(stopwatch.ElapsedTicks);
-            //TestContext.WriteLine(stopwatch.ElapsedMilliseconds);
+            TestContext.WriteLine(Math.Round((decimal)stopwatch.ElapsedTicks / firstRunTicks, 2));
         }
 
         public static IEnumerable<object[]> IsPrimeTestCases
