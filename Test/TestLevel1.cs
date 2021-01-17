@@ -14,7 +14,7 @@ namespace Test
     // Test optimised implemention against reference implementation.  Use reference implementation to build test cases for optimised implementation.
     // Measure performance improvement.
     [TestFixture]
-    public class TestSolution: Test
+    public class TestLevel1: Test
     {
         private static bool IsPrimeReference(
             int n
