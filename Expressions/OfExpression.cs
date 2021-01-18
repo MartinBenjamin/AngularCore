@@ -21,12 +21,6 @@ namespace Expressions
             Rhs = rhs;
         }
 
-        public override decimal? Evaluate()
-        {
-            var lhs = Lhs.Evaluate();
-            var rhs = Rhs.Evaluate();
-
-            return lhs.HasValue && rhs.HasValue ? lhs * rhs : null;
-        }
+        public override decimal? Evaluate() => Lhs.Evaluate() * Rhs.Evaluate();
     }
 }

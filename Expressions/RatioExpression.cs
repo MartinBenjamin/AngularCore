@@ -21,12 +21,6 @@ namespace Expressions
             Denominator = denominator;
         }
 
-        public override decimal? Evaluate()
-        {
-            var numerator   = Numerator.Evaluate();
-            var denominator = Denominator.Evaluate();
-
-            return numerator.HasValue && denominator.HasValue ? numerator / denominator : null;
-        }
+        public override decimal? Evaluate() => Numerator.Evaluate() / Denominator.Evaluate();
     }
 }
