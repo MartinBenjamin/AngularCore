@@ -128,7 +128,7 @@ namespace Test
         {
             get
             {
-                var testCases = new List<object[]>
+                return new List<object[]>
                 {
                     new object[]
                     {
@@ -151,7 +151,6 @@ namespace Test
                         new TestDataList<string>{ "0", "0.0" }
                     }
                 };
-                return testCases;
             }
         }
     }
