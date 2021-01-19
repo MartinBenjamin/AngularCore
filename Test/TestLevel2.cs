@@ -22,7 +22,7 @@ namespace Test
                 string revisionNumber
                 ) => Add(
                     revisionNumber,
-                    revisionNumber.Split('.').Select(component => int.Parse(component)).ToArray(),
+                    revisionNumber.Split('.').Select(int.Parse).ToArray(),
                     0);
 
             private void Add(
