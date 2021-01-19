@@ -14,11 +14,11 @@ namespace Test
             private readonly SortedList<int, Vertex> _children        = new SortedList<int, Vertex>();
             private readonly IList<string>           _revisionNumbers = new List<string>();
 
-            public Vertex()
+            private Vertex()
             {
             }
 
-            public void Add(
+            private void Add(
                 string revisionNumber
                 ) => Add(
                     revisionNumber,
@@ -53,22 +53,32 @@ namespace Test
 
             }
 
-            public string[] Sort()
+            public string[] Extract()
             {
                 var revisionNumbers = new List<string>();
-                Sort(revisionNumbers);
+                Extract(revisionNumbers);
                 return revisionNumbers.ToArray();
             }
 
-            public void Sort(
-                IList<string> revisionNumbers
+            public void Extract(
+                List<string> revisionNumbers
                 )
             {
-                foreach(var revisionNumber in _revisionNumbers)
-                    revisionNumbers.Add(revisionNumber);
+                revisionNumbers.AddRange(_revisionNumbers);
 
                 foreach(var child in _children.Values)
-                    child.Sort(revisionNumbers);
+                    child.Extract(revisionNumbers);
+            }
+
+            public static Vertex Populate(
+                IEnumerable<string> revisionNumbers
+                )
+            {
+                var vertex = new Vertex();
+                foreach(var revisionNumber in revisionNumbers)
+                    vertex.Add(revisionNumber);
+
+                return vertex;
             }
         }
 
@@ -76,13 +86,8 @@ namespace Test
             string[] revisionNumbers
             )
         {
-            var vertex = new Vertex();
-            foreach(var revisionNumber in revisionNumbers)
-                vertex.Add(revisionNumber);
-
-            var sorted = new List<string>(revisionNumbers.Length);
-            vertex.Sort(sorted);
-            return sorted.ToArray();
+            var vertex = Vertex.Populate(revisionNumbers);
+            return vertex.Extract();
         }
 
         private string ToString(
