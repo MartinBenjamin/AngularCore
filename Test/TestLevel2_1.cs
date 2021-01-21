@@ -33,8 +33,7 @@ namespace Test
             )
         {
             // From Binet's Formula.
-            //TestContext.WriteLine((Math.Log10(n) + Math.Log10(5) / 2) / Math.Log10((Math.Sqrt(5) + 1) / 2));
-            return Convert.ToInt32(Math.Floor((Math.Log10(n) + Math.Log10(5) / 2) / Math.Log10((Math.Sqrt(5) + 1) / 2)));
+            return Convert.ToInt32(Math.Floor((Math.Log10(n * Math.Sqrt(5) + 0.5) / Math.Log10((Math.Sqrt(5) + 1) / 2))));
         }
 
         public int Minimum(
@@ -47,9 +46,16 @@ namespace Test
             {
                 henchmen += 1;
                 totalLambs -= next;
-                next +=next;
+                next += next;
             }
             return henchmen;
+        }
+
+        public int Minimum2(
+            int totalLambs
+            )
+        {
+            return Convert.ToInt32(Math.Floor(Math.Log10(totalLambs + 1)/Math.Log10(2)));
         }
 
         public int Maximum(
@@ -69,6 +75,13 @@ namespace Test
                 next = sum;
             }
             return henchmen;
+        }
+
+        public int Maximum2(
+            int totalLambs
+            )
+        {
+            return FibonacciIndex(totalLambs + 1) - 2;
         }
 
         public int Difference(
@@ -100,6 +113,7 @@ namespace Test
             Assert.That(Minimum(totalLambs), Is.EqualTo(expectedMinimun));
             stopWatch.Stop();
             TestContext.WriteLine(stopWatch.ElapsedMilliseconds);
+            TestContext.WriteLine(stopWatch.ElapsedTicks);
         }
 
         [TestCase(0, 0)]
@@ -124,8 +138,10 @@ namespace Test
             Assert.That(Maximum(totalLambs), Is.EqualTo(expectedMaximum));
             stopWatch.Stop();
             TestContext.WriteLine(stopWatch.ElapsedMilliseconds);
+            TestContext.WriteLine(stopWatch.ElapsedTicks);
         }
-        [TestCaseSource("FibonacciIndexTestCases")]
+
+//        [TestCaseSource("FibonacciIndexTestCases")]
         public void TestFibonacciIndex(
             int n,
             int expectedIndex
@@ -183,13 +199,13 @@ namespace Test
         {
             get
             {
-                return Enumerable.Empty<object[]>();
-                //return Enumerable.Range(0, 500).Select(
-                //    n => new object[]
-                //    {
-                //        n,
-                //        FibonacciIndexReference(n)
-                //    });
+                //return Enumerable.Empty<object[]>();
+                return Enumerable.Range(1, 500).Select(
+                    n => new object[]
+                    {
+                        n,
+                        FibonacciIndexReference(n)
+                    });
             }
         }
     }
