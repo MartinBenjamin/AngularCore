@@ -1,5 +1,6 @@
-import { Directive, ElementRef, EventEmitter, Inject, Input, Output } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, HostListener, Inject, Input, Output } from '@angular/core';
 import { AmountConversionServiceToken } from './AmountInputDefinition';
+import { numberSymbols } from "./Cldr";
 import { IConversionService } from './IConversionService';
 import { NumberModel } from './NumberModel';
 
@@ -9,6 +10,8 @@ import { NumberModel } from './NumberModel';
 })
 export class AmountModel extends NumberModel
 {
+    private static _groupRegex = new RegExp(numberSymbols.group, 'g');
+
     constructor(
         el: ElementRef,
         @Inject(AmountConversionServiceToken)
@@ -18,6 +21,21 @@ export class AmountModel extends NumberModel
         super(
             el,
             amountConversionService);
+    }
+
+    @HostListener('focus')
+    onfocus(): void
+    {
+        let input = <HTMLInputElement>this._el.nativeElement;
+        input.value = input.value.replace(
+            AmountModel._groupRegex,
+            '');
+    }
+
+    @HostListener('focusout')
+    onfocusout(): void
+    {
+        this.onchange();
     }
 
     @Input('dtAmountModel')

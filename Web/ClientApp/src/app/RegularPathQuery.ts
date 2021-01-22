@@ -1,4 +1,4 @@
-import { IRegularPathExpression, Property, Alternative, Sequence, ZeroOrOne } from "./RegularPathExpression";
+import { IExpression, Property, Alternative, Sequence, ZeroOrOne } from "./RegularPathExpression";
 
 enum InstructionType
 {
@@ -103,7 +103,7 @@ function Query(): Set<object>
 }
 
 function Compile(
-    regularPathExpression: IRegularPathExpression,
+    regularPathExpression: IExpression,
     program             ?: Program
     ): Program
 {
@@ -114,25 +114,25 @@ function Compile(
 
     else if(regularPathExpression instanceof Alternative)
     {
-        let forkToStartInstructions = new Map<IRegularPathExpression, Fork>();
+        let forkToStartInstructions = new Map<IExpression, Fork>();
 
-        for(let index = 1; index < regularPathExpression.RegularPathExpressions.length; ++index)
+        for(let index = 1; index < regularPathExpression.Expressions.length; ++index)
         {
             let fork = <Fork>{ TargetIndex: -1 };
-            forkToStartInstructions.set(regularPathExpression.RegularPathExpressions[index], fork);
+            forkToStartInstructions.set(regularPathExpression.Expressions[index], fork);
             program.push(fork);
         }
 
         Compile(
-            regularPathExpression.RegularPathExpressions[0],
+            regularPathExpression.Expressions[0],
             program);
 
         let jump = <Jump>{ TargetIndex: -1 };
         program.push(jump);
 
-        for(let index = 1; index < regularPathExpression.RegularPathExpressions.length; ++index)
+        for(let index = 1; index < regularPathExpression.Expressions.length; ++index)
         {
-            let alternative = regularPathExpression.RegularPathExpressions[index];
+            let alternative = regularPathExpression.Expressions[index];
             forkToStartInstructions.get(alternative).TargetIndex = program.length;
             Compile(
                 alternative,
@@ -143,7 +143,7 @@ function Compile(
         jump.TargetIndex = program.length;
     }
     else if(regularPathExpression instanceof Sequence)
-        regularPathExpression.RegularPathExpressions.forEach(
+        regularPathExpression.Expressions.forEach(
             regularPathExpression => Compile(
                 regularPathExpression,
                 program));
@@ -153,7 +153,7 @@ function Compile(
         let fork = <Jump>{ TargetIndex: -1 };
         program.push(fork);
         Compile(
-            regularPathExpression.RegularPathExpression,
+            regularPathExpression.Expression,
             program);
         fork.TargetIndex = program.length;
     }
