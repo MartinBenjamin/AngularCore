@@ -30,8 +30,10 @@ namespace Test
                     }
                     else
                     {
-                        cycles += x / y;
-                        x = x % y;
+                        cycles += BigInteger.DivRem(
+                            x,
+                            y,
+                            out x);
                         if(x == 0)
                             return -1;
                     }
@@ -45,8 +47,10 @@ namespace Test
                     }
                     else
                     {
-                        cycles += y / x;
-                        y = y % x;
+                        cycles += BigInteger.DivRem(
+                            y,
+                            x,
+                            out y);
                         if(y == 0)
                             return -1;
                     }
