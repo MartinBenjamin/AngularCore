@@ -19,11 +19,11 @@ namespace Test
             while(true)
             {
                 if(x == y)
-                    return x == 1 ? cycles : -1;
+                    return x.IsOne ? cycles : -1;
 
                 if(x > y)
                 {
-                    if(y == 1)
+                    if(y.IsOne)
                     {
                         cycles += x - 1;
                         x = 1;
@@ -34,13 +34,13 @@ namespace Test
                             x,
                             y,
                             out x);
-                        if(x == 0)
+                        if(x.IsZero)
                             return -1;
                     }
                 }
                 else if(y > x)
                 {
-                    if(x == 1)
+                    if(x.IsOne)
                     {
                         cycles += y - 1;
                         y = 1;
@@ -51,7 +51,7 @@ namespace Test
                             y,
                             x,
                             out y);
-                        if(y == 0)
+                        if(y.IsZero)
                             return -1;
                     }
                 }
