@@ -242,7 +242,7 @@ namespace Test
             return result;
         }
 
-        public Matrix Extract(
+        public Matrix Block(
             IList<int> rowIndices,
             IList<int> columnIndices
             )
@@ -261,7 +261,17 @@ namespace Test
             return result;
         }
 
-        public Fraction Determinant2X2()
+        public Fraction Determinant()
+        {
+            if(_elements.Count == 2)
+                return Determinant2X2();
+
+            return Determinant(
+                RowIndices,
+                ColumnIndices);
+        }
+
+        private Fraction Determinant2X2()
         {
             var rowIndices = _elements.Keys.ToList();
             return
@@ -269,14 +279,41 @@ namespace Test
                 _elements[rowIndices[0]][rowIndices[1]] * _elements[rowIndices[1]][rowIndices[0]];
         }
 
-        public Fraction Determinant()
+        private Fraction Determinant(
+            IList<int> rowIndices,
+            IList<int> columnIndices
+            )
         {
-            if(_elements.Count == 2)
-                return Determinant2X2();
+            if(rowIndices.Count == 2)
+                return
+                    _elements[rowIndices[0]][columnIndices[0]] * _elements[rowIndices[1]][columnIndices[1]] -
+                    _elements[rowIndices[0]][columnIndices[1]] * _elements[rowIndices[1]][columnIndices[0]];
 
-            IList<int> rowIndices    = RowIndices;
-            IList<int> columnIndices = ColumnIndices;
-            throw new ApplicationException("Not Supported.");
+            else
+            {
+                var positive = true;
+                var determinant = Fraction.Zero;
+                var rowIndex = rowIndices[0];
+                foreach(var columnIndex in columnIndices)
+                {
+                    var element            = _elements[rowIndex][columnIndex];
+                    var minorRowIndices    = rowIndices.Where(index => index != rowIndex).ToList();
+                    var minorColumnIndices = columnIndices.Where(index => index != columnIndex).ToList();
+                    var minor = Determinant(
+                            minorRowIndices,
+                            minorColumnIndices);
+
+                    if(positive)
+                        determinant += element * minor;
+
+                    else
+                        determinant -= element * minor;
+
+                    positive = !positive;
+                }
+
+                return determinant;
+            }
         }
 
         public Matrix Adjugate2X2()
@@ -382,8 +419,8 @@ namespace Test
 
             var transientStates = m.RowIndices.Where(rowIndex => !m[rowIndex, rowIndex].IsOne).ToList();
             var absorbingStates = m.RowIndices.Where(rowIndex => m[rowIndex, rowIndex].IsOne).ToList();
-            var q = m.Extract(transientStates, transientStates);
-            var r = m.Extract(transientStates, absorbingStates);
+            var q = m.Block(transientStates, transientStates);
+            var r = m.Block(transientStates, absorbingStates);
             TestContext.WriteLine("Q:");
             TestContext.WriteLine(q);
 
@@ -397,6 +434,7 @@ namespace Test
             var iMinusQ = qIdentity - q;
             TestContext.WriteLine("I - Q:");
             TestContext.WriteLine(iMinusQ);
+            TestContext.WriteLine(iMinusQ.Determinant());
 
             var n = iMinusQ.Invert();
             TestContext.WriteLine("N = (I - Q)^-1:");
