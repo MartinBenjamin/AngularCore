@@ -415,20 +415,17 @@ namespace Test
             TestContext.Write("Denominators: ");
             TestContext.WriteLine(new TestDataList<int>(denominators));
 
-            int gcd = denominators.Aggregate((lhs, rhs) => Fraction.Gcd(lhs, rhs));
-            TestContext.WriteLine("GCD: " + gcd);
-
-            var lcd = denominators.Aggregate((lhs, rhs) => lhs * rhs) / gcd;
-            TestContext.WriteLine("LCD: " + lcd);
+            var lcm = denominators.Aggregate((lhs, rhs) => lhs * rhs / Fraction.Gcd(lhs, rhs));
+            TestContext.WriteLine("LCD: " + lcm);
 
             var result = new TestDataList<int>();
             foreach(var columnIndex in b.ColumnIndices)
             {
                 var element = b[initialState, columnIndex];
-                result.Add(element.Numerator * lcd / element.Denominator);
+                result.Add(element.Numerator * lcm / element.Denominator);
             }
 
-            result.Add(lcd);
+            result.Add(lcm);
             TestContext.WriteLine("Result: " + result);
             return result;
         }
