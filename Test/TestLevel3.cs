@@ -8,7 +8,8 @@ namespace Test
     [TestFixture]
     public class TestLevel3: Test
     {
-        private static string _impossible = "impossible";
+        private static readonly string _impossible = "impossible";
+
         private BigInteger Cycles(
             BigInteger x,
             BigInteger y
