@@ -222,19 +222,15 @@ namespace Test
             var result = new Matrix(_elements);
             foreach(var rowIndex in _elements.Keys)
             {
-                var denominator = 0;
+                var total = Fraction.Zero;
                 var row = _elements[rowIndex];
                 foreach(var columnIndex in row.Keys)
-                    denominator += row[columnIndex].Numerator;
+                    total += row[columnIndex];
 
-                if(denominator != 0)
-                {
-                    var fraction = new Fraction(
-                        1,
-                        denominator);
+                if(!total.IsZero)
                     foreach(var columnIndex in row.Keys)
-                        result._elements[rowIndex][columnIndex] *= fraction;
-                }
+                        result._elements[rowIndex][columnIndex] /= total;
+
                 else // Absorbing state.
                     result._elements[rowIndex][rowIndex] = Fraction.One;
             }
@@ -371,7 +367,7 @@ namespace Test
 
         public static Matrix operator *(
             Fraction lhs,
-            Matrix  rhs
+            Matrix   rhs
             )
         {
             var result = new Matrix(rhs._elements);
@@ -409,18 +405,18 @@ namespace Test
             IList<IList<int>> matrix
             )
         {
-            var m = new Matrix(matrix);
+            var t = new Matrix(matrix);
             TestContext.WriteLine("Given Transition Matrix:");
-            TestContext.WriteLine(m);
+            TestContext.WriteLine(t);
 
-            m = m.Normalise();
+            t = t.Normalise();
             TestContext.WriteLine("Normalised Transition Matrix:");
-            TestContext.WriteLine(m);
+            TestContext.WriteLine(t);
 
-            var transientStates = m.RowIndices.Where(rowIndex => !m[rowIndex, rowIndex].IsOne).ToList();
-            var absorbingStates = m.RowIndices.Where(rowIndex => m[rowIndex, rowIndex].IsOne).ToList();
-            var q = m.Block(transientStates, transientStates);
-            var r = m.Block(transientStates, absorbingStates);
+            var transientStates = t.RowIndices.Where(rowIndex => !t[rowIndex, rowIndex].IsOne).ToList();
+            var absorbingStates = t.RowIndices.Where(rowIndex => t[rowIndex, rowIndex].IsOne).ToList();
+            var q = t.Block(transientStates, transientStates);
+            var r = t.Block(transientStates, absorbingStates);
             TestContext.WriteLine("Q:");
             TestContext.WriteLine(q);
 
@@ -434,7 +430,7 @@ namespace Test
             var iMinusQ = qIdentity - q;
             TestContext.WriteLine("I - Q:");
             TestContext.WriteLine(iMinusQ);
-            TestContext.WriteLine(iMinusQ.Determinant());
+            //TestContext.WriteLine(iMinusQ.Determinant());
 
             var n = iMinusQ.Invert();
             TestContext.WriteLine("N = (I - Q)^-1:");
