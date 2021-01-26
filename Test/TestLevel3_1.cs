@@ -366,6 +366,7 @@ namespace Test
     public class TestLevel3_1: Test
     {
         public IList<int> Probabilities(
+            int               initialState,
             IList<IList<int>> matrix
             )
         {
@@ -404,7 +405,6 @@ namespace Test
             TestContext.WriteLine(b);
 
             var denominators = new HashSet<int>();
-            var initialState = 0;
             foreach(var columnIndex in b.ColumnIndices)
             {
                 var element = b[initialState, columnIndex];
@@ -432,11 +432,14 @@ namespace Test
 
         [TestCaseSource("TestCases")]
         public void Test(
+            int               initialState,
             IList<IList<int>> matrix,
             IList<int>        expected
             )
         {
-            var result = Probabilities(matrix);
+            var result = Probabilities(
+                initialState,
+                matrix);
             Assert.That(result.SequenceEqual(expected), Is.True);
         }
 
@@ -448,6 +451,7 @@ namespace Test
                 {
                     new object[]
                     {
+                        0,
                         new TestDataList<IList<int>>
                         {
                             new TestDataList<int>{ 1, 0, 0, 0, 0 },
@@ -461,6 +465,7 @@ namespace Test
 
                     new object[]
                     {
+                        0,
                         new TestDataList<IList<int>>
                         {
                             new TestDataList<int>{ 0, 2, 1, 0, 0 },
@@ -474,6 +479,7 @@ namespace Test
 
                     new object[]
                     {
+                        0,
                         new TestDataList<IList<int>>
                         {
                             new TestDataList<int>{ 0, 1, 0, 0, 0, 1 },
