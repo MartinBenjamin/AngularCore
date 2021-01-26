@@ -262,9 +262,10 @@ namespace Test
             if(_elements.Count == 2)
                 return Determinant2X2();
 
+            var rowIndices = _elements.Keys.ToList();
             return Determinant(
-                RowIndices,
-                ColumnIndices);
+                rowIndices,
+                rowIndices);
         }
 
         private Fraction Determinant2X2()
@@ -430,7 +431,7 @@ namespace Test
             var iMinusQ = qIdentity - q;
             TestContext.WriteLine("I - Q:");
             TestContext.WriteLine(iMinusQ);
-            //TestContext.WriteLine(iMinusQ.Determinant());
+            TestContext.WriteLine(iMinusQ.Determinant());
 
             var n = iMinusQ.Invert();
             TestContext.WriteLine("N = (I - Q)^-1:");
