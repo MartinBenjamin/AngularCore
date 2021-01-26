@@ -259,21 +259,10 @@ namespace Test
 
         public Fraction Determinant()
         {
-            if(_elements.Count == 2)
-                return Determinant2X2();
-
             var rowIndices = _elements.Keys.ToList();
             return Determinant(
                 rowIndices,
                 rowIndices);
-        }
-
-        private Fraction Determinant2X2()
-        {
-            var rowIndices = _elements.Keys.ToList();
-            return
-                _elements[rowIndices[0]][rowIndices[0]] * _elements[rowIndices[1]][rowIndices[1]] -
-                _elements[rowIndices[0]][rowIndices[1]] * _elements[rowIndices[1]][rowIndices[0]];
         }
 
         private Fraction Determinant(
