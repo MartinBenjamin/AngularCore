@@ -286,31 +286,28 @@ namespace Test
                     _elements[rowIndices[0]][columnIndices[0]] * _elements[rowIndices[1]][columnIndices[1]] -
                     _elements[rowIndices[0]][columnIndices[1]] * _elements[rowIndices[1]][columnIndices[0]];
 
-            else
+            var positive = true;
+            var determinant = Fraction.Zero;
+            var rowIndex = rowIndices[0];
+            foreach(var columnIndex in columnIndices)
             {
-                var positive = true;
-                var determinant = Fraction.Zero;
-                var rowIndex = rowIndices[0];
-                foreach(var columnIndex in columnIndices)
-                {
-                    var element            = _elements[rowIndex][columnIndex];
-                    var minorRowIndices    = rowIndices.Where(index => index != rowIndex).ToList();
-                    var minorColumnIndices = columnIndices.Where(index => index != columnIndex).ToList();
-                    var minor = Determinant(
-                            minorRowIndices,
-                            minorColumnIndices);
+                var element            = _elements[rowIndex][columnIndex];
+                var minorRowIndices    = rowIndices.Where(index => index != rowIndex).ToList();
+                var minorColumnIndices = columnIndices.Where(index => index != columnIndex).ToList();
+                var minor = Determinant(
+                        minorRowIndices,
+                        minorColumnIndices);
 
-                    if(positive)
-                        determinant += element * minor;
+                if(positive)
+                    determinant += element * minor;
 
-                    else
-                        determinant -= element * minor;
+                else
+                    determinant -= element * minor;
 
-                    positive = !positive;
-                }
-
-                return determinant;
+                positive = !positive;
             }
+
+            return determinant;
         }
 
         public Matrix Adjugate2X2()
