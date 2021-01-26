@@ -191,7 +191,7 @@ namespace Test
             }
         }
 
-        public IList<int> RowsIndices
+        public IList<int> RowIndices
         {
             get
             {
@@ -274,6 +274,8 @@ namespace Test
             if(_elements.Count == 2)
                 return Determinant2X2();
 
+            IList<int> rowIndices    = RowIndices;
+            IList<int> columnIndices = ColumnIndices;
             throw new ApplicationException("Not Supported.");
         }
 
@@ -317,9 +319,9 @@ namespace Test
             )
         {
             var result = new Matrix(
-                lhs.RowsIndices,
+                lhs.RowIndices,
                 rhs.ColumnIndices);
-            foreach(var rowIndex in result.RowsIndices)
+            foreach(var rowIndex in result.RowIndices)
             {
                 var row = result._elements[rowIndex];
                 foreach(var columnIndex in result.ColumnIndices)
@@ -378,8 +380,8 @@ namespace Test
             TestContext.WriteLine("Normalised Transition Matrix:");
             TestContext.WriteLine(m);
 
-            var transientStates = m.RowsIndices.Where(rowIndex => !m[rowIndex, rowIndex].IsOne).ToList();
-            var absorbingStates = m.RowsIndices.Where(rowIndex => m[rowIndex, rowIndex].IsOne).ToList();
+            var transientStates = m.RowIndices.Where(rowIndex => !m[rowIndex, rowIndex].IsOne).ToList();
+            var absorbingStates = m.RowIndices.Where(rowIndex => m[rowIndex, rowIndex].IsOne).ToList();
             var q = m.Extract(transientStates, transientStates);
             var r = m.Extract(transientStates, absorbingStates);
             TestContext.WriteLine("Q:");
