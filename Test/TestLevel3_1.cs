@@ -227,10 +227,12 @@ namespace Test
             var result = new Matrix(_elements);
             foreach(var rowIndex in _elements.Keys)
             {
-                var total = Fraction.Zero;
                 var row = _elements[rowIndex];
-                foreach(var columnIndex in row.Keys)
-                    total += row[columnIndex];
+                var total = row
+                    .Values
+                    .Aggregate(
+                        Fraction.Zero,
+                        (accumulator, current) => accumulator + current);
 
                 if(!total.IsZero)
                     foreach(var columnIndex in row.Keys)
