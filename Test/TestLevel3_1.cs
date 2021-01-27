@@ -243,7 +243,7 @@ namespace Test
             return result;
         }
 
-        public Matrix Block(
+        public Matrix Submatrix(
             IList<int> rowIndices,
             IList<int> columnIndices
             )
@@ -327,7 +327,17 @@ namespace Test
             return adj;
         }
 
-        public Matrix Invert() => (Fraction.One / Det()) * Adj();
+        private Matrix Invert1X1()
+        {
+            var rowIndices = _elements.Keys.ToList();
+            var inverse = new Matrix(
+                rowIndices,
+                rowIndices);
+            inverse._elements[rowIndices[0]][rowIndices[0]] = Fraction.One / _elements[rowIndices[0]][rowIndices[0]];
+            return inverse;
+        }
+
+        public Matrix Invert() => _elements.Count == 1 ? Invert1X1() : (Fraction.One / Det()) * Adj();
 
         public static Matrix operator +(
             Matrix lhs,
@@ -424,8 +434,8 @@ namespace Test
 
             var transientStates = t.RowIndices.Where(rowIndex => !t[rowIndex, rowIndex].IsOne).ToList();
             var absorbingStates = t.RowIndices.Where(rowIndex => t[rowIndex, rowIndex].IsOne).ToList();
-            var q = t.Block(transientStates, transientStates);
-            var r = t.Block(transientStates, absorbingStates);
+            var q = t.Submatrix(transientStates, transientStates);
+            var r = t.Submatrix(transientStates, absorbingStates);
             TestContext.WriteLine("Q:");
             TestContext.WriteLine(q);
 
@@ -494,6 +504,17 @@ namespace Test
             {
                 return new List<object[]>
                 {
+                    new object[]
+                    {
+                        0,
+                        new TestDataList<IList<int>>
+                        {
+                            new TestDataList<int>{ 0, 1 },
+                            new TestDataList<int>{ 0, 1 }
+                        },
+                        new TestDataList<int>{ 1, 1 }
+                    },
+
                     new object[]
                     {
                         1,
