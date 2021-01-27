@@ -69,14 +69,14 @@ namespace Test
         public static Fraction operator*(
             Fraction lhs,
             Fraction rhs
-            )=> new Fraction(
+            ) => new Fraction(
                 lhs.Numerator * rhs.Numerator,
                 lhs.Denominator * rhs.Denominator);
 
         public static Fraction operator/(
             Fraction lhs,
             Fraction rhs
-            )=> new Fraction(
+            ) => new Fraction(
                 lhs.Numerator * (rhs.Numerator < 0 ? -rhs.Denominator : rhs.Denominator),
                 lhs.Denominator * Math.Abs(rhs.Numerator));
 
