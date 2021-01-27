@@ -517,6 +517,18 @@ namespace Test
 
                     new object[]
                     {
+                        0,
+                        new TestDataList<IList<int>>
+                        {
+                            new TestDataList<int>{ 0, 1, 1 },
+                            new TestDataList<int>{ 0, 1, 0 },
+                            new TestDataList<int>{ 0, 0, 1 }
+                        },
+                        new TestDataList<int>{ 1, 1, 2 }
+                    },
+
+                    new object[]
+                    {
                         1,
                         new TestDataList<IList<int>>
                         {
