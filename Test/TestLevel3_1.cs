@@ -209,7 +209,9 @@ namespace Test
 
         public Matrix Identity()
         {
-            var result = new Matrix(_elements);
+            var result = new Matrix(
+                RowIndices,
+                ColumnIndices);
             foreach(var rowIndex in _elements.Keys)
                 foreach(var columnIndex in _elements[rowIndex].Keys)
                     result._elements[rowIndex][columnIndex] = rowIndex == columnIndex ? Fraction.One : Fraction.Zero;
@@ -301,7 +303,9 @@ namespace Test
 
         public Matrix Adjugate2X2()
         {
-            var result = new Matrix(_elements);
+            var result = new Matrix(
+                RowIndices,
+                ColumnIndices);
             var rowIndices = _elements.Keys.ToList();
             result._elements[rowIndices[0]][rowIndices[0]] =  _elements[rowIndices[1]][rowIndices[1]];
             result._elements[rowIndices[0]][rowIndices[1]] = -_elements[rowIndices[0]][rowIndices[1]];
