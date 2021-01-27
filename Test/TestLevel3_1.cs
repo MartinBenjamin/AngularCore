@@ -335,19 +335,9 @@ namespace Test
                         minorRowIndices,
                         minorColumnIndices);
 
-                    adj._elements[rowIndex][columnIndex] = (rowIndexIndex + columnIndexIndex) % 2 == 0 ?
+                    adj._elements[columnIndex][rowIndex] = (rowIndexIndex + columnIndexIndex) % 2 == 0 ?
                         cofactorValue : -cofactorValue;
                 }
-
-            // Transpose.
-            foreach(var rowIndex in rowIndices)
-                foreach(var columnIndex in rowIndices)
-                    if(rowIndex != columnIndex)
-                    {
-                        var temp = adj._elements[rowIndex][columnIndex];
-                        adj._elements[rowIndex][columnIndex] = adj._elements[columnIndex][rowIndex];
-                        adj._elements[columnIndex][rowIndex] = temp;
-                    }
 
             return adj;
         }
