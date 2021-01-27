@@ -123,8 +123,8 @@ namespace Test
         private IDictionary<int, IDictionary<int, Fraction>> _elements;
 
         public Matrix(
-            IList<int> rowIndices,
-            IList<int> columnIndices
+            ICollection<int> rowIndices,
+            ICollection<int> columnIndices
             )
         {
             _elements = new Dictionary<int, IDictionary<int, Fraction>>(rowIndices.Count);
@@ -194,19 +194,19 @@ namespace Test
             }
         }
 
-        public IList<int> RowIndices
+        public ICollection<int> RowIndices
         {
             get
             {
-                return _elements.Keys.ToList();
+                return _elements.Keys;
             }
         }
 
-        public IList<int> ColumnIndices
+        public ICollection<int> ColumnIndices
         {
             get
             {
-                return _elements.First().Value.Keys.ToList();
+                return _elements.First().Value.Keys;
             }
         }
 
@@ -372,13 +372,15 @@ namespace Test
             Matrix rhs
             )
         {
+            var rowIndices    = lhs.RowIndices.ToList();
+            var columnIndices = rhs.ColumnIndices.ToList();
             var result = new Matrix(
-                lhs.RowIndices,
-                rhs.ColumnIndices);
-            foreach(var rowIndex in result.RowIndices)
+                rowIndices,
+                columnIndices);
+            foreach(var rowIndex in rowIndices)
             {
                 var row = result._elements[rowIndex];
-                foreach(var columnIndex in result.ColumnIndices)
+                foreach(var columnIndex in columnIndices)
                     foreach(var index in rhs._elements.Keys)
                         row[columnIndex] += lhs._elements[rowIndex][index] * rhs._elements[index][columnIndex];
             }
