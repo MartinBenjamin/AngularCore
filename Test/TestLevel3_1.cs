@@ -183,7 +183,10 @@ namespace Test
             }
         }
 
-        public Fraction this[int rowIndex, int columnIndex]
+        public Fraction this[
+            int rowIndex,
+            int columnIndex
+            ]
         {
             get
             {
@@ -273,9 +276,7 @@ namespace Test
             )
         {
             if(rowIndices.Count == 1)
-                return
-                    _elements[rowIndices[0]][columnIndices[0]];// * _elements[rowIndices[1]][columnIndices[1]] -
-                    //_elements[rowIndices[0]][columnIndices[1]] * _elements[rowIndices[1]][columnIndices[0]];
+                return _elements[rowIndices[0]][columnIndices[0]];
 
             var determinant = Fraction.Zero;
             var rowIndex = rowIndices[0];
@@ -327,6 +328,19 @@ namespace Test
         }
 
         public Matrix Invert() => (Fraction.One / Det()) * Adj();
+
+        public static Matrix operator +(
+            Matrix lhs,
+            Matrix rhs
+            )
+        {
+            var result = new Matrix(lhs._elements);
+            foreach(var rowIndex in lhs._elements.Keys)
+                foreach(var columnIndex in lhs._elements[rowIndex].Keys)
+                    result._elements[rowIndex][columnIndex] += rhs._elements[rowIndex][columnIndex];
+
+            return result;
+        }
 
         public static Matrix operator -(
             Matrix lhs,
