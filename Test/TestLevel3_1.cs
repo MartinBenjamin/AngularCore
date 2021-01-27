@@ -259,15 +259,15 @@ namespace Test
             return result;
         }
 
-        public Fraction Determinant()
+        public Fraction Det()
         {
             var rowIndices = _elements.Keys.ToList();
-            return Determinant(
+            return Det(
                 rowIndices,
                 rowIndices);
         }
 
-        private Fraction Determinant(
+        private Fraction Det(
             IList<int> rowIndices,
             IList<int> columnIndices
             )
@@ -277,31 +277,29 @@ namespace Test
                     _elements[rowIndices[0]][columnIndices[0]] * _elements[rowIndices[1]][columnIndices[1]] -
                     _elements[rowIndices[0]][columnIndices[1]] * _elements[rowIndices[1]][columnIndices[0]];
 
-            var positive = true;
             var determinant = Fraction.Zero;
             var rowIndex = rowIndices[0];
-            foreach(var columnIndex in columnIndices)
+            for(var columnIndexIndex = 0;columnIndexIndex < columnIndices.Count;++columnIndexIndex)
             {
+                var columnIndex        = columnIndices[columnIndexIndex];
                 var element            = _elements[rowIndex][columnIndex];
                 var minorRowIndices    = rowIndices.Where(index => index != rowIndex).ToList();
                 var minorColumnIndices = columnIndices.Where(index => index != columnIndex).ToList();
-                var minor = Determinant(
+                var minor = Det(
                         minorRowIndices,
                         minorColumnIndices);
 
-                if(positive)
+                if(columnIndexIndex % 2 == 0)
                     determinant += element * minor;
 
                 else
                     determinant -= element * minor;
-
-                positive = !positive;
             }
 
             return determinant;
         }
 
-        public Matrix Adjugate2X2()
+        public Matrix Adj2X2()
         {
             var result = new Matrix(
                 RowIndices,
@@ -314,15 +312,47 @@ namespace Test
             return result;
         }
 
-        public Matrix Adjugate()
+        public Matrix Adj()
         {
             if(_elements.Count == 2)
-                return Adjugate2X2();
+                return Adj2X2();
 
-            throw new ApplicationException("Not Supported.");
+            var rowIndices = _elements.Keys.ToList();
+            var adj = new Matrix(
+                rowIndices,
+                rowIndices);
+
+            // Calculate cofactors.
+            for(var rowIndexIndex = 0;rowIndexIndex < rowIndices.Count;++rowIndexIndex)
+                for(var columnIndexIndex = 0;columnIndexIndex < rowIndices.Count;++columnIndexIndex)
+                {
+                    var rowIndex    = rowIndices[rowIndexIndex   ];
+                    var columnIndex = rowIndices[columnIndexIndex];
+                    var minorRowIndices    = rowIndices.Where(index => index != rowIndex   ).ToList();
+                    var minorColumnIndices = rowIndices.Where(index => index != columnIndex).ToList();
+
+                    var cofactorValue = Det(
+                        minorRowIndices,
+                        minorColumnIndices);
+
+                    adj._elements[rowIndex][columnIndex] = (rowIndexIndex + columnIndexIndex) % 2 == 0 ?
+                        cofactorValue : -cofactorValue;
+                }
+
+            // Transpose.
+            foreach(var rowIndex in rowIndices)
+                foreach(var columnIndex in rowIndices)
+                    if(rowIndex != columnIndex)
+                    {
+                        var temp = adj._elements[rowIndex][columnIndex];
+                        adj._elements[rowIndex][columnIndex] = adj._elements[columnIndex][rowIndex];
+                        adj._elements[columnIndex][rowIndex] = temp;
+                    }
+
+            return adj;
         }
 
-        public Matrix Invert() => (Fraction.One / Determinant()) * Adjugate();
+        public Matrix Invert() => (Fraction.One / Det()) * Adj();
 
         public static Matrix operator -(
             Matrix lhs,
@@ -421,7 +451,7 @@ namespace Test
             var iMinusQ = qIdentity - q;
             TestContext.WriteLine("I - Q:");
             TestContext.WriteLine(iMinusQ);
-            TestContext.WriteLine(iMinusQ.Determinant());
+            TestContext.WriteLine(iMinusQ.Det());
 
             var n = iMinusQ.Invert();
             TestContext.WriteLine("N = (I - Q)^-1:");
@@ -478,7 +508,7 @@ namespace Test
                 {
                     new object[]
                     {
-                        0,
+                        1,
                         new TestDataList<IList<int>>
                         {
                             new TestDataList<int>{ 1, 0, 0, 0, 0 },
@@ -487,7 +517,7 @@ namespace Test
                             new TestDataList<int>{ 0, 0, 1, 0, 1 },
                             new TestDataList<int>{ 0, 0, 0, 0, 1 },
                         },
-                        new TestDataList<int>{ 7, 6, 8, 21 }
+                        new TestDataList<int>{ 3, 1, 4 }
                     },
 
                     new object[]
