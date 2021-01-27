@@ -190,7 +190,7 @@ namespace Test
         {
             get
             {
-                return this._elements[rowIndex][columnIndex];
+                return _elements[rowIndex][columnIndex];
             }
         }
 
