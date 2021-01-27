@@ -272,10 +272,10 @@ namespace Test
             IList<int> columnIndices
             )
         {
-            if(rowIndices.Count == 2)
+            if(rowIndices.Count == 1)
                 return
-                    _elements[rowIndices[0]][columnIndices[0]] * _elements[rowIndices[1]][columnIndices[1]] -
-                    _elements[rowIndices[0]][columnIndices[1]] * _elements[rowIndices[1]][columnIndices[0]];
+                    _elements[rowIndices[0]][columnIndices[0]];// * _elements[rowIndices[1]][columnIndices[1]] -
+                    //_elements[rowIndices[0]][columnIndices[1]] * _elements[rowIndices[1]][columnIndices[0]];
 
             var determinant = Fraction.Zero;
             var rowIndex = rowIndices[0];
@@ -299,24 +299,8 @@ namespace Test
             return determinant;
         }
 
-        public Matrix Adj2X2()
-        {
-            var result = new Matrix(
-                RowIndices,
-                ColumnIndices);
-            var rowIndices = _elements.Keys.ToList();
-            result._elements[rowIndices[0]][rowIndices[0]] =  _elements[rowIndices[1]][rowIndices[1]];
-            result._elements[rowIndices[0]][rowIndices[1]] = -_elements[rowIndices[0]][rowIndices[1]];
-            result._elements[rowIndices[1]][rowIndices[0]] = -_elements[rowIndices[1]][rowIndices[0]];
-            result._elements[rowIndices[1]][rowIndices[1]] =  _elements[rowIndices[0]][rowIndices[0]];
-            return result;
-        }
-
         public Matrix Adj()
         {
-            if(_elements.Count == 2)
-                return Adj2X2();
-
             var rowIndices = _elements.Keys.ToList();
             var adj = new Matrix(
                 rowIndices,
