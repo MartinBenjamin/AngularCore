@@ -303,6 +303,9 @@ namespace Test
         public Matrix Adj()
         {
             var rowIndices = _elements.Keys.ToList();
+            if(rowIndices.Count == 1)
+                return Identity();
+
             var adj = new Matrix(
                 rowIndices,
                 rowIndices);
@@ -327,17 +330,7 @@ namespace Test
             return adj;
         }
 
-        private Matrix Invert1X1()
-        {
-            var rowIndices = _elements.Keys.ToList();
-            var inverse = new Matrix(
-                rowIndices,
-                rowIndices);
-            inverse._elements[rowIndices[0]][rowIndices[0]] = Fraction.One / _elements[rowIndices[0]][rowIndices[0]];
-            return inverse;
-        }
-
-        public Matrix Invert() => _elements.Count == 1 ? Invert1X1() : (Fraction.One / Det()) * Adj();
+        public Matrix Invert() => (Fraction.One / Det()) * Adj();
 
         public static Matrix operator +(
             Matrix lhs,
