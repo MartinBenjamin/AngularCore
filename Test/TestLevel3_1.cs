@@ -372,17 +372,18 @@ namespace Test
             Matrix rhs
             )
         {
-            var rowIndices    = lhs.RowIndices.ToList();
-            var columnIndices = rhs.ColumnIndices.ToList();
             var result = new Matrix(
-                rowIndices,
-                columnIndices);
-            foreach(var rowIndex in rowIndices)
+                lhs.RowIndices,
+                rhs.ColumnIndices);
+            foreach(var rowIndex in lhs.RowIndices)
             {
                 var row = result._elements[rowIndex];
-                foreach(var columnIndex in columnIndices)
-                    foreach(var index in rhs._elements.Keys)
-                        row[columnIndex] += lhs._elements[rowIndex][index] * rhs._elements[index][columnIndex];
+                foreach(var columnIndex in rhs.ColumnIndices)
+                     row[columnIndex] = rhs.RowIndices
+                        .Select(index => lhs._elements[rowIndex][index] * rhs._elements[index][columnIndex])
+                        .Aggregate(
+                            Fraction.Zero,
+                            (accumulator, current) => accumulator + current);
             }
 
             return result;
@@ -428,18 +429,18 @@ namespace Test
             IList<IList<int>> matrix
             )
         {
-            var t = new Matrix(matrix);
+            var transitionMatrix = new Matrix(matrix);
             TestContext.WriteLine("Given Transition Matrix:");
-            TestContext.WriteLine(t);
+            TestContext.WriteLine(transitionMatrix);
 
-            t = t.Normalise();
+            transitionMatrix = transitionMatrix.Normalise();
             TestContext.WriteLine("Normalised Transition Matrix:");
-            TestContext.WriteLine(t);
+            TestContext.WriteLine(transitionMatrix);
 
-            var transientStates = t.RowIndices.Where(rowIndex => !t[rowIndex, rowIndex].IsOne).ToList();
-            var absorbingStates = t.RowIndices.Where(rowIndex => t[rowIndex, rowIndex].IsOne).ToList();
-            var q = t.Submatrix(transientStates, transientStates);
-            var r = t.Submatrix(transientStates, absorbingStates);
+            var transientStates = transitionMatrix.RowIndices.Where(rowIndex => !transitionMatrix[rowIndex, rowIndex].IsOne).ToList();
+            var absorbingStates = transitionMatrix.RowIndices.Where(rowIndex => transitionMatrix[rowIndex, rowIndex].IsOne).ToList();
+            var q = transitionMatrix.Submatrix(transientStates, transientStates);
+            var r = transitionMatrix.Submatrix(transientStates, absorbingStates);
             TestContext.WriteLine("Q:");
             TestContext.WriteLine(q);
 
