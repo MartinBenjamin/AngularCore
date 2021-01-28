@@ -410,7 +410,7 @@ namespace Test
                 foreach(var columnIndex in row.Keys.OrderBy(key => key))
                 {
                     builder.Append('\t');
-                    builder.Append(_elements[rowIndex][columnIndex].ToString());
+                    builder.Append(_elements[rowIndex][columnIndex]);
                 }
 
                 builder.AppendLine(string.Empty);
