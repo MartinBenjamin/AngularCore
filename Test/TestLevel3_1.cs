@@ -227,7 +227,8 @@ namespace Test
             var result = new Matrix(_elements);
             foreach(var rowIndex in _elements.Keys)
             {
-                var row = _elements[rowIndex];
+                var row       = _elements[rowIndex];
+                var resultRow = result._elements[rowIndex];
                 var total = row
                     .Values
                     .Aggregate(
@@ -236,10 +237,10 @@ namespace Test
 
                 if(!total.IsZero)
                     foreach(var columnIndex in row.Keys)
-                        result._elements[rowIndex][columnIndex] /= total;
+                        resultRow[columnIndex] /= total;
 
                 else // Absorbing state.
-                    result._elements[rowIndex][rowIndex] = Fraction.One;
+                    resultRow[rowIndex] = Fraction.One;
             }
 
             return result;
@@ -255,11 +256,8 @@ namespace Test
                 columnIndices);
 
             foreach(var rowIndex in rowIndices)
-            {
-                var row = result._elements[rowIndex];
                 foreach(var columnIndex in columnIndices)
-                    row[columnIndex] = _elements[rowIndex][columnIndex];
-            }
+                    result._elements[rowIndex][columnIndex] = _elements[rowIndex][columnIndex];
 
             return result;
         }
@@ -376,15 +374,12 @@ namespace Test
                 lhs.RowIndices,
                 rhs.ColumnIndices);
             foreach(var rowIndex in lhs.RowIndices)
-            {
-                var row = result._elements[rowIndex];
                 foreach(var columnIndex in rhs.ColumnIndices)
-                     row[columnIndex] = rhs.RowIndices
+                    result._elements[rowIndex][columnIndex] = rhs.RowIndices
                         .Select(index => lhs._elements[rowIndex][index] * rhs._elements[index][columnIndex])
                         .Aggregate(
                             Fraction.Zero,
                             (accumulator, current) => accumulator + current);
-            }
 
             return result;
         }
