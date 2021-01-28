@@ -464,13 +464,11 @@ namespace Test
             TestContext.WriteLine("B = NR:");
             TestContext.WriteLine(b);
 
-            var denominators = new HashSet<int>();
-            foreach(var columnIndex in b.ColumnIndices)
-            {
-                var element = b[initialState, columnIndex];
-                if(!element.IsZero)
-                    denominators.Add(element.Denominator);
-            }
+            var denominators = b.ColumnIndices
+                .Select(columnIndex => b[initialState, columnIndex])
+                .Where(element => !element.IsZero)
+                .Select(element => element.Denominator)
+                .Distinct();
 
             TestContext.Write("Denominators: ");
             TestContext.WriteLine(new TestDataList<int>(denominators));
@@ -478,15 +476,13 @@ namespace Test
             var lcm = denominators.Aggregate((lhs, rhs) => lhs * rhs / Fraction.Gcd(lhs, rhs));
             TestContext.WriteLine("LCD: " + lcm);
 
-            var result = new TestDataList<int>();
-            foreach(var columnIndex in b.ColumnIndices)
-            {
-                var element = b[initialState, columnIndex];
-                result.Add(element.Numerator * lcm / element.Denominator);
-            }
-
+            var result = b.ColumnIndices
+                .Select(columnIndex => b[initialState, columnIndex])
+                .Select(element => element.Numerator * lcm / element.Denominator)
+                .ToList();
             result.Add(lcm);
-            TestContext.WriteLine("Result: " + result);
+
+            TestContext.WriteLine("Result: " + new TestDataList<int>(result));
             return result;
         }
 
