@@ -300,22 +300,23 @@ namespace Test
 
         public Matrix Adj()
         {
-            var rowIndices = _elements.Keys.ToList();
+            var rowIndices    = _elements.Keys.ToList();
+            var columnIndices = _elements.First().Value.Keys.OrderBy(index => index).ToList();
             if(rowIndices.Count == 1)
                 return Identity();
 
             var adj = new Matrix(
-                rowIndices,
+                columnIndices,
                 rowIndices);
 
             // Calculate cofactors.
             for(var rowIndexIndex = 0;rowIndexIndex < rowIndices.Count;++rowIndexIndex)
-                for(var columnIndexIndex = 0;columnIndexIndex < rowIndices.Count;++columnIndexIndex)
+                for(var columnIndexIndex = 0;columnIndexIndex < columnIndices.Count;++columnIndexIndex)
                 {
                     var rowIndex    = rowIndices[rowIndexIndex   ];
-                    var columnIndex = rowIndices[columnIndexIndex];
+                    var columnIndex = columnIndices[columnIndexIndex];
                     var minorRowIndices    = rowIndices.Where(index => index != rowIndex   ).ToList();
-                    var minorColumnIndices = rowIndices.Where(index => index != columnIndex).ToList();
+                    var minorColumnIndices = columnIndices.Where(index => index != columnIndex).ToList();
 
                     var cofactorValue = Det(
                         minorRowIndices,
