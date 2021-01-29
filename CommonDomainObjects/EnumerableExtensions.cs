@@ -106,5 +106,46 @@ namespace CommonDomainObjects
                     index += 1;
                 }
         }
+
+        public static void Permute<T>(
+            this IEnumerable<T> enumerable,
+            Action<IList<T>>    action
+            )
+        {
+            var permutation = enumerable.ToList();
+            action(permutation);
+
+            var c = Enumerable.Repeat(
+                0,
+                permutation.Count).ToList();
+
+            var index = 0;
+            while(index < permutation.Count)
+                if(c[index] < index)
+                {
+                    if(index % 2 == 0)
+                    {
+                        var temp = permutation[0];
+                        permutation[0] = permutation[index];
+                        permutation[index] = temp;
+                    }
+                    else
+                    {
+                        var temp = permutation[c[index]];
+                        permutation[c[index]] = permutation[index];
+                        permutation[index] = temp;
+                    }
+
+                    c[index] += 1;
+                    index = 0;
+
+                    action(permutation);
+                }
+                else
+                {
+                    c[index] = 0;
+                    index += 1;
+                }
+        }
     }
 }

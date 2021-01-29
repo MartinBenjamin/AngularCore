@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using CommonDomainObjects;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -264,10 +265,9 @@ namespace Test
 
         public Fraction Det()
         {
-            var rowIndices = _elements.Keys.ToList();
             return Det(
-                rowIndices,
-                rowIndices);
+                _elements.Keys.OrderBy(index => index).ToList(),
+                _elements.First().Value.Keys.OrderBy(index => index).ToList());
         }
 
         private Fraction Det(
@@ -275,27 +275,25 @@ namespace Test
             IList<int> columnIndices
             )
         {
-            if(rowIndices.Count == 1)
-                return _elements[rowIndices[0]][columnIndices[0]];
-
             var determinant = Fraction.Zero;
-            var rowIndex = rowIndices[0];
-            for(var columnIndexIndex = 0;columnIndexIndex < columnIndices.Count;++columnIndexIndex)
-            {
-                var columnIndex        = columnIndices[columnIndexIndex];
-                var element            = _elements[rowIndex][columnIndex];
-                var minorRowIndices    = rowIndices.Where(index => index != rowIndex).ToList();
-                var minorColumnIndices = columnIndices.Where(index => index != columnIndex).ToList();
-                var minor = Det(
-                        minorRowIndices,
-                        minorColumnIndices);
+            bool positive = true;
+            var elements = _elements;
+            columnIndices.Permute(
+                permutation =>
+                {
+                    var total = Fraction.One;
+                    for(var index = 0;index < rowIndices.Count && !total.IsZero;++index)
+                        total *= elements[rowIndices[index]][permutation[index]];
 
-                if(columnIndexIndex % 2 == 0)
-                    determinant += element * minor;
+                    if(positive)
+                        determinant += total;
 
-                else
-                    determinant -= element * minor;
-            }
+                    else
+                        determinant -= total;
+
+                    // Heap's algorithm produces next permutation by one transposition.
+                    positive = !positive;
+                });
 
             return determinant;
         }
