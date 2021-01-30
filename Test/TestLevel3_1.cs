@@ -214,8 +214,8 @@ namespace Test
         public Matrix Identity()
         {
             var result = new Matrix(
-                _elements.Keys,
-                _elements.Values.First().Keys);
+                RowIndices,
+                ColumnIndices);
             foreach(var rowIndex in _elements.Keys)
                 foreach(var columnIndex in _elements[rowIndex].Keys)
                     result._elements[rowIndex][columnIndex] = rowIndex == columnIndex ? Fraction.One : Fraction.Zero;
@@ -315,7 +315,7 @@ namespace Test
                 {
                     var rowIndex    = rowIndices[rowIndexIndex   ];
                     var columnIndex = columnIndices[columnIndexIndex];
-                    var minorRowIndices    = rowIndices.Where(index => index != rowIndex   ).ToList();
+                    var minorRowIndices    = rowIndices.Where(index => index != rowIndex).ToList();
                     var minorColumnIndices = columnIndices.Where(index => index != columnIndex).ToList();
 
                     var cofactorValue = Det(
