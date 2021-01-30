@@ -68,29 +68,29 @@ namespace Test
             Fraction lhs,
             Fraction rhs
             ) => new Fraction(
-                lhs.Numerator * rhs.Denominator + rhs.Numerator * lhs.Denominator,
-                lhs.Denominator * rhs.Denominator);
+                checked(lhs.Numerator * rhs.Denominator + rhs.Numerator * lhs.Denominator),
+                checked(lhs.Denominator * rhs.Denominator));
 
         public static Fraction operator -(
             Fraction lhs,
             Fraction rhs
             ) => new Fraction(
-                lhs.Numerator * rhs.Denominator - rhs.Numerator * lhs.Denominator,
-                lhs.Denominator * rhs.Denominator);
+                checked(lhs.Numerator * rhs.Denominator - rhs.Numerator * lhs.Denominator),
+                checked(lhs.Denominator * rhs.Denominator));
 
         public static Fraction operator*(
             Fraction lhs,
             Fraction rhs
             ) => new Fraction(
-                lhs.Numerator * rhs.Numerator,
-                lhs.Denominator * rhs.Denominator);
+                checked(lhs.Numerator * rhs.Numerator),
+                checked(lhs.Denominator * rhs.Denominator));
 
         public static Fraction operator/(
             Fraction lhs,
             Fraction rhs
             ) => new Fraction(
-                lhs.Numerator * (rhs.Numerator < 0 ? -rhs.Denominator : rhs.Denominator),
-                lhs.Denominator * Math.Abs(rhs.Numerator));
+                checked(lhs.Numerator * (rhs.Numerator < 0 ? -rhs.Denominator : rhs.Denominator)),
+                checked(lhs.Denominator * Math.Abs(rhs.Numerator)));
 
         public static bool operator ==(
             Fraction lhs,
