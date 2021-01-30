@@ -47,6 +47,17 @@ namespace Test
             }
         }
 
+        public override bool Equals(
+            object obj
+            ) => obj is Fraction fraction &&
+                Numerator   == fraction.Numerator &&
+                Denominator == fraction.Denominator;
+
+        public override int GetHashCode()
+            => HashCode.Combine(
+                Numerator,
+                Denominator);
+
         public static Fraction operator -(
             Fraction fraction
             ) => new Fraction(
@@ -84,30 +95,14 @@ namespace Test
         public static bool operator ==(
             Fraction lhs,
             Fraction rhs
-            ) => lhs.Numerator == rhs.Numerator && lhs.Denominator == rhs.Denominator;
+            ) => Equals(
+                lhs,
+                rhs);
 
         public static bool operator !=(
             Fraction lhs,
             Fraction rhs
             ) => !(lhs == rhs);
-
-        public Fraction Simplify()
-        {
-            int gcfCandidate = Math.Min(Math.Abs(Numerator), Denominator);
-
-            while(gcfCandidate > 1)
-            {
-                if(Numerator % gcfCandidate == 0 &&
-                   Denominator % gcfCandidate == 0)
-                    return new Fraction(
-                        Numerator /= gcfCandidate,
-                        Denominator /= gcfCandidate);
-
-                gcfCandidate -= 1;
-            }
-
-            return this;
-        }
 
         public static int Gcd(
             int a,
@@ -131,7 +126,7 @@ namespace Test
 
     public struct Matrix
     {
-        private IDictionary<int, IDictionary<int, Fraction>> _elements;
+        private readonly IDictionary<int, IDictionary<int, Fraction>> _elements;
 
         public Matrix(
             ICollection<int> rowIndices,
