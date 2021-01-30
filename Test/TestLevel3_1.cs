@@ -298,6 +298,19 @@ namespace Test
             return determinant;
         }
 
+        public Matrix Transpose()
+        {
+            var transpose = new Matrix(
+                ColumnIndices,
+                RowIndices);
+
+            foreach(var rowIndex in _elements.Keys)
+                foreach(var columnIndex in _elements[rowIndex].Keys)
+                    transpose._elements[columnIndex][rowIndex] = _elements[rowIndex][columnIndex];
+
+            return transpose;
+        }
+
         public Matrix Adj()
         {
             var rowIndices    = RowIndices.OrderBy(index => index).ToList();
