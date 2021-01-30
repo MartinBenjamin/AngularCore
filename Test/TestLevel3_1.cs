@@ -214,8 +214,8 @@ namespace Test
         public Matrix Identity()
         {
             var result = new Matrix(
-                RowIndices,
-                ColumnIndices);
+                _elements.Keys,
+                _elements.Values.First().Keys);
             foreach(var rowIndex in _elements.Keys)
                 foreach(var columnIndex in _elements[rowIndex].Keys)
                     result._elements[rowIndex][columnIndex] = rowIndex == columnIndex ? Fraction.One : Fraction.Zero;
