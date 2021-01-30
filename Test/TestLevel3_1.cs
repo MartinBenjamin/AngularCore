@@ -81,6 +81,16 @@ namespace Test
                 lhs.Numerator * (rhs.Numerator < 0 ? -rhs.Denominator : rhs.Denominator),
                 lhs.Denominator * Math.Abs(rhs.Numerator));
 
+        public static bool operator ==(
+            Fraction lhs,
+            Fraction rhs
+            ) => lhs.Numerator == rhs.Numerator && lhs.Denominator == rhs.Denominator;
+
+        public static bool operator !=(
+            Fraction lhs,
+            Fraction rhs
+            ) => !(lhs == rhs);
+
         public Fraction Simplify()
         {
             int gcfCandidate = Math.Min(Math.Abs(Numerator), Denominator);
