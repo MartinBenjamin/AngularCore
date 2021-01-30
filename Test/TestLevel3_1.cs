@@ -266,8 +266,8 @@ namespace Test
         public Fraction Det()
         {
             return Det(
-                _elements.Keys.OrderBy(index => index).ToList(),
-                _elements.First().Value.Keys.OrderBy(index => index).ToList());
+                RowIndices.OrderBy(index => index).ToList(),
+                ColumnIndices.OrderBy(index => index).ToList());
         }
 
         private Fraction Det(
@@ -300,8 +300,8 @@ namespace Test
 
         public Matrix Adj()
         {
-            var rowIndices    = _elements.Keys.ToList();
-            var columnIndices = _elements.First().Value.Keys.OrderBy(index => index).ToList();
+            var rowIndices    = RowIndices.OrderBy(index => index).ToList();
+            var columnIndices = ColumnIndices.OrderBy(index => index).ToList();
             if(rowIndices.Count == 1)
                 return Identity();
 
