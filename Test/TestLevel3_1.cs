@@ -321,7 +321,7 @@ namespace Test
             var rowIndices    = RowIndices.OrderBy(index => index).ToList();
             var columnIndices = ColumnIndices.OrderBy(index => index).ToList();
             if(rowIndices.Count == 1)
-                return Identity();
+                return Identity().Transpose();
 
             var adj = new Matrix(
                 columnIndices,
