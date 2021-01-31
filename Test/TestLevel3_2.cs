@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Test
@@ -45,7 +46,15 @@ namespace Test
 
     public struct Position
     {
-        private IList<IList<int>> _map;
+        private static readonly (int, int)[] _increments = new (int, int)[]
+        {
+            (  1,  0 ),
+            ( -1,  0 ),
+            (  0,  1 ),
+            (  0, -1 )
+        };
+
+    private IList<IList<int>> _map;
 
         public int Row    { get; private set; }
         public int Column { get; private set; }
@@ -61,54 +70,45 @@ namespace Test
             Column = column;
         }
 
-        public IEnumerable<Position> Neighbours
+        public IEnumerable<Position> NeighbouringVertices
         {
             get
             {
-                var increments = new (int, int)[]
-                {
-                    ( 1,  0),
-                    (-1,  0),
-                    ( 0,  1),
-                    ( 0, -1)
-                };
-
-                foreach(var increment in increments)
-                {
-                    var neighbourRow    = Row    + increment.Item1;
-                    var neighbourColumn = Column + increment.Item2;
-                    if(neighbourRow >= 0 &&
-                       neighbourRow < _map.Count &&
-                       neighbourColumn >= 0 &&
-                       neighbourColumn < _map[0].Count &&
-                       _map[neighbourRow][neighbourColumn] == 0)
-                       yield return new Position(_map, neighbourRow, neighbourColumn);
-                }
+                var _this = this;
+                return _increments
+                    .Select(
+                        increment => new Position(
+                            _this._map,
+                            _this.Row    + increment.Item1,
+                            _this.Column + increment.Item2))
+                    .Where(
+                        position =>
+                            position.Row    >= 0 &&
+                            position.Row    < position._map.Count &&
+                            position.Column >= 0 &&
+                            position.Column < position._map[0].Count &&
+                            position._map[position.Row][position.Column] == 0);
             }
         }
-        public IEnumerable<Position> SurroundingWalls
+
+        public IEnumerable<Position> NeighbouringWalls
         {
             get
             {
-                var increments = new (int, int)[]
-                {
-                    ( 1,  0),
-                    (-1,  0),
-                    ( 0,  1),
-                    ( 0, -1)
-                };
-
-                foreach(var increment in increments)
-                {
-                    var wallRow = Row + increment.Item1;
-                    var wallColumn = Column + increment.Item2;
-                    if(wallRow >= 0 &&
-                       wallRow < _map.Count &&
-                       wallColumn >= 0 &&
-                       wallColumn < _map[0].Count &&
-                       _map[wallRow][wallColumn] == 1)
-                        yield return new Position(_map, wallRow, wallColumn);
-                }
+                var _this = this;
+                return _increments
+                    .Select(
+                        increment => new Position(
+                            _this._map,
+                            _this.Row    + increment.Item1,
+                            _this.Column + increment.Item2))
+                    .Where(
+                        position =>
+                            position.Row    >= 0 &&
+                            position.Row    < position._map.Count &&
+                            position.Column >= 0 &&
+                            position.Column < position._map[0].Count &&
+                            position._map[position.Row][position.Column] == 1);
             }
         }
     }
@@ -167,7 +167,7 @@ namespace Test
                 position);
 
             // Update neighbours in the shortest path tree.
-            foreach(var neighbourPosition in position.Neighbours)
+            foreach(var neighbourPosition in position.NeighbouringVertices)
             {
                 var neighbour = vertices[neighbourPosition.Row, neighbourPosition.Column];
                 if(neighbour != null &&
@@ -177,7 +177,7 @@ namespace Test
             }
 
             /// Add neighbours not in the shortest path tree.
-            foreach(var neighbourPosition in position.Neighbours)
+            foreach(var neighbourPosition in position.NeighbouringVertices)
                 if(vertices[neighbourPosition.Row, neighbourPosition.Column] == null)
                     AddVertex(
                         map,
@@ -194,7 +194,7 @@ namespace Test
             )
         {
             // Locate neighbours over the wall.
-            foreach(var wallPosition in vertex.Position.SurroundingWalls)
+            foreach(var wallPosition in vertex.Position.NeighbouringWalls)
             {
                 var neighbourRow =  2 * wallPosition.Row - vertex.Position.Row;
                 var neighbourColumn = 2 * wallPosition.Column - vertex.Position.Column;
