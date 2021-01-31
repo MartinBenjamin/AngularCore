@@ -13,8 +13,8 @@ namespace Test
         public IList<Vertex> Children { get; private set; } = new List<Vertex>();
 
         public Vertex(
-            Position position,
-            Vertex   parent
+            Vertex   parent,
+            Position position
             )
         {
             Position = position;
@@ -128,12 +128,10 @@ namespace Test
                 map,
                 exitShortestPathTreeVertices.GetLength(0) - 1,
                 exitShortestPathTreeVertices.GetLength(1) - 1);
-            exitShortestPathTreeVertices[position.Row, position.Column] = new Vertex(
-                position,
-                null);
-            ProcessVertex(
+            AddVertex(
                 map,
                 exitShortestPathTreeVertices,
+                null,
                 position);
 
             // Generate shortest path tree for entry vertex.
@@ -144,12 +142,10 @@ namespace Test
                 map,
                 0,
                 0);
-            entryShortestPathTreeVertices[position.Row, position.Column] = new Vertex(
-                position,
-                null);
-            ProcessVertex(
+            AddVertex(
                 map,
                 entryShortestPathTreeVertices,
+                null,
                 position);
 
             return FindShortest(
@@ -159,13 +155,16 @@ namespace Test
                 entryShortestPathTreeVertices);
         }
 
-        void ProcessVertex(
+        void AddVertex(
             IList<IList<int>> map,
             Vertex[,]         vertices,
+            Vertex            parent,
             Position          position
             )
         {
-            var current = vertices[position.Row, position.Column];
+            var current = vertices[position.Row, position.Column] = new Vertex(
+                parent,
+                position);
 
             foreach(var neighbourPosition in position.Neighbours)
             {
@@ -178,15 +177,11 @@ namespace Test
 
             foreach(var neighbourPosition in position.Neighbours)
                 if(vertices[neighbourPosition.Row, neighbourPosition.Column] == null)
-                {
-                    var vertex = vertices[neighbourPosition.Row, neighbourPosition.Column] = new Vertex(
-                        neighbourPosition,
-                        current);
-                    ProcessVertex(
+                    AddVertex(
                         map,
                         vertices,
+                        current,
                         neighbourPosition);
-                }
         }
 
         private int FindShortest(
