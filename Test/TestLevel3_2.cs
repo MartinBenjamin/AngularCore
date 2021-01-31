@@ -7,18 +7,24 @@ namespace Test
 {
     public class Vertex
     {
+        public Position      Position { get; private set; }
         public int           Distance { get; private set; }
         public Vertex        Parent   { get; private set; }
         public IList<Vertex> Children { get; private set; } = new List<Vertex>();
 
         public Vertex(
-            Vertex parent
+            Position position,
+            Vertex   parent
             )
         {
-            Parent = parent;
+            Position = position;
+            Parent   = parent;
             Distance = 1;
             if(Parent != null)
+            {
+                Parent.Children.Add(this);
                 Distance = Parent.Distance + Distance;
+            }
         }
 
         public void UpdateParent(
@@ -37,7 +43,7 @@ namespace Test
         }
     }
 
-    struct Position
+    public struct Position
     {
         private IList<IList<int>> _map;
 
@@ -80,6 +86,31 @@ namespace Test
                 }
             }
         }
+        public IEnumerable<Position> SurroundingWalls
+        {
+            get
+            {
+                var increments = new (int, int)[]
+                {
+                    ( 1,  0),
+                    (-1,  0),
+                    ( 0,  1),
+                    ( 0, -1)
+                };
+
+                foreach(var increment in increments)
+                {
+                    var wallRow = Row + increment.Item1;
+                    var wallColumn = Column + increment.Item2;
+                    if(wallRow >= 0 &&
+                       wallRow < _map.Count &&
+                       wallColumn >= 0 &&
+                       wallColumn < _map[0].Count &&
+                       _map[wallRow][wallColumn] == 1)
+                        yield return new Position(_map, wallRow, wallColumn);
+                }
+            }
+        }
     }
 
     [TestFixture]
@@ -89,7 +120,7 @@ namespace Test
             IList<IList<int>> map
             )
         {
-            // Generate shortest for exit vertex.
+            // Generate shortest path tree for exit vertex.
             var exitShortestPathTreeVertices = new Vertex[
                 map.Count,
                 map[0].Count];
@@ -97,15 +128,15 @@ namespace Test
                 map,
                 exitShortestPathTreeVertices.GetLength(0) - 1,
                 exitShortestPathTreeVertices.GetLength(1) - 1);
-            exitShortestPathTreeVertices[position.Row, position.Column] = new Vertex(null);
+            exitShortestPathTreeVertices[position.Row, position.Column] = new Vertex(
+                position,
+                null);
             ProcessVertex(
                 map,
                 exitShortestPathTreeVertices,
                 position);
 
-            var distance = exitShortestPathTreeVertices[0, 0].Distance;
-
-            // Generate shortest for entry vertex.
+            // Generate shortest path tree for entry vertex.
             var entryShortestPathTreeVertices = new Vertex[
                 map.Count,
                 map[0].Count];
@@ -113,13 +144,19 @@ namespace Test
                 map,
                 0,
                 0);
-            entryShortestPathTreeVertices[position.Row, position.Column] = new Vertex(null);
+            entryShortestPathTreeVertices[position.Row, position.Column] = new Vertex(
+                position,
+                null);
             ProcessVertex(
                 map,
                 entryShortestPathTreeVertices,
                 position);
 
-            return exitShortestPathTreeVertices[0, 0].Distance;
+            return FindShortest(
+                map,
+                exitShortestPathTreeVertices[map.Count - 1, map[0].Count - 1],
+                exitShortestPathTreeVertices[0, 0].Distance,
+                entryShortestPathTreeVertices);
         }
 
         void ProcessVertex(
@@ -142,12 +179,47 @@ namespace Test
             foreach(var neighbourPosition in position.Neighbours)
                 if(vertices[neighbourPosition.Row, neighbourPosition.Column] == null)
                 {
-                    var vertex = vertices[neighbourPosition.Row, neighbourPosition.Column] = new Vertex(current);
+                    var vertex = vertices[neighbourPosition.Row, neighbourPosition.Column] = new Vertex(
+                        neighbourPosition,
+                        current);
                     ProcessVertex(
                         map,
                         vertices,
                         neighbourPosition);
                 }
+        }
+
+        private int FindShortest(
+            IList<IList<int>> map,
+            Vertex            vertex,
+            int               distance,
+            Vertex[,]         entryShortestPathTreeVertices
+            )
+        {
+            // Locate neighbours over the wall.
+            foreach(var wallPosition in vertex.Position.SurroundingWalls)
+            {
+                var neighbourRow =  2 * wallPosition.Row - vertex.Position.Row;
+                var neighbourColumn = 2 * wallPosition.Column - vertex.Position.Column;
+
+                if(neighbourRow >= 0 &&
+                   neighbourRow < map.Count &&
+                   neighbourColumn >= 0 &&
+                   neighbourColumn < map[0].Count &&
+                   entryShortestPathTreeVertices[neighbourRow, neighbourColumn] != null)
+                    distance = Math.Min(
+                        distance,
+                        vertex.Distance + entryShortestPathTreeVertices[neighbourRow, neighbourColumn].Distance + 1);
+            }
+
+            foreach(var child in vertex.Children)
+                distance = FindShortest(
+                    map,
+                    child,
+                    distance,
+                    entryShortestPathTreeVertices);
+
+            return distance;
         }
 
         [TestCaseSource("TestCases")]
