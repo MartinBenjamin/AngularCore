@@ -166,6 +166,7 @@ namespace Test
                 parent,
                 position);
 
+            // Update neighbours in the shortest path tree.
             foreach(var neighbourPosition in position.Neighbours)
             {
                 var neighbour = vertices[neighbourPosition.Row, neighbourPosition.Column];
@@ -175,6 +176,7 @@ namespace Test
 
             }
 
+            /// Add neighbours not in the shortest path tree.
             foreach(var neighbourPosition in position.Neighbours)
                 if(vertices[neighbourPosition.Row, neighbourPosition.Column] == null)
                     AddVertex(
