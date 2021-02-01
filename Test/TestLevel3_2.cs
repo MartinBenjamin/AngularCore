@@ -196,7 +196,7 @@ namespace Test
             // Locate neighbours over the wall.
             foreach(var wallPosition in vertex.Position.NeighbouringWalls)
             {
-                var neighbourRow =  2 * wallPosition.Row - vertex.Position.Row;
+                var neighbourRow    = 2 * wallPosition.Row    - vertex.Position.Row;
                 var neighbourColumn = 2 * wallPosition.Column - vertex.Position.Column;
 
                 if(neighbourRow >= 0 &&
