@@ -194,29 +194,36 @@ namespace Test
             )
         {
             // Locate neighbours over the wall.
-            foreach(var wallPosition in vertex.Position.NeighbouringWalls)
-            {
-                var neighbourRow    = 2 * wallPosition.Row    - vertex.Position.Row;
-                var neighbourColumn = 2 * wallPosition.Column - vertex.Position.Column;
+            distance = vertex.Position.NeighbouringWalls
+                .Select(
+                    wallPosition =>
+                    {
+                        var neighbourRow    = 2 * wallPosition.Row    - vertex.Position.Row;
+                        var neighbourColumn = 2 * wallPosition.Column - vertex.Position.Column;
 
-                if(neighbourRow >= 0 &&
-                   neighbourRow < map.Count &&
-                   neighbourColumn >= 0 &&
-                   neighbourColumn < map[0].Count &&
-                   entryShortestPathTreeVertices[neighbourRow, neighbourColumn] != null)
-                    distance = Math.Min(
+                        if(neighbourRow >= 0 &&
+                           neighbourRow < map.Count &&
+                           neighbourColumn >= 0 &&
+                           neighbourColumn < map[0].Count)
+                            return entryShortestPathTreeVertices[neighbourRow, neighbourColumn];
+
+                        return null;
+                    }).Where(neighBourOverWall => neighBourOverWall != null)
+                    .Aggregate(
                         distance,
-                        vertex.Distance + entryShortestPathTreeVertices[neighbourRow, neighbourColumn].Distance + 1);
-            }
+                        (accumulator, neighbourOverWall) => Math.Min(
+                            accumulator,
+                            vertex.Distance + neighbourOverWall.Distance + 1));
 
-            foreach(var child in vertex.Children)
-                distance = FindShortest(
+            return vertex.Children
+                .Select(child => FindShortest(
                     map,
                     child,
                     distance,
-                    entryShortestPathTreeVertices);
-
-            return distance;
+                    entryShortestPathTreeVertices))
+                .Aggregate(
+                    distance,
+                    Math.Min);
         }
 
         [TestCaseSource("TestCases")]
