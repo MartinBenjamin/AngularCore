@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using CommonDomainObjects;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,10 +55,9 @@ namespace Test
             (  0, -1 )
         };
 
-    private IList<IList<int>> _map;
-
-        public int Row    { get; private set; }
-        public int Column { get; private set; }
+        public IList<IList<int>> Map    { get; private set; }
+        public int               Row    { get; private set; }
+        public int               Column { get; private set; }
 
         public Position(
             IList<IList<int>> map,
@@ -65,7 +65,7 @@ namespace Test
             int               column
             )
         {
-            _map   = map;
+            Map    = map;
             Row    = row;
             Column = column;
         }
@@ -78,16 +78,16 @@ namespace Test
                 return _increments
                     .Select(
                         increment => new Position(
-                            _this._map,
+                            _this.Map,
                             _this.Row    + increment.Item1,
                             _this.Column + increment.Item2))
                     .Where(
                         position =>
                             position.Row    >= 0 &&
-                            position.Row    < position._map.Count &&
+                            position.Row    < position.Map.Count &&
                             position.Column >= 0 &&
-                            position.Column < position._map[0].Count &&
-                            position._map[position.Row][position.Column] == 0);
+                            position.Column < position.Map[0].Count &&
+                            position.Map[position.Row][position.Column] == 0);
             }
         }
 
@@ -99,16 +99,16 @@ namespace Test
                 return _increments
                     .Select(
                         increment => new Position(
-                            _this._map,
+                            _this.Map,
                             _this.Row    + increment.Item1,
                             _this.Column + increment.Item2))
                     .Where(
                         position =>
                             position.Row    >= 0 &&
-                            position.Row    < position._map.Count &&
+                            position.Row    < position.Map.Count &&
                             position.Column >= 0 &&
-                            position.Column < position._map[0].Count &&
-                            position._map[position.Row][position.Column] == 1);
+                            position.Column < position.Map[0].Count &&
+                            position.Map[position.Row][position.Column] == 1);
             }
         }
     }
@@ -116,14 +116,38 @@ namespace Test
     [TestFixture]
     public class TestLevel3_2: Test
     {
+        private static readonly (int, int)[] _increments = new (int, int)[]
+        {
+            (  1,  0 ),
+            ( -1,  0 ),
+            (  0,  1 ),
+            (  0, -1 )
+        };
+
         private int PathLength(
             IList<IList<int>> map
             )
         {
             // Generate shortest path tree for exit vertex.
+            var exitDistances = ShortestPathTree(
+                map,
+                map.Count - 1,
+                map[0].Count - 1);
+
+            var entryDistances = ShortestPathTree(
+                map,
+                0,
+                0);
+
+            return Shortest(
+                map,
+                exitDistances,
+                entryDistances);
+
             var exitShortestPathTreeVertices = new Vertex[
                 map.Count,
                 map[0].Count];
+
             var position = new Position(
                 map,
                 exitShortestPathTreeVertices.GetLength(0) - 1,
@@ -153,6 +177,116 @@ namespace Test
                 exitShortestPathTreeVertices[map.Count - 1, map[0].Count - 1],
                 exitShortestPathTreeVertices[0, 0].Distance,
                 entryShortestPathTreeVertices);
+        }
+
+        private int[,] ShortestPathTree(
+            IList<IList<int>> map,
+            int               initialRow,
+            int               initialColumn
+            )
+        {
+            var distances = new int[map.Count, map[0].Count];
+            var vertices = 0;
+            for(var row = 0;row < map.Count;++row)
+                for(var column = 0;column < map[0].Count;++column)
+                {
+                    distances[row, column] = int.MaxValue;
+                    if(map[row][column] == 0)
+                        vertices += 1;
+                }
+
+            distances[initialRow, initialColumn] = 1;
+
+            var processed = new bool[map.Count, map[0].Count];
+            while(vertices-- > 0)
+            {
+                (int row, int column) = NextClosest(
+                    map,
+                    distances,
+                    processed);
+
+                processed[row, column] = true;
+
+                // Update neighbours.
+                _increments
+                    .Select(
+                        increment => (row + increment.Item1, column + increment.Item2))
+                    .Where(
+                        neighbourPosition =>
+                            neighbourPosition.Item1 >= 0 &&
+                            neighbourPosition.Item1 < map.Count &&
+                            neighbourPosition.Item2 >= 0 &&
+                            neighbourPosition.Item2 < map[0].Count &&
+                            map[neighbourPosition.Item1][neighbourPosition.Item2] == 0)
+                    .ForEach(
+                        neighbourPosition => distances[neighbourPosition.Item1, neighbourPosition.Item2] = Math.Min(
+                                distances[neighbourPosition.Item1, neighbourPosition.Item2],
+                                distances[row, column] + 1));
+
+            }
+
+            return distances;
+        }
+
+        private (int, int) NextClosest(
+            IList<IList<int>> map,
+            int[,]            distances,
+            bool[,]           processed
+            )
+        {
+            int minDistance = int.MaxValue;
+            (int, int) next = (-1, -1);
+            for(var row = 0;row < map.Count;++row)
+                for(var column = 0;column < map[0].Count;++column)
+                    if(map[row][column] == 0 &&
+                       !processed[row, column] &&
+                       distances[row, column] <= minDistance)
+                    {
+                        minDistance = distances[row, column];
+                        next = (row, column);
+                    }
+            return next;
+        }
+
+        private int Shortest(
+            IList<IList<int>> map,
+            int[,]            exitDistances,
+            int[,]            entryDistances
+            )
+        {
+            var distance = exitDistances[0, 0];
+
+            for(var row = 0;row < map.Count;++row)
+                for(var column = 0;column < map[0].Count;++column)
+                    if(map[row][column] == 0 && exitDistances[row, column] != int.MaxValue)
+                        foreach(var increment in _increments)
+                        {
+                            var wallRow    = row    + increment.Item1;
+                            var wallColumn = column + increment.Item2;
+
+                            if(wallRow    >= 0 &&
+                               wallRow    < map.Count &&
+                               wallColumn >= 0 &&
+                               wallColumn < map[0].Count &&
+                               map[wallRow][wallColumn] == 1)
+                            {
+                                var neighbourRow    = 2 * wallRow - row;
+                                var neighbourColumn = 2 * wallColumn - column;
+
+                                if(neighbourRow >= 0 &&
+                                   neighbourRow < map.Count &&
+                                   neighbourColumn >= 0 &&
+                                   neighbourColumn < map[0].Count &&
+                                   map[neighbourRow][neighbourColumn] == 0 &&
+                                   entryDistances[neighbourRow, neighbourColumn] != int.MaxValue)
+                                    distance = Math.Min(
+                                          distance,
+                                          exitDistances[row, column] + entryDistances[neighbourRow, neighbourColumn] + 1);
+                            }
+
+                        }
+
+            return distance;
         }
 
         void AddVertex(
