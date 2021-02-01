@@ -243,6 +243,26 @@ namespace Test
                 {
                     new object[]
                     {
+                            new TestDataList<IList<int>>
+                            {
+                                new TestDataList<int>{0, 1},
+                                new TestDataList<int>{0, 0}
+                            },
+                            3
+                    },
+
+                    new object[]
+                    {
+                            new TestDataList<IList<int>>
+                            {
+                                new TestDataList<int>{0, 0},
+                                new TestDataList<int>{1, 0}
+                            },
+                            3
+                    },
+
+                    new object[]
+                    {
                         new TestDataList<IList<int>>
                         {
                             new TestDataList<int>{0, 1, 1, 0},
