@@ -202,8 +202,8 @@ namespace Test
             {
                 var minDistance = int.MaxValue;
                 var minIndex    = 0;
-                int row         = 0;
-                int column      = 0;
+                var row         = 0;
+                var column      = 0;
                 for(var index = 0;index < eligible.Count;++index)
                 {
                     var distance = distances[eligible[index].Item1, eligible[index].Item2];
