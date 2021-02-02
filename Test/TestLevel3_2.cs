@@ -129,17 +129,17 @@ namespace Test
             )
         {
             // Generate shortest path tree for exit vertex.
-            var exitDistances = ShortestPathTree(
+            var exitDistances = ShortestDistances(
                 map,
                 map.Count - 1,
                 map[0].Count - 1);
 
-            var entryDistances = ShortestPathTree(
+            var entryDistances = ShortestDistances(
                 map,
                 0,
                 0);
 
-            return Shortest(
+            return ShortestCombination(
                 map,
                 exitDistances,
                 entryDistances);
@@ -179,7 +179,7 @@ namespace Test
                 entryShortestPathTreeVertices);
         }
 
-        private int[,] ShortestPathTree(
+        private int[,] ShortestDistances(
             IList<IList<int>> map,
             int               initialRow,
             int               initialColumn
@@ -197,60 +197,53 @@ namespace Test
 
             distances[initialRow, initialColumn] = 1;
 
-            var processed = new bool[map.Count, map[0].Count];
-            while(vertices-- > 0)
+            var eligible = new List<(int, int)> { ( initialRow, initialColumn ) };
+            while(eligible.Count > 0)
             {
-                (int row, int column) = NextClosest(
-                    map,
-                    distances,
-                    processed);
+                var minDistance = int.MaxValue;
+                var minIndex    = 0;
+                int row         = 0;
+                int column      = 0;
+                for(var index = 0;index < eligible.Count;++index)
+                {
+                    var distance = distances[eligible[index].Item1, eligible[index].Item2];
+                    if(distance < minDistance)
+                    {
+                        minDistance = distance;
+                        minIndex    = index;
+                    }
+                }
 
-                processed[row, column] = true;
+                (row, column) = eligible[minIndex];
+                eligible.RemoveAt(minIndex);
 
-                if(distances[row, column] != int.MaxValue) // Update neighbours.
-                    _increments
-                        .Select(
-                            increment => (row + increment.Item1, column + increment.Item2))
-                        .Where(
-                            neighbourPosition =>
-                                neighbourPosition.Item1 >= 0 &&
-                                neighbourPosition.Item1 < map.Count &&
-                                neighbourPosition.Item2 >= 0 &&
-                                neighbourPosition.Item2 < map[0].Count &&
-                                map[neighbourPosition.Item1][neighbourPosition.Item2] == 0)
-                        .ForEach(
-                            neighbourPosition =>
-                                distances[neighbourPosition.Item1, neighbourPosition.Item2] = Math.Min(
-                                    distances[neighbourPosition.Item1, neighbourPosition.Item2],
-                                    distances[row, column] + 1));
+                _increments
+                    .Select(
+                        increment => (row + increment.Item1, column + increment.Item2))
+                    .Where(
+                        neighbourPosition =>
+                            neighbourPosition.Item1 >= 0 &&
+                            neighbourPosition.Item1 < map.Count &&
+                            neighbourPosition.Item2 >= 0 &&
+                            neighbourPosition.Item2 < map[0].Count &&
+                            map[neighbourPosition.Item1][neighbourPosition.Item2] == 0)
+                    .ForEach(
+                        neighbourPosition =>
+                        {
+                            var distance = distances[neighbourPosition.Item1, neighbourPosition.Item2];
+                            if(distance == int.MaxValue)
+                                eligible.Add((neighbourPosition.Item1, neighbourPosition.Item2));
 
-
+                            distances[neighbourPosition.Item1, neighbourPosition.Item2] = Math.Min(
+                                distance,
+                                distances[row, column] + 1);
+                        });
             }
 
             return distances;
         }
 
-        private (int, int) NextClosest(
-            IList<IList<int>> map,
-            int[,]            distances,
-            bool[,]           processed
-            )
-        {
-            int minDistance = int.MaxValue;
-            (int, int) next = (-1, -1);
-            for(var row = 0;row < map.Count;++row)
-                for(var column = 0;column < map[0].Count;++column)
-                    if(map[row][column] == 0 &&
-                       !processed[row, column] &&
-                       distances[row, column] <= minDistance)
-                    {
-                        minDistance = distances[row, column];
-                        next = (row, column);
-                    }
-            return next;
-        }
-
-        private int Shortest(
+        private int ShortestCombination(
             IList<IList<int>> map,
             int[,]            exitDistances,
             int[,]            entryDistances
