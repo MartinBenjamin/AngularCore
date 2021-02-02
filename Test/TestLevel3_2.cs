@@ -207,21 +207,23 @@ namespace Test
 
                 processed[row, column] = true;
 
-                // Update neighbours.
-                _increments
-                    .Select(
-                        increment => (row + increment.Item1, column + increment.Item2))
-                    .Where(
-                        neighbourPosition =>
-                            neighbourPosition.Item1 >= 0 &&
-                            neighbourPosition.Item1 < map.Count &&
-                            neighbourPosition.Item2 >= 0 &&
-                            neighbourPosition.Item2 < map[0].Count &&
-                            map[neighbourPosition.Item1][neighbourPosition.Item2] == 0)
-                    .ForEach(
-                        neighbourPosition => distances[neighbourPosition.Item1, neighbourPosition.Item2] = Math.Min(
-                                distances[neighbourPosition.Item1, neighbourPosition.Item2],
-                                distances[row, column] + 1));
+                if(distances[row, column] != int.MaxValue) // Update neighbours.
+                    _increments
+                        .Select(
+                            increment => (row + increment.Item1, column + increment.Item2))
+                        .Where(
+                            neighbourPosition =>
+                                neighbourPosition.Item1 >= 0 &&
+                                neighbourPosition.Item1 < map.Count &&
+                                neighbourPosition.Item2 >= 0 &&
+                                neighbourPosition.Item2 < map[0].Count &&
+                                map[neighbourPosition.Item1][neighbourPosition.Item2] == 0)
+                        .ForEach(
+                            neighbourPosition =>
+                                distances[neighbourPosition.Item1, neighbourPosition.Item2] = Math.Min(
+                                    distances[neighbourPosition.Item1, neighbourPosition.Item2],
+                                    distances[row, column] + 1));
+
 
             }
 
@@ -259,10 +261,10 @@ namespace Test
             for(var row = 0;row < map.Count;++row)
                 for(var column = 0;column < map[0].Count;++column)
                     if(map[row][column] == 0 && exitDistances[row, column] != int.MaxValue)
-                        foreach(var increment in _increments)
+                        foreach(var increment1 in _increments)
                         {
-                            var wallRow    = row    + increment.Item1;
-                            var wallColumn = column + increment.Item2;
+                            var wallRow    = row    + increment1.Item1;
+                            var wallColumn = column + increment1.Item2;
 
                             if(wallRow    >= 0 &&
                                wallRow    < map.Count &&
@@ -270,18 +272,32 @@ namespace Test
                                wallColumn < map[0].Count &&
                                map[wallRow][wallColumn] == 1)
                             {
-                                var neighbourRow    = 2 * wallRow - row;
-                                var neighbourColumn = 2 * wallColumn - column;
 
-                                if(neighbourRow >= 0 &&
-                                   neighbourRow < map.Count &&
-                                   neighbourColumn >= 0 &&
-                                   neighbourColumn < map[0].Count &&
-                                   map[neighbourRow][neighbourColumn] == 0 &&
-                                   entryDistances[neighbourRow, neighbourColumn] != int.MaxValue)
-                                    distance = Math.Min(
-                                          distance,
-                                          exitDistances[row, column] + entryDistances[neighbourRow, neighbourColumn] + 1);
+                                foreach(var increment2 in _increments)
+                                    if(increment1.Item1 + increment2.Item1 != 0 ||
+                                       increment1.Item2 + increment2.Item2 != 0)
+                                    {
+                                        var neighbourRow    = wallRow    + increment2.Item1;
+                                        var neighbourColumn = wallColumn + increment2.Item2;
+
+                                        if(neighbourRow >= 0 &&
+                                           neighbourRow < map.Count &&
+                                           neighbourColumn >= 0 &&
+                                           neighbourColumn < map[0].Count &&
+                                           map[neighbourRow][neighbourColumn] == 0 &&
+                                           entryDistances[neighbourRow, neighbourColumn] != int.MaxValue)
+                                        {
+                                            distance = Math.Min(
+                                                  distance,
+                                                  exitDistances[row, column] + entryDistances[neighbourRow, neighbourColumn] + 1);
+
+                                            if(distance == map.Count + map[0].Count - 1)
+                                            {
+                                                TestContext.WriteLine($"Removed Row: {row}, Column: {column}, Wall Row: {wallRow}, Wall Column: {wallColumn}");
+                                                return distance;
+                                            }
+                                        }
+                                    }
                             }
 
                         }
@@ -419,6 +435,43 @@ namespace Test
                             new TestDataList<int>{0, 0, 0, 0, 0, 0}
                         },
                         11
+                    },
+
+                    new object[]
+                    {
+                        new TestDataList<IList<int>>
+                        {
+                            new TestDataList<int>{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                            new TestDataList<int>{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                            new TestDataList<int>{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                            new TestDataList<int>{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                            new TestDataList<int>{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                            new TestDataList<int>{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                            new TestDataList<int>{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                            new TestDataList<int>{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                            new TestDataList<int>{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                            new TestDataList<int>{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+                        },
+                        19
+                    },
+
+                    new object[]
+                    {
+                        new TestDataList<IList<int>>
+                        {
+                            new TestDataList<int>{0, 0, 0, 1, 1, 1, 1, 1, 1, 0},
+                            new TestDataList<int>{0, 1, 1, 0, 0, 0, 0, 0, 0, 0},
+                            new TestDataList<int>{0, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+                            new TestDataList<int>{0, 1, 1, 0, 0, 0, 0, 0, 1, 0},
+                            new TestDataList<int>{0, 0, 0, 1, 0, 0, 0, 0, 1, 0},
+                            new TestDataList<int>{1, 1, 0, 1, 0, 0, 0, 0, 1, 0},
+                            new TestDataList<int>{1, 1, 0, 1, 0, 0, 0, 0, 1, 0},
+                            new TestDataList<int>{0, 0, 0, 1, 0, 0, 0, 0, 1, 0},
+                            new TestDataList<int>{0, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+                            new TestDataList<int>{0, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+                            new TestDataList<int>{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+                        },
+                        20
                     }
                 };
             }
