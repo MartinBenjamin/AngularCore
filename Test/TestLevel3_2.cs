@@ -7,44 +7,6 @@ using System.Text;
 
 namespace Test
 {
-    public class Vertex
-    {
-        public Position      Position { get; private set; }
-        public int           Distance { get; private set; }
-        public Vertex        Parent   { get; private set; }
-        public IList<Vertex> Children { get; private set; } = new List<Vertex>();
-
-        public Vertex(
-            Vertex   parent,
-            Position position
-            )
-        {
-            Position = position;
-            Parent   = parent;
-            Distance = 1;
-            if(Parent != null)
-            {
-                Parent.Children.Add(this);
-                Distance = Parent.Distance + Distance;
-            }
-        }
-
-        public void UpdateParent(
-            Vertex parent
-            )
-        {
-            Parent = parent;
-            UpdateDistance();
-        }
-
-        void UpdateDistance()
-        {
-            Distance = Parent.Distance + 1;
-            foreach(var child in Children)
-                child.UpdateDistance();
-        }
-    }
-
     public struct Position
     {
         private static readonly (int, int)[] _increments = new (int, int)[]
@@ -143,40 +105,6 @@ namespace Test
                 map,
                 exitDistances,
                 entryDistances);
-
-            var exitShortestPathTreeVertices = new Vertex[
-                map.Count,
-                map[0].Count];
-
-            var position = new Position(
-                map,
-                exitShortestPathTreeVertices.GetLength(0) - 1,
-                exitShortestPathTreeVertices.GetLength(1) - 1);
-            AddVertex(
-                map,
-                exitShortestPathTreeVertices,
-                null,
-                position);
-
-            // Generate shortest path tree for entry vertex.
-            var entryShortestPathTreeVertices = new Vertex[
-                map.Count,
-                map[0].Count];
-            position = new Position(
-                map,
-                0,
-                0);
-            AddVertex(
-                map,
-                entryShortestPathTreeVertices,
-                null,
-                position);
-
-            return FindShortest(
-                map,
-                exitShortestPathTreeVertices[map.Count - 1, map[0].Count - 1],
-                exitShortestPathTreeVertices[0, 0].Distance,
-                entryShortestPathTreeVertices);
         }
 
         private int[,] ShortestDistances(
@@ -296,77 +224,6 @@ namespace Test
                         }
 
             return distance;
-        }
-
-        void AddVertex(
-            IList<IList<int>> map,
-            Vertex[,]         vertices,
-            Vertex            parent,
-            Position          position
-            )
-        {
-            var current = vertices[position.Row, position.Column] = new Vertex(
-                parent,
-                position);
-
-            // Update neighbours in the shortest path tree.
-            foreach(var neighbourPosition in position.NeighbouringVertices)
-            {
-                var neighbour = vertices[neighbourPosition.Row, neighbourPosition.Column];
-                if(neighbour != null &&
-                   neighbour.Distance > current.Distance + 1)
-                    neighbour.UpdateParent(current);
-
-            }
-
-            /// Add neighbours not in the shortest path tree.
-            foreach(var neighbourPosition in position.NeighbouringVertices)
-                if(vertices[neighbourPosition.Row, neighbourPosition.Column] == null)
-                    AddVertex(
-                        map,
-                        vertices,
-                        current,
-                        neighbourPosition);
-        }
-
-        private int FindShortest(
-            IList<IList<int>> map,
-            Vertex            vertex,
-            int               distance,
-            Vertex[,]         entryShortestPathTreeVertices
-            )
-        {
-            // Locate neighbours over the wall.
-            distance = vertex.Position.NeighbouringWalls
-                .Select(
-                    wallPosition =>
-                    {
-                        var neighbourRow    = 2 * wallPosition.Row    - vertex.Position.Row;
-                        var neighbourColumn = 2 * wallPosition.Column - vertex.Position.Column;
-
-                        if(neighbourRow >= 0 &&
-                           neighbourRow < map.Count &&
-                           neighbourColumn >= 0 &&
-                           neighbourColumn < map[0].Count)
-                            return entryShortestPathTreeVertices[neighbourRow, neighbourColumn];
-
-                        return null;
-                    }).Where(neighBourOverWall => neighBourOverWall != null)
-                    .Aggregate(
-                        distance,
-                        (accumulator, neighbourOverWall) => Math.Min(
-                            accumulator,
-                            vertex.Distance + neighbourOverWall.Distance + 1));
-
-            return vertex.Children
-                .Select(child => FindShortest(
-                    map,
-                    child,
-                    distance,
-                    entryShortestPathTreeVertices))
-                .Aggregate(
-                    distance,
-                    Math.Min);
         }
 
         [TestCaseSource("TestCases")]
