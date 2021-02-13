@@ -45,8 +45,8 @@ export class NamedService<TId, TNamed extends Named<TId>, TNamedFilters extends 
             var value = filters[key];
             switch(typeof value)
             {
-                case 'string': params = params.set(key, value                     ); break;
-                case 'number': params = params.set(key, (<number>value).toString()); break;
+                case 'string': params = params.set(key, value           ); break;
+                case 'number': params = params.set(key, value.toString()); break;
                 default: break;
             }
         }
