@@ -17,7 +17,7 @@ import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyE
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataHasValue } from "./IDataHasValue";
-import { count } from "rxjs/operator/count";
+//import { count } from "rxjs/operator/count";
 
 function Intersect(
     lhs: Set<object>,
