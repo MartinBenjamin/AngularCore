@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { InjectionToken, Provider } from "@angular/core";
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Guid } from './CommonDomainObjects';
 import { INamedService, NamedFilters, NamedService } from './INamedService';
 import { Currency } from './Iso4217';
@@ -37,6 +38,6 @@ export const CurrenciesOrderedByCode: Provider =
     provide: CurrenciesOrderedByCodeToken,
     useFactory: (
         currencies: Observable<Currency[]>
-        ) => currencies.map(currencies => currencies.sort((lhs, rhs) => lhs.Id.localeCompare(rhs.Id))),
+        ) => currencies.pipe(map(currencies => [...currencies].sort((lhs, rhs) => lhs.Id.localeCompare(rhs.Id)))),
     deps: [CurrenciesToken]
 };

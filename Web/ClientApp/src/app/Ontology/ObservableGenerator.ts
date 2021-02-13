@@ -36,7 +36,7 @@ function Union(
     rhs.forEach(member => union.add(member));
     return union;
 }
-
+/*
 export class ObservableGenerator implements IClassExpressionVisitor
 {
     private _observableClassExpressions        : Map<IClassExpression         , Observable<Set<object>>>;
@@ -319,3 +319,4 @@ export class ObservableGenerator implements IClassExpressionVisitor
                       new Set([...objectDomain].filter(individual => !groupedByDomain.has(individual)))));
     }
 }
+*/

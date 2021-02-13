@@ -1,6 +1,5 @@
-import { Component, Inject, OnDestroy, forwardRef } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
+import { Component, forwardRef, Inject, OnDestroy } from '@angular/core';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { BranchesToken } from '../BranchServiceProvider';
 import { DomainObject, EmptyGuid, Guid } from '../CommonDomainObjects';
 import { Tab } from '../Components/TabbedView';

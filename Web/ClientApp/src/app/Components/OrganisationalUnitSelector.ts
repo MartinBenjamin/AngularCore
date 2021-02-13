@@ -303,7 +303,6 @@ export class OrganisationalUnitContainer
                 .attr('text-anchor', 'middle')
                 .style('fill-opacity', 1e-6)
                 .style('cursor', 'default')
-                .style('fill', '#999')
                 .text(name);
 
             // Transition nodes to their new position.

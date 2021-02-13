@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, InjectionToken, Provider } from "@angular/core";
 import { Observable } from "rxjs";
+import { map } from 'rxjs/operators';
 import { Guid } from "./CommonDomainObjects";
 import { DomainObjectService, IDomainObjectService } from "./IDomainObjectService";
 import { LifeCycle, LifeCycleStage } from "./LifeCycles";
@@ -49,6 +50,6 @@ export class DealLifeCycleService
         ): Observable<LifeCycleStage[]>
     {
         return this._http.get<LifeCycleStage[]>(`${this._url}/${id.toString()}/phase/${phaseId.toString()}`)
-            .map(newReferenceDeserialiser());
+            .pipe(map(newReferenceDeserialiser()));
     }
 }

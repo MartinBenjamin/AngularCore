@@ -1,6 +1,8 @@
+
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { DomainObject } from './CommonDomainObjects';
 import { newReferenceDeserialiser } from './ReferenceSerialisation';
 
@@ -24,6 +26,6 @@ export class DomainObjectService<TId, TDomainObject extends DomainObject<TId>> i
         ): Observable<TDomainObject>
     {
         return this._http.get<TDomainObject>(this._url + '/' + id.toString())
-            .map(newReferenceDeserialiser());
+            .pipe(map(newReferenceDeserialiser()));
     }
 }

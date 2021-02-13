@@ -1,7 +1,8 @@
+
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import 'rxjs/add/operator/map';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Named } from './CommonDomainObjects';
 import { DomainObjectService, IDomainObjectService } from './IDomainObjectService';
 import { newReferenceDeserialiser } from './ReferenceSerialisation';
@@ -37,9 +38,9 @@ export class NamedService<TId, TNamed extends Named<TId>, TNamedFilters extends 
         filters: TNamedFilters
         ): Observable<TNamed[]>
     {
-        var params = new HttpParams();
+        let params = new HttpParams();
 
-        for(var key in filters)
+        for(let key in <object>filters)
         {
             var value = filters[key];
             switch(typeof value)
@@ -54,6 +55,6 @@ export class NamedService<TId, TNamed extends Named<TId>, TNamedFilters extends 
             this._url,
             {
                 params: params
-            }).map(newReferenceDeserialiser());
+            }).pipe(map(newReferenceDeserialiser()));
     }
 }

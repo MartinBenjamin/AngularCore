@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, NgModule, OnInit, Output, ViewChild } from '@angular/core';
-import { fromEvent } from 'rxjs/observable/fromEvent';
+import { fromEvent } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { DialogModule } from './Dialog';
 import { OrganisationalUnit } from './OrganisationalUnit';
@@ -376,7 +376,6 @@ export class OrganisationalUnitContainerV2 implements OnInit
             .attr('text-anchor', 'middle')
             .style('fill-opacity', 1e-6)
             .style('cursor', 'default')
-            .style('fill', '#999')
             .text(name);
 
         // Transition nodes to their new position.

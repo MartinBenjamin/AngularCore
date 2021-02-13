@@ -1,11 +1,10 @@
 import { Component, Inject, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
+import { Observable, Subscription } from 'rxjs';
+import { DomainObject, Guid } from '../CommonDomainObjects';
 import { CurrenciesToken } from '../CurrencyServiceProvider';
 import { DealProvider } from '../DealProvider';
 import { Deal } from '../Deals';
 import { Currency } from '../Iso4217';
-import { DomainObject, Guid } from '../CommonDomainObjects';
 
 @Component(
     {
