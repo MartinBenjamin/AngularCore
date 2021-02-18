@@ -63,27 +63,27 @@ namespace Test
             var n = 10;
             var r = 6;
 
-            var combination = new int[r];
-            Initialise(combination);
-            IList<int[]> combinations = new List<int[]>();
+            var keyCombination = new int[r];
+            Initialise(keyCombination);
+            IList<int[]> keyCombinations = new List<int[]>();
             var generating = true;
             while(generating)
             {
-                combinations.Add((int[])combination.Clone());
-                WriteCombination(combination);
+                keyCombinations.Add((int[])keyCombination.Clone());
+                WriteCombination(keyCombination);
                 generating = Increment(
                    n,
-                   combination);
+                   keyCombination);
             }
-            TestContext.WriteLine(combinations.Count);
+            TestContext.WriteLine(keyCombinations.Count);
 
-            combination = new int[numBuns];
-            Initialise(combination);
+            var keyCombinationCombination = new int[numBuns];
+            Initialise(keyCombinationCombination);
             int count = 0;
             var numRequiredcombination         = new int[numRequired];
             var numRequiredMinusOneCombination = new int[numRequired - 1];
             var keyIsPresent                   = new bool[n];
-            while(combination[0] == 0)
+            while(keyCombinationCombination[0] == 0)
             {
                 count++;
                 if(count == 100000000)
@@ -104,7 +104,7 @@ namespace Test
 
                     foreach(var index in numRequiredcombination)
                     {
-                        var keyCombination = combinations[combination[index]];
+                        keyCombination = keyCombinations[keyCombinationCombination[index]];
                         foreach(var key in keyCombination)
                             keyIsPresent[key] = true;
                     }
@@ -131,7 +131,7 @@ namespace Test
 
                         foreach(var index in numRequiredMinusOneCombination)
                         {
-                            var keyCombination = combinations[combination[index]];
+                            keyCombination = keyCombinations[keyCombinationCombination[index]];
                             foreach(var key in keyCombination)
                                 keyIsPresent[key] = true;
                         }
@@ -148,19 +148,19 @@ namespace Test
                     break;
 
                 Increment(
-                   combinations.Count,
-                   combination);
+                   keyCombinations.Count,
+                   keyCombinationCombination);
             }
 
-            if(combination[0] == 0)
+            if(keyCombinationCombination[0] == 0)
             {
-                foreach(var index in combination)
-                    WriteCombination(combinations[index]);
+                foreach(var index in keyCombinationCombination)
+                    WriteCombination(keyCombinations[index]);
 
-                Assert.That(combination.Length, Is.EqualTo(expected.Count));
-                for(var index = 0;index < combination.Length;index++)
+                Assert.That(keyCombinationCombination.Length, Is.EqualTo(expected.Count));
+                for(var index = 0;index < keyCombinationCombination.Length;index++)
                 {
-                    var keyCombination = combinations[combination[index]];
+                    keyCombination = keyCombinations[keyCombinationCombination[index]];
                     for(var index2 = 0;index2 < keyCombination.Length;index2++)
                         Assert.That(keyCombination[index2], Is.EqualTo(expected[index][index2]));
                 }
