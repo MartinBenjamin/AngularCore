@@ -168,22 +168,20 @@ namespace Test
                    keyCombinationCombination);
             }
 
-            if(keyCombinationCombination[0] == 0)
-            {
-                foreach(var index in keyCombinationCombination)
-                    WriteCombination(keyCombinations[index]);
-
-                Assert.That(keyCombinationCombination.Length, Is.EqualTo(expected.Count));
-                for(var index = 0;index < keyCombinationCombination.Length;index++)
-                {
-                    keyCombination = keyCombinations[keyCombinationCombination[index]];
-                    for(var index2 = 0;index2 < keyCombination.Length;index2++)
-                        Assert.That(keyCombination[index2], Is.EqualTo(expected[index][index2]));
-                }
-            }
-
             TestContext.WriteLine(count);
             TestContext.WriteLine(tested);
+
+            Assert.That(keyCombinationCombination[0], Is.EqualTo(0));
+            foreach(var index in keyCombinationCombination)
+                WriteCombination(keyCombinations[index]);
+
+            Assert.That(keyCombinationCombination.Length, Is.EqualTo(expected.Count));
+            for(var index = 0;index < keyCombinationCombination.Length;index++)
+            {
+                keyCombination = keyCombinations[keyCombinationCombination[index]];
+                for(var index2 = 0;index2 < keyCombination.Length;index2++)
+                    Assert.That(keyCombination[index2], Is.EqualTo(expected[index][index2]));
+            }
         }
 
         public static IEnumerable<object[]> TestCases
