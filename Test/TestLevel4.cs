@@ -53,13 +53,12 @@ namespace Test
             TestContext.WriteLine(" ]");
         }
 
-        [TestCaseSource("TestCases")]
-        public void Test(
-            int               numBuns,
-            int               numRequired,
-            IList<IList<int>> expected
+        public int[][] GenerateCombinations(
+            int numBuns,
+            int numRequired
             )
         {
+            // Determine n and r.
             var n = 10;
             var r = 6;
 
@@ -84,8 +83,11 @@ namespace Test
             var numRequiredcombination         = new int[numRequired];
             var numRequiredMinusOneCombination = new int[numRequired - 1];
             var keyIsPresent                   = new bool[n];
+            int[][] result                     = null;
             // First key combination is fixed.
-            while(keyCombinationCombination[0] == 0)
+            while(
+                keyCombinationCombination[0] == 0 &&
+                result == null)
             {
                 count++;
                 if(count == 100000000)
@@ -161,26 +163,44 @@ namespace Test
                 }
 
                 if(pass)
-                    break;
-
-                Increment(
-                   keyCombinations.Count,
-                   keyCombinationCombination);
+                {
+                    result = new int[numBuns][];
+                    for(var index = 0;index < numBuns;++index)
+                        result[index] = keyCombinations[keyCombinationCombination[index]];
+                }
+                else
+                    Increment(
+                       keyCombinations.Count,
+                       keyCombinationCombination);
             }
 
             TestContext.WriteLine(count);
             TestContext.WriteLine(tested);
 
-            Assert.That(keyCombinationCombination[0], Is.EqualTo(0));
-            foreach(var index in keyCombinationCombination)
-                WriteCombination(keyCombinations[index]);
+            return result;
+        }
 
-            Assert.That(keyCombinationCombination.Length, Is.EqualTo(expected.Count));
-            for(var index = 0;index < keyCombinationCombination.Length;index++)
+        [TestCaseSource("TestCases")]
+        public void Test(
+            int               numBuns,
+            int               numRequired,
+            IList<IList<int>> expected
+            )
+        {
+            var result = GenerateCombinations(
+                numBuns,
+                numRequired);
+
+            Assert.That(result, Is.Not.Null);
+            foreach(var keyCombination in result)
+                WriteCombination(keyCombination);
+
+            Assert.That(result.Length, Is.EqualTo(expected.Count));
+            for(var index1 = 0;index1 < result.Length;index1++)
             {
-                keyCombination = keyCombinations[keyCombinationCombination[index]];
+                var keyCombination = result[index1];
                 for(var index2 = 0;index2 < keyCombination.Length;index2++)
-                    Assert.That(keyCombination[index2], Is.EqualTo(expected[index][index2]));
+                    Assert.That(keyCombination[index2], Is.EqualTo(expected[index1][index2]));
             }
         }
 
