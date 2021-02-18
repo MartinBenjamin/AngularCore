@@ -79,21 +79,37 @@ namespace Test
 
             var keyCombinationCombination = new int[numBuns];
             Initialise(keyCombinationCombination);
-            int count = 0;
+            int count                          = 0;
+            int tested                         = 0;
             var numRequiredcombination         = new int[numRequired];
             var numRequiredMinusOneCombination = new int[numRequired - 1];
             var keyIsPresent                   = new bool[n];
+            // First key combination is fixed.
             while(keyCombinationCombination[0] == 0)
             {
                 count++;
                 if(count == 100000000)
                     break;
 
+                // Every choice of numRequired must have all keys.
                 Initialise(numRequiredcombination);
-
                 bool pass = true;
                 generating = true;
-                // Every choice of numRequired must have all keys.
+
+                // Optimisation.
+                // key (n-1) can only appear in the last position of a key combination.
+                // To get a sufficient spread of keys the key combinations at indices numRequired - 1 to numBuns - 1
+                // must have (n-1) in the last position.
+                for(var index = numRequired - 1;index < numBuns && pass;index++)
+                {
+                    keyCombination = keyCombinations[keyCombinationCombination[index]];
+                    if(keyCombination[r - 1] != n - 1)
+                        pass = false;
+                }
+
+                if(pass)
+                    tested += 1;
+
                 while(
                     pass &&
                     generating)
@@ -167,6 +183,7 @@ namespace Test
             }
 
             TestContext.WriteLine(count);
+            TestContext.WriteLine(tested);
         }
 
         public static IEnumerable<object[]> TestCases
