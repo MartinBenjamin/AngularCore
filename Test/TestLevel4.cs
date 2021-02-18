@@ -38,6 +38,21 @@ namespace Test
             return true;
         }
 
+        public void WriteCombination(
+            int[] combination
+            )
+        {
+            TestContext.Write("[ ");
+            for(var index = 0;index < combination.Length;index++)
+            {
+                if(index != 0)
+                    TestContext.Write(", ");
+
+                TestContext.Write(combination[index]);
+            }
+            TestContext.WriteLine(" ]");
+        }
+
         [TestCaseSource("TestCases")]
         public void Test(
             int               numBuns,
@@ -55,8 +70,7 @@ namespace Test
             while(generating)
             {
                 combinations.Add((int[])combination.Clone());
-                TestContext.WriteLine(new TestDataList<int>(combination));
-
+                WriteCombination(combination);
                 generating = Increment(
                    n,
                    combination);
@@ -66,9 +80,9 @@ namespace Test
             combination = new int[numBuns];
             Initialise(combination);
             int count = 0;
-            var numRequiredcombination = new int[numRequired];
+            var numRequiredcombination         = new int[numRequired];
             var numRequiredMinusOneCombination = new int[numRequired - 1];
-            var isPresent = new bool[n];
+            var keyIsPresent                   = new bool[n];
             while(combination[0] == 0)
             {
                 count++;
@@ -78,53 +92,53 @@ namespace Test
                 Initialise(numRequiredcombination);
 
                 bool pass = true;
-                bool testing = true;
-                // Every choice of numRequired must have all elements.
+                generating = true;
+                // Every choice of numRequired must have all keys.
                 while(
                     pass &&
-                    testing)
+                    generating)
                 {
                     Array.Fill(
-                        isPresent,
+                        keyIsPresent,
                         false);
 
                     foreach(var index in numRequiredcombination)
                     {
                         var keyCombination = combinations[combination[index]];
                         foreach(var key in keyCombination)
-                            isPresent[key] = true;
+                            keyIsPresent[key] = true;
                     }
 
-                    pass = Array.TrueForAll(isPresent, p => p);
+                    pass = Array.TrueForAll(keyIsPresent, p => p);
                     if(pass)
-                        testing = Increment(
+                        generating = Increment(
                             numBuns,
                             numRequiredcombination);
                 }
 
                 if(pass)
                 {
-                    // Every choice of numRequired - 1 must not have all elements;
+                    // Every choice of numRequired - 1 must not have all keys;
                     Initialise(numRequiredMinusOneCombination);
-                    testing = true;
+                    generating = true;
                     while(
                         pass &&
-                        testing)
+                        generating)
                     {
                         Array.Fill(
-                            isPresent,
+                            keyIsPresent,
                             false);
 
                         foreach(var index in numRequiredMinusOneCombination)
                         {
                             var keyCombination = combinations[combination[index]];
                             foreach(var key in keyCombination)
-                                isPresent[key] = true;
+                                keyIsPresent[key] = true;
                         }
 
-                        pass = !Array.TrueForAll(isPresent, p => p);
+                        pass = !Array.TrueForAll(keyIsPresent, p => p);
                         if(pass)
-                            testing = Increment(
+                            generating = Increment(
                                 numBuns,
                                 numRequiredMinusOneCombination);
                     }
@@ -141,7 +155,7 @@ namespace Test
             if(combination[0] == 0)
             {
                 foreach(var index in combination)
-                    TestContext.WriteLine(new TestDataList<int>(combinations[index]));
+                    WriteCombination(combinations[index]);
 
                 Assert.That(combination.Length, Is.EqualTo(expected.Count));
                 for(var index = 0;index < combination.Length;index++)
