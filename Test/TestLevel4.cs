@@ -97,7 +97,7 @@ namespace Test
                 generating = true;
 
                 // Optimisation.
-                // key (n-1) can only appear in the last position of a key combination.
+                // Key (n-1) can only appear in the last position of a key combination.
                 // To get a sufficient spread of keys the key combinations at indices numRequired - 1 to numBuns - 1
                 // must have (n-1) in the last position.
                 for(var index = numRequired - 1;index < numBuns && pass;index++)
