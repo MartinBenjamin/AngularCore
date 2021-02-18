@@ -58,6 +58,25 @@ namespace Test
             int numRequired
             )
         {
+            int[][] result = null;
+            if(numRequired == 0)
+            {
+                // No key distribution required.
+                result = new int[numBuns][];
+                for(var index = 0;index < numBuns;++index)
+                    result[index] = Array.Empty<int>();
+                return result;
+            }
+            else if(numRequired == 1)
+            {
+                // No key distribution required.
+                result = new int[numBuns][];
+                var singleKeyCombination = new[] { 0 };
+                for(var index = 0;index < numBuns;++index)
+                    result[index] = singleKeyCombination;
+                return result;
+            }
+
             // Determine n and r.
             var n = 10;
             var r = 6;
@@ -83,7 +102,6 @@ namespace Test
             var numRequiredcombination         = new int[numRequired];
             var numRequiredMinusOneCombination = new int[numRequired - 1];
             var keyIsPresent                   = new bool[n];
-            int[][] result                     = null;
             // First key combination is fixed.
             while(
                 keyCombinationCombination[0] == 0 &&
@@ -213,9 +231,30 @@ namespace Test
                     new object[]
                     {
                         2,
+                        0,
+                        new TestDataList<IList<int>>
+                        {
+                            new TestDataList<int>{ },
+                            new TestDataList<int>{ }
+                        }
+                    },
+                    new object[]
+                    {
+                        2,
                         1,
                         new TestDataList<IList<int>>
                         {
+                            new TestDataList<int>{ 0 },
+                            new TestDataList<int>{ 0 }
+                        }
+                    },
+                    new object[]
+                    {
+                        3,
+                        1,
+                        new TestDataList<IList<int>>
+                        {
+                            new TestDataList<int>{ 0 },
                             new TestDataList<int>{ 0 },
                             new TestDataList<int>{ 0 }
                         }
