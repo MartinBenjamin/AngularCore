@@ -53,7 +53,27 @@ namespace Test
             TestContext.WriteLine(" ]");
         }
 
-        public int[][] GenerateCombinations(
+        public IList<int[]> GenerateCombinations(
+            int n,
+            int r
+            )
+        {
+            var combination = new int[r];
+            Initialise(combination);
+            IList<int[]> combinations = new List<int[]>();
+            var generating = true;
+            while(generating)
+            {
+                combinations.Add((int[])combination.Clone());
+                WriteCombination(combination);
+                generating = Increment(
+                   n,
+                   combination);
+            }
+            return combinations;
+        }
+
+        public int[][] GenerateKeyCombinations(
             int numBuns,
             int numRequired
             )
@@ -81,27 +101,18 @@ namespace Test
             var n = 10;
             var r = 6;
 
-            var keyCombination = new int[r];
-            Initialise(keyCombination);
-            IList<int[]> keyCombinations = new List<int[]>();
-            var generating = true;
-            while(generating)
-            {
-                keyCombinations.Add((int[])keyCombination.Clone());
-                WriteCombination(keyCombination);
-                generating = Increment(
-                   n,
-                   keyCombination);
-            }
+            IList<int[]> keyCombinations = GenerateCombinations(
+                n,
+                r);
             TestContext.WriteLine(keyCombinations.Count);
 
-            var keyCombinationCombination = new int[numBuns];
-            Initialise(keyCombinationCombination);
             int count                          = 0;
             int tested                         = 0;
+            var keyCombinationCombination      = new int[numBuns];
             var numRequiredcombination         = new int[numRequired];
             var numRequiredMinusOneCombination = new int[numRequired - 1];
             var keyIsPresent                   = new bool[n];
+            Initialise(keyCombinationCombination);
             // First key combination is fixed.
             while(
                 keyCombinationCombination[0] == 0 &&
@@ -113,8 +124,8 @@ namespace Test
 
                 // Every choice of numRequired must have all keys.
                 Initialise(numRequiredcombination);
-                bool pass = true;
-                generating = true;
+                var pass = true;
+                var generating = true;
 
                 // Optimisation.
                 // Key (n-1) can only appear in the last position of a key combination.
@@ -122,7 +133,7 @@ namespace Test
                 // must have (n-1) in the last position.
                 for(var index = numRequired - 1;index < numBuns && pass;index++)
                 {
-                    keyCombination = keyCombinations[keyCombinationCombination[index]];
+                    var keyCombination = keyCombinations[keyCombinationCombination[index]];
                     if(keyCombination[r - 1] != n - 1)
                         pass = false;
                 }
@@ -140,7 +151,7 @@ namespace Test
 
                     foreach(var index in numRequiredcombination)
                     {
-                        keyCombination = keyCombinations[keyCombinationCombination[index]];
+                        var keyCombination = keyCombinations[keyCombinationCombination[index]];
                         foreach(var key in keyCombination)
                             keyIsPresent[key] = true;
                     }
@@ -167,7 +178,7 @@ namespace Test
 
                         foreach(var index in numRequiredMinusOneCombination)
                         {
-                            keyCombination = keyCombinations[keyCombinationCombination[index]];
+                            var keyCombination = keyCombinations[keyCombinationCombination[index]];
                             foreach(var key in keyCombination)
                                 keyIsPresent[key] = true;
                         }
@@ -205,7 +216,7 @@ namespace Test
             IList<IList<int>> expected
             )
         {
-            var result = GenerateCombinations(
+            var result = GenerateKeyCombinations(
                 numBuns,
                 numRequired);
 
