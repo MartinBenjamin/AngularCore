@@ -72,35 +72,16 @@ namespace Test
             }
             return combinations;
         }
+        
 
-        public int[][] GenerateKeyCombinations(
+        private int[][] GenerateKeyCombinations(
             int numBuns,
-            int numRequired
+            int numRequired,
+            int n,
+            int r
             )
         {
             int[][] result = null;
-            if(numRequired == 0)
-            {
-                // No key distribution required.
-                result = new int[numBuns][];
-                for(var index = 0;index < numBuns;++index)
-                    result[index] = Array.Empty<int>();
-                return result;
-            }
-            else if(numRequired == 1)
-            {
-                // No key distribution required.
-                result = new int[numBuns][];
-                var singleKeyCombination = new[] { 0 };
-                for(var index = 0;index < numBuns;++index)
-                    result[index] = singleKeyCombination;
-                return result;
-            }
-
-            // Determine n and r.
-            var n = 10;
-            var r = 6;
-
             IList<int[]> keyCombinations = GenerateCombinations(
                 n,
                 r);
@@ -209,6 +190,54 @@ namespace Test
             return result;
         }
 
+        public int[][] GenerateKeyCombinations(
+            int numBuns,
+            int numRequired
+            )
+        {
+            int[][] result = null;
+            if(numRequired == 0)
+            {
+                // No key distribution required.
+                result = new int[numBuns][];
+                for(var index = 0;index < numBuns;++index)
+                    result[index] = Array.Empty<int>();
+                return result;
+            }
+            else if(numRequired == 1)
+            {
+                // No key distribution required.
+                result = new int[numBuns][];
+                var singleKeyCombination = new[] { 0 };
+                for(var index = 0;index < numBuns;++index)
+                    result[index] = singleKeyCombination;
+                return result;
+            }
+
+            // Determine n (number of keys)
+            // and r (key combination size/block size).
+
+            // If there are num_buns combinations and any num_required are selected then each key must appear (at least) once in the selection.
+            int repeats = numBuns - numRequired + 1;
+
+            // If there are n keys and each key is repeated repeats times then there must be n * repeats keys.
+            // If there are num_buns combinations and each combination contains r keys then there must be num_buns * r keys.
+            // Therefore n * repeats = num_buns * r .
+            // Therefore n/r = num_buns/repeats = (multiplier * num_buns)/(multiplier * repeats).
+            var multiplier = 1;
+            while(result == null)
+            {
+                result = GenerateKeyCombinations(
+                    numBuns,
+                    numRequired,
+                    multiplier * numBuns,
+                    multiplier * repeats);
+                multiplier += 1;
+            }
+
+            return result;
+        }
+
         [TestCaseSource("TestCases")]
         public void Test(
             int               numBuns,
@@ -272,7 +301,7 @@ namespace Test
                     },
                     new object[]
                     {
-                        2,
+                        3,
                         2,
                         new TestDataList<IList<int>>
                         {
