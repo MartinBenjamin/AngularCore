@@ -87,8 +87,8 @@ namespace Test
                 r);
             TestContext.WriteLine(keyCombinations.Count);
 
-            int count                          = 0;
-            int tested                         = 0;
+            var count                          = 0L;
+            var tested                         = 0L;
             var keyCombinationCombination      = new int[numBuns];
             var numRequiredcombination         = new int[numRequired];
             var numRequiredMinusOneCombination = new int[numRequired - 1];
@@ -225,7 +225,9 @@ namespace Test
             // Therefore n * repeats = num_buns * r .
             // Therefore n/r = num_buns/repeats = (multiplier * num_buns)/(multiplier * repeats).
             var multiplier = 1;
-            while(result == null)
+            while(
+                result == null &&
+                multiplier * numBuns <= 10)
             {
                 result = GenerateKeyCombinations(
                     numBuns,
@@ -335,6 +337,15 @@ namespace Test
                             new TestDataList<int>{ 2, 4, 5, 7, 8, 9 }
                         }
                     }
+                    //,
+                    //new object[]
+                    //{
+                    //    10,
+                    //    7,
+                    //    new TestDataList<IList<int>>
+                    //    {
+                    //    }
+                    //}
                 };
             }
         }
