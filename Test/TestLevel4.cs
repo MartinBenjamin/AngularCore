@@ -222,7 +222,7 @@ namespace Test
 
             // If there are n keys and each key is repeated repeats times then there must be n * repeats keys.
             // If there are num_buns combinations and each combination contains r keys then there must be num_buns * r keys.
-            // Therefore n * repeats = num_buns * r .
+            // Therefore n * repeats = num_buns * r . (Design Theory: vr = bk.)
             // Therefore n/r = num_buns/repeats = (multiplier * num_buns)/(multiplier * repeats).
             var multiplier = 1;
             while(
