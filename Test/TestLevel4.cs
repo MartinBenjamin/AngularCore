@@ -100,7 +100,7 @@ namespace Test
                 result == null)
             {
                 count++;
-                if(count == int.MaxValue)
+                if(count == long.MaxValue)
                     break;
 
                 // Every choice of numRequired must have all keys.
