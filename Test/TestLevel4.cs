@@ -323,7 +323,7 @@ namespace Test
             return result;
         }
 
-        private int[][] GenerateKeyCombinations2(
+        private int[][] GenerateKeyCombinations(
             int numBuns,
             int numRequired,
             int n,
@@ -404,7 +404,7 @@ namespace Test
                 var n = multiplier * numBuns;
                 var w = multiplier * repeats;
                 var d = 2 * (n - w - numRequired + 2);
-                result = GenerateKeyCombinations2(
+                result = GenerateKeyCombinations(
                     numBuns,
                     numRequired,
                     n,
