@@ -196,6 +196,161 @@ namespace Test
             return combinations;
         }
 
+        public int[][] GenerateKeyCombinations(
+            int           numBuns,
+            int           numRequired,
+            int           n,
+            int           d,
+            IList<bool[]> keyCombinations,
+            int[]         keyCombinationCombination,
+            int           position
+            )
+        {
+            int[][] result = null;
+            if(position < keyCombinationCombination.Length)
+            {
+                var startIndex = 0;
+                if(position > 0)
+                    startIndex = keyCombinationCombination[position - 1] + 1;
+                for(var index = startIndex;index < keyCombinations.Count - keyCombinationCombination.Length + position + 1 && result == null;++index)
+                {
+                    var keyCombination = keyCombinations[index];
+                    var valid = true;
+                    for(var index1 = 0;index1 < position && valid;++index1)
+                        valid = valid && Distance(
+                            keyCombinations[keyCombinationCombination[index1]],
+                            keyCombination) == d;
+
+                    if(valid)
+                    {
+                        keyCombinationCombination[position] = index;
+                        result = GenerateKeyCombinations(
+                            numBuns,
+                            numRequired,
+                            n,
+                            d,
+                            keyCombinations,
+                            keyCombinationCombination,
+                            position + 1);
+                    }
+                }
+
+                return result;
+            }
+
+            var numRequiredcombination         = new int[numRequired];
+            var numRequiredMinusOneCombination = new int[numRequired - 1];
+            var keyIsPresent                   = new bool[n];
+            var rowSums                        = new int[n];
+
+            Initialise(numRequiredcombination);
+            var pass = true;
+            var generating = true;
+
+            // Optimisation.
+            // To get all keys in a choice of numRequired key combinations the key combinations at indices numRequired - 1 to numBuns - 1
+            // must have key n - 1.
+            for(var index = numRequired - 1;index < numBuns && pass;index++)
+            {
+                var keyCombination = keyCombinations[keyCombinationCombination[index]];
+                pass = pass && keyCombination[n - 1];
+            }
+
+            // Every choice of numRequired must have all keys.
+            while(
+                pass &&
+                generating)
+            {
+                Array.Fill(
+                    keyIsPresent,
+                    false);
+
+                foreach(var index in numRequiredcombination)
+                {
+                    var keyCombination = keyCombinations[keyCombinationCombination[index]];
+                    for(var key = 0;key < n;++key)
+                        keyIsPresent[key] = keyIsPresent[key] || keyCombination[key];
+                }
+
+                pass = Array.TrueForAll(keyIsPresent, p => p);
+                if(pass)
+                    generating = Increment(
+                        numBuns,
+                        numRequiredcombination);
+            }
+
+            if(pass)
+            {
+                // Every choice of numRequired - 1 must not have all keys.
+                Initialise(numRequiredMinusOneCombination);
+                generating = true;
+                while(
+                    pass &&
+                    generating)
+                {
+                    Array.Fill(
+                        keyIsPresent,
+                        false);
+
+                    foreach(var index in numRequiredMinusOneCombination)
+                    {
+                        var keyCombination = keyCombinations[keyCombinationCombination[index]];
+                        for(var key = 0;key < n;++key)
+                            keyIsPresent[key] = keyIsPresent[key] || keyCombination[key];
+                    }
+
+                    pass = !Array.TrueForAll(keyIsPresent, p => p);
+                    if(pass)
+                        generating = Increment(
+                            numBuns,
+                            numRequiredMinusOneCombination);
+                }
+            }
+
+            if(pass)
+            {
+                result = new int[numBuns][];
+                for(var index = 0;index < numBuns;++index)
+                {
+                    var keyCombination = new List<int>();
+                    for(var key = 0;key < n;++key)
+                        if(keyCombinations[keyCombinationCombination[index]][key])
+                            keyCombination.Add(key);
+                    result[index] = keyCombination.ToArray();
+                }
+            }
+
+            return result;
+        }
+
+        private int[][] GenerateKeyCombinations2(
+            int numBuns,
+            int numRequired,
+            int n,
+            int w,
+            int d
+            )
+        {
+            int[][] result = null;
+            IList<bool[]> keyCombinations = GenerateCombinations(
+                n,
+                w,
+                d);
+            TestContext.WriteLine(keyCombinations.Count);
+
+            if(keyCombinations.Count < numBuns)
+                return null;
+
+            return GenerateKeyCombinations(
+                numBuns,
+                numRequired,
+                n,
+                d,
+                keyCombinations,
+                new int[numBuns],
+                0);
+        }
+
         private int[][] GenerateKeyCombinations(
             int numBuns,
             int numRequired,
@@ -494,7 +649,7 @@ namespace Test
                 var n = multiplier * numBuns;
                 var w = multiplier * repeats;
                 var d = 2 * (n - w - numRequired + 2);
-                result = GenerateKeyCombinations(
+                result = GenerateKeyCombinations2(
                     numBuns,
                     numRequired,
                     n,
@@ -633,8 +788,7 @@ namespace Test
                             new TestDataList<int>{ 1, 3, 5, 6, 8, 9 },
                             new TestDataList<int>{ 2, 4, 5, 7, 8, 9 }
                         }
-                    }
-                    //,
+                    }//,
                     //new object[]
                     //{
                     //    6,
