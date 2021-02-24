@@ -151,7 +151,7 @@ namespace Test
             TestContext.WriteLine(" ]");
         }
 
-        private int Distance1(
+        private int Distance(
             int[] combination1,
             int[] combination2,
             int   n
@@ -183,7 +183,7 @@ namespace Test
                     combinations.Add((int[])combination.Clone());
                     initial = combinations[0];
                 }
-                else if(Distance1(initial, combination, n) == r)
+                else if(Distance(initial, combination, n) == r)
                 {
                     WriteCombination(combination);
                     combinations.Add((int[])combination.Clone());
