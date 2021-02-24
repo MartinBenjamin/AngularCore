@@ -74,7 +74,7 @@ namespace Test
             return distance;
         }       
 
-        public IList<bool[]> GenerateBinaryCombinations(
+        public IList<bool[]> GenerateCombinations(
             int n,
             int w,
             int d
@@ -150,6 +150,7 @@ namespace Test
             }
             TestContext.WriteLine(" ]");
         }
+
         private int Distance1(
             int[] combination1,
             int[] combination2,
@@ -195,7 +196,7 @@ namespace Test
             return combinations;
         }
 
-        private int[][] GenerateKeyCombinations1(
+        private int[][] GenerateKeyCombinations(
             int numBuns,
             int numRequired,
             int n,
@@ -204,7 +205,7 @@ namespace Test
             )
         {
             int[][] result = null;
-            IList<bool[]> keyCombinations = GenerateBinaryCombinations(
+            IList<bool[]> keyCombinations = GenerateCombinations(
                 n,
                 w,
                 d);
@@ -220,7 +221,6 @@ namespace Test
             var numRequiredMinusOneCombination = new int[numRequired - 1];
             var keyIsPresent                   = new bool[n];
             var rowSums                        = new int[n];
-            int repeats                        = numBuns - numRequired + 1;
             Initialise(keyCombinationCombination);
             // First key combination is fixed.
             while(
@@ -494,7 +494,7 @@ namespace Test
                 var n = multiplier * numBuns;
                 var w = multiplier * repeats;
                 var d = 2 * (n - w - numRequired + 2);
-                result = GenerateKeyCombinations1(
+                result = GenerateKeyCombinations(
                     numBuns,
                     numRequired,
                     n,
