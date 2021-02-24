@@ -216,7 +216,7 @@ namespace Test
                 {
                     var keyCombination = keyCombinations[index];
                     var valid = true;
-                    for(var index1 = 0;index1 < position && valid;++index1)
+                    for(var index1 = 1;index1 < position && valid;++index1)
                         valid = valid && Distance(
                             keyCombinations[keyCombinationCombination[index1]],
                             keyCombination) == d;
