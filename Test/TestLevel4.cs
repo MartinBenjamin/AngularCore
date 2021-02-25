@@ -382,7 +382,7 @@ namespace Test
             // d - Hamming Distance.
             
             // If there are numBuns codes and any numRequired are selected then each key must appear (at least) once in the selection.
-            int repeats = numBuns - numRequired + 1;
+            var repeats = numBuns - numRequired + 1;
 
             // If there are n keys and each key is repeated repeats times then there must be n * repeats keys (ones).
             // If there are num_buns combinations and each combination contains w keys then there must be num_buns * w keys (ones).
@@ -390,7 +390,7 @@ namespace Test
             // Therefore n/w = num_buns/repeats = (multiplier * num_buns)/(multiplier * repeats).
 
             // A combination of 2 codes eliminates d/2 zeros.
-            // Assume subsequent blocks eliminate one zero.
+            // Assume subsequent blocks eliminate one zero - incorrect???
             // Therefore d/2 + (numRequired - 3) <  n - w
             // and       d/2 + (numRequired - 2) >= n - w.
             // Therefore d Upper Bound = 2*(n - w - numRequired + 3)
@@ -416,7 +416,7 @@ namespace Test
             return result;
         }
 
-        [TestCaseSource("TestCases")]
+        [TestCaseSource("TestCases1"), Timeout(2000)]
         public void Test(
             int               numBuns,
             int               numRequired,
@@ -431,6 +431,9 @@ namespace Test
             foreach(var keyCombination in result)
                 WriteCombination(keyCombination);
 
+            if(expected.Count == 0)
+                return;
+
             Assert.That(result.Length, Is.EqualTo(expected.Count));
             for(var index1 = 0;index1 < result.Length;index1++)
             {
@@ -440,35 +443,19 @@ namespace Test
             }
         }
 
-        [TestCase]
+        [Test]
         public void CountCombinations()
         {
-            var combinations = GenerateCombinations(
-                5,
-                3);
+            for(var numBuns = 1;numBuns < 10;++numBuns)
+                for(var numRequired = 1;numRequired <= numBuns;numRequired++)
+                {
+                    int repeats = numBuns - numRequired + 1;
+                    var n = numBuns;
+                    var w = repeats;
+                    var d = 2 * (n - w - numRequired + 2);
 
-            var generating = true;
-            //var count = 0;
-            var combinationOfCombinations = new int[2];
-            var elements = new HashSet<int>();
-            var counts = new int[10];
-            Initialise(combinationOfCombinations);
-            while(generating)
-            {
-                elements.Clear();
-                foreach(var index in combinationOfCombinations)
-                    elements.UnionWith(combinations[index]);
-
-                counts[elements.Count] += 1;
-
-                generating = Increment(
-                    combinations.Count,
-                    combinationOfCombinations);
-            }
-
-            TestContext.WriteLine(combinations.Count);
-            for(var index = 0;index < counts.Length;++index)
-                TestContext.WriteLine($"{index}: {counts[index]}");
+                    TestContext.WriteLine($"numBuns: {numBuns}, numRequired: {numRequired}, repeats: {repeats}, n: {n}, w: {w}, d: {d}");
+                }
         }
 
         public static IEnumerable<object[]> TestCases
@@ -556,5 +543,19 @@ namespace Test
             }
         }
 
+        public static IEnumerable<object[]> TestCases1
+        {
+            get
+            {
+                for(var numBuns = 1;numBuns < 10;++numBuns)
+                    for(var numRequired = 1;numRequired <= numBuns;numRequired++)
+                        yield return new object[]
+                        {
+                            numBuns,
+                            numRequired,
+                            new int[0][]
+                        };
+            }
+        }
     }
 }
