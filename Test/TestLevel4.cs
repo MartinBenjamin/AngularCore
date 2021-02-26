@@ -50,15 +50,15 @@ namespace Test
             bool[] combination
             )
         {
-            TestContext.Write("[ ");
-            for(var index = 0;index < combination.Length;index++)
-            {
-                if(index != 0)
-                    TestContext.Write(", ");
+            //TestContext.Write("[ ");
+            //for(var index = 0;index < combination.Length;index++)
+            //{
+            //    if(index != 0)
+            //        TestContext.Write(", ");
 
-                TestContext.Write(combination[index] ? 1 : 0);
-            }
-            TestContext.WriteLine(" ]");
+            //    TestContext.Write(combination[index] ? 1 : 0);
+            //}
+            //TestContext.WriteLine(" ]");
         }
 
         private int Distance(
@@ -330,6 +330,7 @@ namespace Test
             {
                 var n = multiplier * numBuns;
                 var w = multiplier * repeats;
+                TestContext.WriteLine($"n: {n}, w: {w}");
                 result = GenerateKeyCombinations(
                     numBuns,
                     numRequired,
@@ -427,6 +428,18 @@ namespace Test
                             new TestDataList<int>{ 0, 1 },
                             new TestDataList<int>{ 0, 2 },
                             new TestDataList<int>{ 1, 2 }
+                        }
+                    },
+                    new object[]
+                    {
+                        4,
+                        3,
+                        new TestDataList<IList<int>>
+                        {
+                            new TestDataList<int>{ 0, 1, 2, 3 },
+                            new TestDataList<int>{ 0, 1, 4, 5 },
+                            new TestDataList<int>{ 2, 4, 6, 7 },
+                            new TestDataList<int>{ 3, 5, 6, 7 }
                         }
                     },
                     new object[]
