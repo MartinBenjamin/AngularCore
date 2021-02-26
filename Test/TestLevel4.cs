@@ -325,17 +325,24 @@ namespace Test
             // Therefore n * repeats = num_buns * w. (Design Theory: vr = bk.)
             // Therefore n/w = num_buns/repeats = (multiplier * num_buns)/(multiplier * repeats).
 
+            // A particular key has a density of w/n.
+            // Therefore w * numRequired / n >= 1.
+            // Therefore w * numRequired >= n
+
             var multiplier = 1;
             while(result == null)
             {
                 var n = multiplier * numBuns;
                 var w = multiplier * repeats;
-                TestContext.WriteLine($"n: {n}, w: {w}");
-                result = GenerateKeyCombinations(
-                    numBuns,
-                    numRequired,
-                    n,
-                    w);
+                if(w * numRequired >= n)
+                {
+                    TestContext.WriteLine($"n: {n}, w: {w}");
+                    result = GenerateKeyCombinations(
+                        numBuns,
+                        numRequired,
+                        n,
+                        w);
+                }
                 multiplier += 1;
             }
 
