@@ -182,7 +182,7 @@ namespace Test
 
                     if(valid && position + 1 >= numRequired - 1)
                     {
-                        // This key combination when combined with num_required - 2 previously selected key combinations
+                        // This key combination when combined with numRequired - 2 previously selected key combinations
                         // should not contain all the keys.
 
                         var numRequiredMinusTwoCombination = new int[numRequired - 2];
@@ -212,7 +212,7 @@ namespace Test
 
                         if(valid && position + 1 >= numRequired)
                         {
-                            // This key combination when combined with num_required - 1 previously selected key combinations
+                            // This key combination when combined with numRequired - 1 previously selected key combinations
                             // should contain all hte keys.
                             var numRequiredMinusOneCombination = new int[numRequired - 1];
                             Initialise(numRequiredMinusOneCombination);
@@ -322,18 +322,14 @@ namespace Test
             // Need to determine:
             // n - number of bits (keys).
             // w - weight/number of bits set to one.
-            
+
             // If there are numBuns codes and any numRequired are selected then each key must appear (at least) once in the selection.
             var repeats = numBuns - numRequired + 1;
 
             // If there are n keys and each key is repeated repeats times then there must be n * repeats keys (ones).
-            // If there are num_buns combinations and each combination contains w keys then there must be num_buns * w keys (ones).
-            // Therefore n * repeats = num_buns * w. (Design Theory: vr = bk.)
-            // Therefore n/w = num_buns/repeats = (multiplier * num_buns)/(multiplier * repeats).
-
-            // A particular key has a density of w/n.
-            // Therefore w * numRequired / n >= 1.
-            // Therefore w * numRequired >= n
+            // If there are numBuns combinations and each combination contains w keys then there must be numBuns * w keys (ones).
+            // Therefore n * repeats = numBuns * w. (Design Theory: vr = bk.)
+            // Therefore n/w = numBuns/repeats = (multiplier * numBuns)/(multiplier * repeats).
 
             var multiplier = 1;
             while(result == null)
@@ -823,9 +819,9 @@ namespace Test
             var repeats = numBuns - numRequired + 1;
 
             // If there are n keys and each key is repeated repeats times then there must be n * repeats keys (ones).
-            // If there are num_buns combinations and each combination contains w keys then there must be num_buns * w keys (ones).
-            // Therefore n * repeats = num_buns * w. (Design Theory: vr = bk.)
-            // Therefore n/w = num_buns/repeats = (multiplier * num_buns)/(multiplier * repeats).
+            // If there are numBuns combinations and each combination contains w keys then there must be numBuns * w keys (ones).
+            // Therefore n * repeats = numBuns * w. (Design Theory: vr = bk.)
+            // Therefore n/w = numBuns/repeats = (multiplier * numBuns)/(multiplier * repeats).
 
             var multiplier = 2;
             while(result == null)
