@@ -192,9 +192,11 @@ namespace Test
                     // key 0 can only appear in position 0 of a key Combination.
                     // To get all keys in a choice of numRequired key combinations the key combinations at positions 0 to numBuns - numRequired
                     // must have 0 in the first position.
-                    if(position <= numBuns - numRequired &&
-                        !keyCombinations[index][0])
-                        valid = false;
+                    if(position <= numBuns - numRequired)
+                        valid = keyCombinations[index][0];
+
+                    else
+                        valid = !keyCombinations[index][0];
 
                     // Key (n-1) can only appear in the last position of a key combination.
                     // To get all keys in a choice of numRequired key combinations the key combinations at positions numRequired - 1 to numBuns - 1
