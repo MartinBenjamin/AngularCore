@@ -168,6 +168,26 @@ namespace Test
 
             return distance;
         }
+        void Add(
+            int[] rowSums,
+            bool[] combination
+            )
+        {
+            for(var index = 0;index < rowSums.Length;index++)
+                if(combination[index])
+                    rowSums[index] += 1;
+        }
+
+        void Subtract(
+            int[] rowSums,
+            bool[] combination
+            )
+        {
+            for(var index = 0;index < rowSums.Length;index++)
+                if(combination[index])
+                    rowSums[index] -= 1;
+        }
+
 
         public int[][] GenerateKeyCombinations(
             int           numBuns,
@@ -175,11 +195,13 @@ namespace Test
             int           n,
             IList<bool[]> keyCombinations,
             int[]         keyCombinationCombination,
-            int           position
+            int           position,
+            int[]         rowSums
             )
         {
             int[][] result = null;
             var keyIsPresent = new bool[n];
+            var rowSum = numBuns - numRequired + 1;
             if(position < keyCombinationCombination.Length)
             {
                 var startIndex = 0;
@@ -195,13 +217,21 @@ namespace Test
                         valid = keyCombinations[index][0];
 
                     else for(var i = 0;i < position - (numBuns - numRequired) && valid;++i)
-                        valid = !keyCombinations[index][i];
+                            valid = !keyCombinations[index][i];
 
                     // Key (n-1) can only appear in the last position of a key combination.
                     // To get all keys in the first numRequired key combinations key n - 1 must appear at positions numRequired - 1 to numBuns - 1.
                     if(valid && position >= numRequired - 1 &&
                        !keyCombinations[index][n - 1])
                         valid = false;
+
+                    if(!valid)
+                        continue;
+
+                    Add(
+                        rowSums,
+                        keyCombinations[index]);
+                    valid = Array.TrueForAll(rowSums, sum => sum <= rowSum);                       
 
                     if(valid && position + 1 >= numRequired - 1)
                     {
@@ -273,8 +303,14 @@ namespace Test
                             n,
                             keyCombinations,
                             keyCombinationCombination,
-                            position + 1);
+                            position + 1,
+                            rowSums);
                     }
+
+                    Subtract(
+                        rowSums,
+                        keyCombinations[index]);
+
                 }
 
                 return result;
@@ -320,7 +356,8 @@ namespace Test
                 n,
                 keyCombinations,
                 new int[numBuns],
-                0);
+                0,
+                new int[n]);
         }
 
         public int[][] GenerateKeyCombinations(
