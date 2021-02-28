@@ -140,6 +140,21 @@ namespace Test
             TestContext.WriteLine(" ]");
         }
 
+        public void WriteCombination(
+            bool[][] keyCombinationCombination
+            )
+        {
+            for(var rowIndex = 0;rowIndex < keyCombinationCombination[0].Length;++rowIndex)
+            {
+                for(var columnIndex = 0;columnIndex < keyCombinationCombination.Length;++columnIndex)
+                {
+                    TestContext.Write(keyCombinationCombination[columnIndex][rowIndex] ? 1 : 0);
+                    TestContext.Write("  ");
+                }
+                TestContext.WriteLine(string.Empty);
+            }
+        }
+
         private int Distance(
             int[] combination1,
             int[] combination2,
@@ -266,6 +281,12 @@ namespace Test
                         keyCombination.Add(key);
                 result[index] = keyCombination.ToArray();
             }
+
+            var displayedResult = new bool[keyCombinationCombination.Length][];
+            for(var index = 0;index < keyCombinationCombination.Length;index++)
+                displayedResult[index] = keyCombinations[keyCombinationCombination[index]];
+
+            WriteCombination(displayedResult);
 
             return result;
         }
@@ -442,21 +463,6 @@ namespace Test
                 new int[numBuns],
                 0,
                 new int[n]);
-        }
-
-        public void Write(
-            bool[][] keyCombinationCombination
-            )
-        {
-            for(var rowIndex = 0;rowIndex < keyCombinationCombination[0].Length;++rowIndex)
-            {
-                for(var columnIndex = 0;columnIndex < keyCombinationCombination.Length;++columnIndex)
-                {
-                    TestContext.Write(keyCombinationCombination[columnIndex][rowIndex] ? 1 : 0);
-                    TestContext.Write(' ');
-                }
-                TestContext.WriteLine(string.Empty);
-            }
         }
 
         public void Flip(
@@ -778,10 +784,10 @@ namespace Test
                 rowSum);
             var count = 0;
 
-            Write(keyCombinationCombination);
+            WriteCombination(keyCombinationCombination);
             Increment(keyCombinationCombination);
             TestContext.WriteLine(string.Empty);
-            Write(keyCombinationCombination);
+            WriteCombination(keyCombinationCombination);
 
             return null;
         }
