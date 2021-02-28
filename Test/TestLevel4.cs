@@ -173,7 +173,14 @@ namespace Test
                 for(var index = startIndex;index < keyCombinations.Count - keyCombinationCombination.Length + position + 1 && result == null;++index)
                 {
                     var valid = true;
-                    if(position + 1 >= numRequired - 1)
+                    // Key (n-1) can only appear in the last position of a key combination.
+                    // To get all keys in a choice of numRequired key combinations the key combinations at positions numRequired - 1 to numBuns - 1
+                    // must have (n-1) in the last position.
+                    if(position >= numRequired - 1 &&
+                       !keyCombinations[index][n - 1])
+                        valid = false;
+
+                    if(valid && position + 1 >= numRequired - 1)
                     {
                         // This key combination when combined with num_required - 2 previously selected key combinations
                         // should not contain all the keys.
@@ -270,7 +277,6 @@ namespace Test
             int w
             )
         {
-            int[][] result = null;
             IList<bool[]> keyCombinations = GenerateCombinations(
                 n,
                 w);
@@ -334,16 +340,507 @@ namespace Test
             {
                 var n = multiplier * numBuns;
                 var w = multiplier * repeats;
-                if(w * numRequired >= n)
-                {
-                    TestContext.WriteLine($"n: {n}, w: {w}");
-                    result = GenerateKeyCombinations(
-                        numBuns,
-                        numRequired,
-                        n,
-                        w);
-                }
+                TestContext.WriteLine($"n: {n}, w: {w}");
+                result = GenerateKeyCombinations(
+                    numBuns,
+                    numRequired,
+                    n,
+                    w);
                 multiplier += 1;
+            }
+
+            return result;
+        }
+
+        void Add(
+            int[]  rowSums,
+            bool[] combination
+            )
+        {
+            for(var index = 0;index < rowSums.Length;index++)
+                if(combination[index])
+                    rowSums[index] += 1;
+        }
+
+        void Subtract(
+            int[]  rowSums,
+            bool[] combination
+            )
+        {
+            for(var index = 0;index < rowSums.Length;index++)
+                if(combination[index])
+                    rowSums[index] -= 1;
+        }
+
+        public bool[][] GenerateKeyCombinationCombination(
+            int           rowSum,
+            IList<bool[]> keyCombinations,
+            int[]         keyCombinationCombination,
+            int           position,
+            int[]         rowSums
+            )
+        {
+            bool[][] result = null;
+            if(position < keyCombinationCombination.Length)
+            {
+                var startIndex = 0;
+                if(position > 0)
+                    startIndex = keyCombinationCombination[position - 1] + 1;
+                for(var index = startIndex;index < keyCombinations.Count - keyCombinationCombination.Length + position + 1 && result == null;++index)
+                {
+                    var keyCombination = keyCombinations[index];
+
+                    Add(
+                        rowSums,
+                        keyCombination);
+
+                    if(Array.TrueForAll(rowSums, sum => sum <= rowSum))
+                    {
+                        keyCombinationCombination[position] = index;
+                        result = GenerateKeyCombinationCombination(
+                            rowSum,
+                            keyCombinations,
+                            keyCombinationCombination,
+                            position + 1,
+                            rowSums);
+                    }
+
+                    Subtract(
+                        rowSums,
+                        keyCombination);
+                }
+
+                return result;
+            }
+
+            if(Array.TrueForAll(rowSums, sum => sum == rowSum))
+            {
+                result = new bool[keyCombinationCombination.Length][];
+                for(var index = 0;index < keyCombinationCombination.Length;index++)
+                    result[index] = keyCombinations[keyCombinationCombination[index]];
+            }
+
+            return result;
+        }
+
+        public bool[][] GenerateKeyCombinationCombination(
+            int      numBuns,
+            int      n,
+            int      w,
+            int      rowSum
+            )
+        {
+            // Generate initial combination of key combinations
+            // with column sum w and row sum rowSum.
+            IList<bool[]> keyCombinations = GenerateCombinations(
+                n,
+                w);
+            TestContext.WriteLine(keyCombinations.Count);
+
+            if(keyCombinations.Count < numBuns)
+                return null;
+
+            return GenerateKeyCombinationCombination(
+                rowSum,
+                keyCombinations,
+                new int[numBuns],
+                0,
+                new int[n]);
+        }
+
+        public void Write(
+            bool[][] keyCombinationCombination
+            )
+        {
+            for(var rowIndex = 0;rowIndex < keyCombinationCombination[0].Length;++rowIndex)
+            {
+                for(var columnIndex = 0;columnIndex < keyCombinationCombination.Length;++columnIndex)
+                {
+                    TestContext.Write(keyCombinationCombination[columnIndex][rowIndex] ? 1 : 0);
+                    TestContext.Write(' ');
+                }
+                TestContext.WriteLine(string.Empty);
+            }
+        }
+
+        public void Flip(
+            bool[][] keyCombinationCombination,
+            int      columnIndex,
+            int      rowIndex
+            )
+        {
+            keyCombinationCombination[columnIndex][rowIndex] = !keyCombinationCombination[columnIndex][rowIndex];
+        }
+
+        public bool Increment(
+            bool[][] keyCombinationCombination
+            )
+        {
+            // Increment key combinations in lexicographic order
+            // while maintain column and row sums.
+            // First column is fixed.
+            // Determine a pair of bits that can be flipped without altering column and row sums.
+            for(var columnIndex = keyCombinationCombination.Length - 2;columnIndex >= 1;columnIndex--)
+                for(var rowIndex = 0;rowIndex < keyCombinationCombination[0].Length - 2;++rowIndex)
+                    if( keyCombinationCombination[columnIndex    ][rowIndex    ] &&
+                       !keyCombinationCombination[columnIndex + 1][rowIndex    ] &&
+                       !keyCombinationCombination[columnIndex    ][rowIndex + 1] &&
+                        keyCombinationCombination[columnIndex + 1][rowIndex + 1])
+                    {
+                        Flip(keyCombinationCombination, columnIndex    , rowIndex    );
+                        Flip(keyCombinationCombination, columnIndex    , rowIndex + 1);
+                        Flip(keyCombinationCombination, columnIndex + 1, rowIndex    );
+                        Flip(keyCombinationCombination, columnIndex + 1, rowIndex + 1);
+                        return true;
+                    }
+
+            return false;
+        }
+        
+        public bool Equal(
+            bool[][] lhs,
+            bool[][] rhs
+            )
+        {
+            for(var columnIndex = 0;columnIndex < lhs.Length;++columnIndex)
+            {
+                var lhsRow = lhs[columnIndex];
+                var rhsRow = rhs[columnIndex];
+                for(var rowIndex = 0;rowIndex < lhsRow.Length;++rowIndex)
+                    if(lhsRow[rowIndex] != rhsRow[rowIndex])
+                        return false;
+            }
+
+            return true;
+
+        }
+
+        struct Interchange
+        {
+            public int  Column { get; private set; }
+            public int  Row    { get; private set; }
+            public bool Type   { get; private set; }
+
+            public Interchange(
+                int  column,
+                int  row,
+                bool type
+                )
+            {
+                Column = column;
+                Row    = row;
+                Type   = type;
+            }
+
+            public void Apply(
+                bool[][] matrix
+                )
+            {
+                matrix[Column    ][Row    ] = !Type;
+                matrix[Column + 1][Row    ] = Type;
+                matrix[Column    ][Row + 1] = Type;
+                matrix[Column + 1][Row + 1] = !Type;
+            }
+          
+            public void Unapply(
+                bool[][] matrix
+                )
+            {
+                matrix[Column    ][Row    ] = Type;
+                matrix[Column + 1][Row    ] = !Type;
+                matrix[Column    ][Row + 1] = !Type;
+                matrix[Column + 1][Row + 1] = Type;
+            }
+
+            public bool InverseOf(
+                Interchange interchange
+                )
+            {
+                return
+                    Column == interchange.Column &&
+                    Row    == interchange.Row &&
+                    Type   != interchange.Type;
+            }
+
+            public override bool Equals(
+                object obj
+                )
+            {
+                return
+                    obj is Interchange interchange &&
+                    Column == interchange.Column &&
+                    Row    == interchange.Row &&
+                    Type   == interchange.Type;
+            }
+
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(
+                    Column,
+                    Row,
+                    Type);
+            }
+        }
+
+        class TreeVertex
+        {
+            public Interchange?                         Interchange { get; private set; }
+            public TreeVertex                           Parent      { get; private set; }
+            public IDictionary<Interchange, TreeVertex> Children    { get; private set; } = new Dictionary<Interchange, TreeVertex>();
+
+            public TreeVertex()
+            {
+            }
+
+            public TreeVertex(
+                Interchange interchange,
+                TreeVertex  parent
+                )
+            {
+                Interchange = interchange;
+                Parent      = parent;
+
+                Parent.Children.Add(
+                    interchange,
+                    this);
+            }
+        }
+
+        public int Count(
+            bool[][] original
+            )
+        {
+            var count = 0;
+            var root = new TreeVertex();
+            var current = root;
+            var keyCombinationCombination = new bool[original.Length][];
+            for(var index = 0;index < original.Length;++index)
+                keyCombinationCombination[index] = (bool[])original[index].Clone();
+
+            var bits = new[] { true, false };
+
+            // There still might be cycles?
+            while(current != null)
+            {
+                var previousCurrent = current;
+                for(var column = keyCombinationCombination.Length - 2;column >= 1 && previousCurrent == current;--column)
+                    for(var row = 0;row < keyCombinationCombination[0].Length - 2 && previousCurrent == current;++row)
+                        for(var bitIndex = 0;bitIndex < bits.Length && previousCurrent == current;++bitIndex)
+                        {
+                            var bit = bits[bitIndex];
+                            if(keyCombinationCombination[column    ][row    ] == bit &&
+                               keyCombinationCombination[column + 1][row    ] != bit &&
+                               keyCombinationCombination[column    ][row + 1] != bit &&
+                               keyCombinationCombination[column + 1][row + 1] == bit)
+                            {
+                                var interchange = new Interchange(
+                                    column,
+                                    row,
+                                    bit);
+
+                                if(current.Children.ContainsKey(interchange))
+                                    continue;
+
+                                if(current.Interchange != null &&
+                                   interchange.InverseOf(current.Interchange.Value))
+                                    continue;
+
+                                interchange.Apply(keyCombinationCombination);
+                                if(Equal(original, keyCombinationCombination))
+                                    continue;
+
+                                count++;
+                                current = new TreeVertex(
+                                    interchange,
+                                    current);
+                                if(count == 20)
+                                {
+                                    var x = root;
+                                    do
+                                    {
+                                        x = x.Children.Values.FirstOrDefault();
+
+                                        if(x != null)
+                                            TestContext.WriteLine($"c: {x.Interchange.Value.Column}, r: {x.Interchange.Value.Row}, t: {x.Interchange.Value.Type}");
+
+                                    } while(x != null);
+
+                                    return count;
+                                }
+                            }
+                        }
+
+                if(previousCurrent == current)
+                {
+                    if(current.Interchange != null)
+                        current.Interchange.Value.Unapply(keyCombinationCombination);
+
+                    current = current.Parent;
+                }
+            }
+
+            return count;
+        }
+
+        public void Count(
+            bool[][] original,
+            bool[][] keyCombinationCombination,
+            int      previousInterchangeColumn,
+            int      previousInterchangeRow,
+            bool     type,
+            ref int  count
+            )
+        {
+            if(keyCombinationCombination == null)
+            {
+                keyCombinationCombination = new bool[original.Length][];
+                for(var index = 0;index < original.Length;++index)
+                    keyCombinationCombination[index] = (bool[])original[index].Clone();
+            }
+
+            // Increment key combinations in lexicographic order
+            // while maintain column and row sums.
+            // First column is fixed.
+            // Determine a pair of bits that can be flipped without altering column and row sums.
+            for(var columnIndex = keyCombinationCombination.Length - 2;columnIndex >= 1;--columnIndex)
+                for(var rowIndex = 0;rowIndex < keyCombinationCombination[0].Length - 2;++rowIndex)
+                    if( keyCombinationCombination[columnIndex    ][rowIndex    ] &&
+                       !keyCombinationCombination[columnIndex + 1][rowIndex    ] &&
+                       !keyCombinationCombination[columnIndex    ][rowIndex + 1] &&
+                        keyCombinationCombination[columnIndex + 1][rowIndex + 1])
+                    {
+                        Flip(keyCombinationCombination, columnIndex    , rowIndex    );
+                        Flip(keyCombinationCombination, columnIndex    , rowIndex + 1);
+                        Flip(keyCombinationCombination, columnIndex + 1, rowIndex    );
+                        Flip(keyCombinationCombination, columnIndex + 1, rowIndex + 1);
+
+                        if(!Equal(original, keyCombinationCombination))
+                        {
+                            count += 1;
+                            Count(
+                                original,
+                                keyCombinationCombination,
+                                previousInterchangeColumn,
+                                previousInterchangeRow,
+                                true,
+                                ref count);
+                        }
+
+                        Flip(keyCombinationCombination, columnIndex    , rowIndex    );
+                        Flip(keyCombinationCombination, columnIndex    , rowIndex + 1);
+                        Flip(keyCombinationCombination, columnIndex + 1, rowIndex    );
+                        Flip(keyCombinationCombination, columnIndex + 1, rowIndex + 1);
+                    }
+
+            for(var columnIndex = keyCombinationCombination.Length - 2;columnIndex >= 1;--columnIndex)
+                for(var rowIndex = 0;rowIndex < keyCombinationCombination[0].Length - 2;++rowIndex)
+                    if(!keyCombinationCombination[columnIndex    ][rowIndex    ] &&
+                        keyCombinationCombination[columnIndex + 1][rowIndex    ] &&
+                        keyCombinationCombination[columnIndex    ][rowIndex + 1] &&
+                       !keyCombinationCombination[columnIndex + 1][rowIndex + 1] &&
+                        // Don't backtrack.
+                        !(previousInterchangeColumn == columnIndex &&
+                         previousInterchangeRow     == rowIndex &&
+                         type))
+                    {
+                        Flip(keyCombinationCombination, columnIndex    , rowIndex    );
+                        Flip(keyCombinationCombination, columnIndex    , rowIndex + 1);
+                        Flip(keyCombinationCombination, columnIndex + 1, rowIndex    );
+                        Flip(keyCombinationCombination, columnIndex + 1, rowIndex + 1);
+
+                        if(!Equal(original, keyCombinationCombination))
+                        {
+                            count += 1;
+                            Count(
+                                original,
+                                keyCombinationCombination,
+                                previousInterchangeColumn,
+                                previousInterchangeRow,
+                                false,
+                                ref count);
+                        }
+
+                        Flip(keyCombinationCombination, columnIndex    , rowIndex    );
+                        Flip(keyCombinationCombination, columnIndex    , rowIndex + 1);
+                        Flip(keyCombinationCombination, columnIndex + 1, rowIndex    );
+                        Flip(keyCombinationCombination, columnIndex + 1, rowIndex + 1);
+                    }
+        }
+
+        private int[][] GenerateKeyCombinations1(
+            int numBuns,
+            int numRequired,
+            int n,
+            int w,
+            int rowSum
+            )
+        {
+            var keyCombinationCombination = GenerateKeyCombinationCombination(
+                numBuns,
+                n,
+                w,
+                rowSum);
+            var count = 0;
+
+            Write(keyCombinationCombination);
+            Increment(keyCombinationCombination);
+            TestContext.WriteLine(string.Empty);
+            Write(keyCombinationCombination);
+
+            return null;
+        }
+
+        public int[][] GenerateKeyCombinations1(
+            int numBuns,
+            int numRequired
+            )
+        {
+            int[][] result = null;
+            if(numRequired == 0)
+            {
+                // No key distribution required.
+                result = new int[numBuns][];
+                for(var index = 0;index < numBuns;++index)
+                    result[index] = Array.Empty<int>();
+                return result;
+            }
+            else if(numRequired == 1)
+            {
+                // No key distribution required.
+                result = new int[numBuns][];
+                var singleKeyCombination = new[] { 0 };
+                for(var index = 0;index < numBuns;++index)
+                    result[index] = singleKeyCombination;
+                return result;
+            }
+
+            // Represent a key combination by a Contant Weight (m-by-n) code where each key present is represented by a one.
+            // Need to determine:
+            // n - number of bits (keys).
+            // w - weight/number of bits set to one.
+
+            // If there are numBuns codes and any numRequired are selected then each key must appear (at least) once in the selection.
+            var repeats = numBuns - numRequired + 1;
+
+            // If there are n keys and each key is repeated repeats times then there must be n * repeats keys (ones).
+            // If there are num_buns combinations and each combination contains w keys then there must be num_buns * w keys (ones).
+            // Therefore n * repeats = num_buns * w. (Design Theory: vr = bk.)
+            // Therefore n/w = num_buns/repeats = (multiplier * num_buns)/(multiplier * repeats).
+
+            var multiplier = 2;
+            while(result == null)
+            {
+                var n = multiplier * numBuns;
+                var w = multiplier * repeats;
+                TestContext.WriteLine($"n: {n}, w: {w}");
+                result = GenerateKeyCombinations1(
+                    numBuns,
+                    numRequired,
+                    n,
+                    w,
+                    repeats);
+                break;
+                //multiplier += 1;
             }
 
             return result;
@@ -373,7 +870,31 @@ namespace Test
             }
         }
 
-        [TestCaseSource("CoverageTestCases"), Timeout(5000)]
+        [TestCaseSource("TestCases"), Timeout(5000)]
+        public void Test1(
+            int               numBuns,
+            int               numRequired,
+            IList<IList<int>> expected
+            )
+        {
+            var result = GenerateKeyCombinations1(
+                numBuns,
+                numRequired);
+
+            Assert.That(result, Is.Not.Null);
+            foreach(var keyCombination in result)
+                WriteCombination(keyCombination);
+
+            Assert.That(result.Length, Is.EqualTo(expected.Count));
+            for(var index1 = 0;index1 < result.Length;index1++)
+            {
+                var keyCombination = result[index1];
+                for(var index2 = 0;index2 < keyCombination.Length;index2++)
+                    Assert.That(keyCombination[index2], Is.EqualTo(expected[index1][index2]));
+            }
+        }
+
+        [TestCaseSource("CoverageTestCases"), Timeout(10000)]
         public void Coverage(
             int               numBuns,
             int               numRequired,
