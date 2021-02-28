@@ -194,8 +194,8 @@ namespace Test
                     if(position <= numBuns - numRequired)
                         valid = keyCombinations[index][0];
 
-                    else
-                        valid = !keyCombinations[index][0];
+                    else for(var i = 0;i < position - (numBuns - numRequired) && valid;++i)
+                        valid = !keyCombinations[index][i];
 
                     // Key (n-1) can only appear in the last position of a key combination.
                     // To get all keys in the first numRequired key combinations key n - 1 must appear at positions numRequired - 1 to numBuns - 1.
