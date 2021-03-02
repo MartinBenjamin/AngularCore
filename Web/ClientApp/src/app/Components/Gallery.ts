@@ -31,27 +31,27 @@ import { model, TestTab0, TestTab1 } from './TestTab';
     <tr>
         <td>dtDateModel</td>
         <td><input type="text" [(dtDateModel)]="date" [dtModelErrors]="errors?.B?.C"/></td>
-        <td>{{date}}</td>
+        <td>{{date|utcDate}}</td>
     </tr>
     <tr>
         <td>dtAmountModel</td>
         <td><input type="text" [(dtAmountModel)]="amount" [dtModelErrors]="errors?.B?.D"/></td>
-        <td>{{amount}}</td>
+        <td>{{amount|amount}}</td>
     </tr>
     <tr>
         <td>dtPercentageModel</td>
         <td><input type="text" [(dtPercentageModel)]="percentage"/></td>
-        <td>{{percentage}}</td>
+        <td>{{percentage|percentage}}</td>
     </tr>
     <tr>
         <td>dtPercentage100Model</td>
         <td><input type="text" [(dtPercentage100Model)]="percentage"/></td>
-        <td>{{percentage}}</td>
+        <td>{{percentage|percentage}}</td>
     </tr>
     <tr>
         <td>dt-calendar</td>
         <td><dt-calendar (dateSelected)="date = $event"></dt-calendar></td>
-        <td>{{date}}</td>
+        <td>{{date|utcDate}}</td>
     </tr>
     <tr>
         <td>utcDate (Pipe)</td>

@@ -1,4 +1,4 @@
-﻿import { PipeTransform } from '@angular/core';
+import { PipeTransform } from '@angular/core';
 import { IConversionService } from './IConversionService';
 
 export abstract class NumberPipe implements PipeTransform
@@ -13,7 +13,8 @@ export abstract class NumberPipe implements PipeTransform
         number: number
         ): string
     {
-        if(number == null ||
+        if(typeof number != 'number' ||
+           number == null ||
            isNaN(number) ||
            !isFinite(number))
             return '';
