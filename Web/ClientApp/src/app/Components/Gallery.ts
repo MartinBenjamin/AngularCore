@@ -1,10 +1,10 @@
-import { Component, forwardRef, ViewChild } from '@angular/core';
-import { Tab } from './TabbedView';
-import { PredicateEvaluation, PredicateType } from './PredicateEvaluation';
-import { OrganisationalUnitSelector } from './OrganisationalUnitSelector';
-import { OrganisationalUnitSelectorV2 } from './OrganisationalUnitSelectorV2';
+import { Component, ViewChild } from '@angular/core';
 import { AssessmentViewer } from './AssessmentViewer';
 import { OrganisationalUnit } from './OrganisationalUnit';
+import { OrganisationalUnitSelector } from './OrganisationalUnitSelector';
+import { OrganisationalUnitSelectorV2 } from './OrganisationalUnitSelectorV2';
+import { PredicateEvaluation, PredicateType } from './PredicateEvaluation';
+import { ChangeDetector, Tab } from './TabbedView';
 import { model, TestTab0, TestTab1 } from './TestTab';
 
 @Component({
@@ -131,6 +131,13 @@ export class Gallery
     ];
     errors: any = null;
     organisationalUnit: string;
+
+    constructor(
+        private _changeDetector: ChangeDetector
+        )
+    {
+    }
+
     toggle(): void
     {
         if(!this.errors)
@@ -147,6 +154,9 @@ export class Gallery
                 };
 
             this.tabbedViewModel[1][1] = this.errors.E;
+
+            // Detect changes in all Deal Tabs (and nested Tabs).
+            this._changeDetector.DetectChanges();
         }
         else
             this.errors = null;

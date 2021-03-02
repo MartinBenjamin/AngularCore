@@ -1,4 +1,6 @@
-﻿import { Component, Input } from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
+import { Subject } from "rxjs";
+import { HighlighterServiceToken } from './ModelErrors';
 
 @Component(
     {
@@ -11,6 +13,13 @@
 export class Errors
 {
     private _errors: any[];
+
+    constructor(
+        @Inject(HighlighterServiceToken)
+        private _highlighterService: Subject<object>
+        )
+    {
+    }
 
     private flatten(
         object: any
@@ -44,9 +53,9 @@ export class Errors
     }
 
     Highlight(
-        property: any
+        errors: object
         ): void
     {
-        this._errors.forEach((error: any) => error.Property.Highlight = (error.Property == property ? error.Property.Highlight + 1 : 0));
+        this._highlighterService.next(errors);
     }
 }
