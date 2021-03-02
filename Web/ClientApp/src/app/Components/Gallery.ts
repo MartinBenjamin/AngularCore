@@ -155,7 +155,7 @@ export class Gallery
 
             this.tabbedViewModel[1][1] = this.errors.E;
 
-            // Detect changes in all Deal Tabs (and nested Tabs).
+            // Detect changes in all Tabs.
             this._changeDetector.DetectChanges();
         }
         else
