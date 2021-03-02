@@ -124,7 +124,10 @@ table.DataGrid caption
   font-weight: bold;
 }
 
-table.DataGrid > tbody > tr > th, table.DataGrid > tbody > tr > td
+table.DataGrid > tr > th,
+table.DataGrid > tr > td,
+table.DataGrid > tbody > tr > th,
+table.DataGrid > tbody > tr > td
 {
   border: 1px solid #7a7a7a;
   padding: 0px 2px 0px 2px;

@@ -72,7 +72,7 @@ export class TabContainer implements OnDestroy
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
-    @ViewChild('component', { read: ViewContainerRef })
+    @ViewChild('component', { read: ViewContainerRef, static: true })
     private _viewContainerRef: ViewContainerRef;
 
     @Input()

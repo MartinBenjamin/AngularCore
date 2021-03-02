@@ -27,7 +27,7 @@ export class ProjectFinance extends DealProvider implements AfterViewInit
 {
     private _subscription: Subscription;
 
-    @ViewChild('title')
+    @ViewChild('title', { static: true })
     private _title: TemplateRef<any>;
 
     constructor(

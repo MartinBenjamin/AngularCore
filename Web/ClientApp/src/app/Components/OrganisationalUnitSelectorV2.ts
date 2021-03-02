@@ -120,10 +120,10 @@ export class OrganisationalUnitContainerV2 implements OnInit
     private _root      : any;
     private _nodeIndex = 0;
 
-    @ViewChild('nameFragmentInput')
+    @ViewChild('nameFragmentInput', { static: true })
     private _nameFragmentInput: ElementRef;
 
-    @ViewChild('div')
+    @ViewChild('div', { static: true })
     private _div: ElementRef;
 
     constructor(

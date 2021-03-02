@@ -25,7 +25,7 @@ export class Sponsors implements OnDestroy
     private _totalEquity  : number;
     private _errors       : Map<object, object>;
 
-    @ViewChild('legalEntityFinder')
+    @ViewChild('legalEntityFinder', { static: true })
     private _legalEntityFinder: LegalEntityFinder;
 
     constructor(

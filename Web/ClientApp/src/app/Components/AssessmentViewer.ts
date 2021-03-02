@@ -17,7 +17,7 @@ export class AssessmentViewer
 {
     private _assessment: PredicateEvaluation;
 
-    @ViewChild('table')
+    @ViewChild('table', { static: true })
     private _table: ElementRef;
 
     constructor()

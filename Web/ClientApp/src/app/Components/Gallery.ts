@@ -1,11 +1,11 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, forwardRef, ViewChild } from '@angular/core';
 import { Tab } from './TabbedView';
 import { PredicateEvaluation, PredicateType } from './PredicateEvaluation';
 import { OrganisationalUnitSelector } from './OrganisationalUnitSelector';
 import { OrganisationalUnitSelectorV2 } from './OrganisationalUnitSelectorV2';
 import { AssessmentViewer } from './AssessmentViewer';
 import { OrganisationalUnit } from './OrganisationalUnit';
-import { TestTab0, TestTab1 } from './TestTab';
+import { model, TestTab0, TestTab1 } from './TestTab';
 
 @Component({
   selector: 'gallery',
@@ -102,19 +102,19 @@ import { TestTab0, TestTab1 } from './TestTab';
         <td><input type="Button" value="assessment-viewer" (click)="viewAssessment()"/></td>
         <td colspan="2"><assessment-viewer #assessmentViewer></assessment-viewer></td>
     </tr>
-</table>`,
+</table>`
 })
 export class Gallery
 {
     hierarchy: OrganisationalUnit;
 
-    @ViewChild('organisationalUnitSelector')
+    @ViewChild('organisationalUnitSelector', { static: true })
     organisationalUnitSelector: OrganisationalUnitSelector;
 
-    @ViewChild('organisationalUnitSelectorV2')
+    @ViewChild('organisationalUnitSelectorV2', { static: true })
     organisationalUnitSelectorV2: OrganisationalUnitSelectorV2;
 
-    @ViewChild('assessmentViewer')
+    @ViewChild('assessmentViewer', { static: true })
     assessmentViewer: AssessmentViewer;
 
     text            = 'text';
@@ -123,12 +123,7 @@ export class Gallery
     percentage      = 'percentage';
     utcDate         = new Date(Date.UTC(2000, 0, 1));
     open            = false;
-    tabbedViewModel =
-    [
-        ['ABC', null],
-        ['DEF', null]
-    ];
-
+    tabbedViewModel = model;
     tabs            =
     [
         new Tab('T<sub>1</sub>', TestTab0),

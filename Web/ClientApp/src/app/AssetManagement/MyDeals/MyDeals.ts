@@ -8,7 +8,7 @@ import { AssetManagement } from '../AssetManagement';
     })
 export class MyDeals implements AfterViewInit
 {
-    @ViewChild('title')
+    @ViewChild('title', { static: true })
     private _title: TemplateRef<any>;
 
     constructor(

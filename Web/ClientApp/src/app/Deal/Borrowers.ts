@@ -21,7 +21,7 @@ export class Borrowers implements OnDestroy
     private _borrowers     : PartyInRole[];
     private _errors        : object;
 
-    @ViewChild('legalEntityFinder')
+    @ViewChild('legalEntityFinder', { static: true })
     private _legalEntityFinder: LegalEntityFinder;
 
     constructor(

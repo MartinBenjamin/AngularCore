@@ -38,7 +38,7 @@ export class Deal
     private _errors       : BehaviorSubject<Map<object, Map<string, Set<keyof IErrors>>>>;
     private _dealErrors   : object;
 
-    @ViewChild('title')
+    @ViewChild('title', { static: true })
     private _title: TemplateRef<any>;
 
     public Tabs: Tab[];

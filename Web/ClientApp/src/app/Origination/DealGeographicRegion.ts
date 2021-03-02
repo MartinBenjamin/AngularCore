@@ -24,7 +24,7 @@ export class DealGeographicRegion implements OnDestroy
     private _subdivision  : Subdivision;
     private _errors       : object;
 
-    @ViewChild('geographicRegionSelector')
+    @ViewChild('geographicRegionSelector', { static: true })
     private _geographicRegionSelector: GeographicRegionSelector;
 
     constructor(

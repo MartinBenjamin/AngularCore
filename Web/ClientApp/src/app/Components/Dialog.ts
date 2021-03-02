@@ -30,10 +30,10 @@ export class DialogButtons
     })
 export class DialogContainer implements OnInit
 {
-    @ViewChild('div')
+    @ViewChild('div', { static: true })
     private _div: ElementRef;
 
-    @ViewChild('table')
+    @ViewChild('table', { static: true })
     private _table: ElementRef;
 
     constructor()

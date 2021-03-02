@@ -6,7 +6,7 @@ import { INamedService, NamedFilters } from './INamedService';
 
 export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters extends NamedFilters> implements OnInit, OnDestroy
 {
-    @ViewChild('nameFragmentInput')
+    @ViewChild('nameFragmentInput', { static: true })
     private   _nameFragmentInput: ElementRef;
     private   _subscription     : Subscription;
     protected _filters = <TNamedFilters>{

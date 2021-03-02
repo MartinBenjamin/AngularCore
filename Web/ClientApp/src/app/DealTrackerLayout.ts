@@ -23,7 +23,7 @@ export class MenuContainer
     })
 export class DealTrackerLayout implements OnInit
 {
-    @ViewChild(RouterOutlet)
+    @ViewChild(RouterOutlet, { static: true })
     private _outlet: RouterOutlet;
 
     constructor(

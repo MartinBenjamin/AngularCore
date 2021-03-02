@@ -21,7 +21,7 @@ import { Deal } from '../../Deals';
     })
 export class Advisory extends DealProvider implements AfterViewInit
 {
-    @ViewChild('title')
+    @ViewChild('title', { static: true })
     private _title: TemplateRef<any>;
 
     constructor(

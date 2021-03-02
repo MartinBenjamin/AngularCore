@@ -1,5 +1,12 @@
-import { Component, forwardRef, Inject } from '@angular/core';
-import { Gallery } from './Gallery';
+import { Component } from '@angular/core';
+import { TabbedView } from './TabbedView';
+//import { Gallery } from './Gallery';
+
+export var model =
+[
+    ['ABC', null],
+    ['DEF', null]
+];
 
 @Component(
     {
@@ -9,12 +16,9 @@ export class TestTab0
 {
     Model: [string, any];
 
-    constructor(
-        @Inject(forwardRef(() => Gallery))
-        gallery: Gallery
-        )
+    constructor()
     {
-        this.Model = <[string, any]>gallery.tabbedViewModel[0];
+        this.Model = <[string, any]>model[0];
     }
 }
 
@@ -24,13 +28,10 @@ export class TestTab0
     })
 export class TestTab1
 {
-  Model: [string, any];
+    Model: [string, any];
 
-  constructor(
-    @Inject(forwardRef(() => Gallery))
-    gallery: Gallery
-  )
-  {
-    this.Model = <[string, any]>gallery.tabbedViewModel[1];
-  }
+    constructor()
+    {
+        this.Model = <[string, any]>model[1];
+    }
 }

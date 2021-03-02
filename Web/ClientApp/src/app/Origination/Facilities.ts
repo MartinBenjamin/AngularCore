@@ -18,7 +18,7 @@ export class Facilities implements OnDestroy
     private _deal         : Deal;
     private _facilities   : [Facility, LenderParticipation][]
 
-    @ViewChild('facility')
+    @ViewChild('facility', { static: true })
     private _facilityComponent: FacilityComponent;
 
     constructor(
