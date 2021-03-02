@@ -343,21 +343,43 @@ namespace Test
             )
         {
             IList<bool[]> keyCombinations = GenerateCombinations(
-                n,
-                w);
+                numBuns,
+                numBuns - numRequired + 1);
             TestContext.WriteLine(keyCombinations.Count);
 
-            if(keyCombinations.Count < numBuns)
-                return null;
+            //if(keyCombinations.Count < numBuns)
+            //    return null;
 
-            return GenerateKeyCombinations(
-                numBuns,
-                numRequired,
-                n,
-                keyCombinations,
-                new int[numBuns],
-                0,
-                new int[n]);
+
+            var result = new int[numBuns][];
+            for(var index = 0;index < numBuns;++index)
+            {
+                var keyCombination = new List<int>();
+                for(var keyCombinationIndex = 0;keyCombinationIndex < keyCombinations.Count;keyCombinationIndex++)
+                    if(keyCombinations[keyCombinationIndex][index])
+                        keyCombination.Add(keyCombinationIndex);
+
+                result[index] = keyCombination.ToArray();
+            }
+
+            return result;
+
+            //IList<bool[]> keyCombinations = GenerateCombinations(
+            //    n,
+            //    w);
+            //TestContext.WriteLine(keyCombinations.Count);
+
+            //if(keyCombinations.Count < numBuns)
+            //    return null;
+
+            //return GenerateKeyCombinations(
+            //    numBuns,
+            //    numRequired,
+            //    n,
+            //    keyCombinations,
+            //    new int[numBuns],
+            //    0,
+            //    new int[n]);
         }
 
         public int[][] GenerateKeyCombinations(
@@ -502,18 +524,18 @@ namespace Test
                             new TestDataList<int>{ 1, 2 }
                         }
                     },
-                    new object[]
-                    {
-                        4,
-                        3,
-                        new TestDataList<IList<int>>
-                        {
-                            new TestDataList<int>{ 0, 1, 2, 3 },
-                            new TestDataList<int>{ 0, 1, 4, 5 },
-                            new TestDataList<int>{ 2, 4, 6, 7 },
-                            new TestDataList<int>{ 3, 5, 6, 7 }
-                        }
-                    },
+                    //new object[]
+                    //{
+                    //    4,
+                    //    3,
+                    //    new TestDataList<IList<int>>
+                    //    {
+                    //        new TestDataList<int>{ 0, 1, 2, 3 },
+                    //        new TestDataList<int>{ 0, 1, 4, 5 },
+                    //        new TestDataList<int>{ 2, 4, 6, 7 },
+                    //        new TestDataList<int>{ 3, 5, 6, 7 }
+                    //    }
+                    //},
                     new object[]
                     {
                         4,
