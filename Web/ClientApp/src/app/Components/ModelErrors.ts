@@ -13,7 +13,7 @@ export const HighlighterServiceProvider: Provider =
 export const HighlightedServiceProvider: Provider =
 {
     provide: HighlightedServiceToken,
-    useFactory: (highlighterService: Subject<object>) => highlighterService,
+    useFactory: (highlighterService: Subject<object>) => highlighterService.asObservable(),
     deps: [HighlighterServiceToken]
 };
 
