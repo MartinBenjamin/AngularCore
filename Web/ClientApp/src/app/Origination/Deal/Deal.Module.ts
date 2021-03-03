@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ErrorModule } from '../../Components/ErrorModule';
 import { TabbedViewModule } from '../../Components/TabbedView';
 import { DealOntologyServiceProvider } from '../../Ontologies/DealOntologyServiceProvider';
 import { DealBuilderProvider } from '../../Ontologies/IDealBuilder';
 import { DealModule } from '../Deal.Module';
 import { Deal } from './Deal';
+import { Errors } from './Errors';
 
 const routes: Routes =
     [
@@ -21,14 +21,14 @@ const routes: Routes =
     {
         declarations:
             [
-                Deal
+                Deal,
+                Errors
             ],
         imports:
             [
                 CommonModule,
                 RouterModule.forChild(routes),
                 DealModule,
-                ErrorModule,
                 TabbedViewModule
             ],
         providers:

@@ -37,7 +37,6 @@
     <None Remove="ClientApp\src\app\ClassificationSchemeServiceProvider.ts" />
     <None Remove="ClientApp\src\app\CommonDomainObjects.ts" />
     <None Remove="ClientApp\src\app\Components\Cldr.d.ts" />
-    <None Remove="ClientApp\src\app\Components\Errors2.ts" />
     <None Remove="ClientApp\src\app\Contracts.ts" />
     <None Remove="ClientApp\src\app\CurrencyServiceProvider.ts" />
     <None Remove="ClientApp\src\app\DealProvider.ts" />
@@ -234,6 +233,7 @@
     <None Remove="ClientApp\src\app\Origination\Common.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\DealGeographicRegion.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\Errors.ts" />
     <None Remove="ClientApp\src\app\Origination\Exclusivity.ts" />
     <None Remove="ClientApp\src\app\Origination\Facilities.ts" />
     <None Remove="ClientApp\src\app\Origination\MyDeals.ts" />
@@ -270,7 +270,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\ClassificationScheme.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\ClassificationSchemeServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Components\Cldr.d.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Components\Errors2.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Contracts.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\CurrencyServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\DealProvider.ts" />
@@ -468,6 +467,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Common.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\DealGeographicRegion.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\Errors.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Exclusivity.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Facilities.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\KeyCounterparties.ts" />

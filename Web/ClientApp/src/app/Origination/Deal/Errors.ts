@@ -1,7 +1,7 @@
 import { Component, Inject, Input } from '@angular/core';
 import { Subject } from "rxjs";
-import { IErrors, Path, PathSegment } from '../Ontologies/Validate';
-import { HighlighterServiceToken } from './ModelErrors';
+import { IErrors, Path, PathSegment } from '../../Ontologies/Validate';
+import { HighlighterServiceToken } from '../../Components/ModelErrors';
 
 @Component(
     {
@@ -11,7 +11,7 @@ import { HighlighterServiceToken } from './ModelErrors';
     <li *ngFor="let error of Errors" [innerHTML]="error.Message" (click)="Highlight(error.Errors)" style="cursor: pointer;"></li>\
 </ul>'
     })
-export class Errors2
+export class Errors
 {
     private _errors  : any[];    
     private _errorMap: IErrors =
