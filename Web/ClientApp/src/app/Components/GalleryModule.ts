@@ -35,11 +35,6 @@ import { TextModel } from './TextModel';
         TestTab1,
         AssessmentViewer
     ],
-    entryComponents:
-    [
-        TestTab0,
-        TestTab1
-    ],
     bootstrap:
     [
         Gallery

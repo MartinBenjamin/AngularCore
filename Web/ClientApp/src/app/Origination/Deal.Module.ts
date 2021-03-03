@@ -58,16 +58,6 @@ import { TransactionDetails } from './TransactionDetails';
         exports:
             [
                 Common
-            ],
-        entryComponents:
-            [
-                FacilityTab,
-                FacilityTab1,
-                KeyCounterparties,
-                KeyDealData,
-                MoreTabs,
-                OriginationTab,
-                TransactionDetails
             ]
     })
 export class DealModule
