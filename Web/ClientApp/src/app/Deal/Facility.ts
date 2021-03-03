@@ -304,6 +304,11 @@ export class Facility
         this.ComputeBookingOffice();
     }
 
+    get Errors(): any
+    {
+        return null;
+    }
+
     ComputeBookingOffice(): void
     {
         this._bookingOffice = this.Facility.Obligors.find(obligor => obligor.Role.Id === DealRoleIdentifier.BookingOffice);

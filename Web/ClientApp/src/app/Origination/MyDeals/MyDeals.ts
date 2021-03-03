@@ -19,6 +19,6 @@ export class MyDeals implements AfterViewInit
 
     ngAfterViewInit()
     {
-        this._origination.Title.next(this._title);
+        setTimeout(() => this._origination.Title.next(this._title));
     }
 }

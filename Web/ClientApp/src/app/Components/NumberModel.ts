@@ -1,6 +1,7 @@
-import { ElementRef, HostListener } from '@angular/core';
+import { Directive, ElementRef, HostListener } from '@angular/core';
 import { IConversionService } from './IConversionService';
 
+@Directive()
 export abstract class NumberModel
 {
     constructor(

@@ -22,7 +22,7 @@ export class DealGeographicRegion implements OnDestroy
     private _region       : GeographicRegion;
     private _country      : GeographicRegion;
     private _subdivision  : Subdivision;
-    private _errors       : object;
+    private _errors       : any;
 
     @ViewChild('geographicRegionSelector', { static: true })
     private _geographicRegionSelector: GeographicRegionSelector;
@@ -101,7 +101,7 @@ export class DealGeographicRegion implements OnDestroy
             .replace(/(^\w{1})|(\s{1}\w{1})/g, match => match.toUpperCase()) : null;
     }
 
-    get Errors(): object
+    get Errors(): any
     {
         return this._errors;
     }

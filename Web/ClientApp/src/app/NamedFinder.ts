@@ -1,9 +1,10 @@
-import { ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ElementRef, Input, OnDestroy, OnInit, ViewChild, Directive } from '@angular/core';
 import { BehaviorSubject, fromEvent, merge, Observable, Subject, Subscription, timer } from 'rxjs';
 import { debounce, distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { Named } from './CommonDomainObjects';
 import { INamedService, NamedFilters } from './INamedService';
 
+@Directive()
 export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters extends NamedFilters> implements OnInit, OnDestroy
 {
     @ViewChild('nameFragmentInput', { static: true })

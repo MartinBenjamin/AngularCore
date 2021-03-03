@@ -13,7 +13,7 @@ import { HighlighterServiceToken } from './ModelErrors';
     })
 export class Errors2
 {
-    private _errors: any[];    
+    public _errors: any[];    
     private _errorMap: IErrors =
         {
             Mandatory       : "Mandatory",

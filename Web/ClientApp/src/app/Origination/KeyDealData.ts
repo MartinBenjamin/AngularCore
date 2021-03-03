@@ -15,7 +15,7 @@ export class KeyDealData implements OnDestroy
 {
     private _subscriptions: Subscription[] = [];
     private _deal         : Deal;
-    private _errors       : object;
+    private _errors       : any;
 
 
     constructor(
@@ -69,7 +69,7 @@ export class KeyDealData implements OnDestroy
         return this._deal;
     }
 
-    get Errors(): object
+    get Errors(): any
     {
         return this._errors;
     }

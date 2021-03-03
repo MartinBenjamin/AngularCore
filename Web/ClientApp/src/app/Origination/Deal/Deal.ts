@@ -36,7 +36,7 @@ export class Deal
     private _subscriptions: Subscription[] = [];
     private _ontology     : IDealOntology;
     private _errors       : BehaviorSubject<Map<object, Map<string, Set<keyof IErrors>>>>;
-    private _dealErrors   : object;
+    private _errorPaths   : Path[];
 
     @ViewChild('title', { static: true })
     private _title: TemplateRef<any>;
@@ -74,7 +74,7 @@ export class Deal
                         this._errors.complete();
 
                     this._errors = new BehaviorSubject<Map<object, Map<string, Set<keyof IErrors>>>>(null);
-                    this._dealErrors = null;
+                    this._errorPaths = null;
 
                     this._deal.next([dealBuilder.Build(this._ontology), this._errors]);
                 }));
@@ -82,7 +82,7 @@ export class Deal
 
     ngAfterViewInit()
     {
-        this._origination.Title.next(this._title);
+        setTimeout(() => this._origination.Title.next(this._title));
     }
 
     ngOnDestroy(): void
@@ -95,9 +95,9 @@ export class Deal
         return this._deal.getValue()[0];
     }
 
-    get Errors(): any
+    get Errors(): Path[]
     {
-        return this._dealErrors;
+        return this._errorPaths;
     }
 
     Save(): void
@@ -144,7 +144,7 @@ export class Deal
                     errorPaths.push([["Exclusivity", exclusivity], entry]);
         }
 
-        this._dealErrors = errorPaths.length ? errorPaths : null;
+        this._errorPaths = errorPaths.length ? errorPaths : null;
 
         // Detect changes in all Deal Tabs (and nested Tabs).
         this._changeDetector.DetectChanges();

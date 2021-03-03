@@ -12,7 +12,7 @@ import { HighlighterServiceToken } from './ModelErrors';
     })
 export class Errors
 {
-    private _errors: any[];
+    public _errors: any[];
 
     constructor(
         @Inject(HighlighterServiceToken)
