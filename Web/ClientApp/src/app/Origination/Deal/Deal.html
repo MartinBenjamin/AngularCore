@@ -8,7 +8,7 @@
 <div>
   <div *ngIf="Errors" style="color: red;">
     Save was unsuccessful.  Please fix the errors and try again.
-    <errors [Errors]="Errors"></errors>
+    <errors [Paths]="Errors"></errors>
   </div>
   <common></common>
   <dt-tabbed-view [Tabs]="Tabs" class="FullWidth"></dt-tabbed-view>

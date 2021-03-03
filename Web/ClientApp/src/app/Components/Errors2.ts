@@ -8,19 +8,18 @@ import { HighlighterServiceToken } from './ModelErrors';
         selector: 'errors',
         template: '\
 <ul>\
-    <li *ngFor="let error of _errors" [innerHTML]="error.Message" (click)="Highlight(error.Errors)" style="cursor: pointer;"></li>\
+    <li *ngFor="let error of Errors" [innerHTML]="error.Message" (click)="Highlight(error.Errors)" style="cursor: pointer;"></li>\
 </ul>'
     })
 export class Errors2
 {
-    public _errors: any[];    
+    private _errors  : any[];    
     private _errorMap: IErrors =
         {
             Mandatory       : "Mandatory",
             Invalid         : "Invalid",
             MustBe100Percent: "Must be 100%"
         };
-
     private _pathSegmentMap =
         {
             GeographicRegion  : "Country",
@@ -37,28 +36,33 @@ export class Errors2
     }
 
     @Input()
-    set Errors(
-        errorPaths: Path[]
+    set Paths(
+        paths: Path[]
         )
     {
         this._errors = null;
 
-        if(!errorPaths)
+        if(!paths)
             return;
 
         this._errors = [];
-        for(let errorPath of errorPaths)
+        for(let path of paths)
         {
-            let [, errors] = errorPath[errorPath.length - 1];
+            let [, errors] = path[path.length - 1];
             (<Set<keyof IErrors>>errors).forEach(error =>
                 this._errors.push(
                     {
-                        Message: `${this.MapPath(errorPath)}: ${this._errorMap[error]}.`,
+                        Message: `${this.MapPath(path)}: ${this._errorMap[error]}.`,
                         Errors : errors
                     }));
         }
 
         this._highlighterService.next(null);
+    }
+
+    get Errors(): any[]
+    {
+        return this._errors;
     }
 
     Highlight(
