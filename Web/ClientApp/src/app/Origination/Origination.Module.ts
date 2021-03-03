@@ -22,16 +22,6 @@ const routes: Routes =
                             module => module.MyDealsModule)
                     },
                     {
-                        path: 'ProjectFinance',
-                        loadChildren: () => import('./ProjectFinance/ProjectFinance.Module').then(
-                            module => module.ProjectFinanceModule)
-                    },
-                    {
-                        path: 'Advisory',
-                        loadChildren: () => import('./Advisory/Advisory.Module').then(
-                            module => module.AdvisoryModule)
-                    },
-                    {
                         path: 'Deal',
                         loadChildren: () => import('./Deal/Deal.Module').then(
                             module => module.DealComponentModule)
