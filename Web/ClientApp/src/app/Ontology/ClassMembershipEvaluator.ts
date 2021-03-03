@@ -1,5 +1,6 @@
 import { LongestPaths } from "./AdjacencyList";
 import { ClassExpressionNavigator } from "./ClassExpressionNavigator";
+import { Group } from "./Group";
 import { IClass } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
 import { ClassExpressionVisitor } from "./IClassExpressionVisitor";
@@ -20,31 +21,8 @@ import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from "./IOntology";
-import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
+import { IDataPropertyExpression } from "./IPropertyExpression";
 import { IStore, Store, StoreDecorator } from "./IStore";
-
-export function Group<T, TKey, TValue>(
-    iterable     : Iterable<T>,
-    keyAccessor  : (t: T) => TKey,
-    valueAccessor: (t: T) => TValue
-    ): Map<TKey, TValue[]>
-{
-    let map = new Map<TKey, TValue[]>();
-    for(let t of iterable)
-    {
-        let key    = keyAccessor(t);
-        let value  = valueAccessor(t);
-        let values = map.get(key);
-        if(values)
-            values.push(value);
-
-        else
-            map.set(
-                key,
-                [value])
-    }
-    return map;
-}
 
 class ClassVisitor extends ClassExpressionVisitor
 {

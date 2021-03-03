@@ -134,6 +134,7 @@
     <None Remove="ClientApp\src\app\Ontology\EquivalentClasses.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\EquivalentClasses.ts" />
     <None Remove="ClientApp\src\app\Ontology\FunctionalDataProperty.ts" />
+    <None Remove="ClientApp\src\app\Ontology\Group.ts" />
     <None Remove="ClientApp\src\app\Ontology\HasKey.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\HasKey.ts" />
     <None Remove="ClientApp\src\app\Ontology\IAnnotated.ts" />
@@ -368,6 +369,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\EquivalentClasses.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\EquivalentClasses.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\FunctionalDataProperty.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\Group.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\HasKey.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\HasKey.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IAnnotationProperty.ts" />

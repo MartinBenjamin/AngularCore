@@ -1,4 +1,4 @@
-import { Group } from "./ClassMembershipEvaluator";
+import { Group } from "./Group";
 import { IDataPropertyAssertion, INamedIndividual, IObjectPropertyAssertion } from "./INamedIndividual";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
