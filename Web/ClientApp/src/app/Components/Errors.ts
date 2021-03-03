@@ -49,7 +49,6 @@ export class Errors
 
         this._errors = [];
         this.flatten(errors);
-        this._errors.forEach(error => error.Property.Highlight = 0);
     }
 
     Highlight(
