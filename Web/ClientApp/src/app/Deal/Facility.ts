@@ -12,6 +12,7 @@ import { FacilityProvider } from '../FacilityProvider';
 import { Currency } from '../Iso4217';
 import { Branch } from '../Organisations';
 import { PartyInRole } from '../Parties';
+import { Property, Query, ZeroOrMore } from '../RegularPathExpression';
 import { Role } from '../Roles';
 import { RolesToken } from '../RoleServiceProvider';
 import { FacilityTab } from './FacilityTab';
@@ -94,7 +95,7 @@ function Flatten(
 {
     objects = objects ? objects : new Set<object>();
 
-    if(typeof object !== "object" ||
+    if(typeof object !== 'object' ||
         object === null ||
         object instanceof Date ||
         objects.has(object))
@@ -111,24 +112,28 @@ function Flatten(
 }
 
 function Copy(
-    copy  : Map<object, object>,
-    object: any
+    subgraph: Set<object>,
+    copy    : Map<object, object>,
+    object  : any
     ): any
 {
-    if(typeof object !== "object" || object === null )
+    if(typeof object !== 'object'
+        || object === null
+        || (!(object instanceof Array) && !subgraph.has(object)))
         return object;
-
-    let objectCopy = copy.get(object);
-    if(objectCopy)
-        return objectCopy;
 
     if(object instanceof Date)
         return new Date(object.valueOf());
 
     if(object instanceof Array)
         return object.map(element => Copy(
+            subgraph,
             copy,
             element));
+
+    let objectCopy = copy.get(object);
+    if(objectCopy)
+        return objectCopy;
 
     objectCopy = {};
     copy.set(
@@ -137,6 +142,7 @@ function Copy(
 
     for(let key in object)
         objectCopy[key] = Copy(
+            subgraph,
             copy,
             object[key]);
 
@@ -144,47 +150,45 @@ function Copy(
 }
 
 function Update(
+    subgraph: Set<object>,
     original: Map<object, object>,
-    copy    : any,
+    object  : any,
     updated?: Map<object, object>
     ): any
 {
     updated = updated ? updated : new Map<object, object>();
 
-    if(typeof copy !== "object"
-        || copy === null
-        || copy instanceof Date)
-        return copy;
+    if(typeof object !== "object"
+        || object === null
+        || (!(object instanceof Array) && !subgraph.has(object)))
+        return object;
 
-    if(copy instanceof Array)
-        return copy.map(element => Update(
+    if(object instanceof Array)
+        return object.map(element => Update(
+            subgraph,
             original,
             element,
             updated));
 
-    let object = updated.get(copy);
+    let objectToUpdate = updated.get(object);
 
-    if(object)
-        return object;
+    if(objectToUpdate)
+        return objectToUpdate;
 
-    object = original.get(copy);
-    if(!object)
-    {
-        object = {};
-        original.set(
-            copy,
-            original);
-    }
+    objectToUpdate = original.get(object);
+    if(!objectToUpdate)
+        objectToUpdate = {};
 
     // Prevent infinite recursion.
     updated.set(
-        copy,
-        object);
+        object,
+        objectToUpdate);
 
-    for(let key in copy)
-        object[key] = Update(
+    for(let key in object)
+        objectToUpdate[key] = Update(
+            subgraph,
             original,
-            copy[key],
+            object[key],
             updated);
 
     return object;
@@ -212,7 +216,7 @@ export class Facility
     private _bookingOfficeRole: Role;
     private _deal             : Deal;
     private _bookingOffice    : PartyInRole;
-    private _copy             : Map<ContractualCommitment, ContractualCommitment>;
+    private _copy             : Map<object, object>;
     private _applyCallback    : ApplyCallback;
 
     public Tabs: Tab[];
@@ -329,9 +333,16 @@ export class Facility
         applyCallback: ApplyCallback,
         )
     {
+        let subgraph = Query(
+            facility,
+            new ZeroOrMore(new Property('Parts')));
+
         this._applyCallback = applyCallback;
-        this._copy = new Map<ContractualCommitment, ContractualCommitment>();
-        this._facility.next(<facilityAgreements.Facility>this.CopyCommitment(facility));
+        this._copy = new Map<object, object>();
+        this._facility.next(<facilityAgreements.Facility>Copy(
+            subgraph,
+            this._copy,
+            facility));
         this.ComputeBookingOffice();
     }
 
@@ -341,7 +352,7 @@ export class Facility
         let after  = new Set<ContractualCommitment>();
         if(this._copy)
         {
-            let original = new Map<ContractualCommitment, ContractualCommitment>();
+            let original = new Map<object, object>();
             [...this._copy.entries()].forEach(
                 entry => original.set(
                     entry[1],
@@ -351,8 +362,12 @@ export class Facility
                 <ContractualCommitment>original.get(this.Facility),
                 before);
 
+            let subgraph = Query(
+                this.Facility,
+                new ZeroOrMore(new Property('Parts')));
 
-            this.UpdateCommitment(
+            Update(
+                subgraph,
                 original,
                 this.Facility);
 
@@ -415,70 +430,6 @@ export class Facility
         )
     {
         return lhs === rhs || (lhs && rhs && lhs.Id === rhs.Id);
-    }
-
-    private CopyCommitment(
-        commitment : ContractualCommitment
-        ): ContractualCommitment
-    {
-        let copy = this._copy.get(commitment);
-        if(copy)
-            return copy;
-
-        copy = <ContractualCommitment>{ ...commitment };
-
-        // Deep copy dates.
-        for(let key in copy)
-        {
-            var value = copy[key];
-            if(value instanceof Date)
-                copy[key] = new Date(value.valueOf());
-        }
-
-        this._copy.set(
-            commitment,
-            copy);
-
-        if(commitment.PartOf)
-            copy.PartOf = this.CopyCommitment(commitment.PartOf);
-
-        if(commitment.Parts)
-            copy.Parts = commitment.Parts.map(
-                part => this.CopyCommitment(part));
-
-        return copy;
-    }
-
-    private UpdateCommitment(
-        original: Map<ContractualCommitment, ContractualCommitment>,
-        copy    : ContractualCommitment
-        ): ContractualCommitment
-    {
-        let commitment = original.get(copy);
-        if(!commitment)
-        {
-            commitment = <ContractualCommitment>
-                {
-                    Id    : EmptyGuid,
-                    Parts : [],
-                    PartOf: copy.PartOf ? original.get(copy.PartOf) : null
-                };
-
-            original.set(
-                copy,
-                commitment);
-        }
-
-        for(let key in copy)
-            if(['Parts', 'PartOf'].indexOf(key) === -1)
-                commitment[key] = copy[key];
-
-        if(copy.Parts)
-            commitment.Parts = copy.Parts.map(part => this.UpdateCommitment(
-                original,
-                part));
-
-        return commitment;
     }
 
     Flatten(
