@@ -12,7 +12,7 @@ import { FacilityProvider } from '../FacilityProvider';
 import { Currency } from '../Iso4217';
 import { Branch } from '../Organisations';
 import { PartyInRole } from '../Parties';
-import { Property, Query, ZeroOrMore } from '../RegularPathExpression';
+import { Property, Query, ZeroOrMore, IExpression } from '../RegularPathExpression';
 import { Role } from '../Roles';
 import { RolesToken } from '../RoleServiceProvider';
 import { FacilityTab } from './FacilityTab';
@@ -225,6 +225,8 @@ export class Facility
     private _copy             : Map<object, object>;
     private _applyCallback    : ApplyCallback;
 
+    private static _subgraph: IExpression = new ZeroOrMore(new Property('Parts'));
+
     public Tabs: Tab[];
 
     constructor(
@@ -341,7 +343,7 @@ export class Facility
     {
         let subgraph = Query(
             facility,
-            new ZeroOrMore(new Property('Parts')));
+            Facility._subgraph);
 
         this._applyCallback = applyCallback;
         this._copy = new Map<object, object>();
@@ -370,7 +372,7 @@ export class Facility
 
             let subgraph = Query(
                 this.Facility,
-                new ZeroOrMore(new Property('Parts')));
+                Facility._subgraph);
 
             Update(
                 subgraph,
