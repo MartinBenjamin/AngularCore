@@ -427,6 +427,14 @@ export class Facility
 
         copy = <ContractualCommitment>{ ...commitment };
 
+        // Deep copy dates.
+        for(var key in copy)
+        {
+            var value = copy[key];
+            if(value instanceof Date)
+                copy[key] = new Date(value.valueOf());
+        }
+
         this._copy.set(
             commitment,
             copy);
