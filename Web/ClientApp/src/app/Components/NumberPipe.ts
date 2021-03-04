@@ -14,7 +14,6 @@ export abstract class NumberPipe implements PipeTransform
         ): string
     {
         if(typeof number != 'number' ||
-           number == null ||
            isNaN(number) ||
            !isFinite(number))
             return '';
