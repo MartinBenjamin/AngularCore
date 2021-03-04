@@ -117,9 +117,7 @@ function Copy(
     object  : any
     ): any
 {
-    if(typeof object !== 'object'
-        || object === null
-        || (!(object instanceof Array) && !subgraph.has(object)))
+    if(typeof object !== 'object' || object === null)
         return object;
 
     if(object instanceof Date)
@@ -131,22 +129,27 @@ function Copy(
             copy,
             element));
 
-    let objectCopy = copy.get(object);
-    if(objectCopy)
+    if(subgraph.has(object))
+    {
+        let objectCopy = copy.get(object);
+        if(objectCopy)
+            return objectCopy;
+
+        objectCopy = {};
+        copy.set(
+            object,
+            objectCopy);
+
+        for(let key in object)
+            objectCopy[key] = Copy(
+                subgraph,
+                copy,
+                object[key]);
+
         return objectCopy;
+    }
 
-    objectCopy = {};
-    copy.set(
-        object,
-        objectCopy);
-
-    for(let key in object)
-        objectCopy[key] = Copy(
-            subgraph,
-            copy,
-            object[key]);
-
-    return objectCopy;
+    return object;
 }
 
 function Update(
@@ -158,9 +161,7 @@ function Update(
 {
     updated = updated ? updated : new Map<object, object>();
 
-    if(typeof object !== "object"
-        || object === null
-        || (!(object instanceof Array) && !subgraph.has(object)))
+    if(typeof object !== 'object' || object === null)
         return object;
 
     if(object instanceof Array)
@@ -170,26 +171,31 @@ function Update(
             element,
             updated));
 
-    let objectToUpdate = updated.get(object);
+    if(subgraph.has(object))
+    {
+        let objectToUpdate = updated.get(object);
 
-    if(objectToUpdate)
+        if(objectToUpdate)
+            return objectToUpdate;
+
+        objectToUpdate = original.get(object);
+        if(!objectToUpdate)
+            objectToUpdate = {};
+
+        // Prevent infinite recursion.
+        updated.set(
+            object,
+            objectToUpdate);
+
+        for(let key in object)
+            objectToUpdate[key] = Update(
+                subgraph,
+                original,
+                object[key],
+                updated);
+
         return objectToUpdate;
-
-    objectToUpdate = original.get(object);
-    if(!objectToUpdate)
-        objectToUpdate = {};
-
-    // Prevent infinite recursion.
-    updated.set(
-        object,
-        objectToUpdate);
-
-    for(let key in object)
-        objectToUpdate[key] = Update(
-            subgraph,
-            original,
-            object[key],
-            updated);
+    }
 
     return object;
 }
