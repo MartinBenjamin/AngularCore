@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ChangeDetectorRef, ComponentFactoryResolver, forwardRef, Input, NgModule, Type, ViewChild, ViewContainerRef, Injectable, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, ComponentFactoryResolver, forwardRef, Injectable, Input, NgModule, OnDestroy, Type, ViewChild, ViewContainerRef } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, Subscription } from "rxjs";
 
 export class Tab
