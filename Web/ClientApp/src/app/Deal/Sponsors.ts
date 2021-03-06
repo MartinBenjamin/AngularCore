@@ -23,7 +23,6 @@ export class Sponsors implements OnDestroy
     private _deal         : Deal;
     private _sponsors     : Sponsor[];
     private _totalEquity  : number;
-    private _errors       : Map<object, object>;
 
     @ViewChild('legalEntityFinder', { static: true })
     private _legalEntityFinder: LegalEntityFinder;
@@ -46,31 +45,11 @@ export class Sponsors implements OnDestroy
                     if(!deal)
                     {
                         this._deal = null;
-                        this._errors = null;
                     }
                     else
                     {
                         this.Build(deal[0].Ontology);
                         this._deal = deal[0];
-                        deal[1].subscribe(
-                            errors =>
-                            {
-                                this._errors = null;
-                                if(errors)
-                                {
-                                    this._errors = new Map<object, object>();
-
-                                    for(let individualErrors of errors)
-                                    {
-                                        let transformedPropertyErrors = {};
-                                        this._errors.set(
-                                            individualErrors[0],
-                                            transformedPropertyErrors);
-                                        for(let propertyErrors of individualErrors[1])
-                                            transformedPropertyErrors[propertyErrors[0]] = propertyErrors[1];
-                                    }
-                                }
-                            });
                     }
 
                     this.ComputeSponsors();
@@ -117,24 +96,6 @@ export class Sponsors implements OnDestroy
     get TotalEquity(): number
     {
         return this._totalEquity;
-    }
-
-    get Errors(): object
-    {
-        if(this._errors)
-            return this._errors.get(this._deal);
-
-        return null;
-    }
-
-    SponsorErrors(
-        sponsor: Sponsor
-        ): object
-    {
-        if(this._errors)
-            return this._errors.get(sponsor);
-
-        return null;
     }
 
     Add(): void

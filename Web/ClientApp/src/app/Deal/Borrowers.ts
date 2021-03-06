@@ -42,25 +42,10 @@ export class Borrowers implements OnDestroy
                     if(!deal)
                     {
                         this._deal = null;
-                        this._errors = null;
                     }
                     else
                     {
                         this._deal = deal[0];
-                        deal[1].subscribe(
-                            errors =>
-                            {
-                                this._errors = null;
-                                if(errors)
-                                {
-                                    let dealErrors = errors.get(this._deal);
-                                    if(dealErrors)
-                                    {
-                                        this._errors = {};
-                                        [...errors.get(this._deal)].forEach(propertyErrors => this._errors[propertyErrors[0]] = propertyErrors[1]);
-                                    }
-                                }
-                            });
                     }
 
                     this.ComputeBorrowers();
@@ -85,11 +70,6 @@ export class Borrowers implements OnDestroy
     get Borrowers(): PartyInRole[]
     {
         return this._borrowers;
-    }
-
-    get Errors(): object
-    {
-        return this._errors;
     }
 
     Add(): void

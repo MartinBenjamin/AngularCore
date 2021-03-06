@@ -55,35 +55,11 @@ export class Exclusivity implements OnDestroy
                 {
                     if(!deal)
                     {
-                        this._deal              = null;
-                        this._dealErrors        = null;
-                        this._exclusivityErrors = null;
+                        this._deal = null;
                     }
                     else
                     {
                         this._deal = deal[0];
-                        deal[1].subscribe(
-                            errors =>
-                            {
-                                this._dealErrors = null;
-                                this._exclusivityErrors = null;
-                                if(errors)
-                                {
-                                    let dealErrors = errors.get(this._deal);
-                                    if(dealErrors)
-                                    {
-                                        this._dealErrors = {};
-                                        [...dealErrors].forEach(propertyErrors => this._dealErrors[propertyErrors[0]] = propertyErrors[1]);
-                                    }
-
-                                    let exclusivityErrors = errors.get(this._exclusivity);
-                                    if(exclusivityErrors)
-                                    {
-                                        this._exclusivityErrors = {};
-                                        [...exclusivityErrors].forEach(propertyErrors => this._exclusivityErrors[propertyErrors[0]] = propertyErrors[1]);
-                                    }
-                                }
-                            });
                     }
 
                     this.ComputeClassifier();
@@ -129,16 +105,6 @@ export class Exclusivity implements OnDestroy
     get Exclusivity(): ExclusivityCommitment
     {
         return this._exclusivity;
-    }
-
-    get DealErrors(): object
-    {
-        return this._dealErrors;
-    }
-
-    get ExclusivityErrors(): object
-    {
-        return this._exclusivityErrors;
     }
 
     private ComputeClassifier(): void

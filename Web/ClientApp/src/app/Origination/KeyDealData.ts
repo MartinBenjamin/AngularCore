@@ -15,8 +15,6 @@ export class KeyDealData implements OnDestroy
 {
     private _subscriptions: Subscription[] = [];
     private _deal         : Deal;
-    private _errors       : any;
-
 
     constructor(
         @Inject(CurrenciesToken)
@@ -31,25 +29,10 @@ export class KeyDealData implements OnDestroy
                     if(!deal)
                     {
                         this._deal   = null;
-                        this._errors = null;
                     }
                     else
                     {
                         this._deal = deal[0];
-                        deal[1].subscribe(
-                            errors =>
-                            {
-                                this._errors = null;
-                                if(errors)
-                                {
-                                    let dealErrors = errors.get(this._deal);
-                                    if(dealErrors)
-                                    {
-                                        this._errors = {};
-                                        [...errors.get(this._deal)].forEach(propertyErrors => this._errors[propertyErrors[0]] = propertyErrors[1]);
-                                    }
-                                }
-                            });
                     }
                 }));
     }
@@ -67,11 +50,6 @@ export class KeyDealData implements OnDestroy
     get Deal(): Deal
     {
         return this._deal;
-    }
-
-    get Errors(): any
-    {
-        return this._errors;
     }
 
     CompareById(

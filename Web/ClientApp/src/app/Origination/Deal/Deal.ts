@@ -123,7 +123,6 @@ export class Deal
             classifications,
             applicableStages);
 
-        this._errors.next(errors);
         this._errorsService.next(errors);
 
         let errorPaths: ErrorPath[] = [];
