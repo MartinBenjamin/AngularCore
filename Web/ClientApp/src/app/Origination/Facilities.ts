@@ -25,18 +25,15 @@ export class Facilities implements OnDestroy
         dealProvider: DealProvider
         )
     {
+        this._subscriptions.push(dealProvider.subscribe(deal => this._deal = deal));
         this._subscriptions.push(
             dealProvider.subscribe(
                 deal =>
                 {
-                    if(!deal)
-                        this._deal = null;
-
-                    else
-                        this._deal = deal[0];
-
+                    this._deal = deal;
                     this.ComputeFacilities();
                 }));
+
     }
 
     ngOnDestroy(): void

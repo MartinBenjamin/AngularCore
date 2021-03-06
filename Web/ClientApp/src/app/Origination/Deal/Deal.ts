@@ -40,7 +40,6 @@ export class Deal
 {
     private _subscriptions: Subscription[] = [];
     private _ontology     : IDealOntology;
-    private _errors       : BehaviorSubject<Map<object, Map<string, Set<keyof IErrors>>>>;
     private _errorPaths   : ErrorPath[];
 
     @ViewChild('title', { static: true })
@@ -77,13 +76,8 @@ export class Deal
                                annotation.Value in this)
                                 this[annotation.Value]();
 
-                    if(this._errors)
-                        this._errors.complete();
-
-                    this._errors = new BehaviorSubject<Map<object, Map<string, Set<keyof IErrors>>>>(null);
                     this._errorPaths = null;
-
-                    this._deal.next([dealBuilder.Build(this._ontology), this._errors]);
+                    this._deal.next(dealBuilder.Build(this._ontology));
                 }));
     }
 
@@ -99,7 +93,7 @@ export class Deal
 
     get Deal(): import('../../Deals').Deal
     {
-        return this._deal.getValue()[0];
+        return this._deal.getValue();
     }
 
     get Errors(): ErrorPath[]

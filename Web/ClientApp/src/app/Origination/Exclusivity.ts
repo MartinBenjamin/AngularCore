@@ -22,8 +22,6 @@ export class Exclusivity implements OnDestroy
     private _exclusivity                    : ExclusivityCommitment;
     private _map                            = new Map<Guid, ClassificationSchemeClassifier>();
     private _yes                            : ClassificationSchemeClassifier;
-    private _dealErrors                     : object;
-    private _exclusivityErrors              : object;
 
     constructor(
         @Inject(ClassificationSchemeServiceToken)
@@ -53,15 +51,7 @@ export class Exclusivity implements OnDestroy
             dealProvider.subscribe(
                 deal =>
                 {
-                    if(!deal)
-                    {
-                        this._deal = null;
-                    }
-                    else
-                    {
-                        this._deal = deal[0];
-                    }
-
+                    this._deal = deal;
                     this.ComputeClassifier();
                 }));
     }

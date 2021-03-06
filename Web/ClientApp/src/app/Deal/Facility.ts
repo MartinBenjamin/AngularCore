@@ -258,17 +258,7 @@ export class Facility
 
         this._subscriptions.push(
             roles.subscribe(roles => this._bookingOfficeRole = roles.find(role => role.Id == DealRoleIdentifier.BookingOffice)),
-            dealProvider.subscribe(
-                deal =>
-                {
-                    if(!deal)
-                        this._deal = null;
-
-                    else
-                        this._deal = deal[0];
-
-                    this._copy = null;
-                }));
+            dealProvider.subscribe(deal => this._deal = deal));
     }
 
     ngOnDestroy(): void

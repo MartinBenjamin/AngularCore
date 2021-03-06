@@ -46,15 +46,7 @@ export class DealGeographicRegion implements OnDestroy
             dealProvider.subscribe(
                 deal =>
                 {
-                    if(!deal)
-                    {
-                        this._deal   = null;
-                    }
-                    else
-                    {
-                        this._deal = deal[0];
-                    }
-
+                    this._deal = deal;
                     this.ComputeSubdivision();
                 }));
     }

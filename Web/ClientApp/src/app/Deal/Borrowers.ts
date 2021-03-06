@@ -31,23 +31,11 @@ export class Borrowers implements OnDestroy
         )
     {
         this._subscriptions.push(
-            roles.subscribe(
-                roles =>
-                {
-                    this._borrowerRole = roles.find(role => role.Id == DealRoleIdentifier.Borrower);
-                }),
+            roles.subscribe(roles => this._borrowerRole = roles.find(role => role.Id == DealRoleIdentifier.Borrower)),
             dealProvider.subscribe(
                 deal =>
                 {
-                    if(!deal)
-                    {
-                        this._deal = null;
-                    }
-                    else
-                    {
-                        this._deal = deal[0];
-                    }
-
+                    this._deal = deal;
                     this.ComputeBorrowers();
                 }));
     }
