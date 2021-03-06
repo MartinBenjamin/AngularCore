@@ -1,8 +1,7 @@
 import { Component, Inject, Input } from '@angular/core';
 import { Subject } from "rxjs";
-import { IErrors, Path, PathSegment, ErrorPath } from '../../Ontologies/Validate';
-import { HighlighterServiceToken } from '../../Components/ModelErrors';
 import { HighlightedPropertySubjectToken, Property } from '../../Components/ValidatedProperty';
+import { ErrorPath, IErrors, Path, PathSegment } from '../../Ontologies/Validate';
 
 @Component(
     {
