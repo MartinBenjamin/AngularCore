@@ -1,11 +1,10 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { EmptyGuid } from '../CommonDomainObjects';
-import { Facility as FacilityComponent } from '../Deal/Facility';
+import { ContractualCommitment } from '../Contracts';
 import { DealProvider } from '../DealProvider';
 import { Deal } from '../Deals';
 import { Facility, LenderParticipation } from '../FacilityAgreements';
-import { ContractualCommitment } from '../Contracts';
 
 @Component(
     {
@@ -19,7 +18,7 @@ export class Facilities implements OnDestroy
     private _facilities   : [Facility, LenderParticipation][]
 
     @ViewChild('facility', { static: true })
-    private _facilityComponent: FacilityComponent;
+    private _facility: import('../Deal/Facility').Facility;
 
     constructor(
         dealProvider: DealProvider
@@ -84,7 +83,7 @@ export class Facilities implements OnDestroy
         (<any>lenderParticipation).$type = 'Web.Model.LenderParticipation, Web';
         lenderParticipation.PartOf.Parts.push(lenderParticipation);
 
-        this._facilityComponent.Create(
+        this._facility.Create(
             facility,
             () => this.ComputeFacilities());
     }
@@ -93,7 +92,7 @@ export class Facilities implements OnDestroy
         facility: Facility
         )
     {
-        this._facilityComponent.Update(
+        this._facility.Update(
             facility,
             () => this.ComputeFacilities());
     }
