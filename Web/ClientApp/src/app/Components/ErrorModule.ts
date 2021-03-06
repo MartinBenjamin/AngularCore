@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from "@angular/core";
 import { Errors } from './Errors';
 import { HighlightedServiceProvider, HighlighterServiceProvider, ModelErrors } from './ModelErrors';
+import { ValidatedProperty } from './ValidatedProperty';
 
 @NgModule(
     {
@@ -12,12 +13,14 @@ import { HighlightedServiceProvider, HighlighterServiceProvider, ModelErrors } f
         declarations:
         [
             Errors,
-            ModelErrors
+            ModelErrors,
+            ValidatedProperty
         ],
         exports:
         [
             Errors,
-            ModelErrors
+            ModelErrors,
+            ValidatedProperty
         ],
         providers:
         [

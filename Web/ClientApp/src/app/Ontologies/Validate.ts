@@ -6,6 +6,7 @@ import { deals } from "./Deals";
 
 export type PathSegment = [string, object];
 export type Path = PathSegment[];
+export type ErrorPath = [object, Path];
 
 export interface IErrors
 {

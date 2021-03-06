@@ -72,6 +72,11 @@ export class Borrowers implements OnDestroy
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
+    get Deal(): Deal
+    {
+        return this._deal;
+    }
+
     get Initialised(): boolean
     {
         return this._borrowerRole != null;

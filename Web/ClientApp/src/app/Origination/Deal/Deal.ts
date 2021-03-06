@@ -1,16 +1,17 @@
 import { AfterViewInit, Component, forwardRef, Inject, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
+import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
 import { DealProvider } from '../../DealProvider';
-import { Deal as DealType, DealRoleIdentifier } from '../../Deals';
+import { DealRoleIdentifier } from '../../Deals';
 import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServiceProvider';
 import { deals } from '../../Ontologies/Deals';
 import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
 import { IDealOntologyService } from '../../Ontologies/IDealOntologyService';
-import { IErrors, Path, Validate } from '../../Ontologies/Validate';
+import { ErrorPath, IErrors, Validate } from '../../Ontologies/Validate';
 import { KeyCounterparties } from '../KeyCounterparties';
 import { KeyDealData } from '../KeyDealData';
 import { MoreTabs } from '../MoreTabs';
@@ -26,7 +27,11 @@ import { TransactionDetails } from '../TransactionDetails';
                 {
                     provide: DealProvider,
                     useExisting: forwardRef(() => Deal)
-                }
+                },
+                ErrorsSubjectProvider,
+                ErrorsObservableProvider,
+                HighlightedPropertySubjectProvider,
+                HighlightedPropertyObservableProvider
             ]
     })
 export class Deal
@@ -36,7 +41,7 @@ export class Deal
     private _subscriptions: Subscription[] = [];
     private _ontology     : IDealOntology;
     private _errors       : BehaviorSubject<Map<object, Map<string, Set<keyof IErrors>>>>;
-    private _errorPaths   : Path[];
+    private _errorPaths   : ErrorPath[];
 
     @ViewChild('title', { static: true })
     private _title: TemplateRef<any>;
@@ -48,6 +53,8 @@ export class Deal
         dealOntologyService    : IDealOntologyService,
         @Inject(DealBuilderToken)
         dealBuilder            : IDealBuilder,
+        @Inject(ErrorsSubjectToken)
+        private _errorsService : Subject<Errors>,
         private _origination   : Origination,
         private _activatedRoute: ActivatedRoute,
         private _changeDetector: ChangeDetector
@@ -90,12 +97,12 @@ export class Deal
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
-    get Deal(): DealType
+    get Deal(): import('../../Deals').Deal
     {
         return this._deal.getValue()[0];
     }
 
-    get Errors(): Path[]
+    get Errors(): ErrorPath[]
     {
         return this._errorPaths;
     }
@@ -117,13 +124,14 @@ export class Deal
             applicableStages);
 
         this._errors.next(errors);
+        this._errorsService.next(errors);
 
-        let errorPaths: Path[] = [];
+        let errorPaths: ErrorPath[] = [];
 
         let dealErrors = errors.get(this.Deal);
         if(dealErrors)
             for(let entry of dealErrors)
-                errorPaths.push([entry]);
+                errorPaths.push([this.Deal, [entry]]);
 
         // Include Sponsor errors.
         for(let sponsor of this.Deal.Parties.filter(party => party.Role.Id === DealRoleIdentifier.Sponsor))
@@ -131,7 +139,7 @@ export class Deal
             let sponsorErrors = errors.get(sponsor);
             if(sponsorErrors)
                 for(let entry of sponsorErrors)
-                    errorPaths.push([["PartyInRole", sponsor], entry]);
+                    errorPaths.push([this.Deal, [["PartyInRole", sponsor], entry]]);
         }
 
         // Include Exclusivity errors.
@@ -141,7 +149,7 @@ export class Deal
             let exclusivityErrors = errors.get(exclusivity);
             if(exclusivityErrors)
                 for(let entry of exclusivityErrors)
-                    errorPaths.push([["Exclusivity", exclusivity], entry]);
+                    errorPaths.push([this.Deal, [["Exclusivity", exclusivity], entry]]);
         }
 
         this._errorPaths = errorPaths.length ? errorPaths : null;

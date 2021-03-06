@@ -1,14 +1,15 @@
 import { Component, Inject, Input } from '@angular/core';
 import { Subject } from "rxjs";
-import { IErrors, Path, PathSegment } from '../../Ontologies/Validate';
+import { IErrors, Path, PathSegment, ErrorPath } from '../../Ontologies/Validate';
 import { HighlighterServiceToken } from '../../Components/ModelErrors';
+import { HighlightedPropertySubjectToken, Property } from '../../Components/ValidatedProperty';
 
 @Component(
     {
         selector: 'errors',
         template: '\
 <ul>\
-    <li *ngFor="let error of Errors" [innerHTML]="error.Message" (click)="Highlight(error.Errors)" style="cursor: pointer;"></li>\
+    <li *ngFor="let error of Errors" [innerHTML]="error.Message" (click)="Highlight(error.Property)" style="cursor: pointer;"></li>\
 </ul>'
     })
 export class Errors
@@ -29,35 +30,40 @@ export class Errors
         }
 
     constructor(
-        @Inject(HighlighterServiceToken)
-        private _highlighterService: Subject<object>
+        @Inject(HighlightedPropertySubjectToken)
+        private _highlightedPropertyService: Subject<Property>
         )
     {
     }
 
     @Input()
     set Paths(
-        paths: Path[]
+        errorPaths: ErrorPath[]
         )
     {
         this._errors = null;
 
-        if(!paths)
+        if(!errorPaths)
             return;
 
         this._errors = [];
-        for(let path of paths)
+        for(let errorPath of errorPaths)
         {
+            let [, path] = errorPath;
             let [, errors] = path[path.length - 1];
             (<Set<keyof IErrors>>errors).forEach(error =>
                 this._errors.push(
                     {
-                        Message: `${this.MapPath(path)}: ${this._errorMap[error]}.`,
-                        Errors : errors
+                        Message : `${this.MapPath(path)}: ${this._errorMap[error]}.`,
+                        Property:
+                            [
+                                path.length === 1 ? errorPath[0] : path[path.length - 2][1],
+                                path[path.length - 1][0]
+                            ]
                     }));
         }
 
-        this._highlighterService.next(null);
+        this._highlightedPropertyService.next(null);
     }
 
     get Errors(): any[]
@@ -66,10 +72,10 @@ export class Errors
     }
 
     Highlight(
-        errors: object
+        property: Property
         ): void
     {
-        this._highlighterService.next(errors);
+        this._highlightedPropertyService.next(property);
     }
 
     private MapPath(

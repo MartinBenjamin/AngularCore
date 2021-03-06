@@ -3,7 +3,8 @@
   <td *ngIf="ClassificationSchemeClassifiers; else Loading">
     <select
       [(ngModel)]="Classifier"
-      [dtModelErrors]="DealErrors?.Exclusivity">
+      [dtValidatedObject]="Deal"
+      dtValidatedProperty="Exclusivity">
       <option [ngValue]="null"></option>
       <ng-container *ngFor="let classificationSchemeClassifier of ClassificationSchemeClassifiers">
         <optgroup *ngIf="classificationSchemeClassifier.Sub.length;else Option"
@@ -30,5 +31,6 @@
   <td><input
     type="text"
     [(dtDateModel)]="Exclusivity.EndDate"
-    [dtModelErrors]="ExclusivityErrors?.EndDate"/><dt-calendar (dateSelected)="Exclusivity.EndDate = $event"></dt-calendar></td>
+    [dtValidatedObject]="Exclusivity"
+    dtValidatedProperty="EndDate"/><dt-calendar (dateSelected)="Exclusivity.EndDate = $event"></dt-calendar></td>
 </tr>

@@ -82,6 +82,11 @@ export class Sponsors implements OnDestroy
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
+    get Deal(): Deal
+    {
+        return this._deal;
+    }
+
     get NAEnabled(): boolean
     {
         return this._naEnabled;

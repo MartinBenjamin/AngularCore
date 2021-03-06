@@ -28,6 +28,8 @@
                              [ngModel]="Facility?.Name"
                              (ngModelChange)="Facility.Name = $event"
                              [dtModelErrors]="Errors?.Name"
+                             [dtValidatedObject]="Facility"
+                             dtValidatedProperty="Name"
                              class="FacilityType" />
                     </td>
                   </tr>

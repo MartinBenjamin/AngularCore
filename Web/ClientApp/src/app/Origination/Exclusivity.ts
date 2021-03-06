@@ -95,6 +95,11 @@ export class Exclusivity implements OnDestroy
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
+    get Deal(): Deal
+    {
+        return this._deal;
+    }
+
     get ClassificationSchemeClassifiers(): ClassificationSchemeClassifier[]
     {
         return this._classificationSchemeClassifiers;

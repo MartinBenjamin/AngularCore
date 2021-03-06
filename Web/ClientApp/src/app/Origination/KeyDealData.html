@@ -20,7 +20,8 @@
               type="text"
               [ngModel]="Deal?.Name"
               (ngModelChange)="Deal.Name = $event"
-              [dtModelErrors]="Errors?.Name"/></td>
+              [dtValidatedObject]="Deal"
+              dtValidatedProperty="Name"/></td>
           </tr>
           <tr>
             <td class="RowHeading">MUFG Roles:</td>
@@ -49,7 +50,8 @@
               type="text"
               [ngModel]="Deal?.Introducer"
               (ngModelChange)="Deal.Introducer = $event"
-              [dtModelErrors]="Errors?.Introducer"/></td>
+              [dtValidatedObject]="Deal"
+              dtValidatedProperty="Introducer"/></td>
           </tr>
           <tr>
             <td class="RowHeading">Base Currency:</td>
@@ -58,7 +60,8 @@
                 [compareWith]="CompareById"
                 [ngModel]="Deal?.Currency"
                 (ngModelChange)="Deal.Currency = $event"
-                [dtModelErrors]="Errors?.Currency">
+                [dtValidatedObject]="Deal"
+                dtValidatedProperty="Currency">
                 <option [ngValue]="null"></option>
                 <option *ngFor="let currency of currencies" [ngValue]="currency">{{currency.Name}}</option>
               </select>
@@ -83,7 +86,8 @@
               <td><textarea
                 [ngModel]="Deal?.TransactionDetails"
                 (ngModelChange)="Deal.TransactionDetails = $event"
-                [dtModelErrors]="Errors?.TransactionDetails"
+                [dtValidatedObject]="Deal"
+                dtValidatedProperty="TransactionDetails"
                 maxlength="100"
                 rows="5"></textarea></td>
             </tr>
@@ -92,7 +96,8 @@
               <td><textarea
                 [ngModel]="Deal?.CurrentStatus"
                 (ngModelChange)="Deal.CurrentStatus = $event"
-                [dtModelErrors]="Errors?.CurrentStatus"
+                [dtValidatedObject]="Deal"
+                dtValidatedProperty="CurrentStatus"
                 maxlength="100"
                 rows="5"></textarea></td>
             </tr>

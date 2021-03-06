@@ -5,7 +5,11 @@
 <tr>
   <td class="RowHeading">Country:</td>
   <td
-    ><span class="Field" style="margin-right: 2px;" [dtModelErrors]="Errors?.GeographicRegion">{{Country?.Name}}</span><a (click)="Find()">find</a
+    ><span
+      class="Field"
+      style="margin-right: 2px;"
+      [dtValidatedObject]="Deal"
+      dtValidatedProperty="GeographicRegion">{{Country?.Name}}</span><a (click)="Find()">find</a
     ><geographic-region-selector #geographicRegionSelector></geographic-region-selector></td>
 </tr>
 <tr *ngIf="Subdivision">

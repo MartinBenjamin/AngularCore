@@ -13,7 +13,8 @@
 </style>
 <table
   *ngIf="Sponsors as sponsors"
-  [dtModelErrors]="Errors?.Sponsors"
+  [dtValidatedObject]="Deal"
+  dtValidatedProperty="Sponsors"
   class="DataGrid Sponsors">
   <caption style="white-space: nowrap;">Sponsors<span *ngIf="NAEnabled" style="font-size: smaller;"> (N/A: <input type="checkbox" [(ngModel)]="NA" [disabled]="Sponsors.length > 0" />)</span><span *ngIf="!Initialised"> [Initialising]</span></caption>
   <tr>
@@ -31,14 +32,16 @@
       type="text"
       [dtPercentageModel]="sponsor.Equity"
       (dtPercentageModelChange)="UpdateEquity(sponsor, $event)"
-      [dtModelErrors]="SponsorErrors(sponsor)?.Equity"
+      [dtValidatedObject]="sponsor"
+      dtValidatedProperty="Equity"
       class="Percentage Equity"/></td>
     <td><a (click)="Delete(sponsor)">delete</a></td>
   </tr>
   <tr *ngIf="sponsors.length; else NoSponsors">
     <td colspan="3">Total Equity:</td>
     <td
-      [dtModelErrors]="Errors?.TotalSponsorEquity"
+      [dtValidatedObject]="Deal"
+      dtValidatedProperty="TotalSponsorEquity"
       [ngClass]="{ 'EquityError': TotalEquity != 100 }"
       class="Percentage">{{TotalEquity|percentage}}</td>
     <td></td>

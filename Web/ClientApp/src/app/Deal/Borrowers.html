@@ -2,7 +2,8 @@
                      #legalEntityFinder></legal-entity-finder>
 <table
   *ngIf="Borrowers as borrowers"
-  [dtModelErrors]="Errors?.Borrowers"
+  [dtValidatedObject]="Deal"
+  dtValidatedProperty="Borrowers"
   class="DataGrid">
   <caption style="white-space: nowrap;">Borrowers<span *ngIf="!Initialised"> [Initialising]</span></caption>
   <tr>

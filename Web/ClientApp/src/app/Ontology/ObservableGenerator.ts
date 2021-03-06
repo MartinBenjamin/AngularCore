@@ -1,5 +1,5 @@
-import { BehaviorSubject, Observable } from "rxjs";
-import { Group } from "./ClassMembershipEvaluator";
+import { BehaviorSubject, combineLatest, Observable } from "rxjs";
+import { map } from 'rxjs/operators';
 import { IClass } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
@@ -17,7 +17,8 @@ import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyE
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataHasValue } from "./IDataHasValue";
-//import { count } from "rxjs/operator/count";
+import { Group } from './Group';
+import { Property } from "../RegularPathExpression";
 
 function Intersect(
     lhs: Set<object>,
@@ -36,8 +37,8 @@ function Union(
     rhs.forEach(member => union.add(member));
     return union;
 }
-/*
-export class ObservableGenerator implements IClassExpressionVisitor
+
+export class ObservableGenerator// implements IClassExpressionVisitor
 {
     private _observableClassExpressions        : Map<IClassExpression         , Observable<Set<object>>>;
     private _observableObjectPropertyExpression: Map<IObjectPropertyExpression, Observable<Array<[object, IObjectPropertyExpression, object]>>>;
@@ -58,7 +59,7 @@ export class ObservableGenerator implements IClassExpressionVisitor
         let observables = objectIntersectionOf.ClassExpressions.map(classExpression => this._observableClassExpressions.get(classExpression));
         this._observableClassExpressions.set(
             objectIntersectionOf,
-            observables.reduce((accumulator, currentValue) => accumulator.combineLatest(currentValue, Intersect)));
+            observables.reduce((accumulator, currentValue) => combineLatest(accumulator, currentValue, Intersect)));
     }
 
     ObjectUnionOf(
@@ -68,7 +69,7 @@ export class ObservableGenerator implements IClassExpressionVisitor
         let observables = objectUnionOf.ClassExpressions.map(classExpression => this._observableClassExpressions.get(classExpression));
         this._observableClassExpressions.set(
             objectUnionOf,
-            observables.reduce((accumulator, currentValue) => accumulator.combineLatest(currentValue, Union)));
+            observables.reduce((accumulator, currentValue) => combineLatest(accumulator, currentValue, Union)));
     }
 
     ObjectComplementOf(
@@ -77,7 +78,8 @@ export class ObservableGenerator implements IClassExpressionVisitor
     {
         this._observableClassExpressions.set(
             objectComplementOf,
-            this._observableObjectDomain.combineLatest(
+            combineLatest(
+                this._observableObjectDomain,
                 this._observableClassExpressions.get(objectComplementOf.ClassExpression),
                 (objectDomain, classExpression) => new Set<object>([...objectDomain].filter(member => !classExpression.has(member)))));
     }
@@ -97,8 +99,8 @@ export class ObservableGenerator implements IClassExpressionVisitor
     {
         this._observableClassExpressions.set(
             objectSomeValuesFrom,
-            this._observableObjectPropertyExpression.get(objectSomeValuesFrom.ObjectPropertyExpression)
-            .combineLatest(
+            combineLatest(
+                this._observableObjectPropertyExpression.get(objectSomeValuesFrom.ObjectPropertyExpression),
                 this._observableClassExpressions.get(objectSomeValuesFrom.ClassExpression),
                 (objectPropertyExpression, classExpression) =>
                     new Set<object>(
@@ -111,24 +113,25 @@ export class ObservableGenerator implements IClassExpressionVisitor
         objectAllValuesFrom: IObjectAllValuesFrom
         )
     {
-        let observableGroupedByDomain = this._observableObjectPropertyExpression.get(objectAllValuesFrom.ObjectPropertyExpression).map(
+        let observableGroupedByDomain = this._observableObjectPropertyExpression.get(objectAllValuesFrom.ObjectPropertyExpression).pipe(map(
             objectPropertyExpression => Group(
                 objectPropertyExpression,
                 member => member[0],
-                member => member[2]));
+                member => member[2])));
 
         this._observableClassExpressions.set(
             objectAllValuesFrom,
-            observableGroupedByDomain
-                .combineLatest(
-                    this._observableClassExpressions.get(objectAllValuesFrom.ClassExpression),
-                    (groupedByDomain, classExpression) =>
-                        new Set<object>(
-                            [...groupedByDomain.entries()]
-                                .filter(entry => entry[1].every(individual => classExpression.has(individual)))
-                                .map(entry => entry[0]))));
+            combineLatest(
+                observableGroupedByDomain,
+                this._observableClassExpressions.get(objectAllValuesFrom.ClassExpression),
+                (groupedByDomain, classExpression) =>
+                    new Set<object>(
+                        [...groupedByDomain.entries()]
+                            .filter(entry => entry[1].every(individual => classExpression.has(individual)))
+                            .map(entry => entry[0]))));
     }
 
+/*
     ObjectHasValue(
         objectHasValue: IObjectHasValue
         )
@@ -145,23 +148,24 @@ export class ObservableGenerator implements IClassExpressionVisitor
     {
         throw new Error("Method not implemented.");
     }
-
+*/
     ObjectMinCardinality(
         objectMinCardinality: IObjectMinCardinality
         )
     {
         let observableObjectPropertyExpression = this._observableObjectPropertyExpression.get(objectMinCardinality.ObjectPropertyExpression);
         if(objectMinCardinality.ClassExpression)
-            observableObjectPropertyExpression = observableObjectPropertyExpression.combineLatest(
+            observableObjectPropertyExpression = combineLatest(
+                observableObjectPropertyExpression,
                 this._observableClassExpressions.get(objectMinCardinality.ClassExpression),
                 (objectPropertyExpression, classExpression) =>
                     objectPropertyExpression.filter(member => classExpression.has(member[2])));
 
-        let observableGroupedByDomain = observableObjectPropertyExpression.map(
+        let observableGroupedByDomain = observableObjectPropertyExpression.pipe(map(
             objectPropertyExpression => Group(
                 objectPropertyExpression,
                 member => member[0],
-                member => member[2]));
+                member => member[2])));
 
         //this._observableClassExpressions.set(
         //    objectMinCardinality,
@@ -184,11 +188,12 @@ export class ObservableGenerator implements IClassExpressionVisitor
                             .map(entry => entry[0]))));
 
         else
+            // Must include individuals that are not in the range of the property!
             this._observableClassExpressions.set(
                 objectMinCardinality,
-                this._observableObjectDomain.map(objectDomain => new Set(objectDomain)));
+                this._observableObjectDomain);
     }
-
+/*
     ObjectMaxCardinality(
         objectMaxCardinality: IObjectMaxCardinality
         )
@@ -318,5 +323,5 @@ export class ObservableGenerator implements IClassExpressionVisitor
                   (objectDomain, groupedByDomain) =>
                       new Set([...objectDomain].filter(individual => !groupedByDomain.has(individual)))));
     }
-}
 */
+}

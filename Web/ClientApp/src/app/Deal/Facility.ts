@@ -3,6 +3,7 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { BranchesToken } from '../BranchServiceProvider';
 import { DomainObject, EmptyGuid, Guid } from '../CommonDomainObjects';
 import { Tab } from '../Components/TabbedView';
+import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../Components/ValidatedProperty';
 import { ContractualCommitment } from '../Contracts';
 import { CurrenciesOrderedByCodeToken } from '../CurrencyServiceProvider';
 import { DealProvider } from '../DealProvider';
@@ -12,7 +13,7 @@ import { FacilityProvider } from '../FacilityProvider';
 import { Currency } from '../Iso4217';
 import { Branch } from '../Organisations';
 import { PartyInRole } from '../Parties';
-import { Property, Query, ZeroOrMore, IExpression } from '../RegularPathExpression';
+import { IExpression, Property, Query, ZeroOrMore } from '../RegularPathExpression';
 import { Role } from '../Roles';
 import { RolesToken } from '../RoleServiceProvider';
 import { FacilityTab } from './FacilityTab';
@@ -211,7 +212,11 @@ type ApplyCallback = () => void;
                 {
                     provide: FacilityProvider,
                     useExisting: forwardRef(() => Facility)
-                }
+                },
+                ErrorsSubjectProvider,
+                ErrorsObservableProvider,
+                HighlightedPropertySubjectProvider,
+                HighlightedPropertyObservableProvider
             ]
     })
 export class Facility
@@ -231,12 +236,14 @@ export class Facility
 
     constructor(
         @Inject(RolesToken)
-        roles              : Observable<Role[]>,
+        roles                  : Observable<Role[]>,
         @Inject(CurrenciesOrderedByCodeToken)
-        private _currencies: Observable<Currency[]>,
+        private _currencies    : Observable<Currency[]>,
         @Inject(BranchesToken)
-        private _branches  : Observable<Branch[]>,
-        dealProvider       : DealProvider
+        private _branches      : Observable<Branch[]>,
+        dealProvider           : DealProvider,
+        @Inject(ErrorsSubjectToken)
+        private _errorsService : Subject<Errors>
         )
     {
         super();

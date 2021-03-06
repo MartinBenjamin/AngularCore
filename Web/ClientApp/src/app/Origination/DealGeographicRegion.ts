@@ -80,6 +80,11 @@ export class DealGeographicRegion implements OnDestroy
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
+    get Deal(): Deal
+    {
+        return this._deal;
+    }
+
     get Region(): GeographicRegion
     {
         return this._region;
