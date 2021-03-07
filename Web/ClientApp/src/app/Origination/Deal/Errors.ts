@@ -1,6 +1,5 @@
 import { Component, Inject, Input, OnDestroy } from '@angular/core';
-import { Observable, Subject, Subscription, combineLatest } from "rxjs";
-import { map } from 'rxjs/operators';
+import { combineLatest, Observable, Subject, Subscription } from "rxjs";
 import { ErrorsObservableToken, HighlightedPropertySubjectToken, Property } from '../../Components/ValidatedProperty';
 import { DealProvider } from '../../DealProvider';
 import { Deal, DealRoleIdentifier } from '../../Deals';
