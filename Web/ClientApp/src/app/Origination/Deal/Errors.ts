@@ -3,7 +3,11 @@ import { combineLatest, Observable, Subject, Subscription } from "rxjs";
 import { ErrorsObservableToken, HighlightedPropertySubjectToken, Property } from '../../Components/ValidatedProperty';
 import { DealProvider } from '../../DealProvider';
 import { Deal, DealRoleIdentifier } from '../../Deals';
-import { ErrorPath, IErrors, Path, PathSegment } from '../../Ontologies/Validate';
+import { IErrors } from '../../Ontologies/Validate';
+
+type PathSegment = [string, object];
+type Path = PathSegment[];
+type ErrorPath = [object, Path];
 
 @Component(
     {

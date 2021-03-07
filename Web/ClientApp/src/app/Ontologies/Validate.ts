@@ -4,10 +4,6 @@ import { IClass } from "../Ontology/IClass";
 import { IOntology } from "../Ontology/IOntology";
 import { deals } from "./Deals";
 
-export type PathSegment = [string, object];
-export type Path = PathSegment[];
-export type ErrorPath = [object, Path];
-
 export interface IErrors
 {
     Mandatory       : string,
