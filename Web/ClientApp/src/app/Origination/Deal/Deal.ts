@@ -1,17 +1,16 @@
 import { AfterViewInit, Component, forwardRef, Inject, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, Subject, Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
 import { DealProvider } from '../../DealProvider';
-import { DealRoleIdentifier } from '../../Deals';
 import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServiceProvider';
 import { deals } from '../../Ontologies/Deals';
 import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
 import { IDealOntologyService } from '../../Ontologies/IDealOntologyService';
-import { ErrorPath, IErrors, Validate } from '../../Ontologies/Validate';
+import { Validate } from '../../Ontologies/Validate';
 import { KeyCounterparties } from '../KeyCounterparties';
 import { KeyDealData } from '../KeyDealData';
 import { MoreTabs } from '../MoreTabs';
@@ -40,7 +39,6 @@ export class Deal
 {
     private _subscriptions: Subscription[] = [];
     private _ontology     : IDealOntology;
-    private _errorPaths   : ErrorPath[];
 
     @ViewChild('title', { static: true })
     private _title: TemplateRef<any>;
@@ -76,8 +74,8 @@ export class Deal
                                annotation.Value in this)
                                 this[annotation.Value]();
 
-                    this._errorPaths = null;
                     this._deal.next(dealBuilder.Build(this._ontology));
+                    this._errorsService.next(null);
                 }));
     }
 
@@ -96,11 +94,6 @@ export class Deal
         return this._deal.getValue();
     }
 
-    get Errors(): ErrorPath[]
-    {
-        return this._errorPaths;
-    }
-
     Save(): void
     {
         let classifications = this.Deal.Ontology.Classify(this.Deal);
@@ -117,35 +110,7 @@ export class Deal
             classifications,
             applicableStages);
 
-        this._errorsService.next(errors);
-
-        let errorPaths: ErrorPath[] = [];
-
-        let dealErrors = errors.get(this.Deal);
-        if(dealErrors)
-            for(let entry of dealErrors)
-                errorPaths.push([this.Deal, [entry]]);
-
-        // Include Sponsor errors.
-        for(let sponsor of this.Deal.Parties.filter(party => party.Role.Id === DealRoleIdentifier.Sponsor))
-        {
-            let sponsorErrors = errors.get(sponsor);
-            if(sponsorErrors)
-                for(let entry of sponsorErrors)
-                    errorPaths.push([this.Deal, [["PartyInRole", sponsor], entry]]);
-        }
-
-        // Include Exclusivity errors.
-        let exclusivity = this.Deal.Confers.find(commitment => (<any>commitment).$type == 'Web.Model.Exclusivity, Web');
-        if(exclusivity)
-        {
-            let exclusivityErrors = errors.get(exclusivity);
-            if(exclusivityErrors)
-                for(let entry of exclusivityErrors)
-                    errorPaths.push([this.Deal, [["Exclusivity", exclusivity], entry]]);
-        }
-
-        this._errorPaths = errorPaths.length ? errorPaths : null;
+        this._errorsService.next(errors.size ? errors : null);
 
         // Detect changes in all Deal Tabs (and nested Tabs).
         this._changeDetector.DetectChanges();

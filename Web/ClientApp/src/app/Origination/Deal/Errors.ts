@@ -1,19 +1,26 @@
-import { Component, Inject, Input } from '@angular/core';
-import { Subject } from "rxjs";
-import { HighlightedPropertySubjectToken, Property } from '../../Components/ValidatedProperty';
+import { Component, Inject, Input, OnDestroy } from '@angular/core';
+import { Observable, Subject, Subscription, combineLatest } from "rxjs";
+import { map } from 'rxjs/operators';
+import { ErrorsObservableToken, HighlightedPropertySubjectToken, Property } from '../../Components/ValidatedProperty';
+import { DealProvider } from '../../DealProvider';
+import { Deal, DealRoleIdentifier } from '../../Deals';
 import { ErrorPath, IErrors, Path, PathSegment } from '../../Ontologies/Validate';
 
 @Component(
     {
         selector: 'errors',
-        template: '\
-<ul>\
-    <li *ngFor="let error of Errors" [innerHTML]="error.Message" (click)="Highlight(error.Property)" style="cursor: pointer;"></li>\
-</ul>'
+        template: `
+<div *ngIf="Errors" style="color: red;">
+  Save was unsuccessful.  Please fix the errors and try again.
+  <ul>
+    <li *ngFor="let error of Errors" [innerHTML]="error.Message" (click)="Highlight(error.Property)" style="cursor: pointer;"></li>
+  </ul>
+</div>`
     })
-export class Errors
+export class Errors implements OnDestroy
 {
-    private _errors  : any[];    
+    private _subscriptions: Subscription[] = [];
+    private _errors       : any[];    
     private _errorMap: IErrors =
         {
             Mandatory       : "Mandatory",
@@ -29,10 +36,61 @@ export class Errors
         }
 
     constructor(
+        dealProvider : DealProvider,
+        @Inject(ErrorsObservableToken)
+        errorsService: Observable<Map<object, Map<string, Set<keyof IErrors>>>>,
         @Inject(HighlightedPropertySubjectToken)
         private _highlightedPropertyService: Subject<Property>
         )
     {
+        this._subscriptions.push(
+            combineLatest(
+                dealProvider,
+                errorsService
+                ).subscribe(
+                    combined =>
+                    {
+                        let deal  : Deal;
+                        let errors: Map<object, Map<string, Set<keyof IErrors>>>;
+                        [deal, errors] = combined;
+
+                        this._errors = null;
+                        if(!(deal && errors))
+                            return;
+
+                        let errorPaths: ErrorPath[] = [];
+
+                        let dealErrors = errors.get(deal);
+                        if(dealErrors)
+                            for(let entry of dealErrors)
+                                errorPaths.push([deal, [entry]]);
+
+                        // Include Sponsor errors.
+                        for(let sponsor of deal.Parties.filter(party => party.Role.Id === DealRoleIdentifier.Sponsor))
+                        {
+                            let sponsorErrors = errors.get(sponsor);
+                            if(sponsorErrors)
+                                for(let entry of sponsorErrors)
+                                    errorPaths.push([deal, [["PartyInRole", sponsor], entry]]);
+                        }
+
+                        // Include Exclusivity errors.
+                        let exclusivity = deal.Confers.find(commitment => (<any>commitment).$type == 'Web.Model.Exclusivity, Web');
+                        if(exclusivity)
+                        {
+                            let exclusivityErrors = errors.get(exclusivity);
+                            if(exclusivityErrors)
+                                for(let entry of exclusivityErrors)
+                                    errorPaths.push([deal, [["Exclusivity", exclusivity], entry]]);
+                        }
+
+                        this.Paths = errorPaths.length ? errorPaths : null;
+                    }));
+    }
+
+    ngOnDestroy(): void
+    {
+        this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
     @Input()

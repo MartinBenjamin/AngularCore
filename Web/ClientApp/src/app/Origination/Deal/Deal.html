@@ -6,14 +6,10 @@
 </style>
 <ng-template #title>{{Deal?.Type?.Name}}</ng-template>
 <div>
-  <div *ngIf="Errors" style="color: red;">
-    Save was unsuccessful.  Please fix the errors and try again.
-    <errors [Paths]="Errors"></errors>
-  </div>
+  <errors></errors>
   <common></common>
   <dt-tabbed-view [Tabs]="Tabs" class="FullWidth"></dt-tabbed-view>
-  <div class="Buttons" style="padding-top: 5px;"
-    ><input type="button" value="Save" (click)="Save()"
-    /><input type="button" value="Cancel" (click)="Cancel()" />
+  <div class="Buttons" style="padding-top: 5px;">
+    <input type="button" value="Save" (click)="Save()" /><input type="button" value="Cancel" (click)="Cancel()" />
   </div>
 </div>
