@@ -1,29 +1,46 @@
-import { Component, Inject, Input, OnDestroy } from '@angular/core';
+import { Component, Inject, OnDestroy } from '@angular/core';
 import { combineLatest, Observable, Subject, Subscription } from "rxjs";
 import { ErrorsObservableToken, HighlightedPropertySubjectToken, Property } from '../../Components/ValidatedProperty';
 import { DealProvider } from '../../DealProvider';
 import { Deal, DealRoleIdentifier } from '../../Deals';
 import { IErrors } from '../../Ontologies/Validate';
 
-type PathSegment = [string, object];
-type Path = PathSegment[];
-type ErrorPath = [object, Path];
+type Error = [Property, string, string];
 
 @Component(
     {
         selector: 'errors',
         template: `
-<div *ngIf="Errors" style="color: red;">
+<div *ngIf="DealErrors || SponsorErrors || ExclusivityErrors" style="color: red;">
   Save was unsuccessful.  Please fix the errors and try again.
   <ul>
-    <li *ngFor="let error of Errors" [innerHTML]="error.Message" (click)="Highlight(error.Property)" style="cursor: pointer;"></li>
+    <li *ngFor="let error of DealErrors" [innerHTML]="error[1] + ': ' + error[2]" (click)="Highlight(error[0])" style="cursor: pointer;"></li>
+    <li *ngFor="let error of SponsorErrors" [innerHTML]="error[0][0].Role.Name + ' [' + error[0][0].Organisation.Name + '] ' + error[1] + ': ' + error[2]" (click)="Highlight(error[0])" style="cursor: pointer;"></li>
+    <li *ngFor="let error of ExclusivityErrors" [innerHTML]="'Exclusivity ' + error[1] + ': ' + error[2]" (click)="Highlight(error[0])" style="cursor: pointer;"></li>
   </ul>
 </div>`
     })
 export class Errors implements OnDestroy
 {
-    private _subscriptions: Subscription[] = [];
-    private _errors       : any[];    
+    private _subscriptions    : Subscription[] = [];
+    private _dealErrors       : Error[];
+    private _sponsorErrors    : Error[];
+    private _exclusivityErrors: Error[];
+
+    private _errors       : any[];
+    private static _dealPropertyDisplayName =
+        {
+            Name            : 'Deal Name',
+            GeographicRegion: "Country",
+            Currency        : "Base Currency"
+        };
+    private static _sponsorPropertyDisplayName =
+        {
+        };
+    private static _exclusivityPropertyDisplayName =
+        {
+            EndDate: "Date",
+        };
     private _errorMap: IErrors =
         {
             Mandatory       : "Mandatory",
@@ -53,6 +70,9 @@ export class Errors implements OnDestroy
                 ).subscribe(
                     combined =>
                     {
+                        this._dealErrors = null;
+                        this._sponsorErrors = null;
+                        this._exclusivityErrors = null;
                         let deal  : Deal;
                         let errors: Map<object, Map<string, Set<keyof IErrors>>>;
                         [deal, errors] = combined;
@@ -61,20 +81,46 @@ export class Errors implements OnDestroy
                         if(!(deal && errors))
                             return;
 
-                        let errorPaths: ErrorPath[] = [];
-
                         let dealErrors = errors.get(deal);
                         if(dealErrors)
+                        {
+                            this._dealErrors = [];
                             for(let entry of dealErrors)
-                                errorPaths.push([deal, [entry]]);
+                            {
+                                let propertyName = entry[0];
+                                let property: Property = [deal, propertyName];
+                                let propertyDisplayName = propertyName in Errors._dealPropertyDisplayName ? Errors._dealPropertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
+                                for(let error of entry[1])
+                                    this._dealErrors.push(
+                                        [
+                                            property,
+                                            propertyDisplayName,
+                                            this._errorMap[error]
+                                        ]);
+                            }
+                        }
 
                         // Include Sponsor errors.
                         for(let sponsor of deal.Parties.filter(party => party.Role.Id === DealRoleIdentifier.Sponsor))
                         {
                             let sponsorErrors = errors.get(sponsor);
                             if(sponsorErrors)
+                            {
+                                this._sponsorErrors = this._sponsorErrors || [];
                                 for(let entry of sponsorErrors)
-                                    errorPaths.push([deal, [["PartyInRole", sponsor], entry]]);
+                                {
+                                    let propertyName = entry[0];
+                                    let property: Property = [sponsor, propertyName];
+                                    let propertyDisplayName = propertyName in Errors._sponsorPropertyDisplayName ? Errors._sponsorPropertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
+                                    for(let error of entry[1])
+                                        this._sponsorErrors.push(
+                                            [
+                                                property,
+                                                propertyDisplayName,
+                                                this._errorMap[error]
+                                            ]);
+                                }
+                            }
                         }
 
                         // Include Exclusivity errors.
@@ -83,11 +129,23 @@ export class Errors implements OnDestroy
                         {
                             let exclusivityErrors = errors.get(exclusivity);
                             if(exclusivityErrors)
+                            {
+                                this._exclusivityErrors = [];
                                 for(let entry of exclusivityErrors)
-                                    errorPaths.push([deal, [["Exclusivity", exclusivity], entry]]);
+                                {
+                                    let propertyName = entry[0];
+                                    let property: Property = [exclusivity, propertyName];
+                                    let propertyDisplayName = propertyName in Errors._exclusivityPropertyDisplayName ? Errors._exclusivityPropertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
+                                    for(let error of entry[1])
+                                        this._exclusivityErrors.push(
+                                            [
+                                                property,
+                                                propertyDisplayName,
+                                                this._errorMap[error]
+                                            ]);
+                                }
+                            }
                         }
-
-                        this.Paths = errorPaths.length ? errorPaths : null;
                     }));
     }
 
@@ -96,39 +154,19 @@ export class Errors implements OnDestroy
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
-    @Input()
-    set Paths(
-        errorPaths: ErrorPath[]
-        )
+    get DealErrors(): Error[]
     {
-        this._errors = null;
-
-        if(!errorPaths)
-            return;
-
-        this._errors = [];
-        for(let errorPath of errorPaths)
-        {
-            let [, path] = errorPath;
-            let [, errors] = path[path.length - 1];
-            (<Set<keyof IErrors>>errors).forEach(error =>
-                this._errors.push(
-                    {
-                        Message : `${this.MapPath(path)}: ${this._errorMap[error]}.`,
-                        Property:
-                            [
-                                path.length === 1 ? errorPath[0] : path[path.length - 2][1],
-                                path[path.length - 1][0]
-                            ]
-                    }));
-        }
-
-        this._highlightedPropertyService.next(null);
+        return this._dealErrors;
     }
 
-    get Errors(): any[]
+    get SponsorErrors(): Error[]
     {
-        return this._errors;
+        return this._sponsorErrors;
+    }
+
+    get ExclusivityErrors(): Error[]
+    {
+        return this._exclusivityErrors;
     }
 
     Highlight(
@@ -136,26 +174,5 @@ export class Errors implements OnDestroy
         ): void
     {
         this._highlightedPropertyService.next(property);
-    }
-
-    private MapPath(
-        path: Path
-        )
-    {
-        return path.map(pathSegment => this.MapPathSegment(pathSegment)).join(' ');
-    }
-
-    private MapPathSegment(
-        [propertyName, object]: PathSegment
-        ): string
-    {
-        let mapType = typeof this._pathSegmentMap[propertyName];
-        if(mapType === 'string')
-            return this._pathSegmentMap[propertyName];
-
-        else if(mapType === 'function')
-            return this._pathSegmentMap[propertyName](object);
-
-        return propertyName.replace(/\B[A-Z]/g, ' $&'); 
     }
 }
