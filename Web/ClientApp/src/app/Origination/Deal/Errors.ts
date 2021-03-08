@@ -27,7 +27,6 @@ export class Errors implements OnDestroy
     private _sponsorErrors    : Error[];
     private _exclusivityErrors: Error[];
 
-    private _errors       : any[];
     private static _dealPropertyDisplayName =
         {
             Name            : 'Deal Name',
@@ -41,19 +40,12 @@ export class Errors implements OnDestroy
         {
             EndDate: "Date",
         };
-    private _errorMap: IErrors =
+    private static _errorMap: IErrors =
         {
             Mandatory       : "Mandatory",
             Invalid         : "Invalid",
             MustBe100Percent: "Must be 100%"
         };
-    private _pathSegmentMap =
-        {
-            GeographicRegion  : "Country",
-            Currency          : "Base Currency",
-            EndDate           : "Date",
-            PartyInRole       : (partyInRole: any) => `${partyInRole.Role.Name} [${partyInRole.Organisation.Name}]`
-        }
 
     constructor(
         dealProvider : DealProvider,
@@ -70,14 +62,13 @@ export class Errors implements OnDestroy
                 ).subscribe(
                     combined =>
                     {
-                        this._dealErrors = null;
-                        this._sponsorErrors = null;
+                        this._dealErrors        = null;
+                        this._sponsorErrors     = null;
                         this._exclusivityErrors = null;
                         let deal  : Deal;
                         let errors: Map<object, Map<string, Set<keyof IErrors>>>;
                         [deal, errors] = combined;
 
-                        this._errors = null;
                         if(!(deal && errors))
                             return;
 
@@ -95,7 +86,7 @@ export class Errors implements OnDestroy
                                         [
                                             property,
                                             propertyDisplayName,
-                                            this._errorMap[error]
+                                            Errors._errorMap[error]
                                         ]);
                             }
                         }
@@ -117,7 +108,7 @@ export class Errors implements OnDestroy
                                             [
                                                 property,
                                                 propertyDisplayName,
-                                                this._errorMap[error]
+                                                Errors._errorMap[error]
                                             ]);
                                 }
                             }
@@ -141,7 +132,7 @@ export class Errors implements OnDestroy
                                             [
                                                 property,
                                                 propertyDisplayName,
-                                                this._errorMap[error]
+                                                Errors._errorMap[error]
                                             ]);
                                 }
                             }
