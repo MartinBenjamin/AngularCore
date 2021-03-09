@@ -9,10 +9,9 @@ import { FacilityProvider } from '../FacilityProvider';
     })
 export class FacilityTab1 implements OnDestroy
 {
-    private _subscriptions: Subscription[] = [];
-
-    Facility           : Facility;
-    LenderParticipation: LenderParticipation;
+    private _subscriptions      : Subscription[] = [];
+    private _facility           : Facility;
+    private _lenderParticipation: LenderParticipation;
 
     constructor(
         facilityProvider: FacilityProvider
@@ -22,12 +21,12 @@ export class FacilityTab1 implements OnDestroy
             facilityProvider.subscribe(
                 facility =>
                 {
-                    this.Facility = facility;
-                    if(!this.Facility)
-                        this.LenderParticipation = null;
+                    this._facility = facility;
+                    if(!this._facility)
+                        this._lenderParticipation = null;
 
                     else
-                        this.LenderParticipation = <LenderParticipation>this.Facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
+                        this._lenderParticipation = <LenderParticipation>this._facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
                 }));
     }
 
@@ -36,18 +35,28 @@ export class FacilityTab1 implements OnDestroy
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
+    get Facility(): Facility
+    {
+        return this._facility;
+    }
+
+    get LenderParticipation(): LenderParticipation
+    {
+        return this._lenderParticipation;
+    }
+
     get LenderShare(): number
     {
-        if(this.Facility && this.LenderParticipation)
-            return this.LenderParticipationAmount * 100 / this.Facility.TotalCommitments;
+        if(this._facility && this._lenderParticipation)
+            return this.LenderParticipationAmount * 100 / this._facility.TotalCommitments;
 
         return null;
     }
 
     private get LenderParticipationAmount(): number
     {
-        if(this.LenderParticipation)
-            return this.LenderParticipation.ActualAllocation !== null ? this.LenderParticipation.ActualAllocation : this.LenderParticipation.AnticipatedHoldAmount;
+        if(this._lenderParticipation)
+            return this._lenderParticipation.ActualAllocation !== null ? this._lenderParticipation.ActualAllocation : this._lenderParticipation.AnticipatedHoldAmount;
 
         return null;
     }
