@@ -18,16 +18,17 @@ export class FacilityTab1 implements OnDestroy
         facilityProvider: FacilityProvider
         )
     {
-        facilityProvider.subscribe(
-            facility =>
-            {
-                this.Facility = facility;
-                if(!this.Facility)
-                    this.LenderParticipation = null;
+        this._subscriptions.push(
+            facilityProvider.subscribe(
+                facility =>
+                {
+                    this.Facility = facility;
+                    if(!this.Facility)
+                        this.LenderParticipation = null;
 
-                else
-                    this.LenderParticipation = <LenderParticipation>this.Facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
-            });
+                    else
+                        this.LenderParticipation = <LenderParticipation>this.Facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
+                }));
     }
 
     ngOnDestroy(): void
