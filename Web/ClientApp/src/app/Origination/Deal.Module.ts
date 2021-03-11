@@ -10,6 +10,7 @@ import { Borrowers } from '../Deal/Borrowers';
 import { Facility } from '../Deal/Facility';
 import { FacilityTab } from '../Deal/FacilityTab';
 import { FacilityTab1 } from '../Deal/FacilityTab1';
+import { FacilityTab3 } from '../Deal/FacilityTab3';
 import { GeographicRegionSelector } from '../Deal/GeographicRegionSelector';
 import { Sponsors } from '../Deal/Sponsors';
 import { LegalEntityFinder, LegalEntityFinderButtons } from '../LegalEntityFinder';
@@ -35,6 +36,7 @@ import { TransactionDetails } from './TransactionDetails';
                 Facility,
                 FacilityTab,
                 FacilityTab1,
+                FacilityTab3,
                 GeographicRegionSelector,
                 KeyCounterparties,
                 KeyDealData,

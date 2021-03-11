@@ -27,7 +27,6 @@
                       <input type="text"
                              [ngModel]="Facility?.Name"
                              (ngModelChange)="Facility.Name = $event"
-                             [dtModelErrors]="Errors?.Name"
                              [dtValidatedObject]="Facility"
                              dtValidatedProperty="Name"
                              class="FacilityType" />
@@ -42,7 +41,8 @@
                     <td *ngIf="Branches|async as branches; else Loading">
                       <select [compareWith]="CompareById"
                               [(ngModel)]="BookingOffice"
-                              [dtModelErrors]="Errors?.BookingOffice">
+                              [dtValidatedObject]="Facility"
+                              dtValidatedProperty="BookingOffice">
                         <option [ngValue]="null"></option>
                         <option *ngFor="let branch of branches" [ngValue]="branch">{{branch.Name}}</option>
                       </select>
@@ -57,7 +57,8 @@
                       <select [compareWith]="CompareById"
                               [ngModel]="Facility?.Currency"
                               (ngModelChange)="Facility.Currency = $event"
-                              [dtModelErrors]="Errors?.Currency">
+                              [dtValidatedObject]="Facility"
+                              dtValidatedProperty="Currency">
                         <option [ngValue]="null"></option>
                         <option *ngFor="let currency of currencies" [ngValue]="currency">{{currency.Id}}</option>
                       </select>

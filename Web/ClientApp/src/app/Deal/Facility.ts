@@ -18,6 +18,7 @@ import { Role } from '../Roles';
 import { RolesToken } from '../RoleServiceProvider';
 import { FacilityTab } from './FacilityTab';
 import { FacilityTab1 } from './FacilityTab1';
+import { FacilityTab3 } from './FacilityTab3';
 
 enum PropertyAction
 {
@@ -252,7 +253,7 @@ export class Facility
             [
                 new Tab('Size &<br/>Dates', FacilityTab1),
                 new Tab('Tab 2'           , FacilityTab),
-                new Tab('Tab 3'           , FacilityTab),
+                new Tab('Tab 3'           , FacilityTab3),
                 new Tab('Tab 4'           , FacilityTab)
             ];
 
