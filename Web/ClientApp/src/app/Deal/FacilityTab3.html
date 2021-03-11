@@ -9,15 +9,28 @@
     <td style="vertical-align: top;">
       <table class="GridLayout">
         <tr>
-          <td class="RowHeading">Committed:</td>
-          <td><select
-            [ngModel]="Facility?.Committed"
-            (ngModelChange)="Facility.Committed = $event"
-            class="YesNo">
+          <td class="RowHeading">Multi-Currency:</td>
+          <td>
+            <select [ngModel]="Facility?.MultiCurrency"
+                    (ngModelChange)="Facility.MultiCurrency = $event"
+                    class="YesNo">
               <option [ngValue]="null"></option>
               <option [ngValue]="true">Yes</option>
               <option [ngValue]="false">No</option>
-            </select></td>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td class="RowHeading">Committed:</td>
+          <td>
+            <select [ngModel]="Facility?.Committed"
+                    (ngModelChange)="Facility.Committed = $event"
+                    class="YesNo">
+              <option [ngValue]="null"></option>
+              <option [ngValue]="true">Yes</option>
+              <option [ngValue]="false">No</option>
+            </select>
+          </td>
         </tr>
       </table>
     </td>
