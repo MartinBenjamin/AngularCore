@@ -18,7 +18,9 @@ export interface Facility extends ContractualCommitment
     Expected1StDrawdownDate  : Date;
     SameDayFacility          : boolean;
     MultiCurrency            : boolean;
+    Bilteral                 : boolean;
     Committed                : boolean;
+    OnBalanceSheet           : boolean;
 }
 
 export interface LenderParticipation extends ContractualCommitment
