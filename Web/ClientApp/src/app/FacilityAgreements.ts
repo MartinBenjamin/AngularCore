@@ -16,6 +16,7 @@ export interface Facility extends ContractualCommitment
     AvailabilityPeriodEndDate: Date;
     MaturityDate             : Date;
     Expected1StDrawdownDate  : Date;
+    SameDayFacility          : boolean;
     MultiCurrency            : boolean;
     Committed                : boolean;
 }
