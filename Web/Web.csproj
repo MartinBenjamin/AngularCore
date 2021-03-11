@@ -38,6 +38,7 @@
     <None Remove="ClientApp\src\app\CommonDomainObjects.ts" />
     <None Remove="ClientApp\src\app\Components\Cldr.d.ts" />
     <None Remove="ClientApp\src\app\Components\ValidatedProperty.ts" />
+    <None Remove="ClientApp\src\app\Components\YesNoPipe.ts" />
     <None Remove="ClientApp\src\app\Contracts.ts" />
     <None Remove="ClientApp\src\app\CurrencyServiceProvider.ts" />
     <None Remove="ClientApp\src\app\DealProvider.ts" />
@@ -274,6 +275,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\ClassificationSchemeServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Components\Cldr.d.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Components\ValidatedProperty.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Components\YesNoPipe.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Contracts.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\CurrencyServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\DealProvider.ts" />

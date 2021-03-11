@@ -23,6 +23,7 @@ import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
 import { OriginationTab } from './OriginationTab';
 import { TransactionDetails } from './TransactionDetails';
+import { YesNoPipe } from '../Components/YesNoPipe'
 
 @NgModule(
     {
@@ -45,7 +46,8 @@ import { TransactionDetails } from './TransactionDetails';
                 MoreTabs,
                 OriginationTab,
                 Sponsors,
-                TransactionDetails
+                TransactionDetails,
+                YesNoPipe
             ],
         imports:
             [

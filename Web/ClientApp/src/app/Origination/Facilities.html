@@ -31,8 +31,8 @@
     <td class="Amount">{{facility[1].AnticipatedHoldAmount|amount}}</td>
     <td class="Amount">{{facility[1].ActualAllocation|amount}}</td>
     <td>{{facility[0].MaturityDate|utcDate}}</td>
-    <td></td>
-    <td></td>
+    <td>{{facility[0].SameDayFacility|yesNo}}</td>
+    <td>{{facility[0].MultiCurrency|yesNo}}</td>
     <td>{{facility[0].Expected1StDrawdownDate|utcDate}}</td>
     <td>{{facility[0].AvailabilityPeriodEndDate|utcDate}}</td>
     <td><a (click)="Update(facility[0])">edit</a></td>
