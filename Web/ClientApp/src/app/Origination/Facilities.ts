@@ -90,11 +90,25 @@ export class Facilities implements OnDestroy
 
     Update(
         facility: Facility
-        )
+        ): void
     {
         this._facility.Update(
             facility,
             () => this.ComputeFacilities());
+    }
+
+    Delete(
+        facility: Facility
+        ): void
+    {
+        if(confirm(`Delete Facility ${facility.Name}?`))
+        {
+            this._deal.Confers.splice(
+                this._deal.Confers.indexOf(facility),
+                1);
+
+            this.ComputeFacilities();
+        }
     }
 
     private ComputeFacilities(): void
