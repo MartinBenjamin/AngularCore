@@ -24,7 +24,6 @@ import { MoreTabs } from './MoreTabs';
 import { OriginationTab } from './OriginationTab';
 import { TransactionDetails } from './TransactionDetails';
 import { YesNoPipe } from '../Components/YesNoPipe'
-import { YesNoSelect } from '../Components/YesNoSelect';
 
 @NgModule(
     {
@@ -48,8 +47,7 @@ import { YesNoSelect } from '../Components/YesNoSelect';
                 OriginationTab,
                 Sponsors,
                 TransactionDetails,
-                YesNoPipe,
-                YesNoSelect
+                YesNoPipe
             ],
         imports:
             [

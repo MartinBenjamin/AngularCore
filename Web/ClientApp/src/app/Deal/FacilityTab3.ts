@@ -44,20 +44,4 @@ export class FacilityTab3 implements OnDestroy
     {
         return this._lenderParticipation;
     }
-
-    get LenderShare(): number
-    {
-        if(this._facility && this._lenderParticipation)
-            return this.LenderParticipationAmount * 100 / this._facility.TotalCommitments;
-
-        return null;
-    }
-
-    private get LenderParticipationAmount(): number
-    {
-        if(this._lenderParticipation)
-            return this._lenderParticipation.ActualAllocation !== null ? this._lenderParticipation.ActualAllocation : this._lenderParticipation.AnticipatedHoldAmount;
-
-        return null;
-    }
 }
