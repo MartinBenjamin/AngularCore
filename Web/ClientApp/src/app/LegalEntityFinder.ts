@@ -46,7 +46,7 @@ export class LegalEntityFinderButtons
                             <td>{{legalEntity.Name}}</td>
                             <td>{{legalEntity?.Country.Name}}</td>
                         </tr>
-                        <tr [hidden]="legalEntities.length">
+                        <tr *ngIf="!legalEntities.length">
                             <td colspan="3" style="text-align: center;"> No Legal Entities Found.</td>
                         </tr>
                     </table>
