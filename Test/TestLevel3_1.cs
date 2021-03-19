@@ -78,14 +78,14 @@ namespace Test
                 checked(lhs.Numerator * rhs.Denominator - rhs.Numerator * lhs.Denominator),
                 checked(lhs.Denominator * rhs.Denominator));
 
-        public static Fraction operator*(
+        public static Fraction operator *(
             Fraction lhs,
             Fraction rhs
             ) => new Fraction(
                 checked(lhs.Numerator * rhs.Numerator),
                 checked(lhs.Denominator * rhs.Denominator));
 
-        public static Fraction operator/(
+        public static Fraction operator /(
             Fraction lhs,
             Fraction rhs
             ) => new Fraction(
