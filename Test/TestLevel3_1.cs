@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Test
 {
-    public struct Fraction
+    public struct Fraction: IComparable<Fraction>
     {
         public int Numerator   { get; private set; }
         public int Denominator { get; private set; }
@@ -122,6 +122,10 @@ namespace Test
         }
 
         public override string ToString() => Numerator != 0 && Denominator != 1 ? $"{ Numerator }/{ Denominator }" : Numerator.ToString();
+
+        int IComparable<Fraction>.CompareTo(
+            Fraction other
+            ) => other.Numerator * Denominator - Numerator * other.Denominator;
     }
 
     public struct Matrix
