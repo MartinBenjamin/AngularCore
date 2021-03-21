@@ -143,47 +143,24 @@ namespace Test
             };
         }
 
-        private ISet<Direction> Directions(
+        private void ProcessSemiCircle(
             TestDataList<int> room,
             TestDataList<int> me,
             TestDataList<int> trainer,
-            int               distance       
+            int               distance,
+            int               nStart,
+            int               nIncrement,
+            ISet<Direction>   included,
+            ISet<Direction>   excluded
             )
         {
-            /*
-                If room is repeatedly replicated by reflection in each of it walls, then the trainer will form a lattice given by:
-
-                    x = m * x_dim + x_trainer for even m:Z,
-                    x = m * x_dim + (x_dim - x_trainer) for odd m:Z,
-
-                    y = n * y_dim + y_trainer for even n:Z,
-                    y = n * y_dim + (y_dim - y_trainer) for odd n:Z.
-
-                Or:
-
-                    x = m * x_dim + R(m, x_dim, x_trainer),
-                    y = n * y_dim + R(n, y_dim, y_trainer).
-
-                Where R(m, x_dim, x_trainer) is x_trainer for even m and x_dim - x_trainer for odd m.  A similar lattice
-                will be formed by myself.
-
-                Need to find all distinct trainer lattice point directions for lattice points on or within the maximum distance d from me.
-                Need to exclude trainer lattice points hidden by reflections of me.
-            */
-
-            var included = new SortedSet<Direction>(new DirectionComparer());
-            var excluded = new SortedSet<Direction>(new DirectionComparer());
-
-            // Start at m = 0, n = 0.
-            included.Add(new Direction(trainer[0] - me[0], trainer[1] - me[1]));
-
-            var n = 0;
+            var n = nStart;
             var latticeRange = LatticeRange(
                     room,
                     me,
                     trainer,
                     distance,
-                    n);
+                    nStart);
 
             while(latticeRange != null)
             {
@@ -232,76 +209,70 @@ namespace Test
                     excluded.Add(myReflectionDirection);
                 }
 
+                n += nIncrement;
                 latticeRange = LatticeRange(
                     room,
                     me,
                     trainer,
                     distance,
-                    ++n);
+                    n);
             }
 
-            n = -1;
-            latticeRange = LatticeRange(
+        }
+
+        private ISet<Direction> Directions(
+            TestDataList<int> room,
+            TestDataList<int> me,
+            TestDataList<int> trainer,
+            int               distance       
+            )
+        {
+            /*
+                If room is repeatedly replicated by reflection in each of it walls, then the trainer will form a lattice given by:
+
+                    x = m * x_dim + x_trainer for even m:Z,
+                    x = m * x_dim + (x_dim - x_trainer) for odd m:Z,
+
+                    y = n * y_dim + y_trainer for even n:Z,
+                    y = n * y_dim + (y_dim - y_trainer) for odd n:Z.
+
+                Or:
+
+                    x = m * x_dim + R(m, x_dim, x_trainer),
+                    y = n * y_dim + R(n, y_dim, y_trainer).
+
+                Where R(m, x_dim, x_trainer) is x_trainer for even m and x_dim - x_trainer for odd m.  A similar lattice
+                will be formed by myself.
+
+                Need to find all distinct trainer lattice point directions for lattice points on or within the maximum distance d from me.
+                Need to exclude trainer lattice points hidden by reflections of me.
+            */
+
+            var included = new SortedSet<Direction>(new DirectionComparer());
+            var excluded = new SortedSet<Direction>(new DirectionComparer());
+
+            // Start at m = 0, n = 0.
+            included.Add(new Direction(trainer[0] - me[0], trainer[1] - me[1]));
+
+            ProcessSemiCircle(
                 room,
                 me,
                 trainer,
                 distance,
-                n);
+                0,
+                1,
+                included,
+                excluded);
 
-            while(latticeRange != null)
-            {
-                var trainerReflectionY = (n % 2 == 0 ? trainer[1] : room[1] - trainer[1]) + n * room[1];
-                var myReflectionY      = (n % 2 == 0 ? me[1]      : room[1] - me[1]     ) + n * room[1];
-
-                for(var m = 0;m <= latticeRange[0];++m)
-                {
-                    var trainerReflectionX = (m % 2 == 0 ? trainer[0] : room[0] - trainer[0]) + m * room[0];
-                    var myReflectionX      = (m % 2 == 0 ? me[0]      : room[0] - me[0]     ) + m * room[0];
-
-                    var trainerReflectionDirection = new Direction(
-                        trainerReflectionX - me[0],
-                        trainerReflectionY - me[1]);
-                    var myReflectionDirection = new Direction(
-                        myReflectionX - me[0],
-                        myReflectionY - me[1]);
-
-                    if(!(trainerReflectionDirection == myReflectionDirection &&
-                         (Math.Abs(myReflectionX) < Math.Abs(trainerReflectionX) ||
-                          Math.Abs(myReflectionY) < Math.Abs(trainerReflectionY))) &&
-                       !excluded.Contains(trainerReflectionDirection))
-                        included.Add(trainerReflectionDirection);
-
-                    excluded.Add(myReflectionDirection);
-                }
-
-                for(var m = -1;m >= latticeRange[1];--m)
-                {
-                    var trainerReflectionX = (m % 2 == 0 ? trainer[0] : room[0] - trainer[0]) + m * room[0];
-                    var myReflectionX = (m % 2 == 0 ? me[0] : room[0] - me[0]) + m * room[0];
-
-                    var trainerReflectionDirection = new Direction(
-                        trainerReflectionX - me[0],
-                        trainerReflectionY - me[1]);
-                    var myReflectionDirection = new Direction(
-                        myReflectionX - me[0],
-                        myReflectionY - me[1]);
-
-                    if(!(trainerReflectionDirection == myReflectionDirection &&
-                         (Math.Abs(myReflectionX) < Math.Abs(trainerReflectionX) ||
-                          Math.Abs(myReflectionY) < Math.Abs(trainerReflectionY))) &&
-                       !excluded.Contains(trainerReflectionDirection))
-                        included.Add(trainerReflectionDirection);
-
-                    excluded.Add(myReflectionDirection);
-                }
-
-                latticeRange = LatticeRange(
-                    room,
-                    me,
-                    trainer,
-                    distance,
-                    --n);
-            }
+            ProcessSemiCircle(
+                room,
+                me,
+                trainer,
+                distance,
+                -1,
+                -1,
+                included,
+                excluded);
 
             return included;
         }
