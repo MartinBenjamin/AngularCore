@@ -167,7 +167,9 @@ namespace Test
                 var trainerReflectionY = (n % 2 == 0 ? trainer[1] : room[1] - trainer[1]) + n * room[1];
                 var myReflectionY      = (n % 2 == 0 ? me[1]      : room[1] - me[1]     ) + n * room[1];
 
-                for(var m = n == 0 ? 1 : 0;m <= latticeRange[0];++m)
+                var mEnd = me[0] == room[0] ? 0 : latticeRange[0];
+
+                for(var m = n == 0 ? 1 : 0;m <= mEnd;++m)
                 {
                     var trainerReflectionX = (m % 2 == 0 ? trainer[0] : room[0] - trainer[0]) + m * room[0];                   
                     var myReflectionX = (m % 2 == 0 ? me[0] : room[0] - me[0]) + m * room[0];
@@ -188,7 +190,9 @@ namespace Test
                     excluded.Add(myReflectionDirection);
                 }
 
-                for(var m = -1;m >= latticeRange[1];--m)
+                mEnd = me[0] == 0 ? 0 : latticeRange[1];
+                    
+                for(var m = -1;m >= mEnd;--m)
                 {
                     var trainerReflectionX = (m % 2 == 0 ? trainer[0] : room[0] - trainer[0]) + m * room[0];                   
                     var myReflectionX      = (m % 2 == 0 ? me[0]      : room[0] - me[0]     ) + m * room[0];
@@ -217,7 +221,6 @@ namespace Test
                     distance,
                     n);
             }
-
         }
 
         private ISet<Direction> Directions(
@@ -245,7 +248,7 @@ namespace Test
                 will be formed by myself.
 
                 Need to find all distinct trainer lattice point directions for lattice points on or within the maximum distance d from me.
-                Need to exclude trainer lattice points hidden by reflections of me.
+                Need to exclude trainer lattice points hidden by my lattice points.
             */
 
             var included = new SortedSet<Direction>(new DirectionComparer());
@@ -254,25 +257,50 @@ namespace Test
             // Start at m = 0, n = 0.
             included.Add(new Direction(trainer[0] - me[0], trainer[1] - me[1]));
 
-            ProcessSemiCircle(
-                room,
-                me,
-                trainer,
-                distance,
-                0,
-                1,
-                included,
-                excluded);
+            if(me[1] == 0)
+                ProcessSemiCircle(
+                    room,
+                    me,
+                    trainer,
+                    distance,
+                    0,
+                    1,
+                    included,
+                    excluded);
 
-            ProcessSemiCircle(
-                room,
-                me,
-                trainer,
-                distance,
-                -1,
-                -1,
-                included,
-                excluded);
+            else if(me[1] == room[1])
+                ProcessSemiCircle(
+                    room,
+                    me,
+                    trainer,
+                    distance,
+                    0,
+                    -1,
+                    included,
+                    excluded);
+
+            else
+            {
+                ProcessSemiCircle(
+                    room,
+                    me,
+                    trainer,
+                    distance,
+                    0,
+                    1,
+                    included,
+                    excluded);
+
+                ProcessSemiCircle(
+                    room,
+                    me,
+                    trainer,
+                    distance,
+                    -1,
+                    -1,
+                    included,
+                    excluded);
+            }
 
             return included;
         }
@@ -410,9 +438,25 @@ namespace Test
                     },
                     new object[]
                     {
+                        new TestDataList<int>{ 3, 2 },
+                        new TestDataList<int>{ 2, 1 },
+                        new TestDataList<int>{ 1, 1 },
+                        4,
+                        7
+                    },
+                    new object[]
+                    {
                         new TestDataList<int>{ 2, 3 },
                         new TestDataList<int>{ 1, 1 },
                         new TestDataList<int>{ 1, 2 },
+                        4,
+                        7
+                    },
+                    new object[]
+                    {
+                        new TestDataList<int>{ 2, 3 },
+                        new TestDataList<int>{ 1, 2 },
+                        new TestDataList<int>{ 1, 1 },
                         4,
                         7
                     },
@@ -431,6 +475,46 @@ namespace Test
                         new TestDataList<int>{ 100, 185 },
                         500,
                         9
+                    },
+                    new object[]
+                    {
+                        new TestDataList<int>{ 2, 2 },
+                        new TestDataList<int>{ 0, 1 },
+                        new TestDataList<int>{ 1, 1 },
+                        3,
+                        3
+                    },
+                    new object[]
+                    {
+                        new TestDataList<int>{ 2, 2 },
+                        new TestDataList<int>{ 2, 1 },
+                        new TestDataList<int>{ 1, 1 },
+                        3,
+                        3
+                    },
+                    new object[]
+                    {
+                        new TestDataList<int>{ 2, 2 },
+                        new TestDataList<int>{ 1, 0 },
+                        new TestDataList<int>{ 1, 1 },
+                        3,
+                        3
+                    },
+                    new object[]
+                    {
+                        new TestDataList<int>{ 2, 2 },
+                        new TestDataList<int>{ 1, 2 },
+                        new TestDataList<int>{ 1, 1 },
+                        3,
+                        3
+                    },
+                    new object[]
+                    {
+                        new TestDataList<int>{ 2, 2 },
+                        new TestDataList<int>{ 0, 1 },
+                        new TestDataList<int>{ 1, 1 },
+                        4,
+                        5
                     }
                 };
             }
