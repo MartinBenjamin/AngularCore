@@ -167,53 +167,53 @@ namespace Test
 
             while(latticeRange != null)
             {
-                var trainerReflectionY = (n % 2 == 0 ? trainer[1] : room[1] - trainer[1]) + n * room[1];
-                var myReflectionY      = (n % 2 == 0 ? me[1]      : room[1] - me[1]     ) + n * room[1];
+                var trainerY = (n % 2 == 0 ? trainer[1] : room[1] - trainer[1]) + n * room[1];
+                var meY      = (n % 2 == 0 ? me[1]      : room[1] - me[1]     ) + n * room[1];
 
                 var mEnd = me[0] == room[0] ? 0 : latticeRange[0];
 
                 for(var m = 0;m <= mEnd;++m)
                 {
-                    var trainerReflectionX = (m % 2 == 0 ? trainer[0] : room[0] - trainer[0]) + m * room[0];                   
-                    var myReflectionX = (m % 2 == 0 ? me[0] : room[0] - me[0]) + m * room[0];
+                    var trainerX = (m % 2 == 0 ? trainer[0] : room[0] - trainer[0]) + m * room[0];                   
+                    var meX = (m % 2 == 0 ? me[0] : room[0] - me[0]) + m * room[0];
 
-                    var trainerReflectionDirection = new Direction(
-                        trainerReflectionX - me[0],
-                        trainerReflectionY - me[1]);
-                    var myReflectionDirection = new Direction(
-                        myReflectionX - me[0],
-                        myReflectionY - me[1]);
+                    var trainerDirection = new Direction(
+                        trainerX - me[0],
+                        trainerY - me[1]);
+                    var myDirection = new Direction(
+                        meX - me[0],
+                        meY - me[1]);
 
-                    if(!(trainerReflectionDirection == myReflectionDirection &&
-                         (Math.Abs(myReflectionX) < Math.Abs(trainerReflectionX) ||
-                          Math.Abs(myReflectionY) < Math.Abs(trainerReflectionY))) &&
-                       !excluded.Contains(trainerReflectionDirection))
-                         included.Add(trainerReflectionDirection);
+                    if(!(trainerDirection == myDirection &&
+                         (Math.Abs(meX) < Math.Abs(trainerX) ||
+                          Math.Abs(meY) < Math.Abs(trainerY))) &&
+                       !excluded.Contains(trainerDirection))
+                         included.Add(trainerDirection);
 
-                    excluded.Add(myReflectionDirection);
+                    excluded.Add(myDirection);
                 }
 
                 mEnd = me[0] == 0 ? 0 : latticeRange[1];
                     
                 for(var m = -1;m >= mEnd;--m)
                 {
-                    var trainerReflectionX = (m % 2 == 0 ? trainer[0] : room[0] - trainer[0]) + m * room[0];                   
-                    var myReflectionX      = (m % 2 == 0 ? me[0]      : room[0] - me[0]     ) + m * room[0];
+                    var trainerX = (m % 2 == 0 ? trainer[0] : room[0] - trainer[0]) + m * room[0];                   
+                    var meX      = (m % 2 == 0 ? me[0]      : room[0] - me[0]     ) + m * room[0];
 
-                    var trainerReflectionDirection = new Direction(
-                        trainerReflectionX - me[0],
-                        trainerReflectionY - me[1]);
-                    var myReflectionDirection = new Direction(
-                        myReflectionX - me[0],
-                        myReflectionY - me[1]);
+                    var trainerDirection = new Direction(
+                        trainerX - me[0],
+                        trainerY - me[1]);
+                    var myDirection = new Direction(
+                        meX - me[0],
+                        meY - me[1]);
 
-                    if(!(trainerReflectionDirection == myReflectionDirection &&
-                         (Math.Abs(myReflectionX) < Math.Abs(trainerReflectionX) ||
-                          Math.Abs(myReflectionY) < Math.Abs(trainerReflectionY))) &&
-                       !excluded.Contains(trainerReflectionDirection))
-                         included.Add(trainerReflectionDirection);
+                    if(!(trainerDirection == myDirection &&
+                         (Math.Abs(meX) < Math.Abs(trainerX) ||
+                          Math.Abs(meY) < Math.Abs(trainerY))) &&
+                       !excluded.Contains(trainerDirection))
+                         included.Add(trainerDirection);
 
-                    excluded.Add(myReflectionDirection);
+                    excluded.Add(myDirection);
                 }
 
                 n += nIncrement;
