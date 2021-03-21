@@ -18,12 +18,15 @@ namespace Test
             X = x;
             Y = y;
 
-            int gcd = Gcd(
-                Math.Abs(X),
-                Math.Abs(Y));
+            if(X != 0 || Y != 0)
+            {
+                int gcd = Gcd(
+                    Math.Abs(X),
+                    Math.Abs(Y));
 
-            X /= gcd;
-            Y /= gcd;
+                X /= gcd;
+                Y /= gcd;
+            }
         }
 
         public override bool Equals(
@@ -169,7 +172,7 @@ namespace Test
 
                 var mEnd = me[0] == room[0] ? 0 : latticeRange[0];
 
-                for(var m = n == 0 ? 1 : 0;m <= mEnd;++m)
+                for(var m = 0;m <= mEnd;++m)
                 {
                     var trainerReflectionX = (m % 2 == 0 ? trainer[0] : room[0] - trainer[0]) + m * room[0];                   
                     var myReflectionX = (m % 2 == 0 ? me[0] : room[0] - me[0]) + m * room[0];
@@ -253,9 +256,6 @@ namespace Test
 
             var included = new SortedSet<Direction>(new DirectionComparer());
             var excluded = new SortedSet<Direction>(new DirectionComparer());
-
-            // Start at m = 0, n = 0.
-            included.Add(new Direction(trainer[0] - me[0], trainer[1] - me[1]));
 
             if(me[1] == 0)
                 ProcessSemiCircle(
@@ -515,6 +515,38 @@ namespace Test
                         new TestDataList<int>{ 1, 1 },
                         4,
                         5
+                    },
+                    new object[]
+                    {
+                        new TestDataList<int>{ 1, 1 },
+                        new TestDataList<int>{ 0, 0 },
+                        new TestDataList<int>{ 1, 1 },
+                        4,
+                        3
+                    },
+                    new object[]
+                    {
+                        new TestDataList<int>{ 1, 1 },
+                        new TestDataList<int>{ 1, 1 },
+                        new TestDataList<int>{ 0, 0 },
+                        4,
+                        3
+                    },
+                    new object[]
+                    {
+                        new TestDataList<int>{ 1, 1 },
+                        new TestDataList<int>{ 0, 0 },
+                        new TestDataList<int>{ 1, 1 },
+                        3,
+                        1
+                    },
+                    new object[]
+                    {
+                        new TestDataList<int>{ 1, 1 },
+                        new TestDataList<int>{ 0, 0 },
+                        new TestDataList<int>{ 1, 1 },
+                        1,
+                        0
                     }
                 };
             }
