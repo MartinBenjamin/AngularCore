@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Deal"
+    targetNamespace="http://www.bk.mufg.jp/Deal/001"
+    elementFormDefault="qualified"
+    xmlns="http://www.bk.mufg.jp/Deal/001"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:rd="http://www.bk.mufg.jp/Deal/ReferenceData/001">
+    <xs:import namespace="http://www.bk.mufg.jp/Deal/ReferenceData/001" schemaLocation="DealReferenceData.xsd"/>
+    <xs:simpleType name="DateType">
+        <xs:restriction base="xs:date">
+            <xs:pattern value="\d{4}-\d{2}-\d{2}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="FinancialAmountType">
+        <xs:restriction base="xs:decimal">
+            <xs:fractionDigits value="2"/>
+            <xs:totalDigits value="22"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="PercentageType">
+        <xs:restriction base="xs:decimal">
+            <xs:fractionDigits value="2"/>
+            <xs:minInclusive value="0"/>
+            <xs:maxExclusive value="999.99"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Percentage100Type">
+        <xs:restriction base="xs:decimal">
+            <xs:fractionDigits value="2"/>
+            <xs:minInclusive value="0"/>
+            <xs:maxExclusive value="100.00"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="DomainObjectType">
+        <xs:sequence>
+            <xs:element name="Id" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="DealNameType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="100"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ProjectNameType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="100"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="RatchetType">
+        <xs:sequence>
+            <xs:element name="Date" type="DateType"/>
+            <xs:element name="Value" type="Percentage100Type"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="MarginType">
+        <xs:sequence>
+            <xs:element name="Ratchet" type="RatchetType"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CommitmentFeeType">
+        <xs:choice>
+            <xs:element name="PercentageOfMargin" type="Percentage100Type"/>
+            <xs:element name="Ratchet" type="RatchetType" maxOccurs="unbounded"/>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="Deal">
+        <xs:complexContent>
+            <xs:extension base="DomainObjectType">
+                <xs:sequence>
+                    <xs:element name="Type" type="rd:DealType"/>
+                    <xs:element name="Stage" type="rd:DealStage"/>
+                    <xs:element name="Name" type="DealNameType"/>
+                    <xs:element name="ProjectName" type="ProjectNameType" minOccurs="0"/>
+                    <xs:element name="AnticipatedClosingDate" type="DateType"/>
+                    <xs:element name="SignedDate" type="DateType"/>
+                    <xs:element name="FinancialCloseDate" type="DateType"/>
+                    <xs:element name="Tranches">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="CreditRiskTranche" type="CreditRiskTrancheType" minOccurs="0" maxOccurs="unbounded"/>
+                                <xs:element name="Swap" type="SwapType" minOccurs="0" maxOccurs="unbounded"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="CreditRiskTrancheType">
+        <xs:complexContent>
+            <xs:extension base="DomainObjectType">
+                <xs:sequence>
+                    <xs:element name="DebtSize" type="FinancialAmountType"/>
+                    <xs:element name="Currency" type="rd:Currency"/>
+                    <xs:element name="Margin" type="MarginType"/>
+                    <xs:element name="CommitmentFee" type="CommitmentFeeType"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="SwapType">
+        <xs:complexContent>
+            <xs:extension base="DomainObjectType">
+                <xs:sequence>
+                    <xs:element name="AnElement"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

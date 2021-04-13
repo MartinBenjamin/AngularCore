@@ -118,7 +118,7 @@ namespace CommonDomainObjects
 
         public override bool Equals(
             object obj
-            ) => obj is Range<T> range &&
+            ) => obj is Range2<T> range &&
                 Start.Equals(range.Start) &&
                 End.Equals(range.End);
 

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Deal"
+    targetNamespace="http://www.bk.mufg.jp/Deal/ReferenceData/001"
+    elementFormDefault="qualified"
+    xmlns="http://www.bk.mufg.jp/Deal/ReferenceData/001"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:simpleType name="ReferenceDataIdentifier">
+        <xs:restriction base="xs:int"/>
+    </xs:simpleType>
+    <xs:simpleType name="Currency">
+        <xs:restriction base="ReferenceDataIdentifier"/>
+    </xs:simpleType>
+    <xs:simpleType name="DealType">
+        <xs:restriction base="ReferenceDataIdentifier"/>
+    </xs:simpleType>
+    <xs:simpleType name="DealStage">
+        <xs:restriction base="ReferenceDataIdentifier"/>
+    </xs:simpleType>
+</xs:schema>
