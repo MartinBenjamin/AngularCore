@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AreaTitle, DealTrackerLayout, FeatureTitle, MenuContainer } from './DealTrackerLayout';
+import { Performance } from './Performance';
 
 @NgModule(
     {
@@ -10,7 +11,8 @@ import { AreaTitle, DealTrackerLayout, FeatureTitle, MenuContainer } from './Dea
                 AreaTitle,
                 DealTrackerLayout,
                 FeatureTitle,
-                MenuContainer
+                MenuContainer,
+                Performance
             ],
         imports:
             [
