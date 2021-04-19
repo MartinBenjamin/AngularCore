@@ -133,8 +133,22 @@ namespace Test
 
         }
 
+
         [TestCase]
-        public void TestPreimage2()
+        public void TestPreimageRow0()
+        {
+            var cellValues = new[] { false, true };
+            foreach(var tPlusOneValue in cellValues)
+                foreach(var pathSegment1 in _pathSegments)
+                        Assert.That(
+                            _preimagesRow0[tPlusOneValue ? 1 : 0].Contains(pathSegment1),
+                            Is.EqualTo(_pathSegments.Any(pathSegment2 => tPlusOneValue == TPlusOneValue(
+                                pathSegment1,
+                                pathSegment2))));
+        }
+
+        [TestCase]
+        public void TestPreimage()
         {
             var cellValues = new[] { false, true };
             foreach(var tPlusOneValue in cellValues)
@@ -148,11 +162,11 @@ namespace Test
         }
 
         private int ProcessRow(
-            IList<IList<bool>> image,
-            bool[][][][]       preimageNetworks,
-            int[][]            pathSegmentIndices,
-            int                row,
-            int                count
+            bool[][]     image,
+            bool[][][][] preimageNetworks,
+            int[][]      pathSegmentIndices,
+            int          row,
+            int          count
             )
         {
             if(row == preimageNetworks.Length)
@@ -178,7 +192,7 @@ namespace Test
 
             while(column >= 0)
             {
-                if(column < image[0].Count)
+                if(column < image[0].Length)
                 {
                     if(rowPathSegmentIndices[column] == preimageNetwork[column].Length) // No matching next path segment.
                     {
@@ -195,7 +209,7 @@ namespace Test
                             // Matching next path segment.
                             column += 1;
 
-                            if(column < image[0].Count)
+                            if(column < image[0].Length)
                                 rowPathSegmentIndices[column] = 0;
                         }
                         else
