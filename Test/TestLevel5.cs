@@ -16,8 +16,8 @@ namespace Test
 
         private static bool[][] _pathSegments = new[] { _00, _01, _10, _11 };
 
-        private bool[][][]     _preimages = new bool[2][][];
-        private bool[][][][][] _preimages2;
+        private bool[][][]     _preimagesRow0 = new bool[2][][];
+        private bool[][][][][] _preimages;
 
         private bool TPlus1Value(
             bool[] row0,
@@ -37,7 +37,7 @@ namespace Test
         {
             // Derive preimage lookup for first row.
             var cellValues = new[] { false, true };
-            var preimages = new[]
+            var preimagesRow0 = new[]
             {
                 new List<bool[]>(),
                 new List<bool[]>()
@@ -50,15 +50,15 @@ namespace Test
                             _pathSegments[index1],
                             _pathSegments[index2]))
                         {
-                            preimages[tPlusOneValue ? 1 : 0].Add(_pathSegments[index1]);
+                            preimagesRow0[tPlusOneValue ? 1 : 0].Add(_pathSegments[index1]);
                             break;
                         }
 
-            for(var index = 0;index < preimages.Length;++index)
-                _preimages[index] = preimages[index].ToArray();
+            for(var index = 0;index < preimagesRow0.Length;++index)
+                _preimagesRow0[index] = preimagesRow0[index].ToArray();
 
             // Derive preimage lookup for rows other than first.
-            var preimages2 = new[]
+            var preimages = new[]
             {
                 new[]
                 {
@@ -88,7 +88,7 @@ namespace Test
                 }
             };
 
-            _preimages2 = new[]
+            _preimages = new[]
             {
                 new[]
                 {
@@ -128,14 +128,14 @@ namespace Test
                         if(tPlusOneValue == TPlus1Value(
                             pathSegment1,
                             pathSegment2))
-                            preimages2[tPlusOneValue ? 1 : 0][pathSegment1[0] ? 1 : 0][pathSegment1[1] ? 1 : 0].Add(pathSegment2);
+                            preimages[tPlusOneValue ? 1 : 0][pathSegment1[0] ? 1 : 0][pathSegment1[1] ? 1 : 0].Add(pathSegment2);
                     }
                 }
 
             for(var index1 = 0;index1 < cellValues.Length;++index1)
                 for(var index2 = 0;index2 < cellValues.Length;++index2)
                     for(var index3 = 0;index3 < cellValues.Length;++index3)
-                        _preimages2[index1][index2][index3] = preimages2[index1][index2][index3].ToArray();
+                        _preimages[index1][index2][index3] = preimages[index1][index2][index3].ToArray();
 
         }
 
@@ -147,7 +147,7 @@ namespace Test
                 foreach(var pathSegment1 in _pathSegments)
                     foreach(var pathSegment2 in _pathSegments)
                         Assert.That(
-                            _preimages2[tPlusOneValue ? 1 : 0][pathSegment1[0] ? 1 : 0][pathSegment1[1] ? 1 : 0].Contains(pathSegment2),
+                            _preimages[tPlusOneValue ? 1 : 0][pathSegment1[0] ? 1 : 0][pathSegment1[1] ? 1 : 0].Contains(pathSegment2),
                             Is.EqualTo(tPlusOneValue == TPlus1Value(
                                 pathSegment1,
                                 pathSegment2)));
@@ -168,11 +168,11 @@ namespace Test
             var preimageNetwork = preimageNetworks[row];
             if(row == 0)
                 for(var c = 0;c < preimageNetwork.Length;++c)
-                    preimageNetwork[c] = _preimages[image[row][c] ? 1 : 0];
+                    preimageNetwork[c] = _preimagesRow0[image[row][c] ? 1 : 0];
 
             else
                 for(var c = 0;c < preimageNetwork.Length;++c)
-                    preimageNetwork[c] = _preimages2[image[row - 1][c] ? 1 : 0]
+                    preimageNetwork[c] = _preimages[image[row - 1][c] ? 1 : 0]
                         [preimageNetworks[row - 1][c][pathSegmentIndices[row - 1][c]][0] ? 1 : 0]
                         [preimageNetworks[row - 1][c][pathSegmentIndices[row - 1][c]][1] ? 1 : 0];
 
