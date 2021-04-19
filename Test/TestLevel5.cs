@@ -19,7 +19,7 @@ namespace Test
         private bool[][][]     _preimagesRow0 = new bool[2][][];
         private bool[][][][][] _preimages;
 
-        private bool TPlus1Value(
+        private bool TPlusOneValue(
             bool[] row0,
             bool[] row1
             )
@@ -43,14 +43,14 @@ namespace Test
                 new List<bool[]>()
             };
 
-            foreach(var tPlus1Value in cellValues)
+            foreach(var tPlusOneValue in cellValues)
                 for(var index1 = 0;index1 < _pathSegments.Length;++index1)
                     for(var index2 = 0;index2 < _pathSegments.Length;++index2)
-                        if(tPlus1Value == TPlus1Value(
+                        if(tPlusOneValue == TPlusOneValue(
                             _pathSegments[index1],
                             _pathSegments[index2]))
                         {
-                            preimagesRow0[tPlus1Value ? 1 : 0].Add(_pathSegments[index1]);
+                            preimagesRow0[tPlusOneValue ? 1 : 0].Add(_pathSegments[index1]);
                             break;
                         }
 
@@ -118,17 +118,17 @@ namespace Test
                 }
             };
 
-            foreach(var tPlus1Value in cellValues)
+            foreach(var tPlusOneValue in cellValues)
                 for(var index1 = 0;index1 < _pathSegments.Length;++index1)
                 {
                     var pathSegment1 = _pathSegments[index1];
                     for(var index2 = 0;index2 < _pathSegments.Length;++index2)
                     {
                         var pathSegment2 = _pathSegments[index2];
-                        if(tPlus1Value == TPlus1Value(
+                        if(tPlusOneValue == TPlusOneValue(
                             pathSegment1,
                             pathSegment2))
-                            preimages[tPlus1Value ? 1 : 0][pathSegment1[0] ? 1 : 0][pathSegment1[1] ? 1 : 0].Add(pathSegment2);
+                            preimages[tPlusOneValue ? 1 : 0][pathSegment1[0] ? 1 : 0][pathSegment1[1] ? 1 : 0].Add(pathSegment2);
                     }
                 }
 
@@ -148,7 +148,7 @@ namespace Test
                     foreach(var pathSegment2 in _pathSegments)
                         Assert.That(
                             _preimages[tPlusOneValue ? 1 : 0][pathSegment1[0] ? 1 : 0][pathSegment1[1] ? 1 : 0].Contains(pathSegment2),
-                            Is.EqualTo(tPlusOneValue == TPlus1Value(
+                            Is.EqualTo(tPlusOneValue == TPlusOneValue(
                                 pathSegment1,
                                 pathSegment2)));
         }
