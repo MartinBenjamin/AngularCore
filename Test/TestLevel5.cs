@@ -44,13 +44,13 @@ namespace Test
             };
 
             foreach(var tPlusOneValue in cellValues)
-                for(var index1 = 0;index1 < _pathSegments.Length;++index1)
-                    for(var index2 = 0;index2 < _pathSegments.Length;++index2)
+                foreach(var pathSegment1 in _pathSegments)
+                    foreach(var pathSegment2 in _pathSegments)
                         if(tPlusOneValue == TPlusOneValue(
-                            _pathSegments[index1],
-                            _pathSegments[index2]))
+                            pathSegment1,
+                            pathSegment2))
                         {
-                            preimagesRow0[tPlusOneValue ? 1 : 0].Add(_pathSegments[index1]);
+                            preimagesRow0[tPlusOneValue ? 1 : 0].Add(pathSegment1);
                             break;
                         }
 
@@ -119,18 +119,12 @@ namespace Test
             };
 
             foreach(var tPlusOneValue in cellValues)
-                for(var index1 = 0;index1 < _pathSegments.Length;++index1)
-                {
-                    var pathSegment1 = _pathSegments[index1];
-                    for(var index2 = 0;index2 < _pathSegments.Length;++index2)
-                    {
-                        var pathSegment2 = _pathSegments[index2];
+                foreach(var pathSegment1 in _pathSegments)
+                    foreach(var pathSegment2 in _pathSegments)
                         if(tPlusOneValue == TPlusOneValue(
                             pathSegment1,
                             pathSegment2))
                             preimages[tPlusOneValue ? 1 : 0][pathSegment1[0] ? 1 : 0][pathSegment1[1] ? 1 : 0].Add(pathSegment2);
-                    }
-                }
 
             for(var index1 = 0;index1 < cellValues.Length;++index1)
                 for(var index2 = 0;index2 < cellValues.Length;++index2)
