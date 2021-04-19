@@ -43,14 +43,14 @@ namespace Test
                 new List<bool[]>()
             };
 
-            foreach(var tPlusOneValue in cellValues)
+            foreach(var tPlus1Value in cellValues)
                 for(var index1 = 0;index1 < _pathSegments.Length;++index1)
                     for(var index2 = 0;index2 < _pathSegments.Length;++index2)
-                        if(tPlusOneValue == TPlus1Value(
+                        if(tPlus1Value == TPlus1Value(
                             _pathSegments[index1],
                             _pathSegments[index2]))
                         {
-                            preimagesRow0[tPlusOneValue ? 1 : 0].Add(_pathSegments[index1]);
+                            preimagesRow0[tPlus1Value ? 1 : 0].Add(_pathSegments[index1]);
                             break;
                         }
 
@@ -118,17 +118,17 @@ namespace Test
                 }
             };
 
-            foreach(var tPlusOneValue in cellValues)
+            foreach(var tPlus1Value in cellValues)
                 for(var index1 = 0;index1 < _pathSegments.Length;++index1)
                 {
                     var pathSegment1 = _pathSegments[index1];
                     for(var index2 = 0;index2 < _pathSegments.Length;++index2)
                     {
                         var pathSegment2 = _pathSegments[index2];
-                        if(tPlusOneValue == TPlus1Value(
+                        if(tPlus1Value == TPlus1Value(
                             pathSegment1,
                             pathSegment2))
-                            preimages[tPlusOneValue ? 1 : 0][pathSegment1[0] ? 1 : 0][pathSegment1[1] ? 1 : 0].Add(pathSegment2);
+                            preimages[tPlus1Value ? 1 : 0][pathSegment1[0] ? 1 : 0][pathSegment1[1] ? 1 : 0].Add(pathSegment2);
                     }
                 }
 
