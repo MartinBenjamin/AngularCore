@@ -388,6 +388,32 @@ namespace Test
                     {
                         new[]
                         {
+                            new[] { false, false, false },
+                            new[] { false, false, false },
+                            new[] { false, false, false }
+                        },
+                        10148
+                    },
+                    new object[]
+                    {
+                        new[]
+                        {
+                            new[] { false }
+                        },
+                        12
+                    },
+                    new object[]
+                    {
+                        new[]
+                        {
+                            new[] { true }
+                        },
+                        4
+                    },
+                    new object[]
+                    {
+                        new[]
+                        {
                             new[] { true , false, true  },
                             new[] { false, true , false },
                             new[] { true , false, true  }
