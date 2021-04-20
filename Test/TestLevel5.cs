@@ -260,13 +260,95 @@ namespace Test
                 0);
         }
 
+        private int CountPreimagesNonRecursive(
+            bool[][] image
+            )
+        {
+            // Treat gas as a 2D Cellular Automaton (CA).
+            // Contruct preimage 1 row at a time.
+            var preimageNetworks = new bool[image.Length + 1][][][];
+            for(var r = 0;r < preimageNetworks.Length;++r)
+                preimageNetworks[r] = new bool[image[0].Length][][];
+
+            var pathSegmentIndices = new int[preimageNetworks.Length][];
+            for(var r = 0;r < pathSegmentIndices.Length;++r)
+                pathSegmentIndices[r] = new int[preimageNetworks[0].Length];
+
+            for(var c = 0;c < preimageNetworks[0].Length;++c)
+                preimageNetworks[0][c] = _preimagesRow0[image[0][c] ? 1 : 0];
+
+            var row    = 0;
+            var column = 0;
+            var count  = 0;
+
+            while(row >= 0)
+            {
+                if(column < image[0].Length)
+                {
+                    if(pathSegmentIndices[row][column] == preimageNetworks[row][column].Length) // No matching next path segment.
+                    {
+                        column -= 1;
+
+                        if(column >= 0)
+                            pathSegmentIndices[row][column] += 1;
+
+                        else
+                        {
+                            row -= 1;
+                            column = image[0].Length - 1;
+
+                            if(row >= 0)
+                                pathSegmentIndices[row][column] += 1;
+                        }
+                    }
+                    else
+                    {
+                        if(column == 0 ||
+                           preimageNetworks[row][column - 1][pathSegmentIndices[row][column - 1]][1] == preimageNetworks[row][column][pathSegmentIndices[row][column]][0])
+                        {
+                            // Matching next path segment.
+                            column += 1;
+
+                            if(column < image[0].Length)
+                                pathSegmentIndices[row][column] = 0;
+                        }
+                        else
+                            pathSegmentIndices[row][column] += 1;
+                    }
+                }
+                else
+                {
+                    // Found valid path through row preimage network.
+                    if(row == preimageNetworks.Length - 1)
+                    {
+                        count += 1;
+                        column -= 1;
+                        pathSegmentIndices[row][column] += 1;
+                    }
+                    else
+                    {
+                        row += 1;
+                        column = 0;
+                        pathSegmentIndices[row][column] = 0;
+
+                        for(var c = 0;c < preimageNetworks[row].Length;++c)
+                            preimageNetworks[row][c] = _preimages[image[row - 1][c] ? 1 : 0]
+                                [preimageNetworks[row - 1][c][pathSegmentIndices[row - 1][c]][0] ? 1 : 0]
+                                [preimageNetworks[row - 1][c][pathSegmentIndices[row - 1][c]][1] ? 1 : 0];
+                    }
+                }
+            }
+
+            return count;
+        }
+
         [TestCaseSource("TestCases"), Timeout(10000)]
         public void Test(
             bool[][] image,
             int      expectedCount
             )
         {
-            Assert.That(CountPreimages(image), Is.EqualTo(expectedCount));
+            Assert.That(CountPreimagesNonRecursive(image), Is.EqualTo(expectedCount));
         }
 
         public static IEnumerable<object[]> TestCases
