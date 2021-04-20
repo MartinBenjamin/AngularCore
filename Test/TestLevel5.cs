@@ -260,12 +260,34 @@ namespace Test
                 0);
         }
 
+        private bool[][] Transpose(
+            bool[][] image
+            )
+        {
+            var transpose = new bool[image[0].Length][];
+
+            for(var row = 0;row < transpose.Length;++row)
+                transpose[row] = new bool[image.Length];
+
+            for(var row = 0;row < image.Length;++row)
+                for(var column = 0;column < image[row].Length;++column)
+                    transpose[column][row] = image[row][column];
+
+            return transpose;
+        }
+
         private int CountPreimagesNonRecursive(
             bool[][] image
             )
         {
             // Treat gas as a 2D Cellular Automaton (CA).
             // Contruct preimage 1 row at a time.
+
+            // Row 0 has the least constraints on the preimage candidates.
+            // Ensure the row has the smallest dimension to minimise the number of row 0 preimage candidates.
+            if(image[0].Length > image.Length)
+                image = Transpose(image);
+
             var preimageNetworks = new bool[image.Length + 1][][][];
             for(var r = 0;r < preimageNetworks.Length;++r)
                 preimageNetworks[r] = new bool[image[0].Length][][];
@@ -280,6 +302,7 @@ namespace Test
             var row    = 0;
             var column = 0;
             var count  = 0;
+            var cycles = 0;
 
             while(row >= 0)
             {
@@ -337,12 +360,16 @@ namespace Test
                                 [preimageNetworks[row - 1][c][pathSegmentIndices[row - 1][c]][1] ? 1 : 0];
                     }
                 }
+
+                ++cycles;
             }
+
+            TestContext.WriteLine("Cycles: " + cycles);
 
             return count;
         }
 
-        [TestCaseSource("TestCases"), Timeout(10000)]
+        [TestCaseSource("TestCases"), Timeout(20000)]
         public void Test(
             bool[][] image,
             int      expectedCount
@@ -389,6 +416,23 @@ namespace Test
                             new[] { true, false, true, false, false, true, true, true }
                         },
                         254
+                    },
+                    new object[]
+                    {
+                        new[]
+                        {
+                            new[] { false, false, false, false, false, false, false, false, false },
+                            new[] { false, false, false, false, false, false, false, false, false },
+                            //new[] { false, false, false, false, false, false, false, false, false },
+                            //new[] { false, false, false, false, false, false, false, false, false },
+                            //new[] { false, false, false, false, false, false, false, false, false },
+                            //new[] { false, false, false, false, false, false, false, false, false },
+                            //new[] { false, false, false, false, false, false, false, false, false },
+                            //new[] { false, false, false, false, false, false, false, false, false },
+                            //new[] { false, false, false, false, false, false, false, false, false },
+                            //new[] { false, false, false, false, false, false, false, false, false }
+                        },
+                        29029222
                     }
                 };
             }
