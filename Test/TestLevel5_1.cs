@@ -122,10 +122,8 @@ namespace Test
                         foreach(var __PlusOneValue in cellValues)
                         {
                             preimages__[tPlusOneValue ? 1 : 0][__Value ? 1 : 0][_PlusOne_Value ? 1 : 0][__PlusOneValue ? 1 : 0] = new List<bool[][]>();
-                            foreach(var block in _preimages00[tPlusOneValue ? 1 : 0])
-                                if(__Value == block[0][0] &&
-                                   _PlusOne_Value == block[1][0] &&
-                                   __PlusOneValue == block[0][1])
+                            foreach(var block in _preimages0_[tPlusOneValue ? 1 : 0][__Value ? 1 : 0][_PlusOne_Value ? 1 : 0])
+                                if(__PlusOneValue == block[0][1])
                                     preimages__[tPlusOneValue ? 1 : 0][__Value ? 1 : 0][_PlusOne_Value ? 1 : 0][__PlusOneValue ? 1 : 0].Add(block);
                         }
                     }
