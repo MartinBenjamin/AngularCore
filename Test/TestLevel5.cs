@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
 
 namespace Test
 {
@@ -375,7 +375,11 @@ namespace Test
             int      expectedCount
             )
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
             Assert.That(CountPreimagesNonRecursive(image), Is.EqualTo(expectedCount));
+            stopwatch.Stop();
+            TestContext.WriteLine("Elapsed: " + stopwatch.ElapsedMilliseconds);
         }
 
         public static IEnumerable<object[]> TestCases
@@ -409,6 +413,42 @@ namespace Test
                             new[] { true }
                         },
                         4
+                    },
+                    new object[]
+                    {
+                        new[]
+                        {
+                            new[] { false, false }
+                        },
+                        38
+                    },
+                    new object[]
+                    {
+                        new[]
+                        {
+                            new[] { true, true }
+                        },
+                        6
+                    },
+                    new object[]
+                    {
+                        new[]
+                        {
+                            new[] { false, true },
+                            new[] { false, false },
+
+                        },
+                        38
+                    },
+                    new object[]
+                    {
+                        new[]
+                        {
+                            new[] { false, false },
+                            new[] { true, false },
+
+                        },
+                        38
                     },
                     new object[]
                     {
