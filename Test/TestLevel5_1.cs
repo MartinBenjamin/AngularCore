@@ -39,35 +39,8 @@ namespace Test
                 foreach(var row2 in rows)
                     blocks.Add(new[] { row1, row2 });
 
-            IList<bool[][]>[] preimages00 = new IList<bool[][]>[2];
             foreach(var tPlusOneValue in cellValues)
-            {
-                preimages00[tPlusOneValue ? 1 : 0] = new List<bool[][]>();
-                foreach(var block in blocks)
-                    if(tPlusOneValue == TPlusOneValue(block))
-                        preimages00[tPlusOneValue ? 1 : 0].Add(block);
-            }
-
-            for(var index = 0;index < preimages00.Length;++index)
-                _preimages00[index] = preimages00[index].ToArray();
-
-            IList<bool[][]>[][][] preimages0_ = new IList<bool[][]>[2][][];
-            foreach(var tPlusOneValue in cellValues)                
-            {
-                preimages0_[tPlusOneValue ? 1 : 0] = new IList<bool[][]>[2][];
-                foreach(var row0Value in cellValues)
-                {
-                    preimages0_[tPlusOneValue ? 1 : 0][row0Value ? 1 : 0] = new IList<bool[][]>[2];
-                    foreach(var row1Value in cellValues)
-                    {
-                        preimages0_[tPlusOneValue ? 1 : 0][row0Value ? 1 : 0][row1Value ? 1 : 0] = new List<bool[][]>();
-                        foreach(var block in _preimages00[tPlusOneValue ? 1 : 0])
-                            if(row0Value == block[0][0] &&
-                               row1Value == block[1][0])
-                                preimages0_[tPlusOneValue ? 1 : 0][row0Value ? 1 : 0][row1Value ? 1 : 0].Add(block);
-                    }
-                }
-            }
+                _preimages00[tPlusOneValue ? 1 : 0] = blocks.Where(block => tPlusOneValue == TPlusOneValue(block)).ToArray();
 
             foreach(var tPlusOneValue in cellValues)
             {
@@ -76,25 +49,10 @@ namespace Test
                 {
                     _preimages0_[tPlusOneValue ? 1 : 0][row0Value ? 1 : 0] = new bool[2][][][];
                     foreach(var row1Value in cellValues)
-                        _preimages0_[tPlusOneValue ? 1 : 0][row0Value ? 1 : 0][row1Value ? 1 : 0] = preimages0_[tPlusOneValue ? 1 : 0][row0Value ? 1 : 0][row1Value ? 1 : 0].ToArray();
-                }
-            }
-
-            IList<bool[][]>[][][] preimages_0 = new IList<bool[][]>[2][][];
-            foreach(var tPlusOneValue in cellValues)
-            {
-                preimages_0[tPlusOneValue ? 1 : 0] = new IList<bool[][]>[2][];
-                foreach(var column0Value in cellValues)
-                {
-                    preimages_0[tPlusOneValue ? 1 : 0][column0Value ? 1 : 0] = new IList<bool[][]>[2];
-                    foreach(var column1Value in cellValues)
-                    {
-                        preimages_0[tPlusOneValue ? 1 : 0][column0Value ? 1 : 0][column1Value ? 1 : 0] = new List<bool[][]>();
-                        foreach(var block in _preimages00[tPlusOneValue ? 1 : 0])
-                            if(column0Value == block[0][0] &&
-                               column1Value == block[0][1])
-                                preimages_0[tPlusOneValue ? 1 : 0][column0Value ? 1 : 0][column1Value ? 1 : 0].Add(block);
-                    }
+                        _preimages0_[tPlusOneValue ? 1 : 0][row0Value ? 1 : 0][row1Value ? 1 : 0] = _preimages00[tPlusOneValue ? 1 : 0].Where(
+                            block =>
+                               row0Value == block[0][0] &&
+                               row1Value == block[1][0]).ToArray();
                 }
             }
 
@@ -105,28 +63,11 @@ namespace Test
                 {
                     _preimages_0[tPlusOneValue ? 1 : 0][column0Value ? 1 : 0] = new bool[2][][][];
                     foreach(var column1Value in cellValues)
-                        _preimages_0[tPlusOneValue ? 1 : 0][column0Value ? 1 : 0][column1Value ? 1 : 0] = preimages_0[tPlusOneValue ? 1 : 0][column0Value ? 1 : 0][column1Value ? 1 : 0].ToArray();
-                }
-            }
-
-            IList<bool[][]>[][][][] preimages__ = new IList<bool[][]>[2][][][];
-            foreach(var tPlusOneValue in cellValues)
-            {
-                preimages__[tPlusOneValue ? 1 : 0] = new IList<bool[][]>[2][][];
-                foreach(var __Value in cellValues)
-                {
-                    preimages__[tPlusOneValue ? 1 : 0][__Value ? 1 : 0] = new IList<bool[][]>[2][];
-                    foreach(var _PlusOne_Value in cellValues)
-                    {
-                        preimages__[tPlusOneValue ? 1 : 0][__Value ? 1 : 0][_PlusOne_Value ? 1 : 0] = new IList<bool[][]>[2];
-                        foreach(var __PlusOneValue in cellValues)
-                        {
-                            preimages__[tPlusOneValue ? 1 : 0][__Value ? 1 : 0][_PlusOne_Value ? 1 : 0][__PlusOneValue ? 1 : 0] = new List<bool[][]>();
-                            foreach(var block in _preimages0_[tPlusOneValue ? 1 : 0][__Value ? 1 : 0][_PlusOne_Value ? 1 : 0])
-                                if(__PlusOneValue == block[0][1])
-                                    preimages__[tPlusOneValue ? 1 : 0][__Value ? 1 : 0][_PlusOne_Value ? 1 : 0][__PlusOneValue ? 1 : 0].Add(block);
-                        }
-                    }
+                        _preimages_0[tPlusOneValue ? 1 : 0][column0Value ? 1 : 0][column1Value ? 1 : 0] =
+                            _preimages00[tPlusOneValue ? 1 : 0].Where(
+                                block =>
+                                    column0Value == block[0][0] &&
+                                    column1Value == block[0][1]).ToArray();
                 }
             }
 
@@ -140,10 +81,9 @@ namespace Test
                     {
                         _preimages__[tPlusOneValue ? 1 : 0][__Value ? 1 : 0][_PlusOne_Value ? 1 : 0] = new bool[2][][][];
                         foreach(var __PlusOneValue in cellValues)
-                        {
                             _preimages__[tPlusOneValue ? 1 : 0][__Value ? 1 : 0][_PlusOne_Value ? 1 : 0][__PlusOneValue ? 1 : 0] =
-                                preimages__[tPlusOneValue ? 1 : 0][__Value ? 1 : 0][_PlusOne_Value ? 1 : 0][__PlusOneValue ? 1 : 0].ToArray();
-                        }
+                                _preimages0_[tPlusOneValue ? 1 : 0][__Value ? 1 : 0][_PlusOne_Value ? 1 : 0].Where(
+                                    block => __PlusOneValue == block[0][1]).ToArray();
                     }
                 }
             }
