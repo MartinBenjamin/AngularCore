@@ -240,10 +240,10 @@ namespace Test
                     {
                         row += 1;
                         column = 0;
-                        preimageIndices[row][column] = 0;
 
-                        bool[][] topBlock = preimages[row - 1][column][preimageIndices[row - 1][column]];
+                        var topBlock = preimages[row - 1][column][preimageIndices[row - 1][column]];
                         preimages[row][column] = _preimages_0[image[row][column] ? 1 : 0][topBlock[1][0] ? 1 : 0][topBlock[1][1] ? 1 : 0];
+                        preimageIndices[row][column] = 0;
                     }
                 }
 
