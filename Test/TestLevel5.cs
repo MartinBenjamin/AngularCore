@@ -434,21 +434,11 @@ namespace Test
                     {
                         new[]
                         {
-                            new[] { false, true },
-                            new[] { false, false },
-
+                            new[] { false, false, false, false, false, false, false, false },
+                            new[] { false, false, false, false, false, false, false, false },
+                            new[] { false, false, false, false, false, false, false, true  },
                         },
-                        38
-                    },
-                    new object[]
-                    {
-                        new[]
-                        {
-                            new[] { false, false },
-                            new[] { true, false },
-
-                        },
-                        38
+                        130021340
                     },
                     new object[]
                     {

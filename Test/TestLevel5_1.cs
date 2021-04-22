@@ -162,6 +162,78 @@ namespace Test
             return transpose;
         }
 
+        private bool[][] ReflectX(
+            bool[][] image
+            )
+        {
+            var reflected = new bool[image.Length][];
+            for(var row = 0;row < image.Length;++row)
+                reflected[row] = image[image.Length - row - 1];
+            return reflected;
+        }
+
+        private bool[][] ReflectY(
+            bool[][] image
+            )
+        {
+            var reflected = new bool[image.Length][];
+            for(var row = 0;row < image.Length;++row)
+            {
+                reflected[row] = new bool[image[row].Length];
+                for(var column = 0;column < image[row].Length;++column)
+                    reflected[row][column] = image[row][image[row].Length - column - 1];
+            }
+            return reflected;
+        }
+
+        private bool[][] Optimise(
+            bool[][] image
+            )
+        {
+            // Optimise image.
+            // Row 0 has the least constraints on the preimage candidates.
+            // Ensure the row has the smallest dimension to minimise the number of row 0 preimage candidates.
+            if(image[0].Length > image.Length)
+                image = Transpose(image);
+
+            // A cell with a true value only has 4 possible preimages whereas a cell containing false has 12 possible preimages.
+            // Therefore need to encounter a cell containing true as quickly as possible to reduce the number of combinations
+            // to be counted.
+            // Find the corner which has the shortest distance to a cell containing true.
+            var images = new[]
+            {
+                image,
+                ReflectX(image),
+                ReflectY(image),
+                ReflectY(ReflectX(image))
+            };
+
+            bool[][] optimalImage = null;
+            int shortestDistance = 0;
+
+            foreach(var candidateImage in images)
+            {
+                var distance = int.MaxValue;
+                for(var row = 0;row < candidateImage.Length && distance == int.MaxValue;++row)
+                    for(var column = 0;column < candidateImage[row].Length && distance == int.MaxValue;++column)
+                        if(candidateImage[row][column])
+                            distance = row * image[0].Length + column + 1;
+
+                if(optimalImage == null)
+                {
+                    optimalImage = candidateImage;
+                    shortestDistance = distance;
+                }
+                else if(distance < shortestDistance)
+                {
+                    optimalImage = candidateImage;
+                    shortestDistance = distance;
+                }
+            }
+
+            return optimalImage;
+        }
+
         private int CountPreimagesNonRecursive(
             bool[][] image
             )
@@ -169,10 +241,8 @@ namespace Test
             // Treat gas as a 2D Cellular Automaton (CA).
             // Contruct preimage 1 row at a time.
 
-            // Row 0 has the least constraints on the preimage candidates.
-            // Ensure the row has the smallest dimension to minimise the number of row 0 preimage candidates.
-            if(image[0].Length > image.Length)
-                image = Transpose(image);
+            // Optimise image for performance.
+            image = Optimise(image);
 
             var preimages = new bool[image.Length][][][][];
             for(var r = 0;r < preimages.Length;++r)
