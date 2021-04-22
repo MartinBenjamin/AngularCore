@@ -216,15 +216,13 @@ namespace Test
                         if(column < image[0].Length)
                         {
                             var leftBlock = preimages[row][column - 1][preimageIndices[row][column - 1]];
-                            bool[][] topBlock = null;
                             if(row > 0)
-                                topBlock = preimages[row - 1][column][preimageIndices[row - 1][column]];
-
-                            if(topBlock == null)
-                                preimages[row][column] = _preimages0_[image[row][column] ? 1 : 0][leftBlock[0][1] ? 1 : 0][leftBlock[1][1] ? 1 : 0];
-
-                            else
+                            {
+                                var topBlock = preimages[row - 1][column][preimageIndices[row - 1][column]];
                                 preimages[row][column] = _preimages__[image[row][column] ? 1 : 0][leftBlock[0][1] ? 1 : 0][leftBlock[1][1] ? 1 : 0][topBlock[1][1] ? 1 : 0];
+                            }
+                            else
+                                preimages[row][column] = _preimages0_[image[row][column] ? 1 : 0][leftBlock[0][1] ? 1 : 0][leftBlock[1][1] ? 1 : 0];
 
                             preimageIndices[row][column] = 0;
                         }
