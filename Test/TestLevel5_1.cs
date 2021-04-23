@@ -1,7 +1,9 @@
 ﻿using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 
 namespace Test
 {
@@ -335,6 +337,19 @@ namespace Test
             Assert.That(CountPreimagesNonRecursive(image), Is.EqualTo(expectedCount));
             stopwatch.Stop();
             TestContext.WriteLine("Elapsed: " + stopwatch.ElapsedMilliseconds);
+        }
+
+        [Test]
+        public void DecryptMessage()
+        {
+            var encodedMessage = "FkYBAQoNSxkcSUFOSEYJXAcEGk1NTU4NAg0eEQgJWw9ITltUTwQdWgcAAw8FSkVOSgQUEgYcWhlI TltUTwgATRAACgMDAQxJQUFVFQoGRw8ZCwwRBhVJDlhFSR8PAQYNBgQWU0VOCRgODAMdHBJJDlhF SRkACwxJQUFVEgYBCUpVTkYDAQ9PCR8=";
+            var key            = Encoding.UTF8.GetBytes("martin.jonathan.benjamin");
+            var decodedMessage = Convert.FromBase64String(encodedMessage);
+            var decryptedMessage = new byte[decodedMessage.Length];
+            for(var index = 0;index < decodedMessage.Length;++index)
+                decryptedMessage[index] = (byte)(decodedMessage[index] ^ key[index % key.Length]);
+
+            TestContext.WriteLine(Encoding.UTF8.GetString(decryptedMessage));
         }
     }
 }
