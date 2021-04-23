@@ -262,23 +262,7 @@ namespace Test
             {
                 if(column < image[0].Length)
                 {
-                    if(preimageIndices[row][column] == preimages[row][column].Length)
-                    {
-                        column -= 1;
-
-                        if(column >= 0)
-                            preimageIndices[row][column] += 1;
-
-                        else
-                        {
-                            row -= 1;
-                            column = image[0].Length - 1;
-
-                            if(row >= 0)
-                                preimageIndices[row][column] += 1;
-                        }
-                    }
-                    else
+                    if(preimageIndices[row][column] < preimages[row][column].Length)
                     {
                         // Advance column.
                         column += 1;
@@ -294,6 +278,22 @@ namespace Test
                                 preimages[row][column] = _preimages0_[image[row][column] ? 1 : 0][leftBlock[0][1] ? 1 : 0][leftBlock[1][1] ? 1 : 0];
 
                             preimageIndices[row][column] = 0;
+                        }
+                    }
+                    else
+                    {
+                        column -= 1;
+
+                        if(column >= 0)
+                            preimageIndices[row][column] += 1;
+
+                        else
+                        {
+                            row -= 1;
+                            column = image[0].Length - 1;
+
+                            if(row >= 0)
+                                preimageIndices[row][column] += 1;
                         }
                     }
                 }
