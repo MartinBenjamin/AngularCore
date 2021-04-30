@@ -1,11 +1,16 @@
 <style type="text/css">
-  select.YesNo
+  .ExternalFunding .YesNo
+  {
+    width: 50px;
+  }
+
+  .ExternalFunding .Percentage
   {
     width: 50px;
   }
 </style>
 <legal-entity-finder Title="Find External Funding Provider" #legalEntityFinder></legal-entity-finder>
-<fieldset>
+<fieldset class="ExternalFunding">
   <legend>Funding</legend>
   <table class="GridLayout">
     <tr>
@@ -20,6 +25,13 @@
       </td>
     </tr>
     <tbody *ngIf="ExternallyFunded">
+      <tr>
+        <td>Percentage:</td>
+        <td><input
+          type="text"
+          [(dtPercentage100Model)]="ExternalFunding.Percentage"
+          class="Percentage"/></td>
+      </tr>
       <tr>
         <td>Providers:</td>
       </tr>
