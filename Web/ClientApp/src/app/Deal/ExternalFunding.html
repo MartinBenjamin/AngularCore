@@ -26,7 +26,10 @@
       <tr>
         <td colspan="2">
           <table class="DataGrid">
-            <tr>
+            <tr *ngFor="let provider of Providers">
+                <td>{{provider.Name}}</td>
+            </tr>
+            <tr *ngIf="!(Providers && Providers.length)">
               <td>No Providers</td>
             </tr>
           </table>
