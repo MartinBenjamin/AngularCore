@@ -6,7 +6,9 @@ import { DialogModule } from '../Components/Dialog';
 import { ErrorModule } from '../Components/ErrorModule';
 import { NumberModule } from '../Components/NumberModule';
 import { TabbedViewModule } from '../Components/TabbedView';
+import { YesNoPipe } from '../Components/YesNoPipe';
 import { Borrowers } from '../Deal/Borrowers';
+import { ExternalFunding } from '../Deal/ExternalFunding';
 import { Facility } from '../Deal/Facility';
 import { FacilityTab } from '../Deal/FacilityTab';
 import { FacilityTab1 } from '../Deal/FacilityTab1';
@@ -23,7 +25,6 @@ import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
 import { OriginationTab } from './OriginationTab';
 import { TransactionDetails } from './TransactionDetails';
-import { YesNoPipe } from '../Components/YesNoPipe'
 
 @NgModule(
     {
@@ -33,6 +34,7 @@ import { YesNoPipe } from '../Components/YesNoPipe'
                 Common,
                 DealGeographicRegion,
                 Exclusivity,
+                ExternalFunding,
                 Facilities,
                 Facility,
                 FacilityTab,

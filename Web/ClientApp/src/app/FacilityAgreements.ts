@@ -2,6 +2,7 @@ import { Contract, ContractualCommitment } from "./Contracts";
 import { Currency } from "./Iso4217";
 import { PartyInRole } from "./Parties";
 import { Named, Guid } from "./CommonDomainObjects";
+import { percentage } from './Deals';
 
 export interface FacilityAgreement extends Contract
 {
@@ -31,6 +32,11 @@ export interface LenderParticipation extends ContractualCommitment
     CreditSoughtLimit    : number;
     AnticipatedHoldAmount: number;
     ActualAllocation     : number;
+}
+
+export interface ExternalFunding extends ContractualCommitment
+{
+    Percentage: percentage;
 }
 
 export interface FeeType extends Named<Guid>

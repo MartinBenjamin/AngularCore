@@ -34,11 +34,7 @@ export class Sponsors implements OnDestroy
         )
     {
         this._subscriptions.push(
-            roles.subscribe(
-                roles =>
-                {
-                    this._sponsorRole = roles.find(role => role.Id == DealRoleIdentifier.Sponsor);
-                }),
+            roles.subscribe(roles => this._sponsorRole = roles.find(role => role.Id == DealRoleIdentifier.Sponsor)),
             dealProvider.subscribe(
                 deal =>
                 {
