@@ -28,7 +28,7 @@
           <table class="DataGrid">
             <tr *ngFor="let provider of Providers">
                 <td>{{provider.Name}}</td>
-                <td><a (click)="RemoveProvider(provider)">delete</a></td>
+                <td><a (click)="DeleteProvider(provider)">delete</a></td>
             </tr>
             <tr *ngIf="!(Providers && Providers.length)">
               <td>No Providers</td>

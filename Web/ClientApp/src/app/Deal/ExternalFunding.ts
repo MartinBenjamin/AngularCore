@@ -146,10 +146,13 @@ export class ExternalFunding implements OnDestroy
             });
     }
 
-    RemoveProvider(
+    DeleteProvider(
         provider: LegalEntity
         ): void
     {
+        if(!confirm(`Delete ${this._externalFundingProviderRole.Name} ${provider.Name}?`))
+            return;
+
         for(let index = 0; index < this._externalFunding.Obligors.length; ++index)
         {
             let obligor = this._externalFunding.Obligors[index];
