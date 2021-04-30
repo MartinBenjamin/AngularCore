@@ -8,7 +8,7 @@ using System.Text;
 namespace Test
 {
     [TestFixture]
-    public class TestLevel5_1: Test
+    public class TestLevel5: Test
     {
         private bool[][][][]       _preimages00 = new bool[2][][][];
         private bool[][][][][][]   _preimages0_ = new bool[2][][][][][];
@@ -26,7 +26,7 @@ namespace Test
             return sum == 1;
         }
 
-        public TestLevel5_1()
+        public TestLevel5()
         {
             var cellValues = new[] { false, true };
 
