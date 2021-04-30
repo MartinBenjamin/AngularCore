@@ -1,12 +1,13 @@
-import { Component, Inject, OnDestroy } from '@angular/core';
+import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { EmptyGuid } from '../CommonDomainObjects';
 import { DealRoleIdentifier } from '../Deals';
 import { Facility } from '../FacilityAgreements';
 import { FacilityProvider } from '../FacilityProvider';
+import { LegalEntity } from '../LegalEntities';
+import { LegalEntityFinder } from '../LegalEntityFinder';
 import { Role } from '../Roles';
 import { RolesToken } from '../RoleServiceProvider';
-import { LegalEntity } from '../LegalEntities';
 
 @Component(
     {
@@ -19,6 +20,9 @@ export class ExternalFunding implements OnDestroy
     private _facility                   : Facility;
     private _externalFunding            : import('../FacilityAgreements').ExternalFunding;
     private _externalFundingProviderRole: Role;
+
+    @ViewChild('legalEntityFinder', { static: true })
+    private _legalEntityFinder: LegalEntityFinder;
 
     constructor(
         facilityProvider: FacilityProvider,
@@ -86,11 +90,12 @@ export class ExternalFunding implements OnDestroy
         return this._externalFunding;
     }
 
-    AddProvider(
-        provider: LegalEntity
-        ): void
+    AddProvider(): void
     {
-
+        this._legalEntityFinder.Find(
+            legalEntity =>
+            {
+            });
     }
 
     RemoveProvider(

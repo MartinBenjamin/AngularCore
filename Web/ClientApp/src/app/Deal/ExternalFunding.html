@@ -4,6 +4,7 @@
     width: 50px;
   }
 </style>
+<legal-entity-finder Title="Find External Funding Provider" #legalEntityFinder></legal-entity-finder>
 <fieldset>
   <legend>Funding</legend>
   <table class="GridLayout">
@@ -32,7 +33,10 @@
         </td>
       </tr>
       <tr>
-        <td><input type="button" value="Add" /></td>
+        <td><input
+          type="button"
+          value="Add"
+          (click)="AddProvider()"/></td>
       </tr>
     </tbody>
   </table>
