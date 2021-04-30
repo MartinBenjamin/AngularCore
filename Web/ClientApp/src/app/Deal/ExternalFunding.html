@@ -8,6 +8,11 @@
   {
     width: 50px;
   }
+
+  table.ExternalFundingProviders td
+  {
+    max-width: 300px;
+  }
 </style>
 <legal-entity-finder Title="Find External Funding Provider" #legalEntityFinder></legal-entity-finder>
 <fieldset class="ExternalFunding">
@@ -35,7 +40,7 @@
       <tr>
         <td>Providers:</td>
         <td>
-          <table class="DataGrid">
+          <table class="DataGrid ExternalFundingProviders">
             <tr *ngFor="let provider of Providers">
                 <td>{{provider.Name}}</td>
                 <td><a (click)="DeleteProvider(provider)">delete</a></td>
