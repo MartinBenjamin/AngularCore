@@ -326,7 +326,7 @@ namespace Test
             return count;
         }
 
-        [TestCaseSource(typeof(TestLevel5), "TestCases"), Timeout(20000)]
+        [TestCaseSource("TestCases"), Timeout(20000)]
         public void Test(
             bool[][] image,
             int      expectedCount
@@ -350,6 +350,118 @@ namespace Test
                 decryptedMessage[index] = (byte)(decodedMessage[index] ^ key[index % key.Length]);
 
             TestContext.WriteLine(Encoding.UTF8.GetString(decryptedMessage));
+        }
+
+        public static IEnumerable<object[]> TestCases
+        {
+            get
+            {
+                return new List<object[]>
+                {
+                    new object[]
+                    {
+                        new[]
+                        {
+                            new[] { false, false, false },
+                            new[] { false, false, false },
+                            new[] { false, false, false }
+                        },
+                        10148
+                    },
+                    new object[]
+                    {
+                        new[]
+                        {
+                            new[] { false }
+                        },
+                        12
+                    },
+                    new object[]
+                    {
+                        new[]
+                        {
+                            new[] { true }
+                        },
+                        4
+                    },
+                    new object[]
+                    {
+                        new[]
+                        {
+                            new[] { false, false }
+                        },
+                        38
+                    },
+                    new object[]
+                    {
+                        new[]
+                        {
+                            new[] { true, true }
+                        },
+                        6
+                    },
+                    new object[]
+                    {
+                        new[]
+                        {
+                            new[] { false, false, false, false, false, false, false, false },
+                            new[] { false, false, false, false, false, false, false, false },
+                            new[] { false, false, false, false, false, false, false, true  },
+                        },
+                        130021340
+                    },
+                    new object[]
+                    {
+                        new[]
+                        {
+                            new[] { true , false, true  },
+                            new[] { false, true , false },
+                            new[] { true , false, true  }
+                        },
+                        4
+                    },
+                    new object[]
+                    {
+                        new[]
+                        {
+                            new[] { true, true, false, true, false, true, false, true, true, false },
+                            new[] { true, true, false, false, false, false, true, true, true, false },
+                            new[] { true, true, false, false, false, false, false, false, false, true },
+                            new[] { false, true, false, false, false, false, true, true, false, false }
+                        },
+                        11567
+                    },
+                    new object[]
+                    {
+                        new[]
+                        {
+                            new[] { true, false, true, false, false, true, true, true },
+                            new[] { true, false, true, false, false, false, true, false },
+                            new[] { true, true, true, false, false, false, true, false },
+                            new[] { true, false, true, false, false, false, true, false },
+                            new[] { true, false, true, false, false, true, true, true }
+                        },
+                        254
+                    },
+                    new object[]
+                    {
+                        new[]
+                        {
+                            new[] { false, false, false, false, false, false, false, false, false },
+                            new[] { false, false, false, false, false, false, false, false, false },
+                            //new[] { false, false, false, false, false, false, false, false, false },
+                            //new[] { false, false, false, false, false, false, false, false, false },
+                            //new[] { false, false, false, false, false, false, false, false, false },
+                            //new[] { false, false, false, false, false, false, false, false, false },
+                            //new[] { false, false, false, false, false, false, false, false, false },
+                            //new[] { false, false, false, false, false, false, false, false, false },
+                            //new[] { false, false, false, false, false, false, false, false, false },
+                            //new[] { false, false, false, false, false, false, false, false, false }
+                        },
+                        29029222
+                    }
+                };
+            }
         }
     }
 }
