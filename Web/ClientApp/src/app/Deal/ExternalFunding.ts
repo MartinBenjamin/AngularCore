@@ -107,7 +107,7 @@ export class ExternalFunding implements OnDestroy
         }
 
         this._providers = this._externalFunding.Obligors
-            .filter(obligor => obligor.Role.Id == DealRoleIdentifier.ExternalFundingProvider)
+            .filter(obligor => obligor.Role.Id === DealRoleIdentifier.ExternalFundingProvider)
             .map(obligor => <LegalEntity>obligor.Organisation);
     }
 
@@ -121,7 +121,7 @@ export class ExternalFunding implements OnDestroy
         this._legalEntityFinder.Find(
             legalEntity =>
             {
-                if(this._providers && this._providers.find(provider => provider.Id == legalEntity.Id))
+                if(this._providers && this._providers.find(provider => provider.Id === legalEntity.Id))
                 {
                     alert(`${legalEntity.Name} is already a ${this._externalFundingProviderRole.Name}.`);
                     return;
@@ -156,8 +156,8 @@ export class ExternalFunding implements OnDestroy
         for(let index = 0; index < this._externalFunding.Obligors.length; ++index)
         {
             let obligor = this._externalFunding.Obligors[index];
-            if(obligor.Role.Id == DealRoleIdentifier.ExternalFundingProvider &&
-               obligor.Organisation == provider)
+            if(obligor.Role.Id === DealRoleIdentifier.ExternalFundingProvider &&
+               obligor.Organisation === provider)
             {
                 this._externalFunding.Obligors.splice(
                     index,
