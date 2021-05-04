@@ -288,35 +288,42 @@ export class Facility
     }
 
     set BookingOffice(
-        bookingOffice: Branch
+        branch: Branch
         )
     {
+        let lenderParticipation = <facilityAgreements.LenderParticipation>this.Facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
         if(this._bookingOffice)
-            this.Facility.Obligors.splice(
-                this.Facility.Obligors.indexOf(this._bookingOffice),
+            lenderParticipation.Obligors.splice(
+                lenderParticipation.Obligors.indexOf(this._bookingOffice),
                 1);
 
-        let bookingOfficeParty = this._deal.Parties.find(
-            party => party.Organisation.Id === bookingOffice.Id && party.Role.Id === this._bookingOfficeRole.Id);
+        if(branch)
+        {
 
-        if(!bookingOfficeParty)
-            bookingOfficeParty = <PartyInRole>
-                {
-                    Id             : EmptyGuid,
-                    AutonomousAgent: bookingOffice,
-                    Organisation   : bookingOffice,
-                    Person         : null,
-                    Role           : this._bookingOfficeRole,
-                    Period         : null
-                };
+            let bookingOffice = this._deal.Parties.find(
+                party => party.Organisation.Id === branch.Id && party.Role.Id === this._bookingOfficeRole.Id);
 
-        this.Facility.Obligors.push(bookingOfficeParty);
+            if(!bookingOffice)
+                bookingOffice = <PartyInRole>
+                    {
+                        Id             : EmptyGuid,
+                        AutonomousAgent: branch,
+                        Organisation   : branch,
+                        Person         : null,
+                        Role           : this._bookingOfficeRole,
+                        Period         : null
+                    };
+
+            lenderParticipation.Obligors.push(bookingOffice);
+        }
+
         this.ComputeBookingOffice();
     }
 
     ComputeBookingOffice(): void
     {
-        this._bookingOffice = this.Facility.Obligors.find(obligor => obligor.Role.Id === DealRoleIdentifier.BookingOffice);
+        let lenderParticipation = <facilityAgreements.LenderParticipation>this.Facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
+        this._bookingOffice = lenderParticipation.Obligors.find(obligor => obligor.Role.Id === DealRoleIdentifier.BookingOffice);
     }
 
     Create(
