@@ -24,7 +24,7 @@
           </select>
         </td>
       </tr>
-      <tbody *ngIf="Fee && Fee.Amount.Type == 0">
+      <tbody *ngIf="Fee && Fee.Amount.Type == 0; else PercentageOfCommitment">
         <tr>
           <td class="RowHeading">Amount:</td>
           <td>
@@ -41,7 +41,7 @@
           </td>
         </tr>
       </tbody>
-      <tbody *ngIf="Fee && Fee.Amount.Type == 1">
+      <ng-template #PercentageOfCommitment>
         <tr>
           <td class="RowHeading">Amount:</td>
           <td>
@@ -57,7 +57,7 @@
                    class="Percentage" />
           </td>
         </tr>
-      </tbody>
+      </ng-template>
       <tr>
         <td class="RowHeading">Expected/Received Date:</td>
         <td>
