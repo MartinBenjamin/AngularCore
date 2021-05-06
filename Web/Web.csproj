@@ -50,6 +50,7 @@
     <None Remove="ClientApp\src\app\DealTrackerLayout.ts" />
     <None Remove="ClientApp\src\app\Components\TestTab.ts" />
     <None Remove="ClientApp\src\app\Deal\ExternalFunding.ts" />
+    <None Remove="ClientApp\src\app\Deal\FacilityFees.ts" />
     <None Remove="ClientApp\src\app\Deal\FacilityTab1.ts" />
     <None Remove="ClientApp\src\app\Deal\FacilityTab3.ts" />
     <None Remove="ClientApp\src\app\Deal\GeographicRegionSelector.ts" />
@@ -292,6 +293,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\DealTrackerLayout.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Components\TestTab.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Deal\ExternalFunding.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Deal\FacilityFees.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Deal\FacilityTab1.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Deal\FacilityTab3.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Deal\GeographicRegionSelector.ts" />
