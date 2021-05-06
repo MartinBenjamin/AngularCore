@@ -13,6 +13,7 @@ export class FacilityFees implements OnDestroy
     private _subscriptions: Subscription[] = [];
     private _feeTypes     : FeeType[];
     private _facility     : Facility;
+    private _feeType      : FeeType;
 
     constructor(
         @Inject(FacilityFeeTypesToken)
@@ -32,5 +33,27 @@ export class FacilityFees implements OnDestroy
     ngOnDestroy(): void
     {
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
+    }
+
+    get FeeTypes(): FeeType[]
+    {
+        return this._feeTypes;
+    }
+
+    get FeeType(): FeeType
+    {
+        return this._feeType;
+    }
+
+    set FeeType(
+        feeType: FeeType
+        )
+    {
+        this._feeType = feeType;
+    }
+
+    Add(): void
+    {
+        alert('Add');
     }
 }

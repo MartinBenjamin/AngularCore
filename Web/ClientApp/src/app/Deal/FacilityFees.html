@@ -20,4 +20,15 @@
     <td colspan="8" style="text-align: center;">No Fees</td>
   </tr>
 </table>
-
+<div style="margin-top: 5px;">
+  <select
+    [(ngModel)]="FeeType">
+    <option [ngValue]="null"></option>
+    <option *ngFor="let feeType of FeeTypes" [ngValue]="feeType">{{feeType.Name}}</option>
+  </select><input
+    type="button"
+    value="Add"
+    (click)="Add()"
+    [disabled]="!FeeType"
+    style="height: 20px; margin-left: 1px;" />
+</div>
