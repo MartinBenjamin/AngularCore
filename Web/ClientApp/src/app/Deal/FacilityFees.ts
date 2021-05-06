@@ -31,6 +31,7 @@ export class FacilityFees implements OnDestroy
                 facility =>
                 {
                     this._facility = facility;
+                    this._feeType = null;
                 }));
     }
 
