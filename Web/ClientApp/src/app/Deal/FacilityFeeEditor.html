@@ -1,27 +1,67 @@
 <style typeof="text/css">
-  .FacilityFeeEditorDialog input[type=text],
-  .FacilityFeeEditorDialog span.Field,
-  .FacilityFeeEditorDialog select
+  .FacilityFeeEditorDialog input[type=text].Amount
   {
     width: 200px;
   }
+
+  .FacilityFeeEditorDialog input[type=text].Percentage,
+  .FacilityFeeEditorDialog input[type=text].Date
+  {
+    width: 100px;
+  }
+
 </style>
 <dt-dialog [Title]="Fee?.Type.Name + ' Fee'"
            [Open]="Fee">
   <dt-dialog-body>
     <table class="GridLayout FacilityFeeEditorDialog">
       <tr>
+        <td class="RowHeading">Amount Type</td>
+        <td>
+          <select
+            [ngModel]="Fee?.Amount.Type"
+            (ngModel)="Fee.Amount.Type = $event">
+            <option [ngValue]="0">Monetary</option>
+            <option [ngValue]="1">% Of Commitment</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
         <td class="RowHeading">Amount:</td>
         <td>
           <input type="text"
                  [dtAmountModel]="Fee?.Amount.Value"
+                 (dtAmountModel)="Fee.Amount.Value = $event"
                  class="Amount" />
         </td>
       </tr>
       <tr>
         <td class="RowHeading">% Of Commitment:</td>
         <td>
+          <input type="text"
+                 class="Percentage"/>
         </td>
+      </tr>
+      <tr>
+        <td class="RowHeading">Expected/Received Date:</td>
+        <td>
+          <input type="text"
+                 [dtDateModel]="Fee?.ExpectedReceivedDate"
+                 (dtDateModelChange)="Fee.ExpectedReceivedDate = $event"
+                 class="Date" /><dt-calendar (dateSelected)="Fee.ExpectedReceivedDate = $event"></dt-calendar>
+        </td>
+      </tr>
+      <tr>
+        <td class="RowHeading">Received:</td>
+        <td><input type="checkbox" /></td>
+      </tr>
+      <tr>
+        <td class="RowHeading">Accrued:</td>
+        <td><input type="checkbox" /></td>
+      </tr>
+      <tr>
+        <td class="RowHeading">Accrual Date:</td>
+        <td></td>
       </tr>
     </table>
   </dt-dialog-body>
