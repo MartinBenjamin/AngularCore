@@ -74,7 +74,7 @@ export class FacilityFeeEditor
             ExpectedReceivedDate: null,
             Received            : false,
             AccrualDate         : null
-            };
+        };
         this._participation = this.CalculateParticipation(this._facility);
     }
 
