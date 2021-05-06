@@ -50,7 +50,8 @@ export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters 
 
     ngOnDestroy(): void
     {
-        this._subscription.unsubscribe();
+        if(this._subscription)
+            this._subscription.unsubscribe();
     }
 
     get Open(): boolean
