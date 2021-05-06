@@ -252,10 +252,10 @@ export class Facility
 
         this.Tabs =
             [
-                new Tab('Size &<br/>Dates', FacilityTab1),
-                new Tab('Tab 2'           , FacilityFees),
-                new Tab('Tab 3'           , FacilityTab3),
-                new Tab('Tab 4'           , FacilityTab )
+                new Tab('Size &<br/>Dates'                , FacilityTab1),
+                new Tab('Upfront &<br/>Participation Fees', FacilityFees),
+                new Tab('Tab 3'                           , FacilityTab3),
+                new Tab('Tab 4'                           , FacilityTab )
             ];
 
         this._subscriptions.push(
