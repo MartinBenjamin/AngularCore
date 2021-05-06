@@ -1,8 +1,7 @@
+import { Guid, Named } from "./CommonDomainObjects";
 import { Contract, ContractualCommitment } from "./Contracts";
-import { Currency } from "./Iso4217";
-import { PartyInRole } from "./Parties";
-import { Named, Guid } from "./CommonDomainObjects";
 import { percentage } from './Deals';
+import { Currency } from "./Iso4217";
 
 export interface FacilityAgreement extends Contract
 {
@@ -26,7 +25,6 @@ export interface Facility extends ContractualCommitment
 
 export interface LenderParticipation extends ContractualCommitment
 {
-    Lender               : PartyInRole;
     Amount               : number;
     UnderwriteAmount     : number;
     CreditSoughtLimit    : number;
@@ -43,14 +41,22 @@ export interface FeeType extends Named<Guid>
 {
 }
 
-export interface Expression<T>
+export enum FeeAmountType
 {
+    Monetary = 0,
+    PercentageOfCommitment
+}
+
+export interface FeeAmount
+{
+    Type : FeeAmountType;
+    Value: number;
 }
 
 export interface FacilityFee extends ContractualCommitment
 {
     Type                : FeeType;
-    Amount              : Expression<number>;
+    Amount              : FeeAmount;
     ExpectedReceivedDate: Date;
     Received            : boolean;
     AccrualDate         : Date;

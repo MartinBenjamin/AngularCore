@@ -18,4 +18,20 @@ namespace FacilityAgreements
         {
         }
     }
+
+    public class FacilityFeeType: FeeType
+    {
+        protected FacilityFeeType() : base()
+        {
+        }
+
+        public FacilityFeeType(
+            Guid   id,
+            string name
+            ) : base(
+                id,
+                name)
+        {
+        }
+    }
 }

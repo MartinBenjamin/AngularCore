@@ -47,6 +47,7 @@
     <ProjectReference Include="..\Agents\Agents.csproj" />
     <ProjectReference Include="..\CommonDomainObjects\CommonDomainObjects.csproj" />
     <ProjectReference Include="..\Deals\Deals.csproj" />
+    <ProjectReference Include="..\FacilityAgreements\FacilityAgreements.csproj" />
     <ProjectReference Include="..\Iso3166\Iso3166.csproj" />
     <ProjectReference Include="..\Iso4217\Iso4217.csproj" />
     <ProjectReference Include="..\LegalEntities\LegalEntities.csproj" />

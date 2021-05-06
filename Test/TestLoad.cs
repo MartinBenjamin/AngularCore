@@ -2,6 +2,7 @@
 using Autofac;
 using CommonDomainObjects;
 using Data;
+using FacilityAgreements;
 using Iso3166._1;
 using Iso3166._2;
 using Iso4217;
@@ -74,6 +75,12 @@ namespace Test
         public async Task Role()
         {
             await Etl<Guid, Role>();
+        }
+
+        [Test]
+        public async Task FacilityFeeType()
+        {
+            await Etl<Guid, FacilityFeeType>();
         }
 
         [Test]
@@ -202,6 +209,7 @@ namespace Test
         public async Task Load()
         {
             await _container.Resolve<IEtl<IEnumerable<Role>>>().ExecuteAsync();
+            await _container.Resolve<IEtl<IEnumerable<FacilityFeeType>>>().ExecuteAsync();
             await _container.Resolve<IEtl<IEnumerable<Country>>>().ExecuteAsync();
             await _container.Resolve<IEtl<IEnumerable<Subdivision>>>().ExecuteAsync();
             await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();

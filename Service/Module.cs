@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using CommonDomainObjects;
+using FacilityAgreements;
 using Iso3166._1;
 using Iso3166._2;
 using Iso4217;
@@ -82,6 +83,10 @@ namespace Service
             builder
                 .RegisterType<NamedService<Guid, Role, NamedFilters>>()
                 .As<INamedService<Guid, Role, NamedFilters>>()
+                .InstancePerLifetimeScope();
+            builder
+                .RegisterType<NamedService<Guid, FacilityFeeType, NamedFilters>>()
+                .As<INamedService<Guid, FacilityFeeType, NamedFilters>>()
                 .InstancePerLifetimeScope();
         }
     }

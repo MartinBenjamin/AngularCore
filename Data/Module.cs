@@ -1,6 +1,7 @@
 ﻿using Agents;
 using Autofac;
 using CommonDomainObjects;
+using FacilityAgreements;
 using Iso3166._1;
 using Iso3166._2;
 using Iso4217;
@@ -71,6 +72,11 @@ namespace Data
             builder
                 .RegisterType<LifeCycleLoader>()
                 .As<IEtl<IEnumerable<LifeCycle>>>()
+                .SingleInstance();
+
+            builder
+                .RegisterType<FacilityFeeTypeLoader>()
+                .As<IEtl<IEnumerable<FacilityFeeType>>>()
                 .SingleInstance();
         }
     }
