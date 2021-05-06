@@ -1,8 +1,9 @@
-import { Component, Inject, OnDestroy } from '@angular/core';
+import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { Facility, FeeType } from '../FacilityAgreements';
 import { FacilityProvider } from '../FacilityProvider';
 import { FacilityFeeTypesToken } from '../FacilityFeeTypeServiceProvider';
+import { FacilityFeeEditor } from './FacilityFeeEditor';
 
 @Component(
     {
@@ -14,6 +15,9 @@ export class FacilityFees implements OnDestroy
     private _feeTypes     : FeeType[];
     private _facility     : Facility;
     private _feeType      : FeeType;
+
+    @ViewChild('editor', { static: true })
+    private _editor: FacilityFeeEditor;
 
     constructor(
         @Inject(FacilityFeeTypesToken)
@@ -54,6 +58,8 @@ export class FacilityFees implements OnDestroy
 
     Add(): void
     {
-        alert('Add');
+        this._editor.Create(
+            this._feeType,
+            () => { });
     }
 }
