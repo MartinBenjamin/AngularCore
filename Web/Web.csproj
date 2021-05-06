@@ -54,6 +54,7 @@
     <None Remove="ClientApp\src\app\Deal\FacilityTab3.ts" />
     <None Remove="ClientApp\src\app\Deal\GeographicRegionSelector.ts" />
     <None Remove="ClientApp\src\app\FacilityAgreements.ts" />
+    <None Remove="ClientApp\src\app\FacilityFeeTypeServiceProvider.ts" />
     <None Remove="ClientApp\src\app\FacilityProvider.ts" />
     <None Remove="ClientApp\src\app\GeographicRegionHierarchy.ts" />
     <None Remove="ClientApp\src\app\GeographicRegionHierarchyProvider.ts" />
@@ -295,6 +296,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Deal\FacilityTab3.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Deal\GeographicRegionSelector.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\FacilityAgreements.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\FacilityFeeTypeServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\FacilityProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\GeographicRegionHierarchy.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\GeographicRegionHierarchyProvider.ts" />

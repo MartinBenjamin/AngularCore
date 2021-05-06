@@ -9,6 +9,7 @@ import { Gallery } from './Components/Gallery';
 import { GalleryModule } from './Components/GalleryModule';
 import { CurrenciesOrderedByCode, CurrenciesProvider, CurrencyServiceProvider, CurrencyServiceUrlToken } from './CurrencyServiceProvider';
 import { DealTracker } from './DealTracker';
+import { FacilityFeeTypeServiceProvider, FacilityFeeTypeServiceUrlToken, FacilityFeeTypesProvider } from './FacilityFeeTypeServiceProvider';
 import { GeographicRegionHierarchyProvider, GeographicRegionHierarchyServiceProvider, GeographicRegionHierarchyServiceUrlToken } from './GeographicRegionHierarchyProvider';
 import { DealLifeCycleServiceProvider, DealLifeCycleServiceUrlToken } from './IDealLifeCycleService';
 import { LegalEntityServiceProvider, LegalEntityServiceUrlToken } from './LegalEntityServiceProvider';
@@ -67,6 +68,12 @@ import { RoleServiceProvider, RoleServiceUrlToken, RolesProvider } from './RoleS
             },
             RoleServiceProvider,
             RolesProvider,
+            {
+                provide: FacilityFeeTypeServiceUrlToken,
+                useValue: '/api/facilityfeetypes'
+            },
+            FacilityFeeTypeServiceProvider,
+            FacilityFeeTypesProvider,
             {
                 provide: LegalEntityServiceUrlToken,
                 useValue: '/api/legalentities'
