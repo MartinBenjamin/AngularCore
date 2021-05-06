@@ -1,6 +1,7 @@
 ﻿using Agents;
 using CommonDomainObjects;
 using Deals;
+using FacilityAgreements;
 using Iso3166._1;
 using Iso3166._2;
 using Iso4217;
@@ -64,6 +65,7 @@ namespace Web
             CreateMap<Branch                         , Model.Branch                         >().PreserveReferences();
             CreateMap<LegalEntity                    , Model.LegalEntity                    >().PreserveReferences();
             CreateMap<Role                           , Model.Role                           >().PreserveReferences();
+            CreateMap<FacilityFeeType                , Model.FacilityFeeType                >().PreserveReferences();
             CreateMap<LifeCycle                      , Model.LifeCycle                      >().PreserveReferences();
         }
     }
