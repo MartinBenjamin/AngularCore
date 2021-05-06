@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { ContractualCommitment } from '../Contracts';
 import { Query, Empty } from '../RegularPathExpression';
-import { Facility, FacilityFee, FeeType } from '../FacilityAgreements';
+import { Facility, FacilityFee, FeeType, FeeAmount, FeeAmountType } from '../FacilityAgreements';
 import { EmptyGuid } from '../CommonDomainObjects';
 import { FacilityProvider } from '../FacilityProvider';
 
@@ -47,7 +47,11 @@ export class FacilityFeeEditor
             Id                  : EmptyGuid,
             PartOf              : this._facility,
             Type                : feeType,
-            Amount              : null,
+            Amount              : <FeeAmount>
+                {
+                    Type: FeeAmountType.Monetary,
+                    Value: null
+                },
             ExpectedReceivedDate: null,
             Received            : false,
             AccrualDate         : null

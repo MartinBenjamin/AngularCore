@@ -11,7 +11,16 @@
   <dt-dialog-body>
     <table class="GridLayout FacilityFeeEditorDialog">
       <tr>
-        <td>Facility Fee Editor
+        <td class="RowHeading">Amount:</td>
+        <td>
+          <input type="text"
+                 [dtAmountModel]="Fee?.Amount.Value"
+                 class="Amount" />
+        </td>
+      </tr>
+      <tr>
+        <td class="RowHeading">% Of Commitment:</td>
+        <td>
         </td>
       </tr>
     </table>
