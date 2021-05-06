@@ -23,7 +23,7 @@ namespace Data
         async Task<IEnumerable<FacilityFeeType>> IEtl<IEnumerable<FacilityFeeType>>.ExecuteAsync()
         {
             var facilityFeeTypes = await _csvExtractor.ExtractAsync(
-                "Role.csv",
+                "FacilityFeeType.csv",
                 record => new FacilityFeeType(
                     new Guid(record[0]),
                     record[1]));
