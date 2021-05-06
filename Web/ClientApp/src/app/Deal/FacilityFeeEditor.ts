@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { ContractualCommitment } from '../Contracts';
 import { Query, Empty } from '../RegularPathExpression';
-import { Facility, FacilityFee, FeeType, FeeAmount, FeeAmountType } from '../FacilityAgreements';
+import { Facility, FacilityFee, FeeType, FeeAmount, FeeAmountType, LenderParticipation } from '../FacilityAgreements';
 import { EmptyGuid } from '../CommonDomainObjects';
 import { FacilityProvider } from '../FacilityProvider';
 
@@ -19,6 +19,7 @@ export class FacilityFeeEditor
     private _subscriptions: Subscription[] = [];
     private _facility     : Facility;
     private _fee          : FacilityFee;
+    private _participation: number;
 
     constructor(
         facilityProvider: FacilityProvider
@@ -35,6 +36,24 @@ export class FacilityFeeEditor
     get Fee(): FacilityFee
     {
         return this._fee;
+    }
+
+    get MonetaryAmount(): number
+    {
+        if(typeof this._participation === 'number' &&
+           typeof this._fee.Amount.Value === 'number')
+            return this._fee.Amount.Value * this._participation / 100;
+
+        return null;
+    }
+
+    get PercentageOfCommitment(): number
+    {
+        if(typeof this._participation === 'number' &&
+           typeof this._fee.Amount.Value === 'number')
+            return this._fee.Amount.Value * 100 / this._participation;
+
+        return null;
     }
 
     Create(
@@ -55,7 +74,8 @@ export class FacilityFeeEditor
             ExpectedReceivedDate: null,
             Received            : false,
             AccrualDate         : null
-        };
+            };
+        this._participation = this.CalculateParticipation(this._facility);
     }
 
     Update(
@@ -150,5 +170,12 @@ export class FacilityFeeEditor
     Close(): void
     {
         this._fee = null;
+    }
+
+    private CalculateParticipation(
+        facility: Facility): number
+    {
+        let lenderParticipation = <LenderParticipation>facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
+        return lenderParticipation.ActualAllocation !== null ? lenderParticipation.ActualAllocation : lenderParticipation.AnticipatedHoldAmount;
     }
 }

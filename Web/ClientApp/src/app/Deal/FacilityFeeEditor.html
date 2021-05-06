@@ -24,36 +24,36 @@
           </select>
         </td>
       </tr>
-      <tbody *ngIf="Fee && Fee.Amount.Type == 0; else PercentageOfCommitment">
+      <tbody *ngIf="Fee && Fee.Amount.Type == 0; else Percentage">
         <tr>
           <td class="RowHeading">Amount:</td>
           <td>
             <input type="text"
                    [dtAmountModel]="Fee?.Amount.Value"
-                   (dtAmountModel)="Fee.Amount.Value = $event"
+                   (dtAmountModelChange)="Fee.Amount.Value = $event"
                    class="Amount" />
           </td>
         </tr>
         <tr>
           <td class="RowHeading">% Of Commitment:</td>
           <td>
-            <span class="Field Percentage"></span>
+            <span class="Field Percentage">{{PercentageOfCommitment|percentage}}</span>
           </td>
         </tr>
       </tbody>
-      <ng-template #PercentageOfCommitment>
+      <ng-template #Percentage>
         <tr>
           <td class="RowHeading">Amount:</td>
           <td>
-            <span class="Field Amount"></span>
+            <span class="Field Amount">{{MonetaryAmount|amount}}</span>
           </td>
         </tr>
         <tr>
           <td class="RowHeading">% Of Commitment:</td>
           <td>
             <input type="text"
-                   [dtAmountModel]="Fee?.Amount.Value"
-                   (dtAmountModel)="Fee.Amount.Value = $event"
+                   [dtPercentage100Model]="Fee?.Amount.Value"
+                   (dtPercentage100ModelChange)="Fee.Amount.Value = $event"
                    class="Percentage" />
           </td>
         </tr>
