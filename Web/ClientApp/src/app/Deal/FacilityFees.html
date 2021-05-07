@@ -52,7 +52,7 @@
       <td><a (click)="Update(fee)">edit</a><a (click)="Delete(fee)">delete</a></td>
     </tr>
   </tbody>
-  <tr *ngIf="Fees && !Fees.length">
+  <tr *ngIf="!Fees?.length">
     <td colspan="8" style="text-align: center;">No Fees</td>
   </tr>
 </table>
