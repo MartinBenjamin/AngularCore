@@ -135,6 +135,7 @@ export class FacilityFees implements OnDestroy
         this._fees = [...Group(
             <FacilityFee[]>this._facility.Parts.filter(part => (<any>part).$type == 'Web.Model.FacilityFee, Web'),
             facilityFee => facilityFee.Type,
-            facilityFee => facilityFee)];
+            facilityFee => facilityFee)].sort(
+                (a, b) => a[0].Name.localeCompare(b[0].Name));
     }
 }
