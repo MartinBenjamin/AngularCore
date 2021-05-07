@@ -35,7 +35,7 @@
   </tr>
   <tbody *ngFor="let feesGroupedByfeeType of Fees">
     <tr *ngFor="let fee of feesGroupedByfeeType[1]; first as first; count as count">
-      <td *ngIf="first" [rowSpan]="count">{{fee.Type.Name}}</td>
+      <td *ngIf="first" [rowSpan]="count">{{feesGroupedByfeeType[0].Name}}</td>
       <ng-container *ngIf="fee.Amount.Type === 0; else Percentage">
         <td>Monetary Amount</td>
         <td class="Amount">{{fee.Amount.Value|amount}}</td>
