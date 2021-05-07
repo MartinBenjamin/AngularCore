@@ -4,6 +4,17 @@
     text-align: center;
     vertical-align: top;
   }
+  
+  table.DataGrid.FacilityFees td
+  {
+    text-align: center
+  }
+
+  table.DataGrid.FacilityFees td.Amount,
+  table.DataGrid.FacilityFees td.Percentage
+  {
+    text-align: right
+  }
 </style>
 <facility-fee-editor #editor></facility-fee-editor>
 <table class="DataGrid FacilityFees">
@@ -21,13 +32,13 @@
     <td>{{fee.Type.Name}}</td>
     <ng-container *ngIf="fee.Amount.Type === 0; else Percentage">
       <td>Monetary Amount</td>
-      <td>{{fee.Amount.Value|amount}}</td>
-      <td>{{PercentageOfCommitment(fee)|percentage}}</td>
+      <td class="Amount">{{fee.Amount.Value|amount}}</td>
+      <td class="Percentage">{{PercentageOfCommitment(fee)|percentage}}</td>
     </ng-container>
     <ng-template #Percentage>
       <td>% Of Commitment</td>
-      <td>{{MonetaryAmount(fee)|amount}}</td>
-      <td>{{fee.Amount.Value|percentage}}</td>
+      <td class="Amount">{{MonetaryAmount(fee)|amount}}</td>
+      <td class="Percentage">{{fee.Amount.Value|percentage}}</td>
     </ng-template>
     <td>{{fee.Received|yesNo}}</td>
     <td>{{fee.ExpectedReceivedDate|utcDate}}</td>
