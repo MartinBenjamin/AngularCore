@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { ContractualCommitment } from '../Contracts';
-import { Query, Empty } from '../RegularPathExpression';
+import { Query, Empty, IExpression, Alternative, Sequence, Any, ZeroOrOne, Property } from '../RegularPathExpression';
 import { Facility, FacilityFee, FeeType, FeeAmount, FeeAmountType, LenderParticipation } from '../FacilityAgreements';
 import { EmptyGuid } from '../CommonDomainObjects';
 import { FacilityProvider } from '../FacilityProvider';
@@ -18,8 +18,12 @@ export class FacilityFeeEditor
 {
     private _subscriptions: Subscription[] = [];
     private _facility     : Facility;
+    private _originalFee  : FacilityFee;
     private _fee          : FacilityFee;
+    private _applyCallback: ApplyCallback;
     private _participation: number;
+
+    private static _subgraph: IExpression = new ZeroOrOne(new Property('Amount'));
 
     constructor(
         facilityProvider: FacilityProvider
@@ -61,7 +65,9 @@ export class FacilityFeeEditor
         applyCallback: ApplyCallback,
         )
     {
-        this._fee = <FacilityFee>
+        this._applyCallback = applyCallback;
+        this._originalFee   = null;
+        this._fee           = <FacilityFee>
         {
             Id                  : EmptyGuid,
             PartOf              : this._facility,
@@ -75,6 +81,8 @@ export class FacilityFeeEditor
             Received            : false,
             AccrualDate         : null
         };
+
+        (<any>this._fee).$type = 'Web.Model.FacilityFee, Web';
         this._participation = this.CalculateParticipation(this._facility);
     }
 
@@ -83,81 +91,30 @@ export class FacilityFeeEditor
         applyCallback: ApplyCallback,
         )
     {
-        //let subgraph = Query(
-        //    facility,
-        //    Facility._subgraph);
+        this._applyCallback = applyCallback;
+        this._originalFee   = fee;
+        this._fee           = <FacilityFee>{};
+        for(let key in fee)
+        {
+            let value = fee[key];
+            this._fee[key] = value instanceof Date ? new Date(value.valueOf()) : value;
+        }
 
-        //this._applyCallback = applyCallback;
-        //this._copy = new Map<object, object>();
-        //this._facility.next(<facilityAgreements.Facility>Copy(
-        //    subgraph,
-        //    this._copy,
-        //    facility));
-        //this.ComputeBookingOffice();
+        this._fee.Amount = <FeeAmount>{ ...this._fee.Amount };
+
+        this._participation = this.CalculateParticipation(this._facility);
     }
 
     Apply(): void
     {
-        //let before = new Set<ContractualCommitment>();
-        //let after = new Set<ContractualCommitment>();
-        //if(this._copy)
-        //{
-        //    let original = new Map<object, object>();
-        //    [...this._copy.entries()].forEach(
-        //        entry => original.set(
-        //            entry[1],
-        //            entry[0]));
+        if(!this._originalFee)
+            this._fee.PartOf.Parts.push(this._fee);
 
-        //    this.Flatten(
-        //        <ContractualCommitment>original.get(this.Facility),
-        //        before);
+        else for(let key in this._fee)
+            this._originalFee[key] = this._fee[key];
 
-        //    let subgraph = Query(
-        //        this.Facility,
-        //        Facility._subgraph);
-
-        //    Update(
-        //        subgraph,
-        //        original,
-        //        this.Facility);
-
-        //    this.Flatten(<
-        //        ContractualCommitment>original.get(this.Facility),
-        //        after);
-        //}
-        //else
-        //    this.Flatten(
-        //        this.Facility,
-        //        after);
-
-        //[...before]
-        //    .filter(commitment => !after.has(commitment))
-        //    .forEach(
-        //        commitment =>
-        //        {
-        //            if(commitment.Contract)
-        //                commitment.Contract.Confers.splice(
-        //                    commitment.Contract.Confers.indexOf(commitment),
-        //                    1);
-
-        //            this._deal.Confers.splice(
-        //                this._deal.Confers.indexOf(commitment),
-        //                1);
-        //        });
-
-        //[...after]
-        //    .filter(commitment => !before.has(commitment))
-        //    .forEach(
-        //        commitment =>
-        //        {
-        //            if(commitment.Contract)
-        //                commitment.Contract.Confers.push(commitment);
-
-        //            this._deal.Confers.push(commitment);
-        //        });
-
-        //if(this._applyCallback)
-        //    this._applyCallback();
+        if(this._applyCallback)
+            this._applyCallback();
 
         this.Close();
     }
@@ -169,7 +126,9 @@ export class FacilityFeeEditor
 
     Close(): void
     {
-        this._fee = null;
+        this._originalFee   = null;
+        this._fee           = null;
+        this._participation = null;
     }
 
     private CalculateParticipation(

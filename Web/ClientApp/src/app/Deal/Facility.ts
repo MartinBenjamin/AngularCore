@@ -380,8 +380,8 @@ export class Facility
                 original,
                 this.Facility);
 
-            this.Flatten(<
-                ContractualCommitment>original.get(this.Facility),
+            this.Flatten(
+                <ContractualCommitment>original.get(this.Facility),
                 after);
         }
         else
