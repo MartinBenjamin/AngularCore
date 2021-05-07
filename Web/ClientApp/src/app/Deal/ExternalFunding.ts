@@ -108,7 +108,8 @@ export class ExternalFunding implements OnDestroy
 
         this._providers = this._externalFunding.Obligors
             .filter(obligor => obligor.Role.Id === DealRoleIdentifier.ExternalFundingProvider)
-            .map(obligor => <LegalEntity>obligor.Organisation);
+            .map(obligor => <LegalEntity>obligor.Organisation)
+            .sort((a, b) => a.Name.localeCompare(b.Name));
     }
 
     get Providers(): LegalEntity[]
