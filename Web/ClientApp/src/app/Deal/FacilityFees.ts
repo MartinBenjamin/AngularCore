@@ -13,7 +13,7 @@ import { FacilityFeeEditor } from './FacilityFeeEditor';
 export class FacilityFees implements OnDestroy
 {
     private _subscriptions      : Subscription[] = [];
-    private _fees               : Map<FeeType, FacilityFee[]>;
+    private _fees               : [FeeType, FacilityFee[]][];
     private _feeTypes           : FeeType[];
     private _facility           : Facility;
     private _lenderParticipation: LenderParticipation;
@@ -69,7 +69,7 @@ export class FacilityFees implements OnDestroy
         this._feeType = feeType;
     }
 
-    get Fees(): Map<FeeType, FacilityFee[]>
+    get Fees(): [FeeType, FacilityFee[]][]
     {
         return this._fees;
     }
@@ -132,9 +132,9 @@ export class FacilityFees implements OnDestroy
             return;
         }
 
-        this._fees = Group(
+        this._fees = [...Group(
             <FacilityFee[]>this._facility.Parts.filter(part => (<any>part).$type == 'Web.Model.FacilityFee, Web'),
             facilityFee => facilityFee.Type,
-            facilityFee => facilityFee);
+            facilityFee => facilityFee)];
     }
 }

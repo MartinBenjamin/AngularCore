@@ -33,8 +33,8 @@
     <th>Accrual<br />Date</th>
     <th></th>
   </tr>
-  <tbody *ngFor="let feeType of FeeTypes">
-    <tr *ngFor="let fee of Fees?.get(feeType); first as first; count as count">
+  <tbody *ngFor="let feesGroupedByfeeType of Fees">
+    <tr *ngFor="let fee of feesGroupedByfeeType[1]; first as first; count as count">
       <td *ngIf="first" [rowSpan]="count">{{fee.Type.Name}}</td>
       <ng-container *ngIf="fee.Amount.Type === 0; else Percentage">
         <td>Monetary Amount</td>
@@ -52,7 +52,7 @@
       <td><a (click)="Update(fee)">edit</a><a (click)="Delete(fee)">delete</a></td>
     </tr>
   </tbody>
-  <tr *ngIf="Fees && !Fees.size">
+  <tr *ngIf="Fees && !Fees.length">
     <td colspan="8" style="text-align: center;">No Fees</td>
   </tr>
 </table>
