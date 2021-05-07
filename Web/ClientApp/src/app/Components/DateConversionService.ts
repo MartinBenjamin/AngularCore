@@ -23,8 +23,8 @@ export class DateConversionService implements IConversionService<Date>
         value: string
         ): Date
     {
-        var date: Date = null;
-        var index: number = 0;
+        let date: Date = null;
+        let index: number = 0;
         while(index < this._parsers.length && !(date = this._parsers[index++](value)));
         return date;
     }

@@ -130,7 +130,7 @@ export class Calendar implements OnInit
                 'click',
                 (event: MouseEvent) =>
                 {
-                    var srcElement = <HTMLElement>event.srcElement;
+                    let srcElement = <HTMLElement>event.srcElement;
                     if(srcElement.tagName.toLowerCase() == 'td')
                     {
                         dateComponent.DateSelected.emit(new Date((<Element & IDateCell>event.srcElement).Date));
@@ -153,10 +153,10 @@ export class Calendar implements OnInit
                     let date = new Date(currentMonth.valueOf());
                     date.setUTCDate(date.getUTCDate() - (dayOfWeek > 0 ? dayOfWeek : 7));
 
-                    for(var weekIndex = 0; weekIndex < 6; ++weekIndex)
+                    for(let weekIndex = 0; weekIndex < 6; ++weekIndex)
                     {
                         let row = <HTMLTableRowElement>calendarDaysBody.children[weekIndex];
-                        for(var dayIndex = 0; dayIndex < 7; ++dayIndex)
+                        for(let dayIndex = 0; dayIndex < 7; ++dayIndex)
                         {
                             let dayCell = <HTMLTableCellElement & IDateCell>(row.cells[dayIndex]);
                             dayCell.innerText = date.getDate().toString();

@@ -17,7 +17,7 @@ export function Validate(
     applicableStages: Set<Guid>
     ): Map<object, Map<string, Set<keyof IErrors>>>
 {
-    var evaluator = new ClassMembershipEvaluator(
+    let evaluator = new ClassMembershipEvaluator(
         ontology,
         classifications);
 

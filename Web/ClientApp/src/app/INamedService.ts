@@ -42,7 +42,7 @@ export class NamedService<TId, TNamed extends Named<TId>, TNamedFilters extends 
 
         for(let key in <object>filters)
         {
-            var value = filters[key];
+            let value = filters[key];
             switch(typeof value)
             {
                 case 'string': params = params.set(key, value           ); break;

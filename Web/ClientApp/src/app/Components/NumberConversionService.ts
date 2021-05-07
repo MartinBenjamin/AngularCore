@@ -19,8 +19,8 @@ export class NumberConversionService implements IConversionService<number>
         value: string
         ): number
     {
-        var number: number = null;
-        var index = 0;
+        let number: number = null;
+        let index = 0;
         while(index < this._parsers.length && isNaN(number = this._parsers[index++](value)));
 
         if(isNaN(number))

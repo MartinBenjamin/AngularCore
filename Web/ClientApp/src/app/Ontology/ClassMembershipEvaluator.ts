@@ -143,7 +143,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
 
         let adjacent: Set<IClass> = null;
         let empty = new Set<IClass>();
-        var adjacencyList = new Map<IClass, Set<IClass>>();
+        let adjacencyList = new Map<IClass, Set<IClass>>();
         for(let class$ of ontology.Get(ontology.IsAxiom.IClass))
             adjacencyList.set(
                 class$,

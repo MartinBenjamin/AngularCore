@@ -34,7 +34,7 @@ export class Globe implements AfterViewInit
             .append('svg')
             .attr('width', width)
             .attr('height', height);
-        var projection = d3.geoOrthographic();
+        let projection = d3.geoOrthographic();
         //projection = projection.scale(200);
         console.log(projection.scale());
         const path = d3.geoPath().projection(projection);
