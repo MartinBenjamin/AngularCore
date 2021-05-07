@@ -33,24 +33,26 @@
     <th>Accrual<br />Date</th>
     <th></th>
   </tr>
-  <tr *ngFor="let fee of Fees">
-    <td>{{fee.Type.Name}}</td>
-    <ng-container *ngIf="fee.Amount.Type === 0; else Percentage">
-      <td>Monetary Amount</td>
-      <td class="Amount">{{fee.Amount.Value|amount}}</td>
-      <td class="Percentage">{{PercentageOfCommitment(fee)|percentage}}</td>
-    </ng-container>
-    <ng-template #Percentage>
-      <td>% Of Commitment</td>
-      <td class="Amount">{{MonetaryAmount(fee)|amount}}</td>
-      <td class="Percentage">{{fee.Amount.Value|percentage}}</td>
-    </ng-template>
-    <td>{{fee.Received|yesNo}}</td>
-    <td>{{fee.ExpectedReceivedDate|utcDate}}</td>
-    <td></td>
-    <td><a (click)="Update(fee)">edit</a><a (click)="Delete(fee)">delete</a></td>
-  </tr>
-  <tr *ngIf="Fees && Fees.length === 0">
+  <tbody *ngFor="let feeType of FeeTypes">
+    <tr *ngFor="let fee of Fees?.get(feeType); first as first; count as count">
+      <td *ngIf="first" [rowSpan]="count">{{fee.Type.Name}}</td>
+      <ng-container *ngIf="fee.Amount.Type === 0; else Percentage">
+        <td>Monetary Amount</td>
+        <td class="Amount">{{fee.Amount.Value|amount}}</td>
+        <td class="Percentage">{{PercentageOfCommitment(fee)|percentage}}</td>
+      </ng-container>
+      <ng-template #Percentage>
+        <td>% Of Commitment</td>
+        <td class="Amount">{{MonetaryAmount(fee)|amount}}</td>
+        <td class="Percentage">{{fee.Amount.Value|percentage}}</td>
+      </ng-template>
+      <td>{{fee.Received|yesNo}}</td>
+      <td>{{fee.ExpectedReceivedDate|utcDate}}</td>
+      <td></td>
+      <td><a (click)="Update(fee)">edit</a><a (click)="Delete(fee)">delete</a></td>
+    </tr>
+  </tbody>
+  <tr *ngIf="Fees && !Fees.size">
     <td colspan="8" style="text-align: center;">No Fees</td>
   </tr>
 </table>
