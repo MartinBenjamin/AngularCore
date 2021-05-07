@@ -113,6 +113,16 @@ export class FacilityFees implements OnDestroy
             () => this.ComputeFees());
     }
 
+    Delete(
+        fee: FacilityFee
+        ): void
+    {
+        this._facility.Parts.splice(
+            this._facility.Parts.indexOf(fee),
+            1);
+        this.ComputeFees();
+    }
+
     private ComputeFees(): void
     {
         if(!this._facility)

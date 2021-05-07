@@ -15,6 +15,11 @@
   {
     text-align: right
   }
+
+  table.DataGrid.FacilityFees a
+  {
+    margin-right: 2px;
+  }
 </style>
 <facility-fee-editor #editor></facility-fee-editor>
 <table class="DataGrid FacilityFees">
@@ -43,7 +48,7 @@
     <td>{{fee.Received|yesNo}}</td>
     <td>{{fee.ExpectedReceivedDate|utcDate}}</td>
     <td></td>
-    <td><a (click)="Update(fee)">edit</a></td>
+    <td><a (click)="Update(fee)">edit</a><a (click)="Delete(fee)">delete</a></td>
   </tr>
   <tr *ngIf="Fees && Fees.length === 0">
     <td colspan="8" style="text-align: center;">No Fees</td>
