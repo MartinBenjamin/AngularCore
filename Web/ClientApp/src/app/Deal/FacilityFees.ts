@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { Facility, FeeType, FacilityFee } from '../FacilityAgreements';
+import { Facility, FeeType, FacilityFee, LenderParticipation } from '../FacilityAgreements';
 import { FacilityProvider } from '../FacilityProvider';
 import { FacilityFeeTypesToken } from '../FacilityFeeTypeServiceProvider';
 import { FacilityFeeEditor } from './FacilityFeeEditor';
@@ -11,11 +11,12 @@ import { FacilityFeeEditor } from './FacilityFeeEditor';
     })
 export class FacilityFees implements OnDestroy
 {
-    private _subscriptions: Subscription[] = [];
-    private _fees         : FacilityFee[];
-    private _feeTypes     : FeeType[];
-    private _facility     : Facility;
-    private _feeType      : FeeType;
+    private _subscriptions      : Subscription[] = [];
+    private _fees               : FacilityFee[];
+    private _feeTypes           : FeeType[];
+    private _facility           : Facility;
+    private _lenderParticipation: LenderParticipation;
+    private _feeType            : FeeType;
 
     @ViewChild('editor', { static: true })
     private _editor: FacilityFeeEditor;
@@ -32,7 +33,15 @@ export class FacilityFees implements OnDestroy
                 facility =>
                 {
                     this._facility = facility;
-                    this._feeType = null;
+                    this._feeType  = null;
+
+                    if(!this._facility)
+                        this._lenderParticipation = null;
+
+                    else
+                        this._lenderParticipation = <LenderParticipation>this._facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
+
+
                     this.ComputeFees();
                 }));
     }
@@ -62,6 +71,30 @@ export class FacilityFees implements OnDestroy
     get Fees(): FacilityFee[]
     {
         return this._fees;
+    }
+
+    MonetaryAmount(
+        fee: FacilityFee
+        ): number
+    {
+        let participation = this._lenderParticipation.ActualAllocation !== null ? this._lenderParticipation.ActualAllocation : this._lenderParticipation.AnticipatedHoldAmount;
+        if(typeof participation === 'number' &&
+           typeof fee.Amount.Value === 'number')
+            return fee.Amount.Value * participation / 100;
+
+        return null;
+    }
+
+    PercentageOfCommitment(
+        fee: FacilityFee
+        ): number
+    {
+        let participation = this._lenderParticipation.ActualAllocation !== null ? this._lenderParticipation.ActualAllocation : this._lenderParticipation.AnticipatedHoldAmount;
+        if(typeof participation === 'number' &&
+           typeof fee.Amount.Value === 'number')
+            return fee.Amount.Value * 100 / participation;
+
+        return null;
     }
 
     Add(): void

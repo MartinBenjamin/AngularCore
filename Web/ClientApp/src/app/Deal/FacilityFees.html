@@ -22,11 +22,11 @@
     <ng-container *ngIf="fee.Amount.Type === 0; else Percentage">
       <td>Monetary Amount</td>
       <td>{{fee.Amount.Value|amount}}</td>
-      <td></td>
+      <td>{{PercentageOfCommitment(fee)|percentage}}</td>
     </ng-container>
     <ng-template #Percentage>
       <td>% Of Commitment</td>
-      <td></td>
+      <td>{{MonetaryAmount(fee)|amount}}</td>
       <td>{{fee.Amount.Value|percentage}}</td>
     </ng-template>
     <td>{{fee.Received|yesNo}}</td>
