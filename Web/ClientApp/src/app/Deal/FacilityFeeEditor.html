@@ -69,7 +69,11 @@
       </tr>
       <tr>
         <td class="RowHeading">Received:</td>
-        <td><input type="checkbox" /></td>
+        <td>
+          <input type="checkbox"
+                 [ngModel]="Fee?.Received"
+                 (ngModelChange)="Fee.Received = $event" />
+        </td>
       </tr>
       <tr>
         <td class="RowHeading">Accrued:</td>

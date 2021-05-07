@@ -17,6 +17,16 @@
     <th>Accrual<br />Date</th>
     <th></th>
   </tr>
+  <tr *ngFor="let fee of Fees">
+    <td>{{fee.Type.Name}}</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td>{{fee.Received|yesNo}}</td>
+    <td>{{fee.ExpectedReceivedDate|utcDate}}</td>
+    <td></td>
+    <td><a (click)="Update(fee)">edit</a></td>
+  </tr>
   <tr>
     <td colspan="8" style="text-align: center;">No Fees</td>
   </tr>

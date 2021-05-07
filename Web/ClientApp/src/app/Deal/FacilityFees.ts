@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { Facility, FeeType } from '../FacilityAgreements';
+import { Facility, FeeType, FacilityFee } from '../FacilityAgreements';
 import { FacilityProvider } from '../FacilityProvider';
 import { FacilityFeeTypesToken } from '../FacilityFeeTypeServiceProvider';
 import { FacilityFeeEditor } from './FacilityFeeEditor';
@@ -12,6 +12,7 @@ import { FacilityFeeEditor } from './FacilityFeeEditor';
 export class FacilityFees implements OnDestroy
 {
     private _subscriptions: Subscription[] = [];
+    private _fees         : FacilityFee[];
     private _feeTypes     : FeeType[];
     private _facility     : Facility;
     private _feeType      : FeeType;
@@ -32,6 +33,7 @@ export class FacilityFees implements OnDestroy
                 {
                     this._facility = facility;
                     this._feeType = null;
+                    this.ComputeFees();
                 }));
     }
 
@@ -57,10 +59,35 @@ export class FacilityFees implements OnDestroy
         this._feeType = feeType;
     }
 
+    get Fees(): FacilityFee[]
+    {
+        return this._fees;
+    }
+
     Add(): void
     {
         this._editor.Create(
             this._feeType,
-            () => { });
+            () => this.ComputeFees());
+    }
+
+    Update(
+        fee: FacilityFee
+        ): void
+    {
+        this._editor.Update(
+            fee,
+            () => this.ComputeFees());
+    }
+
+    private ComputeFees(): void
+    {
+        if(!this._facility)
+        {
+            this._fees = null;
+            return;
+        }
+
+        this._fees = <FacilityFee[]>this._facility.Parts.filter(part => (<any>part).$type == 'Web.Model.FacilityFee, Web');
     }
 }
