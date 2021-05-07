@@ -19,15 +19,22 @@
   </tr>
   <tr *ngFor="let fee of Fees">
     <td>{{fee.Type.Name}}</td>
-    <td></td>
-    <td></td>
-    <td></td>
+    <ng-container *ngIf="fee.Amount.Type === 0; else Percentage">
+      <td>Monetary Amount</td>
+      <td>{{fee.Amount.Value|amount}}</td>
+      <td></td>
+    </ng-container>
+    <ng-template #Percentage>
+      <td>% Of Commitment</td>
+      <td></td>
+      <td>{{fee.Amount.Value|percentage}}</td>
+    </ng-template>
     <td>{{fee.Received|yesNo}}</td>
     <td>{{fee.ExpectedReceivedDate|utcDate}}</td>
     <td></td>
     <td><a (click)="Update(fee)">edit</a></td>
   </tr>
-  <tr>
+  <tr *ngIf="Fees && Fees.length === 0">
     <td colspan="8" style="text-align: center;">No Fees</td>
   </tr>
 </table>

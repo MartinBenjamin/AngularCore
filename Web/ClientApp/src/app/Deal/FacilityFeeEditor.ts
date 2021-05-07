@@ -73,10 +73,10 @@ export class FacilityFeeEditor
             PartOf              : this._facility,
             Type                : feeType,
             Amount              : <FeeAmount>
-                {
-                    Type: FeeAmountType.Monetary,
-                    Value: null
-                },
+            {
+                Type : FeeAmountType.MonetaryAmount,
+                Value: null
+            },
             ExpectedReceivedDate: null,
             Received            : false,
             AccrualDate         : null

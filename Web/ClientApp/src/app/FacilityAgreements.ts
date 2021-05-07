@@ -43,7 +43,7 @@ export interface FeeType extends Named<Guid>
 
 export enum FeeAmountType
 {
-    Monetary = 0,
+    MonetaryAmount = 0,
     PercentageOfCommitment
 }
 

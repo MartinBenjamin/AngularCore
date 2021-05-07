@@ -19,12 +19,12 @@
         <td>
           <select [ngModel]="Fee?.Amount.Type"
                   (ngModelChange)="Fee.Amount.Type = $event">
-            <option [ngValue]="0">Monetary</option>
+            <option [ngValue]="0">Monetary Amount</option>
             <option [ngValue]="1">% Of Commitment</option>
           </select>
         </td>
       </tr>
-      <tbody *ngIf="Fee && Fee.Amount.Type == 0; else Percentage">
+      <tbody *ngIf="Fee && Fee.Amount.Type === 0; else Percentage">
         <tr>
           <td class="RowHeading">Amount:</td>
           <td>
