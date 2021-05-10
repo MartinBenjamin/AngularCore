@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AccrualDateEditor } from '../AccrualDateEditor';
+import { AccrualDatePipe } from '../AccrualDatePipe';
 import { DateModule } from '../Components/DateModule';
 import { DialogModule } from '../Components/Dialog';
 import { ErrorModule } from '../Components/ErrorModule';
@@ -34,6 +35,7 @@ import { TransactionDetails } from './TransactionDetails';
         declarations:
             [
                 AccrualDateEditor,
+                AccrualDatePipe,
                 Borrowers,
                 Common,
                 DealGeographicRegion,

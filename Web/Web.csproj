@@ -32,6 +32,7 @@
   <ItemGroup>
     <None Remove="ClientApp\src\app\AccrualDate.ts" />
     <None Remove="ClientApp\src\app\AccrualDateEditor.ts" />
+    <None Remove="ClientApp\src\app\AccrualDatePipe.ts" />
     <None Remove="ClientApp\src\app\Agents.ts" />
     <None Remove="ClientApp\src\app\Agreements.ts" />
     <None Remove="ClientApp\src\app\BranchServiceProvider.ts" />
@@ -278,6 +279,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\AccrualDate.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\AccrualDateEditor.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\AccrualDatePipe.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Agents.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Agreements.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\BranchServiceProvider.ts" />

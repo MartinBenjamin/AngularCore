@@ -48,7 +48,7 @@
       </ng-template>
       <td>{{fee.Received|yesNo}}</td>
       <td>{{fee.ExpectedReceivedDate|utcDate}}</td>
-      <td></td>
+      <td>{{fee.AccrualDate|accrualDate}}</td>
       <td><a (click)="Update(fee)">edit</a><a (click)="Delete(fee)">delete</a></td>
     </tr>
   </tbody>
