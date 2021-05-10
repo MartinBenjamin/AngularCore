@@ -77,11 +77,14 @@
       </tr>
       <tr>
         <td class="RowHeading">Accrued:</td>
-        <td><input type="checkbox" /></td>
+        <td>
+          <input type="checkbox"
+                 [(ngModel)]="Accrued" />
+        </td>
       </tr>
-      <tr>
+      <tr *ngIf="Accrued">
         <td class="RowHeading">Accrual Date:</td>
-        <td></td>
+        <td><accrual-date-editor [AccrualDate]="Fee?.AccrualDate"></accrual-date-editor></td>
       </tr>
     </table>
   </dt-dialog-body>

@@ -1,6 +1,5 @@
 import { DealTypeIdentifier } from "../Deals";
 import { IClass } from "../Ontology/IClass";
-import { INamedIndividual } from "../Ontology/INamedIndividual";
 import { Ontology } from "../Ontology/Ontology";
 import { commonDomainObjects } from "./CommonDomainObjects";
 import { deals } from "./Deals";

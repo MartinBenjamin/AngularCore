@@ -175,11 +175,6 @@ export class Deals extends Ontology
             .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect)
             .Annotate(this.Error, "MustBe100Percent");
 
-        //this.KeyCounterpartyRole = this.DeclareClass("KeyCounterpartyRole");
-        //this.KeyCounterparty = this.DeclareClass("KeyCounterparty");
-        //this.KeyCounterparty.SubClassOf(this.DealParty);
-        //this.KeyCounterparty.Define(new ObjectSomeValuesFrom(parties.Role, this.KeyCounterpartyRole));
-
         this.Debt = this.DeclareClass("Debt");
         this.Debt.SubClassOf(this.Deal);
         this.Debt.SubClassOf(this.Parties.MinCardinality(1, this.BorrowerParty))
@@ -192,18 +187,6 @@ export class Deals extends Ontology
         this.Debt.SubClassOf(this.LifeCycle.HasValue(this.DebtLifeCycle));
 
         new DisjointClasses(this, [this.Deal, parties.PartyInRole, commonDomainObjects.Classifier]);
-
-        //let NotExclusive = ExclusivityClassifier.DeclareNamedIndividual("NotExclusive");
-        //NotExclusive.Value(commonDomainObjects.Id, ExclusivityClassifierIdentifier.No);
-        //let Exclusive = ExclusivityClassifier.Intersect((new ObjectOneOf(NotExclusive) + Complement()));
-        //let ExclusiveDeal = this.DeclareClass("ExclusiveDeal");
-        //ExclusiveDeal.SubClassOf(this.Deal);
-        //let intermediate = this.DeclareClass("Intermediate");
-        //intermediate.Define(new ObjectSomeValuesFrom(this.Classifiers, Exclusive));
-        //ExclusiveDeal.Define(new ObjectIntersectionOf(intermediate));
-
-        //let Date = this.Exclusivity.DeclareDataProperty("Date");
-        //Date.Range(ReservedVocabulary.DateTime).Annotate(validation.RangeValidated, null);
     }
 }
 

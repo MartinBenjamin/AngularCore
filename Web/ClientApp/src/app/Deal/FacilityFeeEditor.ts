@@ -5,6 +5,7 @@ import { Query, Empty, IExpression, Alternative, Sequence, Any, ZeroOrOne, Prope
 import { Facility, FacilityFee, FeeType, FeeAmount, FeeAmountType, LenderParticipation } from '../FacilityAgreements';
 import { EmptyGuid } from '../CommonDomainObjects';
 import { FacilityProvider } from '../FacilityProvider';
+import { AccrualDate } from '../AccrualDate';
 
 
 type ApplyCallback = () => void;
@@ -58,6 +59,29 @@ export class FacilityFeeEditor
             return this._fee.Amount.Value * 100 / this._participation;
 
         return null;
+    }
+
+    get Accrued(): boolean
+    {
+        return this._fee && this._fee.AccrualDate !== null;
+    }
+
+    set Accrued(
+        accrued: boolean
+        )
+    {
+        if(!this._fee)
+            return;
+
+        if(accrued && !this._fee.AccrualDate)
+            this._fee.AccrualDate = <AccrualDate>
+                {
+                    Year : null,
+                    Month: null
+                };
+
+        else if(!accrued && this._fee.AccrualDate)
+            this._fee.AccrualDate = null;
     }
 
     Create(

@@ -2,6 +2,7 @@ import { Guid, Named } from "./CommonDomainObjects";
 import { Contract, ContractualCommitment } from "./Contracts";
 import { percentage } from './Deals';
 import { Currency } from "./Iso4217";
+import { AccrualDate } from "./AccrualDate";
 
 export interface FacilityAgreement extends Contract
 {
@@ -59,5 +60,5 @@ export interface FacilityFee extends ContractualCommitment
     Amount              : FeeAmount;
     ExpectedReceivedDate: Date;
     Received            : boolean;
-    AccrualDate         : Date;
+    AccrualDate         : AccrualDate;
 }
