@@ -1,11 +1,11 @@
-import { Component, Inject } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
-import { ContractualCommitment } from '../Contracts';
-import { Query, Empty, IExpression, Alternative, Sequence, Any, ZeroOrOne, Property } from '../RegularPathExpression';
-import { Facility, FacilityFee, FeeType, FeeAmount, FeeAmountType, LenderParticipation } from '../FacilityAgreements';
-import { EmptyGuid } from '../CommonDomainObjects';
-import { FacilityProvider } from '../FacilityProvider';
+import { Component } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { AccrualDate } from '../AccrualDate';
+import { EmptyGuid } from '../CommonDomainObjects';
+import { Facility, FacilityFee, FeeAmount, FeeAmountType, FeeType, LenderParticipation } from '../FacilityAgreements';
+import { FacilityProvider } from '../FacilityProvider';
+import { Alternative, Empty, IExpression, Property, Query } from '../RegularPathExpression';
+import { Copy, Update } from './Facility';
 
 
 type ApplyCallback = () => void;
@@ -19,12 +19,17 @@ export class FacilityFeeEditor
 {
     private _subscriptions: Subscription[] = [];
     private _facility     : Facility;
-    private _originalFee  : FacilityFee;
     private _fee          : FacilityFee;
+    private _copy         : Map<object, object>;
     private _applyCallback: ApplyCallback;
     private _participation: number;
 
-    private static _subgraph: IExpression = new ZeroOrOne(new Property('Amount'));
+    private static _subgraph: IExpression = new Alternative(
+        [
+            Empty,
+            new Property('Amount'),
+            new Property('AccrualDate')
+        ]);
 
     constructor(
         facilityProvider: FacilityProvider
@@ -90,7 +95,7 @@ export class FacilityFeeEditor
         )
     {
         this._applyCallback = applyCallback;
-        this._originalFee   = null;
+        this._copy          = null;
         this._fee           = <FacilityFee>
         {
             Id                  : EmptyGuid,
@@ -116,29 +121,41 @@ export class FacilityFeeEditor
         )
     {
         this._applyCallback = applyCallback;
-        this._originalFee   = fee;
-        this._fee           = <FacilityFee>{};
-        for(let key in fee)
-        {
-            let value = fee[key];
-            this._fee[key] = value instanceof Date ? new Date(value.valueOf()) : value;
-        }
 
-        this._fee.Amount = <FeeAmount>{ ...this._fee.Amount };
+        let subgraph = Query(
+            fee,
+            FacilityFeeEditor._subgraph);
 
-        if(this._fee.AccrualDate)
-            this._fee.AccrualDate = <AccrualDate>{ ...this._fee.AccrualDate };
+        this._copy = new Map<object, object>();
+        this._fee = <FacilityFee>Copy(
+            subgraph,
+            this._copy,
+            fee);
 
         this._participation = this.CalculateParticipation(this._facility);
     }
 
     Apply(): void
     {
-        if(!this._originalFee)
-            this._fee.PartOf.Parts.push(this._fee);
+        if(this._copy)
+        {
+            let original = new Map<object, object>();
+            [...this._copy.entries()].forEach(
+                entry => original.set(
+                    entry[1],
+                    entry[0]));
 
-        else for(let key in this._fee)
-            this._originalFee[key] = this._fee[key];
+            let subgraph = Query(
+                this._fee,
+                FacilityFeeEditor._subgraph);
+
+            Update(
+                subgraph,
+                original,
+                this._fee);
+        }
+        else
+            this._fee.PartOf.Parts.push(this._fee);
 
         if(this._applyCallback)
             this._applyCallback();
@@ -153,7 +170,6 @@ export class FacilityFeeEditor
 
     Close(): void
     {
-        this._originalFee   = null;
         this._fee           = null;
         this._participation = null;
     }

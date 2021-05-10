@@ -114,7 +114,7 @@ function Flatten(
     return objects;
 }
 
-function Copy(
+export function Copy(
     subgraph: Set<object>,
     copy    : Map<object, object>,
     object  : any
@@ -155,7 +155,7 @@ function Copy(
     return object;
 }
 
-function Update(
+export function Update(
     subgraph: Set<object>,
     original: Map<object, object>,
     object  : any,
