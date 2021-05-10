@@ -175,7 +175,8 @@ export class FacilityFeeEditor
     }
 
     private CalculateParticipation(
-        facility: Facility): number
+        facility: Facility
+        ): number
     {
         let lenderParticipation = <LenderParticipation>facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
         return lenderParticipation.ActualAllocation !== null ? lenderParticipation.ActualAllocation : lenderParticipation.AnticipatedHoldAmount;
