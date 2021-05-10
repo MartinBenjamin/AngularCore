@@ -7,7 +7,8 @@ export let AccrualDatePatternsToken = new InjectionToken<Patterns>("AccrualDateP
 
 @Pipe(
     {
-        name: 'accrualDate'
+        name: 'accrualDate',
+        pure: false
     })
 export class AccrualDatePipe implements PipeTransform
 {

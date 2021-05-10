@@ -126,6 +126,9 @@ export class FacilityFeeEditor
 
         this._fee.Amount = <FeeAmount>{ ...this._fee.Amount };
 
+        if(this._fee.AccrualDate)
+            this._fee.AccrualDate = <AccrualDate>{ ...this._fee.AccrualDate };
+
         this._participation = this.CalculateParticipation(this._facility);
     }
 
