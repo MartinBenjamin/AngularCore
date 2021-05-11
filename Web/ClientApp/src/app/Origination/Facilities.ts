@@ -49,11 +49,11 @@ export class Facilities implements OnDestroy
         let facility = <Facility>
         {
             Id                       : EmptyGuid,
+            Name                     : '',
             Obligors                 : [],
             Contract                 : null,
             PartOf                   : null,
             Parts                    : [],
-            Name                     : '',
             Currency                 : null,
             TotalCommitments         : null,
             AvailabilityPeriodEndDate: null,
