@@ -5,6 +5,7 @@ import { commonDomainObjects } from "./CommonDomainObjects";
 import { deals } from "./Deals";
 import { IDealOntology } from "./IDealOntology";
 import { lifeCycles } from "./LifeCycles";
+import { annotations } from './Annotations';
 
 export class Advisory
     extends Ontology
@@ -18,12 +19,13 @@ export class Advisory
             "Advisory",
             commonDomainObjects,
             lifeCycles,
+            annotations,
             deals);
 
         let dealType = deals.DealType.DeclareNamedIndividual("Advisory");
         dealType.DataPropertyValue(commonDomainObjects.Id, DealTypeIdentifier.Advisory);
 
-        let lifeCycle = lifeCycles.LifeCycle.DeclareNamedIndividual("DebtLifeCycle");
+        let lifeCycle = lifeCycles.LifeCycle.DeclareNamedIndividual("AdvisoryLifeCycle");
         lifeCycle.DataPropertyValue(commonDomainObjects.Id, DealLifeCycleIdentifier.Advisory);
 
         this.Deal = this.DeclareClass("Deal");
@@ -31,7 +33,7 @@ export class Advisory
         this.Deal.SubClassOf(deals.Type.HasValue(dealType));
         this.Deal.SubClassOf(deals.LifeCycle.HasValue(lifeCycle));
         this.Deal.SubClassOf(deals.Sponsored);
-        this.Deal.Annotate(deals.ComponentBuildAction, "AddAdvisoryTabs");
+        this.Deal.Annotate(annotations.ComponentBuildAction, "AddAdvisoryTabs");
     }
 }
 

@@ -81,10 +81,12 @@
     <None Remove="ClientApp\src\app\ObservableNamedStore.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Advisory.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Agreements.ts" />
+    <None Remove="ClientApp\src\app\Ontologies\Annotations.ts" />
     <None Remove="ClientApp\src\app\Ontologies\CommonDomainObjects.ts" />
     <None Remove="ClientApp\src\app\Ontologies\DealOntologyService.ts" />
     <None Remove="ClientApp\src\app\Ontologies\DealOntologyServiceProvider.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Deals.ts" />
+    <None Remove="ClientApp\src\app\Ontologies\FacilityAgreements.ts" />
     <None Remove="ClientApp\src\app\Ontologies\IDealBuilder.ts" />
     <None Remove="ClientApp\src\app\Ontologies\IDealComponentBuilder.ts" />
     <None Remove="ClientApp\src\app\Ontologies\IDealOntology.ts" />
@@ -329,10 +331,12 @@
     <TypeScriptCompile Include="ClientApp\src\app\ObservableNamedStore.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Advisory.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Agreements.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Annotations.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\CommonDomainObjects.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\DealOntologyService.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\DealOntologyServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Deals.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontologies\FacilityAgreements.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\IDealBuilder.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\IDealComponentBuilder.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\IDealOntology.ts" />

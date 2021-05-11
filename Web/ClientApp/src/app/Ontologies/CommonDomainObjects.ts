@@ -4,6 +4,7 @@ import { Ontology } from "../Ontology/Ontology";
 
 export class CommonDomainObjects extends Ontology
 {
+    readonly $type       : IDataPropertyExpression;
     readonly DomainObject: IClass;
     readonly Id          : IDataPropertyExpression;
     readonly Named       : IClass                 
@@ -13,6 +14,8 @@ export class CommonDomainObjects extends Ontology
     constructor()
     {
         super("CommonDomainObjects");
+
+        this.$type = this.DeclareDataProperty("$type")
 
         this.DomainObject = this.DeclareClass("DomainObject");
         this.Id = this.DomainObject.DeclareFunctionalDataProperty("Id");

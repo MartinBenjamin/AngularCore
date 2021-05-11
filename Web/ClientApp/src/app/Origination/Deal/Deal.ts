@@ -5,8 +5,8 @@ import { Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
 import { DealProvider } from '../../DealProvider';
+import { annotations } from '../../Ontologies/Annotations';
 import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServiceProvider';
-import { deals } from '../../Ontologies/Deals';
 import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
 import { IDealOntologyService } from '../../Ontologies/IDealOntologyService';
@@ -70,7 +70,7 @@ export class Deal
                     let superClasses = this._ontology.SuperClasses(this._ontology.Deal);
                     for(let superClass of superClasses)
                         for(let annotation of superClass.Annotations)
-                            if(annotation.Property == deals.ComponentBuildAction &&
+                            if(annotation.Property == annotations.ComponentBuildAction &&
                                annotation.Value in this)
                                 this[annotation.Value]();
 

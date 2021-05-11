@@ -2,7 +2,7 @@ import { Guid } from "../CommonDomainObjects";
 import { ClassMembershipEvaluator } from "../Ontology/ClassMembershipEvaluator";
 import { IClass } from "../Ontology/IClass";
 import { IOntology } from "../Ontology/IOntology";
-import { deals } from "./Deals";
+import { annotations } from './Annotations';
 
 export interface IErrors
 {
@@ -61,7 +61,7 @@ export function Validate(
                 {
                     let superClassExpression = subClassOf.SuperClassExpression;
                     for(let annotation of subClassOf.Annotations)
-                        if(annotation.Property === deals.RestrictedfromStage &&
+                        if(annotation.Property === annotations.RestrictedfromStage &&
                             applicableStages.has(annotation.Value) &&
                             !subClassOf.SuperClassExpression.Evaluate(
                                 evaluator,
@@ -69,7 +69,7 @@ export function Validate(
                         {
                             let propertyName;
                             for(let annotationAnnotation of annotation.Annotations)
-                                if(annotationAnnotation.Property === deals.NominalProperty)
+                                if(annotationAnnotation.Property === annotations.NominalProperty)
                                 {
                                     propertyName = annotationAnnotation.Value;
                                     break;
@@ -97,7 +97,7 @@ export function Validate(
                                     propertyErrors);
                             }
 
-                            let errorAnnotation = annotation.Annotations.find(annotation => annotation.Property === deals.Error);
+                            let errorAnnotation = annotation.Annotations.find(annotation => annotation.Property === annotations.Error);
                             propertyErrors.add(errorAnnotation ? errorAnnotation.Value : "Mandatory");
                         }
                 }

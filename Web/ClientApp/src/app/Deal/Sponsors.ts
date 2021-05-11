@@ -4,7 +4,7 @@ import { EmptyGuid } from '../CommonDomainObjects';
 import { DealProvider } from '../DealProvider';
 import { Deal, DealRoleIdentifier, percentage, Sponsor } from '../Deals';
 import { LegalEntityFinder } from '../LegalEntityFinder';
-import { deals } from '../Ontologies/Deals';
+import { annotations } from '../Ontologies/Annotations';
 import { IDealOntology } from '../Ontologies/IDealOntology';
 import { Sort } from '../Parties';
 import { Role } from '../Roles';
@@ -185,7 +185,7 @@ export class Sponsors implements OnDestroy
         let superClasses = ontology.SuperClasses(ontology.Deal);
         for(let superClass of superClasses)
             for(let annotation of superClass.Annotations)
-                if(annotation.Property == deals.ComponentBuildAction &&
+                if(annotation.Property == annotations.ComponentBuildAction &&
                     annotation.Value in this)
                     this[annotation.Value]();
     }

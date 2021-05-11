@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DealProvider } from '../DealProvider';
-import { deals } from '../Ontologies/Deals';
+import { annotations } from '../Ontologies/Annotations';
 import { IDealOntology } from '../Ontologies/IDealOntology';
 
 @Component(
@@ -44,7 +44,7 @@ export class KeyCounterparties implements OnDestroy
         let superClasses = ontology.SuperClasses(ontology.Deal);
         for(let superClass of superClasses)
             for(let annotation of superClass.Annotations)
-                if(annotation.Property == deals.ComponentBuildAction &&
+                if(annotation.Property == annotations.ComponentBuildAction &&
                     annotation.Value in this)
                     this[annotation.Value]();
     }
