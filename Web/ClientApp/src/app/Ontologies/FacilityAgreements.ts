@@ -5,7 +5,7 @@ import { Ontology } from "../Ontology/Ontology";
 import { agreements } from './Agreements';
 import { annotations } from './Annotations';
 import { commonDomainObjects } from "./CommonDomainObjects";
-import { Decimal } from '../Ontology/Xsd';
+import { Decimal, DateTime } from '../Ontology/Xsd';
 
 export class FacilityAgreements extends Ontology
 {
@@ -32,6 +32,15 @@ export class FacilityAgreements extends Ontology
         totalCommitments.Range(Decimal);
         facility.SubClassOf(totalCommitments.ExactCardinality(1))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect)
+
+        let availabilityPeriodEndDate = facility.DeclareDataProperty("AvailabilityPeriodEndDate");
+        availabilityPeriodEndDate.Range(DateTime);
+
+        let expected1StDrawdownDate = facility.DeclareDataProperty("Expected1StDrawdownDate");
+        expected1StDrawdownDate.Range(DateTime);
+
+        let maturityDate = facility.DeclareDataProperty("MaturityDate");
+        maturityDate.Range(DateTime);
     }
 }
 

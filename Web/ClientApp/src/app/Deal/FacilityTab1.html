@@ -25,6 +25,8 @@
             <input type="text"
                    [dtAmountModel]="LenderParticipation?.UnderwriteAmount"
                    (dtAmountModelChange)="LenderParticipation.UnderwriteAmount = $event"
+                   [dtValidatedObject]="LenderParticipation"
+                   dtValidatedProperty="TotalCommitments"
                    class="Amount" />
           </td>
         </tr>
@@ -34,6 +36,8 @@
             <input type="text"
                    [dtAmountModel]="LenderParticipation?.CreditSoughtLimit"
                    (dtAmountModelChange)="LenderParticipation.CreditSoughtLimit = $event"
+                   [dtValidatedObject]="LenderParticipation"
+                   dtValidatedProperty="CreditSoughtLimit"
                    class="Amount" />
           </td>
         </tr>
@@ -43,6 +47,8 @@
             <input type="text"
                    [dtAmountModel]="LenderParticipation?.AnticipatedHoldAmount"
                    (dtAmountModelChange)="LenderParticipation.AnticipatedHoldAmount = $event"
+                   [dtValidatedObject]="LenderParticipation"
+                   dtValidatedProperty="AnticipatedHoldAmount"
                    class="Amount" />
           </td>
         </tr>
@@ -52,6 +58,8 @@
             <input type="text"
                    [dtAmountModel]="LenderParticipation?.ActualAllocation"
                    (dtAmountModelChange)="LenderParticipation.ActualAllocation = $event"
+                   [dtValidatedObject]="LenderParticipation"
+                   dtValidatedProperty="ActualAllocation"
                    class="Amount" />
           </td>
         </tr>
@@ -69,6 +77,8 @@
             <input type="text"
                    [dtDateModel]="Facility?.AvailabilityPeriodEndDate"
                    (dtDateModelChange)="Facility.AvailabilityPeriodEndDate = $event"
+                   [dtValidatedObject]="Facility"
+                   dtValidatedProperty="AvailabilityPeriodEndDate"
                    class="Date" /><dt-calendar (dateSelected)="Facility.AvailabilityPeriodEndDate = $event"></dt-calendar>
           </td>
         </tr>
@@ -78,6 +88,8 @@
             <input type="text"
                    [dtDateModel]="Facility?.Expected1StDrawdownDate"
                    (dtDateModelChange)="Facility.Expected1StDrawdownDate = $event"
+                   [dtValidatedObject]="Facility"
+                   dtValidatedProperty="Expected1StDrawdownDate"
                    class="Date" /><dt-calendar (dateSelected)="Facility.Expected1StDrawdownDate = $event"></dt-calendar>
           </td>
         </tr>
@@ -87,6 +99,8 @@
             <input type="text"
                    [dtDateModel]="Facility?.MaturityDate"
                    (dtDateModelChange)="Facility.MaturityDate = $event"
+                   [dtValidatedObject]="Facility"
+                   dtValidatedProperty="MaturityDate"
                    class="Date" /><dt-calendar (dateSelected)="Facility.MaturityDate = $event"></dt-calendar>
           </td>
         </tr>
