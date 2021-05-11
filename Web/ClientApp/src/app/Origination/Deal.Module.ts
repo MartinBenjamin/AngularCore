@@ -12,6 +12,7 @@ import { YesNoPipe } from '../Components/YesNoPipe';
 import { Borrowers } from '../Deal/Borrowers';
 import { ExternalFunding } from '../Deal/ExternalFunding';
 import { Facility } from '../Deal/Facility';
+import { FacilityErrors } from '../Deal/FacilityErrors';
 import { FacilityFeeEditor } from '../Deal/FacilityFeeEditor';
 import { FacilityFees } from '../Deal/FacilityFees';
 import { FacilityTab } from '../Deal/FacilityTab';
@@ -43,6 +44,7 @@ import { TransactionDetails } from './TransactionDetails';
                 ExternalFunding,
                 Facilities,
                 Facility,
+                FacilityErrors,
                 FacilityFeeEditor,
                 FacilityFees,
                 FacilityTab,
