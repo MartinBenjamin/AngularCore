@@ -11,6 +11,7 @@ import { IDataPropertyExpression, IObjectPropertyExpression } from "../Ontology/
 import { ObjectSomeValuesFrom } from "../Ontology/ObjectSomeValuesFrom";
 import { Ontology } from "../Ontology/Ontology";
 import { DateTime, Decimal } from "../Ontology/Xsd";
+import { agreements } from './Agreements';
 import { commonDomainObjects } from "./CommonDomainObjects";
 import { legalEntities } from "./LegalEntities";
 import { lifeCycles } from "./LifeCycles";
@@ -30,8 +31,6 @@ export class Deals extends Ontology
     Deal                   : IClass;
     Debt                   : IClass;
     Type                   : IObjectPropertyExpression;
-    Parties                : IObjectPropertyExpression;
-    Commitments            : IObjectPropertyExpression;
     Classifiers            : IObjectPropertyExpression;
     SponsorsNA             : IDataPropertyExpression;
     LenderParty            : IClass;
@@ -59,7 +58,8 @@ export class Deals extends Ontology
             roleIndividuals,
             legalEntities,
             parties,
-            lifeCycles)
+            lifeCycles,
+            agreements)
 
         this.RestrictedfromStage  = this.DeclareAnnotationProperty("RestrictedFromStage" );
         this.NominalProperty      = this.DeclareAnnotationProperty("NominalProperty"     );
@@ -72,13 +72,11 @@ export class Deals extends Ontology
         this.DealType.SubClassOf(commonDomainObjects.Classifier);
 
         this.Deal = this.DeclareClass("Deal");
-        this.Deal.SubClassOf(commonDomainObjects.Named);
+        this.Deal.SubClassOf(agreements.Agreement);
 
         this.LifeCycle   = this.Deal.DeclareObjectProperty("LifeCycle"  );
         this.Type        = this.Deal.DeclareObjectProperty("Type"       );
-        this.Parties     = this.Deal.DeclareObjectProperty("Parties"    );
         this.Classifiers = this.Deal.DeclareObjectProperty("Classifiers");
-        this.Commitments = this.Deal.DeclareObjectProperty("Commitments");
 
         this.SponsorsNA = this.Deal.DeclareDataProperty("SponsorsNA");
 
@@ -149,7 +147,7 @@ export class Deals extends Ontology
 
         this.Sponsored = this.DeclareClass("Sponsored");
         this.Sponsored.SubClassOf(this.Deal);
-        this.Sponsored.SubClassOf(new ObjectSomeValuesFrom(this.Parties, this.SponsorParty))
+        this.Sponsored.SubClassOf(new ObjectSomeValuesFrom(agreements.Parties, this.SponsorParty))
             .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect)
             .Annotate(this.NominalProperty, "Sponsors");
         this.Sponsored.SubClassOf(this.SponsorsNA.ExactCardinality(0));
@@ -157,7 +155,7 @@ export class Deals extends Ontology
 
         this.SponsoredWhenApplicable = this.DeclareClass("SponsoredWhenApplicable");
         this.SponsoredWhenApplicable.SubClassOf(this.Deal);
-        this.SponsoredWhenApplicable.SubClassOf(new ObjectSomeValuesFrom(this.Parties, this.SponsorParty).Union(this.SponsorsNA.HasValue(true)))
+        this.SponsoredWhenApplicable.SubClassOf(new ObjectSomeValuesFrom(agreements.Parties, this.SponsorParty).Union(this.SponsorsNA.HasValue(true)))
             .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect)
             .Annotate(this.NominalProperty, "Sponsors");
         this.SponsoredWhenApplicable.Annotate(this.ComponentBuildAction, "AddSponsors");
@@ -165,11 +163,11 @@ export class Deals extends Ontology
 
         this.NotSponsored = this.DeclareClass("NotSponsored");
         this.NotSponsored.SubClassOf(this.Deal);
-        this.NotSponsored.SubClassOf(this.Parties.ExactCardinality(0, this.SponsorParty));
+        this.NotSponsored.SubClassOf(agreements.Parties.ExactCardinality(0, this.SponsorParty));
         this.NotSponsored.SubClassOf(this.SponsorsNA.ExactCardinality(0));
 
         let sponsoredDeal = this.DeclareClass("SponsoredDeal");
-        sponsoredDeal.Define(new ObjectSomeValuesFrom(this.Parties, this.SponsorParty));
+        sponsoredDeal.Define(new ObjectSomeValuesFrom(agreements.Parties, this.SponsorParty));
         sponsoredDeal.SubClassOf(this.Deal);
         sponsoredDeal.SubClassOf(new DataAllValuesFrom(this.DeclareFunctionalDataProperty("TotalSponsorEquity"), new DataOneOf([100])))
             .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect)
@@ -177,7 +175,7 @@ export class Deals extends Ontology
 
         this.Debt = this.DeclareClass("Debt");
         this.Debt.SubClassOf(this.Deal);
-        this.Debt.SubClassOf(this.Parties.MinCardinality(1, this.BorrowerParty))
+        this.Debt.SubClassOf(agreements.Parties.MinCardinality(1, this.BorrowerParty))
             .Annotate(this.RestrictedfromStage, DealStageIdentifier.Prospect)
             .Annotate(this.NominalProperty, "Borrowers");
         this.Debt.Annotate(this.ComponentBuildAction, "AddDebtTabs");
