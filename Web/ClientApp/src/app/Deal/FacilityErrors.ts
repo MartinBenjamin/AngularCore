@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
 import { combineLatest, Observable, Subject, Subscription } from "rxjs";
 import { ErrorsObservableToken, HighlightedPropertySubjectToken, Property } from '../Components/ValidatedProperty';
-import { Facility } from '../FacilityAgreements';
+import { Facility, LenderParticipation } from '../FacilityAgreements';
 import { FacilityProvider } from '../FacilityProvider';
 import { IErrors } from '../Ontologies/Validate';
 
@@ -64,6 +64,26 @@ export class FacilityErrors implements OnDestroy
                             {
                                 let propertyName = entry[0];
                                 let property: Property = [facility, propertyName];
+                                let propertyDisplayName = propertyName in FacilityErrors._facilityPropertyDisplayName ? FacilityErrors._facilityPropertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
+                                for(let error of entry[1])
+                                    this._facilityErrors.push(
+                                        [
+                                            property,
+                                            propertyDisplayName,
+                                            FacilityErrors._errorMap[error]
+                                        ]);
+                            }
+                        }
+
+                        let lenderParticipation = <LenderParticipation>facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
+                        facilityErrors = errors.get(lenderParticipation);
+                        if(facilityErrors)
+                        {
+                            this._facilityErrors = this._facilityErrors || [];
+                            for(let entry of facilityErrors)
+                            {
+                                let propertyName = entry[0];
+                                let property: Property = [lenderParticipation, propertyName];
                                 let propertyDisplayName = propertyName in FacilityErrors._facilityPropertyDisplayName ? FacilityErrors._facilityPropertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
                                 for(let error of entry[1])
                                     this._facilityErrors.push(

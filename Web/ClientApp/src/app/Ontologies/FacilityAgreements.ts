@@ -42,6 +42,12 @@ export class FacilityAgreements extends Ontology
 
         let maturityDate = facility.DeclareDataProperty("MaturityDate");
         maturityDate.Range(DateTime);
+
+        let lenderParticipation = this.DeclareClass("LenderParticipation");
+        facility.Define(commonDomainObjects.$type.HasValue('Web.Model.LenderParticipation, Web'));
+
+        let underwriteAmount = lenderParticipation.DeclareDataProperty("UnderwriteAmount");
+        underwriteAmount.Range(Decimal);
     }
 }
 
