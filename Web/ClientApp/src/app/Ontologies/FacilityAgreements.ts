@@ -48,6 +48,9 @@ export class FacilityAgreements extends Ontology
 
         let underwriteAmount = lenderParticipation.DeclareDataProperty("UnderwriteAmount");
         underwriteAmount.Range(Decimal);
+
+        let creditSoughtLimit = lenderParticipation.DeclareDataProperty("CreditSoughtLimit");
+        creditSoughtLimit.Range(Decimal);
     }
 }
 

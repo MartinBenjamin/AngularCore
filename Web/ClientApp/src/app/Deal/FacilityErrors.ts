@@ -25,6 +25,7 @@ export class FacilityErrors implements OnDestroy
 
     private static _facilityPropertyDisplayName =
         {
+            Expected1StDrawdownDate: "Expected 1<sup>st</sup> Drawdown Date"
         };
     private static _errorMap: IErrors =
         {
