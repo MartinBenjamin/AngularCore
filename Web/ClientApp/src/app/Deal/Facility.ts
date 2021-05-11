@@ -2,7 +2,7 @@ import { Component, forwardRef, Inject, OnDestroy } from '@angular/core';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { BranchesToken } from '../BranchServiceProvider';
 import { DomainObject, EmptyGuid, Guid } from '../CommonDomainObjects';
-import { Tab } from '../Components/TabbedView';
+import { ChangeDetector, Tab } from '../Components/TabbedView';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../Components/ValidatedProperty';
 import { ContractualCommitment } from '../Contracts';
 import { CurrenciesOrderedByCodeToken } from '../CurrencyServiceProvider';
@@ -11,6 +11,7 @@ import { Deal, DealRoleIdentifier } from '../Deals';
 import * as facilityAgreements from '../FacilityAgreements';
 import { FacilityProvider } from '../FacilityProvider';
 import { Currency } from '../Iso4217';
+import { Validate } from '../Ontologies/Validate';
 import { Branch } from '../Organisations';
 import { PartyInRole } from '../Parties';
 import { IExpression, Property, Query, ZeroOrMore } from '../RegularPathExpression';
@@ -245,7 +246,8 @@ export class Facility
         private _branches      : Observable<Branch[]>,
         dealProvider           : DealProvider,
         @Inject(ErrorsSubjectToken)
-        private _errorsService : Subject<Errors>
+        private _errorsService : Subject<Errors>,
+        private _changeDetector: ChangeDetector
         )
     {
         super();
@@ -357,6 +359,28 @@ export class Facility
 
     Apply(): void
     {
+        let classifications = this._deal.Ontology.Classify(this.Facility);
+        let applicableStages = new Set<Guid>();
+        for(let lifeCycleStage of this._deal.LifeCycle.Stages)
+        {
+            applicableStages.add(lifeCycleStage.Id);
+            if(lifeCycleStage.Id === this._deal.Stage.Id)
+                break;
+        }
+
+        let errors = Validate(
+            this._deal.Ontology,
+            classifications,
+            applicableStages);
+
+        this._errorsService.next(errors.size ? errors : null);
+
+        // Detect changes in all Facility Tabs (and nested Tabs).
+        this._changeDetector.DetectChanges();
+
+        if(errors.size)
+            return;
+
         let before = new Set<ContractualCommitment>();
         let after  = new Set<ContractualCommitment>();
         if(this._copy)
