@@ -9,9 +9,8 @@ export interface FacilityAgreement extends Contract
 
 }
 
-export interface Facility extends ContractualCommitment
+export interface Facility extends Named<Guid>, ContractualCommitment
 {
-    Name                     : string;
     Currency                 : Currency;
     TotalCommitments         : number;
     AvailabilityPeriodEndDate: Date;

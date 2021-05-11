@@ -19,6 +19,7 @@ export class FacilityAgreements extends Ontology
         let nonEmptyString = new DataComplementOf(new DataOneOf([""]));
         let facility = this.DeclareClass("Facility");
         facility.Define(commonDomainObjects.$type.HasValue('Web.Model.Facility, Web'));
+        facility.SubClassOf(commonDomainObjects.Named);
         facility.SubClassOf(agreements.Commitment);
 
         facility.SubClassOf(commonDomainObjects.Name.MinCardinality(1, nonEmptyString))
