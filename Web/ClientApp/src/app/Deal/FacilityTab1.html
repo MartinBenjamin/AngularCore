@@ -14,6 +14,8 @@
             <input type="text"
                    [dtAmountModel]="Facility?.TotalCommitments"
                    (dtAmountModelChange)="Facility.TotalCommitments = $event"
+                   [dtValidatedObject]="Facility"
+                   dtValidatedProperty="TotalCommitments"
                    class="Amount" />
           </td>
         </tr>
