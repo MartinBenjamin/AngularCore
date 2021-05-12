@@ -64,6 +64,15 @@ export class FacilityAgreements extends Ontology
 
         let expectedReceivedDate = facilityFee.DeclareDataProperty("ExpectedReceivedDate");
         expectedReceivedDate.Range(DateTime);
+
+        let feeAmount = this.DeclareClass("FeeAmount");
+        feeAmount.Define(commonDomainObjects.$type.HasValue('Web.Model.FeeAmount, Web'))
+
+        let value = feeAmount.DeclareDataProperty("Value");
+        value.Range(Decimal);
+
+        feeAmount.SubClassOf(value.ExactCardinality(1))
+            .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
     }
 }
 

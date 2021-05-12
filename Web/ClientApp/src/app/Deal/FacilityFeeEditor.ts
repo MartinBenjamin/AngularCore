@@ -130,6 +130,7 @@ export class FacilityFeeEditor
         };
 
         (<any>this._fee).$type = 'Web.Model.FacilityFee, Web';
+        (<any>this._fee.Amount).$type = 'Web.Model.FeeAmount, Web';
         this._participation = this.CalculateParticipation(this._facility);
     }
 
