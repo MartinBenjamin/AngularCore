@@ -210,6 +210,7 @@ export class FacilityFeeEditor
     {
         this._fee           = null;
         this._participation = null;
+        this._errorsService.next(null);
     }
 
     private CalculateParticipation(

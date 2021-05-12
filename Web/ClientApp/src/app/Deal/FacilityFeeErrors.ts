@@ -59,7 +59,7 @@ export class FacilityFeeErrors implements OnDestroy
                                     let property: Property = [object, propertyName];
                                     let propertyDisplayName: string;
 
-                                    if(object.$type == 'Web.Model.FeeAmount, Web')
+                                    if((<any>object).$type == 'Web.Model.FeeAmount, Web')
                                     {
                                         let feeAmount = <FeeAmount>object;
                                         propertyDisplayName = feeAmount.Type == FeeAmountType.MonetaryAmount ? 'Amount' : '% Of Commitment';
