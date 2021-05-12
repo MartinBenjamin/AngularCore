@@ -14,6 +14,7 @@ import { ExternalFunding } from '../Deal/ExternalFunding';
 import { Facility } from '../Deal/Facility';
 import { FacilityErrors } from '../Deal/FacilityErrors';
 import { FacilityFeeEditor } from '../Deal/FacilityFeeEditor';
+import { FacilityFeeErrors } from '../Deal/FacilityFeeErrors';
 import { FacilityFees } from '../Deal/FacilityFees';
 import { FacilityTab } from '../Deal/FacilityTab';
 import { FacilityTab1 } from '../Deal/FacilityTab1';
@@ -46,6 +47,7 @@ import { TransactionDetails } from './TransactionDetails';
                 Facility,
                 FacilityErrors,
                 FacilityFeeEditor,
+                FacilityFeeErrors,
                 FacilityFees,
                 FacilityTab,
                 FacilityTab1,

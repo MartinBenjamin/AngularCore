@@ -1,8 +1,6 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
-import { combineLatest, Observable, Subject, Subscription } from "rxjs";
+import { Observable, Subject, Subscription } from "rxjs";
 import { ErrorsObservableToken, HighlightedPropertySubjectToken, Property } from '../Components/ValidatedProperty';
-import { Facility, LenderParticipation } from '../FacilityAgreements';
-import { FacilityProvider } from '../FacilityProvider';
 import { IErrors } from '../Ontologies/Validate';
 
 type Error = [Property, string, string];
@@ -23,6 +21,10 @@ export class FacilityFeeErrors implements OnDestroy
     private _subscriptions: Subscription[] = [];
     private _errors       : Error[];
 
+    private static _propertyDisplayName =
+        {
+            ExpectedReceivedDate: "Expected/Received Date"
+        };
     private static _errorMap: IErrors =
         {
             Mandatory       : "Mandatory",
@@ -48,37 +50,22 @@ export class FacilityFeeErrors implements OnDestroy
 
                     errors.forEach(
                         (objectErrors, object) =>
+                        {
+                            this._errors = this._errors || [];
                             objectErrors.forEach(
                                 (propertyErrors, propertyName) =>
                                 {
                                     let property: Property = [object, propertyName];
+                                    let propertyDisplayName = propertyName in FacilityFeeErrors._propertyDisplayName ? FacilityFeeErrors._propertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
+
                                     propertyErrors.forEach(
                                         propertyError => this._errors.push([
-                                                property,
-                                                '',//propertyDisplayName,
-                                                FacilityFeeErrors._errorMap[propertyError]
-                                            ]));
-                                }));
-
-                //this._errors = [];
-                //    let facilityErrors = errors.get(facility);
-                //    if(facilityErrors)
-                //    {
-                //        this._facilityErrors = [];
-                //        for(let entry of facilityErrors)
-                //        {
-                //            let propertyName = entry[0];
-                //            let property: Property = [facility, propertyName];
-                //            let propertyDisplayName = propertyName in FacilityErrors._facilityPropertyDisplayName ? FacilityErrors._facilityPropertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
-                //            for(let error of entry[1])
-                //                this._facilityErrors.push(
-                //                    [
-                //                        property,
-                //                        propertyDisplayName,
-                //                        FacilityErrors._errorMap[error]
-                //                    ]);
-                //        }
-                //    }
+                                            property,
+                                            propertyDisplayName,
+                                            FacilityFeeErrors._errorMap[propertyError]
+                                        ]));
+                                });
+                        });
                 }));
     }
 
@@ -87,9 +74,9 @@ export class FacilityFeeErrors implements OnDestroy
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
-    get FacilityErrors(): Error[]
+    get Errors(): Error[]
     {
-        return this._facilityErrors;
+        return this._errors;
     }
 
     Highlight(
