@@ -2,6 +2,7 @@ import { Component, Inject, OnDestroy } from '@angular/core';
 import { Observable, Subject, Subscription } from "rxjs";
 import { ErrorsObservableToken, HighlightedPropertySubjectToken, Property } from '../Components/ValidatedProperty';
 import { IErrors } from '../Ontologies/Validate';
+import { FeeAmount, FeeAmountType } from '../FacilityAgreements';
 
 type Error = [Property, string, string];
 
@@ -56,7 +57,15 @@ export class FacilityFeeErrors implements OnDestroy
                                 (propertyErrors, propertyName) =>
                                 {
                                     let property: Property = [object, propertyName];
-                                    let propertyDisplayName = propertyName in FacilityFeeErrors._propertyDisplayName ? FacilityFeeErrors._propertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
+                                    let propertyDisplayName: string;
+
+                                    if(object.$type == 'Web.Model.FeeAmount, Web')
+                                    {
+                                        let feeAmount = <FeeAmount>object;
+                                        propertyDisplayName = feeAmount.Type == FeeAmountType.MonetaryAmount ? 'Amount' : '% Of Commitment';
+                                    }
+                                    else
+                                        propertyDisplayName = propertyName in FacilityFeeErrors._propertyDisplayName ? FacilityFeeErrors._propertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
 
                                     propertyErrors.forEach(
                                         propertyError => this._errors.push([
