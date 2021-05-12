@@ -355,7 +355,7 @@ export function Query(
                         if(value instanceof Array)
                             value.forEach(element => traversals.push([nextState, element]));
 
-                        else
+                        else if(value)
                             traversals.push([nextState, value]);
                     }
                 else if(property in object)
@@ -364,7 +364,7 @@ export function Query(
                     if(value instanceof Array)
                         value.forEach(element => traversals.push([nextState, element]));
 
-                    else
+                    else if(value)
                         traversals.push([nextState, value]);
                 }
     }
@@ -401,7 +401,7 @@ export function QueryPaths(
                         if(value instanceof Array)
                             value.forEach(element => traversals.push([nextState, [...path, [key, element]]]));
 
-                        else
+                        else if(value)
                             traversals.push([nextState, [...path, [key, value]]]);
                     }
                 else if(property in object)
@@ -410,7 +410,7 @@ export function QueryPaths(
                     if(value instanceof Array)
                         value.forEach(element => traversals.push([nextState, [...path, [property, element]]]));
 
-                    else
+                    else if(value)
                         traversals.push([nextState, [...path, [property, value]]]);
                 }
     }

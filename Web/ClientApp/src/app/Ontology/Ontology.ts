@@ -82,12 +82,19 @@ export class Ontology implements IOntology
         individual: object
         ) : Map<object, Set<IClass>>
     {
+        return this.ClassifyIndividuals(Individuals(individual));
+    }
+
+    ClassifyIndividuals(
+        individuals: Set<object>
+        ): Map<object, Set<IClass>>
+    {
         let classifications = new Map<object, Set<IClass>>()
         let classMembershipEvaluator = new ClassMembershipEvaluator(
             this,
             classifications);
 
-        Individuals(individual).forEach(individual => classMembershipEvaluator.Classify(individual));
+        individuals.forEach(individual => classMembershipEvaluator.Classify(individual));
 
         return classifications;
     }

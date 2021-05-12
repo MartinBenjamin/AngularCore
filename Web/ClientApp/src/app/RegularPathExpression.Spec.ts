@@ -7,10 +7,10 @@ describe(
     () =>
     {
         describe(
-            'Given o = { A: {}, B: [{}, { B: [{}] }], C: {} }',
+            'Given o = { A: {}, B: [{}, { B: [{}] }], C: {}, D: null }',
             () =>
             {
-                let o = { A: {}, B: [{}, { B: [{}] }], C: {} };
+                let o = { A: {}, B: [{}, { B: [{}] }], C: {}, D: null };
                 let assert = assertBuilder(
                     'o', 'Any', 'Alternative', 'Empty', 'OneOrMore', 'Property', 'Query', 'Sequence', 'ZeroOrMore', 'ZeroOrOne')
                     (o, Any, Alternative, Empty, OneOrMore, Property, Query, Sequence, ZeroOrMore, ZeroOrOne);
@@ -20,6 +20,7 @@ describe(
                 assert(`Query(o, Empty).has(o)`);
                 assert(`Query(o, new Property('A')).size === 1`);
                 assert(`Query(o, new Property('A')).has(o.A)`);
+                assert(`Query(o, new Property('D')).size === 0`);
                 assert(`Query(o, new Property('X')).size === 0`);
                 assert(`Query(o, new Property('B')).size === 2`);
                 assert(`Query(o, new Property('B')).has(o.B[0])`);

@@ -1,9 +1,14 @@
-import { Component } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, Inject } from '@angular/core';
+import { Subject, Subscription } from 'rxjs';
 import { AccrualDate } from '../AccrualDate';
-import { EmptyGuid } from '../CommonDomainObjects';
+import { EmptyGuid, Guid } from '../CommonDomainObjects';
+import { ChangeDetector } from '../Components/TabbedView';
+import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../Components/ValidatedProperty';
+import { DealProvider } from '../DealProvider';
+import { Deal } from '../Deals';
 import { Facility, FacilityFee, FeeAmount, FeeAmountType, FeeType, LenderParticipation } from '../FacilityAgreements';
 import { FacilityProvider } from '../FacilityProvider';
+import { Validate } from '../Ontologies/Validate';
 import { Alternative, Empty, IExpression, Property, Query } from '../RegularPathExpression';
 import { Copy, Update } from './Facility';
 
@@ -13,11 +18,19 @@ type ApplyCallback = () => void;
 @Component(
     {
         selector: 'facility-fee-editor',
-        templateUrl: './FacilityFeeEditor.html'
+        templateUrl: './FacilityFeeEditor.html',
+        providers:
+            [
+                ErrorsSubjectProvider,
+                ErrorsObservableProvider,
+                HighlightedPropertySubjectProvider,
+                HighlightedPropertyObservableProvider
+            ]
     })
 export class FacilityFeeEditor
 {
     private _subscriptions: Subscription[] = [];
+    private _deal         : Deal;
     private _facility     : Facility;
     private _fee          : FacilityFee;
     private _copy         : Map<object, object>;
@@ -32,10 +45,15 @@ export class FacilityFeeEditor
         ]);
 
     constructor(
-        facilityProvider: FacilityProvider
+        dealProvider: DealProvider,
+        facilityProvider: FacilityProvider,
+        @Inject(ErrorsSubjectToken)
+        private _errorsService: Subject<Errors>
         )
     {
-        this._subscriptions.push(facilityProvider.subscribe(facility => this._facility = facility));
+        this._subscriptions.push(
+            dealProvider.subscribe(deal => this._deal = deal),
+            facilityProvider.subscribe(facility => this._facility = facility));
     }
 
     ngOnDestroy(): void
@@ -137,17 +155,36 @@ export class FacilityFeeEditor
 
     Apply(): void
     {
+        let subgraph = Query(
+            this._fee,
+            FacilityFeeEditor._subgraph);
+
+        let classifications = this._deal.Ontology.ClassifyIndividuals(subgraph);
+        let applicableStages = new Set<Guid>();
+        for(let lifeCycleStage of this._deal.LifeCycle.Stages)
+        {
+            applicableStages.add(lifeCycleStage.Id);
+            if(lifeCycleStage.Id === this._deal.Stage.Id)
+                break;
+        }
+
+        let errors = Validate(
+            this._deal.Ontology,
+            classifications,
+            applicableStages);
+
+        this._errorsService.next(errors.size ? errors : null);
+
+        if(errors.size)
+            return;
+
         if(this._copy)
         {
             let original = new Map<object, object>();
-            [...this._copy.entries()].forEach(
-                entry => original.set(
-                    entry[1],
-                    entry[0]));
-
-            let subgraph = Query(
-                this._fee,
-                FacilityFeeEditor._subgraph);
+            this._copy.forEach(
+                (value, key) => original.set(
+                    value,
+                    key));
 
             Update(
                 subgraph,
