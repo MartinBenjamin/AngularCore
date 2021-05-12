@@ -51,6 +51,19 @@ export class FacilityAgreements extends Ontology
 
         let creditSoughtLimit = lenderParticipation.DeclareDataProperty("CreditSoughtLimit");
         creditSoughtLimit.Range(Decimal);
+
+        let anticipatedHoldAmount = lenderParticipation.DeclareDataProperty("AnticipatedHoldAmount");
+        anticipatedHoldAmount.Range(Decimal);
+
+        let actualAllocation = lenderParticipation.DeclareDataProperty("ActualAllocation");
+        actualAllocation.Range(Decimal);
+
+        let facilityFee = this.DeclareClass("FacilityFee");
+        facilityFee.Define(commonDomainObjects.$type.HasValue('Web.Model.facilityFee, Web'));
+        facilityFee.SubClassOf(agreements.Commitment);
+
+        let expectedReceivedDate = facilityFee.DeclareDataProperty("ExpectedReceivedDate");
+        expectedReceivedDate.Range(DateTime);
     }
 }
 

@@ -31,6 +31,8 @@
             <input type="text"
                    [dtAmountModel]="Fee?.Amount.Value"
                    (dtAmountModelChange)="Fee.Amount.Value = $event"
+                   [dtValidatedObject]="Fee?.Amount"
+                   dtValidatedProperty="Value"
                    class="Amount" />
           </td>
         </tr>
@@ -54,6 +56,8 @@
             <input type="text"
                    [dtPercentage100Model]="Fee?.Amount.Value"
                    (dtPercentage100ModelChange)="Fee.Amount.Value = $event"
+                   [dtValidatedObject]="Fee?.Amount"
+                   dtValidatedProperty="Value"
                    class="Percentage" />
           </td>
         </tr>
@@ -64,6 +68,8 @@
           <input type="text"
                  [dtDateModel]="Fee?.ExpectedReceivedDate"
                  (dtDateModelChange)="Fee.ExpectedReceivedDate = $event"
+                 [dtValidatedObject]="Fee"
+                 dtValidatedProperty="ExpectedReceivedDate"
                  class="Date" /><dt-calendar (dateSelected)="Fee.ExpectedReceivedDate = $event"></dt-calendar>
         </td>
       </tr>
