@@ -386,10 +386,10 @@ export class Facility
         if(this._copy)
         {
             let original = new Map<object, object>();
-            [...this._copy.entries()].forEach(
-                entry => original.set(
-                    entry[1],
-                    entry[0]));
+            this._copy.forEach(
+                (value, key) => original.set(
+                    value,
+                    key));
 
             this.Flatten(
                 <ContractualCommitment>original.get(this.Facility),
