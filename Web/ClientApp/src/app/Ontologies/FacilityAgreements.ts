@@ -5,7 +5,7 @@ import { Ontology } from "../Ontology/Ontology";
 import { agreements } from './Agreements';
 import { annotations } from './Annotations';
 import { commonDomainObjects } from "./CommonDomainObjects";
-import { Decimal, DateTime } from '../Ontology/Xsd';
+import { Decimal, DateTime } from "../Ontology/Xsd";
 
 export class FacilityAgreements extends Ontology
 {
@@ -18,7 +18,7 @@ export class FacilityAgreements extends Ontology
 
         let nonEmptyString = new DataComplementOf(new DataOneOf([""]));
         let facility = this.DeclareClass("Facility");
-        facility.Define(commonDomainObjects.$type.HasValue('Web.Model.Facility, Web'));
+        facility.Define(commonDomainObjects.$type.HasValue("Web.Model.Facility, Web"));
         facility.SubClassOf(commonDomainObjects.Named);
         facility.SubClassOf(agreements.Commitment);
 
@@ -44,13 +44,19 @@ export class FacilityAgreements extends Ontology
         maturityDate.Range(DateTime);
 
         let lenderParticipation = this.DeclareClass("LenderParticipation");
-        facility.Define(commonDomainObjects.$type.HasValue('Web.Model.LenderParticipation, Web'));
+        lenderParticipation.Define(commonDomainObjects.$type.HasValue("Web.Model.LenderParticipation, Web"));
 
         let underwriteAmount = lenderParticipation.DeclareDataProperty("UnderwriteAmount");
         underwriteAmount.Range(Decimal);
 
+        lenderParticipation.SubClassOf(underwriteAmount.ExactCardinality(1))
+            .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.BusinessScreened);
+
         let creditSoughtLimit = lenderParticipation.DeclareDataProperty("CreditSoughtLimit");
         creditSoughtLimit.Range(Decimal);
+
+        lenderParticipation.SubClassOf(creditSoughtLimit.ExactCardinality(1))
+            .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.BusinessScreened);
 
         let anticipatedHoldAmount = lenderParticipation.DeclareDataProperty("AnticipatedHoldAmount");
         anticipatedHoldAmount.Range(Decimal);

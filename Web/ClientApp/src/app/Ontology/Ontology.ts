@@ -26,6 +26,15 @@ export function Individuals(
         individuals.has(individual))
         return;
 
+    if(individual instanceof Array)
+    {
+        individual.forEach(element => Individuals(
+            element,
+            individuals));
+
+        return individuals;
+    }
+
     individuals.add(individual);
 
     for(let propertyName in individual)
