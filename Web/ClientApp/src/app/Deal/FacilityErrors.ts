@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
 import { combineLatest, Observable, Subject, Subscription } from "rxjs";
 import { ErrorsObservableToken, HighlightedPropertySubjectToken, Property } from '../Components/ValidatedProperty';
-import { Facility, LenderParticipation } from '../FacilityAgreements';
+import { Facility } from '../FacilityAgreements';
 import { FacilityProvider } from '../FacilityProvider';
 import { IErrors } from '../Ontologies/Validate';
 
@@ -57,44 +57,32 @@ export class FacilityErrors implements OnDestroy
                         if(!(facility && errors))
                             return;
 
-                        let facilityErrors = errors.get(facility);
-                        if(facilityErrors)
-                        {
-                            this._errors = [];
-                            for(let entry of facilityErrors)
+                        [
+                            facility,
+                            facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web')
+                        ].forEach(
+                            object =>
                             {
-                                let propertyName = entry[0];
-                                let property: Property = [facility, propertyName];
-                                let propertyDisplayName = propertyName in FacilityErrors._facilityPropertyDisplayName ? FacilityErrors._facilityPropertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
-                                for(let error of entry[1])
-                                    this._errors.push(
-                                        [
-                                            property,
-                                            propertyDisplayName,
-                                            FacilityErrors._errorMap[error]
-                                        ]);
-                            }
-                        }
+                                let objectErrors = errors.get(object);                         
 
-                        let lenderParticipation = <LenderParticipation>facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
-                        let lenderParticipationErrors = errors.get(lenderParticipation);
-                        if(lenderParticipationErrors)
-                        {
-                            this._errors = this._errors || [];
-                            for(let entry of lenderParticipationErrors)
-                            {
-                                let propertyName = entry[0];
-                                let property: Property = [lenderParticipation, propertyName];
-                                let propertyDisplayName = propertyName in FacilityErrors._facilityPropertyDisplayName ? FacilityErrors._facilityPropertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
-                                for(let error of entry[1])
-                                    this._errors.push(
-                                        [
-                                            property,
-                                            propertyDisplayName,
-                                            FacilityErrors._errorMap[error]
-                                        ]);
-                            }
-                        }
+                                if(objectErrors)
+                                {
+                                    this._errors = this._errors || [];
+                                    objectErrors.forEach(
+                                        (propertyErrors, propertyName) =>
+                                        {
+                                            let property: Property = [object, propertyName];
+                                            let propertyDisplayName = propertyName in FacilityErrors._facilityPropertyDisplayName ? FacilityErrors._facilityPropertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
+                                            propertyErrors.forEach(
+                                                propertyError => this._errors.push(
+                                                    [
+                                                        property,
+                                                        propertyDisplayName,
+                                                        FacilityErrors._errorMap[propertyError]
+                                                    ]));
+                                        });
+                                }
+                            });
                     }));
     }
 
