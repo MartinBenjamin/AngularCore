@@ -11,17 +11,17 @@ type Error = [Property, string, string];
     {
         selector: 'facility-errors',
         template: `
-<div *ngIf="FacilityErrors" style="color: red;">
+<div *ngIf="Errors" style="color: red;">
   Apply was unsuccessful.  Please fix the errors and try again.
   <ul>
-    <li *ngFor="let error of FacilityErrors" [innerHTML]="error[1] + ': ' + error[2]" (click)="Highlight(error[0])" style="cursor: pointer;"></li>
+    <li *ngFor="let error of Errors" [innerHTML]="error[1] + ': ' + error[2]" (click)="Highlight(error[0])" style="cursor: pointer;"></li>
   </ul>
 </div>`
     })
 export class FacilityErrors implements OnDestroy
 {
-    private _subscriptions : Subscription[] = [];
-    private _facilityErrors: Error[];
+    private _subscriptions: Subscription[] = [];
+    private _errors       : Error[];
 
     private static _facilityPropertyDisplayName =
         {
@@ -49,7 +49,7 @@ export class FacilityErrors implements OnDestroy
                 ).subscribe(
                     combined =>
                     {
-                        this._facilityErrors = null;
+                        this._errors = null;
                         let facility: Facility;
                         let errors: Map<object, Map<string, Set<keyof IErrors>>>;
                         [facility, errors] = combined;
@@ -60,14 +60,14 @@ export class FacilityErrors implements OnDestroy
                         let facilityErrors = errors.get(facility);
                         if(facilityErrors)
                         {
-                            this._facilityErrors = [];
+                            this._errors = [];
                             for(let entry of facilityErrors)
                             {
                                 let propertyName = entry[0];
                                 let property: Property = [facility, propertyName];
                                 let propertyDisplayName = propertyName in FacilityErrors._facilityPropertyDisplayName ? FacilityErrors._facilityPropertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
                                 for(let error of entry[1])
-                                    this._facilityErrors.push(
+                                    this._errors.push(
                                         [
                                             property,
                                             propertyDisplayName,
@@ -77,17 +77,17 @@ export class FacilityErrors implements OnDestroy
                         }
 
                         let lenderParticipation = <LenderParticipation>facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
-                        facilityErrors = errors.get(lenderParticipation);
-                        if(facilityErrors)
+                        let lenderParticipationErrors = errors.get(lenderParticipation);
+                        if(lenderParticipationErrors)
                         {
-                            this._facilityErrors = this._facilityErrors || [];
-                            for(let entry of facilityErrors)
+                            this._errors = this._errors || [];
+                            for(let entry of lenderParticipationErrors)
                             {
                                 let propertyName = entry[0];
                                 let property: Property = [lenderParticipation, propertyName];
                                 let propertyDisplayName = propertyName in FacilityErrors._facilityPropertyDisplayName ? FacilityErrors._facilityPropertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
                                 for(let error of entry[1])
-                                    this._facilityErrors.push(
+                                    this._errors.push(
                                         [
                                             property,
                                             propertyDisplayName,
@@ -103,9 +103,9 @@ export class FacilityErrors implements OnDestroy
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
-    get FacilityErrors(): Error[]
+    get Errors(): Error[]
     {
-        return this._facilityErrors;
+        return this._errors;
     }
 
     Highlight(
