@@ -14,7 +14,7 @@ import { Currency } from '../Iso4217';
 import { Validate } from '../Ontologies/Validate';
 import { Branch } from '../Organisations';
 import { PartyInRole } from '../Parties';
-import { IExpression, Property, Query, ZeroOrMore } from '../RegularPathExpression';
+import { Alternative, Empty, IExpression, Property, Query, Sequence, ZeroOrMore } from '../RegularPathExpression';
 import { Role } from '../Roles';
 import { RolesToken } from '../RoleServiceProvider';
 import { FacilityFees } from './FacilityFees';
@@ -233,7 +233,16 @@ export class Facility
     private _copy             : Map<object, object>;
     private _applyCallback    : ApplyCallback;
 
-    private static _subgraph: IExpression = new ZeroOrMore(new Property('Parts'));
+    private static _subgraph: IExpression = new Sequence(
+        [
+            new ZeroOrMore(new Property('Parts')),
+            new Alternative(
+            [
+                Empty,
+                new Property('Amount'),
+                new Property('AccrualDate')
+            ])
+        ]);
 
     public Tabs: Tab[];
 
