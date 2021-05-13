@@ -10,12 +10,9 @@ type Error = [Property, string, string];
     {
         selector: 'facility-fee-errors',
         template: `
-<div *ngIf="Errors" style="color: red;">
-  Apply was unsuccessful.  Please fix the errors and try again.
-  <ul>
-    <li *ngFor="let error of Errors" [innerHTML]="error[1] + ': ' + error[2]" (click)="Highlight(error[0])" style="cursor: pointer;"></li>
-  </ul>
-</div>`
+<ul *ngIf="Errors" style="color: red;">
+  <li *ngFor="let error of Errors" [innerHTML]="error[1] + ': ' + error[2]" (click)="Highlight(error[0])" style="cursor: pointer;"></li>
+</ul>`
     })
 export class FacilityFeeErrors implements OnDestroy
 {
