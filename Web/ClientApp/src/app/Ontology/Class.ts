@@ -1,4 +1,3 @@
-import { DataPropertyDomain } from "./DataPropertyDomain";
 import { Entity } from "./Entity";
 import { EquivalentClasses } from "./EquivalentClasses";
 import { HasKey } from "./HasKey";
@@ -13,12 +12,11 @@ import { IObjectComplementOf } from "./IObjectComplementOf";
 import { IObjectIntersectionOf } from "./IObjectIntersectionOf";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from "./IOntology";
-import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
+import { IDataPropertyExpression } from "./IPropertyExpression";
 import { ISubClassOf } from "./ISubClassOf";
 import { ClassAssertion } from "./NamedIndividual";
 import { ObjectComplementOf } from "./ObjectComplementOf";
 import { ObjectIntersectionOf } from "./ObjectIntersectionOf";
-import { ObjectPropertyDomain } from "./ObjectPropertyDomain";
 import { ObjectUnionOf } from "./ObjectUnionOf";
 import { SubClassOf } from "./SubClassOf";
 
@@ -51,36 +49,6 @@ export class Class
         return evaluator.Class(
             this,
             individual);
-    }
-
-    DeclareObjectProperty(
-        localName: string
-        ): IObjectPropertyExpression
-    {
-        return new ObjectPropertyDomain(
-            this.Ontology,
-            this.Ontology.DeclareObjectProperty(localName),
-            this).ObjectPropertyExpression;
-    }
-
-    DeclareDataProperty(
-        localName: string
-        ): IDataPropertyExpression
-    {
-        return new DataPropertyDomain(
-            this.Ontology,
-            this.Ontology.DeclareDataProperty(localName),
-            this).DataPropertyExpression;
-    }
-
-    DeclareFunctionalDataProperty(
-        localName: string
-        ): IDataPropertyExpression
-    {
-        return new DataPropertyDomain(
-            this.Ontology,
-            this.Ontology.DeclareFunctionalDataProperty(localName),
-            this).DataPropertyExpression;
     }
 
     DeclareNamedIndividual(

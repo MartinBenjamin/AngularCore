@@ -19,7 +19,7 @@ export class LifeCycles extends Ontology
         this.LifeCycle.SubClassOf(commonDomainObjects.DomainObject);
         this.LifeCycleStage = this.DeclareClass("LifeCycleStage");
         this.LifeCycleStage.SubClassOf(commonDomainObjects.DomainObject);
-        this.Stages = this.LifeCycle.DeclareObjectProperty("Stages");
+        this.Stages = this.DeclareObjectProperty("Stages");
     }
 }
 

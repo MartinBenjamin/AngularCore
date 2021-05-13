@@ -19,8 +19,8 @@ export class Agreements extends Ontology
 
         this.Agreement  = this.DeclareClass("Agreement" );
         this.Commitment = this.DeclareClass("Commitment");
-        this.Parties    = this.Agreement.DeclareObjectProperty("Parties");
-        this.Confers    = this.Agreement.DeclareObjectProperty("Confers");
+        this.Parties    = this.DeclareObjectProperty("Parties");
+        this.Confers    = this.DeclareObjectProperty("Confers");
     }
 }
 

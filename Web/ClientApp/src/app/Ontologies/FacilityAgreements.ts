@@ -25,56 +25,56 @@ export class FacilityAgreements extends Ontology
         facility.SubClassOf(commonDomainObjects.Name.MinCardinality(1, nonEmptyString))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
 
-        let currency = facility.DeclareObjectProperty("Currency");
+        let currency = this.DeclareObjectProperty("Currency");
         facility.SubClassOf(currency.ExactCardinality(1))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
 
-        let totalCommitments = facility.DeclareDataProperty("TotalCommitments");
+        let totalCommitments = this.DeclareDataProperty("TotalCommitments");
         totalCommitments.Range(Decimal);
         facility.SubClassOf(totalCommitments.ExactCardinality(1))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect)
 
-        let availabilityPeriodEndDate = facility.DeclareDataProperty("AvailabilityPeriodEndDate");
+        let availabilityPeriodEndDate = this.DeclareDataProperty("AvailabilityPeriodEndDate");
         availabilityPeriodEndDate.Range(DateTime);
 
-        let expected1StDrawdownDate = facility.DeclareDataProperty("Expected1StDrawdownDate");
+        let expected1StDrawdownDate = this.DeclareDataProperty("Expected1StDrawdownDate");
         expected1StDrawdownDate.Range(DateTime);
 
-        let maturityDate = facility.DeclareDataProperty("MaturityDate");
+        let maturityDate = this.DeclareDataProperty("MaturityDate");
         maturityDate.Range(DateTime);
 
         let lenderParticipation = this.DeclareClass("LenderParticipation");
         lenderParticipation.Define(commonDomainObjects.$type.HasValue("Web.Model.LenderParticipation, Web"));
 
-        let underwriteAmount = lenderParticipation.DeclareDataProperty("UnderwriteAmount");
+        let underwriteAmount = this.DeclareDataProperty("UnderwriteAmount");
         underwriteAmount.Range(Decimal);
 
         lenderParticipation.SubClassOf(underwriteAmount.ExactCardinality(1))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.BusinessScreened);
 
-        let creditSoughtLimit = lenderParticipation.DeclareDataProperty("CreditSoughtLimit");
+        let creditSoughtLimit = this.DeclareDataProperty("CreditSoughtLimit");
         creditSoughtLimit.Range(Decimal);
 
         lenderParticipation.SubClassOf(creditSoughtLimit.ExactCardinality(1))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.BusinessScreened);
 
-        let anticipatedHoldAmount = lenderParticipation.DeclareDataProperty("AnticipatedHoldAmount");
+        let anticipatedHoldAmount = this.DeclareDataProperty("AnticipatedHoldAmount");
         anticipatedHoldAmount.Range(Decimal);
 
-        let actualAllocation = lenderParticipation.DeclareDataProperty("ActualAllocation");
+        let actualAllocation = this.DeclareDataProperty("ActualAllocation");
         actualAllocation.Range(Decimal);
 
         let facilityFee = this.DeclareClass("FacilityFee");
         facilityFee.Define(commonDomainObjects.$type.HasValue('Web.Model.facilityFee, Web'));
         facilityFee.SubClassOf(agreements.Commitment);
 
-        let expectedReceivedDate = facilityFee.DeclareDataProperty("ExpectedReceivedDate");
+        let expectedReceivedDate = this.DeclareDataProperty("ExpectedReceivedDate");
         expectedReceivedDate.Range(DateTime);
 
         let feeAmount = this.DeclareClass("FeeAmount");
         feeAmount.Define(commonDomainObjects.$type.HasValue('Web.Model.FeeAmount, Web'))
 
-        let value = feeAmount.DeclareDataProperty("Value");
+        let value = this.DeclareDataProperty("Value");
         value.Range(Decimal);
 
         feeAmount.SubClassOf(value.ExactCardinality(1))

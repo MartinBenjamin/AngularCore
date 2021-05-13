@@ -20,9 +20,9 @@ export class Parties extends Ontology
         this.PartyInRole = this.DeclareClass("PartyInRole");
         this.PartyInRole.SubClassOf(commonDomainObjects.DomainObject);
 
-        this.Role         = this.PartyInRole.DeclareObjectProperty("Role");
-        this.Organisation = this.PartyInRole.DeclareObjectProperty("Organisation");
-        this.Person       = this.PartyInRole.DeclareObjectProperty("Person");
+        this.Role         = this.DeclareObjectProperty("Role");
+        this.Organisation = this.DeclareObjectProperty("Organisation");
+        this.Person       = this.DeclareObjectProperty("Person");
     }
 }
 
