@@ -355,28 +355,12 @@ export class Facility
             this._copy,
             facility));
         this.ComputeBookingOffice();
+        this.Validate();
     }
 
     Apply(): void
     {
-        let classifications = this._deal.Ontology.Classify(this.Facility);
-        let applicableStages = new Set<Guid>();
-        for(let lifeCycleStage of this._deal.LifeCycle.Stages)
-        {
-            applicableStages.add(lifeCycleStage.Id);
-            if(lifeCycleStage.Id === this._deal.Stage.Id)
-                break;
-        }
-
-        let errors = Validate(
-            this._deal.Ontology,
-            classifications,
-            applicableStages);
-
-        this._errorsService.next(errors.size ? errors : null);
-
-        // Detect changes in all Facility Tabs (and nested Tabs).
-        this._changeDetector.DetectChanges();
+        let errors = this.Validate();
 
         if(errors.size)
             return;
@@ -465,7 +449,30 @@ export class Facility
         return lhs === rhs || (lhs && rhs && lhs.Id === rhs.Id);
     }
 
-    Flatten(
+    private Validate(): Map<object, Map<string, Set<keyof IErrors>>>
+    {
+        let classifications = this._deal.Ontology.Classify(this.Facility);
+        let applicableStages = new Set<Guid>();
+        for(let lifeCycleStage of this._deal.LifeCycle.Stages)
+        {
+            applicableStages.add(lifeCycleStage.Id);
+            if(lifeCycleStage.Id === this._deal.Stage.Id)
+                break;
+        }
+
+        let errors = Validate(
+            this._deal.Ontology,
+            classifications,
+            applicableStages);
+
+        this._errorsService.next(errors.size ? errors : null);
+
+        // Detect changes in all Facility Tabs (and nested Tabs).
+        this._changeDetector.DetectChanges();
+        return errors;
+    }
+
+    private Flatten(
         commitment  : ContractualCommitment,
         commitments?: Set<ContractualCommitment>
         ): Set<ContractualCommitment>
