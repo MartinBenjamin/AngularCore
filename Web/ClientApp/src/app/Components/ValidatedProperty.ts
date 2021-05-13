@@ -66,8 +66,11 @@ export class ValidatedProperty implements OnDestroy
         object: object
         )
     {
+        if(this._object !== object)
+            this.Unsubscribe();
+
         this._object = object;
-        this.UpdateSubscriptions();
+        this.Subscribe();
     }
 
     @Input('dtValidatedProperty')
@@ -75,11 +78,14 @@ export class ValidatedProperty implements OnDestroy
         property: string
         )
     {
+        if(this._property !== property)
+            this.Unsubscribe();
+            
         this._property = property;
-        this.UpdateSubscriptions();
+        this.Subscribe();
     }
 
-    private UpdateSubscriptions()
+    private Subscribe()
     {
         if(this._object &&
            this._property)
@@ -135,8 +141,6 @@ export class ValidatedProperty implements OnDestroy
 
                     });
         }
-        else
-            this.Unsubscribe();
     }
 
     private Unsubscribe(): void
