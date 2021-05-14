@@ -4,8 +4,7 @@ import { ErrorsObservableToken, HighlightedPropertySubjectToken, Property } from
 import { DealProvider } from '../../DealProvider';
 import { Deal, DealRoleIdentifier } from '../../Deals';
 import { IErrors } from '../../Ontologies/Validate';
-import { Facility } from '../../FacilityAgreements';
-import { Query2, ZeroOrMore, Property as PropertyExpression, Sequence, Alternative, Empty, Any, ZeroOrOne } from '../../RegularPathExpression';
+import { Alternative, Empty, Property as PropertyExpression, Query2, Sequence, ZeroOrMore } from '../../RegularPathExpression';
 
 type Error = [Property, string, string];
 
