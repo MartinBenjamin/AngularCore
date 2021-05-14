@@ -4,6 +4,8 @@ import { ErrorsObservableToken, HighlightedPropertySubjectToken, Property } from
 import { DealProvider } from '../../DealProvider';
 import { Deal, DealRoleIdentifier } from '../../Deals';
 import { IErrors } from '../../Ontologies/Validate';
+import { Facility } from '../../FacilityAgreements';
+import { Query2, ZeroOrMore, Property as PropertyExpression, Sequence, Alternative, Empty, Any, ZeroOrOne } from '../../RegularPathExpression';
 
 type Error = [Property, string, string];
 
@@ -17,6 +19,7 @@ type Error = [Property, string, string];
     <li *ngFor="let error of DealErrors" [innerHTML]="error[1] + ': ' + error[2]" (click)="Highlight(error[0])" style="cursor: pointer;"></li>
     <li *ngFor="let error of SponsorErrors" [innerHTML]="error[0][0].Role.Name + ' [' + error[0][0].Organisation.Name + '] ' + error[1] + ': ' + error[2]" (click)="Highlight(error[0])" style="cursor: pointer;"></li>
     <li *ngFor="let error of ExclusivityErrors" [innerHTML]="'Exclusivity ' + error[1] + ': ' + error[2]" (click)="Highlight(error[0])" style="cursor: pointer;"></li>
+    <li *ngFor="let error of FacilityErrors" [innerHTML]="'Tranche[' + error[0][0].Name + ']: Has errors'" (click)="Highlight(error[0])" style="cursor: pointer;"></li>
   </ul>
 </div>`
     })
@@ -26,6 +29,7 @@ export class Errors implements OnDestroy
     private _dealErrors       : Error[];
     private _sponsorErrors    : Error[];
     private _exclusivityErrors: Error[];
+    private _facilityErrors   : Error[];
 
     private static _dealPropertyDisplayName =
         {
@@ -65,6 +69,7 @@ export class Errors implements OnDestroy
                         this._dealErrors        = null;
                         this._sponsorErrors     = null;
                         this._exclusivityErrors = null;
+                        this._facilityErrors    = null;
                         let deal  : Deal;
                         let errors: Map<object, Map<string, Set<keyof IErrors>>>;
                         [deal, errors] = combined;
@@ -137,6 +142,36 @@ export class Errors implements OnDestroy
                                 }
                             }
                         }
+
+                        // Include Facility errors.
+                        let query = Query2(new Sequence(
+                            [
+                                new ZeroOrMore(new PropertyExpression('Parts')),
+                                new Alternative(
+                                    [
+                                        Empty,
+                                        new PropertyExpression('Amount'),
+                                        new PropertyExpression('AccrualDate')
+                                    ])
+                            ]));
+                        deal.Confers.filter(
+                            commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
+                            .forEach(
+                                commitment =>
+                                {
+                                    for(let object of query(commitment))
+                                        if(errors.has(object))
+                                        {
+                                            this._facilityErrors = this._facilityErrors || [];
+                                            this._facilityErrors.push(
+                                                [
+                                                    [commitment, null],
+                                                    null,
+                                                    null,
+                                                ]);
+                                            break;
+                                        }
+                                });
                     }));
     }
 
@@ -158,6 +193,11 @@ export class Errors implements OnDestroy
     get ExclusivityErrors(): Error[]
     {
         return this._exclusivityErrors;
+    }
+
+    get FacilityErrors(): Error[]
+    {
+        return this._facilityErrors;
     }
 
     Highlight(
