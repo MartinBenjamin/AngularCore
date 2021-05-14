@@ -331,6 +331,7 @@ export function Query(
     expression: IExpression
     ): Set<any>
 {
+    //return new Set<any>(Query2(expression)(object));
     let result = new Set<any>();
     //let nfa = expression.Nfa();
     let nfa = expression.Select(new NfaFactorySelector())();
@@ -370,6 +371,54 @@ export function Query(
     }
 
     return result;
+}
+
+export function Query2(
+    expression: IExpression
+    ): (object: object) => Generator<any>
+{
+    let nfa = expression.Select(new NfaFactorySelector())();
+
+    return function*(
+        object: object
+        ): Generator<any>
+    {
+        //let nfa = expression.Nfa();
+        let traversals: [State, object][] = [[nfa.Initial, object]];
+
+        while(traversals.length)
+        {
+            let [state, object] = traversals.shift();
+
+            if(state === nfa.Final)
+                yield object;
+
+            else if(state.EpsilonTransitions)
+                state.EpsilonTransitions.forEach(state => traversals.push([state, object]));
+
+            else if(typeof object === 'object' && object !== null)
+                for(let [property, nextState] of state.Transitions)
+                    if(property === '.')
+                        for(let key in object)
+                        {
+                            let value = object[key];
+                            if(value instanceof Array)
+                                value.forEach(element => traversals.push([nextState, element]));
+
+                            else if(value)
+                                traversals.push([nextState, value]);
+                        }
+                    else if(property in object)
+                    {
+                        let value = object[property];
+                        if(value instanceof Array)
+                            value.forEach(element => traversals.push([nextState, element]));
+
+                        else if(value)
+                            traversals.push([nextState, value]);
+                    }
+        }
+    }
 }
 
 export function QueryPaths(

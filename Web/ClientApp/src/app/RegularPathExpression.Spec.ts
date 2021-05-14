@@ -1,19 +1,23 @@
 import { } from 'jasmine';
 import { assertBuilder } from './Ontology/assertBuilder';
-import { Any, Alternative, Empty, OneOrMore, Property, Query, Sequence, ZeroOrMore, ZeroOrOne } from './RegularPathExpression';
+import { Alternative, Any, Empty, IExpression, OneOrMore, Property, Query, Query2, Sequence, ZeroOrMore, ZeroOrOne } from './RegularPathExpression';
 
 describe(
     'Path Expression',
     () =>
     {
-        describe(
+        [
+            Query,
+            (object: object, expression: IExpression) => new Set<any>(Query2(expression)(object))
+        ].forEach(
+        query => describe(
             'Given o = { A: {}, B: [{}, { B: [{}] }], C: {}, D: null }',
             () =>
             {
                 let o = { A: {}, B: [{}, { B: [{}] }], C: {}, D: null };
                 let assert = assertBuilder(
                     'o', 'Any', 'Alternative', 'Empty', 'OneOrMore', 'Property', 'Query', 'Sequence', 'ZeroOrMore', 'ZeroOrOne')
-                    (o, Any, Alternative, Empty, OneOrMore, Property, Query, Sequence, ZeroOrMore, ZeroOrOne);
+                    (o, Any, Alternative, Empty, OneOrMore, Property, query, Sequence, ZeroOrMore, ZeroOrOne);
 
                 console.log(Query(o,Any).size);
                 assert(`Query(o, Empty).size === 1`);
@@ -47,5 +51,5 @@ describe(
                 assert(`Query(o, Any).has(o.B[0])`);
                 assert(`Query(o, Any).has(o.B[1])`);
                 assert(`Query(o, Any).has(o.C)`);
-            });
+            }));
     });
