@@ -11,7 +11,7 @@ import { Deal, DealRoleIdentifier } from '../Deals';
 import * as facilityAgreements from '../FacilityAgreements';
 import { FacilityProvider } from '../FacilityProvider';
 import { Currency } from '../Iso4217';
-import { Validate } from '../Ontologies/Validate';
+import { IErrors, Validate } from '../Ontologies/Validate';
 import { Branch } from '../Organisations';
 import { PartyInRole } from '../Parties';
 import { Alternative, Empty, IExpression, Property, Query, Sequence, ZeroOrMore } from '../RegularPathExpression';
