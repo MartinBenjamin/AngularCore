@@ -1,6 +1,7 @@
-import { Component, OnDestroy, ViewChild } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
+import { Subject, Subscription } from 'rxjs';
 import { EmptyGuid } from '../CommonDomainObjects';
+import { HighlightedPropertySubjectToken, Property } from '../Components/ValidatedProperty';
 import { ContractualCommitment } from '../Contracts';
 import { DealProvider } from '../DealProvider';
 import { Deal } from '../Deals';
@@ -21,7 +22,9 @@ export class Facilities implements OnDestroy
     private _facility: import('../Deal/Facility').Facility;
 
     constructor(
-        dealProvider: DealProvider
+        dealProvider: DealProvider,
+        @Inject(HighlightedPropertySubjectToken)
+        highlightedPropertyService: Subject<Property>
         )
     {
         this._subscriptions.push(
@@ -30,8 +33,17 @@ export class Facilities implements OnDestroy
                 {
                     this._deal = deal;
                     this.ComputeFacilities();
+                }),
+            highlightedPropertyService.subscribe(
+                highlightedProperty =>
+                {                    
+                    if(this._facilities)
+                    {
+                        let highlighted = this._facilities.find(tuple => tuple[0] === highlightedProperty[0]);
+                        if(highlighted)
+                            this.Update(highlighted[0]);
+                    }
                 }));
-
     }
 
     ngOnDestroy(): void
