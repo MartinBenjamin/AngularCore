@@ -4,7 +4,6 @@ import { ErrorsObservableToken, HighlightedPropertySubjectToken, Property } from
 import { DealProvider } from '../../DealProvider';
 import { Deal, DealRoleIdentifier } from '../../Deals';
 import { IErrors } from '../../Ontologies/Validate';
-import { Alternative, Empty, Property as PropertyExpression, Query2, Sequence, ZeroOrMore } from '../../RegularPathExpression';
 
 type Error = [Property, string, string];
 
@@ -143,33 +142,18 @@ export class Errors implements OnDestroy
                         }
 
                         // Include Facility errors.
-                        let query = Query2(new Sequence(
-                            [
-                                new ZeroOrMore(new PropertyExpression('Parts')),
-                                new Alternative(
-                                    [
-                                        Empty,
-                                        new PropertyExpression('Amount'),
-                                        new PropertyExpression('AccrualDate')
-                                    ])
-                            ]));
                         deal.Confers.filter(
-                            commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
+                            commitment => (<any>commitment).$type === 'Web.Model.Facility, Web' && errors.has(commitment))
                             .forEach(
                                 commitment =>
                                 {
-                                    for(let object of query(commitment))
-                                        if(errors.has(object))
-                                        {
-                                            this._facilityErrors = this._facilityErrors || [];
-                                            this._facilityErrors.push(
-                                                [
-                                                    [commitment, null],
-                                                    null,
-                                                    null,
-                                                ]);
-                                            break;
-                                        }
+                                    this._facilityErrors = this._facilityErrors || [];
+                                    this._facilityErrors.push(
+                                        [
+                                            [commitment, '$HasErrors'],
+                                            null,
+                                            null,
+                                        ]);
                                 });
                     }));
     }

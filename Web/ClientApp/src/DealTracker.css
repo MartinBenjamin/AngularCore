@@ -192,6 +192,11 @@ span.ValidationError
   border-color: red;
 }
 
+a.ValidationError
+{
+  color: red;
+}
+
 /*table.ValidationError caption
 {
   color: red;

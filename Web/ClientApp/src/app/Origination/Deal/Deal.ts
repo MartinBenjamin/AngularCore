@@ -10,7 +10,8 @@ import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServicePr
 import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
 import { IDealOntologyService } from '../../Ontologies/IDealOntologyService';
-import { Validate } from '../../Ontologies/Validate';
+import { IErrors, Validate } from '../../Ontologies/Validate';
+import { Alternative, Empty, Property, Query2, Sequence, ZeroOrMore } from '../../RegularPathExpression';
 import { KeyCounterparties } from '../KeyCounterparties';
 import { KeyDealData } from '../KeyDealData';
 import { MoreTabs } from '../MoreTabs';
@@ -109,6 +110,42 @@ export class Deal
             this.Deal.Ontology,
             classifications,
             applicableStages);
+
+        let query = Query2(new Sequence(
+            [
+                new ZeroOrMore(new Property('Parts')),
+                new Alternative(
+                    [
+                        Empty,
+                        new Property('Amount'),
+                        new Property('AccrualDate')
+                    ])
+            ]));
+        this.Deal.Confers.filter(
+            commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
+            .forEach(
+                commitment =>
+                {
+                    for(let object of query(commitment))
+                        if(errors.has(object))
+                        {
+                            let facilityErrors = errors.get(commitment);
+                            if(!facilityErrors)
+                            {
+                                facilityErrors = new Map<string, Set<keyof IErrors>>();
+                                errors.set(
+                                    commitment,
+                                    facilityErrors);
+                            }
+
+                            let hasErrors = facilityErrors.get('$HasErrors');
+                            if(!hasErrors)
+                                facilityErrors.set(
+                                    '$HasErrors',
+                                    new Set<keyof IErrors>());
+                            break;
+                        }
+                });
 
         this._errorsService.next(errors.size ? errors : null);
 
