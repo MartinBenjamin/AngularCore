@@ -21,13 +21,13 @@ export class FacilityFeeErrors implements OnDestroy
 
     private static _propertyDisplayName =
         {
-            ExpectedReceivedDate: "Expected/Received Date"
+            ExpectedReceivedDate: 'Expected/Received Date'
         };
     private static _errorMap: IErrors =
         {
-            Mandatory       : "Mandatory",
-            Invalid         : "Invalid",
-            MustBe100Percent: "Must be 100%"
+            Mandatory       : 'Mandatory',
+            Invalid         : 'Invalid',
+            MustBe100Percent: 'Must be 100%'
         };
 
     constructor(

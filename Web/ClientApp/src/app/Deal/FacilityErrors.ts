@@ -23,13 +23,13 @@ export class FacilityErrors implements OnDestroy
     private static _facilityPropertyDisplayName =
         {
             TotalCommitments: 'Total Debt Size',
-            Expected1StDrawdownDate: "Expected 1<sup>st</sup> Drawdown Date"
+            Expected1StDrawdownDate: 'Expected 1<sup>st</sup> Drawdown Date'
         };
     private static _errorMap: IErrors =
         {
-            Mandatory       : "Mandatory",
-            Invalid         : "Invalid",
-            MustBe100Percent: "Must be 100%"
+            Mandatory       : 'Mandatory',
+            Invalid         : 'Invalid',
+            MustBe100Percent: 'Must be 100%'
         };
 
     constructor(

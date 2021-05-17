@@ -41,8 +41,11 @@
     <td>{{facility[0].MultiCurrency|yesNo}}</td>
     <td>{{facility[0].Expected1StDrawdownDate|utcDate}}</td>
     <td>{{facility[0].AvailabilityPeriodEndDate|utcDate}}</td>
-    <td><a (click)="Update(facility[0])">edit</a
-      ><a (click)="Delete(facility[0])">delete</a></td>
+    <td>
+      <a (click)="Update(facility[0])"
+         [dtValidatedObject]="facility[0]"
+         dtValidatedProperty="null">edit</a><a (click)="Delete(facility[0])">delete</a>
+    </td>
   </tr>
   <tr><td *ngIf="!Facilities.length" colspan="16" style="text-align: center;">No Credit Risk Tranches</td></tr>
 </table>

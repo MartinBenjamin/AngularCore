@@ -33,8 +33,8 @@ export class Errors implements OnDestroy
     private static _dealPropertyDisplayName =
         {
             Name            : 'Deal Name',
-            GeographicRegion: "Country",
-            Currency        : "Base Currency"
+            GeographicRegion: 'Country',
+            Currency        : 'Base Currency'
         };
     private static _sponsorPropertyDisplayName =
         {
@@ -45,9 +45,9 @@ export class Errors implements OnDestroy
         };
     private static _errorMap: IErrors =
         {
-            Mandatory       : "Mandatory",
-            Invalid         : "Invalid",
-            MustBe100Percent: "Must be 100%"
+            Mandatory       : 'Mandatory',
+            Invalid         : 'Invalid',
+            MustBe100Percent: 'Must be 100%'
         };
 
     constructor(
