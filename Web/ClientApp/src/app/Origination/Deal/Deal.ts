@@ -46,6 +46,17 @@ export class Deal
 
     public Tabs: Tab[];
 
+    public static FacilitySubgraphQuery = Query2(new Sequence(
+        [
+            new ZeroOrMore(new Property('Parts')),
+            new Alternative(
+                [
+                    Empty,
+                    new Property('Amount'),
+                    new Property('AccrualDate')
+                ])
+        ]));
+
     constructor(
         @Inject(DealOntologyServiceToken)
         dealOntologyService    : IDealOntologyService,
@@ -111,22 +122,12 @@ export class Deal
             classifications,
             applicableStages);
 
-        let query = Query2(new Sequence(
-            [
-                new ZeroOrMore(new Property('Parts')),
-                new Alternative(
-                    [
-                        Empty,
-                        new Property('Amount'),
-                        new Property('AccrualDate')
-                    ])
-            ]));
         this.Deal.Confers.filter(
             commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
             .forEach(
                 commitment =>
                 {
-                    for(let object of query(commitment))
+                    for(let object of Deal.FacilitySubgraphQuery(commitment))
                         if(errors.has(object))
                         {
                             let facilityErrors = errors.get(commitment);
