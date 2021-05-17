@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { EmptyGuid } from '../CommonDomainObjects';
-import { HighlightedPropertySubjectToken, Property } from '../Components/ValidatedProperty';
+import { HighlightedPropertyObservableToken, Property } from '../Components/ValidatedProperty';
 import { ContractualCommitment } from '../Contracts';
 import { DealProvider } from '../DealProvider';
 import { Deal } from '../Deals';
@@ -23,8 +23,8 @@ export class Facilities implements OnDestroy
 
     constructor(
         dealProvider: DealProvider,
-        @Inject(HighlightedPropertySubjectToken)
-        highlightedPropertyService: Subject<Property>
+        @Inject(HighlightedPropertyObservableToken)
+        highlightedPropertyService: Observable<Property>
         )
     {
         this._subscriptions.push(
