@@ -19,6 +19,7 @@ import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataHasValue } from "./IDataHasValue";
 import { Group } from './Group';
 import { Property } from "../RegularPathExpression";
+import { IHasKey } from './IHasKey';
 
 function Intersect(
     lhs: Set<object>,
@@ -33,9 +34,7 @@ function Union(
     rhs: Set<object>
     )
 {
-    let union = new Set<object>(lhs);
-    rhs.forEach(member => union.add(member));
-    return union;
+    return new Set<object>([...lhs, ...rhs]);
 }
 
 export class ObservableGenerator// implements IClassExpressionVisitor
@@ -44,6 +43,7 @@ export class ObservableGenerator// implements IClassExpressionVisitor
     private _observableObjectPropertyExpression: Map<IObjectPropertyExpression, Observable<Array<[object, IObjectPropertyExpression, object]>>>;
     private _observableDataPropertyExpression  : Map<IDataPropertyExpression  , Observable<Array<[object, IDataPropertyExpression  , any   ]>>>;
     private _observableObjectDomain            : Observable<Set<object>>;
+    private _hasKeys                           : Observable<Set<[IHasKey, Set<object>]>>;
 
     Class(
         class$: IClass
@@ -153,6 +153,16 @@ export class ObservableGenerator// implements IClassExpressionVisitor
         objectMinCardinality: IObjectMinCardinality
         )
     {
+        if(objectMinCardinality.Cardinality === 0)
+        {
+            // All individuals.
+            this._observableClassExpressions.set(
+                objectMinCardinality,
+                this._observableObjectDomain);
+
+            return;
+        }
+
         let observableObjectPropertyExpression = this._observableObjectPropertyExpression.get(objectMinCardinality.ObjectPropertyExpression);
         if(objectMinCardinality.ClassExpression)
             observableObjectPropertyExpression = combineLatest(
@@ -167,31 +177,13 @@ export class ObservableGenerator// implements IClassExpressionVisitor
                 member => member[0],
                 member => member[2])));
 
-        //this._observableClassExpressions.set(
-        //    objectMinCardinality,
-        //    observableGroupedByDomain.combineLatest(
-        //        this._observableClassExpressions.get(objectMinCardinality.ClassExpression),
-        //        (groupedByDomain, classExpression) =>
-        //            new Set([...groupedByDomain.entries()]
-        //                .filter(entry => entry[1].reduce(
-        //                    (count, individual) => classExpression.has(individual) ? count + 1 : count,
-        //                    0) >= objectMinCardinality.Cardinality)
-        //                .map(entry => entry[0]))));
-
-        if(objectMinCardinality.Cardinality > 0)
-            this._observableClassExpressions.set(
-                objectMinCardinality,
-                observableGroupedByDomain.map(
-                    groupedByDomain =>
-                        new Set([...groupedByDomain.entries()]
-                            .filter(entry => entry[1].length >= objectMinCardinality.Cardinality)
-                            .map(entry => entry[0]))));
-
-        else
-            // Must include individuals that are not in the range of the property!
-            this._observableClassExpressions.set(
-                objectMinCardinality,
-                this._observableObjectDomain);
+        this._observableClassExpressions.set(
+            objectMinCardinality,
+            observableGroupedByDomain.pipe(map(
+                groupedByDomain =>
+                    new Set([...groupedByDomain.entries()]
+                        .filter(entry => entry[1].length >= objectMinCardinality.Cardinality)
+                        .map(entry => entry[0])))));
     }
 /*
     ObjectMaxCardinality(

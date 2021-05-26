@@ -1,6 +1,5 @@
 import { IAxiom } from "./IAxiom";
 import { IClassExpression } from "./IClassExpression";
-import { IOntology } from "./IOntology";
 import { IDataPropertyExpression } from "./IPropertyExpression";
 
 export interface IHasKey extends IAxiom
