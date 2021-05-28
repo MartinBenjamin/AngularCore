@@ -4,5 +4,5 @@ import { IEntity } from "./IEntity";
 
 export interface IAnnotationAssertion extends IAnnotationAxiom, IAnnotation
 {
-    Subject: IEntity;
+    readonly Subject: IEntity;
 }

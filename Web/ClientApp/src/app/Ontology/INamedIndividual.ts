@@ -21,24 +21,24 @@ export interface IAssertion extends IAxiom
 
 export interface IClassAssertion extends IAssertion
 {
-    ClassExpression: IClassExpression;
-    NamedIndividual: INamedIndividual;
+    readonly ClassExpression: IClassExpression;
+    readonly NamedIndividual: INamedIndividual;
 }
 
 export interface IPropertyAssertion extends IAssertion
 {
-    PropertyExpression: IPropertyExpression;
-    SourceIndividual  : INamedIndividual;
+    readonly PropertyExpression: IPropertyExpression;
+    readonly SourceIndividual  : INamedIndividual;
 }
 
 export interface IObjectPropertyAssertion extends IPropertyAssertion
 {
-    ObjectPropertyExpression: IObjectPropertyExpression;
-    TargetIndividual        : object;
+    readonly ObjectPropertyExpression: IObjectPropertyExpression;
+    readonly TargetIndividual        : object;
 }
 
 export interface IDataPropertyAssertion extends IPropertyAssertion
 {
-    DataPropertyExpression: IDataPropertyExpression;
-    TargetValue           : any;
+    readonly DataPropertyExpression: IDataPropertyExpression;
+    readonly TargetValue           : any;
 }
