@@ -108,6 +108,7 @@
     <None Remove="ClientApp\src\app\Ontology\AdjacencyList.ts" />
     <None Remove="ClientApp\src\app\Ontology\Annotated.ts" />
     <None Remove="ClientApp\src\app\Ontology\Annotation.ts" />
+    <None Remove="ClientApp\src\app\Ontology\AnnotationAssertion.ts" />
     <None Remove="ClientApp\src\app\Ontology\AnnotationProperty.ts" />
     <None Remove="ClientApp\src\app\Ontology\assertBuilder.ts" />
     <None Remove="ClientApp\src\app\Ontology\Axiom.ts" />
@@ -155,6 +156,8 @@
     <None Remove="ClientApp\src\app\Ontology\HasKey.ts" />
     <None Remove="ClientApp\src\app\Ontology\IAnnotated.ts" />
     <None Remove="ClientApp\src\app\Ontology\IAnnotation.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IAnnotationAssertion.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IAnnotationAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IAnnotationProperty.ts" />
     <None Remove="ClientApp\src\app\Ontology\IAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClass.ts" />
@@ -356,6 +359,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Roles.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\StructuredTradeFinance.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Validate.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\AnnotationAssertion.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\CombineLatest.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AdjacencyList.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AdjacencyList.ts" />
@@ -405,6 +409,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Group.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\HasKey.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\HasKey.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IAnnotationAssertion.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IAnnotationAxiom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IAnnotationProperty.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IAnnotated.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IAnnotation.ts" />

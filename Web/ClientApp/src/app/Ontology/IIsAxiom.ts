@@ -1,3 +1,4 @@
+import { IAnnotationAssertion } from "./IAnnotationAssertion";
 import { IAnnotationProperty } from "./IAnnotationProperty";
 import { IAxiom } from "./IAxiom";
 import { IClass } from "./IClass";
@@ -37,4 +38,5 @@ export interface IIsAxiom
     IDataPropertyDomain      : TypeGuard<IDataPropertyDomain      >;
     IDataPropertyRange       : TypeGuard<IDataPropertyRange       >;
     IFunctionalDataProperty  : TypeGuard<IFunctionalDataProperty  >;
+    IAnnotationAssertion     : TypeGuard<IAnnotationAssertion     >;
 }

@@ -1,3 +1,4 @@
+import { AnnotationAssertion } from "./AnnotationAssertion";
 import { AnnotationProperty } from "./AnnotationProperty";
 import { Axiom } from "./Axiom";
 import { Class } from "./Class";
@@ -8,6 +9,7 @@ import { Entity } from "./Entity";
 import { EquivalentClasses } from "./EquivalentClasses";
 import { FunctionalDataProperty } from "./FunctionalDataProperty";
 import { HasKey } from "./HasKey";
+import { IAnnotationAssertion } from "./IAnnotationAssertion";
 import { IAnnotationProperty } from "./IAnnotationProperty";
 import { IAxiom } from "./IAxiom";
 import { IClass } from "./IClass";
@@ -50,5 +52,5 @@ export class IsAxiom implements IIsAxiom
     IDataPropertyDomain      (axiom: object): axiom is IDataPropertyDomain       { return axiom instanceof DataPropertyDomain     ; }
     IDataPropertyRange       (axiom: object): axiom is IDataPropertyRange        { return axiom instanceof DataPropertyRange      ; }
     IFunctionalDataProperty  (axiom: object): axiom is IDataPropertyDomain       { return axiom instanceof FunctionalDataProperty ; }
-
+    IAnnotationAssertion     (axiom: object): axiom is IAnnotationAssertion      { return axiom instanceof AnnotationAssertion    ; }
 }
