@@ -43,6 +43,25 @@ export function GroupBy<T, TKey, TValue, TResult>(
     };
 }
 
+export function GroupByDomain(
+    relations: Iterable<[any, any]>
+    ): Map<any, Set<any>>
+{
+    let map = new Map<any, Set<any>>();
+    for(let relation of relations)
+    {
+        let values = map.get(relation[0]);
+        if(values)
+            values.add(relation[1]);
+
+        else
+            map.set(
+                relation[0],
+                new Set<any>().add(relation[1]));
+    }
+    return map;
+}
+
 export function GroupJoin<TLeft, TRight, TKey>(
     leftIterable    : Iterable<TLeft>,
     rightIterable   : Iterable<TRight>,
@@ -376,6 +395,83 @@ export class ObservableGenerator implements IClassExpressionVisitor
         )
     {
         throw new Error("Method not implemented.");
+    }
+
+    private ObjectPropertyExpression(
+        objectPropertyExpression: IObjectPropertyExpression
+        ): Observable<[any, any][]>
+    {
+        const objectPropertyAssertions = [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyAssertion)]
+            .filter(objectPropertyAssertion => objectPropertyAssertion.ObjectPropertyExpression === objectPropertyExpression);
+
+        if(!objectPropertyAssertions.length)
+            return this._store.ObjectPropertyExpression(objectPropertyExpression);
+
+        return combineLatest(
+            this._store.ObjectPropertyExpression(objectPropertyExpression),
+            new BehaviorSubject<[any, any][]>(objectPropertyAssertions.map(objectPropertyAssertion =>
+                [this.InterpretIndividual(objectPropertyAssertion.SourceIndividual),
+                    this.InterpretIndividual(objectPropertyAssertion.TargetIndividual)])),
+            (lhs, rhs) =>
+            {
+                const map = GroupByDomain(lhs);
+                for(const relation of rhs)
+                {
+                    var values = map.get(relation[0])
+                    if(!values)
+                    {
+                        values = new Set<any>().add(relation[1]);
+                        map.set(
+                            relation[0],
+                            values);
+                        lhs.push(relation);
+                    }
+                    else if(!values.has(relation[1]))
+                    {
+                        values.add(relation[1]);
+                        lhs.push(relation);
+                    }
+                }
+                return lhs;
+            });
+    }
+
+    private DataPropertyExpression(
+        dataPropertyExpression: IDataPropertyExpression
+        ): Observable<[any, any][]>
+    {
+        const dataPropertyAssertions = [...this._ontology.Get(this._ontology.IsAxiom.IDataPropertyAssertion)]
+            .filter(dataPropertyAssertion => dataPropertyAssertion.DataPropertyExpression === dataPropertyExpression);
+
+        if(!dataPropertyAssertions.length)
+            return this._store.DataPropertyExpression(dataPropertyExpression);
+
+        return combineLatest(
+            this._store.DataPropertyExpression(dataPropertyExpression),
+            new BehaviorSubject<[any, any][]>(dataPropertyAssertions.map(dataPropertyAssertion =>
+                [this.InterpretIndividual(dataPropertyAssertion.SourceIndividual), dataPropertyAssertion.TargetValue])),
+            (lhs, rhs) =>
+            {
+                const map = GroupByDomain(lhs);
+                for(const relation of rhs)
+                {
+                    var values = map.get(relation[0])
+                    if(!values)
+                    {
+                        values = new Set<any>().add(relation[1]);
+                        map.set(
+                            relation[0],
+                            values);
+                        lhs.push(relation);
+                    }
+                    else if(!values.has(relation[1]))
+                    {
+                        values.add(relation[1]);
+                        lhs.push(relation);
+                    }
+                }
+                return lhs;
+            });
     }
 
     private InterpretIndividual(
