@@ -1,9 +1,13 @@
 import { BehaviorSubject, combineLatest, Observable } from "rxjs";
 import { map } from 'rxjs/operators';
+import { Group } from './Group';
 import { IClass } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
+import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
+import { IDataHasValue } from "./IDataHasValue";
+import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
 import { IObjectAllValuesFrom } from "./IObjectAllValuesFrom";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectComplementOf } from "./IObjectComplementOf";
@@ -13,14 +17,8 @@ import { IObjectIntersectionOf } from "./IObjectIntersectionOf";
 import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
+import { IOntology } from './IOntology';
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
-import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
-import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
-import { IDataHasValue } from "./IDataHasValue";
-import { Group } from './Group';
-import { Property } from "../RegularPathExpression";
-import { IHasKey } from './IHasKey';
-
 
 export function GroupBy<T, TKey, TValue, TResult>(
     iterable      : Iterable<T>,
@@ -44,35 +42,6 @@ export function GroupBy<T, TKey, TValue, TResult>(
         }
     };
 }
-
-//export function GroupJoin<TLeft, TRight, TKey, TResult>(
-//    leftIterable    : Iterable<TLeft>,
-//    rightIterable   : Iterable<TRight>,
-//    leftKeySelector : (left: TLeft) => TKey,
-//    rightKeySelector: (right: TRight) => TKey,
-//    resultSelector  : (left: TLeft, rightIterable: Iterable<TRight>) => TResult
-//    ): Iterable<TResult>
-//{
-//    return {
-//        *[Symbol.iterator]()
-//        {
-//            const map = Group(
-//                rightIterable,
-//                rightKeySelector,
-//                (t: TRight) => t);
-
-//            const emptyIterable: TRight[] = [];
-//            for(const left of leftIterable)
-//            {
-//                const rightIterable = map.get(leftKeySelector(left));
-//                yield resultSelector(
-//                    left,
-//                    rightIterable ? rightIterable : emptyIterable);
-//            }
-//        }
-//    };
-//}
-
 
 export function GroupJoin<TLeft, TRight, TKey>(
     leftIterable    : Iterable<TLeft>,
@@ -99,29 +68,13 @@ export function GroupJoin<TLeft, TRight, TKey>(
     return join;
 }
 
-function Intersect<T>(
-    lhs: Set<T>,
-    rhs: Set<T>
-    ): Set<T>
+export class ObservableGenerator implements IClassExpressionVisitor
 {
-    return new Set<T>([...lhs].filter(member => rhs.has(member)));
-}
-
-function Union<T>(
-    lhs: Set<T>,
-    rhs: Set<T>
-    ): Set<T>
-{
-    return new Set<T>([...lhs, ...rhs]);
-}
-
-export class ObservableGenerator// implements IClassExpressionVisitor
-{
+    private _ontology                          : IOntology;
     private _observableClassExpressions        : Map<IClassExpression         , Observable<Set<any>>>;
     private _observableObjectPropertyExpression: Map<IObjectPropertyExpression, Observable<Array<[any, IObjectPropertyExpression, any]>>>;
     private _observableDataPropertyExpression  : Map<IDataPropertyExpression  , Observable<Array<[any, IDataPropertyExpression  , any]>>>;
     private _observableObjectDomain            : Observable<Set<any>>;
-    private _hasKeys                           : Observable<Set<[IHasKey, Set<object>]>>;
 
     Class(
         class$: IClass
@@ -137,7 +90,7 @@ export class ObservableGenerator// implements IClassExpressionVisitor
         let observables = objectIntersectionOf.ClassExpressions.map(classExpression => this._observableClassExpressions.get(classExpression));
         this._observableClassExpressions.set(
             objectIntersectionOf,
-            observables.reduce((accumulator, currentValue) => combineLatest(accumulator, currentValue, Intersect)));
+            combineLatest(observables, (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs]))));
     }
 
     ObjectUnionOf(
@@ -147,7 +100,7 @@ export class ObservableGenerator// implements IClassExpressionVisitor
         let observables = objectUnionOf.ClassExpressions.map(classExpression => this._observableClassExpressions.get(classExpression));
         this._observableClassExpressions.set(
             objectUnionOf,
-            observables.reduce((accumulator, currentValue) => combineLatest(accumulator, currentValue, Union)));
+            combineLatest(observables, (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs].filter(member => rhs.has(member))))));
     }
 
     ObjectComplementOf(
@@ -159,7 +112,7 @@ export class ObservableGenerator// implements IClassExpressionVisitor
             combineLatest(
                 this._observableObjectDomain,
                 this._observableClassExpressions.get(objectComplementOf.ClassExpression),
-                (objectDomain, classExpression) => new Set<object>([...objectDomain].filter(member => !classExpression.has(member)))));
+                (objectDomain, classExpression) => new Set<any>([...objectDomain].filter(member => !classExpression.has(member)))));
     }
 
     ObjectOneOf(
@@ -168,7 +121,7 @@ export class ObservableGenerator// implements IClassExpressionVisitor
     {
         this._observableClassExpressions.set(
             objectOneOf,
-            new BehaviorSubject<Set<object>>(new Set<object>(objectOneOf.Individuals)));
+            new BehaviorSubject<Set<any>>(new Set<any>([...objectOneOf.Individuals.map(individual => this.InterpretIndividual(individual))])));
     }
 
     ObjectSomeValuesFrom(
@@ -181,7 +134,7 @@ export class ObservableGenerator// implements IClassExpressionVisitor
                 this._observableObjectPropertyExpression.get(objectSomeValuesFrom.ObjectPropertyExpression),
                 this._observableClassExpressions.get(objectSomeValuesFrom.ClassExpression),
                 (objectPropertyExpression, classExpression) =>
-                    new Set<object>(
+                    new Set<any>(
                         [...objectPropertyExpression]
                             .filter(member => classExpression.has(member[2]))
                             .map(member => member[0]))));
@@ -191,7 +144,7 @@ export class ObservableGenerator// implements IClassExpressionVisitor
         objectAllValuesFrom: IObjectAllValuesFrom
         )
     {
-        let observableGroupedByDomain = this._observableObjectPropertyExpression.get(objectAllValuesFrom.ObjectPropertyExpression).pipe(map(
+        const observableGroupedByDomain = this._observableObjectPropertyExpression.get(objectAllValuesFrom.ObjectPropertyExpression).pipe(map(
             objectPropertyExpression => Group(
                 objectPropertyExpression,
                 member => member[0],
@@ -203,30 +156,40 @@ export class ObservableGenerator// implements IClassExpressionVisitor
                 observableGroupedByDomain,
                 this._observableClassExpressions.get(objectAllValuesFrom.ClassExpression),
                 (groupedByDomain, classExpression) =>
-                    new Set<object>(
+                    new Set<any>(
                         [...groupedByDomain.entries()]
                             .filter(entry => entry[1].every(individual => classExpression.has(individual)))
                             .map(entry => entry[0]))));
     }
 
-/*
     ObjectHasValue(
         objectHasValue: IObjectHasValue
         )
     {
-        // Need Individual Interpretation Function.
+        const individual = this.InterpretIndividual(objectHasValue.Individual);
         this._observableClassExpressions.set(
             objectHasValue,
-            new BehaviorSubject<Set<object>>(new Set<object>().add(objectHasValue.Individual)));
+            this._observableObjectPropertyExpression.get(objectHasValue.ObjectPropertyExpression).pipe(
+                map(objectPropertyExpression =>
+                    new Set<any>([...objectPropertyExpression
+                        .filter(member => member[2] === individual)
+                        .map(member => member[0])]))));
     }
 
     ObjectHasSelf(
         objectHasSelf: IObjectHasSelf
         )
     {
-        throw new Error("Method not implemented.");
+        const observableObjectPropertyExpression = this._observableObjectPropertyExpression.get(objectHasSelf.ObjectPropertyExpression);
+        this._observableClassExpressions.set(
+            objectHasSelf,
+            observableObjectPropertyExpression.pipe(
+                map(objectPropertyExpression =>
+                    new Set<any>([...objectPropertyExpression
+                        .filter(member => member[0] === member[2])
+                        .map(member => member[0])]))));
     }
-*/
+
     ObjectMinCardinality(
         objectMinCardinality: IObjectMinCardinality
         )
@@ -257,7 +220,7 @@ export class ObservableGenerator// implements IClassExpressionVisitor
                     member => member[0],
                     member => member[2])),
                 map(groupedByDomain =>
-                    new Set([...groupedByDomain.entries()]
+                    new Set<any>([...groupedByDomain.entries()]
                         .filter(entry => entry[1].length >= objectMinCardinality.Cardinality)
                         .map(entry => entry[0])))));
     }
@@ -287,7 +250,7 @@ export class ObservableGenerator// implements IClassExpressionVisitor
                             individual => individual,
                             member => member[0])).pipe(
                                 map(groupedByDomain =>
-                                    new Set([...groupedByDomain.entries()]
+                                    new Set<any>([...groupedByDomain.entries()]
                                         .filter(entry => entry[1].length <= objectMaxCardinality.Cardinality)
                                         .map(entry => entry[0])))));
         else
@@ -299,7 +262,7 @@ export class ObservableGenerator// implements IClassExpressionVisitor
                         member => member[0],
                         member => member[2])),
                     map(groupedByDomain =>
-                        new Set([...groupedByDomain.entries()]
+                        new Set<any>([...groupedByDomain.entries()]
                             .filter(entry => entry[1].length <= objectMaxCardinality.Cardinality)
                             .map(entry => entry[0])))));
     }
@@ -329,7 +292,7 @@ export class ObservableGenerator// implements IClassExpressionVisitor
                             individual => individual,
                             relation => relation[0])).pipe(
                                 map(groupedByDomain =>
-                                    new Set([...groupedByDomain.entries()]
+                                    new Set<any>([...groupedByDomain.entries()]
                                         .filter(entry => entry[1].length <== objectExactCardinality.Cardinality)
                                         .map(entry => entry[0])))));
         else
@@ -341,125 +304,84 @@ export class ObservableGenerator// implements IClassExpressionVisitor
                         member => member[0],
                         member => member[2])),
                     map(groupedByDomain =>
-                        new Set([...groupedByDomain.entries()]
+                        new Set<any>([...groupedByDomain.entries()]
                             .filter(entry => entry[1].length === objectExactCardinality.Cardinality)
                             .map(entry => entry[0])))));
     }
-/*
+
     DataSomeValuesFrom(
         dataSomeValuesFrom: IDataSomeValuesFrom
         )
     {
-        throw new Error("Method not implemented.");
+        this._observableClassExpressions.set(
+            dataSomeValuesFrom,
+            this._observableDataPropertyExpression.get(dataSomeValuesFrom.DataPropertyExpression).pipe(
+                map(dataPropertyExpression =>
+                    new Set<any>([...dataPropertyExpression]
+                        .filter(member => dataSomeValuesFrom.DataRange.HasMember(member[2]))))));
     }
 
     DataAllValuesFrom(
         dataAllValuesFrom: IDataAllValuesFrom
         )
     {
-        throw new Error("Method not implemented.");
+        this._observableClassExpressions.set(
+            dataAllValuesFrom,
+            this._observableDataPropertyExpression.get(dataAllValuesFrom.DataPropertyExpression).pipe(
+                map(objectPropertyExpression => Group(
+                    objectPropertyExpression,
+                    member => member[0],
+                    member => member[2])),
+                map(groupedByDomain =>
+                    new Set<any>(
+                        [...groupedByDomain.entries()]
+                            .filter(entry => entry[1].every(value => dataAllValuesFrom.DataRange.HasMember(value)))
+                            .map(entry => entry[0])))));
     }
 
     DataHasValue(
         dataHasValue: IDataHasValue
         )
     {
-        throw new Error("Method not implemented.");
+        this._observableClassExpressions.set(
+            dataHasValue,
+            this._observableDataPropertyExpression.get(dataHasValue.DataPropertyExpression).pipe(
+                map(dataPropertyExpression =>
+                    new Set<any>([...dataPropertyExpression
+                        .filter(member => member[2] === dataHasValue.Value)
+                        .map(member => member[0])]))));
     }
 
     DataMinCardinality(
         dataMinCardinality: IDataMinCardinality
         )
     {
-        let observableDataPropertyExpression = this._observableDataPropertyExpression.get(dataMinCardinality.DataPropertyExpression);
-        if(dataMinCardinality.DataRange)
-            observableDataPropertyExpression = observableDataPropertyExpression.map(
-                dataPropertyExpression => dataPropertyExpression.filter(member => dataMinCardinality.DataRange.HasMember(member[2])));
-
-        let observableGroupedByDomain = observableDataPropertyExpression.map(
-            dataPropertyExpression => Group(
-                dataPropertyExpression,
-                member => member[0],
-                member => member[2]));
-
-        if(dataMinCardinality.Cardinality > 0)
-            this._observableClassExpressions.set(
-                dataMinCardinality,
-                observableGroupedByDomain.map(
-                    groupedByDomain =>
-                        new Set([...groupedByDomain.entries()]
-                            .filter(entry => entry[1].length >= dataMinCardinality.Cardinality)
-                            .map(entry => entry[0]))));
-
-        else
-            this._observableClassExpressions.set(
-                dataMinCardinality,
-                this._observableObjectDomain.map(objectDomain => new Set(objectDomain)));
+        throw new Error("Method not implemented.");
     }
 
     DataMaxCardinality(
         dataMaxCardinality: IDataMaxCardinality
         )
     {
-        let observableDataPropertyExpression = this._observableDataPropertyExpression.get(dataMaxCardinality.DataPropertyExpression);
-        if(dataMaxCardinality.DataRange)
-            observableDataPropertyExpression = observableDataPropertyExpression.map(
-                dataPropertyExpression => dataPropertyExpression.filter(member => dataMaxCardinality.DataRange.HasMember(member[2])));
-
-        let observableGroupedByDomain = observableDataPropertyExpression.map(
-            dataPropertyExpression => Group(
-                dataPropertyExpression,
-                member => member[0],
-                member => member[2]));
-
-        if(dataMaxCardinality.Cardinality > 0)
-            this._observableClassExpressions.set(
-                dataMaxCardinality,
-                observableGroupedByDomain.map(
-                    groupedByDomain =>
-                        new Set([...groupedByDomain.entries()]
-                            .filter(entry => entry[1].length <= dataMaxCardinality.Cardinality)
-                            .map(entry => entry[0]))));
-
-        else
-            this._observableClassExpressions.set(
-                dataMaxCardinality,
-                this._observableObjectDomain.combineLatest(
-                    observableGroupedByDomain,
-                    (objectDomain, groupedByDomain) =>
-                        new Set([...objectDomain].filter(individual => !groupedByDomain.has(individual)))));
+        throw new Error("Method not implemented.");
     }
 
     DataExactCardinality(
         dataExactCardinality: IDataExactCardinality
         )
     {
-        let observableDataPropertyExpression = this._observableDataPropertyExpression.get(dataExactCardinality.DataPropertyExpression);
-        if(dataExactCardinality.DataRange)
-            observableDataPropertyExpression = observableDataPropertyExpression.map(
-                dataPropertyExpression => dataPropertyExpression.filter(member => dataExactCardinality.DataRange.HasMember(member[2])));
-
-        let observableGroupedByDomain = observableDataPropertyExpression.map(
-            dataPropertyExpression => Group(
-                dataPropertyExpression,
-                member => member[0],
-                member => member[2]));
-
-        if(dataExactCardinality.Cardinality > 0)
-            this._observableClassExpressions.set(
-                dataExactCardinality,
-                observableGroupedByDomain.map(
-                    groupedByDomain => new Set([...groupedByDomain.entries()]
-                        .filter(entry => entry[1].length === dataExactCardinality.Cardinality)
-                        .map(entry => entry[0]))));
-
-        else
-            this._observableClassExpressions.set(
-              dataExactCardinality,
-              this._observableObjectDomain.combineLatest(
-                  observableGroupedByDomain,
-                  (objectDomain, groupedByDomain) =>
-                      new Set([...objectDomain].filter(individual => !groupedByDomain.has(individual)))));
+        throw new Error("Method not implemented.");
     }
-*/
+
+    private InterpretIndividual(
+        individual: object
+        ): any
+    {
+        for(const dataPropertyAssertion of this._ontology.Get(this._ontology.IsAxiom.IDataPropertyAssertion))
+            if(dataPropertyAssertion.DataPropertyExpression.LocalName === "Id" &&
+                dataPropertyAssertion.SourceIndividual === individual)
+                return dataPropertyAssertion.TargetValue;
+
+        return individual;
+    }
 }
