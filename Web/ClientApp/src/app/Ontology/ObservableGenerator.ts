@@ -68,13 +68,20 @@ export function GroupJoin<TLeft, TRight, TKey>(
     return join;
 }
 
+export interface IStore
+{
+    ObjectDomain: Observable<Set<any>>;
+    ObjectPropertyExpression(objectPropertyExpression: IObjectPropertyExpression): Observable<[any, any][]>;
+    DataPropertyExpression(dataPropertyExpression: IDataPropertyExpression): Observable<[any, any][]>;
+}
+
 export class ObservableGenerator implements IClassExpressionVisitor
 {
     private _ontology                          : IOntology;
-    private _observableClassExpressions        : Map<IClassExpression         , Observable<Set<any>>>;
+    private _observableClassExpressions        : Map<IClassExpression, Observable<Set<any>>>;
+    private _observableObjectDomain            : Observable<Set<any>>;
     private _observableObjectPropertyExpression: Map<IObjectPropertyExpression, Observable<[any, any][]>>;
     private _observableDataPropertyExpression  : Map<IDataPropertyExpression  , Observable<[any, any][]>>;
-    private _observableObjectDomain            : Observable<Set<any>>;
 
     Class(
         class$: IClass
