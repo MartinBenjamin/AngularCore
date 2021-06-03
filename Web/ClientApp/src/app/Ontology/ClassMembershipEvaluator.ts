@@ -50,7 +50,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     private readonly _ontology                 : IOntology;
     private readonly _classes                  = new Map<string, IClass>();
     private readonly _classAssertions          : Map<INamedIndividual, IClassExpression[]>;
-    private readonly _hasKeys                  : Map<IClassExpression, IHasKey[]>;
+    private readonly _hasKeys                  : IHasKey[];
     private readonly _superClassExpressions    : Map<IClassExpression, IClassExpression[]>;
     private readonly _subClassExpressions      : Map<IClassExpression, IClassExpression[]>;
     private readonly _disjointClassExpressions : Map<IClassExpression, IClassExpression[]>;
@@ -82,10 +82,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
             ontology.Get(ontology.IsAxiom.IClassAssertion),
             classAssertion => classAssertion.NamedIndividual,
             classAssertion => classAssertion.ClassExpression);
-        this._hasKeys = Group(
-            ontology.Get(ontology.IsAxiom.IHasKey),
-            hasKey => hasKey.ClassExpression,
-            hasKey => hasKey);
+        this._hasKeys = [...ontology.Get(ontology.IsAxiom.IHasKey)];
         this._superClassExpressions = Group(
             ontology.Get(ontology.IsAxiom.ISubClassOf),
             subClassOf => subClassOf.SubClassExpression,
@@ -161,7 +158,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         }
 
         let longestPaths = LongestPaths(adjacencyList);
-        this._definedClasses = Array.from(this._classDefinitions.keys())
+        this._definedClasses = [...this._classDefinitions.keys()]
             .sort((a, b) => longestPaths.get(b) - longestPaths.get(a));
     }
 
@@ -485,13 +482,8 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         rhs: object
         ): boolean
     {
-        let lhsClassExpressions = this.Classify(lhs);
-        let rhsClassExpressions = this.Classify(rhs);
-        let hasKeys = [];
-        [...lhsClassExpressions]
-            .filter(lhsClassExpression => this._hasKeys.has(lhsClassExpression))
-            .filter(lhsClassExpression => rhsClassExpressions.has(lhsClassExpression))
-            .forEach(lhsClassExpression => hasKeys.push(...this._hasKeys.get(lhsClassExpression)))
+        const hasKeys = this._hasKeys
+            .filter(hasKey => hasKey.ClassExpression.Evaluate(this, lhs) && hasKey.ClassExpression.Evaluate(this, rhs));
 
         return hasKeys.length &&
             hasKeys.every(
