@@ -140,7 +140,7 @@ export class ObservableGenerator implements IClassExpressionVisitor
                 this._observableClassExpressions.get(objectSomeValuesFrom.ClassExpression),
                 (objectPropertyExpression, classExpression) =>
                     new Set<any>(
-                        [...objectPropertyExpression]
+                        objectPropertyExpression
                             .filter(member => classExpression.has(member[1]))
                             .map(member => member[0]))));
     }
@@ -176,9 +176,9 @@ export class ObservableGenerator implements IClassExpressionVisitor
             objectHasValue,
             this._store.ObjectPropertyExpression(objectHasValue.ObjectPropertyExpression).pipe(
                 map(objectPropertyExpression =>
-                    new Set<any>([...objectPropertyExpression
+                    new Set<any>(objectPropertyExpression
                         .filter(member => member[1] === individual)
-                        .map(member => member[0])]))));
+                        .map(member => member[0])))));
     }
 
     ObjectHasSelf(
@@ -190,9 +190,9 @@ export class ObservableGenerator implements IClassExpressionVisitor
             objectHasSelf,
             observableObjectPropertyExpression.pipe(
                 map(objectPropertyExpression =>
-                    new Set<any>([...objectPropertyExpression
+                    new Set<any>(objectPropertyExpression
                         .filter(member => member[0] === member[1])
-                        .map(member => member[0])]))));
+                        .map(member => member[0])))));
     }
 
     ObjectMinCardinality(
@@ -298,7 +298,7 @@ export class ObservableGenerator implements IClassExpressionVisitor
                             relation => relation[0])).pipe(
                                 map(groupedByDomain =>
                                     new Set<any>([...groupedByDomain.entries()]
-                                        .filter(entry => entry[1].length <== objectExactCardinality.Cardinality)
+                                        .filter(entry => entry[1].length === objectExactCardinality.Cardinality)
                                         .map(entry => entry[0])))));
         else
             this._observableClassExpressions.set(
@@ -322,7 +322,7 @@ export class ObservableGenerator implements IClassExpressionVisitor
             dataSomeValuesFrom,
             this._store.DataPropertyExpression(dataSomeValuesFrom.DataPropertyExpression).pipe(
                 map(dataPropertyExpression =>
-                    new Set<any>([...dataPropertyExpression]
+                    new Set<any>(dataPropertyExpression
                         .filter(member => dataSomeValuesFrom.DataRange.HasMember(member[1]))))));
     }
 
@@ -352,9 +352,9 @@ export class ObservableGenerator implements IClassExpressionVisitor
             dataHasValue,
             this._store.DataPropertyExpression(dataHasValue.DataPropertyExpression).pipe(
                 map(dataPropertyExpression =>
-                    new Set<any>([...dataPropertyExpression
+                    new Set<any>(dataPropertyExpression
                         .filter(member => member[1] === dataHasValue.Value)
-                        .map(member => member[0])]))));
+                        .map(member => member[0])))));
     }
 
     DataMinCardinality(
