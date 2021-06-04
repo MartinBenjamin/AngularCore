@@ -1,28 +1,28 @@
 type AdjacencyMatrix<TVertex> = Map<TVertex, Map<TVertex, boolean>>;
 
 export function TransitiveClosure(
-    input: boolean[][]
+    adjacencyMatrix: boolean[][]
     ): boolean[][]
 {
-    const result: boolean[][] = [];
-    for(let rowIndex = 0; rowIndex < input.length; ++rowIndex)
-        result[rowIndex] = [...input[rowIndex]];
+    const transitiveClosure: boolean[][] = [];
+    for(let rowIndex = 0; rowIndex < adjacencyMatrix.length; ++rowIndex)
+        transitiveClosure[rowIndex] = [...adjacencyMatrix[rowIndex]];
 
-    //for(let k = 0; k < input.length; ++k)
-    //    for(let i = 0; i < input.length; ++i)
-    //        for(let j = 0; j < input.length; ++j)
-    //            result[i][j] = result[i][j] || (result[i][k] && result[k][j]);
+    //for(let k = 0; k < adjacencyMatrix.length; ++k)
+    //    for(let i = 0; i < adjacencyMatrix.length; ++i)
+    //        for(let j = 0; j < adjacencyMatrix.length; ++j)
+    //            transitiveClosure[i][j] = transitiveClosure[i][j] || (transitiveClosure[i][k] && transitiveClosure[k][j]);
 
-    for(let i = 0; i < input.length; ++i)
-        for(let j = 0; j < input.length; ++j)
-            if(input[i][j])
+    for(let i = 0; i < adjacencyMatrix.length; ++i)
+        for(let j = 0; j < adjacencyMatrix.length; ++j)
+            if(adjacencyMatrix[i][j])
                 TransitiveClosureDfs(
-                    input,
-                    result,
+                    adjacencyMatrix,
+                    transitiveClosure,
                     i,
                     j);
 
-    return result;
+    return transitiveClosure;
 }
 
 export function TransitiveClosure2<TVertex>(
@@ -58,18 +58,18 @@ export function TransitiveClosure2<TVertex>(
 }
 
 function TransitiveClosureDfs(
-    input            : boolean[][],
+    adjacencyMatrix  : boolean[][],
     transitiveClosure: boolean[][],
     i                : number,
     j                : number
     )
 {
     transitiveClosure[i][j] = true;
-    for(let index = 0; index < input[j].length; ++index)
-        if(input[j][index] && !transitiveClosure[i][index])
+    for(let k = 0; k < adjacencyMatrix.length; ++k)
+        if(adjacencyMatrix[j][k] && !transitiveClosure[i][k])
             TransitiveClosureDfs(
-                input,
+                adjacencyMatrix,
                 transitiveClosure,
                 i,
-                index);
+                k);
 }
