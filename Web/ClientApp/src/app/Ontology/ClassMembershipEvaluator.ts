@@ -143,9 +143,11 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         for(let equivalentClassExpressions of ontology.Get(ontology.IsAxiom.IEquivalentClasses))
         {
             let equivalentClasses = <IClass[]>equivalentClassExpressions.ClassExpressions.filter(classExpression => ontology.IsAxiom.IClass(classExpression));
-            for(let class1 of equivalentClasses)
-                for(let class2 of equivalentClasses)
+            for(let index1 = 0; index1 < equivalentClasses.length; ++index1)
+                for(let index2 = index1; index2 < equivalentClasses.length; ++index2)
                 {
+                    let class1 = equivalentClasses[index1];
+                    let class2 = equivalentClasses[index2];
                     adjacencyMatrix.get(class1).set(
                         class2,
                         true);
@@ -171,6 +173,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                                 ]);
                 break;
             }
+
         this._classDefinitions = Group(
             definitions,
             definition => definition[0],
