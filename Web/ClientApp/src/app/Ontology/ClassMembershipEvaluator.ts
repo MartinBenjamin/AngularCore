@@ -126,19 +126,8 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         for(let functionalDataProperty of ontology.Get(ontology.IsAxiom.IFunctionalDataProperty))
             this._functionalDataProperties.add(functionalDataProperty.DataPropertyExpression);
 
-        let adjacencyMatrix = new Map<IClass, Map<IClass, boolean>>();
-        for(let rowClass of classes)
-        {
-            const row = new Map<IClass, boolean>();
-            adjacencyMatrix.set(
-                rowClass,
-                row);
-
-            for(let columnClass of classes)
-                row.set(
-                    columnClass,
-                    rowClass === columnClass);
-        }
+        let adjacencyMatrix = new Map<IClass, Map<IClass, boolean>>(
+            classes.map(class$ => [class$, new Map<IClass, boolean>(classes.map(class$ => [class$, false]))]));
 
         for(let equivalentClassExpressions of ontology.Get(ontology.IsAxiom.IEquivalentClasses))
         {

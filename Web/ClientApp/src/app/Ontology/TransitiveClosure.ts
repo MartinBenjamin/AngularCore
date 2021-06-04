@@ -57,13 +57,12 @@ export function TransitiveClosure2<TVertex>(
 
     const transformedTransitiveClosure = TransitiveClosure(transformedAdjacencyMatrix);
 
-    const transitiveClosure = new Map<TVertex, Map<TVertex, boolean>>();
+    const transitiveClosure = new Map<TVertex, Map<TVertex, boolean>>(
+        keys.map(key => [key, new Map<TVertex, boolean>(keys.map(key => [key, false]))]));
+
     for(let rowIndex = 0; rowIndex < keys.length; ++rowIndex)
     {
-        const row = new Map<TVertex, boolean>();
-        transitiveClosure.set(
-            keys[rowIndex],
-            row);
+        const row = transitiveClosure.get(keys[rowIndex]);
         for(let columnIndex = 0; columnIndex < keys.length; ++columnIndex)
             row.set(
                 keys[columnIndex],
