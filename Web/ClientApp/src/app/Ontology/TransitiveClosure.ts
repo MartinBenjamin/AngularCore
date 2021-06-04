@@ -8,10 +8,19 @@ export function TransitiveClosure(
     for(let rowIndex = 0; rowIndex < input.length; ++rowIndex)
         result[rowIndex] = [...input[rowIndex]];
 
-    for(let k = 0; k < input.length; ++k)
-        for(let i = 0; i < input.length; ++i)
-            for(let j = 0; j < input.length; ++j)
-                result[i][j] = result[i][j] || (result[i][k] && result[k][j]);
+    //for(let k = 0; k < input.length; ++k)
+    //    for(let i = 0; i < input.length; ++i)
+    //        for(let j = 0; j < input.length; ++j)
+    //            result[i][j] = result[i][j] || (result[i][k] && result[k][j]);
+
+    for(let i = 0; i < input.length; ++i)
+        for(let j = 0; j < input.length; ++j)
+            if(input[i][j])
+                TransitiveClosureDfs(
+                    input,
+                    result,
+                    i,
+                    j);
 
     return result;
 }
@@ -46,4 +55,21 @@ export function TransitiveClosure2<TVertex>(
     }
 
     return result;
+}
+
+function TransitiveClosureDfs(
+    input            : boolean[][],
+    transitiveClosure: boolean[][],
+    i                : number,
+    j                : number
+    )
+{
+    transitiveClosure[i][j] = true;
+    for(let index = 0; index < input[j].length; ++index)
+        if(input[j][index] && !transitiveClosure[i][index])
+            TransitiveClosureDfs(
+                input,
+                transitiveClosure,
+                i,
+                index);
 }
