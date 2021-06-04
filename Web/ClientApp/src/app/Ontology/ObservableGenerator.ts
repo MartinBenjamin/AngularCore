@@ -415,6 +415,7 @@ export class ObservableGenerator implements IClassExpressionVisitor
             (lhs, rhs) =>
             {
                 const map = GroupByDomain(lhs);
+                const combined = [].concat(lhs);
                 for(const relation of rhs)
                 {
                     var values = map.get(relation[0])
@@ -424,15 +425,15 @@ export class ObservableGenerator implements IClassExpressionVisitor
                         map.set(
                             relation[0],
                             values);
-                        lhs.push(relation);
+                        combined.push(relation);
                     }
                     else if(!values.has(relation[1]))
                     {
                         values.add(relation[1]);
-                        lhs.push(relation);
+                        combined.push(relation);
                     }
                 }
-                return lhs;
+                return combined;
             });
     }
 
@@ -453,6 +454,7 @@ export class ObservableGenerator implements IClassExpressionVisitor
             (lhs, rhs) =>
             {
                 const map = GroupByDomain(lhs);
+                const combined = [].concat(lhs);
                 for(const relation of rhs)
                 {
                     var values = map.get(relation[0])
@@ -462,12 +464,12 @@ export class ObservableGenerator implements IClassExpressionVisitor
                         map.set(
                             relation[0],
                             values);
-                        lhs.push(relation);
+                        combined.push(relation);
                     }
                     else if(!values.has(relation[1]))
                     {
                         values.add(relation[1]);
-                        lhs.push(relation);
+                        combined.push(relation);
                     }
                 }
                 return lhs;

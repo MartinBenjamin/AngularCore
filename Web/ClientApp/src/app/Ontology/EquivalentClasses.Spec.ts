@@ -29,6 +29,36 @@ describe(
                         assert('result.has(i)')
                         assert('result.get(i).size === 1');
                         assert('result.get(i).has(c1)');
+
+                        describe(
+                            'Given an additional declaration Class(c2) and additional axiom EquivalentClasses(c1, c2):',
+                            () =>
+                            {
+                                let c2 = new Class(o1, 'c2');
+                                new EquivalentClasses(o1, [c1, c2]);
+                                let result = o1.Classify(i);
+                                let assert = assertBuilder('i', 'result', 'c1', 'c2')(i, result, c1, c2);
+                                assert('result.has(i)')
+                                assert('result.get(i).size === 2');
+                                assert('result.get(i).has(c1)');
+                                assert('result.get(i).has(c2)');
+
+                                describe(
+                                    'Given an additional declaration Class(c3) and additional axiom EquivalentClasses(c2, c3):',
+                                    () =>
+                                    {
+                                        let c3 = new Class(o1, 'c3');
+                                        new EquivalentClasses(o1, [c2, c3]);
+                                        let result = o1.Classify(i);
+                                        let assert = assertBuilder('i', 'result', 'c1', 'c2', 'c3')(i, result, c1, c2, c3);
+                                        assert('result.has(i)')
+                                        assert('result.get(i).size === 3');
+                                        assert('result.get(i).has(c1)');
+                                        assert('result.get(i).has(c2)');
+                                        assert('result.get(i).has(c3)');
+                                    });
+
+                            });
                     });
             });
     });

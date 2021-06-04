@@ -246,6 +246,8 @@
     <None Remove="ClientApp\src\app\Ontology\SubClassOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\Thing.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Thing.ts" />
+    <None Remove="ClientApp\src\app\Ontology\TransitiveClosure.Spec.ts" />
+    <None Remove="ClientApp\src\app\Ontology\TransitiveClosure.ts" />
     <None Remove="ClientApp\src\app\Ontology\Xsd.ts" />
     <None Remove="ClientApp\src\app\Organisations.ts" />
     <None Remove="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
@@ -501,6 +503,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\SubClassOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Thing.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Thing.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\TransitiveClosure.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\TransitiveClosure.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Xsd.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Organisations.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Advisory\Advisory.Module.ts" />
