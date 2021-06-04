@@ -21,13 +21,7 @@ export function TransitiveClosure(
     adjacencyMatrix: boolean[][]
     ): boolean[][]
 {
-    const transitiveClosure: boolean[][] = [];
-    for(let rowIndex = 0; rowIndex < adjacencyMatrix.length; ++rowIndex)
-    {
-        transitiveClosure[rowIndex] = [];
-        for(let columnIndex = 0; columnIndex < adjacencyMatrix.length; ++columnIndex)
-            transitiveClosure[rowIndex][columnIndex] = false;
-    }
+    const transitiveClosure = adjacencyMatrix.map(_ => adjacencyMatrix.map(_ => false));
 
     for(let i = 0; i < adjacencyMatrix.length; ++i)
         for(let j = 0; j < adjacencyMatrix.length; ++j)
