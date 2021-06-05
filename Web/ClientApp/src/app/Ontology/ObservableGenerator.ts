@@ -94,11 +94,154 @@ export interface IStore
     DataPropertyExpression(dataPropertyExpression: IDataPropertyExpression): Observable<[any, any][]>;
 }
 
+export class Store implements IStore
+{
+    ObjectDomain: Observable<Set<any>>;
+
+    ObjectPropertyExpression(
+        objectPropertyExpression: IObjectPropertyExpression
+        ): Observable<[any, any][]>
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    DataPropertyExpression(
+        dataPropertyExpression: IDataPropertyExpression
+        ): Observable<[any, any][]>
+    {
+        throw new Error("Method not implemented.");
+    }
+}
+
+class StoreDecorator implements IStore
+{
+    constructor(
+        private _ontology : IOntology,
+        private _decorated: IStore
+        )
+    {
+    }
+
+    get ObjectDomain(): Observable<Set<any>>
+    {
+        const individuals = [...this._ontology.Get(this._ontology.IsAxiom.INamedIndividual)];
+
+        if(!individuals.length)
+            return this._decorated.ObjectDomain;
+
+        else
+            return combineLatest(
+                this._decorated.ObjectDomain,
+                new BehaviorSubject<any[]>(individuals.map(individual => this.InterpretIndividual(individual))),
+                (lhs, rhs) => new Set<any>([...lhs, ...rhs]));
+    }
+
+    ObjectPropertyExpression(
+        objectPropertyExpression: IObjectPropertyExpression
+        ): Observable<[any, any][]>
+    {
+        const objectPropertyAssertions = [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyAssertion)]
+            .filter(objectPropertyAssertion => objectPropertyAssertion.ObjectPropertyExpression === objectPropertyExpression);
+
+        if(!objectPropertyAssertions.length)
+            return this._decorated.ObjectPropertyExpression(objectPropertyExpression);
+
+        return combineLatest(
+            this._decorated.ObjectPropertyExpression(objectPropertyExpression),
+            new BehaviorSubject<[any, any][]>(objectPropertyAssertions.map(objectPropertyAssertion =>
+                [this.InterpretIndividual(objectPropertyAssertion.SourceIndividual),
+                this.InterpretIndividual(objectPropertyAssertion.TargetIndividual)])),
+            (lhs, rhs) =>
+            {
+                const map = GroupByDomain(lhs);
+                const combined = [].concat(lhs);
+                for(const relation of rhs)
+                {
+                    var values = map.get(relation[0])
+                    if(!values)
+                    {
+                        values = new Set<any>().add(relation[1]);
+                        map.set(
+                            relation[0],
+                            values);
+                        combined.push(relation);
+                    }
+                    else if(!values.has(relation[1]))
+                    {
+                        values.add(relation[1]);
+                        combined.push(relation);
+                    }
+                }
+                return combined;
+            });
+    }
+
+    DataPropertyExpression(
+        dataPropertyExpression: IDataPropertyExpression
+        ): Observable<[any, any][]>
+    {
+        const dataPropertyAssertions = [...this._ontology.Get(this._ontology.IsAxiom.IDataPropertyAssertion)]
+            .filter(dataPropertyAssertion => dataPropertyAssertion.DataPropertyExpression === dataPropertyExpression);
+
+        if(!dataPropertyAssertions.length)
+            return this._decorated.DataPropertyExpression(dataPropertyExpression);
+
+        return combineLatest(
+            this._decorated.DataPropertyExpression(dataPropertyExpression),
+            new BehaviorSubject<[any, any][]>(dataPropertyAssertions.map(dataPropertyAssertion =>
+                [this.InterpretIndividual(dataPropertyAssertion.SourceIndividual), dataPropertyAssertion.TargetValue])),
+            (lhs, rhs) =>
+            {
+                const map = GroupByDomain(lhs);
+                const combined = [].concat(lhs);
+                for(const relation of rhs)
+                {
+                    var values = map.get(relation[0])
+                    if(!values)
+                    {
+                        values = new Set<any>().add(relation[1]);
+                        map.set(
+                            relation[0],
+                            values);
+                        combined.push(relation);
+                    }
+                    else if(!values.has(relation[1]))
+                    {
+                        values.add(relation[1]);
+                        combined.push(relation);
+                    }
+                }
+                return lhs;
+            });
+    }
+    
+    private InterpretIndividual(
+        individual: object
+        ): any
+    {
+        for(const dataPropertyAssertion of this._ontology.Get(this._ontology.IsAxiom.IDataPropertyAssertion))
+            if(dataPropertyAssertion.DataPropertyExpression.LocalName === "Id" &&
+                dataPropertyAssertion.SourceIndividual === individual)
+                return dataPropertyAssertion.TargetValue;
+
+        return individual;
+    }
+}
+
 export class ObservableGenerator implements IClassExpressionVisitor
 {
-    private _ontology                  : IOntology;
     private _observableClassExpressions: Map<IClassExpression, Observable<Set<any>>>;
     private _store                     : IStore;
+
+    constructor(
+        private _ontology: IOntology,
+        store            : IStore
+        )
+    {
+        this._store = new StoreDecorator(
+            _ontology,
+            store);
+    }
 
     Class(
         class$: IClass
@@ -111,20 +254,22 @@ export class ObservableGenerator implements IClassExpressionVisitor
         objectIntersectionOf: IObjectIntersectionOf
         )
     {
-        let observables = objectIntersectionOf.ClassExpressions.map(classExpression => this._observableClassExpressions.get(classExpression));
         this._observableClassExpressions.set(
             objectIntersectionOf,
-            combineLatest(observables, (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs]))));
+            combineLatest(
+                objectIntersectionOf.ClassExpressions.map(classExpression => this._observableClassExpressions.get(classExpression)),
+                (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs]))));
     }
 
     ObjectUnionOf(
         objectUnionOf: IObjectUnionOf
         )
     {
-        let observables = objectUnionOf.ClassExpressions.map(classExpression => this._observableClassExpressions.get(classExpression));
         this._observableClassExpressions.set(
             objectUnionOf,
-            combineLatest(observables, (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs].filter(member => rhs.has(member))))));
+            combineLatest(
+                objectUnionOf.ClassExpressions.map(classExpression => this._observableClassExpressions.get(classExpression)),
+                (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs].filter(member => rhs.has(member))))));
     }
 
     ObjectComplementOf(
@@ -145,7 +290,7 @@ export class ObservableGenerator implements IClassExpressionVisitor
     {
         this._observableClassExpressions.set(
             objectOneOf,
-            new BehaviorSubject<Set<any>>(new Set<any>([...objectOneOf.Individuals.map(individual => this.InterpretIndividual(individual))])));
+            new BehaviorSubject<Set<any>>(new Set<any>(objectOneOf.Individuals.map(individual => this.InterpretIndividual(individual)))));
     }
 
     ObjectSomeValuesFrom(
@@ -168,16 +313,10 @@ export class ObservableGenerator implements IClassExpressionVisitor
         objectAllValuesFrom: IObjectAllValuesFrom
         )
     {
-        const observableGroupedByDomain = this._store.ObjectPropertyExpression(objectAllValuesFrom.ObjectPropertyExpression).pipe(map(
-            objectPropertyExpression => Group(
-                objectPropertyExpression,
-                member => member[0],
-                member => member[1])));
-
         this._observableClassExpressions.set(
             objectAllValuesFrom,
             combineLatest(
-                observableGroupedByDomain,
+                this._store.ObjectPropertyExpression(objectAllValuesFrom.ObjectPropertyExpression).pipe(map(this.GroupByDomain)),
                 this._observableClassExpressions.get(objectAllValuesFrom.ClassExpression),
                 (groupedByDomain, classExpression) =>
                     new Set<any>(
@@ -204,10 +343,9 @@ export class ObservableGenerator implements IClassExpressionVisitor
         objectHasSelf: IObjectHasSelf
         )
     {
-        const observableObjectPropertyExpression = this._store.ObjectPropertyExpression(objectHasSelf.ObjectPropertyExpression);
         this._observableClassExpressions.set(
             objectHasSelf,
-            observableObjectPropertyExpression.pipe(
+            this._store.ObjectPropertyExpression(objectHasSelf.ObjectPropertyExpression).pipe(
                 map(objectPropertyExpression =>
                     new Set<any>(objectPropertyExpression
                         .filter(member => member[0] === member[1])
@@ -239,10 +377,7 @@ export class ObservableGenerator implements IClassExpressionVisitor
         this._observableClassExpressions.set(
             objectMinCardinality,
             observableObjectPropertyExpression.pipe(
-                map(objectPropertyExpression => Group(
-                    objectPropertyExpression,
-                    member => member[0],
-                    member => member[1])),
+                map(this.GroupByDomain),
                 map(groupedByDomain =>
                     new Set<any>([...groupedByDomain.entries()]
                         .filter(entry => entry[1].length >= objectMinCardinality.Cardinality)
@@ -281,10 +416,7 @@ export class ObservableGenerator implements IClassExpressionVisitor
             this._observableClassExpressions.set(
                 objectMaxCardinality,
                 observableObjectPropertyExpression.pipe(
-                    map(objectPropertyExpression => Group(
-                        objectPropertyExpression,
-                        member => member[0],
-                        member => member[1])),
+                    map(this.GroupByDomain),
                     map(groupedByDomain =>
                         new Set<any>([...groupedByDomain.entries()]
                             .filter(entry => entry[1].length <= objectMaxCardinality.Cardinality)
@@ -323,10 +455,7 @@ export class ObservableGenerator implements IClassExpressionVisitor
             this._observableClassExpressions.set(
                 objectExactCardinality,
                 observableObjectPropertyExpression.pipe(
-                    map(objectPropertyExpression => Group(
-                        objectPropertyExpression,
-                        member => member[0],
-                        member => member[1])),
+                    map(this.GroupByDomain),
                     map(groupedByDomain =>
                         new Set<any>([...groupedByDomain.entries()]
                             .filter(entry => entry[1].length === objectExactCardinality.Cardinality)
@@ -352,10 +481,7 @@ export class ObservableGenerator implements IClassExpressionVisitor
         this._observableClassExpressions.set(
             dataAllValuesFrom,
             this._store.DataPropertyExpression(dataAllValuesFrom.DataPropertyExpression).pipe(
-                map(dataPropertyExpression => Group(
-                    dataPropertyExpression,
-                    member => member[0],
-                    member => member[1])),
+                map(this.GroupByDomain),
                 map(groupedByDomain =>
                     new Set<any>(
                         [...groupedByDomain.entries()]
@@ -397,84 +523,16 @@ export class ObservableGenerator implements IClassExpressionVisitor
         throw new Error("Method not implemented.");
     }
 
-    private ObjectPropertyExpression(
-        objectPropertyExpression: IObjectPropertyExpression
-        ): Observable<[any, any][]>
+    private GroupByDomain(
+        relations: [any, any][]
+        ): Map<any, any[]>
     {
-        const objectPropertyAssertions = [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyAssertion)]
-            .filter(objectPropertyAssertion => objectPropertyAssertion.ObjectPropertyExpression === objectPropertyExpression);
-
-        if(!objectPropertyAssertions.length)
-            return this._store.ObjectPropertyExpression(objectPropertyExpression);
-
-        return combineLatest(
-            this._store.ObjectPropertyExpression(objectPropertyExpression),
-            new BehaviorSubject<[any, any][]>(objectPropertyAssertions.map(objectPropertyAssertion =>
-                [this.InterpretIndividual(objectPropertyAssertion.SourceIndividual),
-                    this.InterpretIndividual(objectPropertyAssertion.TargetIndividual)])),
-            (lhs, rhs) =>
-            {
-                const map = GroupByDomain(lhs);
-                const combined = [].concat(lhs);
-                for(const relation of rhs)
-                {
-                    var values = map.get(relation[0])
-                    if(!values)
-                    {
-                        values = new Set<any>().add(relation[1]);
-                        map.set(
-                            relation[0],
-                            values);
-                        combined.push(relation);
-                    }
-                    else if(!values.has(relation[1]))
-                    {
-                        values.add(relation[1]);
-                        combined.push(relation);
-                    }
-                }
-                return combined;
-            });
+        return Group(
+            relations,
+            relation => relation[0],
+            relation => relation[1]);
     }
 
-    private DataPropertyExpression(
-        dataPropertyExpression: IDataPropertyExpression
-        ): Observable<[any, any][]>
-    {
-        const dataPropertyAssertions = [...this._ontology.Get(this._ontology.IsAxiom.IDataPropertyAssertion)]
-            .filter(dataPropertyAssertion => dataPropertyAssertion.DataPropertyExpression === dataPropertyExpression);
-
-        if(!dataPropertyAssertions.length)
-            return this._store.DataPropertyExpression(dataPropertyExpression);
-
-        return combineLatest(
-            this._store.DataPropertyExpression(dataPropertyExpression),
-            new BehaviorSubject<[any, any][]>(dataPropertyAssertions.map(dataPropertyAssertion =>
-                [this.InterpretIndividual(dataPropertyAssertion.SourceIndividual), dataPropertyAssertion.TargetValue])),
-            (lhs, rhs) =>
-            {
-                const map = GroupByDomain(lhs);
-                const combined = [].concat(lhs);
-                for(const relation of rhs)
-                {
-                    var values = map.get(relation[0])
-                    if(!values)
-                    {
-                        values = new Set<any>().add(relation[1]);
-                        map.set(
-                            relation[0],
-                            values);
-                        combined.push(relation);
-                    }
-                    else if(!values.has(relation[1]))
-                    {
-                        values.add(relation[1]);
-                        combined.push(relation);
-                    }
-                }
-                return lhs;
-            });
-    }
 
     private InterpretIndividual(
         individual: object
