@@ -23,7 +23,7 @@ import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression } from "./IPropertyExpression";
 import { IStore, Store, StoreDecorator } from "./IStore";
-import { TransitiveClosure2 } from './TransitiveClosure';
+import { TransitiveClosure3 } from './TransitiveClosure';
 
 class ClassVisitor extends ClassExpressionVisitor
 {
@@ -126,9 +126,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         for(let functionalDataProperty of ontology.Get(ontology.IsAxiom.IFunctionalDataProperty))
             this._functionalDataProperties.add(functionalDataProperty.DataPropertyExpression);
 
-        let adjacencyMatrix = new Map<IClass, Map<IClass, boolean>>(
-            classes.map(class$ => [class$, new Map<IClass, boolean>(classes.map(class$ => [class$, false]))]));
-
+        const adjacencyList1 = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, new Set<IClass>()]));
         for(let equivalentClassExpressions of ontology.Get(ontology.IsAxiom.IEquivalentClasses))
         {
             let equivalentClasses = <IClass[]>equivalentClassExpressions.ClassExpressions.filter(classExpression => ontology.IsAxiom.IClass(classExpression));
@@ -137,29 +135,24 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                 {
                     let class1 = equivalentClasses[index1];
                     let class2 = equivalentClasses[index2];
-                    adjacencyMatrix.get(class1).set(
-                        class2,
-                        true);
-                    adjacencyMatrix.get(class2).set(
-                        class1,
-                        true);
+                    adjacencyList1.get(class1).add(class2);
+                    adjacencyList1.get(class2).add(class1);
                 }
         }
 
-        let transitiveClosure = TransitiveClosure2(adjacencyMatrix);
+        let transitiveClosure = TransitiveClosure3(adjacencyList1);
 
         let definitions: [IClass, IClassExpression][] = [];
         for(let equivalentClasses of ontology.Get(ontology.IsAxiom.IEquivalentClasses))
             for(let class$ of equivalentClasses.ClassExpressions.filter(classExpression => ontology.IsAxiom.IClass(classExpression)))
             {
                 for(let classExpression of equivalentClasses.ClassExpressions.filter(classExpression => !ontology.IsAxiom.IClass(classExpression)))
-                    for(let entry of transitiveClosure.get(<IClass>class$))
-                        if(entry[1])
-                            definitions.push(
-                                [
-                                    entry[0],
-                                    classExpression
-                                ]);
+                    for(let equivalentClass of transitiveClosure.get(<IClass>class$))
+                        definitions.push(
+                            [
+                                equivalentClass,
+                                classExpression
+                            ]);
                 break;
             }
 

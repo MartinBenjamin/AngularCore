@@ -55,3 +55,19 @@ export function TransitiveClosure2<TVertex>(
                         ]))
             ]));
 }
+
+export function TransitiveClosure3<TVertex>(
+    adjacencyList: Map<TVertex, Set<TVertex>>
+    ): Map<TVertex, Set<TVertex>>
+{
+    const keys = [...adjacencyList.keys()];
+    const transformedAdjacencyMatrix = keys.map(rowKey => keys.map(columnKey => adjacencyList.get(rowKey).has(columnKey)));
+    const transformedTransitiveClosure = TransitiveClosure(transformedAdjacencyMatrix);
+
+    return new Map<TVertex, Set<TVertex>>(
+        keys.map((rowKey, rowIndex) =>
+            [
+                rowKey,
+                new Set<TVertex>(keys.filter((_, columnIndex) => transformedTransitiveClosure[rowIndex][columnIndex]))
+            ]));
+}
