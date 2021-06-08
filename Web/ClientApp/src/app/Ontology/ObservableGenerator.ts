@@ -19,6 +19,7 @@ import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from './IOntology';
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
+import { ClassExpressionNavigator } from './ClassExpressionNavigator';
 
 export function GroupBy<T, TKey, TValue, TResult>(
     iterable      : Iterable<T>,
@@ -230,17 +231,12 @@ class StoreDecorator implements IStore
 
 export class ObservableGenerator implements IClassExpressionVisitor
 {
-    private _observableClassExpressions: Map<IClassExpression, Observable<Set<any>>>;
-    private _store                     : IStore;
-
     constructor(
-        private _ontology: IOntology,
-        store            : IStore
+        private _ontology                  : IOntology,
+        private _store                     : IStore,
+        private _observableClassExpressions: Map<IClassExpression, Observable<Set<any>>>
         )
     {
-        this._store = new StoreDecorator(
-            _ontology,
-            store);
     }
 
     Class(
@@ -545,4 +541,25 @@ export class ObservableGenerator implements IClassExpressionVisitor
 
         return individual;
     }
+}
+
+export function Translate(
+    ontology       : IOntology,
+    store          : IStore,
+    classExpression: IClassExpression
+    ): Observable<Set<any>>
+{
+    const map = new Map<IClassExpression, Observable<Set<any>>>();
+
+    const generator = new ObservableGenerator(
+        ontology,
+        store,
+        map);
+
+    const navigator = new ClassExpressionNavigator(
+        null,
+        generator);
+
+    classExpression.Accept(navigator);
+    return map.get(classExpression);
 }
