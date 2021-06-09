@@ -126,7 +126,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         for(let functionalDataProperty of ontology.Get(ontology.IsAxiom.IFunctionalDataProperty))
             this._functionalDataProperties.add(functionalDataProperty.DataPropertyExpression);
 
-        const adjacencyList1 = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, new Set<IClass>()]));
+        let adjacencyList = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, new Set<IClass>()]));
         for(let equivalentClassExpressions of ontology.Get(ontology.IsAxiom.IEquivalentClasses))
         {
             let equivalentClasses = <IClass[]>equivalentClassExpressions.ClassExpressions.filter(classExpression => ontology.IsAxiom.IClass(classExpression));
@@ -135,12 +135,12 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                 {
                     let class1 = equivalentClasses[index1];
                     let class2 = equivalentClasses[index2];
-                    adjacencyList1.get(class1).add(class2);
-                    adjacencyList1.get(class2).add(class1);
+                    adjacencyList.get(class1).add(class2);
+                    adjacencyList.get(class2).add(class1);
                 }
         }
 
-        let transitiveClosure = TransitiveClosure3(adjacencyList1);
+        let transitiveClosure = TransitiveClosure3(adjacencyList);
 
         let definitions: [IClass, IClassExpression][] = [];
         for(let equivalentClasses of ontology.Get(ontology.IsAxiom.IEquivalentClasses))
@@ -163,12 +163,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
 
         let adjacent: Set<IClass> = null;
         let empty = new Set<IClass>();
-        let adjacencyList = new Map<IClass, Set<IClass>>();
-        for(let class$ of ontology.Get(ontology.IsAxiom.IClass))
-            adjacencyList.set(
-                class$,
-                empty);
-
+        adjacencyList = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, empty]));
         let classVisitor = new ClassExpressionNavigator(new ClassVisitor(class$ => adjacent.add(class$)));
 
         for(let [class$, classExpression] of this._classDefinitions)
