@@ -22,5 +22,6 @@ describe(
                 assert('new DataAllValuesFrom(dp1, new DataOneOf([ 1 ])).Evaluate(evaluator, { dp1: [] })');
                 assert('new DataAllValuesFrom(dp1, new DataOneOf([ 1 ])).Evaluate(evaluator, { dp1: [ 1 ] })');
                 assert('!new DataAllValuesFrom(dp1, new DataOneOf([ 1 ])).Evaluate(evaluator, { dp1: [ 1, 2 ] })');
+                assert('new DataAllValuesFrom(dp1, new DataOneOf([ 1, 2 ])).Evaluate(evaluator, { dp1: [ 1, 2 ] })');
             });
     });
