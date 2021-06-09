@@ -25,7 +25,6 @@ describe(
                 new DataPropertyAssertion(o1, dp1, i1, 1);
                 let evaluator = new ClassMembershipEvaluator(o1);
                 let assert = assertBuilder('evaluator', 'i1')(evaluator, i1);
-                assert('!evaluator.AreEqual(i1, i1)');
                 assert('!evaluator.AreEqual({ ClassIri: "o1.c1", dp1: 1 }, { ClassIri: "o1.c1", dp1: 1 })');
 
                 describe(
@@ -35,7 +34,6 @@ describe(
                         new HasKey(o1, c1, [dp1]);
                         evaluator = new ClassMembershipEvaluator(o1);
                         let assert = assertBuilder('evaluator', 'i1')(evaluator, i1);
-                        assert('evaluator.AreEqual(i1, i1)');
                         assert('!evaluator.AreEqual(i1, {})');
                         assert('!evaluator.AreEqual(i1, { ClassIri: "o1.c1", dp1: 2 })');
                         assert('!evaluator.AreEqual(i1, { ClassIri: "o1.c2", dp1: 1 })');
@@ -78,7 +76,6 @@ describe(
                 new DataPropertyAssertion(o1, dp1, i1, 1);
                 let evaluator = new ClassMembershipEvaluator(o1);
                 let assert = assertBuilder('evaluator', 'i1')(evaluator, i1);
-                assert('!evaluator.AreEqual(i1, i1)');
                 assert('!evaluator.AreEqual({ dp1: 1 }, { dp1: 1 })');
 
                 describe(
@@ -88,7 +85,6 @@ describe(
                         new HasKey(o1, new DataMinCardinality(dp1, 1), [dp1]);
                         evaluator = new ClassMembershipEvaluator(o1);
                         let assert = assertBuilder('evaluator', 'i1')(evaluator, i1);
-                        assert('evaluator.AreEqual(i1, i1)');
                         assert('!evaluator.AreEqual(i1, {})');
                         assert('!evaluator.AreEqual(i1, { dp1: 2 })');
                         assert('evaluator.AreEqual(i1, { dp1: 1 })');

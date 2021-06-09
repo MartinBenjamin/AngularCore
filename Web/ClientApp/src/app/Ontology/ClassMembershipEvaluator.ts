@@ -505,6 +505,9 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
         rhs: object
         ): boolean
     {
+        if(lhs === rhs)
+            return true;
+
         const hasKeys = this._hasKeys
             .filter(hasKey => hasKey.ClassExpression.Evaluate(this, lhs) && hasKey.ClassExpression.Evaluate(this, rhs));
 
