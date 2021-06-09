@@ -458,10 +458,10 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     }
 
     private ApplyClassExpression(
-        classes         : Set<IClass>,
-        candidates      : Set<IClass>,
-        individual      : object,
-        classExpression : IClassExpression
+        classes        : Set<IClass>,
+        candidates     : Set<IClass>,
+        individual     : object,
+        classExpression: IClassExpression
         ): void
     {
         if(this._ontology.IsAxiom.IClass(classExpression))
