@@ -146,7 +146,8 @@ export class ClassExpressionNavigator implements IClassExpressionVisitor
         if(this._enter)
             this._enter.ObjectMinCardinality(objectMinCardinality);
 
-        objectMinCardinality.ClassExpression.Accept(this);
+        if(objectMinCardinality.ClassExpression)
+            objectMinCardinality.ClassExpression.Accept(this);
 
         if(this._exit)
             this._exit.ObjectMinCardinality(objectMinCardinality);
@@ -159,7 +160,8 @@ export class ClassExpressionNavigator implements IClassExpressionVisitor
         if(this._enter)
             this._enter.ObjectMaxCardinality(objectMaxCardinality);
 
-        objectMaxCardinality.ClassExpression.Accept(this);
+        if(objectMaxCardinality.ClassExpression)
+            objectMaxCardinality.ClassExpression.Accept(this);
 
         if(this._exit)
             this._exit.ObjectMaxCardinality(objectMaxCardinality);
@@ -172,7 +174,8 @@ export class ClassExpressionNavigator implements IClassExpressionVisitor
         if(this._enter)
             this._enter.ObjectExactCardinality(objectExactCardinality);
 
-        objectExactCardinality.ClassExpression.Accept(this);
+        if(objectExactCardinality.ClassExpression)
+            objectExactCardinality.ClassExpression.Accept(this);
 
         if(this._exit)
             this._exit.ObjectExactCardinality(objectExactCardinality);

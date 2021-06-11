@@ -71,7 +71,7 @@ export function GroupJoin<TLeft, TRight, TKey>(
     rightIterable   : Iterable<TRight>,
     leftKeySelector : (left: TLeft) => TKey,
     rightKeySelector: (right: TRight) => TKey
-    ): Map<TLeft, TRight[]
+    ): Map<TLeft, TRight[]>
 {
     const map = Group(
         rightIterable,
@@ -235,7 +235,7 @@ class StoreDecorator implements IStore
 export class ObservableGenerator implements IClassExpressionVisitor
 {
     private _ontology        : IOntology;
-    private _objectDomain    : Observable<Set<any>>;
+    private _objectDomain    : Subject<Set<any>>;
     private _properties      : Map<string, Subject<[any, any][]>>;
     private _classes         : Map<IClassExpression, Observable<Set<any>>>;
     private _classDefinitions: Map<IClass, IClassExpression[]>;
@@ -563,10 +563,10 @@ export class ObservableGenerator implements IClassExpressionVisitor
 
     Generate(
         onology: IOntology
-        ): [BehaviorSubject<Set<any>>, Map<string, BehaviorSubject<[any, any][]>>, Map<IClassExpression, Observable<Set<any>>>]
+        ): [Subject<Set<any>>, Map<string, Subject<[any, any][]>>, Map<IClassExpression, Observable<Set<any>>>]
     {
         this._ontology     = onology;
-        this._objectDomain = new BehaviorSubject<Set<any>>([]);
+        this._objectDomain = new BehaviorSubject<Set<any>>(new Set<any>());
         this._properties   = new Map<string, BehaviorSubject<[any, any][]>>();
         this._classes      = new Map<IClassExpression, Observable<Set<any>>>();
 
