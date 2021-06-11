@@ -427,16 +427,6 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
                         individual,
                         assertedClassExpression));
         }
-        else if('ClassIri' in individual)
-        {
-            let class$ = this._classes.get(individual['ClassIri']);
-            if(class$)
-                this.ApplyClassExpression(
-                    classes,
-                    candidates,
-                    individual,
-                    class$);
-        }
 
         for(let definedClass of this._definedClasses)
             if(candidates.has(definedClass) &&

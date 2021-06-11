@@ -22,11 +22,12 @@ import { facilityAgreements } from './FacilityAgreements';
 
 export class Deals extends Ontology
 {
-    readonly LifeCycle              : IObjectPropertyExpression;
     readonly DealType               : IClass;
     readonly Deal                   : IClass;
     readonly Debt                   : IClass;
+    readonly Class                  : IDataPropertyExpression;
     readonly Type                   : IObjectPropertyExpression;
+    readonly LifeCycle              : IObjectPropertyExpression;
     readonly Classifiers            : IObjectPropertyExpression;
     readonly SponsorsNA             : IDataPropertyExpression;
     readonly LenderParty            : IClass;
@@ -65,11 +66,11 @@ export class Deals extends Ontology
         this.Deal = this.DeclareClass("Deal");
         this.Deal.SubClassOf(agreements.Agreement);
 
+        this.Class       = this.DeclareDataProperty("ClassIri");
         this.LifeCycle   = this.DeclareObjectProperty("LifeCycle"  );
         this.Type        = this.DeclareObjectProperty("Type"       );
         this.Classifiers = this.DeclareObjectProperty("Classifiers");
-
-        this.SponsorsNA = this.DeclareDataProperty("SponsorsNA");
+        this.SponsorsNA  = this.DeclareDataProperty("SponsorsNA");
 
         this.Deal.SubClassOf(this.Type.ExactCardinality(1));
 
