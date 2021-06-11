@@ -553,8 +553,11 @@ export class ObservableGenerator implements IClassExpressionVisitor
         individual: object
         ): any
     {
+        if('Id' in individual)
+            return individual['Id'];
+
         for(const dataPropertyAssertion of this._ontology.Get(this._ontology.IsAxiom.IDataPropertyAssertion))
-            if(dataPropertyAssertion.DataPropertyExpression.LocalName === "Id" &&
+            if(dataPropertyAssertion.DataPropertyExpression.LocalName === 'Id' &&
                 dataPropertyAssertion.SourceIndividual === individual)
                 return dataPropertyAssertion.TargetValue;
 
