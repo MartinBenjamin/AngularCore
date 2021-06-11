@@ -1,5 +1,8 @@
-import { BehaviorSubject, combineLatest, Observable } from "rxjs";
+import { BehaviorSubject, combineLatest, Observable, Subject } from "rxjs";
 import { map } from 'rxjs/operators';
+import { LongestPaths } from "./AdjacencyList";
+import { ClassExpressionNavigator } from './ClassExpressionNavigator';
+import { ClassVisitor } from "./ClassMembershipEvaluator";
 import { Group } from './Group';
 import { IClass } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
@@ -18,8 +21,8 @@ import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from './IOntology';
-import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
-import { ClassExpressionNavigator } from './ClassExpressionNavigator';
+import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
+import { TransitiveClosure3 } from "./TransitiveClosure";
 
 export function GroupBy<T, TKey, TValue, TResult>(
     iterable      : Iterable<T>,
@@ -231,11 +234,14 @@ class StoreDecorator implements IStore
 
 export class ObservableGenerator implements IClassExpressionVisitor
 {
-    constructor(
-        private _ontology                  : IOntology,
-        private _store                     : IStore,
-        private _observableClassExpressions: Map<IClassExpression, Observable<Set<any>>>
-        )
+    private _ontology        : IOntology;
+    private _objectDomain    : Observable<Set<any>>;
+    private _properties      : Map<string, Subject<[any, any][]>>;
+    private _classes         : Map<IClassExpression, Observable<Set<any>>>;
+    private _classDefinitions: Map<IClass, IClassExpression[]>;
+    private _definedClasses  : IClass[];
+
+    constructor()
     {
     }
 
@@ -243,17 +249,16 @@ export class ObservableGenerator implements IClassExpressionVisitor
         class$: IClass
         )
     {
-        throw new Error("Method not implemented.");
     }
 
     ObjectIntersectionOf(
         objectIntersectionOf: IObjectIntersectionOf
         )
     {
-        this._observableClassExpressions.set(
+        this._classes.set(
             objectIntersectionOf,
             combineLatest(
-                objectIntersectionOf.ClassExpressions.map(classExpression => this._observableClassExpressions.get(classExpression)),
+                objectIntersectionOf.ClassExpressions.map(classExpression => this._classes.get(classExpression)),
                 (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs]))));
     }
 
@@ -261,10 +266,10 @@ export class ObservableGenerator implements IClassExpressionVisitor
         objectUnionOf: IObjectUnionOf
         )
     {
-        this._observableClassExpressions.set(
+        this._classes.set(
             objectUnionOf,
             combineLatest(
-                objectUnionOf.ClassExpressions.map(classExpression => this._observableClassExpressions.get(classExpression)),
+                objectUnionOf.ClassExpressions.map(classExpression => this._classes.get(classExpression)),
                 (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs].filter(member => rhs.has(member))))));
     }
 
@@ -272,11 +277,11 @@ export class ObservableGenerator implements IClassExpressionVisitor
         objectComplementOf: IObjectComplementOf
         )
     {
-        this._observableClassExpressions.set(
+        this._classes.set(
             objectComplementOf,
             combineLatest(
-                this._store.ObjectDomain,
-                this._observableClassExpressions.get(objectComplementOf.ClassExpression),
+                this._objectDomain,
+                this._classes.get(objectComplementOf.ClassExpression),
                 (objectDomain, classExpression) => new Set<any>([...objectDomain].filter(member => !classExpression.has(member)))));
     }
 
@@ -284,7 +289,7 @@ export class ObservableGenerator implements IClassExpressionVisitor
         objectOneOf: IObjectOneOf
         )
     {
-        this._observableClassExpressions.set(
+        this._classes.set(
             objectOneOf,
             new BehaviorSubject<Set<any>>(new Set<any>(objectOneOf.Individuals.map(individual => this.InterpretIndividual(individual)))));
     }
@@ -293,11 +298,11 @@ export class ObservableGenerator implements IClassExpressionVisitor
         objectSomeValuesFrom: IObjectSomeValuesFrom
         )
     {
-        this._observableClassExpressions.set(
+        this._classes.set(
             objectSomeValuesFrom,
             combineLatest(
-                this._store.ObjectPropertyExpression(objectSomeValuesFrom.ObjectPropertyExpression),
-                this._observableClassExpressions.get(objectSomeValuesFrom.ClassExpression),
+                this.PropertyExpression(objectSomeValuesFrom.ObjectPropertyExpression),
+                this._classes.get(objectSomeValuesFrom.ClassExpression),
                 (objectPropertyExpression, classExpression) =>
                     new Set<any>(
                         objectPropertyExpression
@@ -309,11 +314,11 @@ export class ObservableGenerator implements IClassExpressionVisitor
         objectAllValuesFrom: IObjectAllValuesFrom
         )
     {
-        this._observableClassExpressions.set(
+        this._classes.set(
             objectAllValuesFrom,
             combineLatest(
-                this._store.ObjectPropertyExpression(objectAllValuesFrom.ObjectPropertyExpression).pipe(map(this.GroupByDomain)),
-                this._observableClassExpressions.get(objectAllValuesFrom.ClassExpression),
+                this.PropertyExpression(objectAllValuesFrom.ObjectPropertyExpression).pipe(map(this.GroupByDomain)),
+                this._classes.get(objectAllValuesFrom.ClassExpression),
                 (groupedByDomain, classExpression) =>
                     new Set<any>(
                         [...groupedByDomain.entries()]
@@ -326,9 +331,9 @@ export class ObservableGenerator implements IClassExpressionVisitor
         )
     {
         const individual = this.InterpretIndividual(objectHasValue.Individual);
-        this._observableClassExpressions.set(
+        this._classes.set(
             objectHasValue,
-            this._store.ObjectPropertyExpression(objectHasValue.ObjectPropertyExpression).pipe(
+            this.PropertyExpression(objectHasValue.ObjectPropertyExpression).pipe(
                 map(objectPropertyExpression =>
                     new Set<any>(objectPropertyExpression
                         .filter(member => member[1] === individual)
@@ -339,9 +344,9 @@ export class ObservableGenerator implements IClassExpressionVisitor
         objectHasSelf: IObjectHasSelf
         )
     {
-        this._observableClassExpressions.set(
+        this._classes.set(
             objectHasSelf,
-            this._store.ObjectPropertyExpression(objectHasSelf.ObjectPropertyExpression).pipe(
+            this.PropertyExpression(objectHasSelf.ObjectPropertyExpression).pipe(
                 map(objectPropertyExpression =>
                     new Set<any>(objectPropertyExpression
                         .filter(member => member[0] === member[1])
@@ -355,22 +360,22 @@ export class ObservableGenerator implements IClassExpressionVisitor
         if(objectMinCardinality.Cardinality === 0)
         {
             // All individuals.
-            this._observableClassExpressions.set(
+            this._classes.set(
                 objectMinCardinality,
-                this._store.ObjectDomain);
+                this._objectDomain);
 
             return;
         }
 
-        let observableObjectPropertyExpression = this._store.ObjectPropertyExpression(objectMinCardinality.ObjectPropertyExpression);
+        let observableObjectPropertyExpression = this.PropertyExpression(objectMinCardinality.ObjectPropertyExpression);
         if(objectMinCardinality.ClassExpression)
             observableObjectPropertyExpression = combineLatest(
                 observableObjectPropertyExpression,
-                this._observableClassExpressions.get(objectMinCardinality.ClassExpression),
+                this._classes.get(objectMinCardinality.ClassExpression),
                 (objectPropertyExpression, classExpression) =>
                     objectPropertyExpression.filter(member => classExpression.has(member[1])));
 
-        this._observableClassExpressions.set(
+        this._classes.set(
             objectMinCardinality,
             observableObjectPropertyExpression.pipe(
                 map(this.GroupByDomain),
@@ -384,19 +389,19 @@ export class ObservableGenerator implements IClassExpressionVisitor
         objectMaxCardinality: IObjectMaxCardinality
         )
     {
-        let observableObjectPropertyExpression = this._store.ObjectPropertyExpression(objectMaxCardinality.ObjectPropertyExpression);
+        let observableObjectPropertyExpression = this.PropertyExpression(objectMaxCardinality.ObjectPropertyExpression);
         if(objectMaxCardinality.ClassExpression)
             observableObjectPropertyExpression = combineLatest(
                 observableObjectPropertyExpression,
-                this._observableClassExpressions.get(objectMaxCardinality.ClassExpression),
+                this._classes.get(objectMaxCardinality.ClassExpression),
                 (objectPropertyExpression, classExpression) =>
                     objectPropertyExpression.filter(member => classExpression.has(member[1])));
 
         if(objectMaxCardinality.Cardinality == 0)
-            this._observableClassExpressions.set(
+            this._classes.set(
                 objectMaxCardinality,
                 combineLatest(
-                    this._store.ObjectDomain,
+                    this._objectDomain,
                     observableObjectPropertyExpression,
                     (objectDomain, objectPropertyExpression) =>
                         GroupJoin(
@@ -409,7 +414,7 @@ export class ObservableGenerator implements IClassExpressionVisitor
                                         .filter(entry => entry[1].length <= objectMaxCardinality.Cardinality)
                                         .map(entry => entry[0])))));
         else
-            this._observableClassExpressions.set(
+            this._classes.set(
                 objectMaxCardinality,
                 observableObjectPropertyExpression.pipe(
                     map(this.GroupByDomain),
@@ -423,19 +428,19 @@ export class ObservableGenerator implements IClassExpressionVisitor
         objectExactCardinality: IObjectExactCardinality
         )
     {
-        let observableObjectPropertyExpression = this._store.ObjectPropertyExpression(objectExactCardinality.ObjectPropertyExpression);
+        let observableObjectPropertyExpression = this.PropertyExpression(objectExactCardinality.ObjectPropertyExpression);
         if(objectExactCardinality.ClassExpression)
             observableObjectPropertyExpression = combineLatest(
                 observableObjectPropertyExpression,
-                this._observableClassExpressions.get(objectExactCardinality.ClassExpression),
+                this._classes.get(objectExactCardinality.ClassExpression),
                 (objectPropertyExpression, classExpression) =>
                     objectPropertyExpression.filter(member => classExpression.has(member[1])));
 
         if(objectExactCardinality.Cardinality == 0)
-            this._observableClassExpressions.set(
+            this._classes.set(
                 objectExactCardinality,
                 combineLatest(
-                    this._store.ObjectDomain,
+                    this._objectDomain,
                     observableObjectPropertyExpression,
                     (objectDomain, objectPropertyExpression) =>
                         GroupJoin(
@@ -448,7 +453,7 @@ export class ObservableGenerator implements IClassExpressionVisitor
                                         .filter(entry => entry[1].length === objectExactCardinality.Cardinality)
                                         .map(entry => entry[0])))));
         else
-            this._observableClassExpressions.set(
+            this._classes.set(
                 objectExactCardinality,
                 observableObjectPropertyExpression.pipe(
                     map(this.GroupByDomain),
@@ -462,9 +467,9 @@ export class ObservableGenerator implements IClassExpressionVisitor
         dataSomeValuesFrom: IDataSomeValuesFrom
         )
     {
-        this._observableClassExpressions.set(
+        this._classes.set(
             dataSomeValuesFrom,
-            this._store.DataPropertyExpression(dataSomeValuesFrom.DataPropertyExpression).pipe(
+            this.PropertyExpression(dataSomeValuesFrom.DataPropertyExpression).pipe(
                 map(dataPropertyExpression =>
                     new Set<any>(dataPropertyExpression
                         .filter(member => dataSomeValuesFrom.DataRange.HasMember(member[1]))))));
@@ -474,9 +479,9 @@ export class ObservableGenerator implements IClassExpressionVisitor
         dataAllValuesFrom: IDataAllValuesFrom
         )
     {
-        this._observableClassExpressions.set(
+        this._classes.set(
             dataAllValuesFrom,
-            this._store.DataPropertyExpression(dataAllValuesFrom.DataPropertyExpression).pipe(
+            this.PropertyExpression(dataAllValuesFrom.DataPropertyExpression).pipe(
                 map(this.GroupByDomain),
                 map(groupedByDomain =>
                     new Set<any>(
@@ -489,9 +494,9 @@ export class ObservableGenerator implements IClassExpressionVisitor
         dataHasValue: IDataHasValue
         )
     {
-        this._observableClassExpressions.set(
+        this._classes.set(
             dataHasValue,
-            this._store.DataPropertyExpression(dataHasValue.DataPropertyExpression).pipe(
+            this.PropertyExpression(dataHasValue.DataPropertyExpression).pipe(
                 map(dataPropertyExpression =>
                     new Set<any>(dataPropertyExpression
                         .filter(member => member[1] === dataHasValue.Value)
@@ -529,6 +534,20 @@ export class ObservableGenerator implements IClassExpressionVisitor
             relation => relation[1]);
     }
 
+    PropertyExpression(
+        objectPropertyExpression: IPropertyExpression
+        ): Observable<[any, any][]>
+    {
+        let subject = this._properties.get(objectPropertyExpression.LocalName);
+        if(!subject)
+        {
+            subject = new BehaviorSubject<[any, any][]>([]);
+            this._properties.set(
+                objectPropertyExpression.LocalName,
+                subject);
+        }
+        return subject;
+    }
 
     private InterpretIndividual(
         individual: object
@@ -541,25 +560,83 @@ export class ObservableGenerator implements IClassExpressionVisitor
 
         return individual;
     }
-}
 
-export function Translate(
-    ontology       : IOntology,
-    store          : IStore,
-    classExpression: IClassExpression
-    ): Observable<Set<any>>
-{
-    const map = new Map<IClassExpression, Observable<Set<any>>>();
+    Generate(
+        onology: IOntology
+        ): [BehaviorSubject<Set<any>>, Map<string, BehaviorSubject<[any, any][]>>, Map<IClassExpression, Observable<Set<any>>>]
+    {
+        this._ontology     = onology;
+        this._objectDomain = new BehaviorSubject<Set<any>>([]);
+        this._properties   = new Map<string, BehaviorSubject<[any, any][]>>();
+        this._classes      = new Map<IClassExpression, Observable<Set<any>>>();
 
-    const generator = new ObservableGenerator(
-        ontology,
-        store,
-        map);
+        let classes = [...this._ontology.Get(this._ontology.IsAxiom.IClass)];
+        let adjacencyList = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, new Set<IClass>()]));
+        for(let equivalentClassExpressions of this._ontology.Get(this._ontology.IsAxiom.IEquivalentClasses))
+        {
+            let equivalentClasses = <IClass[]>equivalentClassExpressions.ClassExpressions.filter(classExpression => this._ontology.IsAxiom.IClass(classExpression));
+            for(let index1 = 0; index1 < equivalentClasses.length; ++index1)
+                for(let index2 = index1; index2 < equivalentClasses.length; ++index2)
+                {
+                    let class1 = equivalentClasses[index1];
+                    let class2 = equivalentClasses[index2];
+                    adjacencyList.get(class1).add(class2);
+                    adjacencyList.get(class2).add(class1);
+                }
+        }
 
-    const navigator = new ClassExpressionNavigator(
-        null,
-        generator);
+        let transitiveClosure = TransitiveClosure3(adjacencyList);
 
-    classExpression.Accept(navigator);
-    return map.get(classExpression);
+        let definitions: [IClass, IClassExpression][] = [];
+        for(let equivalentClasses of this._ontology.Get(this._ontology.IsAxiom.IEquivalentClasses))
+            for(let class$ of equivalentClasses.ClassExpressions.filter(classExpression => this._ontology.IsAxiom.IClass(classExpression)))
+            {
+                for(let classExpression of equivalentClasses.ClassExpressions.filter(classExpression => !this._ontology.IsAxiom.IClass(classExpression)))
+                    for(let equivalentClass of transitiveClosure.get(<IClass>class$))
+                        definitions.push(
+                            [
+                                equivalentClass,
+                                classExpression
+                            ]);
+                break;
+            }
+
+        this._classDefinitions = Group(
+            definitions,
+            definition => definition[0],
+            definition => definition[1]);
+
+        let adjacent: Set<IClass> = null;
+        let empty = new Set<IClass>();
+        adjacencyList = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, empty]));
+        let classVisitor = new ClassExpressionNavigator(new ClassVisitor(class$ => adjacent.add(class$)));
+
+        for(let [class$, classExpression] of this._classDefinitions)
+        {
+            adjacent = new Set<IClass>();
+            classExpression[0].Accept(classVisitor);
+            adjacencyList.set(
+                class$,
+                adjacent);
+        }
+
+        let longestPaths = LongestPaths(adjacencyList);
+        this._definedClasses = [...this._classDefinitions.keys()]
+            .sort((a, b) => longestPaths.get(b) - longestPaths.get(a));
+
+        const navigator = new ClassExpressionNavigator(
+            null,
+            this);
+
+        for(let definedClass of this._definedClasses)
+        {
+            const definition = this._classDefinitions.get(definedClass)[0];
+            definition.Accept(navigator);
+            this._classes.set(
+                definedClass,
+                this._classes.get(definedClass));
+        }
+
+        return [this._objectDomain, this._properties, this._classes];
+    }
 }

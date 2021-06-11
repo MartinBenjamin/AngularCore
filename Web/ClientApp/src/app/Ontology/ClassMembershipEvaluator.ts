@@ -25,7 +25,7 @@ import { IDataPropertyExpression } from "./IPropertyExpression";
 import { IStore, Store, StoreDecorator } from "./IStore";
 import { TransitiveClosure3 } from './TransitiveClosure';
 
-class ClassVisitor extends ClassExpressionVisitor
+export class ClassVisitor extends ClassExpressionVisitor
 {
     private readonly _action: (class$: IClass) => { };
 
