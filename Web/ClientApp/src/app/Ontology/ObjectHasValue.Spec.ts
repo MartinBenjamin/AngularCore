@@ -11,7 +11,7 @@ describe(
     () =>
     {
         describe(
-            'Given an Ontology o1 whith declarations ObjectProperty(op1), NamedIndividual(i1) and NamedIndividual(i2):',
+            'Given an Ontology o1 with axioms ObjectProperty(op1), NamedIndividual(i1) and NamedIndividual(i2):',
             () =>
             {
                 let o1 = new Ontology('o1');

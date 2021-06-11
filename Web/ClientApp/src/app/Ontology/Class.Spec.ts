@@ -35,8 +35,6 @@ describe(
                         assert('c2.Evaluate(evaluator, i1) === false');
                         assert('c2.Evaluate(evaluator, i2)');
                         assert('c1.Evaluate(evaluator, {}) === false');
-                        assert('c1.Evaluate(evaluator, { ClassIri: "abc"}) === false');
-                        assert('c1.Evaluate(evaluator, { ClassIri: "o1.c1"})');
 
                         describe(
                             'Given result = o1.Classify(i1)',

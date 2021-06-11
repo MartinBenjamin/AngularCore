@@ -11,7 +11,7 @@ describe(
     () =>
     {
         describe(
-            'Given ontology o1 with declarations Class(c1), DataProperty(dp1) and axiom EquivalentClasses(c1, DataHasValue(dp1, 1)):',
+            'Given ontology o1 with axioms Class(c1), DataProperty(dp1) and EquivalentClasses(c1, DataHasValue(dp1, 1)):',
             () =>
             {
                 let o1 = new Ontology('o1');
@@ -31,7 +31,7 @@ describe(
                         assert('result.get(i).has(c1)');
 
                         describe(
-                            'Given an additional declaration Class(c2) and additional axiom EquivalentClasses(c1, c2):',
+                            'Given an additional axioms Class(c2) and EquivalentClasses(c1, c2):',
                             () =>
                             {
                                 let c2 = new Class(o1, 'c2');
@@ -44,7 +44,7 @@ describe(
                                 assert('result.get(i).has(c2)');
 
                                 describe(
-                                    'Given an additional declaration Class(c3) and additional axiom EquivalentClasses(c2, c3):',
+                                    'Given an additional axioms Class(c3) and EquivalentClasses(c2, c3):',
                                     () =>
                                     {
                                         let c3 = new Class(o1, 'c3');
