@@ -634,7 +634,7 @@ export class ObservableGenerator implements IClassExpressionVisitor
             definition.Accept(navigator);
             this._classes.set(
                 definedClass,
-                this._classes.get(definedClass));
+                this._classes.get(definition));
         }
 
         return [this._objectDomain, this._properties, this._classes];

@@ -25,25 +25,41 @@ describe(
                 new EquivalentClasses(o1, [c1, new ObjectMinCardinality(op1, 0)]);
                 const generator = new ObservableGenerator();
                 const x = generator.Generate(o1);
+                it('Output generated.', () => expect(x).toBeDefined());
+                it('There is an observable for c1.', () => expect(x[2].has(c1)).toBe(true));
+                it('There is an observable for c1.', () => expect(x[2].get(c1)).toBeDefined());
+
                 describe(
                     'Given an individual i:',
                     () =>
                     {
-                        //x[]
-                        describe(
+                        let i = 1;
+                        x[0].next([i]);
+                        let members: Set<any> = null;
+                        let subscription = x[2].get(c1).subscribe(m => members = m);
+                        it(
                             'i is a member of c1',
                             () =>
-                            { });
+                            {
+                                expect(members).toBeDefined();
+                                expect(members.has(i)).toBe(true);
+                            });
 
-                        describe(
+                        members = null;
+                        x[1].get('op1').next([[i, 1]]);
+                        it(
                             'Given a relation (i, 1) then i is a member of c1',
                             () =>
-                            { });
+                            {
+                                expect(members).toBeDefined();
+                                expect(members.has(i)).toBe(true);
+                            });
 
                         describe(
                             'Given relations (i, 1) and (i, 2) then i is a member of c1',
                             () =>
                             { });
+                        subscription.unsubscribe();
                     });
             });
     });
