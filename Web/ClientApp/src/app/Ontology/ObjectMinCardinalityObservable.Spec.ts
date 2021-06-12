@@ -71,7 +71,7 @@ describe(
                     });
 
                 describe(
-                    'Given an individual i1 with a relation (i1, 12):',
+                    'Given the extension of op1 is {(i1, 12)}:',
                     () =>
                     {
                         let i1 = 1;
@@ -122,7 +122,7 @@ describe(
                     });
 
                 describe(
-                    'Given an individual i1 with a relation (i1, 12):',
+                    'Given the extension of op1 is {(i1, 12)}:',
                     () =>
                     {
                         let i1 = 1;
@@ -143,7 +143,7 @@ describe(
                     });
 
                 describe(
-                    'Given an individual i1 with relations (i1, 12) and (i1, i3):',
+                    'Given the extension of op1 is {(i1, 12), (i1, i3)}:',
                     () =>
                     {
                         let i1 = 1;
@@ -199,7 +199,7 @@ describe(
                 const x = generator.Generate(o1);
 
                 describe(
-                    'Given an individual i1 with a relation (i1, i3):',
+                    'Given the extension of op1 is {(i1, i3)}:',
                     () =>
                     {
                         let i1 = 1;
@@ -219,7 +219,7 @@ describe(
                     });
 
                 describe(
-                    'Given an individual i1 with a relation (i1, 12):',
+                    'Given the extension of op1 is {(i1, 12)}:',
                     () =>
                     {
                         let i1 = 1;
@@ -240,7 +240,7 @@ describe(
                     });
 
                 describe(
-                    'Given an individual i1 with relations (i1, 12) and (i1, i3):',
+                    'Given the extension of op1 is {(i1, 12), (i1, i3)}:',
                     () =>
                     {
                         let i1 = 1;
