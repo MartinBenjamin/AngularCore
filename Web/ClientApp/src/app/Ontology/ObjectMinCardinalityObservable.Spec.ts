@@ -1,10 +1,10 @@
 import { } from 'jasmine';
 import { Class } from './Class';
+import { ClassifierGenerator } from './ClassifierGenerator';
 import { EquivalentClasses } from './EquivalentClasses';
 import { DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
 import { ObjectMinCardinality } from './ObjectMinCardinality';
 import { ObjectOneOf } from './ObjectOneOf';
-import { ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { DataProperty, ObjectProperty } from './Property';
 
@@ -12,6 +12,8 @@ describe(
     'ObjectMinCardinality (Observable)',
     () =>
     {
+        const generator = new ClassifierGenerator();
+
         describe(
             'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1) and EquivalentClasses(c1, ObjectMinCardinality(op1, 0)):',
             () =>
@@ -20,7 +22,6 @@ describe(
                 const c1 = new Class(o1, 'c1');
                 const op1 = new ObjectProperty(o1, 'op1');
                 new EquivalentClasses(o1, [c1, new ObjectMinCardinality(op1, 0)]);
-                const generator = new ObservableGenerator();
                 const classifier = generator.Generate(o1);
 
                 describe(
@@ -50,7 +51,6 @@ describe(
                 const c1 = new Class(o1, 'c1');
                 const op1 = new ObjectProperty(o1, 'op1');
                 new EquivalentClasses(o1, [c1, new ObjectMinCardinality(op1, 1)]);
-                const generator = new ObservableGenerator();
                 const classifier = generator.Generate(o1);
 
                 describe(
@@ -101,7 +101,6 @@ describe(
                 const c1 = new Class(o1, 'c1');
                 const op1 = new ObjectProperty(o1, 'op1');
                 new EquivalentClasses(o1, [c1, new ObjectMinCardinality(op1, 2)]);
-                const generator = new ObservableGenerator();
                 const classifier = generator.Generate(o1);
 
                 describe(
@@ -188,7 +187,8 @@ describe(
             });
 
         describe(
-            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1) and EquivalentClasses(c1, ObjectMinCardinality(op1, 1, ObjectOneOf([i2]))):',
+            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1), NamedIndividual(i2)\
+ and EquivalentClasses(c1, ObjectMinCardinality(op1, 1, ObjectOneOf([i2]))):',
             () =>
             {
                 const o1 = new Ontology('o1');
@@ -197,7 +197,6 @@ describe(
                 const c1 = new Class(o1, 'c1');
                 const op1 = new ObjectProperty(o1, 'op1');
                 new EquivalentClasses(o1, [c1, new ObjectMinCardinality(op1, 1, new ObjectOneOf([i2]))]);
-                const generator = new ObservableGenerator();
                 const classifier = generator.Generate(o1);
 
                 describe(

@@ -232,7 +232,7 @@ class StoreDecorator implements IStore
     }
 }
 
-export class ObservableGenerator implements IClassExpressionVisitor
+export class ClassifierGenerator implements IClassExpressionVisitor
 {
     private _ontology        : IOntology;
     private _objectDomain    : Subject<Set<any>>;
