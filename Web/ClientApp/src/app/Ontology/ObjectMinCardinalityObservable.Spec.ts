@@ -1,11 +1,12 @@
 import { } from 'jasmine';
 import { Class } from './Class';
 import { EquivalentClasses } from './EquivalentClasses';
+import { DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
 import { ObjectMinCardinality } from './ObjectMinCardinality';
 import { ObjectOneOf } from './ObjectOneOf';
 import { ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
-import { ObjectProperty } from './Property';
+import { DataProperty, ObjectProperty } from './Property';
 
 describe(
     'ObjectMinCardinality (Observable)',
@@ -154,7 +155,7 @@ describe(
                         x[0].next(new Set<any>([i1]));
                         x[1].get('op1').next([[i1, i2], [i1, i3]]);
                         it(
-                            'i1 is not a member of c1',
+                            'i1 is a member of c1',
                             () =>
                             {
                                 expect(c1Members).not.toBeNull();
@@ -190,8 +191,9 @@ describe(
             'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1) and EquivalentClasses(c1, ObjectMinCardinality(op1, 1, ObjectOneOf([i2]))):',
             () =>
             {
-                const i2 = { Id: 2 };
                 const o1 = new Ontology('o1');
+                const i2 = new NamedIndividual(o1, 'i2');
+                new DataPropertyAssertion(o1, new DataProperty(o1, 'Id'), i2, 2);
                 const c1 = new Class(o1, 'c1');
                 const op1 = new ObjectProperty(o1, 'op1');
                 new EquivalentClasses(o1, [c1, new ObjectMinCardinality(op1, 1, new ObjectOneOf([i2]))]);
@@ -251,7 +253,7 @@ describe(
                         x[0].next(new Set<any>([i1]));
                         x[1].get('op1').next([[i1, i2], [i1, i3]]);
                         it(
-                            'i1 is not a member of c1',
+                            'i1 is a member of c1',
                             () =>
                             {
                                 expect(c1Members).not.toBeNull();
