@@ -9,13 +9,13 @@ import { Ontology } from "./Ontology";
 import { DataProperty, ObjectProperty } from './Property';
 
 describe(
-    'ObjectMinCardinality (Observable)',
+    'ObjectMinCardinality(n OPE) ({ x | #{ y | ( x , y ) ∈ (OPE)OP } ≥ n })',
     () =>
     {
         const generator = new ClassifierGenerator();
 
         describe(
-            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1) and EquivalentClasses(c1, ObjectMinCardinality(op1, 0)):',
+            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1) and EquivalentClasses(c1 ObjectMinCardinality(0 op1)):',
             () =>
             {
                 const o1 = new Ontology('o1');
@@ -33,7 +33,7 @@ describe(
                         let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([i]));
                         it(
-                            'i is a member of c1',
+                            'i ∈ (c1)C',
                             () =>
                             {
                                 expect(c1Members).not.toBeNull();
@@ -44,7 +44,7 @@ describe(
             });
 
         describe(
-            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1) and EquivalentClasses(c1, ObjectMinCardinality(op1, 1)):',
+            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1) and EquivalentClasses(c1 ObjectMinCardinality(1 op1)):',
             () =>
             {
                 const o1 = new Ontology('o1');
@@ -62,7 +62,7 @@ describe(
                         let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([i]));
                         it(
-                            'i is not a member of c1',
+                            '¬(i ∈ (c1)C)',
                             () =>
                             {
                                 expect(c1Members).not.toBeNull();
@@ -72,7 +72,7 @@ describe(
                     });
 
                 describe(
-                    'Given the extension of op1 is {(i1, 12)}:',
+                    'Given (op1)OP = {(i1, 12)}:',
                     () =>
                     {
                         let i1 = 1;
@@ -82,7 +82,7 @@ describe(
                         classifier[0].next(new Set<any>([i1]));
                         classifier[1].get('op1').next([[i1, i2]]);
                         it(
-                            'i1 is a member of c1',
+                            'i1 ∈ (c1)C',
                             () =>
                             {
                                 expect(c1Members).not.toBeNull();
@@ -94,7 +94,7 @@ describe(
             });
 
         describe(
-            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1) and EquivalentClasses(c1, ObjectMinCardinality(op1, 2)):',
+            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1) and EquivalentClasses(c1 ObjectMinCardinality(2 op1)):',
             () =>
             {
                 const o1 = new Ontology('o1');
@@ -112,7 +112,7 @@ describe(
                         let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([i]));
                         it(
-                            'i is not a member of c1',
+                            '¬(i ∈ (c1)C)',
                             () =>
                             {
                                 expect(c1Members).not.toBeNull();
@@ -122,7 +122,7 @@ describe(
                     });
 
                 describe(
-                    'Given the extension of op1 is {(i1, 12)}:',
+                    'Given (op1)OP = {(i1, 12)}:',
                     () =>
                     {
                         let i1 = 1;
@@ -132,7 +132,7 @@ describe(
                         classifier[0].next(new Set<any>([i1]));
                         classifier[1].get('op1').next([[i1, i2]]);
                         it(
-                            'i1 is not a member of c1',
+                            '¬(i1 ∈ (c1)C)',
                             () =>
                             {
                                 expect(c1Members).not.toBeNull();
@@ -143,7 +143,7 @@ describe(
                     });
 
                 describe(
-                    'Given the extension of op1 is {(i1, 12), (i1, i3)}:',
+                    'Given (op1)OP = {(i1, 12), (i1, i3)}:',
                     () =>
                     {
                         let i1 = 1;
@@ -154,7 +154,7 @@ describe(
                         classifier[0].next(new Set<any>([i1]));
                         classifier[1].get('op1').next([[i1, i2], [i1, i3]]);
                         it(
-                            'i1 is a member of c1',
+                            'i1 ∈ (c1)C',
                             () =>
                             {
                                 expect(c1Members).not.toBeNull();
@@ -188,7 +188,7 @@ describe(
 
         describe(
             'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1), NamedIndividual(i2)\
- and EquivalentClasses(c1, ObjectMinCardinality(op1, 1, ObjectOneOf([i2]))):',
+ and EquivalentClasses(c1 ObjectMinCardinality(1 op1 ObjectOneOf([i2]))):',
             () =>
             {
                 const o1 = new Ontology('o1');
@@ -200,7 +200,7 @@ describe(
                 const classifier = generator.Generate(o1);
 
                 describe(
-                    'Given the extension of op1 is {(i1, i3)}:',
+                    'Given (op1)OP = {(i1, i3)}:',
                     () =>
                     {
                         let i1 = 1;
@@ -210,7 +210,7 @@ describe(
                         classifier[0].next(new Set<any>([i1]));
                         classifier[1].get('op1').next([[i1, i3]]);
                         it(
-                            'i1 is not a member of c1',
+                            '¬(i1 ∈ (c1)C)',
                             () =>
                             {
                                 expect(c1Members).not.toBeNull();
@@ -220,7 +220,7 @@ describe(
                     });
 
                 describe(
-                    'Given the extension of op1 is {(i1, 12)}:',
+                    'Given (op1)OP = {(i1, 12)}:',
                     () =>
                     {
                         let i1 = 1;
@@ -230,7 +230,7 @@ describe(
                         classifier[0].next(new Set<any>([i1]));
                         classifier[1].get('op1').next([[i1, i2]]);
                         it(
-                            'i1 is a member of c1',
+                            'i1 ∈ (c1)C',
                             () =>
                             {
                                 expect(c1Members).not.toBeNull();
@@ -241,7 +241,7 @@ describe(
                     });
 
                 describe(
-                    'Given the extension of op1 is {(i1, 12), (i1, i3)}:',
+                    'Given (op1)OP = {(i1, 12), (i1, i3)}:',
                     () =>
                     {
                         let i1 = 1;
@@ -252,7 +252,7 @@ describe(
                         classifier[0].next(new Set<any>([i1]));
                         classifier[1].get('op1').next([[i1, i2], [i1, i3]]);
                         it(
-                            'i1 is a member of c1',
+                            'i1 ∈ (c1)C',
                             () =>
                             {
                                 expect(c1Members).not.toBeNull();
