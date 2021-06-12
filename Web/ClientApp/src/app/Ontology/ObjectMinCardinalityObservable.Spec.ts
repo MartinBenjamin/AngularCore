@@ -21,7 +21,7 @@ describe(
                 const op1 = new ObjectProperty(o1, 'op1');
                 new EquivalentClasses(o1, [c1, new ObjectMinCardinality(op1, 0)]);
                 const generator = new ObservableGenerator();
-                const x = generator.Generate(o1);
+                const classifier = generator.Generate(o1);
 
                 describe(
                     'Given an individual i:',
@@ -29,8 +29,8 @@ describe(
                     {
                         let i = 1;
                         let c1Members: Set<any> = null;
-                        let subscription = x[2].get(c1).subscribe(m => c1Members = m);
-                        x[0].next(new Set<any>([i]));
+                        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
+                        classifier[0].next(new Set<any>([i]));
                         it(
                             'i is a member of c1',
                             () =>
@@ -51,7 +51,7 @@ describe(
                 const op1 = new ObjectProperty(o1, 'op1');
                 new EquivalentClasses(o1, [c1, new ObjectMinCardinality(op1, 1)]);
                 const generator = new ObservableGenerator();
-                const x = generator.Generate(o1);
+                const classifier = generator.Generate(o1);
 
                 describe(
                     'Given an individual i:',
@@ -59,8 +59,8 @@ describe(
                     {
                         let i = 1;
                         let c1Members: Set<any> = null;
-                        let subscription = x[2].get(c1).subscribe(m => c1Members = m);
-                        x[0].next(new Set<any>([i]));
+                        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
+                        classifier[0].next(new Set<any>([i]));
                         it(
                             'i is not a member of c1',
                             () =>
@@ -78,9 +78,9 @@ describe(
                         let i1 = 1;
                         let i2 = 2;
                         let c1Members: Set<any> = null;
-                        let subscription = x[2].get(c1).subscribe(m => c1Members = m);
-                        x[0].next(new Set<any>([i1]));
-                        x[1].get('op1').next([[i1, i2]]);
+                        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
+                        classifier[0].next(new Set<any>([i1]));
+                        classifier[1].get('op1').next([[i1, i2]]);
                         it(
                             'i1 is a member of c1',
                             () =>
@@ -102,7 +102,7 @@ describe(
                 const op1 = new ObjectProperty(o1, 'op1');
                 new EquivalentClasses(o1, [c1, new ObjectMinCardinality(op1, 2)]);
                 const generator = new ObservableGenerator();
-                const x = generator.Generate(o1);
+                const classifier = generator.Generate(o1);
 
                 describe(
                     'Given an individual i:',
@@ -110,8 +110,8 @@ describe(
                     {
                         let i = 1;
                         let c1Members: Set<any> = null;
-                        let subscription = x[2].get(c1).subscribe(m => c1Members = m);
-                        x[0].next(new Set<any>([i]));
+                        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
+                        classifier[0].next(new Set<any>([i]));
                         it(
                             'i is not a member of c1',
                             () =>
@@ -129,9 +129,9 @@ describe(
                         let i1 = 1;
                         let i2 = 2;
                         let c1Members: Set<any> = null;
-                        let subscription = x[2].get(c1).subscribe(m => c1Members = m);
-                        x[0].next(new Set<any>([i1]));
-                        x[1].get('op1').next([[i1, i2]]);
+                        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
+                        classifier[0].next(new Set<any>([i1]));
+                        classifier[1].get('op1').next([[i1, i2]]);
                         it(
                             'i1 is not a member of c1',
                             () =>
@@ -151,9 +151,9 @@ describe(
                         let i2 = 2;
                         let i3 = 3;
                         let c1Members: Set<any> = null;
-                        let subscription = x[2].get(c1).subscribe(m => c1Members = m);
-                        x[0].next(new Set<any>([i1]));
-                        x[1].get('op1').next([[i1, i2], [i1, i3]]);
+                        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
+                        classifier[0].next(new Set<any>([i1]));
+                        classifier[1].get('op1').next([[i1, i2], [i1, i3]]);
                         it(
                             'i1 is a member of c1',
                             () =>
@@ -172,9 +172,9 @@ describe(
                 //        let i1 = 1;
                 //        let i2 = 2;
                 //        let c1Members: Set<any> = null;
-                //        let subscription = x[2].get(c1).subscribe(m => c1Members = m);
-                //        x[0].next(new Set<any>([i1]));
-                //        x[1].get('op1').next([[i1, i2], [i1, i2]]);
+                //        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
+                //        classifier[0].next(new Set<any>([i1]));
+                //        classifier[1].get('op1').next([[i1, i2], [i1, i2]]);
                 //        it(
                 //            'i1 is not a member of c1',
                 //            () =>
@@ -198,7 +198,7 @@ describe(
                 const op1 = new ObjectProperty(o1, 'op1');
                 new EquivalentClasses(o1, [c1, new ObjectMinCardinality(op1, 1, new ObjectOneOf([i2]))]);
                 const generator = new ObservableGenerator();
-                const x = generator.Generate(o1);
+                const classifier = generator.Generate(o1);
 
                 describe(
                     'Given the extension of op1 is {(i1, i3)}:',
@@ -207,9 +207,9 @@ describe(
                         let i1 = 1;
                         let i3 = 3;
                         let c1Members: Set<any> = null;
-                        let subscription = x[2].get(c1).subscribe(m => c1Members = m);
-                        x[0].next(new Set<any>([i1]));
-                        x[1].get('op1').next([[i1, i3]]);
+                        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
+                        classifier[0].next(new Set<any>([i1]));
+                        classifier[1].get('op1').next([[i1, i3]]);
                         it(
                             'i1 is not a member of c1',
                             () =>
@@ -227,9 +227,9 @@ describe(
                         let i1 = 1;
                         let i2 = 2;
                         let c1Members: Set<any> = null;
-                        let subscription = x[2].get(c1).subscribe(m => c1Members = m);
-                        x[0].next(new Set<any>([i1]));
-                        x[1].get('op1').next([[i1, i2]]);
+                        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
+                        classifier[0].next(new Set<any>([i1]));
+                        classifier[1].get('op1').next([[i1, i2]]);
                         it(
                             'i1 is a member of c1',
                             () =>
@@ -249,9 +249,9 @@ describe(
                         let i2 = 2;
                         let i3 = 3;
                         let c1Members: Set<any> = null;
-                        let subscription = x[2].get(c1).subscribe(m => c1Members = m);
-                        x[0].next(new Set<any>([i1]));
-                        x[1].get('op1').next([[i1, i2], [i1, i3]]);
+                        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
+                        classifier[0].next(new Set<any>([i1]));
+                        classifier[1].get('op1').next([[i1, i2], [i1, i3]]);
                         it(
                             'i1 is a member of c1',
                             () =>
