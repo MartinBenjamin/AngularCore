@@ -162,6 +162,13 @@ describe(
                 //        subscription.unsubscribe();
                 //    });
             });
+    });
+    
+describe(
+    'ObjectMinCardinality( n OPE CE ) ({ x | #{ y | ( x , y ) ∈ (OPE)OP and y ∈ (CE)C } ≥ n })',
+    () =>
+    {
+        const generator = new ClassifierGenerator();
 
         describe(
             'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1), NamedIndividual(i)\
