@@ -24,17 +24,21 @@ describe(
                 new EquivalentClasses(o1, [c1, new ObjectMinCardinality(op1, 0)]);
                 const classifier = generator.Generate(o1);
 
+                it(
+                    '(c1)C = ΔI',
+                    () => expect(classifier[2].get(c1)).toBe(classifier[0]));
+
                 describe(
-                    'Given an individual i:',
+                    'Given x ∈ ΔI:',
                     () =>
                     {
-                        let i = 1;
+                        let x = 1;
                         let c1Members: Set<any> = null;
                         let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                        classifier[0].next(new Set<any>([i]));
+                        classifier[0].next(new Set<any>([x]));
                         it(
-                            'i ∈ (c1)C',
-                            () => expect(c1Members.has(i)).toBe(true));
+                            'x ∈ (c1)C',
+                            () => expect(c1Members.has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
             });
@@ -50,32 +54,32 @@ describe(
                 const classifier = generator.Generate(o1);
 
                 describe(
-                    'Given an individual i:',
+                    'Given x ∈ ΔI:',
                     () =>
                     {
-                        let i = 1;
+                        let x = 1;
                         let c1Members: Set<any> = null;
                         let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                        classifier[0].next(new Set<any>([i]));
+                        classifier[0].next(new Set<any>([x]));
                         it(
-                            '¬(i ∈ (c1)C)',
-                            () => expect(c1Members.has(i)).toBe(false));
+                            '¬(x ∈ (c1)C)',
+                            () => expect(c1Members.has(x)).toBe(false));
                         subscription.unsubscribe();
                     });
 
                 describe(
-                    'Given (op1)OP = {(i1, 12)}:',
+                    'Given (op1)OP = {(x, y)}:',
                     () =>
                     {
-                        let i1 = 1;
-                        let i2 = 2;
+                        let x = 1;
+                        let y = 2;
                         let c1Members: Set<any> = null;
                         let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                        classifier[0].next(new Set<any>([i1]));
-                        classifier[1].get('op1').next([[i1, i2]]);
+                        classifier[0].next(new Set<any>([x]));
+                        classifier[1].get('op1').next([[x, y]]);
                         it(
-                            'i1 ∈ (c1)C',
-                            () => expect(c1Members.has(i1)).toBe(true));
+                            'x ∈ (c1)C',
+                            () => expect(c1Members.has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
             });
@@ -91,49 +95,49 @@ describe(
                 const classifier = generator.Generate(o1);
 
                 describe(
-                    'Given an individual i:',
+                    'Given x ∈ ΔI:',
                     () =>
                     {
-                        let i = 1;
+                        let x = 1;
                         let c1Members: Set<any> = null;
                         let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                        classifier[0].next(new Set<any>([i]));
+                        classifier[0].next(new Set<any>([x]));
                         it(
-                            '¬(i ∈ (c1)C)',
-                            () => expect(c1Members.has(i)).toBe(false));
+                            '¬(x ∈ (c1)C)',
+                            () => expect(c1Members.has(x)).toBe(false));
                         subscription.unsubscribe();
                     });
 
                 describe(
-                    'Given (op1)OP = {(i1, 12)}:',
+                    'Given (op1)OP = {(x, y)}:',
                     () =>
                     {
-                        let i1 = 1;
-                        let i2 = 2;
+                        let x = 1;
+                        let y = 2;
                         let c1Members: Set<any> = null;
                         let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                        classifier[0].next(new Set<any>([i1]));
-                        classifier[1].get('op1').next([[i1, i2]]);
+                        classifier[0].next(new Set<any>([x]));
+                        classifier[1].get('op1').next([[x, y]]);
                         it(
-                            '¬(i1 ∈ (c1)C)',
-                            () => expect(c1Members.has(i1)).toBe(false));
+                            '¬(x ∈ (c1)C)',
+                            () => expect(c1Members.has(x)).toBe(false));
                         subscription.unsubscribe();
                     });
 
                 describe(
-                    'Given (op1)OP = {(i1, 12), (i1, i3)}:',
+                    'Given (op1)OP = {(x, y), (x, z)}:',
                     () =>
                     {
-                        let i1 = 1;
-                        let i2 = 2;
-                        let i3 = 3;
+                        let x = 1;
+                        let y = 2;
+                        let z = 3;
                         let c1Members: Set<any> = null;
                         let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                        classifier[0].next(new Set<any>([i1]));
-                        classifier[1].get('op1').next([[i1, i2], [i1, i3]]);
+                        classifier[0].next(new Set<any>([x]));
+                        classifier[1].get('op1').next([[x, y], [x, z]]);
                         it(
-                            'i1 ∈ (c1)C',
-                            () => expect(c1Members.has(i1)).toBe(true));
+                            'x ∈ (c1)C',
+                            () => expect(c1Members.has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
 
@@ -160,64 +164,64 @@ describe(
             });
 
         describe(
-            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1), NamedIndividual(i2)\
- and EquivalentClasses(c1 ObjectMinCardinality(1 op1 ObjectOneOf([i2]))):',
+            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1), NamedIndividual(i)\
+ and EquivalentClasses(c1 ObjectMinCardinality(1 op1 ObjectOneOf([i]))):',
             () =>
             {
                 const o1 = new Ontology('o1');
-                const i2 = new NamedIndividual(o1, 'i2');
-                new DataPropertyAssertion(o1, new DataProperty(o1, 'Id'), i2, 2);
+                const i = new NamedIndividual(o1, 'i');
+                new DataPropertyAssertion(o1, new DataProperty(o1, 'Id'), i, 10);
                 const c1 = new Class(o1, 'c1');
                 const op1 = new ObjectProperty(o1, 'op1');
-                new EquivalentClasses(o1, [c1, new ObjectMinCardinality(op1, 1, new ObjectOneOf([i2]))]);
+                new EquivalentClasses(o1, [c1, new ObjectMinCardinality(op1, 1, new ObjectOneOf([i]))]);
                 const classifier = generator.Generate(o1);
 
                 describe(
-                    'Given (op1)OP = {(i1, i3)}:',
+                    'Given (op1)OP = {(x, y)}:',
                     () =>
                     {
-                        let i1 = 1;
-                        let i3 = 3;
+                        let x = 1;
+                        let y = 2;
                         let c1Members: Set<any> = null;
                         let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                        classifier[0].next(new Set<any>([i1]));
-                        classifier[1].get('op1').next([[i1, i3]]);
+                        classifier[0].next(new Set<any>([x]));
+                        classifier[1].get('op1').next([[x, y]]);
                         it(
-                            '¬(i1 ∈ (c1)C)',
-                            () => expect(c1Members.has(i1)).toBe(false));
+                            '¬(x ∈ (c1)C)',
+                            () => expect(c1Members.has(x)).toBe(false));
                         subscription.unsubscribe();
                     });
 
                 describe(
-                    'Given (op1)OP = {(i1, 12)}:',
+                    'Given (op1)OP = {(x, (i)I)}:',
                     () =>
                     {
-                        let i1 = 1;
-                        let i2 = 2;
+                        let x = 1;
+                        let i = 10;
                         let c1Members: Set<any> = null;
                         let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                        classifier[0].next(new Set<any>([i1]));
-                        classifier[1].get('op1').next([[i1, i2]]);
+                        classifier[0].next(new Set<any>([x]));
+                        classifier[1].get('op1').next([[x, i]]);
                         it(
-                            'i1 ∈ (c1)C',
-                            () => expect(c1Members.has(i1)).toBe(true));
+                            'x ∈ (c1)C',
+                            () => expect(c1Members.has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
 
                 describe(
-                    'Given (op1)OP = {(i1, 12), (i1, i3)}:',
+                    'Given (op1)OP = {(x, (i)I), (x, y)}:',
                     () =>
                     {
-                        let i1 = 1;
-                        let i2 = 2;
-                        let i3 = 3;
+                        let x = 1;
+                        let y = 2;
+                        let i = 10;
                         let c1Members: Set<any> = null;
                         let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                        classifier[0].next(new Set<any>([i1]));
-                        classifier[1].get('op1').next([[i1, i2], [i1, i3]]);
+                        classifier[0].next(new Set<any>([x]));
+                        classifier[1].get('op1').next([[x, i], [x, y]]);
                         it(
-                            'i1 ∈ (c1)C',
-                            () => expect(c1Members.has(i1)).toBe(true));
+                            'x ∈ (c1)C',
+                            () => expect(c1Members.has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
             });
