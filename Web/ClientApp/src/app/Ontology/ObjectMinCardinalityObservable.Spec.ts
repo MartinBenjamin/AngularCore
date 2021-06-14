@@ -34,11 +34,7 @@ describe(
                         classifier[0].next(new Set<any>([i]));
                         it(
                             'i ∈ (c1)C',
-                            () =>
-                            {
-                                expect(c1Members).not.toBeNull();
-                                expect(c1Members.has(i)).toBe(true);
-                            });
+                            () => expect(c1Members.has(i)).toBe(true));
                         subscription.unsubscribe();
                     });
             });
@@ -63,11 +59,7 @@ describe(
                         classifier[0].next(new Set<any>([i]));
                         it(
                             '¬(i ∈ (c1)C)',
-                            () =>
-                            {
-                                expect(c1Members).not.toBeNull();
-                                expect(c1Members.has(i)).toBe(false);
-                            });
+                            () => expect(c1Members.has(i)).toBe(false));
                         subscription.unsubscribe();
                     });
 
@@ -83,12 +75,7 @@ describe(
                         classifier[1].get('op1').next([[i1, i2]]);
                         it(
                             'i1 ∈ (c1)C',
-                            () =>
-                            {
-                                expect(c1Members).not.toBeNull();
-                                expect(c1Members.has(i1)).toBe(true);
-                            });
-
+                            () => expect(c1Members.has(i1)).toBe(true));
                         subscription.unsubscribe();
                     });
             });
@@ -113,11 +100,7 @@ describe(
                         classifier[0].next(new Set<any>([i]));
                         it(
                             '¬(i ∈ (c1)C)',
-                            () =>
-                            {
-                                expect(c1Members).not.toBeNull();
-                                expect(c1Members.has(i)).toBe(false);
-                            });
+                            () => expect(c1Members.has(i)).toBe(false));
                         subscription.unsubscribe();
                     });
 
@@ -133,12 +116,7 @@ describe(
                         classifier[1].get('op1').next([[i1, i2]]);
                         it(
                             '¬(i1 ∈ (c1)C)',
-                            () =>
-                            {
-                                expect(c1Members).not.toBeNull();
-                                expect(c1Members.has(i1)).toBe(false);
-                            });
-
+                            () => expect(c1Members.has(i1)).toBe(false));
                         subscription.unsubscribe();
                     });
 
@@ -155,12 +133,7 @@ describe(
                         classifier[1].get('op1').next([[i1, i2], [i1, i3]]);
                         it(
                             'i1 ∈ (c1)C',
-                            () =>
-                            {
-                                expect(c1Members).not.toBeNull();
-                                expect(c1Members.has(i1)).toBe(true);
-                            });
-
+                            () => expect(c1Members.has(i1)).toBe(true));
                         subscription.unsubscribe();
                     });
 
@@ -211,11 +184,7 @@ describe(
                         classifier[1].get('op1').next([[i1, i3]]);
                         it(
                             '¬(i1 ∈ (c1)C)',
-                            () =>
-                            {
-                                expect(c1Members).not.toBeNull();
-                                expect(c1Members.has(i1)).toBe(false);
-                            });
+                            () => expect(c1Members.has(i1)).toBe(false));
                         subscription.unsubscribe();
                     });
 
@@ -231,12 +200,7 @@ describe(
                         classifier[1].get('op1').next([[i1, i2]]);
                         it(
                             'i1 ∈ (c1)C',
-                            () =>
-                            {
-                                expect(c1Members).not.toBeNull();
-                                expect(c1Members.has(i1)).toBe(true);
-                            });
-
+                            () => expect(c1Members.has(i1)).toBe(true));
                         subscription.unsubscribe();
                     });
 
@@ -253,12 +217,7 @@ describe(
                         classifier[1].get('op1').next([[i1, i2], [i1, i3]]);
                         it(
                             'i1 ∈ (c1)C',
-                            () =>
-                            {
-                                expect(c1Members).not.toBeNull();
-                                expect(c1Members.has(i1)).toBe(true);
-                            });
-
+                            () => expect(c1Members.has(i1)).toBe(true));
                         subscription.unsubscribe();
                     });
             });
