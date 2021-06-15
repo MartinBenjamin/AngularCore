@@ -234,12 +234,13 @@ class StoreDecorator implements IStore
 
 export class ClassifierGenerator implements IClassExpressionVisitor
 {
-    private _ontology        : IOntology;
-    private _objectDomain    : Subject<Set<any>>;
-    private _properties      : Map<string, Subject<[any, any][]>>;
-    private _classes         : Map<IClassExpression, Observable<Set<any>>>;
-    private _classDefinitions: Map<IClass, IClassExpression[]>;
-    private _definedClasses  : IClass[];
+    private _ontology                : IOntology;
+    private _objectDomain            : Subject<Set<any>>;
+    private _properties              : Map<string, Subject<[any, any][]>>;
+    private _classes                 : Map<IClassExpression, Observable<Set<any>>>;
+    private _classDefinitions        : Map<IClass, IClassExpression[]>;
+    private _definedClasses          : IClass[];
+    private _functionalDataProperties: Set<IDataPropertyExpression>;
 
     constructor()
     {
@@ -543,14 +544,70 @@ export class ClassifierGenerator implements IClassExpressionVisitor
         dataMaxCardinality: IDataMaxCardinality
         )
     {
-        throw new Error("Method not implemented.");
+        let observabledataPropertyExpression = this.PropertyExpression(dataMaxCardinality.DataPropertyExpression);
+        if(dataMaxCardinality.DataRange)
+            observabledataPropertyExpression = observabledataPropertyExpression.pipe(
+                map(dataPropertyExpression => dataPropertyExpression.filter(member => dataMaxCardinality.DataRange.HasMember(member[1]))));
+
+        this._classes.set(
+            dataMaxCardinality,
+            combineLatest(
+                this._objectDomain,
+                observabledataPropertyExpression,
+                (objectDomain, dataPropertyExpression) =>
+                    GroupJoin(
+                        objectDomain,
+                        dataPropertyExpression,
+                        individual => individual,
+                        member => member[0])).pipe(
+                            map(groupedByDomain =>
+                                new Set<any>([...groupedByDomain.entries()]
+                                    .filter(entry => entry[1].length <= dataMaxCardinality.Cardinality)
+                                    .map(entry => entry[0])))));
     }
 
     DataExactCardinality(
         dataExactCardinality: IDataExactCardinality
         )
     {
-        throw new Error("Method not implemented.");
+        let observabledataPropertyExpression = this.PropertyExpression(dataExactCardinality.DataPropertyExpression);
+        if(dataExactCardinality.DataRange)
+            observabledataPropertyExpression = observabledataPropertyExpression.pipe(
+                map(dataPropertyExpression => dataPropertyExpression.filter(member => dataExactCardinality.DataRange.HasMember(member[1]))));
+
+        if(dataExactCardinality.Cardinality === 0)
+            this._classes.set(
+                dataExactCardinality,
+                combineLatest(
+                    this._objectDomain,
+                    observabledataPropertyExpression,
+                    (objectDomain, dataPropertyExpression) =>
+                        GroupJoin(
+                            objectDomain,
+                            dataPropertyExpression,
+                            individual => individual,
+                            member => member[0])).pipe(
+                                map(groupedByDomain =>
+                                    new Set<any>([...groupedByDomain.entries()]
+                                        .filter(entry => entry[1].length === dataExactCardinality.Cardinality)
+                                        .map(entry => entry[0])))));
+
+        else if(dataExactCardinality.Cardinality === 1 && this._functionalDataProperties.has(dataExactCardinality.DataPropertyExpression))
+            // Optimise for Functional Data Properties.
+            this._classes.set(
+                dataExactCardinality,
+                observabledataPropertyExpression.pipe(
+                    map(dataPropertyExpression => new Set<any>(dataPropertyExpression.map(member => member[0])))));
+
+        else
+            this._classes.set(
+                dataExactCardinality,
+                observabledataPropertyExpression.pipe(
+                    map(this.GroupByDomain),
+                    map(groupedByDomain =>
+                        new Set<any>([...groupedByDomain.entries()]
+                            .filter(entry => entry[1].length === dataExactCardinality.Cardinality)
+                            .map(entry => entry[0])))));
     }
 
     private GroupByDomain(
@@ -591,13 +648,17 @@ export class ClassifierGenerator implements IClassExpressionVisitor
     }
 
     Generate(
-        onology: IOntology
+        ontology: IOntology
         ): [Subject<Set<any>>, Map<string, Subject<[any, any][]>>, Map<IClassExpression, Observable<Set<any>>>]
     {
-        this._ontology     = onology;
-        this._objectDomain = new BehaviorSubject<Set<any>>(new Set<any>());
-        this._properties   = new Map<string, BehaviorSubject<[any, any][]>>();
-        this._classes      = new Map<IClassExpression, Observable<Set<any>>>();
+        this._ontology                 = ontology;
+        this._objectDomain             = new BehaviorSubject<Set<any>>(new Set<any>());
+        this._properties               = new Map<string, BehaviorSubject<[any, any][]>>();
+        this._classes                  = new Map<IClassExpression, Observable<Set<any>>>();
+        this._functionalDataProperties = new Set<IDataPropertyExpression>();
+
+        for(let functionalDataProperty of ontology.Get(ontology.IsAxiom.IFunctionalDataProperty))
+            this._functionalDataProperties.add(functionalDataProperty.DataPropertyExpression);
 
         let classes = [...this._ontology.Get(this._ontology.IsAxiom.IClass)];
         let adjacencyList = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, new Set<IClass>()]));
