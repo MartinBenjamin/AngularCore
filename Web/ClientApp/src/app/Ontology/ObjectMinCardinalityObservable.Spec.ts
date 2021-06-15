@@ -32,9 +32,9 @@ describe(
                     'Given x ∈ ΔI:',
                     () =>
                     {
-                        let x = 1;
-                        let c1Members: Set<any> = null;
-                        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
+                        const x = 1;
+                        let   c1Members: Set<any> = null;
+                        const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([x]));
                         it(
                             'x ∈ (c1)C',
@@ -57,9 +57,9 @@ describe(
                     'Given x ∈ ΔI:',
                     () =>
                     {
-                        let x = 1;
-                        let c1Members: Set<any> = null;
-                        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
+                        const x = 1;
+                        let   c1Members: Set<any> = null;
+                        const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([x]));
                         it(
                             '¬(x ∈ (c1)C)',
@@ -71,10 +71,10 @@ describe(
                     'Given (op1)OP = {(x, y)}:',
                     () =>
                     {
-                        let x = 1;
-                        let y = 2;
-                        let c1Members: Set<any> = null;
-                        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
+                        const x = 1;
+                        const y = 2;
+                        let   c1Members: Set<any> = null;
+                        const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([x]));
                         classifier[1].get('op1').next([[x, y]]);
                         it(
@@ -98,9 +98,9 @@ describe(
                     'Given x ∈ ΔI:',
                     () =>
                     {
-                        let x = 1;
-                        let c1Members: Set<any> = null;
-                        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
+                        const x = 1;
+                        let   c1Members: Set<any> = null;
+                        const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([x]));
                         it(
                             '¬(x ∈ (c1)C)',
@@ -112,10 +112,10 @@ describe(
                     'Given (op1)OP = {(x, y)}:',
                     () =>
                     {
-                        let x = 1;
-                        let y = 2;
-                        let c1Members: Set<any> = null;
-                        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
+                        const x = 1;
+                        const y = 2;
+                        let   c1Members: Set<any> = null;
+                        const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([x]));
                         classifier[1].get('op1').next([[x, y]]);
                         it(
@@ -128,11 +128,11 @@ describe(
                     'Given (op1)OP = {(x, y), (x, z)}:',
                     () =>
                     {
-                        let x = 1;
-                        let y = 2;
-                        let z = 3;
-                        let c1Members: Set<any> = null;
-                        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
+                        const x = 1;
+                        const y = 2;
+                        const z = 3;
+                        let   c1Members: Set<any> = null;
+                        const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([x]));
                         classifier[1].get('op1').next([[x, y], [x, z]]);
                         it(
@@ -187,10 +187,10 @@ describe(
                     'Given (op1)OP = {(x, y)}:',
                     () =>
                     {
-                        let x = 1;
-                        let y = 2;
-                        let c1Members: Set<any> = null;
-                        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
+                        const x = 1;
+                        const y = 2;
+                        let   c1Members: Set<any> = null;
+                        const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([x]));
                         classifier[1].get('op1').next([[x, y]]);
                         it(
@@ -203,10 +203,10 @@ describe(
                     'Given (op1)OP = {(x, (i)I)}:',
                     () =>
                     {
-                        let x = 1;
-                        let i = 10;
-                        let c1Members: Set<any> = null;
-                        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
+                        const x = 1;
+                        const i = 10;
+                        let   c1Members: Set<any> = null;
+                        const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([x]));
                         classifier[1].get('op1').next([[x, i]]);
                         it(
@@ -219,11 +219,11 @@ describe(
                     'Given (op1)OP = {(x, (i)I), (x, y)}:',
                     () =>
                     {
-                        let x = 1;
-                        let y = 2;
-                        let i = 10;
-                        let c1Members: Set<any> = null;
-                        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
+                        const x = 1;
+                        const y = 2;
+                        const i = 10;
+                        let   c1Members: Set<any> = null;
+                        const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([x]));
                         classifier[1].get('op1').next([[x, i], [x, y]]);
                         it(
