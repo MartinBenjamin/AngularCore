@@ -506,7 +506,37 @@ export class ClassifierGenerator implements IClassExpressionVisitor
         dataMinCardinality: IDataMinCardinality
         )
     {
-        throw new Error("Method not implemented.");
+        if(dataMinCardinality.Cardinality === 0)
+        {
+            // All individuals.
+            this._classes.set(
+                dataMinCardinality,
+                this._objectDomain);
+
+            return;
+        }
+
+        let observabledataPropertyExpression = this.PropertyExpression(dataMinCardinality.DataPropertyExpression);
+        if(dataMinCardinality.DataRange)
+            observabledataPropertyExpression = observabledataPropertyExpression.pipe(
+                map(dataPropertyExpression => dataPropertyExpression.filter(member => dataMinCardinality.DataRange.HasMember(member[1]))));
+
+        if(observabledataPropertyExpression.Cardinality === 1)
+            // Optimise for a minimum cardinality of 1.
+            this._classes.set(
+                dataMinCardinality,
+                observabledataPropertyExpression.pipe(
+                    map(dataPropertyExpression => new Set<any>(dataPropertyExpression.map(member => member[0])))));
+
+        else
+            this._classes.set(
+                dataMinCardinality,
+                observabledataPropertyExpression.pipe(
+                    map(this.GroupByDomain),
+                    map(groupedByDomain =>
+                        new Set<any>([...groupedByDomain.entries()]
+                            .filter(entry => entry[1].length >= dataMinCardinality.Cardinality)
+                            .map(entry => entry[0])))));
     }
 
     DataMaxCardinality(
