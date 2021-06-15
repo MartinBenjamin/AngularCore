@@ -405,32 +405,21 @@ export class ClassifierGenerator implements IClassExpressionVisitor
                 (objectPropertyExpression, classExpression) =>
                     objectPropertyExpression.filter(member => classExpression.has(member[1])));
 
-        if(objectMaxCardinality.Cardinality === 0)
-            this._classes.set(
-                objectMaxCardinality,
-                combineLatest(
-                    this._objectDomain,
-                    observableObjectPropertyExpression,
-                    (objectDomain, objectPropertyExpression) =>
-                        GroupJoin(
-                            objectDomain,
-                            objectPropertyExpression,
-                            individual => individual,
-                            member => member[0])).pipe(
-                                map(groupedByDomain =>
-                                    new Set<any>([...groupedByDomain.entries()]
-                                        .filter(entry => entry[1].length <= objectMaxCardinality.Cardinality)
-                                        .map(entry => entry[0])))));
-
-        else
-            this._classes.set(
-                objectMaxCardinality,
-                observableObjectPropertyExpression.pipe(
-                    map(this.GroupByDomain),
-                    map(groupedByDomain =>
-                        new Set<any>([...groupedByDomain.entries()]
-                            .filter(entry => entry[1].length <= objectMaxCardinality.Cardinality)
-                            .map(entry => entry[0])))));
+        this._classes.set(
+            objectMaxCardinality,
+            combineLatest(
+                this._objectDomain,
+                observableObjectPropertyExpression,
+                (objectDomain, objectPropertyExpression) =>
+                    GroupJoin(
+                        objectDomain,
+                        objectPropertyExpression,
+                        individual => individual,
+                        member => member[0])).pipe(
+                            map(groupedByDomain =>
+                                new Set<any>([...groupedByDomain.entries()]
+                                    .filter(entry => entry[1].length <= objectMaxCardinality.Cardinality)
+                                    .map(entry => entry[0])))));
     }
 
     ObjectExactCardinality(

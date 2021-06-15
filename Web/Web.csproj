@@ -227,6 +227,7 @@
     <None Remove="ClientApp\src\app\Ontology\ObjectIntersectionOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMaxCardinality.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMaxCardinality.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectMaxCardinalityObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMinCardinality.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMinCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMinCardinalityObservable.Spec.ts" />
@@ -478,6 +479,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectExactCardinalityObservable.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectHasValue.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectMaxCardinality.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectMaxCardinalityObservable.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectMinCardinality.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectCardinality.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectComplementOf.Spec.ts" />
