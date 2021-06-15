@@ -58,7 +58,7 @@ describe(
                     () =>
                     {
                         const x = 1;
-                        let   c1Members: Set<any> = null;
+                        let c1Members: Set<any> = null;
                         const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([x]));
                         it(
@@ -73,7 +73,7 @@ describe(
                     {
                         const x = 1;
                         const y = 2;
-                        let   c1Members: Set<any> = null;
+                        let c1Members: Set<any> = null;
                         const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([x]));
                         classifier[1].get('op1').next([[x, y]]);
@@ -99,7 +99,7 @@ describe(
                     () =>
                     {
                         const x = 1;
-                        let   c1Members: Set<any> = null;
+                        let c1Members: Set<any> = null;
                         const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([x]));
                         it(
@@ -114,7 +114,7 @@ describe(
                     {
                         const x = 1;
                         const y = 2;
-                        let   c1Members: Set<any> = null;
+                        let c1Members: Set<any> = null;
                         const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([x]));
                         classifier[1].get('op1').next([[x, y]]);
@@ -169,7 +169,7 @@ describe(
                     {
                         const x = 1;
                         const y = 2;
-                        let   c1Members: Set<any> = null;
+                        let c1Members: Set<any> = null;
                         const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([x]));
                         classifier[1].get('op1').next([[x, y]]);
@@ -184,7 +184,7 @@ describe(
                     () =>
                     {
                         const x = 1;
-                        let   c1Members: Set<any> = null;
+                        let c1Members: Set<any> = null;
                         const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([x]));
                         classifier[1].get('op1').next([[x, iInterpretation]]);
@@ -200,7 +200,7 @@ describe(
                     {
                         const x = 1;
                         const y = 2;
-                        let   c1Members: Set<any> = null;
+                        let c1Members: Set<any> = null;
                         const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([x]));
                         classifier[1].get('op1').next([[x, iInterpretation], [x, y]]);
