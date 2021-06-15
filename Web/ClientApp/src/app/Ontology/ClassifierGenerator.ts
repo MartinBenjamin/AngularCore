@@ -544,7 +544,7 @@ export class ClassifierGenerator implements IClassExpressionVisitor
             relation => relation[1]);
     }
 
-    PropertyExpression(
+    private PropertyExpression(
         objectPropertyExpression: IPropertyExpression
         ): Observable<[any, any][]>
     {
