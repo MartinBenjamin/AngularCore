@@ -380,7 +380,7 @@ export class ClassifierGenerator implements IClassExpressionVisitor
             this._classes.set(
                 objectMinCardinality,
                 observableObjectPropertyExpression.pipe(
-                    map(objectPropertyExpression => new Set<any>(objectPropertyExpression.map(relation => relation[0])))));
+                    map(objectPropertyExpression => new Set<any>(objectPropertyExpression.map(member => member[0])))));
 
         else
             this._classes.set(
@@ -455,7 +455,7 @@ export class ClassifierGenerator implements IClassExpressionVisitor
                             objectDomain,
                             objectPropertyExpression,
                             individual => individual,
-                            relation => relation[0])).pipe(
+                            member => member[0])).pipe(
                                 map(groupedByDomain =>
                                     new Set<any>([...groupedByDomain.entries()]
                                         .filter(entry => entry[1].length === objectExactCardinality.Cardinality)
