@@ -375,14 +375,22 @@ export class ClassifierGenerator implements IClassExpressionVisitor
                 (objectPropertyExpression, classExpression) =>
                     objectPropertyExpression.filter(member => classExpression.has(member[1])));
 
-        this._classes.set(
-            objectMinCardinality,
-            observableObjectPropertyExpression.pipe(
-                map(this.GroupByDomain),
-                map(groupedByDomain =>
-                    new Set<any>([...groupedByDomain.entries()]
-                        .filter(entry => entry[1].length >= objectMinCardinality.Cardinality)
-                        .map(entry => entry[0])))));
+        if(objectMinCardinality.Cardinality === 1)
+            // Optimise for a minimum cardinality of 1.
+            this._classes.set(
+                objectMinCardinality,
+                observableObjectPropertyExpression.pipe(
+                    map(objectPropertyExpression => new Set<any>(objectPropertyExpression.map(relation => relation[0])))));
+
+        else
+            this._classes.set(
+                objectMinCardinality,
+                observableObjectPropertyExpression.pipe(
+                    map(this.GroupByDomain),
+                    map(groupedByDomain =>
+                        new Set<any>([...groupedByDomain.entries()]
+                            .filter(entry => entry[1].length >= objectMinCardinality.Cardinality)
+                            .map(entry => entry[0])))));
     }
 
     ObjectMaxCardinality(
