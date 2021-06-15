@@ -517,22 +517,22 @@ export class ClassifierGenerator implements IClassExpressionVisitor
             return;
         }
 
-        let observabledataPropertyExpression = this.PropertyExpression(dataMinCardinality.DataPropertyExpression);
+        let observableDataPropertyExpression = this.PropertyExpression(dataMinCardinality.DataPropertyExpression);
         if(dataMinCardinality.DataRange)
-            observabledataPropertyExpression = observabledataPropertyExpression.pipe(
+            observableDataPropertyExpression = observableDataPropertyExpression.pipe(
                 map(dataPropertyExpression => dataPropertyExpression.filter(member => dataMinCardinality.DataRange.HasMember(member[1]))));
 
-        if(observabledataPropertyExpression.Cardinality === 1)
+        if(dataMinCardinality.Cardinality === 1)
             // Optimise for a minimum cardinality of 1.
             this._classes.set(
                 dataMinCardinality,
-                observabledataPropertyExpression.pipe(
+                observableDataPropertyExpression.pipe(
                     map(dataPropertyExpression => new Set<any>(dataPropertyExpression.map(member => member[0])))));
 
         else
             this._classes.set(
                 dataMinCardinality,
-                observabledataPropertyExpression.pipe(
+                observableDataPropertyExpression.pipe(
                     map(this.GroupByDomain),
                     map(groupedByDomain =>
                         new Set<any>([...groupedByDomain.entries()]
@@ -544,16 +544,16 @@ export class ClassifierGenerator implements IClassExpressionVisitor
         dataMaxCardinality: IDataMaxCardinality
         )
     {
-        let observabledataPropertyExpression = this.PropertyExpression(dataMaxCardinality.DataPropertyExpression);
+        let observableDataPropertyExpression = this.PropertyExpression(dataMaxCardinality.DataPropertyExpression);
         if(dataMaxCardinality.DataRange)
-            observabledataPropertyExpression = observabledataPropertyExpression.pipe(
+            observableDataPropertyExpression = observableDataPropertyExpression.pipe(
                 map(dataPropertyExpression => dataPropertyExpression.filter(member => dataMaxCardinality.DataRange.HasMember(member[1]))));
 
         this._classes.set(
             dataMaxCardinality,
             combineLatest(
                 this._objectDomain,
-                observabledataPropertyExpression,
+                observableDataPropertyExpression,
                 (objectDomain, dataPropertyExpression) =>
                     GroupJoin(
                         objectDomain,
@@ -570,9 +570,9 @@ export class ClassifierGenerator implements IClassExpressionVisitor
         dataExactCardinality: IDataExactCardinality
         )
     {
-        let observabledataPropertyExpression = this.PropertyExpression(dataExactCardinality.DataPropertyExpression);
+        let observableDataPropertyExpression = this.PropertyExpression(dataExactCardinality.DataPropertyExpression);
         if(dataExactCardinality.DataRange)
-            observabledataPropertyExpression = observabledataPropertyExpression.pipe(
+            observableDataPropertyExpression = observableDataPropertyExpression.pipe(
                 map(dataPropertyExpression => dataPropertyExpression.filter(member => dataExactCardinality.DataRange.HasMember(member[1]))));
 
         if(dataExactCardinality.Cardinality === 0)
@@ -580,7 +580,7 @@ export class ClassifierGenerator implements IClassExpressionVisitor
                 dataExactCardinality,
                 combineLatest(
                     this._objectDomain,
-                    observabledataPropertyExpression,
+                    observableDataPropertyExpression,
                     (objectDomain, dataPropertyExpression) =>
                         GroupJoin(
                             objectDomain,
@@ -596,13 +596,13 @@ export class ClassifierGenerator implements IClassExpressionVisitor
             // Optimise for Functional Data Properties.
             this._classes.set(
                 dataExactCardinality,
-                observabledataPropertyExpression.pipe(
+                observableDataPropertyExpression.pipe(
                     map(dataPropertyExpression => new Set<any>(dataPropertyExpression.map(member => member[0])))));
 
         else
             this._classes.set(
                 dataExactCardinality,
-                observabledataPropertyExpression.pipe(
+                observableDataPropertyExpression.pipe(
                     map(this.GroupByDomain),
                     map(groupedByDomain =>
                         new Set<any>([...groupedByDomain.entries()]
