@@ -140,27 +140,6 @@ describe(
                             () => expect(c1Members.has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
-
-                //describe(
-                //    'Given an individual i1 with relations (i1, 12) and (i1, i2):',
-                //    () =>
-                //    {
-                //        let i1 = 1;
-                //        let i2 = 2;
-                //        let c1Members: Set<any> = null;
-                //        let subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                //        classifier[0].next(new Set<any>([i1]));
-                //        classifier[1].get('op1').next([[i1, i2], [i1, i2]]);
-                //        it(
-                //            'i1 is not a member of c1',
-                //            () =>
-                //            {
-                //                expect(c1Members).not.toBeNull();
-                //                expect(c1Members.has(i1)).toBe(false);
-                //            });
-
-                //        subscription.unsubscribe();
-                //    });
             });
     });
     
@@ -177,7 +156,8 @@ describe(
             {
                 const o1 = new Ontology('o1');
                 const i = new NamedIndividual(o1, 'i');
-                new DataPropertyAssertion(o1, new DataProperty(o1, 'Id'), i, 10);
+                const iInterpretation = 10;
+                new DataPropertyAssertion(o1, new DataProperty(o1, 'Id'), i, iInterpretation);
                 const c1 = new Class(o1, 'c1');
                 const op1 = new ObjectProperty(o1, 'op1');
                 new EquivalentClasses(o1, [c1, new ObjectMinCardinality(op1, 1, new ObjectOneOf([i]))]);
@@ -204,11 +184,10 @@ describe(
                     () =>
                     {
                         const x = 1;
-                        const i = 10;
                         let   c1Members: Set<any> = null;
                         const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([x]));
-                        classifier[1].get('op1').next([[x, i]]);
+                        classifier[1].get('op1').next([[x, iInterpretation]]);
                         it(
                             'x ∈ (c1)C',
                             () => expect(c1Members.has(x)).toBe(true));
@@ -221,11 +200,10 @@ describe(
                     {
                         const x = 1;
                         const y = 2;
-                        const i = 10;
                         let   c1Members: Set<any> = null;
                         const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
                         classifier[0].next(new Set<any>([x]));
-                        classifier[1].get('op1').next([[x, i], [x, y]]);
+                        classifier[1].get('op1').next([[x, iInterpretation], [x, y]]);
                         it(
                             'x ∈ (c1)C',
                             () => expect(c1Members.has(x)).toBe(true));
