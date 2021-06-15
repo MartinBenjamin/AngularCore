@@ -451,15 +451,19 @@ export class ClassifierGenerator implements IClassExpressionVisitor
                     this._objectDomain,
                     observableObjectPropertyExpression,
                     (objectDomain, objectPropertyExpression) =>
-                        GroupJoin(
+                    {
+                        return GroupJoin(
                             objectDomain,
                             objectPropertyExpression,
                             individual => individual,
-                            member => member[0])).pipe(
+                            member => member[0]);
+                    }).pipe(
                                 map(groupedByDomain =>
-                                    new Set<any>([...groupedByDomain.entries()]
+                                {
+                                    return new Set<any>([...groupedByDomain.entries()]
                                         .filter(entry => entry[1].length === objectExactCardinality.Cardinality)
-                                        .map(entry => entry[0])))));
+                                        .map(entry => entry[0]));
+                                })));
         else
             this._classes.set(
                 objectExactCardinality,
