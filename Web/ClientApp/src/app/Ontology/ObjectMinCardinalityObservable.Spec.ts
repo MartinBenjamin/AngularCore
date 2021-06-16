@@ -6,11 +6,14 @@ import { ObjectOneOf } from './ObjectOneOf';
 import { ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { DataProperty, ObjectProperty } from './Property';
+import { ClassExpressionWriter } from './ClassExpressionWriter';
 
 describe(
     'ObjectMinCardinality(n OPE) ({ x | #{ y | ( x , y ) ∈ (OPE)OP } ≥ n })',
     () =>
     {
+        const classExpressionWriter = new ClassExpressionWriter();
+
         describe(
             'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1):',
             () =>
@@ -21,7 +24,7 @@ describe(
                 const generator = new ObservableGenerator(o1);
 
                 it(
-                    '(ObjectMinCardinality(0 op1))C = ΔI',
+                    `(${classExpressionWriter.Write(ope)})C = ΔI`,
                     () => expect(generator.ClassExpression(ope)).toBe(generator.ObjectDomain));
 
                 describe(
@@ -33,7 +36,7 @@ describe(
                         const subscription = generator.ClassExpression(ope).subscribe(m => opeMembers = m);
                         generator.ObjectDomain.next(new Set<any>([x]));
                         it(
-                            'x ∈ (ObjectMinCardinality(0 op1))C',
+                            `x ∈ (${classExpressionWriter.Write(ope)})C`,
                             () => expect(opeMembers.has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
@@ -57,7 +60,7 @@ describe(
                         const subscription = generator.ClassExpression(ope).subscribe(m => opeMembers = m);
                         generator.ObjectDomain.next(new Set<any>([x]));
                         it(
-                            '¬(x ∈ (ObjectMinCardinality(1 op1))C)',
+                            `¬(x ∈ (${classExpressionWriter.Write(ope)})C)`,
                             () => expect(opeMembers.has(x)).toBe(false));
                         subscription.unsubscribe();
                     });
@@ -73,18 +76,17 @@ describe(
                         generator.ObjectDomain.next(new Set<any>([x]));
                         generator.PropertyExpression(op1).next([[x, y]]);
                         it(
-                            'x ∈ (ObjectMinCardinality(1 op1))C',
+                            `x ∈ (${classExpressionWriter.Write(ope)})C`,
                             () => expect(opeMembers.has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
             });
 
         describe(
-            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1) and EquivalentClasses(c1 ObjectMinCardinality(2 op1)):',
+            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1):',
             () =>
             {
                 const o1 = new Ontology('o1');
-                const c1 = new Class(o1, 'c1');
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ope = new ObjectMinCardinality(op1, 2);
                 const generator = new ObservableGenerator(o1);
@@ -98,7 +100,7 @@ describe(
                         const subscription = generator.ClassExpression(ope).subscribe(m => opeMembers = m);
                         generator.ObjectDomain.next(new Set<any>([x]));
                         it(
-                            '¬(x ∈ (ObjectMinCardinality(2 op1))C)',
+                            `¬(x ∈ (${classExpressionWriter.Write(ope)})C)`,
                             () => expect(opeMembers.has(x)).toBe(false));
                         subscription.unsubscribe();
                     });
@@ -114,7 +116,7 @@ describe(
                         generator.ObjectDomain.next(new Set<any>([x]));
                         generator.PropertyExpression(op1).next([[x, y]]);
                         it(
-                            '¬(x ∈ (ObjectMinCardinality(2 op1))C)',
+                            `¬(x ∈ (${classExpressionWriter.Write(ope)})C)`,
                             () => expect(opeMembers.has(x)).toBe(false));
                         subscription.unsubscribe();
                     });
@@ -131,7 +133,7 @@ describe(
                         generator.ObjectDomain.next(new Set<any>([x]));
                         generator.PropertyExpression(op1).next([[x, y], [x, z]]);
                         it(
-                            'x ∈ (ObjectMinCardinality(2 op1))C',
+                            `x ∈ (${classExpressionWriter.Write(ope)})C`,
                             () => expect(opeMembers.has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
