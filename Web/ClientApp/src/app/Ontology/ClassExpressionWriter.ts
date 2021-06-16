@@ -5,6 +5,8 @@ import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
 import { IDataHasValue } from "./IDataHasValue";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
+import { IEntity } from './IEntity';
+import { INamedIndividual } from './INamedIndividual';
 import { IObjectAllValuesFrom } from "./IObjectAllValuesFrom";
 import { IObjectCardinality, IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectComplementOf } from "./IObjectComplementOf";
@@ -14,13 +16,14 @@ import { IObjectIntersectionOf } from "./IObjectIntersectionOf";
 import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
-import { IPropertyExpression } from './IPropertyExpression';
 
 export class ClassExpressionWriter implements IClassExpressionSelector<string>
 {
     Class(class$: IClass): string {
         throw new Error("Method not implemented.");
-    }    ObjectIntersectionOf(objectIntersectionOf: IObjectIntersectionOf): string {
+    }
+    ObjectIntersectionOf(objectIntersectionOf: IObjectIntersectionOf): string
+    {
         throw new Error("Method not implemented.");
     }
     ObjectUnionOf(objectUnionOf: IObjectUnionOf): string {
@@ -29,9 +32,17 @@ export class ClassExpressionWriter implements IClassExpressionSelector<string>
     ObjectComplementOf(objectComplementOf: IObjectComplementOf): string {
         throw new Error("Method not implemented.");
     }
-    ObjectOneOf(objectOneOf: IObjectOneOf): string {
-        throw new Error("Method not implemented.");
+
+    ObjectOneOf(
+        objectOneOf: IObjectOneOf
+        ): string
+    {
+        const individuals = objectOneOf.Individuals
+            .map(individual => this.Entity(<INamedIndividual>individual))
+            .reduce((previousValue, currentValue) => previousValue + ' ' + currentValue);
+        return `ObjectOneOf(${individuals})`;
     }
+
     ObjectSomeValuesFrom(objectSomeValuesFrom: IObjectSomeValuesFrom): string {
         throw new Error("Method not implemented.");
     }
@@ -70,7 +81,10 @@ export class ClassExpressionWriter implements IClassExpressionSelector<string>
         objectCardinality: IObjectCardinality
         ): string
     {
-        return `(${objectCardinality.Cardinality} ${this.PropertyExpression(objectCardinality.ObjectPropertyExpression)}${objectCardinality.ClassExpression ? ' ' + objectCardinality.Select(this) : ''})`;
+        return `(\
+${objectCardinality.Cardinality} \
+${this.Entity(objectCardinality.ObjectPropertyExpression)}\
+${objectCardinality.ClassExpression ? ' ' + objectCardinality.ClassExpression.Select(this) : ''})`;
     }
 
     DataSomeValuesFrom(dataSomeValuesFrom: IDataSomeValuesFrom): string {
@@ -92,11 +106,11 @@ export class ClassExpressionWriter implements IClassExpressionSelector<string>
         throw new Error("Method not implemented.");
     }
 
-    PropertyExpression(
-        propertyExpression: IPropertyExpression
+    Entity(
+        entity: IEntity
         ): string
     {
-        return propertyExpression.LocalName;
+        return entity.LocalName;
     }
 
     Write(
