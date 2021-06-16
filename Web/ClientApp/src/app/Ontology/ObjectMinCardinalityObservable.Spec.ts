@@ -14,7 +14,7 @@ describe(
         const classExpressionWriter = new ClassExpressionWriter();
 
         describe(
-            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1):',
+            'Given an Ontology o1 with axiom ObjectProperty(op1):',
             () =>
             {
                 const o1 = new Ontology('o1');
@@ -42,7 +42,7 @@ describe(
             });
 
         describe(
-            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1):',
+            'Given an Ontology o1 with axiom ObjectProperty(op1):',
             () =>
             {
                 const o1 = new Ontology('o1');
@@ -82,7 +82,7 @@ describe(
             });
 
         describe(
-            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1):',
+            'Given an Ontology o1 with axiom ObjectProperty(op1):',
             () =>
             {
                 const o1 = new Ontology('o1');
@@ -146,7 +146,7 @@ describe(
         const classExpressionWriter = new ClassExpressionWriter();
 
         describe(
-            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1), NamedIndividual(i):',
+            'Given an Ontology o1 with axioms ObjectProperty(op1) and NamedIndividual(i):',
             () =>
             {
                 const o1 = new Ontology('o1');
