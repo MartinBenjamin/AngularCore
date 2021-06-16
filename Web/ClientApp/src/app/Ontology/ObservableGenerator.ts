@@ -233,494 +233,6 @@ class StoreDecorator implements IStore
     }
 }
 
-export class ObservableGenerator implements IClassExpressionVisitor
-{
-    private _objectDomain             : Subject<Set<any>> = new BehaviorSubject<Set<any>>(new Set<any>());
-    private _properties               : Map<string, Subject<[any, any][]>> = new Map<string, BehaviorSubject<[any, any][]>>();;
-    private _classes                  = new Map<IClassExpression, Observable<Set<any>>>();
-    private _classDefinitions         : Map<IClass, IClassExpression[]>;
-    private _definedClasses           : IClass[];
-    private _functionalDataProperties = new Set<IDataPropertyExpression>();
-
-    constructor(
-        private _ontology: IOntology
-        )
-    {
-        for(let functionalDataProperty of this._ontology.Get(this._ontology.IsAxiom.IFunctionalDataProperty))
-            this._functionalDataProperties.add(functionalDataProperty.DataPropertyExpression);
-
-        let classes = [...this._ontology.Get(this._ontology.IsAxiom.IClass)];
-        let adjacencyList = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, new Set<IClass>()]));
-        for(let equivalentClassExpressions of this._ontology.Get(this._ontology.IsAxiom.IEquivalentClasses))
-        {
-            let equivalentClasses = <IClass[]>equivalentClassExpressions.ClassExpressions.filter(classExpression => this._ontology.IsAxiom.IClass(classExpression));
-            for(let index1 = 0; index1 < equivalentClasses.length; ++index1)
-                for(let index2 = index1; index2 < equivalentClasses.length; ++index2)
-                {
-                    let class1 = equivalentClasses[index1];
-                    let class2 = equivalentClasses[index2];
-                    adjacencyList.get(class1).add(class2);
-                    adjacencyList.get(class2).add(class1);
-                }
-        }
-
-        let transitiveClosure = TransitiveClosure3(adjacencyList);
-
-        let definitions: [IClass, IClassExpression][] = [];
-        for(let equivalentClasses of this._ontology.Get(this._ontology.IsAxiom.IEquivalentClasses))
-            for(let class$ of equivalentClasses.ClassExpressions.filter(classExpression => this._ontology.IsAxiom.IClass(classExpression)))
-            {
-                for(let classExpression of equivalentClasses.ClassExpressions.filter(classExpression => !this._ontology.IsAxiom.IClass(classExpression)))
-                    for(let equivalentClass of transitiveClosure.get(<IClass>class$))
-                        definitions.push(
-                            [
-                                equivalentClass,
-                                classExpression
-                            ]);
-                break;
-            }
-
-        this._classDefinitions = Group(
-            definitions,
-            definition => definition[0],
-            definition => definition[1]);
-
-        let adjacent: Set<IClass> = null;
-        let empty = new Set<IClass>();
-        adjacencyList = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, empty]));
-        let classVisitor = new ClassExpressionNavigator(new ClassVisitor(class$ => adjacent.add(class$)));
-
-        for(let [class$, classExpression] of this._classDefinitions)
-        {
-            adjacent = new Set<IClass>();
-            classExpression[0].Accept(classVisitor);
-            adjacencyList.set(
-                class$,
-                adjacent);
-        }
-
-        let longestPaths = LongestPaths(adjacencyList);
-        this._definedClasses = [...this._classDefinitions.keys()]
-            .sort((a, b) => longestPaths.get(b) - longestPaths.get(a));
-    }
-
-    Class(
-        class$: IClass
-        )
-    {
-    }
-
-    ObjectIntersectionOf(
-        objectIntersectionOf: IObjectIntersectionOf
-        )
-    {
-        this._classes.set(
-            objectIntersectionOf,
-            combineLatest(
-                objectIntersectionOf.ClassExpressions.map(classExpression => this.ClassExpression(classExpression)),
-                (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs]))));
-    }
-
-    ObjectUnionOf(
-        objectUnionOf: IObjectUnionOf
-        )
-    {
-        this._classes.set(
-            objectUnionOf,
-            combineLatest(
-                objectUnionOf.ClassExpressions.map(classExpression => this.ClassExpression(classExpression)),
-                (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs].filter(member => rhs.has(member))))));
-    }
-
-    ObjectComplementOf(
-        objectComplementOf: IObjectComplementOf
-        )
-    {
-        this._classes.set(
-            objectComplementOf,
-            combineLatest(
-                this._objectDomain,
-                this.ClassExpression(objectComplementOf.ClassExpression),
-                (objectDomain, classExpression) => new Set<any>([...objectDomain].filter(member => !classExpression.has(member)))));
-    }
-
-    ObjectOneOf(
-        objectOneOf: IObjectOneOf
-        )
-    {
-        this._classes.set(
-            objectOneOf,
-            new BehaviorSubject<Set<any>>(new Set<any>(objectOneOf.Individuals.map(individual => this.InterpretIndividual(individual)))));
-    }
-
-    ObjectSomeValuesFrom(
-        objectSomeValuesFrom: IObjectSomeValuesFrom
-        )
-    {
-        this._classes.set(
-            objectSomeValuesFrom,
-            combineLatest(
-                this.PropertyExpression(objectSomeValuesFrom.ObjectPropertyExpression),
-                this.ClassExpression(objectSomeValuesFrom.ClassExpression),
-                (objectPropertyExpression, classExpression) =>
-                    new Set<any>(
-                        objectPropertyExpression
-                            .filter(member => classExpression.has(member[1]))
-                            .map(member => member[0]))));
-    }
-
-    ObjectAllValuesFrom(
-        objectAllValuesFrom: IObjectAllValuesFrom
-        )
-    {
-        this._classes.set(
-            objectAllValuesFrom,
-            combineLatest(
-                this.PropertyExpression(objectAllValuesFrom.ObjectPropertyExpression).pipe(map(this.GroupByDomain)),
-                this.ClassExpression(objectAllValuesFrom.ClassExpression),
-                (groupedByDomain, classExpression) =>
-                    new Set<any>(
-                        [...groupedByDomain.entries()]
-                            .filter(entry => entry[1].every(individual => classExpression.has(individual)))
-                            .map(entry => entry[0]))));
-    }
-
-    ObjectHasValue(
-        objectHasValue: IObjectHasValue
-        )
-    {
-        const individual = this.InterpretIndividual(objectHasValue.Individual);
-        this._classes.set(
-            objectHasValue,
-            this.PropertyExpression(objectHasValue.ObjectPropertyExpression).pipe(
-                map(objectPropertyExpression =>
-                    new Set<any>(objectPropertyExpression
-                        .filter(member => member[1] === individual)
-                        .map(member => member[0])))));
-    }
-
-    ObjectHasSelf(
-        objectHasSelf: IObjectHasSelf
-        )
-    {
-        this._classes.set(
-            objectHasSelf,
-            this.PropertyExpression(objectHasSelf.ObjectPropertyExpression).pipe(
-                map(objectPropertyExpression =>
-                    new Set<any>(objectPropertyExpression
-                        .filter(member => member[0] === member[1])
-                        .map(member => member[0])))));
-    }
-
-    ObjectMinCardinality(
-        objectMinCardinality: IObjectMinCardinality
-        )
-    {
-        if(objectMinCardinality.Cardinality === 0)
-        {
-            // All individuals.
-            this._classes.set(
-                objectMinCardinality,
-                this._objectDomain);
-
-            return;
-        }
-
-        let observableObjectPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(objectMinCardinality.ObjectPropertyExpression);
-        if(objectMinCardinality.ClassExpression)
-            observableObjectPropertyExpression = combineLatest(
-                observableObjectPropertyExpression,
-                this.ClassExpression(objectMinCardinality.ClassExpression),
-                (objectPropertyExpression, classExpression) =>
-                    objectPropertyExpression.filter(member => classExpression.has(member[1])));
-
-        if(objectMinCardinality.Cardinality === 1)
-            // Optimise for a minimum cardinality of 1.
-            this._classes.set(
-                objectMinCardinality,
-                observableObjectPropertyExpression.pipe(
-                    map(objectPropertyExpression => new Set<any>(objectPropertyExpression.map(member => member[0])))));
-
-        else
-            this._classes.set(
-                objectMinCardinality,
-                observableObjectPropertyExpression.pipe(
-                    map(this.GroupByDomain),
-                    map(groupedByDomain =>
-                        new Set<any>([...groupedByDomain.entries()]
-                            .filter(entry => entry[1].length >= objectMinCardinality.Cardinality)
-                            .map(entry => entry[0])))));
-    }
-
-    ObjectMaxCardinality(
-        objectMaxCardinality: IObjectMaxCardinality
-        )
-    {
-        let observableObjectPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(objectMaxCardinality.ObjectPropertyExpression);
-        if(objectMaxCardinality.ClassExpression)
-            observableObjectPropertyExpression = combineLatest(
-                observableObjectPropertyExpression,
-                this.ClassExpression(objectMaxCardinality.ClassExpression),
-                (objectPropertyExpression, classExpression) =>
-                    objectPropertyExpression.filter(member => classExpression.has(member[1])));
-
-        this._classes.set(
-            objectMaxCardinality,
-            combineLatest(
-                this._objectDomain,
-                observableObjectPropertyExpression,
-                (objectDomain, objectPropertyExpression) =>
-                    GroupJoin(
-                        objectDomain,
-                        objectPropertyExpression,
-                        individual => individual,
-                        member => member[0])).pipe(
-                            map(groupedByDomain =>
-                                new Set<any>([...groupedByDomain.entries()]
-                                    .filter(entry => entry[1].length <= objectMaxCardinality.Cardinality)
-                                    .map(entry => entry[0])))));
-    }
-
-    ObjectExactCardinality(
-        objectExactCardinality: IObjectExactCardinality
-        )
-    {
-        let observableObjectPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(objectExactCardinality.ObjectPropertyExpression);
-        if(objectExactCardinality.ClassExpression)
-            observableObjectPropertyExpression = combineLatest(
-                observableObjectPropertyExpression,
-                this.ClassExpression(objectExactCardinality.ClassExpression),
-                (objectPropertyExpression, classExpression) =>
-                    objectPropertyExpression.filter(member => classExpression.has(member[1])));
-
-        if(objectExactCardinality.Cardinality === 0)
-            this._classes.set(
-                objectExactCardinality,
-                combineLatest(
-                    this._objectDomain,
-                    observableObjectPropertyExpression,
-                    (objectDomain, objectPropertyExpression) =>
-                        GroupJoin(
-                            objectDomain,
-                            objectPropertyExpression,
-                            individual => individual,
-                            member => member[0])).pipe(
-                                map(groupedByDomain =>
-                                    new Set<any>([...groupedByDomain.entries()]
-                                        .filter(entry => entry[1].length === objectExactCardinality.Cardinality)
-                                        .map(entry => entry[0])))));
-
-        else
-            this._classes.set(
-                objectExactCardinality,
-                observableObjectPropertyExpression.pipe(
-                    map(this.GroupByDomain),
-                    map(groupedByDomain =>
-                        new Set<any>([...groupedByDomain.entries()]
-                            .filter(entry => entry[1].length === objectExactCardinality.Cardinality)
-                            .map(entry => entry[0])))));
-    }
-
-    DataSomeValuesFrom(
-        dataSomeValuesFrom: IDataSomeValuesFrom
-        )
-    {
-        this._classes.set(
-            dataSomeValuesFrom,
-            this.PropertyExpression(dataSomeValuesFrom.DataPropertyExpression).pipe(
-                map(dataPropertyExpression =>
-                    new Set<any>(dataPropertyExpression
-                        .filter(member => dataSomeValuesFrom.DataRange.HasMember(member[1]))))));
-    }
-
-    DataAllValuesFrom(
-        dataAllValuesFrom: IDataAllValuesFrom
-        )
-    {
-        this._classes.set(
-            dataAllValuesFrom,
-            this.PropertyExpression(dataAllValuesFrom.DataPropertyExpression).pipe(
-                map(this.GroupByDomain),
-                map(groupedByDomain =>
-                    new Set<any>(
-                        [...groupedByDomain.entries()]
-                            .filter(entry => entry[1].every(value => dataAllValuesFrom.DataRange.HasMember(value)))
-                            .map(entry => entry[0])))));
-    }
-
-    DataHasValue(
-        dataHasValue: IDataHasValue
-        )
-    {
-        this._classes.set(
-            dataHasValue,
-            this.PropertyExpression(dataHasValue.DataPropertyExpression).pipe(
-                map(dataPropertyExpression =>
-                    new Set<any>(dataPropertyExpression
-                        .filter(member => member[1] === dataHasValue.Value)
-                        .map(member => member[0])))));
-    }
-
-    DataMinCardinality(
-        dataMinCardinality: IDataMinCardinality
-        )
-    {
-        if(dataMinCardinality.Cardinality === 0)
-        {
-            // All individuals.
-            this._classes.set(
-                dataMinCardinality,
-                this._objectDomain);
-
-            return;
-        }
-
-        let observableDataPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(dataMinCardinality.DataPropertyExpression);
-        if(dataMinCardinality.DataRange)
-            observableDataPropertyExpression = observableDataPropertyExpression.pipe(
-                map(dataPropertyExpression => dataPropertyExpression.filter(member => dataMinCardinality.DataRange.HasMember(member[1]))));
-
-        if(dataMinCardinality.Cardinality === 1)
-            // Optimise for a minimum cardinality of 1.
-            this._classes.set(
-                dataMinCardinality,
-                observableDataPropertyExpression.pipe(
-                    map(dataPropertyExpression => new Set<any>(dataPropertyExpression.map(member => member[0])))));
-
-        else
-            this._classes.set(
-                dataMinCardinality,
-                observableDataPropertyExpression.pipe(
-                    map(this.GroupByDomain),
-                    map(groupedByDomain =>
-                        new Set<any>([...groupedByDomain.entries()]
-                            .filter(entry => entry[1].length >= dataMinCardinality.Cardinality)
-                            .map(entry => entry[0])))));
-    }
-
-    DataMaxCardinality(
-        dataMaxCardinality: IDataMaxCardinality
-        )
-    {
-        let observableDataPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(dataMaxCardinality.DataPropertyExpression);
-        if(dataMaxCardinality.DataRange)
-            observableDataPropertyExpression = observableDataPropertyExpression.pipe(
-                map(dataPropertyExpression => dataPropertyExpression.filter(member => dataMaxCardinality.DataRange.HasMember(member[1]))));
-
-        this._classes.set(
-            dataMaxCardinality,
-            combineLatest(
-                this._objectDomain,
-                observableDataPropertyExpression,
-                (objectDomain, dataPropertyExpression) =>
-                    GroupJoin(
-                        objectDomain,
-                        dataPropertyExpression,
-                        individual => individual,
-                        member => member[0])).pipe(
-                            map(groupedByDomain =>
-                                new Set<any>([...groupedByDomain.entries()]
-                                    .filter(entry => entry[1].length <= dataMaxCardinality.Cardinality)
-                                    .map(entry => entry[0])))));
-    }
-
-    DataExactCardinality(
-        dataExactCardinality: IDataExactCardinality
-        )
-    {
-        let observableDataPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(dataExactCardinality.DataPropertyExpression);
-        if(dataExactCardinality.DataRange)
-            observableDataPropertyExpression = observableDataPropertyExpression.pipe(
-                map(dataPropertyExpression => dataPropertyExpression.filter(member => dataExactCardinality.DataRange.HasMember(member[1]))));
-
-        if(dataExactCardinality.Cardinality === 0)
-            this._classes.set(
-                dataExactCardinality,
-                combineLatest(
-                    this._objectDomain,
-                    observableDataPropertyExpression,
-                    (objectDomain, dataPropertyExpression) =>
-                        GroupJoin(
-                            objectDomain,
-                            dataPropertyExpression,
-                            individual => individual,
-                            member => member[0])).pipe(
-                                map(groupedByDomain =>
-                                    new Set<any>([...groupedByDomain.entries()]
-                                        .filter(entry => entry[1].length === dataExactCardinality.Cardinality)
-                                        .map(entry => entry[0])))));
-
-        else if(dataExactCardinality.Cardinality === 1 && this._functionalDataProperties.has(dataExactCardinality.DataPropertyExpression))
-            // Optimise for Functional Data Properties.
-            this._classes.set(
-                dataExactCardinality,
-                observableDataPropertyExpression.pipe(
-                    map(dataPropertyExpression => new Set<any>(dataPropertyExpression.map(member => member[0])))));
-
-        else
-            this._classes.set(
-                dataExactCardinality,
-                observableDataPropertyExpression.pipe(
-                    map(this.GroupByDomain),
-                    map(groupedByDomain =>
-                        new Set<any>([...groupedByDomain.entries()]
-                            .filter(entry => entry[1].length === dataExactCardinality.Cardinality)
-                            .map(entry => entry[0])))));
-    }
-
-    private GroupByDomain(
-        relations: [any, any][]
-        ): Map<any, any[]>
-    {
-        return Group(
-            relations,
-            relation => relation[0],
-            relation => relation[1]);
-    }
-
-    get ObjectDomain(): Subject<Set<any>>
-    {
-        return this._objectDomain;
-    }
-
-    PropertyExpression(
-        objectPropertyExpression: IPropertyExpression
-        ): Subject<[any, any][]>
-    {
-        let subject = this._properties.get(objectPropertyExpression.LocalName);
-        if(!subject)
-        {
-            subject = new BehaviorSubject<[any, any][]>([]);
-            this._properties.set(
-                objectPropertyExpression.LocalName,
-                subject);
-        }
-        return subject;
-    }
-
-    ClassExpression(
-        classExpression: IClassExpression
-        ): Observable<Set<any>>
-    {
-        if(!this._classes.has(classExpression))
-            classExpression.Accept(this);
-
-        return this._classes.get(classExpression);
-    }
-
-    InterpretIndividual(
-        individual: object
-        ): any
-    {
-        for(const dataPropertyAssertion of this._ontology.Get(this._ontology.IsAxiom.IDataPropertyAssertion))
-            if(dataPropertyAssertion.DataPropertyExpression.LocalName === 'Id' &&
-                dataPropertyAssertion.SourceIndividual === individual)
-                return dataPropertyAssertion.TargetValue;
-
-        return individual;
-    }
-}
-
 export class ObservableGenerator2 implements IClassExpressionSelector<Observable<Set<any>>>
 {
     private _objectDomain             : Subject<Set<any>> = new BehaviorSubject<Set<any>>(new Set<any>());
@@ -979,42 +491,120 @@ export class ObservableGenerator2 implements IClassExpressionSelector<Observable
         dataSomeValuesFrom: IDataSomeValuesFrom
         ): Observable<Set<any>>
     {
-        throw new Error("Method not implemented.");
+        return this.PropertyExpression(dataSomeValuesFrom.DataPropertyExpression).pipe(
+            map(dataPropertyExpression =>
+                new Set<any>(dataPropertyExpression
+                    .filter(member => dataSomeValuesFrom.DataRange.HasMember(member[1])))));
     }
 
     DataAllValuesFrom(
         dataAllValuesFrom: IDataAllValuesFrom
         ): Observable<Set<any>>
     {
-        throw new Error("Method not implemented.");
+        return this.PropertyExpression(dataAllValuesFrom.DataPropertyExpression).pipe(
+            map(this.GroupByDomain),
+            map(groupedByDomain =>
+                new Set<any>(
+                    [...groupedByDomain.entries()]
+                        .filter(entry => entry[1].every(value => dataAllValuesFrom.DataRange.HasMember(value)))
+                        .map(entry => entry[0]))));
     }
 
     DataHasValue(
         dataHasValue: IDataHasValue
         ): Observable<Set<any>>
     {
-        throw new Error("Method not implemented.");
+        return this.PropertyExpression(dataHasValue.DataPropertyExpression).pipe(
+            map(dataPropertyExpression =>
+                new Set<any>(dataPropertyExpression
+                    .filter(member => member[1] === dataHasValue.Value)
+                    .map(member => member[0]))));
     }
 
     DataMinCardinality(
         dataMinCardinality: IDataMinCardinality
         ): Observable<Set<any>>
     {
-        throw new Error("Method not implemented.");
+        if(dataMinCardinality.Cardinality === 0)
+            return this._objectDomain;
+
+        let observableDataPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(dataMinCardinality.DataPropertyExpression);
+        if(dataMinCardinality.DataRange)
+            observableDataPropertyExpression = observableDataPropertyExpression.pipe(
+                map(dataPropertyExpression => dataPropertyExpression.filter(member => dataMinCardinality.DataRange.HasMember(member[1]))));
+
+        if(dataMinCardinality.Cardinality === 1)
+            // Optimise for a minimum cardinality of 1.
+            return observableDataPropertyExpression.pipe(
+                map(dataPropertyExpression => new Set<any>(dataPropertyExpression.map(member => member[0]))));
+
+        return observableDataPropertyExpression.pipe(
+            map(this.GroupByDomain),
+            map(groupedByDomain =>
+                new Set<any>([...groupedByDomain.entries()]
+                    .filter(entry => entry[1].length >= dataMinCardinality.Cardinality)
+                    .map(entry => entry[0]))));
     }
 
     DataMaxCardinality(
         dataMaxCardinality: IDataMaxCardinality
         ): Observable<Set<any>>
     {
-        throw new Error("Method not implemented.");
+        let observableDataPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(dataMaxCardinality.DataPropertyExpression);
+        if(dataMaxCardinality.DataRange)
+            observableDataPropertyExpression = observableDataPropertyExpression.pipe(
+                map(dataPropertyExpression => dataPropertyExpression.filter(member => dataMaxCardinality.DataRange.HasMember(member[1]))));
+
+        return combineLatest(
+            this._objectDomain,
+            observableDataPropertyExpression,
+            (objectDomain, dataPropertyExpression) =>
+                GroupJoin(
+                    objectDomain,
+                    dataPropertyExpression,
+                    individual => individual,
+                    member => member[0])).pipe(
+                        map(groupedByDomain =>
+                            new Set<any>([...groupedByDomain.entries()]
+                                .filter(entry => entry[1].length <= dataMaxCardinality.Cardinality)
+                                .map(entry => entry[0]))));
     }
 
     DataExactCardinality(
         dataExactCardinality: IDataExactCardinality
         ): Observable<Set<any>>
     {
-        throw new Error("Method not implemented.");
+        let observableDataPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(dataExactCardinality.DataPropertyExpression);
+        if(dataExactCardinality.DataRange)
+            observableDataPropertyExpression = observableDataPropertyExpression.pipe(
+                map(dataPropertyExpression => dataPropertyExpression.filter(member => dataExactCardinality.DataRange.HasMember(member[1]))));
+
+        if(dataExactCardinality.Cardinality === 0)
+            return combineLatest(
+                this._objectDomain,
+                observableDataPropertyExpression,
+                (objectDomain, dataPropertyExpression) =>
+                    GroupJoin(
+                        objectDomain,
+                        dataPropertyExpression,
+                        individual => individual,
+                        member => member[0])).pipe(
+                            map(groupedByDomain =>
+                                new Set<any>([...groupedByDomain.entries()]
+                                    .filter(entry => entry[1].length === dataExactCardinality.Cardinality)
+                                    .map(entry => entry[0]))));
+
+        if(dataExactCardinality.Cardinality === 1 && this._functionalDataProperties.has(dataExactCardinality.DataPropertyExpression))
+            // Optimise for Functional Data Properties.
+            return observableDataPropertyExpression.pipe(
+                map(dataPropertyExpression => new Set<any>(dataPropertyExpression.map(member => member[0]))));
+
+        return observableDataPropertyExpression.pipe(
+            map(this.GroupByDomain),
+            map(groupedByDomain =>
+                new Set<any>([...groupedByDomain.entries()]
+                    .filter(entry => entry[1].length === dataExactCardinality.Cardinality)
+                    .map(entry => entry[0]))));
     }
 
     PropertyExpression(

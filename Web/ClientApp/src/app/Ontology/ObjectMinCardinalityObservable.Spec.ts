@@ -1,12 +1,11 @@
 import { } from 'jasmine';
-import { Class } from './Class';
+import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
 import { ObjectMinCardinality } from './ObjectMinCardinality';
 import { ObjectOneOf } from './ObjectOneOf';
-import { ObservableGenerator, ObservableGenerator2 } from './ObservableGenerator';
+import { ObservableGenerator2 } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { DataProperty, ObjectProperty } from './Property';
-import { ClassExpressionWriter } from './ClassExpressionWriter';
 
 describe(
     'ObjectMinCardinality(n OPE) ({ x | #{ y | ( x , y ) ∈ (OPE)OP } ≥ n })',
