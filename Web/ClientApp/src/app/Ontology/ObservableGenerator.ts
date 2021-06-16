@@ -882,27 +882,74 @@ export class ObservableGenerator2 implements IClassExpressionSelector<Observable
             return observableObjectPropertyExpression.pipe(
                 map(objectPropertyExpression => new Set<any>(objectPropertyExpression.map(member => member[0]))));
 
-        else
-            return observableObjectPropertyExpression.pipe(
-                map(this.GroupByDomain),
-                map(groupedByDomain =>
-                    new Set<any>([...groupedByDomain.entries()]
-                        .filter(entry => entry[1].length >= objectMinCardinality.Cardinality)
-                        .map(entry => entry[0]))));
+        return observableObjectPropertyExpression.pipe(
+            map(this.GroupByDomain),
+            map(groupedByDomain =>
+                new Set<any>([...groupedByDomain.entries()]
+                    .filter(entry => entry[1].length >= objectMinCardinality.Cardinality)
+                    .map(entry => entry[0]))));
     }
 
     ObjectMaxCardinality(
         objectMaxCardinality: IObjectMaxCardinality
         ): Observable<Set<any>>
     {
-        throw new Error("Method not implemented.");
+        let observableObjectPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(objectMaxCardinality.ObjectPropertyExpression);
+        if(objectMaxCardinality.ClassExpression)
+            observableObjectPropertyExpression = combineLatest(
+                observableObjectPropertyExpression,
+                this.ClassExpression(objectMaxCardinality.ClassExpression),
+                (objectPropertyExpression, classExpression) =>
+                    objectPropertyExpression.filter(member => classExpression.has(member[1])));
+
+        return combineLatest(
+            this._objectDomain,
+            observableObjectPropertyExpression,
+            (objectDomain, objectPropertyExpression) =>
+                GroupJoin(
+                    objectDomain,
+                    objectPropertyExpression,
+                    individual => individual,
+                    member => member[0])).pipe(
+                        map(groupedByDomain =>
+                            new Set<any>([...groupedByDomain.entries()]
+                                .filter(entry => entry[1].length <= objectMaxCardinality.Cardinality)
+                                .map(entry => entry[0]))));
     }
 
     ObjectExactCardinality(
         objectExactCardinality: IObjectExactCardinality
         ): Observable<Set<any>>
     {
-        throw new Error("Method not implemented.");
+        let observableObjectPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(objectExactCardinality.ObjectPropertyExpression);
+        if(objectExactCardinality.ClassExpression)
+            observableObjectPropertyExpression = combineLatest(
+                observableObjectPropertyExpression,
+                this.ClassExpression(objectExactCardinality.ClassExpression),
+                (objectPropertyExpression, classExpression) =>
+                    objectPropertyExpression.filter(member => classExpression.has(member[1])));
+
+        if(objectExactCardinality.Cardinality === 0)
+            return combineLatest(
+                this._objectDomain,
+                observableObjectPropertyExpression,
+                (objectDomain, objectPropertyExpression) =>
+                    GroupJoin(
+                        objectDomain,
+                        objectPropertyExpression,
+                        individual => individual,
+                        member => member[0])).pipe(
+                            map(groupedByDomain =>
+                                new Set<any>([...groupedByDomain.entries()]
+                                    .filter(entry => entry[1].length === objectExactCardinality.Cardinality)
+                                    .map(entry => entry[0]))));
+
+        return observableObjectPropertyExpression.pipe(
+            map(this.GroupByDomain),
+            map(groupedByDomain =>
+                new Set<any>([...groupedByDomain.entries()]
+                    .filter(entry => entry[1].length === objectExactCardinality.Cardinality)
+                    .map(entry => entry[0]))));
     }
 
     DataSomeValuesFrom(
