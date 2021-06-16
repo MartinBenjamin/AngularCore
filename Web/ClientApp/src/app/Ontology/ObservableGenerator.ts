@@ -6,6 +6,7 @@ import { ClassVisitor } from "./ClassMembershipEvaluator";
 import { Group } from './Group';
 import { IClass } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
+import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
@@ -23,7 +24,6 @@ import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from './IOntology';
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
 import { TransitiveClosure3 } from "./TransitiveClosure";
-import { IClassExpressionSelector } from './IClassExpressionSelector';
 
 export function GroupBy<T, TKey, TValue, TResult>(
     iterable      : Iterable<T>,
