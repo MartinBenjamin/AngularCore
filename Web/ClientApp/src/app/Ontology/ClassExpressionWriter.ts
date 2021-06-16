@@ -1,5 +1,6 @@
 import { IClass } from "./IClass";
-import { IClassExpressionVisitor } from './IClassExpressionVisitor';
+import { IClassExpression } from './IClassExpression';
+import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
 import { IDataHasValue } from "./IDataHasValue";
@@ -13,8 +14,6 @@ import { IObjectIntersectionOf } from "./IObjectIntersectionOf";
 import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
-import { IClassExpression } from './IClassExpression';
-import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IPropertyExpression } from './IPropertyExpression';
 
 export class ClassExpressionWriter implements IClassExpressionSelector<string>
