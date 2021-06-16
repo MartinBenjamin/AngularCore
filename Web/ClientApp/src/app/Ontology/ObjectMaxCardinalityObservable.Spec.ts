@@ -1,10 +1,9 @@
 import { } from 'jasmine';
-import { Class } from './Class';
-import { ClassifierGenerator } from './ClassifierGenerator';
-import { EquivalentClasses } from './EquivalentClasses';
+import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
 import { ObjectMaxCardinality } from './ObjectMaxCardinality';
 import { ObjectOneOf } from './ObjectOneOf';
+import { ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { DataProperty, ObjectProperty } from './Property';
 
@@ -12,55 +11,33 @@ describe(
     'ObjectMaxCardinality( n OPE ) ({ x | #{ y | ( x , y ) ∈ (OPE)OP } ≤ n })',
     () =>
     {
-        const generator = new ClassifierGenerator();
+        const classExpressionWriter = new ClassExpressionWriter();
 
         describe(
-            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1) and EquivalentClasses(c1 ObjectMaxCardinality(0 op1)):',
+            'Given an Ontology o1 with axiom ObjectProperty(op1):',
             () =>
             {
                 const o1 = new Ontology('o1');
-                const c1 = new Class(o1, 'c1');
                 const op1 = new ObjectProperty(o1, 'op1');
-                new EquivalentClasses(o1, [c1, new ObjectMaxCardinality(op1, 0)]);
-                const classifier = generator.Generate(o1);
+                const ces = [0, 1, 2].map(cardinality => new ObjectMaxCardinality(op1, cardinality));
+                const generator = new ObservableGenerator(o1);
 
                 describe(
                     'Given x ∈ ΔI:',
                     () =>
                     {
                         const x = 1;
-                        let c1Members: Set<any> = null;
-                        const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                        classifier[0].next(new Set<any>([x]));
-                        it(
-                            'x ∈ (c1)C',
-                            () => expect(c1Members.has(x)).toBe(true));
-                        subscription.unsubscribe();
-                    });
-            });
-
-        describe(
-            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1) and EquivalentClasses(c1 ObjectMaxCardinality(1 op1)):',
-            () =>
-            {
-                const o1 = new Ontology('o1');
-                const c1 = new Class(o1, 'c1');
-                const op1 = new ObjectProperty(o1, 'op1');
-                new EquivalentClasses(o1, [c1, new ObjectMaxCardinality(op1, 1)]);
-                const classifier = generator.Generate(o1);
-
-                describe(
-                    'Given x ∈ ΔI:',
-                    () =>
-                    {
-                        const x = 1;
-                        let c1Members: Set<any> = null;
-                        const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                        classifier[0].next(new Set<any>([x]));
-                        it(
-                            'x ∈ (c1)C',
-                            () => expect(c1Members.has(x)).toBe(true));
-                        subscription.unsubscribe();
+                        generator.ObjectDomain.next(new Set<any>([x]));
+                        for(const ce of ces)
+                        {
+                            let members: Set<any> = null;
+                            const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
+                            it(
+                                ce.Cardinality === 0 ?
+                                    `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
+                                () => expect(members.has(x)).toBe(ce.Cardinality >= 0));
+                            subscription.unsubscribe();
+                        }
                     });
 
                 describe(
@@ -69,14 +46,18 @@ describe(
                     {
                         const x = 1;
                         const y = 2;
-                        let c1Members: Set<any> = null;
-                        const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                        classifier[0].next(new Set<any>([x]));
-                        classifier[1].get('op1').next([[x, y]]);
-                        it(
-                            'x ∈ (c1)C',
-                            () => expect(c1Members.has(x)).toBe(true));
-                        subscription.unsubscribe();
+                        generator.ObjectDomain.next(new Set<any>([x]));
+                        generator.PropertyExpression(op1).next([[x, y]]);
+                        for(const ce of ces)
+                        {
+                            let members: Set<any> = null;
+                            const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
+                            it(
+                                ce.Cardinality === 1 ?
+                                    `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
+                                () => expect(members.has(x)).toBe(ce.Cardinality >= 1));
+                            subscription.unsubscribe();
+                        }
                     });
 
                 describe(
@@ -86,14 +67,18 @@ describe(
                         const x = 1;
                         const y = 2;
                         const z = 3;
-                        let c1Members: Set<any> = null;
-                        const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                        classifier[0].next(new Set<any>([x]));
-                        classifier[1].get('op1').next([[x, y], [x, z]]);
-                        it(
-                            '¬(x ∈ (c1)C)',
-                            () => expect(c1Members.has(x)).toBe(false));
-                        subscription.unsubscribe();
+                        generator.ObjectDomain.next(new Set<any>([x]));
+                        generator.PropertyExpression(op1).next([[x, y], [x, z]]);
+                        for(const ce of ces)
+                        {
+                            let members: Set<any> = null;
+                            const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
+                            it(
+                                ce.Cardinality === 2 ?
+                                    `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
+                                () => expect(members.has(x)).toBe(ce.Cardinality >= 2));
+                            subscription.unsubscribe();
+                        }
                     });
             });
     });
@@ -102,26 +87,23 @@ describe(
     'ObjectMaxCardinality( n OPE CE ) ({ x | #{ y | ( x , y ) ∈ (OPE)OP and y ∈ (CE)C } ≤ n })',
     () =>
     {
-        const generator = new ClassifierGenerator();
-
+        const classExpressionWriter = new ClassExpressionWriter();
 
         describe(
-            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1), NamedIndividual(i)\
- and EquivalentClasses(c1 ObjectMaxCardinality(1 op1 ObjectOneOf([i1, i2]))):',
+            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1), NamedIndividual(i1) and NamedIndividual(i2):',
             () =>
             {
                 const o1 = new Ontology('o1');
-                const i1 = new NamedIndividual(o1, 'i1');
-                const i1Interpretation = 10;
                 const id = new DataProperty(o1, 'Id');
-                new DataPropertyAssertion(o1, id, i1, i1Interpretation);
+                const i1 = new NamedIndividual(o1, 'i1');
                 const i2 = new NamedIndividual(o1, 'i2');
-                const i2Interpretation = 11;
-                new DataPropertyAssertion(o1, id, i2, i2Interpretation);
-                const c1 = new Class(o1, 'c1');
+                new DataPropertyAssertion(o1, id, i1, 10);
+                new DataPropertyAssertion(o1, id, i2, 11);
                 const op1 = new ObjectProperty(o1, 'op1');
-                new EquivalentClasses(o1, [c1, new ObjectMaxCardinality(op1, 1, new ObjectOneOf([i1, i2]))]);
-                const classifier = generator.Generate(o1);
+                const ce = new ObjectMaxCardinality(op1, 1, new ObjectOneOf([i1, i2]));
+                const generator = new ObservableGenerator(o1);
+                const i1Interpretation = generator.InterpretIndividual(i1);
+                const i2Interpretation = generator.InterpretIndividual(i2);
 
                 describe(
                     'Given (op1)OP = {(x, y)}:',
@@ -129,13 +111,13 @@ describe(
                     {
                         const x = 1;
                         const y = 2;
-                        let c1Members: Set<any> = null;
-                        const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                        classifier[0].next(new Set<any>([x]));
-                        classifier[1].get('op1').next([[x, y]]);
+                        let members: Set<any> = null;
+                        const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
+                        generator.ObjectDomain.next(new Set<any>([x]));
+                        generator.PropertyExpression(op1).next([[x, y]]);
                         it(
-                            'x ∈ (c1)C',
-                            () => expect(c1Members.has(x)).toBe(true));
+                            `x ∈ (${classExpressionWriter.Write(ce)})C`,
+                            () => expect(members.has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
 
@@ -144,13 +126,13 @@ describe(
                     () =>
                     {
                         const x = 1;
-                        let c1Members: Set<any> = null;
-                        const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                        classifier[0].next(new Set<any>([x]));
-                        classifier[1].get('op1').next([[x, i1Interpretation]]);
+                        let members: Set<any> = null;
+                        const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
+                        generator.ObjectDomain.next(new Set<any>([x]));
+                        generator.PropertyExpression(op1).next([[x, i1Interpretation]]);
                         it(
-                            'x ∈ (c1)C',
-                            () => expect(c1Members.has(x)).toBe(true));
+                            `x ∈ (${classExpressionWriter.Write(ce)})C`,
+                            () => expect(members.has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
 
@@ -160,13 +142,13 @@ describe(
                     {
                         const x = 1;
                         const y = 2;
-                        let c1Members: Set<any> = null;
-                        const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                        classifier[0].next(new Set<any>([x]));
-                        classifier[1].get('op1').next([[x, i1Interpretation], [x, y]]);
+                        let members: Set<any> = null;
+                        const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
+                        generator.ObjectDomain.next(new Set<any>([x]));
+                        generator.PropertyExpression(op1).next([[x, i1Interpretation], [x, y]]);
                         it(
-                            'x ∈ (c1)C',
-                            () => expect(c1Members.has(x)).toBe(true));
+                            `x ∈ (${classExpressionWriter.Write(ce)})C`,
+                            () => expect(members.has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
 
@@ -175,13 +157,13 @@ describe(
                     () =>
                     {
                         const x = 1;
-                        let c1Members: Set<any> = null;
-                        const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                        classifier[0].next(new Set<any>([x]));
-                        classifier[1].get('op1').next([[x, i2Interpretation]]);
+                        let members: Set<any> = null;
+                        const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
+                        generator.ObjectDomain.next(new Set<any>([x]));
+                        generator.PropertyExpression(op1).next([[x, i2Interpretation]]);
                         it(
-                            'x ∈ (c1)C',
-                            () => expect(c1Members.has(x)).toBe(true));
+                            `x ∈ (${classExpressionWriter.Write(ce)})C`,
+                            () => expect(members.has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
 
@@ -191,13 +173,13 @@ describe(
                     {
                         const x = 1;
                         const y = 2;
-                        let c1Members: Set<any> = null;
-                        const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                        classifier[0].next(new Set<any>([x]));
-                        classifier[1].get('op1').next([[x, i2Interpretation], [x, y]]);
+                        let members: Set<any> = null;
+                        const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
+                        generator.ObjectDomain.next(new Set<any>([x]));
+                        generator.PropertyExpression(op1).next([[x, i2Interpretation], [x, y]]);
                         it(
-                            'x ∈ (c1)C',
-                            () => expect(c1Members.has(x)).toBe(true));
+                            `x ∈ (${classExpressionWriter.Write(ce)})C`,
+                            () => expect(members.has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
 
@@ -206,13 +188,13 @@ describe(
                     () =>
                     {
                         const x = 1;
-                        let c1Members: Set<any> = null;
-                        const subscription = classifier[2].get(c1).subscribe(m => c1Members = m);
-                        classifier[0].next(new Set<any>([x]));
-                        classifier[1].get('op1').next([[x, i1Interpretation], [x, i2Interpretation]]);
+                        let members: Set<any> = null;
+                        const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
+                        generator.ObjectDomain.next(new Set<any>([x]));
+                        generator.PropertyExpression(op1).next([[x, i1Interpretation], [x, i2Interpretation]]);
                         it(
-                            '¬(x ∈ (c1)C)',
-                            () => expect(c1Members.has(x)).toBe(false));
+                            '¬(x ∈ (${classExpressionWriter.Write(ce)})C)',
+                            () => expect(members.has(x)).toBe(false));
                         subscription.unsubscribe();
                     });
             });
