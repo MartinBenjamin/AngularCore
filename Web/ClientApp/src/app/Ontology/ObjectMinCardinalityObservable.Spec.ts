@@ -1,5 +1,4 @@
 import { } from 'jasmine';
-import { Subscription } from 'rxjs';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
 import { ObjectMinCardinality } from './ObjectMinCardinality';
@@ -37,7 +36,7 @@ describe(
                         for(const ce of ces)
                         {
                             let members: Set<any> = null;
-                            const subscription: Subscription = generator.ClassExpression(ce).subscribe(m => members = m);
+                            const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                             it(
                                 ce.Cardinality === 0 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
@@ -57,7 +56,7 @@ describe(
                         for(const ce of ces)
                         {
                             let members: Set<any> = null;
-                            const subscription: Subscription = generator.ClassExpression(ce).subscribe(m => members = m);
+                            const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                             it(
                                 ce.Cardinality <= 1 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
@@ -78,7 +77,7 @@ describe(
                         let members: Set<any> = null;
                         for(const ce of ces)
                         {
-                            const subscription: Subscription = generator.ClassExpression(ce).subscribe(m => members = m);
+                            const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                             it(
                                 ce.Cardinality <= 2 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
@@ -103,7 +102,7 @@ describe(
                 const i = new NamedIndividual(o1, 'i');
                 new DataPropertyAssertion(o1, new DataProperty(o1, 'Id'), i, 10);
                 const op1 = new ObjectProperty(o1, 'op1');
-                const ope = new ObjectMinCardinality(op1, 1, new ObjectOneOf([i]));
+                const ce = new ObjectMinCardinality(op1, 1, new ObjectOneOf([i]));
                 const generator = new ObservableGenerator(o1);
                 const iInterpretation = generator.InterpretIndividual(i);
 
@@ -113,13 +112,13 @@ describe(
                     {
                         const x = 1;
                         const y = 2;
-                        let opeMembers: Set<any> = null;
-                        const subscription = generator.ClassExpression(ope).subscribe(m => opeMembers = m);
+                        let members: Set<any> = null;
+                        const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         generator.ObjectDomain.next(new Set<any>([x]));
                         generator.PropertyExpression(op1).next([[x, y]]);
                         it(
-                            `¬(x ∈ (${classExpressionWriter.Write(ope)})C)`,
-                            () => expect(opeMembers.has(x)).toBe(false));
+                            `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
+                            () => expect(members.has(x)).toBe(false));
                         subscription.unsubscribe();
                     });
 
@@ -128,13 +127,13 @@ describe(
                     () =>
                     {
                         const x = 1;
-                        let opeMembers: Set<any> = null;
-                        const subscription = generator.ClassExpression(ope).subscribe(m => opeMembers = m);
+                        let members: Set<any> = null;
+                        const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         generator.ObjectDomain.next(new Set<any>([x]));
                         generator.PropertyExpression(op1).next([[x, iInterpretation]]);
                         it(
-                            `x ∈ (${classExpressionWriter.Write(ope)})C`,
-                            () => expect(opeMembers.has(x)).toBe(true));
+                            `x ∈ (${classExpressionWriter.Write(ce)})C`,
+                            () => expect(members.has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
 
@@ -144,13 +143,13 @@ describe(
                     {
                         const x = 1;
                         const y = 2;
-                        let opeMembers: Set<any> = null;
-                        const subscription = generator.ClassExpression(ope).subscribe(m => opeMembers = m);
+                        let members: Set<any> = null;
+                        const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         generator.ObjectDomain.next(new Set<any>([x]));
                         generator.PropertyExpression(op1).next([[x, iInterpretation], [x, y]]);
                         it(
-                            `x ∈ (${classExpressionWriter.Write(ope)})C`,
-                            () => expect(opeMembers.has(x)).toBe(true));
+                            `x ∈ (${classExpressionWriter.Write(ce)})C`,
+                            () => expect(members.has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
             });
