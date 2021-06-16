@@ -6,7 +6,6 @@ import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from 
 import { IDataHasValue } from "./IDataHasValue";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
 import { IEntity } from './IEntity';
-import { INamedIndividual } from './INamedIndividual';
 import { IObjectAllValuesFrom } from "./IObjectAllValuesFrom";
 import { IObjectCardinality, IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectComplementOf } from "./IObjectComplementOf";
@@ -16,20 +15,37 @@ import { IObjectIntersectionOf } from "./IObjectIntersectionOf";
 import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
+import { IsAxiom } from "./IsAxiom";
+
+const isAxiom = new IsAxiom();
 
 export class ClassExpressionWriter implements IClassExpressionSelector<string>
 {
-    Class(class$: IClass): string {
-        throw new Error("Method not implemented.");
+    Class(
+        class$: IClass
+        ): string
+    {
+        return `Class(${this.Entity(class$)})`;
     }
-    ObjectIntersectionOf(objectIntersectionOf: IObjectIntersectionOf): string
+
+    ObjectIntersectionOf(
+        objectIntersectionOf: IObjectIntersectionOf
+        ): string
     {
         throw new Error("Method not implemented.");
     }
-    ObjectUnionOf(objectUnionOf: IObjectUnionOf): string {
+
+    ObjectUnionOf(
+        objectUnionOf: IObjectUnionOf
+        ): string
+    {
         throw new Error("Method not implemented.");
     }
-    ObjectComplementOf(objectComplementOf: IObjectComplementOf): string {
+
+    ObjectComplementOf(
+        objectComplementOf: IObjectComplementOf
+        ): string
+    {
         throw new Error("Method not implemented.");
     }
 
@@ -38,21 +54,36 @@ export class ClassExpressionWriter implements IClassExpressionSelector<string>
         ): string
     {
         const individuals = objectOneOf.Individuals
-            .map(individual => this.Entity(<INamedIndividual>individual))
-            .reduce((previousValue, currentValue) => previousValue + ' ' + currentValue);
+            .map(individual => this.Individual(individual))
+            .reduce((concatenated, individual) => concatenated + ' ' + individual);
         return `ObjectOneOf(${individuals})`;
     }
 
-    ObjectSomeValuesFrom(objectSomeValuesFrom: IObjectSomeValuesFrom): string {
+    ObjectSomeValuesFrom(
+        objectSomeValuesFrom: IObjectSomeValuesFrom
+        ): string
+    {
         throw new Error("Method not implemented.");
     }
-    ObjectAllValuesFrom(objectAllValuesFrom: IObjectAllValuesFrom): string {
+
+    ObjectAllValuesFrom(
+        objectAllValuesFrom: IObjectAllValuesFrom
+        ): string
+    {
         throw new Error("Method not implemented.");
     }
-    ObjectHasValue(objectHasValue: IObjectHasValue): string {
+
+    ObjectHasValue(
+        objectHasValue: IObjectHasValue
+        ): string
+    {
         throw new Error("Method not implemented.");
     }
-    ObjectHasSelf(objectHasSelf: IObjectHasSelf): string {
+
+    ObjectHasSelf(
+        objectHasSelf: IObjectHasSelf
+        ): string
+    {
         throw new Error("Method not implemented.");
     }
 
@@ -87,23 +118,53 @@ ${this.Entity(objectCardinality.ObjectPropertyExpression)}\
 ${objectCardinality.ClassExpression ? ' ' + objectCardinality.ClassExpression.Select(this) : ''})`;
     }
 
-    DataSomeValuesFrom(dataSomeValuesFrom: IDataSomeValuesFrom): string {
+    DataSomeValuesFrom(
+        dataSomeValuesFrom: IDataSomeValuesFrom
+        ): string
+    {
         throw new Error("Method not implemented.");
     }
-    DataAllValuesFrom(dataAllValuesFrom: IDataAllValuesFrom): string {
+
+    DataAllValuesFrom(
+        dataAllValuesFrom: IDataAllValuesFrom
+        ): string
+    {
         throw new Error("Method not implemented.");
     }
-    DataHasValue(dataHasValue: IDataHasValue): string {
+
+    DataHasValue(
+        dataHasValue: IDataHasValue
+        ): string
+    {
         throw new Error("Method not implemented.");
     }
-    DataMinCardinality(dataMinCardinality: IDataMinCardinality): string {
+
+    DataMinCardinality(
+        dataMinCardinality: IDataMinCardinality
+        ): string
+    {
         throw new Error("Method not implemented.");
     }
-    DataMaxCardinality(dataMaxCardinality: IDataMaxCardinality): string {
+
+    DataMaxCardinality(
+        dataMaxCardinality: IDataMaxCardinality
+        ): string
+    {
         throw new Error("Method not implemented.");
     }
-    DataExactCardinality(dataExactCardinality: IDataExactCardinality): string {
+
+    DataExactCardinality(
+        dataExactCardinality: IDataExactCardinality
+        ): string
+    {
         throw new Error("Method not implemented.");
+    }
+
+    Individual(
+        individual: object
+        )
+    {
+        return isAxiom.INamedIndividual(individual) ? this.Entity(individual) : individual;
     }
 
     Entity(

@@ -233,7 +233,7 @@ class StoreDecorator implements IStore
     }
 }
 
-export class ObservableGenerator2 implements IClassExpressionSelector<Observable<Set<any>>>
+export class ObservableGenerator implements IClassExpressionSelector<Observable<Set<any>>>
 {
     private _objectDomain             : Subject<Set<any>> = new BehaviorSubject<Set<any>>(new Set<any>());
     private _properties               : Map<string, Subject<[any, any][]>> = new Map<string, BehaviorSubject<[any, any][]>>();;

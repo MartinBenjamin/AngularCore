@@ -3,7 +3,7 @@ import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
 import { ObjectMinCardinality } from './ObjectMinCardinality';
 import { ObjectOneOf } from './ObjectOneOf';
-import { ObservableGenerator2 } from './ObservableGenerator';
+import { ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { DataProperty, ObjectProperty } from './Property';
 
@@ -20,7 +20,7 @@ describe(
                 const o1 = new Ontology('o1');
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ope = new ObjectMinCardinality(op1, 0);
-                const generator = new ObservableGenerator2(o1);
+                const generator = new ObservableGenerator(o1);
 
                 it(
                     `(${classExpressionWriter.Write(ope)})C = ΔI`,
@@ -48,7 +48,7 @@ describe(
                 const o1 = new Ontology('o1');
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ope = new ObjectMinCardinality(op1, 1);
-                const generator = new ObservableGenerator2(o1);
+                const generator = new ObservableGenerator(o1);
 
                 describe(
                     'Given x ∈ ΔI:',
@@ -88,7 +88,7 @@ describe(
                 const o1 = new Ontology('o1');
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ope = new ObjectMinCardinality(op1, 2);
-                const generator = new ObservableGenerator2(o1);
+                const generator = new ObservableGenerator(o1);
 
                 describe(
                     'Given x ∈ ΔI:',
@@ -154,7 +154,7 @@ describe(
                 new DataPropertyAssertion(o1, new DataProperty(o1, 'Id'), i, 10);
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ope = new ObjectMinCardinality(op1, 1, new ObjectOneOf([i]));
-                const generator = new ObservableGenerator2(o1);
+                const generator = new ObservableGenerator(o1);
                 const iInterpretation = generator.InterpretIndividual(i);
 
                 describe(
