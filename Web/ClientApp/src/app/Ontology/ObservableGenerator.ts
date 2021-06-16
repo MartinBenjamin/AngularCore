@@ -23,6 +23,7 @@ import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from './IOntology';
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
 import { TransitiveClosure3 } from "./TransitiveClosure";
+import { IClassExpressionSelector } from './IClassExpressionSelector';
 
 export function GroupBy<T, TKey, TValue, TResult>(
     iterable      : Iterable<T>,
@@ -717,5 +718,281 @@ export class ObservableGenerator implements IClassExpressionVisitor
                 return dataPropertyAssertion.TargetValue;
 
         return individual;
+    }
+}
+
+export class ObservableGenerator2 implements IClassExpressionSelector<Observable<Set<any>>>
+{
+    private _objectDomain             : Subject<Set<any>> = new BehaviorSubject<Set<any>>(new Set<any>());
+    private _properties               : Map<string, Subject<[any, any][]>> = new Map<string, BehaviorSubject<[any, any][]>>();;
+    private _classes                  = new Map<IClassExpression, Observable<Set<any>>>();
+    private _classDefinitions         : Map<IClass, IClassExpression[]>;
+    private _definedClasses           : IClass[];
+    private _functionalDataProperties = new Set<IDataPropertyExpression>();
+
+    constructor(
+        private _ontology: IOntology
+        )
+    {
+        for(let functionalDataProperty of this._ontology.Get(this._ontology.IsAxiom.IFunctionalDataProperty))
+            this._functionalDataProperties.add(functionalDataProperty.DataPropertyExpression);
+
+        let classes = [...this._ontology.Get(this._ontology.IsAxiom.IClass)];
+        let adjacencyList = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, new Set<IClass>()]));
+        for(let equivalentClassExpressions of this._ontology.Get(this._ontology.IsAxiom.IEquivalentClasses))
+        {
+            let equivalentClasses = <IClass[]>equivalentClassExpressions.ClassExpressions.filter(classExpression => this._ontology.IsAxiom.IClass(classExpression));
+            for(let index1 = 0; index1 < equivalentClasses.length; ++index1)
+                for(let index2 = index1; index2 < equivalentClasses.length; ++index2)
+                {
+                    let class1 = equivalentClasses[index1];
+                    let class2 = equivalentClasses[index2];
+                    adjacencyList.get(class1).add(class2);
+                    adjacencyList.get(class2).add(class1);
+                }
+        }
+
+        let transitiveClosure = TransitiveClosure3(adjacencyList);
+
+        let definitions: [IClass, IClassExpression][] = [];
+        for(let equivalentClasses of this._ontology.Get(this._ontology.IsAxiom.IEquivalentClasses))
+            for(let class$ of equivalentClasses.ClassExpressions.filter(classExpression => this._ontology.IsAxiom.IClass(classExpression)))
+            {
+                for(let classExpression of equivalentClasses.ClassExpressions.filter(classExpression => !this._ontology.IsAxiom.IClass(classExpression)))
+                    for(let equivalentClass of transitiveClosure.get(<IClass>class$))
+                        definitions.push(
+                            [
+                                equivalentClass,
+                                classExpression
+                            ]);
+                break;
+            }
+
+        this._classDefinitions = Group(
+            definitions,
+            definition => definition[0],
+            definition => definition[1]);
+
+        let adjacent: Set<IClass> = null;
+        let empty = new Set<IClass>();
+        adjacencyList = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, empty]));
+        let classVisitor = new ClassExpressionNavigator(new ClassVisitor(class$ => adjacent.add(class$)));
+
+        for(let [class$, classExpression] of this._classDefinitions)
+        {
+            adjacent = new Set<IClass>();
+            classExpression[0].Accept(classVisitor);
+            adjacencyList.set(
+                class$,
+                adjacent);
+        }
+
+        let longestPaths = LongestPaths(adjacencyList);
+        this._definedClasses = [...this._classDefinitions.keys()]
+            .sort((a, b) => longestPaths.get(b) - longestPaths.get(a));
+    }
+
+    Class(
+        class$: IClass
+        ): Observable<Set<any>>
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    ObjectIntersectionOf(
+        objectIntersectionOf: IObjectIntersectionOf
+        ): Observable<Set<any>>
+    {
+        return combineLatest(
+            objectIntersectionOf.ClassExpressions.map(classExpression => classExpression.Select(this)),
+            (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])));
+    }
+
+    ObjectUnionOf(
+        objectUnionOf: IObjectUnionOf
+        ): Observable<Set<any>>
+    {
+        return combineLatest(
+            objectUnionOf.ClassExpressions.map(classExpression => classExpression.Select(this)),
+            (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs].filter(member => rhs.has(member)))));
+    }
+
+    ObjectComplementOf(
+        objectComplementOf: IObjectComplementOf
+        ): Observable<Set<any>>
+    {
+        return combineLatest(
+            this._objectDomain,
+            objectComplementOf.ClassExpression.Select(this),
+            (objectDomain, classExpression) => new Set<any>([...objectDomain].filter(member => !classExpression.has(member))));
+    }
+
+    ObjectOneOf(
+        objectOneOf: IObjectOneOf
+        ): Observable<Set<any>>
+    {
+        return new BehaviorSubject<Set<any>>(new Set<any>(objectOneOf.Individuals.map(individual => this.InterpretIndividual(individual))));
+    }
+
+    ObjectSomeValuesFrom(
+        objectSomeValuesFrom: IObjectSomeValuesFrom
+        ): Observable<Set<any>>
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    ObjectAllValuesFrom(
+        objectAllValuesFrom: IObjectAllValuesFrom
+        ): Observable<Set<any>>
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    ObjectHasValue(
+        objectHasValue: IObjectHasValue
+        ): Observable<Set<any>>
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    ObjectHasSelf(
+        objectHasSelf: IObjectHasSelf
+        ): Observable<Set<any>>
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    ObjectMinCardinality(
+        objectMinCardinality: IObjectMinCardinality
+        ): Observable<Set<any>>
+    {
+        if(objectMinCardinality.Cardinality === 0)
+            return this._objectDomain;
+
+        let observableObjectPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(objectMinCardinality.ObjectPropertyExpression);
+        if(objectMinCardinality.ClassExpression)
+            observableObjectPropertyExpression = combineLatest(
+                observableObjectPropertyExpression,
+                objectMinCardinality.ClassExpression.Select(this),
+                (objectPropertyExpression, classExpression) =>
+                    objectPropertyExpression.filter(member => classExpression.has(member[1])));
+
+        if(objectMinCardinality.Cardinality === 1)
+            // Optimise for a minimum cardinality of 1.
+            return observableObjectPropertyExpression.pipe(
+                map(objectPropertyExpression => new Set<any>(objectPropertyExpression.map(member => member[0]))));
+
+        else
+            return observableObjectPropertyExpression.pipe(
+                map(this.GroupByDomain),
+                map(groupedByDomain =>
+                    new Set<any>([...groupedByDomain.entries()]
+                        .filter(entry => entry[1].length >= objectMinCardinality.Cardinality)
+                        .map(entry => entry[0]))));
+    }
+
+    ObjectMaxCardinality(
+        objectMaxCardinality: IObjectMaxCardinality
+        ): Observable<Set<any>>
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    ObjectExactCardinality(
+        objectExactCardinality: IObjectExactCardinality
+        ): Observable<Set<any>>
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    DataSomeValuesFrom(
+        dataSomeValuesFrom: IDataSomeValuesFrom
+        ): Observable<Set<any>>
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    DataAllValuesFrom(
+        dataAllValuesFrom: IDataAllValuesFrom
+        ): Observable<Set<any>>
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    DataHasValue(
+        dataHasValue: IDataHasValue
+        ): Observable<Set<any>>
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    DataMinCardinality(
+        dataMinCardinality: IDataMinCardinality
+        ): Observable<Set<any>>
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    DataMaxCardinality(
+        dataMaxCardinality: IDataMaxCardinality
+        ): Observable<Set<any>>
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    DataExactCardinality(
+        dataExactCardinality: IDataExactCardinality
+        ): Observable<Set<any>>
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    PropertyExpression(
+        objectPropertyExpression: IPropertyExpression
+        ): Subject<[any, any][]>
+    {
+        let subject = this._properties.get(objectPropertyExpression.LocalName);
+        if(!subject)
+        {
+            subject = new BehaviorSubject<[any, any][]>([]);
+            this._properties.set(
+                objectPropertyExpression.LocalName,
+                subject);
+        }
+        return subject;
+    }
+
+    get ObjectDomain(): Subject<Set<any>>
+    {
+        return this._objectDomain;
+    }
+
+    ClassExpression(
+        classExpression: IClassExpression
+        ): Observable<Set<any>>
+    {
+        return classExpression.Select(this);
+    }
+
+    InterpretIndividual(
+        individual: object
+        ): any
+    {
+        for(const dataPropertyAssertion of this._ontology.Get(this._ontology.IsAxiom.IDataPropertyAssertion))
+            if(dataPropertyAssertion.DataPropertyExpression.LocalName === 'Id' &&
+                dataPropertyAssertion.SourceIndividual === individual)
+                return dataPropertyAssertion.TargetValue;
+
+        return individual;
+    }
+
+    private GroupByDomain(
+        relations: [any, any][]
+        ): Map<any, any[]>
+    {
+        return Group(
+            relations,
+            relation => relation[0],
+            relation => relation[1]);
     }
 }
