@@ -14,106 +14,96 @@ import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IClassExpression } from './IClassExpression';
+import { IClassExpressionSelector } from './IClassExpressionSelector';
+import { IPropertyExpression } from './IPropertyExpression';
 
-export class ClassExpressionWriter implements IClassExpressionVisitor
+export class ClassExpressionWriter implements IClassExpressionSelector<string>
 {
-    private _output: string;
-
-    Class(class$: IClass): void {
+    Class(class$: IClass): string {
+        throw new Error("Method not implemented.");
+    }    ObjectIntersectionOf(objectIntersectionOf: IObjectIntersectionOf): string {
         throw new Error("Method not implemented.");
     }
-
-    ObjectIntersectionOf(objectIntersectionOf: IObjectIntersectionOf): void
-    {
+    ObjectUnionOf(objectUnionOf: IObjectUnionOf): string {
         throw new Error("Method not implemented.");
     }
-    ObjectUnionOf(objectUnionOf: IObjectUnionOf): void {
+    ObjectComplementOf(objectComplementOf: IObjectComplementOf): string {
         throw new Error("Method not implemented.");
     }
-    ObjectComplementOf(objectComplementOf: IObjectComplementOf): void {
+    ObjectOneOf(objectOneOf: IObjectOneOf): string {
         throw new Error("Method not implemented.");
     }
-    ObjectOneOf(objectOneOf: IObjectOneOf): void {
+    ObjectSomeValuesFrom(objectSomeValuesFrom: IObjectSomeValuesFrom): string {
         throw new Error("Method not implemented.");
     }
-    ObjectSomeValuesFrom(objectSomeValuesFrom: IObjectSomeValuesFrom): void {
+    ObjectAllValuesFrom(objectAllValuesFrom: IObjectAllValuesFrom): string {
         throw new Error("Method not implemented.");
     }
-    ObjectAllValuesFrom(objectAllValuesFrom: IObjectAllValuesFrom): void {
+    ObjectHasValue(objectHasValue: IObjectHasValue): string {
         throw new Error("Method not implemented.");
     }
-    ObjectHasValue(objectHasValue: IObjectHasValue): void {
-        throw new Error("Method not implemented.");
-    }
-    ObjectHasSelf(objectHasSelf: IObjectHasSelf): void {
+    ObjectHasSelf(objectHasSelf: IObjectHasSelf): string {
         throw new Error("Method not implemented.");
     }
 
     ObjectMinCardinality(
         objectMinCardinality: IObjectMinCardinality
-        ): void
+        ): string
     {
-        this._output += 'ObjectMinCardinality';
-        this.ObjectCardinality(objectMinCardinality);
+        return `ObjectMinCardinality${this.ObjectCardinality(objectMinCardinality)}`;
     }
 
     ObjectMaxCardinality(
         objectMaxCardinality: IObjectMaxCardinality
-        ): void
+        ): string
     {
-        this._output += 'ObjectMaxCardinality';
-        this.ObjectCardinality(objectMaxCardinality);
+        return `ObjectMaxCardinality${this.ObjectCardinality(objectMaxCardinality)}`;
     }
 
     ObjectExactCardinality(
         objectExactCardinality: IObjectExactCardinality
-        ): void
+        ): string
     {
-        this._output += 'ObjectExactCardinality(';
-        this.ObjectCardinality(objectExactCardinality);
+        return `ObjectExactCardinality${this.ObjectCardinality(objectExactCardinality)}`;
     }
 
     ObjectCardinality(
         objectCardinality: IObjectCardinality
-        )
+        ): string
     {
-        this._output += '(';
-        this._output += objectCardinality.Cardinality;
-        this._output += ' ';
-        this._output += objectCardinality.ObjectPropertyExpression.LocalName;
-        if(objectCardinality.ClassExpression)
-        {
-            this._output += ' ';
-            objectCardinality.Accept(this);
-        }
-        this._output += ')';
+        return `(${objectCardinality.Cardinality} ${this.PropertyExpression(objectCardinality.ObjectPropertyExpression)}${objectCardinality.ClassExpression ? ' ' + objectCardinality.Select(this) : ''})`;
     }
 
-    DataSomeValuesFrom(dataSomeValuesFrom: IDataSomeValuesFrom): void {
+    DataSomeValuesFrom(dataSomeValuesFrom: IDataSomeValuesFrom): string {
         throw new Error("Method not implemented.");
     }
-    DataAllValuesFrom(dataAllValuesFrom: IDataAllValuesFrom): void {
+    DataAllValuesFrom(dataAllValuesFrom: IDataAllValuesFrom): string {
         throw new Error("Method not implemented.");
     }
-    DataHasValue(dataHasValue: IDataHasValue): void {
+    DataHasValue(dataHasValue: IDataHasValue): string {
         throw new Error("Method not implemented.");
     }
-    DataMinCardinality(dataMinCardinality: IDataMinCardinality): void {
+    DataMinCardinality(dataMinCardinality: IDataMinCardinality): string {
         throw new Error("Method not implemented.");
     }
-    DataMaxCardinality(dataMaxCardinality: IDataMaxCardinality): void {
+    DataMaxCardinality(dataMaxCardinality: IDataMaxCardinality): string {
         throw new Error("Method not implemented.");
     }
-    DataExactCardinality(dataExactCardinality: IDataExactCardinality): void {
+    DataExactCardinality(dataExactCardinality: IDataExactCardinality): string {
         throw new Error("Method not implemented.");
+    }
+
+    PropertyExpression(
+        propertyExpression: IPropertyExpression
+        ): string
+    {
+        return propertyExpression.LocalName;
     }
 
     Write(
         classExpression: IClassExpression
         ): string
     {
-        this._output = '';
-        classExpression.Accept(this);
-        return this._output;
+        return classExpression.Select(this);
     }
 }
