@@ -1,3 +1,4 @@
+import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IObjectComplementOf } from "./IObjectComplementOf";
@@ -8,6 +9,7 @@ export interface IClassExpression
 {
 
     Accept(visitor: IClassExpressionVisitor): void;
+    Select<TResult>(selector: IClassExpressionSelector<TResult>): TResult
 
     Evaluate(
         evaluator : IClassMembershipEvaluator,

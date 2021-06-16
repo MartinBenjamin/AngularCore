@@ -1,4 +1,5 @@
 import { DataPropertyRestriction } from "./DataPropertyRestriction";
+import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
@@ -22,6 +23,13 @@ export class DataAllValuesFrom
         )
     {
         visitor.DataAllValuesFrom(this);
+    }
+
+    Select<TResult>(
+        selector: IClassExpressionSelector<TResult>
+        ): TResult
+    {
+        return selector.DataAllValuesFrom(this);
     }
 
     Evaluate(

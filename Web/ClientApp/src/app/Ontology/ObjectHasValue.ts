@@ -1,3 +1,4 @@
+import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IObjectHasValue } from "./IObjectHasValue";
@@ -21,6 +22,13 @@ export class ObjectHasValue
         )
     {
         visitor.ObjectHasValue(this);
+    }
+
+    Select<TResult>(
+        selector: IClassExpressionSelector<TResult>
+        ): TResult
+    {
+        return selector.ObjectHasValue(this);
     }
 
     Evaluate(

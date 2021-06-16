@@ -1,4 +1,5 @@
 import { DataCardinality } from "./DataCardinality";
+import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IDataMinCardinality } from "./IDataCardinality";
@@ -26,6 +27,13 @@ export class DataMinCardinality
         )
     {
         visitor.DataMinCardinality(this);
+    }
+
+    Select<TResult>(
+        selector: IClassExpressionSelector<TResult>
+        ): TResult
+    {
+        return selector.DataMinCardinality(this);
     }
 
     Evaluate(

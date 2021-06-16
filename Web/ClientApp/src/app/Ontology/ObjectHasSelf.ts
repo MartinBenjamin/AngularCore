@@ -1,3 +1,4 @@
+import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IObjectHasSelf } from "./IObjectHasSelf";
@@ -20,6 +21,13 @@ export class ObjectHasSelf
         )
     {
         visitor.ObjectHasSelf(this);
+    }
+
+    Select<TResult>(
+        selector: IClassExpressionSelector<TResult>
+        ): TResult
+    {
+        return selector.ObjectHasSelf(this);
     }
 
     Evaluate(

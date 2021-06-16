@@ -1,4 +1,5 @@
 import { DataCardinality } from "./DataCardinality";
+import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IDataMaxCardinality } from "./IDataCardinality";
@@ -26,6 +27,13 @@ export class DataMaxCardinality
         )
     {
         visitor.DataMaxCardinality(this);
+    }
+
+    Select<TResult>(
+        selector: IClassExpressionSelector<TResult>
+        ): TResult
+    {
+        return selector.DataMaxCardinality(this);
     }
 
     Evaluate(

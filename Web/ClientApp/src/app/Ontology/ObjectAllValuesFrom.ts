@@ -1,4 +1,5 @@
 import { IClassExpression } from "./IClassExpression";
+import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IObjectAllValuesFrom } from "./IObjectAllValuesFrom";
@@ -22,6 +23,13 @@ export class ObjectAllValuesFrom
         )
     {
         visitor.ObjectAllValuesFrom(this);
+    }
+
+    Select<TResult>(
+        selector: IClassExpressionSelector<TResult>
+        ): TResult
+    {
+        return selector.ObjectAllValuesFrom(this);
     }
     
     Evaluate(

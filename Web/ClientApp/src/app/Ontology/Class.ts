@@ -3,6 +3,7 @@ import { EquivalentClasses } from "./EquivalentClasses";
 import { HasKey } from "./HasKey";
 import { IClass } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
+import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IEquivalentClasses } from "./IEquivalentClasses";
@@ -39,6 +40,13 @@ export class Class
         ): void
     {
         visitor.Class(this);
+    }
+
+    Select<TResult>(
+        selector: IClassExpressionSelector<TResult>
+        ): TResult
+    {
+        return selector.Class(this);
     }
 
     Evaluate(

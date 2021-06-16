@@ -1,4 +1,5 @@
 import { DataCardinality } from "./DataCardinality";
+import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IDataExactCardinality } from "./IDataCardinality";
@@ -26,6 +27,13 @@ export class DataExactCardinality
         )
     {
         visitor.DataExactCardinality(this);
+    }
+
+    Select<TResult>(
+        selector: IClassExpressionSelector<TResult>
+        ): TResult
+    {
+        return selector.DataExactCardinality(this);
     }
 
     Evaluate(

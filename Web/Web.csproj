@@ -166,6 +166,7 @@
     <None Remove="ClientApp\src\app\Ontology\IClass.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClassAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClassExpression.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IClassExpressionSelector.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClassExpressionVisitor.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClassMembershipEvaluator.ts" />
     <None Remove="ClientApp\src\app\Ontology\IDataAllValuesFrom.ts" />
@@ -429,6 +430,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IClass.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IClassAxiom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IClassExpression.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IClassExpressionSelector.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IClassExpressionVisitor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IClassMembershipEvaluator.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataAllValuesFrom.ts" />
