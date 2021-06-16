@@ -838,28 +838,51 @@ export class ObservableGenerator2 implements IClassExpressionSelector<Observable
         objectSomeValuesFrom: IObjectSomeValuesFrom
         ): Observable<Set<any>>
     {
-        throw new Error("Method not implemented.");
+        return combineLatest(
+            this.PropertyExpression(objectSomeValuesFrom.ObjectPropertyExpression),
+            objectSomeValuesFrom.ClassExpression.Select(this),
+            (objectPropertyExpression, classExpression) =>
+                new Set<any>(
+                    objectPropertyExpression
+                        .filter(member => classExpression.has(member[1]))
+                        .map(member => member[0])));
     }
 
     ObjectAllValuesFrom(
         objectAllValuesFrom: IObjectAllValuesFrom
         ): Observable<Set<any>>
     {
-        throw new Error("Method not implemented.");
+        return combineLatest(
+            this.PropertyExpression(objectAllValuesFrom.ObjectPropertyExpression).pipe(map(this.GroupByDomain)),
+            objectAllValuesFrom.ClassExpression.Select(this),
+            (groupedByDomain, classExpression) =>
+                new Set<any>(
+                    [...groupedByDomain.entries()]
+                        .filter(entry => entry[1].every(individual => classExpression.has(individual)))
+                        .map(entry => entry[0])));
     }
 
     ObjectHasValue(
         objectHasValue: IObjectHasValue
         ): Observable<Set<any>>
     {
-        throw new Error("Method not implemented.");
+        const individual = this.InterpretIndividual(objectHasValue.Individual);
+        return this.PropertyExpression(objectHasValue.ObjectPropertyExpression).pipe(
+            map(objectPropertyExpression =>
+                new Set<any>(objectPropertyExpression
+                    .filter(member => member[1] === individual)
+                    .map(member => member[0]))));
     }
 
     ObjectHasSelf(
         objectHasSelf: IObjectHasSelf
         ): Observable<Set<any>>
     {
-        throw new Error("Method not implemented.");
+        return this.PropertyExpression(objectHasSelf.ObjectPropertyExpression).pipe(
+            map(objectPropertyExpression =>
+                new Set<any>(objectPropertyExpression
+                    .filter(member => member[0] === member[1])
+                    .map(member => member[0]))));
     }
 
     ObjectMinCardinality(
