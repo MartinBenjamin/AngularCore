@@ -1,5 +1,6 @@
 import { BehaviorSubject, combineLatest, Observable, Subject } from "rxjs";
 import { map } from 'rxjs/operators';
+import { DomainObject } from "../CommonDomainObjects";
 import { LongestPaths } from "./AdjacencyList";
 import { ClassExpressionNavigator } from './ClassExpressionNavigator';
 import { ClassVisitor } from "./ClassMembershipEvaluator";
@@ -7,7 +8,6 @@ import { Group } from './Group';
 import { IClass } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
 import { IClassExpressionSelector } from './IClassExpressionSelector';
-import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
 import { IDataHasValue } from "./IDataHasValue";
@@ -76,19 +76,35 @@ export function GroupJoin<TLeft, TRight, TKey>(
 export interface IStore
 {
     ObjectDomain: Observable<Set<any>>;
-    ObjectPropertyExpression(objectPropertyExpression: IObjectPropertyExpression): Observable<[any, any][]>;
-    DataPropertyExpression(dataPropertyExpression: IDataPropertyExpression): Observable<[any, any][]>;
+    ObserveProperty(property: string): Observable<[any, any][]>;
 }
 
 export class Store implements IStore
 {
-    ObjectDomain: Observable<Set<any>>;
+    private _nextId       = 1;
+    private _objectDomain = new BehaviorSubject<Set<any>>(new Set<any>());
+    private _properties   = new Map<string, BehaviorSubject<[any, any][]>>();
+    private _objects      = new Map<any, any>();
+    private _functionalProperties = new Set<string>();
 
-    ObjectPropertyExpression(
-        objectPropertyExpression: IObjectPropertyExpression
+    get ObjectDomain(): Observable<Set<any>>
+    {
+        return this._objectDomain;
+    }
+
+    ObserveProperty(
+        property: string
         ): Observable<[any, any][]>
     {
-        throw new Error("Method not implemented.");
+        let subject = this._properties.get(property);
+        if(!subject)
+        {
+            subject = new BehaviorSubject<[any, any][]>([]);
+            this._properties.set(
+                property,
+                subject);
+        }
+        return subject;
     }
 
     DataPropertyExpression(
@@ -96,6 +112,148 @@ export class Store implements IStore
         ): Observable<[any, any][]>
     {
         throw new Error("Method not implemented.");
+    }
+
+    LoadEntity(
+        entity: any,
+        loaded: Set<any>
+        ): void
+    {
+        this._objects.set(
+            entity.Id,
+            entity);
+
+        for(const property in entity)
+            if(property !== 'Id')
+            {
+                const propertySubject = this._properties.get(property);
+                if(propertySubject)
+                {
+                    const value = entity[property];
+                    const values = propertySubject.getValue();
+                    if(typeof value === 'object')
+                    {
+                        if('Id' in value)
+                            values.push([entity.Id, value.Id])
+
+                        else if(value instanceof Array)
+                            value.forEach(value => values.push([entity.Id, 'Id' in value ? value.Id : value]));
+
+                        else
+                            values.push([entity.Id, 'Id' in value ? value.Id : value]);
+                    }
+                    else
+                        values.push([entity.Id, value]);
+
+                    propertySubject.next(values);
+                }
+            }
+    }
+
+    NewEntity<TEntity>(): TEntity
+    {
+        const entity: any = {
+            Id: this._nextId++
+        };
+
+        this._objects.set(
+            entity.Id,
+            entity);
+        this._objectDomain.next(new Set<any>(this._objects.keys()));
+        return <TEntity>entity;
+    }
+
+    AddValue(
+        entity  : any,
+        property: string,
+        value   : any
+        )
+    {
+        let currentValue = entity[property];
+
+        if(typeof currentValue === 'undefined' && this._functionalProperties.has(property))
+            currentValue = entity[property] = [];
+
+        if(currentValue instanceof Array)
+            currentValue.push(value);
+
+        else
+            entity[property] = value;
+
+        const propertySubject = this._properties.get(property);
+        if(propertySubject)
+        {
+            const values = propertySubject.getValue();
+            values.push([entity.Id, value]);
+            propertySubject.next(values);
+        }
+    }
+
+    UpdateValue(
+        entity   : any,
+        property : string,
+        newValue : any,
+        oldValue?: any
+        )
+    {
+        if(typeof oldValue === 'undefined')
+        {
+            oldValue = entity[property];
+            entity[property] = newValue;
+        }
+        else
+        {
+            let currentValue = entity[property];
+            if(currentValue instanceof Array)
+            {
+                const index = currentValue.indexOf(oldValue);
+                if(index !== -1)
+                    currentValue[index] = newValue;
+            }
+            else
+                entity[property] = newValue;
+        }
+
+        const propertySubject = this._properties.get(property);
+        if(propertySubject)
+        {
+            const values = propertySubject.getValue();
+            const index = values.findIndex(value => value[0] === entity.Id && value[1] === oldValue);
+            if(index != -1)
+            {
+                values[index][1] = newValue;
+                propertySubject.next(values);
+            }
+        }  
+    }
+
+    DeleteValue(
+        entity  : any,
+        property: string,
+        value   : any
+        )
+    {
+        let currentValue = entity[property];
+
+        if(currentValue instanceof Array)
+            currentValue.splice(
+                currentValue.indexOf(value),
+                1);
+
+        else
+            delete entity[property];
+
+        const propertySubject = this._properties.get(property);
+        if(propertySubject)
+        {
+            const values = propertySubject.getValue();
+            values.splice(
+                values.findIndex(
+                    value => value[0] === entity.Id && value[1] === value),
+                1);
+            propertySubject.next(values);
+            //propertySubject.next(values.filter(value => value[0] !== entity.Id || value[1] !== value));
+        }        
     }
 }
 
