@@ -1,12 +1,10 @@
 import { } from 'jasmine';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
-import { DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
-import { ObjectExactCardinality } from './ObjectExactCardinality';
-import { ObjectOneOf } from './ObjectOneOf';
+import { DataExactCardinality } from './DataExactCardinality';
+import { DataOneOf } from './DataOneOf';
 import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
-import { DataProperty, ObjectProperty } from './Property';
-import { DataExactCardinality } from './DataExactCardinality';
+import { DataProperty } from './Property';
 
 describe(
     'DataExactCardinality( n DPE ) ({ x | #{ y | ( x , y ) ∈ (DPE)DP } = n })',
@@ -44,12 +42,11 @@ describe(
                     });
 
                 describe(
-                    'Given (op1)OP = {(x, y)}:',
+                    'Given (dp1)DP = {(x, 1)}:',
                     () =>
                     {
                         const x = store.NewEntity<any>();
-                        const y = 2;
-                        store.Add(x, dp1.LocalName, y);
+                        store.Add(x, dp1.LocalName, 1);
                         for(const ce of ces)
                         {
                             let members: Set<any> = null;
@@ -63,14 +60,12 @@ describe(
                     });
 
                 describe(
-                    'Given (op1)OP = {(x, y), (x, z)}:',
+                    'Given (dp1)DP = {(x, 1), (x, 2)}:',
                     () =>
                     {
                         const x = store.NewEntity<any>();
-                        const y = 2;
-                        const z = 3;
-                        store.Add(x, dp1.LocalName, y);
-                        store.Add(x, dp1.LocalName, z);
+                        store.Add(x, dp1.LocalName, 1);
+                        store.Add(x, dp1.LocalName, 2);
                         for(const ce of ces)
                         {
                             let members: Set<any> = null;
@@ -86,33 +81,29 @@ describe(
     });
 
 describe(
-    'ObjectExactCardinality( n OPE CE ) ({ x | #{ y | ( x , y ) ∈ (OPE)OP and y ∈ (CE)C } = n })',
+    'DataExactCardinality( n DPE DR ) ({ x | #{ y | ( x , y ) ∈ (DPE)DP and y ∈ (DR)DT } = n })',
     () =>
     {
         const classExpressionWriter = new ClassExpressionWriter();
 
         describe(
-            'Given an Ontology o1 with axioms ObjectProperty(op1) and NamedIndividual(i):',
+            'Given an Ontology o1 with axiom DataProperty(op1):',
             () =>
             {
                 const o1 = new Ontology('o1');
-                const op1 = new ObjectProperty(o1, 'op1');
-                const i = new NamedIndividual(o1, 'i');
-                new DataPropertyAssertion(o1, new DataProperty(o1, 'Id'), i, 10);
-                const ce = new ObjectExactCardinality(op1, 0, new ObjectOneOf([i]));
+                const dp1 = new DataProperty(o1, 'op1');
+                const ce = new DataExactCardinality(dp1, 0, new DataOneOf([1]));
                 const store: IStore = new Store();
                 const generator = new ObservableGenerator(
                     o1,
                     store);
-                const iInterpretation = generator.InterpretIndividual(i);
 
                 describe(
-                    'Given (op1)OP = {(x, y)}:',
+                    'Given (dp1)DP = {(x, 2)}:',
                     () =>
                     {
                         const x = store.NewEntity<any>();
-                        const y = 2;
-                        store.Add(x, op1.LocalName, y);
+                        store.Add(x, dp1.LocalName, 2);
                         let members: Set<any> = null;
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
@@ -122,11 +113,11 @@ describe(
                     });
 
                 describe(
-                    'Given (op1)OP = {(x, (i)I)}:',
+                    'Given (dp1)DP = {(x, 1)}:',
                     () =>
                     {
                         const x = store.NewEntity<any>();
-                        store.Add(x, op1.LocalName, iInterpretation);
+                        store.Add(x, dp1.LocalName, 1);
                         let members: Set<any> = null;
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
@@ -137,31 +128,23 @@ describe(
             });
 
         describe(
-            'Given an Ontology o1 with axioms ObjectProperty(op1), NamedIndividual(i1) and NamedIndividual(i2):',
+            'Given an Ontology o1 with axiom DataProperty(op1):',
             () =>
             {
                 const o1 = new Ontology('o1');
-                const id = new DataProperty(o1, 'Id');
-                const i1 = new NamedIndividual(o1, 'i1');
-                const i2 = new NamedIndividual(o1, 'i2');
-                new DataPropertyAssertion(o1, id, i1, 10);
-                new DataPropertyAssertion(o1, id, i2, 11);
-                const op1 = new ObjectProperty(o1, 'op1');
-                const ce = new ObjectExactCardinality(op1, 1, new ObjectOneOf([i1, i2]));
+                const dp1 = new DataProperty(o1, 'op1');
+                const ce = new DataExactCardinality(dp1, 1, new DataOneOf([1, 2]));
                 const store: IStore = new Store();
                 const generator = new ObservableGenerator(
                     o1,
                     store);
-                const i1Interpretation = generator.InterpretIndividual(i1);
-                const i2Interpretation = generator.InterpretIndividual(i2);
 
                 describe(
-                    'Given (op1)OP = {(x, y)}:',
+                    'Given (op1)OP = {(x, 0)}:',
                     () =>
                     {
                         const x = store.NewEntity<any>();
-                        const y = 2;
-                        store.Add(x, op1.LocalName, y);
+                        store.Add(x, dp1.LocalName, 3);
                         let members: Set<any> = null;
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
@@ -171,11 +154,11 @@ describe(
                     });
 
                 describe(
-                    'Given (op1)OP = {(x, (i1)I)}:',
+                    'Given (op1)OP = {(x, 1)}:',
                     () =>
                     {
                         const x = store.NewEntity<any>();
-                        store.Add(x, op1.LocalName, i1Interpretation);
+                        store.Add(x, dp1.LocalName, 1);
                         let members: Set<any> = null;
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
@@ -185,13 +168,12 @@ describe(
                     });
 
                 describe(
-                    'Given (op1)OP = {(x, (i1)I), (x, y)}:',
+                    'Given (op1)OP = {(x, 0), (x, 1)}:',
                     () =>
                     {
                         const x = store.NewEntity<any>();
-                        const y = 2;
-                        store.Add(x, op1.LocalName, i1Interpretation);
-                        store.Add(x, op1.LocalName,                y);
+                        store.Add(x, dp1.LocalName, 0);
+                        store.Add(x, dp1.LocalName, 1);
                         let members: Set<any> = null;
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
@@ -201,11 +183,11 @@ describe(
                     });
 
                 describe(
-                    'Given (op1)OP = {(x, (i2)I)}:',
+                    'Given (op1)OP = {(x, 2)}:',
                     () =>
                     {
                         const x = store.NewEntity<any>();
-                        store.Add(x, op1.LocalName, i2Interpretation);
+                        store.Add(x, dp1.LocalName, 2);
                         let members: Set<any> = null;
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
@@ -215,13 +197,12 @@ describe(
                     });
 
                 describe(
-                    'Given (op1)OP = {(x, (i2)I), (x, y)}:',
+                    'Given (op1)OP = {(x, 0), (x, 2)}:',
                     () =>
                     {
                         const x = store.NewEntity<any>();
-                        const y = 2;
-                        store.Add(x, op1.LocalName, i2Interpretation);
-                        store.Add(x, op1.LocalName, y               );
+                        store.Add(x, dp1.LocalName, 0);
+                        store.Add(x, dp1.LocalName, 2);
                         let members: Set<any> = null;
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
@@ -231,12 +212,12 @@ describe(
                     });
 
                 describe(
-                    'Given (op1)OP = {(x, (i1)I), (x, (i2)I)}:',
+                    'Given (op1)OP = {(x, 1), (x, 2)}:',
                     () =>
                     {
                         const x = store.NewEntity<any>();
-                        store.Add(x, op1.LocalName, i1Interpretation);
-                        store.Add(x, op1.LocalName, i2Interpretation);
+                        store.Add(x, dp1.LocalName, 1);
+                        store.Add(x, dp1.LocalName, 2);
                         let members: Set<any> = null;
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
