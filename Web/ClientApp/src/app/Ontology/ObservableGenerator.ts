@@ -88,13 +88,20 @@ export interface IStore
         value   : any);
 }
 
+enum Cardinality
+{
+    One,
+    Many
+}
+
 export class Store implements IStore
 {
-    private _nextId       = 1;
-    private _objectDomain = new BehaviorSubject<Set<any>>(new Set<any>());
-    private _properties   = new Map<string, BehaviorSubject<[any, any][]>>();
-    private _objects      = new Map<any, any>();
-    private _functionalProperties = new Set<string>();
+    private _nextId             = 1;
+    private _objectDomain       = new BehaviorSubject<Set<any>>(new Set<any>());
+    private _properties         = new Map<string, BehaviorSubject<[any, any][]>>();
+    private _objects            = new Map<any, any>();
+    private _cardinalities      = new Map<string, Cardinality>();
+    private _defaultCardinality = Cardinality.One;
 
     get ObjectDomain(): Observable<Set<any>>
     {
@@ -173,7 +180,7 @@ export class Store implements IStore
     {
         let currentValue = entity[property];
 
-        if(typeof currentValue === 'undefined' && this._functionalProperties.has(property))
+        if(typeof currentValue === 'undefined' && this.Cardinality(property) === Cardinality.Many)
             currentValue = entity[property] = [];
 
         if(currentValue instanceof Array)
@@ -221,7 +228,6 @@ export class Store implements IStore
                     1);
                 propertySubject.next(values);
             }
-            //propertySubject.next(values.filter(value => value[0] !== mappedEntity || value[1] !== mappedValue));
         }        
     }
 
@@ -266,6 +272,24 @@ export class Store implements IStore
                 propertySubject.next(values);
             }
         }  
+    }
+
+    private Cardinality(
+        property: string
+        ): Cardinality
+    {
+        return this._cardinalities.has(property) ? this._cardinalities.get(property) : this._defaultCardinality;
+    }
+
+    private Publish(
+        property: string
+        )
+    {
+        const propertySubject = this._properties.get(property);
+        if(propertySubject)
+            propertySubject.next([...this._objects.values()]
+                .filter(object => property in object)
+                .map(object => [this.Map(object), this.Map(object[property])]));
     }
 
     private Map(
