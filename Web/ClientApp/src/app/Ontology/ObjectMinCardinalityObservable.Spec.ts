@@ -52,7 +52,7 @@ describe(
                     {
                         const x = store.NewEntity<any>();
                         const y = 2;
-                        store.AddValue(x, op1.LocalName, y);
+                        store.Add(x, op1.LocalName, y);
                         for(const ce of ces)
                         {
                             let members: Set<any> = null;
@@ -72,8 +72,8 @@ describe(
                         const x = store.NewEntity<any>();
                         const y = 2;
                         const z = 3;
-                        store.AddValue(x, op1.LocalName, y);
-                        store.AddValue(x, op1.LocalName, z);
+                        store.Add(x, op1.LocalName, y);
+                        store.Add(x, op1.LocalName, z);
                         let members: Set<any> = null;
                         for(const ce of ces)
                         {
@@ -115,7 +115,7 @@ describe(
                     {
                         const x = store.NewEntity<any>();
                         const y = 2;
-                        store.AddValue(x, op1.LocalName, y);
+                        store.Add(x, op1.LocalName, y);
                         let members: Set<any> = null;
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
@@ -129,7 +129,7 @@ describe(
                     () =>
                     {
                         const x = store.NewEntity<any>();
-                        store.AddValue(x, op1.LocalName, iInterpretation);
+                        store.Add(x, op1.LocalName, iInterpretation);
                         let members: Set<any> = null;
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
@@ -144,8 +144,8 @@ describe(
                     {
                         const x = store.NewEntity<any>();
                         const y = 2;
-                        store.AddValue(x, op1.LocalName, iInterpretation);
-                        store.AddValue(x, op1.LocalName, y              );
+                        store.Add(x, op1.LocalName, iInterpretation);
+                        store.Add(x, op1.LocalName, y              );
                         let members: Set<any> = null;
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(

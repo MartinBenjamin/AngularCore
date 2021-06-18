@@ -78,7 +78,11 @@ export interface IStore
     ObjectDomain: Observable<Set<any>>;
     ObserveProperty(property: string): Observable<[any, any][]>;
     NewEntity<TEntity>(): TEntity;
-    AddValue(
+    Add(
+        entity  : any,
+        property: string,
+        value   : any);
+    Remove(
         entity  : any,
         property: string,
         value   : any);
@@ -161,7 +165,7 @@ export class Store implements IStore
         return <TEntity>entity;
     }
 
-    AddValue(
+    Add(
         entity  : any,
         property: string,
         value   : any
@@ -185,6 +189,37 @@ export class Store implements IStore
             values.push([this.Map(entity), this.Map(value)]);
             propertySubject.next(values);
         }
+    }
+
+    Remove(
+        entity  : any,
+        property: string,
+        value   : any
+        )
+    {
+        let currentValue = entity[property];
+
+        if(currentValue instanceof Array)
+            currentValue.splice(
+                currentValue.indexOf(value),
+                1);
+
+        else
+            delete entity[property];
+
+        const propertySubject = this._properties.get(property);
+        if(propertySubject)
+        {
+            const mappedEntity = this.Map(entity);
+            const mappedValue  = this.Map(value);
+            const values = propertySubject.getValue();
+            values.splice(
+                values.findIndex(
+                    value => value[0] === mappedEntity && value[1] === mappedValue),
+                1);
+            propertySubject.next(values);
+            //propertySubject.next(values.filter(value => value[0] !== entity.Id || value[1] !== value));
+        }        
     }
 
     UpdateValue(
@@ -228,37 +263,6 @@ export class Store implements IStore
                 propertySubject.next(values);
             }
         }  
-    }
-
-    DeleteValue(
-        entity  : any,
-        property: string,
-        value   : any
-        )
-    {
-        let currentValue = entity[property];
-
-        if(currentValue instanceof Array)
-            currentValue.splice(
-                currentValue.indexOf(value),
-                1);
-
-        else
-            delete entity[property];
-
-        const propertySubject = this._properties.get(property);
-        if(propertySubject)
-        {
-            const mappedEntity = this.Map(entity);
-            const mappedValue  = this.Map(value);
-            const values = propertySubject.getValue();
-            values.splice(
-                values.findIndex(
-                    value => value[0] === mappedEntity && value[1] === mappedValue),
-                1);
-            propertySubject.next(values);
-            //propertySubject.next(values.filter(value => value[0] !== entity.Id || value[1] !== value));
-        }        
     }
 
     private Map(
