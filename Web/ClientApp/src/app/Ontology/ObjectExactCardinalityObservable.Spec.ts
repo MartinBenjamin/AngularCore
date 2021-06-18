@@ -190,7 +190,7 @@ describe(
                         const x = store.NewEntity<any>();
                         const y = 2;
                         store.Add(x, op1.LocalName, i1Interpretation);
-                        store.Add(x, op1.LocalName,                y);
+                        store.Add(x, op1.LocalName, y               );
                         let members: Set<any> = null;
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
