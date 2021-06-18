@@ -77,6 +77,11 @@ export interface IStore
 {
     ObjectDomain: Observable<Set<any>>;
     ObserveProperty(property: string): Observable<[any, any][]>;
+    NewEntity<TEntity>(): TEntity;
+    AddValue(
+        entity  : any,
+        property: string,
+        value   : any);
 }
 
 export class Store implements IStore
@@ -105,13 +110,6 @@ export class Store implements IStore
                 subject);
         }
         return subject;
-    }
-
-    DataPropertyExpression(
-        dataPropertyExpression: IDataPropertyExpression
-        ): Observable<[any, any][]>
-    {
-        throw new Error("Method not implemented.");
     }
 
     LoadEntity(
@@ -184,7 +182,7 @@ export class Store implements IStore
         if(propertySubject)
         {
             const values = propertySubject.getValue();
-            values.push([entity.Id, value]);
+            values.push([this.Map(entity), this.Map(value)]);
             propertySubject.next(values);
         }
     }
@@ -217,11 +215,16 @@ export class Store implements IStore
         const propertySubject = this._properties.get(property);
         if(propertySubject)
         {
+            const mappedEntity   = this.Map(entity);
+            const mappedNewValue = this.Map(newValue);
+            const mappedOldValue = this.Map(oldValue);
+
             const values = propertySubject.getValue();
-            const index = values.findIndex(value => value[0] === entity.Id && value[1] === oldValue);
+            const index = values.findIndex(value => value[0] === mappedEntity && value[1] === mappedOldValue);
+
             if(index != -1)
             {
-                values[index][1] = newValue;
+                values[index][1] = mappedNewValue;
                 propertySubject.next(values);
             }
         }  
@@ -246,20 +249,29 @@ export class Store implements IStore
         const propertySubject = this._properties.get(property);
         if(propertySubject)
         {
+            const mappedEntity = this.Map(entity);
+            const mappedValue  = this.Map(value);
             const values = propertySubject.getValue();
             values.splice(
                 values.findIndex(
-                    value => value[0] === entity.Id && value[1] === value),
+                    value => value[0] === mappedEntity && value[1] === mappedValue),
                 1);
             propertySubject.next(values);
             //propertySubject.next(values.filter(value => value[0] !== entity.Id || value[1] !== value));
         }        
     }
+
+    private Map(
+        value: any
+        ): any
+    {
+        return typeof value === 'object' && 'Id' in value ? value.Id : value;
+    }
 }
 
 export class ObservableGenerator implements IClassExpressionSelector<Observable<Set<any>>>
 {
-    private _objectDomain             : Subject<Set<any>> = new BehaviorSubject<Set<any>>(new Set<any>());
+    //private _objectDomain             : Subject<Set<any>> = new BehaviorSubject<Set<any>>(new Set<any>());
     private _properties               : Map<string, Subject<[any, any][]>> = new Map<string, BehaviorSubject<[any, any][]>>();;
     private _classes                  = new Map<IClassExpression, Observable<Set<any>>>();
     private _classDefinitions         : Map<IClass, IClassExpression[]>;
@@ -267,9 +279,13 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
     private _functionalDataProperties = new Set<IDataPropertyExpression>();
 
     constructor(
-        private _ontology: IOntology
+        private _ontology: IOntology,
+        private _store  ?: IStore
         )
     {
+        if(!this._store)
+            this._store = new Store();
+
         for(let functionalDataProperty of this._ontology.Get(this._ontology.IsAxiom.IFunctionalDataProperty))
             this._functionalDataProperties.add(functionalDataProperty.DataPropertyExpression);
 
@@ -358,7 +374,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         ): Observable<Set<any>>
     {
         return combineLatest(
-            this._objectDomain,
+            this._store.ObjectDomain,
             objectComplementOf.ClassExpression.Select(this),
             (objectDomain, classExpression) => new Set<any>([...objectDomain].filter(member => !classExpression.has(member))));
     }
@@ -426,7 +442,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         ): Observable<Set<any>>
     {
         if(objectMinCardinality.Cardinality === 0)
-            return this._objectDomain;
+            return this._store.ObjectDomain;
 
         let observableObjectPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(objectMinCardinality.ObjectPropertyExpression);
         if(objectMinCardinality.ClassExpression)
@@ -462,7 +478,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
                     objectPropertyExpression.filter(member => classExpression.has(member[1])));
 
         return combineLatest(
-            this._objectDomain,
+            this._store.ObjectDomain,
             observableObjectPropertyExpression,
             (objectDomain, objectPropertyExpression) =>
                 GroupJoin(
@@ -490,7 +506,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
 
         if(objectExactCardinality.Cardinality === 0)
             return combineLatest(
-                this._objectDomain,
+                this._store.ObjectDomain,
                 observableObjectPropertyExpression,
                 (objectDomain, objectPropertyExpression) =>
                     GroupJoin(
@@ -550,7 +566,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         ): Observable<Set<any>>
     {
         if(dataMinCardinality.Cardinality === 0)
-            return this._objectDomain;
+            return this._store.ObjectDomain;
 
         let observableDataPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(dataMinCardinality.DataPropertyExpression);
         if(dataMinCardinality.DataRange)
@@ -580,7 +596,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
                 map(dataPropertyExpression => dataPropertyExpression.filter(member => dataMaxCardinality.DataRange.HasMember(member[1]))));
 
         return combineLatest(
-            this._objectDomain,
+            this._store.ObjectDomain,
             observableDataPropertyExpression,
             (objectDomain, dataPropertyExpression) =>
                 GroupJoin(
@@ -605,7 +621,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
 
         if(dataExactCardinality.Cardinality === 0)
             return combineLatest(
-                this._objectDomain,
+                this._store.ObjectDomain,
                 observableDataPropertyExpression,
                 (objectDomain, dataPropertyExpression) =>
                     GroupJoin(
@@ -632,23 +648,15 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
     }
 
     PropertyExpression(
-        objectPropertyExpression: IPropertyExpression
+        propertyExpression: IPropertyExpression
         ): Subject<[any, any][]>
     {
-        let subject = this._properties.get(objectPropertyExpression.LocalName);
-        if(!subject)
-        {
-            subject = new BehaviorSubject<[any, any][]>([]);
-            this._properties.set(
-                objectPropertyExpression.LocalName,
-                subject);
-        }
-        return subject;
+        return <Subject<[any, any][]>>this._store.ObserveProperty(propertyExpression.LocalName);
     }
 
     get ObjectDomain(): Subject<Set<any>>
     {
-        return this._objectDomain;
+        return <Subject<Set<any>>>this._store.ObjectDomain;
     }
 
     ClassExpression(
