@@ -79,11 +79,11 @@ export interface IStore
     ObserveProperty(property: string): Observable<[any, any][]>;
     NewEntity<TEntity>(): TEntity;
     Add(
-        entity  : any,
+        entity  : object,
         property: string,
         value   : any);
     Remove(
-        entity  : any,
+        entity  : object,
         property: string,
         value   : any);
 }
@@ -166,7 +166,7 @@ export class Store implements IStore
     }
 
     Add(
-        entity  : any,
+        entity  : object,
         property: string,
         value   : any
         )
@@ -192,7 +192,7 @@ export class Store implements IStore
     }
 
     Remove(
-        entity  : any,
+        entity  : object,
         property: string,
         value   : any
         )
@@ -213,17 +213,20 @@ export class Store implements IStore
             const mappedEntity = this.Map(entity);
             const mappedValue  = this.Map(value);
             const values = propertySubject.getValue();
-            values.splice(
-                values.findIndex(
-                    value => value[0] === mappedEntity && value[1] === mappedValue),
-                1);
-            propertySubject.next(values);
-            //propertySubject.next(values.filter(value => value[0] !== entity.Id || value[1] !== value));
+            const index = values.findIndex(value => value[0] === mappedEntity && value[1] === mappedValue);
+            if(index != -1)
+            {
+                values.splice(
+                    index,
+                    1);
+                propertySubject.next(values);
+            }
+            //propertySubject.next(values.filter(value => value[0] !== mappedEntity || value[1] !== mappedValue));
         }        
     }
 
     UpdateValue(
-        entity   : any,
+        entity   : object,
         property : string,
         newValue : any,
         oldValue?: any
