@@ -13,11 +13,11 @@ describe(
         const classExpressionWriter = new ClassExpressionWriter();
 
         describe(
-            'Given an Ontology o1 with axiom DataProperty(op1):',
+            'Given an Ontology o1 with axiom DataProperty(dp1):',
             () =>
             {
                 const o1 = new Ontology('o1');
-                const dp1 = new DataProperty(o1, 'op1');
+                const dp1 = new DataProperty(o1, 'dp1');
                 const ces = [0, 1, 2].map(cardinality => new DataExactCardinality(dp1, cardinality));
                 const store: IStore = new Store();
                 const generator = new ObservableGenerator(
@@ -87,11 +87,11 @@ describe(
         const classExpressionWriter = new ClassExpressionWriter();
 
         describe(
-            'Given an Ontology o1 with axiom DataProperty(op1):',
+            'Given an Ontology o1 with axiom DataProperty(dp1):',
             () =>
             {
                 const o1 = new Ontology('o1');
-                const dp1 = new DataProperty(o1, 'op1');
+                const dp1 = new DataProperty(o1, 'dp1');
                 const ce = new DataExactCardinality(dp1, 0, new DataOneOf([1]));
                 const store: IStore = new Store();
                 const generator = new ObservableGenerator(
@@ -128,11 +128,11 @@ describe(
             });
 
         describe(
-            'Given an Ontology o1 with axiom DataProperty(op1):',
+            'Given an Ontology o1 with axiom DataProperty(dp1):',
             () =>
             {
                 const o1 = new Ontology('o1');
-                const dp1 = new DataProperty(o1, 'op1');
+                const dp1 = new DataProperty(o1, 'dp1');
                 const ce = new DataExactCardinality(dp1, 1, new DataOneOf([1, 2]));
                 const store: IStore = new Store();
                 const generator = new ObservableGenerator(
@@ -140,7 +140,7 @@ describe(
                     store);
 
                 describe(
-                    'Given (op1)OP = {(x, 0)}:',
+                    'Given (dp1)OP = {(x, 0)}:',
                     () =>
                     {
                         const x = store.NewEntity<any>();
@@ -154,7 +154,7 @@ describe(
                     });
 
                 describe(
-                    'Given (op1)OP = {(x, 1)}:',
+                    'Given (dp1)OP = {(x, 1)}:',
                     () =>
                     {
                         const x = store.NewEntity<any>();
@@ -168,7 +168,7 @@ describe(
                     });
 
                 describe(
-                    'Given (op1)OP = {(x, 0), (x, 1)}:',
+                    'Given (dp1)OP = {(x, 0), (x, 1)}:',
                     () =>
                     {
                         const x = store.NewEntity<any>();
@@ -183,7 +183,7 @@ describe(
                     });
 
                 describe(
-                    'Given (op1)OP = {(x, 2)}:',
+                    'Given (dp1)OP = {(x, 2)}:',
                     () =>
                     {
                         const x = store.NewEntity<any>();
@@ -197,7 +197,7 @@ describe(
                     });
 
                 describe(
-                    'Given (op1)OP = {(x, 0), (x, 2)}:',
+                    'Given (dp1)OP = {(x, 0), (x, 2)}:',
                     () =>
                     {
                         const x = store.NewEntity<any>();
@@ -212,7 +212,7 @@ describe(
                     });
 
                 describe(
-                    'Given (op1)OP = {(x, 1), (x, 2)}:',
+                    'Given (dp1)OP = {(x, 1), (x, 2)}:',
                     () =>
                     {
                         const x = store.NewEntity<any>();
