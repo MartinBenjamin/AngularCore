@@ -100,8 +100,9 @@ export class Store implements IStore
     private _objectDomain       = new BehaviorSubject<Set<any>>(new Set<any>());
     private _properties         = new Map<string, BehaviorSubject<[any, any][]>>();
     private _objects            = new Map<any, any>();
+    private _incremental        = false;
     private _cardinalities      = new Map<string, Cardinality>();
-    private _defaultCardinality = Cardinality.One;
+    private _defaultCardinality = Cardinality.Many;
 
     get ObjectDomain(): Observable<Set<any>>
     {
@@ -189,12 +190,18 @@ export class Store implements IStore
         else
             entity[property] = value;
 
-        const propertySubject = this._properties.get(property);
-        if(propertySubject)
+        if(!this._incremental)
+            this.Publish(property);
+
+        else
         {
-            const values = propertySubject.getValue();
-            values.push([this.Map(entity), this.Map(value)]);
-            propertySubject.next(values);
+            const propertySubject = this._properties.get(property);
+            if(propertySubject)
+            {
+                const values = propertySubject.getValue();
+                values.push([this.Map(entity), this.Map(value)]);
+                propertySubject.next(values);
+            }
         }
     }
 
@@ -214,21 +221,27 @@ export class Store implements IStore
         else
             delete entity[property];
 
-        const propertySubject = this._properties.get(property);
-        if(propertySubject)
+        if(!this._incremental)
+            this.Publish(property);
+
+        else
         {
-            const mappedEntity = this.Map(entity);
-            const mappedValue  = this.Map(value);
-            const values = propertySubject.getValue();
-            const index = values.findIndex(value => value[0] === mappedEntity && value[1] === mappedValue);
-            if(index != -1)
+            const propertySubject = this._properties.get(property);
+            if(propertySubject)
             {
-                values.splice(
-                    index,
-                    1);
-                propertySubject.next(values);
+                const mappedEntity = this.Map(entity);
+                const mappedValue  = this.Map(value);
+                const values = propertySubject.getValue();
+                const index = values.findIndex(value => value[0] === mappedEntity && value[1] === mappedValue);
+                if(index != -1)
+                {
+                    values.splice(
+                        index,
+                        1);
+                    propertySubject.next(values);
+                }
             }
-        }        
+        }
     }
 
     UpdateValue(
@@ -238,40 +251,38 @@ export class Store implements IStore
         oldValue?: any
         )
     {
-        if(typeof oldValue === 'undefined')
+        let currentValue = entity[property];
+        if(currentValue instanceof Array)
         {
-            oldValue = entity[property];
-            entity[property] = newValue;
+            const index = currentValue.indexOf(oldValue);
+            if(index !== -1)
+                currentValue[index] = newValue;
         }
         else
+            entity[property] = newValue;
+
+        if(!this._incremental)
+            this.Publish(property);
+
+        else
         {
-            let currentValue = entity[property];
-            if(currentValue instanceof Array)
+            const propertySubject = this._properties.get(property);
+            if(propertySubject)
             {
-                const index = currentValue.indexOf(oldValue);
-                if(index !== -1)
-                    currentValue[index] = newValue;
+                const mappedEntity   = this.Map(entity);
+                const mappedNewValue = this.Map(newValue);
+                const mappedOldValue = this.Map(oldValue);
+
+                const values = propertySubject.getValue();
+                const index = values.findIndex(value => value[0] === mappedEntity && value[1] === mappedOldValue);
+
+                if(index != -1)
+                {
+                    values[index][1] = mappedNewValue;
+                    propertySubject.next(values);
+                }
             }
-            else
-                entity[property] = newValue;
         }
-
-        const propertySubject = this._properties.get(property);
-        if(propertySubject)
-        {
-            const mappedEntity   = this.Map(entity);
-            const mappedNewValue = this.Map(newValue);
-            const mappedOldValue = this.Map(oldValue);
-
-            const values = propertySubject.getValue();
-            const index = values.findIndex(value => value[0] === mappedEntity && value[1] === mappedOldValue);
-
-            if(index != -1)
-            {
-                values[index][1] = mappedNewValue;
-                propertySubject.next(values);
-            }
-        }  
     }
 
     private Cardinality(
@@ -289,7 +300,17 @@ export class Store implements IStore
         if(propertySubject)
             propertySubject.next([...this._objects.values()]
                 .filter(object => property in object)
-                .map(object => [this.Map(object), this.Map(object[property])]));
+                .reduce((list, object) =>
+                {
+                    if(object[property] instanceof Array)
+                        list.push(...object[property].map(value => [this.Map(object), this.Map(value)]));
+
+                    else
+                        list.push([this.Map(object), this.Map(object[property])]);
+
+                    return list;
+                },
+                []));
     }
 
     private Map(
