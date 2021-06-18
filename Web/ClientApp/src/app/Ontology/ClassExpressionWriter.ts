@@ -2,7 +2,7 @@ import { IClass } from "./IClass";
 import { IClassExpression } from './IClassExpression';
 import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
-import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
+import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality, IDataCardinality } from "./IDataCardinality";
 import { IDataHasValue } from "./IDataHasValue";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
 import { IEntity } from './IEntity';
@@ -143,21 +143,31 @@ ${objectCardinality.ClassExpression ? ' ' + objectCardinality.ClassExpression.Se
         dataMinCardinality: IDataMinCardinality
         ): string
     {
-        throw new Error("Method not implemented.");
+        return `DataMinCardinality${this.DataCardinality(dataMinCardinality)}`;
     }
 
     DataMaxCardinality(
         dataMaxCardinality: IDataMaxCardinality
         ): string
     {
-        throw new Error("Method not implemented.");
+        return `DataMaxCardinality${this.DataCardinality(dataMaxCardinality)}`;
     }
 
     DataExactCardinality(
         dataExactCardinality: IDataExactCardinality
         ): string
     {
-        throw new Error("Method not implemented.");
+        return `DataExactCardinality${this.DataCardinality(dataExactCardinality)}`;
+    }
+
+    DataCardinality(
+        dataCardinality: IDataCardinality
+        ): string
+    {
+        return `(\
+${dataCardinality.Cardinality} \
+${this.Entity(dataCardinality.DataPropertyExpression)}\
+${dataCardinality.DataRange ? ' ' + '' : ''})`;
     }
 
     Individual(
