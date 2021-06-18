@@ -1,4 +1,4 @@
-import { IClassExpressionSelector } from './IClassExpressionSelector';
+import { IClassExpressionSelector } from "./IClassExpressionSelector";
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IObjectComplementOf } from "./IObjectComplementOf";
