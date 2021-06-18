@@ -10,28 +10,27 @@ export class DataRangeWriter implements IDataRangeSelector<string>
         dataIntersectionOf: IDataIntersectionOf
         ): string
     {
-        throw new Error("Method not implemented.");
+        return `DataIntersectionOf(${dataIntersectionOf.DataRanges.map(dataRange => dataRange.Select(this)).join(' ')})`;
     }
 
     DataUnionOf(
         dataUnionOf: IDataUnionOf
         ): string
     {
-        throw new Error("Method not implemented.");
+        return `DataIntersectionOf(${dataUnionOf.DataRanges.map(dataRange => dataRange.Select(this)).join(' ')})`;
     }
 
     DataComplementOf(
         dataComplementOf: IDataComplementOf
         ): string
     {
-        throw new Error("Method not implemented.");
+        return `DataComplementOf(${dataComplementOf.DataRange.Select(this)})`;
     }
 
     DataOneOf(
         dataOneOf: IDataOneOf
         ): string
     {
-        throw new Error("Method not implemented.");
+        return `DataOneOf(${dataOneOf.Values.join(' ')})`;
     }
-
 }

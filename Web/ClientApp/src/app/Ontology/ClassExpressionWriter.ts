@@ -1,8 +1,9 @@
+import { DataRangeWriter } from "./DataRangeWriter";
 import { IClass } from "./IClass";
 import { IClassExpression } from './IClassExpression';
 import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
-import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality, IDataCardinality } from "./IDataCardinality";
+import { IDataCardinality, IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
 import { IDataHasValue } from "./IDataHasValue";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
 import { IEntity } from './IEntity';
@@ -21,6 +22,8 @@ const isAxiom = new IsAxiom();
 
 export class ClassExpressionWriter implements IClassExpressionSelector<string>
 {
+    private _dataRangeWriter = new DataRangeWriter();
+
     Class(
         class$: IClass
         ): string
@@ -55,7 +58,7 @@ export class ClassExpressionWriter implements IClassExpressionSelector<string>
     {
         const individuals = objectOneOf.Individuals
             .map(individual => this.Individual(individual))
-            .reduce((concatenated, individual) => concatenated + ' ' + individual);
+            .join(' ');
         return `ObjectOneOf(${individuals})`;
     }
 
@@ -167,7 +170,7 @@ ${objectCardinality.ClassExpression ? ' ' + objectCardinality.ClassExpression.Se
         return `(\
 ${dataCardinality.Cardinality} \
 ${this.Entity(dataCardinality.DataPropertyExpression)}\
-${dataCardinality.DataRange ? ' ' + '' : ''})`;
+${dataCardinality.DataRange ? ' ' + dataCardinality.DataRange.Select(this._dataRangeWriter) : ''})`;
     }
 
     Individual(
