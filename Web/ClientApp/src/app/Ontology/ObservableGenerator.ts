@@ -323,9 +323,6 @@ export class Store implements IStore
 
 export class ObservableGenerator implements IClassExpressionSelector<Observable<Set<any>>>
 {
-    //private _objectDomain             : Subject<Set<any>> = new BehaviorSubject<Set<any>>(new Set<any>());
-    private _properties               : Map<string, Subject<[any, any][]>> = new Map<string, BehaviorSubject<[any, any][]>>();;
-    private _classes                  = new Map<IClassExpression, Observable<Set<any>>>();
     private _classDefinitions         : Map<IClass, IClassExpression[]>;
     private _definedClasses           : IClass[];
     private _functionalDataProperties = new Set<IDataPropertyExpression>();
@@ -443,7 +440,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         ): Observable<Set<any>>
     {
         return combineLatest(
-            this.PropertyExpression(objectSomeValuesFrom.ObjectPropertyExpression),
+            this.ObservePropertyExpression(objectSomeValuesFrom.ObjectPropertyExpression),
             objectSomeValuesFrom.ClassExpression.Select(this),
             (objectPropertyExpression, classExpression) =>
                 new Set<any>(
@@ -457,7 +454,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         ): Observable<Set<any>>
     {
         return combineLatest(
-            this.PropertyExpression(objectAllValuesFrom.ObjectPropertyExpression).pipe(map(this.GroupByDomain)),
+            this.ObservePropertyExpression(objectAllValuesFrom.ObjectPropertyExpression).pipe(map(this.GroupByDomain)),
             objectAllValuesFrom.ClassExpression.Select(this),
             (groupedByDomain, classExpression) =>
                 new Set<any>(
@@ -471,7 +468,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         ): Observable<Set<any>>
     {
         const individual = this.InterpretIndividual(objectHasValue.Individual);
-        return this.PropertyExpression(objectHasValue.ObjectPropertyExpression).pipe(
+        return this.ObservePropertyExpression(objectHasValue.ObjectPropertyExpression).pipe(
             map(objectPropertyExpression =>
                 new Set<any>(objectPropertyExpression
                     .filter(member => member[1] === individual)
@@ -482,7 +479,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         objectHasSelf: IObjectHasSelf
         ): Observable<Set<any>>
     {
-        return this.PropertyExpression(objectHasSelf.ObjectPropertyExpression).pipe(
+        return this.ObservePropertyExpression(objectHasSelf.ObjectPropertyExpression).pipe(
             map(objectPropertyExpression =>
                 new Set<any>(objectPropertyExpression
                     .filter(member => member[0] === member[1])
@@ -496,7 +493,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         if(objectMinCardinality.Cardinality === 0)
             return this._store.ObjectDomain;
 
-        let observableObjectPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(objectMinCardinality.ObjectPropertyExpression);
+        let observableObjectPropertyExpression: Observable<[any, any][]> = this.ObservePropertyExpression(objectMinCardinality.ObjectPropertyExpression);
         if(objectMinCardinality.ClassExpression)
             observableObjectPropertyExpression = combineLatest(
                 observableObjectPropertyExpression,
@@ -521,7 +518,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         objectMaxCardinality: IObjectMaxCardinality
         ): Observable<Set<any>>
     {
-        let observableObjectPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(objectMaxCardinality.ObjectPropertyExpression);
+        let observableObjectPropertyExpression: Observable<[any, any][]> = this.ObservePropertyExpression(objectMaxCardinality.ObjectPropertyExpression);
         if(objectMaxCardinality.ClassExpression)
             observableObjectPropertyExpression = combineLatest(
                 observableObjectPropertyExpression,
@@ -548,7 +545,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         objectExactCardinality: IObjectExactCardinality
         ): Observable<Set<any>>
     {
-        let observableObjectPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(objectExactCardinality.ObjectPropertyExpression);
+        let observableObjectPropertyExpression: Observable<[any, any][]> = this.ObservePropertyExpression(objectExactCardinality.ObjectPropertyExpression);
         if(objectExactCardinality.ClassExpression)
             observableObjectPropertyExpression = combineLatest(
                 observableObjectPropertyExpression,
@@ -583,7 +580,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         dataSomeValuesFrom: IDataSomeValuesFrom
         ): Observable<Set<any>>
     {
-        return this.PropertyExpression(dataSomeValuesFrom.DataPropertyExpression).pipe(
+        return this.ObservePropertyExpression(dataSomeValuesFrom.DataPropertyExpression).pipe(
             map(dataPropertyExpression =>
                 new Set<any>(dataPropertyExpression
                     .filter(member => dataSomeValuesFrom.DataRange.HasMember(member[1])))));
@@ -593,7 +590,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         dataAllValuesFrom: IDataAllValuesFrom
         ): Observable<Set<any>>
     {
-        return this.PropertyExpression(dataAllValuesFrom.DataPropertyExpression).pipe(
+        return this.ObservePropertyExpression(dataAllValuesFrom.DataPropertyExpression).pipe(
             map(this.GroupByDomain),
             map(groupedByDomain =>
                 new Set<any>(
@@ -606,7 +603,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         dataHasValue: IDataHasValue
         ): Observable<Set<any>>
     {
-        return this.PropertyExpression(dataHasValue.DataPropertyExpression).pipe(
+        return this.ObservePropertyExpression(dataHasValue.DataPropertyExpression).pipe(
             map(dataPropertyExpression =>
                 new Set<any>(dataPropertyExpression
                     .filter(member => member[1] === dataHasValue.Value)
@@ -620,7 +617,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         if(dataMinCardinality.Cardinality === 0)
             return this._store.ObjectDomain;
 
-        let observableDataPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(dataMinCardinality.DataPropertyExpression);
+        let observableDataPropertyExpression: Observable<[any, any][]> = this.ObservePropertyExpression(dataMinCardinality.DataPropertyExpression);
         if(dataMinCardinality.DataRange)
             observableDataPropertyExpression = observableDataPropertyExpression.pipe(
                 map(dataPropertyExpression => dataPropertyExpression.filter(member => dataMinCardinality.DataRange.HasMember(member[1]))));
@@ -642,7 +639,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         dataMaxCardinality: IDataMaxCardinality
         ): Observable<Set<any>>
     {
-        let observableDataPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(dataMaxCardinality.DataPropertyExpression);
+        let observableDataPropertyExpression: Observable<[any, any][]> = this.ObservePropertyExpression(dataMaxCardinality.DataPropertyExpression);
         if(dataMaxCardinality.DataRange)
             observableDataPropertyExpression = observableDataPropertyExpression.pipe(
                 map(dataPropertyExpression => dataPropertyExpression.filter(member => dataMaxCardinality.DataRange.HasMember(member[1]))));
@@ -666,7 +663,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         dataExactCardinality: IDataExactCardinality
         ): Observable<Set<any>>
     {
-        let observableDataPropertyExpression: Observable<[any, any][]> = this.PropertyExpression(dataExactCardinality.DataPropertyExpression);
+        let observableDataPropertyExpression: Observable<[any, any][]> = this.ObservePropertyExpression(dataExactCardinality.DataPropertyExpression);
         if(dataExactCardinality.DataRange)
             observableDataPropertyExpression = observableDataPropertyExpression.pipe(
                 map(dataPropertyExpression => dataPropertyExpression.filter(member => dataExactCardinality.DataRange.HasMember(member[1]))));
@@ -699,16 +696,11 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
                     .map(entry => entry[0]))));
     }
 
-    PropertyExpression(
+    private ObservePropertyExpression(
         propertyExpression: IPropertyExpression
-        ): Subject<[any, any][]>
+        ): Observable<[any, any][]>
     {
-        return <Subject<[any, any][]>>this._store.ObserveProperty(propertyExpression.LocalName);
-    }
-
-    get ObjectDomain(): Subject<Set<any>>
-    {
-        return <Subject<Set<any>>>this._store.ObjectDomain;
+        return this._store.ObserveProperty(propertyExpression.LocalName);
     }
 
     ClassExpression(
