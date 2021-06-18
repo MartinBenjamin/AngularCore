@@ -1,5 +1,6 @@
 import { DataRange } from "./DataRange";
 import { IDataOneOf } from "./IDataOneOf";
+import { IDataRangeSelector } from "./IDataRangeSelector";
 
 export class DataOneOf
     extends DataRange
@@ -18,5 +19,12 @@ export class DataOneOf
         ): boolean
     {
         return this.Values.includes(value);
+    }
+
+    Select<TResult>(
+        selector: IDataRangeSelector<TResult>
+        ): TResult
+    {
+        return selector.DataOneOf(this);
     }
 }

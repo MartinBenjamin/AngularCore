@@ -1,6 +1,7 @@
 import { DataRange } from "./DataRange";
 import { IDataComplementOf } from "./IDataComplementOf";
 import { IDataRange } from "./IDataRange";
+import { IDataRangeSelector } from "./IDataRangeSelector";
 
 export class DataComplementOf
     extends DataRange
@@ -18,5 +19,12 @@ export class DataComplementOf
         ): boolean
     {
         return !this.DataRange.HasMember(value);
+    }
+
+    Select<TResult>(
+        selector: IDataRangeSelector<TResult>
+        ): TResult
+    {
+        return selector.DataComplementOf(this);
     }
 }

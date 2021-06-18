@@ -1,6 +1,7 @@
 import { DataRange } from "./DataRange";
-import { IDataUnionOf } from "./IDataUnionOf";
 import { IDataRange } from "./IDataRange";
+import { IDataRangeSelector } from "./IDataRangeSelector";
+import { IDataUnionOf } from "./IDataUnionOf";
 
 export class DataUnionOf
     extends DataRange
@@ -18,5 +19,12 @@ export class DataUnionOf
         ): boolean
     {
         return this.DataRanges.some(dataRange => dataRange.HasMember(value));
+    }
+
+    Select<TResult>(
+        selector: IDataRangeSelector<TResult>
+        ): TResult
+    {
+        return selector.DataUnionOf(this);
     }
 }
