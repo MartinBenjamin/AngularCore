@@ -100,6 +100,7 @@ export class Store implements IStore
     private _objectDomain       = new BehaviorSubject<Set<any>>(new Set<any>());
     private _properties         = new Map<string, BehaviorSubject<[any, any][]>>();
     private _objects            = new Map<any, any>();
+    private _ids                = new Map<object, any>();
     private _incremental        = false;
     private _cardinalities      = new Map<string, Cardinality>();
     private _defaultCardinality = Cardinality.Many;
@@ -116,7 +117,19 @@ export class Store implements IStore
         let subject = this._properties.get(property);
         if(!subject)
         {
-            subject = new BehaviorSubject<[any, any][]>([]);
+            subject = new BehaviorSubject<[any, any][]>([...this._objects.values()]
+                .filter(object => property in object)
+                .reduce((list, object) =>
+                {
+                    if(object[property] instanceof Array)
+                        list.push(...object[property].map(value => [this.Map(object), this.Map(value)]));
+
+                    else
+                        list.push([this.Map(object), this.Map(object[property])]);
+
+                    return list;
+                },
+                []));
             this._properties.set(
                 property,
                 subject);
@@ -169,7 +182,10 @@ export class Store implements IStore
         this._objects.set(
             entity.Id,
             entity);
-        this._objectDomain.next(new Set<any>(this._objects.keys()));
+        this._ids.set(
+            entity,
+            entity.Id);
+        this._objectDomain.next(new Set<any>(this._ids.values()));
         return <TEntity>entity;
     }
 
@@ -259,7 +275,10 @@ export class Store implements IStore
                 currentValue[index] = newValue;
         }
         else
+        {
+            oldValue = currentValue;
             entity[property] = newValue;
+        }
 
         if(!this._incremental)
             this.Publish(property);
@@ -317,7 +336,15 @@ export class Store implements IStore
         value: any
         ): any
     {
-        return typeof value === 'object' && 'Id' in value ? value.Id : value;
+        if(typeof value === 'object')
+        {
+            const entityId = this._ids.get(value);
+            if(typeof entityId != 'undefined')
+                return entityId;
+        }
+
+        // Not entity.
+        return value;
     }
 }
 
