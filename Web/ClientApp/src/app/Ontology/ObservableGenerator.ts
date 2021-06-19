@@ -99,8 +99,7 @@ export class Store implements IStore
     private _nextId             = 1;
     private _objectDomain       = new BehaviorSubject<Set<any>>(new Set<any>());
     private _properties         = new Map<string, BehaviorSubject<[any, any][]>>();
-    private _objects            = new Map<any, any>();
-    private _ids                = new Map<object, any>();
+    private _ids                = new Map<any, any>();
     private _incremental        = false;
     private _cardinalities      = new Map<string, Cardinality>();
     private _defaultCardinality = Cardinality.Many;
@@ -117,7 +116,7 @@ export class Store implements IStore
         let subject = this._properties.get(property);
         if(!subject)
         {
-            subject = new BehaviorSubject<[any, any][]>([...this._objects.values()]
+            subject = new BehaviorSubject<[any, any][]>([...this._ids.keys()]
                 .filter(object => property in object)
                 .reduce((list, object) =>
                 {
@@ -142,9 +141,9 @@ export class Store implements IStore
         loaded: Set<any>
         ): void
     {
-        this._objects.set(
-            entity.Id,
-            entity);
+        //this._objects.set(
+        //    entity.Id,
+        //    entity);
 
         for(const property in entity)
             if(property !== 'Id')
@@ -179,9 +178,6 @@ export class Store implements IStore
             Id: this._nextId++
         };
 
-        this._objects.set(
-            entity.Id,
-            entity);
         this._ids.set(
             entity,
             entity.Id);
@@ -317,7 +313,7 @@ export class Store implements IStore
     {
         const propertySubject = this._properties.get(property);
         if(propertySubject)
-            propertySubject.next([...this._objects.values()]
+            propertySubject.next([...this._ids.keys()]
                 .filter(object => property in object)
                 .reduce((list, object) =>
                 {
