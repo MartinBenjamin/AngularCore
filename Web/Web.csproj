@@ -184,6 +184,7 @@
     <None Remove="ClientApp\src\app\Ontology\IDataRangeSelector.ts" />
     <None Remove="ClientApp\src\app\Ontology\IDataSomeValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IDatatype.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IDatatypeRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\IDataUnionOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\IDisjointClasses.ts" />
     <None Remove="ClientApp\src\app\Ontology\IEntity.ts" />
@@ -450,6 +451,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataRangeSelector.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataSomeValuesFrom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDatatype.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDatatypeRestriction.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataUnionOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDisjointClasses.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IEntity.ts" />

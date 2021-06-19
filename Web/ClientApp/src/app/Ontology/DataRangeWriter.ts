@@ -3,6 +3,7 @@ import { IDataIntersectionOf } from "./IDataIntersectionOf";
 import { IDataOneOf } from "./IDataOneOf";
 import { IDataRangeSelector } from "./IDataRangeSelector";
 import { IDatatype } from "./IDatatype";
+import { IDatatypeRestriction } from "./IDatatypeRestriction";
 import { IDataUnionOf } from "./IDataUnionOf";
 
 export class DataRangeWriter implements IDataRangeSelector<string>
@@ -40,5 +41,12 @@ export class DataRangeWriter implements IDataRangeSelector<string>
         ): string
     {
         return `DataOneOf(${dataOneOf.Values.join(' ')})`;
+    }
+
+    DatatypeRestriction(
+        datatypeRestriction: IDatatypeRestriction
+        ): string
+    {
+        throw new Error("Method not implemented.");
     }
 }
