@@ -116,15 +116,15 @@ export class Store implements IStore
         let subject = this._properties.get(property);
         if(!subject)
         {
-            subject = new BehaviorSubject<[any, any][]>([...this._ids.keys()]
-                .filter(object => property in object)
-                .reduce((list, object) =>
+            subject = new BehaviorSubject<[any, any][]>([...this._ids]
+                .filter(([entity, _]) => property in entity)
+                .reduce((list, [entity, entityId]) =>
                 {
-                    if(object[property] instanceof Array)
-                        list.push(...object[property].map(value => [this.Map(object), this.Map(value)]));
+                    if(entity[property] instanceof Array)
+                        list.push(...entity[property].map(value => [entityId, this.Map(value)]));
 
                     else
-                        list.push([this.Map(object), this.Map(object[property])]);
+                        list.push([entityId, this.Map(entity[property])]);
 
                     return list;
                 },
@@ -313,15 +313,15 @@ export class Store implements IStore
     {
         const propertySubject = this._properties.get(property);
         if(propertySubject)
-            propertySubject.next([...this._ids.keys()]
-                .filter(object => property in object)
-                .reduce((list, object) =>
+            propertySubject.next([...this._ids]
+                .filter(([entity, _]) => property in entity)
+                .reduce((list, [entity, entityId]) =>
                 {
-                    if(object[property] instanceof Array)
-                        list.push(...object[property].map(value => [this.Map(object), this.Map(value)]));
+                    if(entity[property] instanceof Array)
+                        list.push(...entity[property].map(value => [entityId, this.Map(value)]));
 
                     else
-                        list.push([this.Map(object), this.Map(object[property])]);
+                        list.push([entityId, this.Map(entity[property])]);
 
                     return list;
                 },
