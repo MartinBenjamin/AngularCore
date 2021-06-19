@@ -120,7 +120,6 @@
     <None Remove="ClientApp\src\app\Ontology\ClassExpressionWriter.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassifierGenerator.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassMembershipEvaluator.ts" />
-    <None Remove="ClientApp\src\app\Ontology\CombineLatest.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataAllValuesFrom.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataAllValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataCardinality.ts" />
@@ -374,7 +373,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Validate.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AnnotationAssertion.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassExpressionWriter.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Ontology\CombineLatest.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AdjacencyList.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AdjacencyList.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Annotated.ts" />
