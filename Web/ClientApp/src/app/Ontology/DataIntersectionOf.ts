@@ -15,7 +15,7 @@ export class DataIntersectionOf
     }
 
     HasMember(
-        value: object
+        value: any
         ): boolean
     {
         return this.DataRanges.every(dataRange => dataRange.HasMember(value));

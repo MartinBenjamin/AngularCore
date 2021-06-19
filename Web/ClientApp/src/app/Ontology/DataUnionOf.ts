@@ -15,7 +15,7 @@ export class DataUnionOf
     }
 
     HasMember(
-        value: object
+        value: any
         ): boolean
     {
         return this.DataRanges.some(dataRange => dataRange.HasMember(value));

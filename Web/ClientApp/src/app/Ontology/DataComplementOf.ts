@@ -15,7 +15,7 @@ export class DataComplementOf
     }
 
     HasMember(
-        value: object
+        value: any
         ): boolean
     {
         return !this.DataRange.HasMember(value);
