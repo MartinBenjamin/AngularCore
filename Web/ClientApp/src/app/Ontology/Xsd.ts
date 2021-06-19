@@ -1,16 +1,28 @@
-import { BuiltIn } from "./BuiltIn";
-import { IDatatype } from "./IDatatype";
+import { Datatype } from "./Datatype";
 import { PrefixIris } from "./PrefixIris";
 
-class DateTime
-    extends BuiltIn
-    implements IDatatype
+class XsdDatatype extends Datatype
+{
+    constructor(
+        localName: string
+        )
+    {
+        super(
+            null,
+            localName);
+    }
+
+    get PrefixIri(): string
+    {
+        return PrefixIris.xsd;
+    }
+}
+
+class DateTime extends XsdDatatype
 {
     constructor()
     {
-        super(
-            PrefixIris.xsd,
-            "dateTime");
+        super("dateTime");
     }
 
     HasMember(
@@ -21,15 +33,11 @@ class DateTime
     }
 }
 
-class Decimal
-    extends BuiltIn
-    implements IDatatype
+class Decimal extends XsdDatatype
 {
     constructor()
     {
-        super(
-            PrefixIris.xsd,
-            "decimal");
+        super("decimal");
     }
 
     HasMember(
@@ -40,7 +48,7 @@ class Decimal
     }
 }
 
-let dateTime = new DateTime();
-let decimal  = new Decimal();
+const dateTime = new DateTime();
+const decimal  = new Decimal();
 
 export { dateTime as DateTime, decimal as Decimal };

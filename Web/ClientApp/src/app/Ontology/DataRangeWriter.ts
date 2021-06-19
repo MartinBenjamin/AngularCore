@@ -2,10 +2,18 @@ import { IDataComplementOf } from "./IDataComplementOf";
 import { IDataIntersectionOf } from "./IDataIntersectionOf";
 import { IDataOneOf } from "./IDataOneOf";
 import { IDataRangeSelector } from "./IDataRangeSelector";
+import { IDatatype } from "./IDatatype";
 import { IDataUnionOf } from "./IDataUnionOf";
 
 export class DataRangeWriter implements IDataRangeSelector<string>
 {
+    Datatype(
+        datatype: IDatatype
+        ): string
+    {
+        return datatype.Iri;
+    }
+
     DataIntersectionOf(
         dataIntersectionOf: IDataIntersectionOf
         ): string
