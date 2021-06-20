@@ -119,15 +119,15 @@ export class Store implements IStore
         let subject = this._properties.get(property);
         if(!subject)
         {
-            subject = new BehaviorSubject<[any, any][]>([...this._ids]
-                .filter(([entity, _]) => property in entity)
-                .reduce((list, [entity, entityId]) =>
+            subject = new BehaviorSubject<[any, any][]>([...this._ids.keys()]
+                .filter(entity => property in entity)
+                .reduce((list, entity) =>
                 {
                     if(entity[property] instanceof Array)
-                        list.push(...entity[property].map(value => [entityId, this.Map(value)]));
+                        list.push(...entity[property].map(value => [entity, value]));
 
                     else
-                        list.push([entityId, this.Map(entity[property])]);
+                        list.push([entity, entity[property]]);
 
                     return list;
                 },
@@ -182,7 +182,7 @@ export class Store implements IStore
     {
         if(keyProperty)
         {
-            const existing = [...this._ids.values()].find(entity => entity[keyProperty] === keyValue);
+            const existing = [...this._ids.keys()].find(entity => entity[keyProperty] === keyValue);
             if(existing)
                 // Upsert.
                 return existing;
@@ -194,7 +194,7 @@ export class Store implements IStore
             entity,
             this._nextId++);
 
-        this._objectDomain.next(new Set<any>(this._ids.values()));
+        this._objectDomain.next(new Set<any>(this._ids.keys()));
 
         if(keyProperty)
         {
@@ -231,7 +231,7 @@ export class Store implements IStore
             if(propertySubject)
             {
                 const values = propertySubject.getValue();
-                values.push([this.Map(entity), this.Map(value)]);
+                values.push([entity, value]);
                 propertySubject.next(values);
             }
         }
@@ -261,10 +261,8 @@ export class Store implements IStore
             const propertySubject = this._properties.get(property);
             if(propertySubject)
             {
-                const mappedEntity = this.Map(entity);
-                const mappedValue  = this.Map(value);
                 const values = propertySubject.getValue();
-                const index = values.findIndex(value => value[0] === mappedEntity && value[1] === mappedValue);
+                const index = values.findIndex(value => value[0] === entity && value[1] === value);
                 if(index != -1)
                 {
                     values.splice(
@@ -304,16 +302,12 @@ export class Store implements IStore
             const propertySubject = this._properties.get(property);
             if(propertySubject)
             {
-                const mappedEntity   = this.Map(entity);
-                const mappedNewValue = this.Map(newValue);
-                const mappedOldValue = this.Map(oldValue);
-
                 const values = propertySubject.getValue();
-                const value = values.find(value => value[0] === mappedEntity && value[1] === mappedOldValue);
+                const value = values.find(value => value[0] === entity && value[1] === oldValue);
 
                 if(value)
                 {
-                    value[1] = mappedNewValue;
+                    value[1] = newValue;
                     propertySubject.next(values);
                 }
             }
@@ -340,15 +334,15 @@ export class Store implements IStore
     {
         const propertySubject = this._properties.get(property);
         if(propertySubject)
-            propertySubject.next([...this._ids]
-                .filter(([entity, _]) => property in entity)
-                .reduce((list, [entity, entityId]) =>
+            propertySubject.next([...this._ids.keys()]
+                .filter(entity => property in entity)
+                .reduce((list, entity) =>
                 {
                     if(entity[property] instanceof Array)
-                        list.push(...entity[property].map(value => [entityId, this.Map(value)]));
+                        list.push(...entity[property].map(value => [entity, value]));
 
                     else
-                        list.push([entityId, this.Map(entity[property])]);
+                        list.push([entity, entity[property]]);
 
                     return list;
                 },
@@ -767,7 +761,9 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         for(const dataPropertyAssertion of this._ontology.Get(this._ontology.IsAxiom.IDataPropertyAssertion))
             if(dataPropertyAssertion.DataPropertyExpression.LocalName === 'Id' &&
                 dataPropertyAssertion.SourceIndividual === individual)
-                return dataPropertyAssertion.TargetValue;
+                return this._store.NewEntity<any>(
+                    dataPropertyAssertion.DataPropertyExpression.LocalName,
+                    dataPropertyAssertion.TargetValue);
 
         return individual;
     }
