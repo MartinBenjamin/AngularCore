@@ -77,7 +77,9 @@ export interface IStore
 {
     ObjectDomain: Observable<Set<any>>;
     ObserveProperty(property: string): Observable<[any, any][]>;
-    NewEntity<TEntity>(): TEntity;
+    NewEntity<TEntity>(
+        keyProperty?: string,
+        keyValue   ?: any): TEntity;
     Add(
         entity  : object,
         property: string,
@@ -86,6 +88,7 @@ export interface IStore
         entity  : object,
         property: string,
         value   : any);
+    EntityId(entity: object): number
 }
 
 enum Cardinality
@@ -172,15 +175,27 @@ export class Store implements IStore
             }
     }
 
-    NewEntity<TEntity>(): TEntity
+    NewEntity<TEntity>(
+        keyProperty?: string,
+        keyValue   ?: any
+        ): TEntity
     {
-        const entity: any = {
-            Id: this._nextId++
-        };
+        if(keyProperty)
+        {
+            const existing = [...this._ids.values()].find(entity => entity[keyProperty] === keyValue);
+            if(existing)
+                // Upsert.
+                return existing;
+        }
+
+        const entity: any = {};
+
+        if(keyProperty)
+            entity[keyProperty] = keyValue;
 
         this._ids.set(
             entity,
-            entity.Id);
+            this._nextId++);
         this._objectDomain.next(new Set<any>(this._ids.values()));
         return <TEntity>entity;
     }
@@ -298,6 +313,13 @@ export class Store implements IStore
                 }
             }
         }
+    }
+
+    EntityId(
+        entity: object
+        ): number
+    {
+        return this._ids.get(entity);
     }
 
     private Cardinality(
