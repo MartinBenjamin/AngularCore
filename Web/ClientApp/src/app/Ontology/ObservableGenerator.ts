@@ -289,11 +289,11 @@ export class Store implements IStore
                 const mappedOldValue = this.Map(oldValue);
 
                 const values = propertySubject.getValue();
-                const index = values.findIndex(value => value[0] === mappedEntity && value[1] === mappedOldValue);
+                const value = values.find(value => value[0] === mappedEntity && value[1] === mappedOldValue);
 
-                if(index != -1)
+                if(value)
                 {
-                    values[index][1] = mappedNewValue;
+                    value[1] = mappedNewValue;
                     propertySubject.next(values);
                 }
             }
