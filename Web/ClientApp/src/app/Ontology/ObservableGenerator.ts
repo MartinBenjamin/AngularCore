@@ -190,13 +190,18 @@ export class Store implements IStore
 
         const entity: any = {};
 
-        if(keyProperty)
-            entity[keyProperty] = keyValue;
-
         this._ids.set(
             entity,
             this._nextId++);
+
         this._objectDomain.next(new Set<any>(this._ids.values()));
+
+        if(keyProperty)
+        {
+            entity[keyProperty] = keyValue;
+            this.Publish(keyProperty);
+        }
+
         return <TEntity>entity;
     }
 
