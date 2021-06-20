@@ -232,46 +232,6 @@ export class Store implements IStore
         }
     }
 
-    UpdateValue(
-        entity   : object,
-        property : string,
-        newValue : any,
-        oldValue?: any
-        )
-    {
-        let currentValue = entity[property];
-        if(currentValue instanceof Array)
-        {
-            const index = currentValue.indexOf(oldValue);
-            if(index !== -1)
-                currentValue[index] = newValue;
-        }
-        else
-        {
-            oldValue = currentValue;
-            entity[property] = newValue;
-        }
-
-        if(!this._incremental)
-            this.Publish(property);
-
-        else
-        {
-            const propertySubject = this._properties.get(property);
-            if(propertySubject)
-            {
-                const values = propertySubject.getValue();
-                const value = values.find(value => value[0] === entity && value[1] === oldValue);
-
-                if(value)
-                {
-                    value[1] = newValue;
-                    propertySubject.next(values);
-                }
-            }
-        }
-    }
-
     private Cardinality(
         property: string
         ): Cardinality
@@ -386,7 +346,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
     {
         return combineLatest(
             objectIntersectionOf.ClassExpressions.map(classExpression => classExpression.Select(this)),
-            (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])));
+            (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs].filter(member => rhs.has(member)))));
     }
 
     ObjectUnionOf(
@@ -395,7 +355,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
     {
         return combineLatest(
             objectUnionOf.ClassExpressions.map(classExpression => classExpression.Select(this)),
-            (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs].filter(member => rhs.has(member)))));
+            (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])));
     }
 
     ObjectComplementOf(
