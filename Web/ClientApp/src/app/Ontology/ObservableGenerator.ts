@@ -88,7 +88,6 @@ export interface IStore
         entity  : object,
         property: string,
         value   : any);
-    EntityId(entity: object): number
 }
 
 enum Cardinality
@@ -99,10 +98,8 @@ enum Cardinality
 
 export class Store implements IStore
 {
-    private _nextId             = 1;
     private _objectDomain       = new BehaviorSubject<Set<any>>(new Set<any>());
     private _properties         = new Map<string, BehaviorSubject<[any, any][]>>();
-    private _ids                = new Map<any, any>();
     private _incremental        = false;
     private _cardinalities      = new Map<string, Cardinality>();
     private _defaultCardinality = Cardinality.Many;
@@ -119,7 +116,7 @@ export class Store implements IStore
         let subject = this._properties.get(property);
         if(!subject)
         {
-            subject = new BehaviorSubject<[any, any][]>([...this._ids.keys()]
+            subject = new BehaviorSubject<[any, any][]>([...this._objectDomain.getValue()]
                 .filter(entity => property in entity)
                 .reduce((list, entity) =>
                 {
@@ -139,62 +136,23 @@ export class Store implements IStore
         return subject;
     }
 
-    LoadEntity(
-        entity: any,
-        loaded: Set<any>
-        ): void
-    {
-        //this._objects.set(
-        //    entity.Id,
-        //    entity);
-
-        for(const property in entity)
-            if(property !== 'Id')
-            {
-                const propertySubject = this._properties.get(property);
-                if(propertySubject)
-                {
-                    const value = entity[property];
-                    const values = propertySubject.getValue();
-                    if(typeof value === 'object')
-                    {
-                        if('Id' in value)
-                            values.push([entity.Id, value.Id])
-
-                        else if(value instanceof Array)
-                            value.forEach(value => values.push([entity.Id, 'Id' in value ? value.Id : value]));
-
-                        else
-                            values.push([entity.Id, 'Id' in value ? value.Id : value]);
-                    }
-                    else
-                        values.push([entity.Id, value]);
-
-                    propertySubject.next(values);
-                }
-            }
-    }
-
     NewEntity<TEntity>(
         keyProperty?: string,
         keyValue   ?: any
         ): TEntity
     {
+        const objectDomain = this._objectDomain.getValue();
         if(keyProperty)
         {
-            const existing = [...this._ids.keys()].find(entity => entity[keyProperty] === keyValue);
+            const existing = [...objectDomain].find(entity => entity[keyProperty] === keyValue);
             if(existing)
                 // Upsert.
                 return existing;
         }
 
         const entity: any = {};
-
-        this._ids.set(
-            entity,
-            this._nextId++);
-
-        this._objectDomain.next(new Set<any>(this._ids.keys()));
+        objectDomain.add(entity);
+        this._objectDomain.next(objectDomain);
 
         if(keyProperty)
         {
@@ -314,13 +272,6 @@ export class Store implements IStore
         }
     }
 
-    EntityId(
-        entity: object
-        ): number
-    {
-        return this._ids.get(entity);
-    }
-
     private Cardinality(
         property: string
         ): Cardinality
@@ -334,7 +285,7 @@ export class Store implements IStore
     {
         const propertySubject = this._properties.get(property);
         if(propertySubject)
-            propertySubject.next([...this._ids.keys()]
+            propertySubject.next([...this._objectDomain.getValue()]
                 .filter(entity => property in entity)
                 .reduce((list, entity) =>
                 {
@@ -347,21 +298,6 @@ export class Store implements IStore
                     return list;
                 },
                 []));
-    }
-
-    private Map(
-        value: any
-        ): any
-    {
-        if(typeof value === 'object')
-        {
-            const entityId = this._ids.get(value);
-            if(typeof entityId != 'undefined')
-                return entityId;
-        }
-
-        // Not entity.
-        return value;
     }
 }
 
