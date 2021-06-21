@@ -134,6 +134,7 @@
     <None Remove="ClientApp\src\app\Ontology\DataIntersectionOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMaxCardinality.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMaxCardinality.ts" />
+    <None Remove="ClientApp\src\app\Ontology\DataMaxCardinalityObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMinCardinality.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMinCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMinCardinalityObservable.Spec.ts" />
@@ -401,6 +402,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataIntersectionOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataMaxCardinality.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataMaxCardinality.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataMaxCardinalityObservable.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataMinCardinality.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataMinCardinality.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataMinCardinalityObservable.Spec.ts" />
