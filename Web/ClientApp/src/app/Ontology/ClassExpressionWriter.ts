@@ -49,7 +49,7 @@ export class ClassExpressionWriter implements IClassExpressionSelector<string>
         objectComplementOf: IObjectComplementOf
         ): string
     {
-        throw new Error("Method not implemented.");
+        return `ObjectComplementOf(${objectComplementOf.ClassExpression.Select(this)})`;
     }
 
     ObjectOneOf(
@@ -66,28 +66,28 @@ export class ClassExpressionWriter implements IClassExpressionSelector<string>
         objectSomeValuesFrom: IObjectSomeValuesFrom
         ): string
     {
-        throw new Error("Method not implemented.");
+        return `ObjectSomeValuesFrom(${objectSomeValuesFrom.ClassExpression.Select(this)})`;
     }
 
     ObjectAllValuesFrom(
         objectAllValuesFrom: IObjectAllValuesFrom
         ): string
     {
-        throw new Error("Method not implemented.");
+        return `ObjectAllValuesFrom(${objectAllValuesFrom.ClassExpression.Select(this)})`;
     }
 
     ObjectHasValue(
         objectHasValue: IObjectHasValue
         ): string
     {
-        throw new Error("Method not implemented.");
+        return `ObjectHasValue(${this.Entity(objectHasValue.ObjectPropertyExpression)} ${this.Individual(objectHasValue.Individual)})`;
     }
 
     ObjectHasSelf(
         objectHasSelf: IObjectHasSelf
         ): string
     {
-        throw new Error("Method not implemented.");
+        return `ObjectHasSelf(${this.Entity(objectHasSelf.ObjectPropertyExpression)})`;
     }
 
     ObjectMinCardinality(
@@ -125,14 +125,14 @@ ${objectCardinality.ClassExpression ? ' ' + objectCardinality.ClassExpression.Se
         dataSomeValuesFrom: IDataSomeValuesFrom
         ): string
     {
-        throw new Error("Method not implemented.");
+        return `DataSomeValuesFrom(${dataSomeValuesFrom.DataRange.Select(this._dataRangeWriter)})`;
     }
 
     DataAllValuesFrom(
         dataAllValuesFrom: IDataAllValuesFrom
         ): string
     {
-        throw new Error("Method not implemented.");
+        return `DataAllValuesFrom(${dataAllValuesFrom.DataRange.Select(this._dataRangeWriter)})`;
     }
 
     DataHasValue(
