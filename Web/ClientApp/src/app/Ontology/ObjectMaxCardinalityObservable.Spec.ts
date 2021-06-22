@@ -194,7 +194,7 @@ describe(
                         let members: Set<any> = null;
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
-                            '¬(x ∈ (${classExpressionWriter.Write(ce)})C)',
+                            `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
                             () => expect(members.has(x)).toBe(false));
                         subscription.unsubscribe();
                     });
