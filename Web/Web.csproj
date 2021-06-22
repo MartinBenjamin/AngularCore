@@ -248,6 +248,7 @@
     <None Remove="ClientApp\src\app\Ontology\ObjectSomeValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectUnionOf.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectUnionOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectUnionOfObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObservableGenerator.ts" />
     <None Remove="ClientApp\src\app\Ontology\Ontology.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Ontology.ts" />
@@ -518,6 +519,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectUnionOf.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectUnionOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassifierGenerator.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectUnionOfObservable.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObservableGenerator.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Ontology.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Ontology.ts" />

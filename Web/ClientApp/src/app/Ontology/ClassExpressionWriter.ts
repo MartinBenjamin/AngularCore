@@ -35,14 +35,14 @@ export class ClassExpressionWriter implements IClassExpressionSelector<string>
         objectIntersectionOf: IObjectIntersectionOf
         ): string
     {
-        throw new Error("Method not implemented.");
+        return `ObjectIntersectionOf(${objectIntersectionOf.ClassExpressions.map(classExpression => classExpression.Select(this)).join(' ')})`;
     }
 
     ObjectUnionOf(
         objectUnionOf: IObjectUnionOf
         ): string
     {
-        throw new Error("Method not implemented.");
+        return `ObjectUnionOf(${objectUnionOf.ClassExpressions.map(classExpression => classExpression.Select(this)).join(' ')})`;
     }
 
     ObjectComplementOf(
