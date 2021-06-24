@@ -1,6 +1,8 @@
 import { } from 'jasmine';
+import { Subscription } from 'rxjs';
 import { ObjectIntersectionOf } from './ClassExpression';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
+import { IClassExpression } from './IClassExpression';
 import { DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
 import { ObjectOneOf } from './ObjectOneOf';
 import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
@@ -25,7 +27,9 @@ describe(
                 new DataPropertyAssertion(o1, id, i1, 1);
                 new DataPropertyAssertion(o1, id, i2, 2);
                 new DataPropertyAssertion(o1, id, i2, 3);
-                const ce = new ObjectIntersectionOf([new ObjectOneOf([i1, i3]), new ObjectOneOf([i2, i3])]);
+                const ce1 = new ObjectOneOf([i1, i3]);
+                const ce2 = new ObjectOneOf([i2, i3]);
+                const ce3 = new ObjectIntersectionOf([ce1, ce2]);
                 const store: IStore = new Store();
                 const generator = new ObservableGenerator(
                     o1,
@@ -34,17 +38,51 @@ describe(
                 const i2Interpretation = generator.InterpretIndividual(i2);
                 const i3Interpretation = generator.InterpretIndividual(i3);
 
-                let members: Set<any> = null;
-                const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
+                function elements(
+                    ce: IClassExpression
+                    ): Set<any>
+                {
+                    let subscription: Subscription;
+                    try
+                    {
+                        let members: Set<any> = null;
+                        subscription = generator.ClassExpression(ce).subscribe(m => members = m);
+                        return members;
+                    }
+                    finally
+                    {
+                        subscription.unsubscribe();
+                    }
+                }
+
                 it(
-                    `¬((i1)I ∈ (${classExpressionWriter.Write(ce)})C)`,
+                    `(i1)I ∈ (${classExpressionWriter.Write(ce1)})C`,
+                    () => expect(elements(ce1).has(i1Interpretation)).toBe(true));
+                it(
+                    `¬((i1)I ∈ (${classExpressionWriter.Write(ce2)})C)`,
+                    () => expect(elements(ce2).has(i1Interpretation)).toBe(false));
+                it(
+                    `¬((i1)I ∈ (${classExpressionWriter.Write(ce3)})C)`,
                     () => expect(members.has(i1Interpretation)).toBe(false));
+
                 it(
-                    `¬((i2)I ∈ (${classExpressionWriter.Write(ce)})C)`,
-                    () => expect(members.has(i2Interpretation)).toBe(false));
+                    `¬((i2)I ∈ (${classExpressionWriter.Write(ce1)})C)`,
+                    () => expect(elements(ce1).has(i2Interpretation)).toBe(false));
                 it(
-                    `(i3)I ∈ (${classExpressionWriter.Write(ce)})C`,
-                    () => expect(members.has(i3Interpretation)).toBe(true));
-                subscription.unsubscribe();
+                    `(i2)I ∈ (${classExpressionWriter.Write(ce2)})C`,
+                    () => expect(elements(ce2).has(i2Interpretation)).toBe(true));
+                it(
+                    `¬((i2)I ∈ (${classExpressionWriter.Write(ce3)})C)`,
+                    () => expect(elements(ce3).has(i2Interpretation)).toBe(false));
+
+                it(
+                    `(i3)I ∈ (${classExpressionWriter.Write(ce1)})C`,
+                    () => expect(elements(ce1).has(i3Interpretation)).toBe(true));
+                it(
+                    `(i3)I ∈ (${classExpressionWriter.Write(ce2)})C`,
+                    () => expect(elements(ce2).has(i3Interpretation)).toBe(true));
+                it(
+                    `(i3)I ∈ (${classExpressionWriter.Write(ce3)})C`,
+                    () => expect(elements(ce3).has(i3Interpretation)).toBe(true));
             });
     });

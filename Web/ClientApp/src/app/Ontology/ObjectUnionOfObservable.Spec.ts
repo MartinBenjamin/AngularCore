@@ -1,13 +1,13 @@
 import { } from 'jasmine';
+import { Subscription } from 'rxjs';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
+import { IClassExpression } from './IClassExpression';
 import { DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
 import { ObjectOneOf } from './ObjectOneOf';
 import { ObjectUnionOf } from './ObjectUnionOf';
 import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { DataProperty } from './Property';
-import { IClassExpression } from './IClassExpression';
-import { Subscription } from 'rxjs';
 
 describe(
     'ObjectUnionOf( CE1 ... CEn ) ((CE1)C ∪ ... ∪ (CEn)C)',
