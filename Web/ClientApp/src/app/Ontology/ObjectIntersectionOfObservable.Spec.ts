@@ -63,7 +63,7 @@ describe(
                     () => expect(elements(ce2).has(i1Interpretation)).toBe(false));
                 it(
                     `¬((i1)I ∈ (${classExpressionWriter.Write(ce3)})C)`,
-                    () => expect(members.has(i1Interpretation)).toBe(false));
+                    () => expect(elements(ce3).has(i1Interpretation)).toBe(false));
 
                 it(
                     `¬((i2)I ∈ (${classExpressionWriter.Write(ce1)})C)`,
