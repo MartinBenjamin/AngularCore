@@ -34,9 +34,9 @@ describe(
                     let subscription: Subscription;
                     try
                     {
-                        let members: Set<any> = null;
-                        subscription = generator.ClassExpression(ce).subscribe(m => members = m);
-                        return members;
+                        let elements: Set<any> = null;
+                        subscription = generator.ClassExpression(ce).subscribe(m => elements = m);
+                        return elements;
                     }
                     finally
                     {
@@ -116,9 +116,9 @@ describe(
                     let subscription: Subscription;
                     try
                     {
-                        let members: Set<any> = null;
-                        subscription = generator.ClassExpression(ce).subscribe(m => members = m);
-                        return members;
+                        let elements: Set<any> = null;
+                        subscription = generator.ClassExpression(ce).subscribe(m => elements = m);
+                        return elements;
                     }
                     finally
                     {
@@ -176,9 +176,9 @@ describe(
                     let subscription: Subscription;
                     try
                     {
-                        let members: Set<any> = null;
-                        subscription = generator.ClassExpression(ce).subscribe(m => members = m);
-                        return members;
+                        let elements: Set<any> = null;
+                        subscription = generator.ClassExpression(ce).subscribe(m => elements = m);
+                        return elements;
                     }
                     finally
                     {
