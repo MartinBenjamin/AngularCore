@@ -1,7 +1,9 @@
 import { } from 'jasmine';
+import { Subscription } from 'rxjs';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { DataMaxCardinality } from './DataMaxCardinality';
 import { DataOneOf } from './DataOneOf';
+import { IClassExpression } from './IClassExpression';
 import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { DataProperty } from './Property';
@@ -24,6 +26,23 @@ describe(
                     o1,
                     store);
 
+                function elements(
+                    ce: IClassExpression
+                    ): Set<any>
+                {
+                    let subscription: Subscription;
+                    try
+                    {
+                        let elements: Set<any> = null;
+                        subscription = generator.ClassExpression(ce).subscribe(m => elements = m);
+                        return elements;
+                    }
+                    finally
+                    {
+                        subscription.unsubscribe();
+                    }
+                }
+
                 describe(
                     'Given x ∈ ΔI:',
                     () =>
@@ -36,7 +55,7 @@ describe(
                             it(
                                 ce.Cardinality === 0 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                                () => expect(members.has(x)).toBe(ce.Cardinality >= 0));
+                                () => expect(elements(ce).has(x)).toBe(ce.Cardinality >= 0));
                             subscription.unsubscribe();
                         }
                     });
@@ -54,7 +73,7 @@ describe(
                             it(
                                 ce.Cardinality === 1 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                                () => expect(members.has(x)).toBe(ce.Cardinality >= 1));
+                                () => expect(elements(ce).has(x)).toBe(ce.Cardinality >= 1));
                             subscription.unsubscribe();
                         }
                     });
@@ -73,7 +92,7 @@ describe(
                             it(
                                 ce.Cardinality === 2 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                                () => expect(members.has(x)).toBe(ce.Cardinality >= 2));
+                                () => expect(elements(ce).has(x)).toBe(ce.Cardinality >= 2));
                             subscription.unsubscribe();
                         }
                     });
@@ -98,6 +117,23 @@ describe(
                     o1,
                     store);
 
+                function elements(
+                    ce: IClassExpression
+                    ): Set<any>
+                {
+                    let subscription: Subscription;
+                    try
+                    {
+                        let elements: Set<any> = null;
+                        subscription = generator.ClassExpression(ce).subscribe(m => elements = m);
+                        return elements;
+                    }
+                    finally
+                    {
+                        subscription.unsubscribe();
+                    }
+                }
+
                 describe(
                     'Given (dp1)DP = {(x, 3)}:',
                     () =>
@@ -108,7 +144,7 @@ describe(
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(members.has(x)).toBe(true));
+                            () => expect(elements(ce).has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
 
@@ -122,7 +158,7 @@ describe(
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(members.has(x)).toBe(true));
+                            () => expect(elements(ce).has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
 
@@ -137,7 +173,7 @@ describe(
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(members.has(x)).toBe(true));
+                            () => expect(elements(ce).has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
 
@@ -151,7 +187,7 @@ describe(
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(members.has(x)).toBe(true));
+                            () => expect(elements(ce).has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
 
@@ -166,7 +202,7 @@ describe(
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(members.has(x)).toBe(true));
+                            () => expect(elements(ce).has(x)).toBe(true));
                         subscription.unsubscribe();
                     });
 
@@ -181,7 +217,7 @@ describe(
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
                             `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                            () => expect(members.has(x)).toBe(false));
+                            () => expect(elements(ce).has(x)).toBe(false));
                         subscription.unsubscribe();
                     });
             });
