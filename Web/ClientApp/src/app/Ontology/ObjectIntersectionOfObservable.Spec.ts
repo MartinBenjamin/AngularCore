@@ -16,7 +16,7 @@ describe(
         const classExpressionWriter = new ClassExpressionWriter();
 
         describe(
-            'Given an Ontology o1 with axioms NamedIndividual(i1), NamedIndividual(i2) and  NamedIndividual(i1):',
+            'Given an Ontology o1 with axioms NamedIndividual(i1), NamedIndividual(i2) and NamedIndividual(i3):',
             () =>
             {
                 const o1 = new Ontology('o1');

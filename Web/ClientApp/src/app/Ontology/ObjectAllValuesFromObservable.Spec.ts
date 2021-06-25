@@ -3,14 +3,14 @@ import { Subscription } from 'rxjs';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { IClassExpression } from './IClassExpression';
 import { DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
+import { ObjectAllValuesFrom } from './ObjectAllValuesFrom';
 import { ObjectOneOf } from './ObjectOneOf';
-import { ObjectSomeValuesFrom } from './ObjectSomeValuesFrom';
 import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { DataProperty, ObjectProperty } from './Property';
 
 describe(
-    'ObjectSomeValuesFrom( OPE CE ) ({ x | ∃ y : ( x, y ) ∈ (OPE)OP and y ∈ (CE)C })',
+    'ObjectAllValuesFrom( OPE CE ) ({ x | ∀ y : ( x, y ) ∈ (OPE)OP implies y ∈ (CE)C })',
     () =>
     {
         const classExpressionWriter = new ClassExpressionWriter();
@@ -27,8 +27,8 @@ describe(
                 const i3 = new NamedIndividual(o1, 'i3');
                 new DataPropertyAssertion(o1, id, i1, 1);
                 new DataPropertyAssertion(o1, id, i2, 2);
-                new DataPropertyAssertion(o1, id, i3, 3);
-                const ce = new ObjectSomeValuesFrom(op1, new ObjectOneOf([i1, i2]));
+                new DataPropertyAssertion(o1, id, i2, 3);
+                const ce = new ObjectAllValuesFrom(op1, new ObjectOneOf([i1, i2]));
                 const store: IStore = new Store();
                 const generator = new ObservableGenerator(
                     o1,
@@ -60,8 +60,8 @@ describe(
                     {
                         const x = store.NewEntity<any>();
                         it(
-                            `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                            () => expect(elements(ce).has(x)).toBe(false));
+                            `x ∈ (${classExpressionWriter.Write(ce)})C`,
+                            () => expect(elements(ce).has(x)).toBe(true));
                     });
 
                 describe(
@@ -80,18 +80,32 @@ describe(
                     () =>
                     {
                         const x = store.NewEntity<any>();
-                        store.Add(x, op1.LocalName, i2Interpretation)
+                        store.Add(x, op1.LocalName, i2Interpretation);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
                             () => expect(elements(ce).has(x)).toBe(true));
                     });
 
                 describe(
-                    'Given (op1)OP = {(x, i3)}',
+                    'Given (op1)OP = {(x, i1), (x, i2)}',
                     () =>
                     {
                         const x = store.NewEntity<any>();
-                        store.Add(x, op1.LocalName, i3Interpretation)
+                        store.Add(x, op1.LocalName, i1Interpretation);
+                        store.Add(x, op1.LocalName, i2Interpretation);
+                        it(
+                            `x ∈ (${classExpressionWriter.Write(ce)})C`,
+                            () => expect(elements(ce).has(x)).toBe(true));
+                    });
+
+                describe(
+                    'Given (op1)OP = {(x, i1), (x, i2), (x, i3)}',
+                    () =>
+                    {
+                        const x = store.NewEntity<any>();
+                        store.Add(x, op1.LocalName, i1Interpretation);
+                        store.Add(x, op1.LocalName, i2Interpretation);
+                        store.Add(x, op1.LocalName, i3Interpretation);
                         it(
                             `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
                             () => expect(elements(ce).has(x)).toBe(false));

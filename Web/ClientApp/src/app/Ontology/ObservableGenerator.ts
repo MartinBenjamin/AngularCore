@@ -393,13 +393,23 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         objectAllValuesFrom: IObjectAllValuesFrom
         ): Observable<Set<any>>
     {
+        const groupedByDomain = combineLatest(
+            this._store.ObjectDomain,
+            this.ObservePropertyExpression(objectAllValuesFrom.ObjectPropertyExpression),
+            (objectDomain, objectPropertyExpression) =>
+                GroupJoin(
+                    objectDomain,
+                    objectPropertyExpression,
+                    individual => individual,
+                    member => member[0]));
+
         return combineLatest(
-            this.ObservePropertyExpression(objectAllValuesFrom.ObjectPropertyExpression).pipe(map(this.GroupByDomain)),
+            groupedByDomain,
             objectAllValuesFrom.ClassExpression.Select(this),
             (groupedByDomain, classExpression) =>
                 new Set<any>(
                     [...groupedByDomain.entries()]
-                        .filter(entry => entry[1].every(individual => classExpression.has(individual)))
+                        .filter(entry => entry[1].every(t => classExpression.has(t[1])))
                         .map(entry => entry[0])));
     }
 

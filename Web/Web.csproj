@@ -221,6 +221,7 @@
     <None Remove="ClientApp\src\app\Ontology\Nothing.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectAllValuesFrom.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectAllValuesFrom.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectAllValuesFromObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectComplementOf.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectComplementOf.ts" />
@@ -495,6 +496,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Nothing.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectAllValuesFrom.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectAllValuesFrom.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectAllValuesFromObservable.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectComplementOfObservable.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectExactCardinality.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectExactCardinalityObservable.Spec.ts" />
