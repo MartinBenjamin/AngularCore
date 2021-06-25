@@ -4,13 +4,12 @@ import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { IClassExpression } from './IClassExpression';
 import { DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
 import { ObjectOneOf } from './ObjectOneOf';
-import { ObjectUnionOf } from './ObjectUnionOf';
 import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { DataProperty } from './Property';
 
 describe(
-    'ObjectUnionOf( CE1 ... CEn ) ((CE1)C ∪ ... ∪ (CEn)C)',
+    'ObjectOneOf( a1 ... an ) ({ (a1)I , ... , (an)I })',
     () =>
     {
         const classExpressionWriter = new ClassExpressionWriter();
@@ -27,7 +26,6 @@ describe(
                 new DataPropertyAssertion(o1, id, i2, 2);
                 const ce1 = new ObjectOneOf([i1]);
                 const ce2 = new ObjectOneOf([i2]);
-                const ce3 = new ObjectUnionOf([ce1, ce2]);
                 const store: IStore = new Store();
                 const generator = new ObservableGenerator(
                     o1,
@@ -59,16 +57,10 @@ describe(
                     `¬((i1)I ∈ (${classExpressionWriter.Write(ce2)})C)`,
                     () => expect(elements(ce2).has(i1Interpretation)).toBe(false));
                 it(
-                    `(i1)I ∈ (${classExpressionWriter.Write(ce3)})C`,
-                    () => expect(elements(ce3).has(i1Interpretation)).toBe(true));
-                it(
                     `¬((i2)I ∈ (${classExpressionWriter.Write(ce1)})C)`,
                     () => expect(elements(ce1).has(i2Interpretation)).toBe(false));
                 it(
                     `(i2)I ∈ (${classExpressionWriter.Write(ce2)})C`,
                     () => expect(elements(ce2).has(i2Interpretation)).toBe(true));
-                it(
-                    `(i2)I ∈ (${classExpressionWriter.Write(ce3)})C`,
-                    () => expect(elements(ce3).has(i2Interpretation)).toBe(true));
             });
     });
