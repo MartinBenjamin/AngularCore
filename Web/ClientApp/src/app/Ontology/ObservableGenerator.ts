@@ -1,6 +1,5 @@
-import { BehaviorSubject, combineLatest, Observable, Subject } from "rxjs";
+import { BehaviorSubject, combineLatest, Observable } from "rxjs";
 import { map } from 'rxjs/operators';
-import { DomainObject } from "../CommonDomainObjects";
 import { LongestPaths } from "./AdjacencyList";
 import { ClassExpressionNavigator } from './ClassExpressionNavigator';
 import { ClassVisitor } from "./ClassMembershipEvaluator";
@@ -22,7 +21,7 @@ import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from './IOntology';
-import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
+import { IDataPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
 import { TransitiveClosure3 } from "./TransitiveClosure";
 
 export function GroupBy<T, TKey, TValue, TResult>(
