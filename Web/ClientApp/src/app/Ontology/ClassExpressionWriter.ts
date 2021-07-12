@@ -139,7 +139,7 @@ ${objectCardinality.ClassExpression ? ' ' + objectCardinality.ClassExpression.Se
         dataHasValue: IDataHasValue
         ): string
     {
-        throw new Error("Method not implemented.");
+        return `DataHasValue(${this.Entity(dataHasValue.DataPropertyExpression)}, ${dataHasValue.Value})`;
     }
 
     DataMinCardinality(
