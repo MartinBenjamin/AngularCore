@@ -97,8 +97,6 @@ describe(
                             () => expect(elements(ce).has(x)).toBe(false));
                     });
 
-
-
                 describe(
                     'Given (op1)OP = {(x, i1), (x, i2), (x, i3)}',
                     () =>
