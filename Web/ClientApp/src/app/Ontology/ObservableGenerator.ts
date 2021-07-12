@@ -533,7 +533,8 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         return this.ObservePropertyExpression(dataSomeValuesFrom.DataPropertyExpression).pipe(
             map(dataPropertyExpression =>
                 new Set<any>(dataPropertyExpression
-                    .filter(element => dataSomeValuesFrom.DataRange.HasMember(element[1])))));
+                    .filter(element => dataSomeValuesFrom.DataRange.HasMember(element[1]))
+                    .map(element => element[0]))));
     }
 
     DataAllValuesFrom(

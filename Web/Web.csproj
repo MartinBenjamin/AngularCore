@@ -149,6 +149,7 @@
     <None Remove="ClientApp\src\app\Ontology\DataRangeWriter.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataSomeValuesFrom.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataSomeValuesFrom.ts" />
+    <None Remove="ClientApp\src\app\Ontology\DataSomeValuesFromObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Datatype.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataUnionOf.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataUnionOf.ts" />
@@ -426,6 +427,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataSomeValuesFrom.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataSomeValuesFrom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataAllValuesFrom.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataSomeValuesFromObservable.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Datatype.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataUnionOf.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataUnionOf.ts" />
