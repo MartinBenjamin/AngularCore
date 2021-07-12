@@ -96,5 +96,20 @@ describe(
                             `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
                             () => expect(elements(ce).has(x)).toBe(false));
                     });
+
+
+
+                describe(
+                    'Given (op1)OP = {(x, i1), (x, i2), (x, i3)}',
+                    () =>
+                    {
+                        const x = store.NewEntity<any>();
+                        store.Add(x, op1.LocalName, i1Interpretation)
+                        store.Add(x, op1.LocalName, i2Interpretation)
+                        store.Add(x, op1.LocalName, i3Interpretation)
+                        it(
+                            `x ∈ (${classExpressionWriter.Write(ce)})C`,
+                            () => expect(elements(ce).has(x)).toBe(true));
+                    });
             });
     });
