@@ -87,17 +87,11 @@ export class Ontology implements IOntology
         };
     }
 
-    Classify(
-        individual: object
-        ) : Map<object, Set<IClass>>
+    Classify(individual: object): Map<object, Set<IClass>>;
+    Classify(individuals: Set<object>): Map<object, Set<IClass>>;
+    Classify(individualOrIndividuals: object | Set<object>): Map<object, Set<IClass>>
     {
-        return this.ClassifyIndividuals(Individuals(individual));
-    }
-
-    ClassifyIndividuals(
-        individuals: Set<object>
-        ): Map<object, Set<IClass>>
-    {
+        let individuals = individualOrIndividuals instanceof Set ? individualOrIndividuals : Individuals(individualOrIndividuals);
         let classifications = new Map<object, Set<IClass>>()
         let classMembershipEvaluator = new ClassMembershipEvaluator(
             this,

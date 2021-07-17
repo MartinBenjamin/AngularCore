@@ -160,7 +160,7 @@ export class FacilityFeeEditor
             this._fee,
             FacilityFeeEditor._subgraph);
 
-        let classifications = this._deal.Ontology.ClassifyIndividuals(subgraph);
+        let classifications = this._deal.Ontology.Classify(subgraph);
         let applicableStages = new Set<Guid>();
         for(let lifeCycleStage of this._deal.LifeCycle.Stages)
         {
