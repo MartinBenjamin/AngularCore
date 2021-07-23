@@ -338,7 +338,16 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
     {
         let classDefinitions = this._classDefinitions.get(class$);
         if(classDefinitions)
-            return this.ClassExpression(classDefinitions[0]);
+            return classDefinitions[0].Select(this);
+
+        let subClassExpressions = [...this._ontology.Get(this._ontology.IsAxiom.ISubClassOf)]
+            .filter(subClassOf => subClassOf.SuperClassExpression === class$)
+            .map(subClassOf => subClassOf.SubClassExpression);
+
+        if(subClassExpressions.length)
+            return combineLatest(
+                subClassExpressions.map(classExpression => classExpression.Select(this)),
+                (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])));
     }
 
     ObjectIntersectionOf(
