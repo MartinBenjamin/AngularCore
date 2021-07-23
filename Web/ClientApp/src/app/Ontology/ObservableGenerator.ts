@@ -336,7 +336,9 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         class$: IClass
         ): Observable<Set<any>>
     {
-        throw new Error("Method not implemented.");
+        let classDefinitions = this._classDefinitions.get(class$);
+        if(classDefinitions)
+            return this.ClassExpression(classDefinitions[0]);
     }
 
     ObjectIntersectionOf(
