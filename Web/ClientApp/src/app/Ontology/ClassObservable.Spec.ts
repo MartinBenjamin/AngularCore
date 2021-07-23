@@ -97,7 +97,7 @@ describe(
 
                 function elements(
                     ce: IClassExpression
-                ): Set<any>
+                    ): Set<any>
                 {
                     let subscription: Subscription;
                     try
