@@ -1,14 +1,14 @@
 import { } from 'jasmine';
 import { Subscription } from 'rxjs';
+import { Class } from './Class';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
+import { EquivalentClasses } from './EquivalentClasses';
 import { IClassExpression } from './IClassExpression';
 import { DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
 import { ObjectOneOf } from './ObjectOneOf';
 import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { DataProperty } from './Property';
-import { Class } from './Class';
-import { EquivalentClasses } from './EquivalentClasses';
 import { SubClassOf } from './SubClassOf';
 
 describe(
