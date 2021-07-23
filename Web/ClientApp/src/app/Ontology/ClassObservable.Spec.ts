@@ -17,16 +17,18 @@ describe(
         const classExpressionWriter = new ClassExpressionWriter();
 
         describe(
-            'Given an Ontology o1 with axioms Class(c1), NamedIndividual(i1), NamedIndividual(i2) and EquivalentClasses(c1, ObjectOneOf(i1)):',
+            'Given an Ontology o1 with axioms Class(c1), Class(c2), NamedIndividual(i1), NamedIndividual(i2), EquivalentClass(c1, c2) and EquivalentClasses(c1, ObjectOneOf(i1)):',
             () =>
             {
                 const o1 = new Ontology('o1');
                 const c1 = new Class(o1, 'c1');
+                const c2 = new Class(o1, 'c2');
                 const id = new DataProperty(o1, 'Id');
                 const i1 = new NamedIndividual(o1, 'i1');
                 const i2 = new NamedIndividual(o1, 'i2');
                 new DataPropertyAssertion(o1, id, i1, 1);
                 new DataPropertyAssertion(o1, id, i2, 2);
+                new EquivalentClasses(o1, [c1, c2]);
                 new EquivalentClasses(o1, [c1, new ObjectOneOf([i1])]);
                 const store: IStore = new Store();
                 const generator = new ObservableGenerator(
@@ -58,5 +60,11 @@ describe(
                 it(
                     `¬((i2)I ∈ (${classExpressionWriter.Write(c1)})C)`,
                     () => expect(elements(c1).has(i2Interpretation)).toBe(false));
+                it(
+                    `(i1)I ∈ (${classExpressionWriter.Write(c2)})C`,
+                    () => expect(elements(c2).has(i1Interpretation)).toBe(true));
+                it(
+                    `¬((i2)I ∈ (${classExpressionWriter.Write(c2)})C)`,
+                    () => expect(elements(c2).has(i2Interpretation)).toBe(false));
             });
     });
