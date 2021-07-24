@@ -74,7 +74,7 @@ export function GroupJoin<TLeft, TRight, TKey>(
 
 export interface IStore
 {
-    ObjectDomain: Observable<Set<any>>;
+    Entities: Observable<Set<any>>;
     ObserveProperty(property: string): Observable<[any, any][]>;
     NewEntity<TEntity>(
         keyProperty?: string,
@@ -97,15 +97,15 @@ enum Cardinality
 
 export class Store implements IStore
 {
-    private _objectDomain       = new BehaviorSubject<Set<any>>(new Set<any>());
+    private _entities           = new BehaviorSubject<Set<any>>(new Set<any>());
     private _properties         = new Map<string, BehaviorSubject<[any, any][]>>();
     private _incremental        = false;
     private _cardinalities      = new Map<string, Cardinality>();
     private _defaultCardinality = Cardinality.Many;
 
-    get ObjectDomain(): Observable<Set<any>>
+    get Entities(): Observable<Set<any>>
     {
-        return this._objectDomain;
+        return this._entities;
     }
 
     ObserveProperty(
@@ -115,7 +115,7 @@ export class Store implements IStore
         let subject = this._properties.get(property);
         if(!subject)
         {
-            subject = new BehaviorSubject<[any, any][]>([...this._objectDomain.getValue()]
+            subject = new BehaviorSubject<[any, any][]>([...this._entities.getValue()]
                 .filter(entity => property in entity)
                 .reduce((list, entity) =>
                 {
@@ -140,18 +140,18 @@ export class Store implements IStore
         keyValue   ?: any
         ): TEntity
     {
-        const objectDomain = this._objectDomain.getValue();
+        const entities = this._entities.getValue();
         if(keyProperty)
         {
-            const existing = [...objectDomain].find(entity => entity[keyProperty] === keyValue);
+            const existing = [...entities].find(entity => entity[keyProperty] === keyValue);
             if(existing)
                 // Upsert.
                 return existing;
         }
 
         const entity: any = {};
-        objectDomain.add(entity);
-        this._objectDomain.next(objectDomain);
+        entities.add(entity);
+        this._entities.next(entities);
 
         if(keyProperty)
         {
@@ -244,7 +244,7 @@ export class Store implements IStore
     {
         const propertySubject = this._properties.get(property);
         if(propertySubject)
-            propertySubject.next([...this._objectDomain.getValue()]
+            propertySubject.next([...this._entities.getValue()]
                 .filter(entity => property in entity)
                 .reduce((list, entity) =>
                 {
@@ -373,7 +373,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         ): Observable<Set<any>>
     {
         return combineLatest(
-            this._store.ObjectDomain,
+            this._store.Entities,
             objectComplementOf.ClassExpression.Select(this),
             (objectDomain, classExpression) => new Set<any>([...objectDomain].filter(element => !classExpression.has(element))));
     }
@@ -404,7 +404,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         ): Observable<Set<any>>
     {
         const groupedByDomain = combineLatest(
-            this._store.ObjectDomain,
+            this._store.Entities,
             this.ObservePropertyExpression(objectAllValuesFrom.ObjectPropertyExpression),
             (objectDomain, objectPropertyExpression) =>
                 GroupJoin(
@@ -451,7 +451,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         ): Observable<Set<any>>
     {
         if(objectMinCardinality.Cardinality === 0)
-            return this._store.ObjectDomain;
+            return this._store.Entities;
 
         let observableObjectPropertyExpression: Observable<[any, any][]> = this.ObservePropertyExpression(objectMinCardinality.ObjectPropertyExpression);
         if(objectMinCardinality.ClassExpression)
@@ -487,7 +487,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
                     objectPropertyExpression.filter(element => classExpression.has(element[1])));
 
         return combineLatest(
-            this._store.ObjectDomain,
+            this._store.Entities,
             observableObjectPropertyExpression,
             (objectDomain, objectPropertyExpression) =>
                 GroupJoin(
@@ -515,7 +515,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
 
         if(objectExactCardinality.Cardinality === 0)
             return combineLatest(
-                this._store.ObjectDomain,
+                this._store.Entities,
                 observableObjectPropertyExpression,
                 (objectDomain, objectPropertyExpression) =>
                     GroupJoin(
@@ -576,7 +576,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         ): Observable<Set<any>>
     {
         if(dataMinCardinality.Cardinality === 0)
-            return this._store.ObjectDomain;
+            return this._store.Entities;
 
         let observableDataPropertyExpression: Observable<[any, any][]> = this.ObservePropertyExpression(dataMinCardinality.DataPropertyExpression);
         if(dataMinCardinality.DataRange)
@@ -606,7 +606,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
                 map(dataPropertyExpression => dataPropertyExpression.filter(element => dataMaxCardinality.DataRange.HasMember(element[1]))));
 
         return combineLatest(
-            this._store.ObjectDomain,
+            this._store.Entities,
             observableDataPropertyExpression,
             (objectDomain, dataPropertyExpression) =>
                 GroupJoin(
@@ -631,7 +631,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
 
         if(dataExactCardinality.Cardinality === 0)
             return combineLatest(
-                this._store.ObjectDomain,
+                this._store.Entities,
                 observableDataPropertyExpression,
                 (objectDomain, dataPropertyExpression) =>
                     GroupJoin(

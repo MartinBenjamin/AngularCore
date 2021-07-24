@@ -97,6 +97,7 @@
     <None Remove="ClientApp\src\app\Ontologies\LegalEntities.ts" />
     <None Remove="ClientApp\src\app\Ontologies\LeveragedFinance.ts" />
     <None Remove="ClientApp\src\app\Ontologies\LifeCycles.ts" />
+    <None Remove="ClientApp\src\app\Ontologies\ObserveErrors.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Organisations.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Parties.ts" />
     <None Remove="ClientApp\src\app\Ontologies\ProjectFinance.ts" />
@@ -379,6 +380,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\LegalEntities.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\LeveragedFinance.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\LifeCycles.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontologies\ObserveErrors.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Organisations.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Parties.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\ProjectFinance.ts" />

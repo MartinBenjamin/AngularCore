@@ -45,7 +45,7 @@ describe(
 
                 it(
                     `(${classExpressionWriter.Write(ces[0])})C = ΔI`,
-                    () => expect(generator.ClassExpression(ces[0])).toBe(store.ObjectDomain));
+                    () => expect(generator.ClassExpression(ces[0])).toBe(store.Entities));
 
                 describe(
                     'Given x ∈ ΔI:',
