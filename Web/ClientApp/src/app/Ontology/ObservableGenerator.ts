@@ -264,6 +264,9 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
 {
     private _classDefinitions         : Map<IClass, IClassExpression[]>;
     private _functionalDataProperties = new Set<IDataPropertyExpression>();
+    private _classObservables         = new Map<IClass, Observable<Set<any>>>();
+
+    private static _nothing = new BehaviorSubject<Set<any>>(new Set<any>()).asObservable();
 
     constructor(
         private _ontology: IOntology,
@@ -317,18 +320,38 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         class$: IClass
         ): Observable<Set<any>>
     {
-        let classDefinitions = this._classDefinitions.get(class$);
-        if(classDefinitions)
-            return classDefinitions[0].Select(this);
+        let classObservable = this._classObservables.get(class$);
+        if(!classObservable)
+        {
+            let classDefinitions = this._classDefinitions.get(class$);
+            if(classDefinitions)
+            {
+                classObservable = classDefinitions[0].Select(this);
+                this._classObservables.set(
+                    class$,
+                    classObservable);
+            }
+            else
+            {
+                let subClassExpressions = [...this._ontology.Get(this._ontology.IsAxiom.ISubClassOf)]
+                    .filter(subClassOf => subClassOf.SuperClassExpression === class$)
+                    .map(subClassOf => subClassOf.SubClassExpression);
 
-        let subClassExpressions = [...this._ontology.Get(this._ontology.IsAxiom.ISubClassOf)]
-            .filter(subClassOf => subClassOf.SuperClassExpression === class$)
-            .map(subClassOf => subClassOf.SubClassExpression);
+                if(subClassExpressions.length)
+                    classObservable = combineLatest(
+                        subClassExpressions.map(classExpression => classExpression.Select(this)),
+                        (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])));
 
-        if(subClassExpressions.length)
-            return combineLatest(
-                subClassExpressions.map(classExpression => classExpression.Select(this)),
-                (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])));
+                else
+                    classObservable = ObservableGenerator._nothing;
+            }
+
+            this._classObservables.set(
+                class$,
+                classObservable);
+        }
+
+        return classObservable;
     }
 
     ObjectIntersectionOf(

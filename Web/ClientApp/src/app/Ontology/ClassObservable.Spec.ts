@@ -38,6 +38,10 @@ describe(
                 const i1Interpretation = generator.InterpretIndividual(i1);
                 const i2Interpretation = generator.InterpretIndividual(i2);
 
+                it(
+                    'ObservableGenerator generates same Observable for same class',
+                    () => expect(generator.ClassExpression(c1)).toBe(generator.ClassExpression(c1)))
+
                 function elements(
                     ce: IClassExpression
                     ): Set<any>
@@ -94,6 +98,10 @@ describe(
                     store);
                 const i1Interpretation = generator.InterpretIndividual(i1);
                 const i2Interpretation = generator.InterpretIndividual(i2);
+
+                it(
+                    'ObservableGenerator generates same Observable for same class',
+                    () => expect(generator.ClassExpression(c1)).toBe(generator.ClassExpression(c1)))
 
                 function elements(
                     ce: IClassExpression
