@@ -1,4 +1,6 @@
 import { combineLatest, Observable } from "rxjs";
+import { map } from 'rxjs/operators';
+import { IDataRange } from '../Ontology/IDataRange';
 import { IOntology } from "../Ontology/IOntology";
 import { ISubClassOf } from "../Ontology/ISubClassOf";
 import { IStore, ObservableGenerator } from "../Ontology/ObservableGenerator";
@@ -16,7 +18,21 @@ export function ObserveRestrictedFromStage(
         subClassOf.SuperClassExpression.Select(generator),
         subClassOf.SubClassExpression.Select(generator),
         (superClassExpression, subClassExpression) =>
-            [propertyName, error, new Set<any>([...subClassExpression].filter(element => !superClassExpression.has(element)))]);
+            [
+                propertyName,
+                error,
+                new Set<any>([...subClassExpression].filter(element => !superClassExpression.has(element)))
+            ]);
+}
+
+export function ObserveDataRangeError(
+    store       : IStore,
+    dataRange   : IDataRange,
+    propertyName: string
+    ): Observable<[string, keyof IErrors, Set<any>]>
+{
+    return store.ObserveProperty(propertyName).pipe(
+        map(elements => [propertyName, "Invalid", new Set<any>(elements.filter(element => !dataRange.HasMember(element[1])).map(element => element[0]))));
 }
 
 export function ObserveErrors(
@@ -28,7 +44,14 @@ export function ObserveErrors(
         ontology,
         store);
 
-    let observables: Observable<[string, keyof IErrors, Set<any>]>[] = [];
+    let observables: Observable<[string, keyof IErrors, Set<any>]>[] = [...ontology.Get(ontology.IsAxiom.IDataPropertyRange)].map(
+        dataPropertyRange => store.ObserveProperty(dataPropertyRange.DataPropertyExpression.LocalName).pipe(
+            map(elements =>
+                [
+                    dataPropertyRange.DataPropertyExpression.LocalName,
+                    "Invalid",
+                    new Set<any>(elements.filter(element => !dataPropertyRange.Range.HasMember(element[1])).map(element => element[0]))
+                ])));
 
     for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
         for(let annotation of subClassOf.Annotations)
