@@ -263,7 +263,6 @@ export class Store implements IStore
 export class ObservableGenerator implements IClassExpressionSelector<Observable<Set<any>>>
 {
     private _classDefinitions         : Map<IClass, IClassExpression[]>;
-    private _definedClasses           : IClass[];
     private _functionalDataProperties = new Set<IDataPropertyExpression>();
 
     constructor(
@@ -312,24 +311,6 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
             definitions,
             definition => definition[0],
             definition => definition[1]);
-
-        let adjacent: Set<IClass> = null;
-        let empty = new Set<IClass>();
-        adjacencyList = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, empty]));
-        let classVisitor = new ClassExpressionNavigator(new ClassVisitor(class$ => adjacent.add(class$)));
-
-        for(let [class$, classExpression] of this._classDefinitions)
-        {
-            adjacent = new Set<IClass>();
-            classExpression[0].Accept(classVisitor);
-            adjacencyList.set(
-                class$,
-                adjacent);
-        }
-
-        let longestPaths = LongestPaths(adjacencyList);
-        this._definedClasses = [...this._classDefinitions.keys()]
-            .sort((a, b) => longestPaths.get(b) - longestPaths.get(a));
     }
 
     Class(
