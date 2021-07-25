@@ -1,8 +1,5 @@
 import { BehaviorSubject, combineLatest, Observable } from "rxjs";
 import { map } from 'rxjs/operators';
-import { LongestPaths } from "./AdjacencyList";
-import { ClassExpressionNavigator } from './ClassExpressionNavigator';
-import { ClassVisitor } from "./ClassMembershipEvaluator";
 import { Group } from './Group';
 import { IClass } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
@@ -89,19 +86,28 @@ export interface IStore
         value   : any);
 }
 
-enum Cardinality
+export enum Cardinality
 {
-    One,
+    One = 1,
     Many
 }
 
 export class Store implements IStore
 {
-    private _objectDomain       = new BehaviorSubject<Set<any>>(new Set<any>());
-    private _properties         = new Map<string, BehaviorSubject<[any, any][]>>();
-    private _incremental        = false;
-    private _cardinalities      = new Map<string, Cardinality>();
-    private _defaultCardinality = Cardinality.Many;
+    private _objectDomain      = new BehaviorSubject<Set<any>>(new Set<any>());
+    private _properties        = new Map<string, BehaviorSubject<[any, any][]>>();
+    private _incremental       = false;
+    private _cardinalities     : Map<string, Cardinality>;
+    private _defaultCardinality: Cardinality;
+
+    constructor(
+        cardinalities     ?: Map<string, Cardinality>,
+        defaultCardinality?: Cardinality
+        )
+    {
+        this._cardinalities = cardinalities ? cardinalities : new Map<string, Cardinality>();
+        this._defaultCardinality = defaultCardinality ? defaultCardinality : Cardinality.Many;
+    }
 
     get ObjectDomain(): Observable<Set<any>>
     {
@@ -229,6 +235,68 @@ export class Store implements IStore
                 }
             }
         }
+    }
+
+    Load(
+        individual: any,
+        loaded   ?: Map<any, any>
+        ): any
+    {
+        let top = typeof loaded == 'undefined';
+        loaded = loaded ? loaded : new Map<any, any>();
+        if(typeof individual !== "object" ||
+            individual === null ||
+            individual instanceof Date)
+            return individual;
+
+        let entity = loaded.get(individual);
+        if(entity)
+            return entity;
+
+        const objectDomain = this._objectDomain.getValue();
+        if('Id' in individual)
+        {
+            entity = [...objectDomain].find(entity => entity.Id === individual.Id);
+            if(!entity)
+            {
+                entity = {
+                    Id: individual.Id
+                };
+
+                objectDomain.add(entity);
+            }
+        }
+        else
+        {
+            entity = this.NewEntity();
+            objectDomain.add(entity);
+        }
+
+        for(let key in individual)
+        {
+            let value = individual[key];
+            if(value instanceof Array)
+                entity[key] = value.map(element => this.Load(
+                    element,
+                    loaded));
+
+            else
+                entity[key] = this.Load(
+                    value,
+                    loaded);               
+        }
+
+        loaded.set(
+            individual,
+            entity);
+
+        if(top)
+        {
+            this._objectDomain.next(this._objectDomain.getValue());
+            [...this._properties.keys()].forEach(this.Publish)
+        }
+
+        return entity;
     }
 
     private Cardinality(
