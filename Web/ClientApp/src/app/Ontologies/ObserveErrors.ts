@@ -1,50 +1,71 @@
-import { BehaviorSubject, combineLatest, Observable } from "rxjs";
-import { Guid } from "../CommonDomainObjects";
-import { ClassMembershipEvaluator } from "../Ontology/ClassMembershipEvaluator";
-import { IClass } from "../Ontology/IClass";
+import { combineLatest, Observable } from "rxjs";
 import { IOntology } from "../Ontology/IOntology";
-import { annotations } from './Annotations';
+import { ISubClassOf } from "../Ontology/ISubClassOf";
 import { IStore, ObservableGenerator } from "../Ontology/ObservableGenerator";
+import { annotations } from './Annotations';
+import { IErrors } from './Validate';
 
-export interface IErrors
+export function ObserveRestrictedFromStage(
+    generator   : ObservableGenerator,
+    subClassOf  : ISubClassOf,
+    propertyName: string,
+    error       : keyof IErrors
+    ): Observable<[string, keyof IErrors, Set<any>]>
 {
-    Mandatory       : string,
-    Invalid         : string,
-    MustBe100Percent: string
+    return combineLatest(
+        subClassOf.SuperClassExpression.Select(generator),
+        subClassOf.SubClassExpression.Select(generator),
+        (superClassExpression, subClassExpression) =>
+            [propertyName, error, new Set<any>([...subClassExpression].filter(element => !superClassExpression.has(element)))]);
 }
 
 export function ObserveErrors(
-    ontology        : IOntology,
-    store           : IStore,
-    entity          : object,
-    propertyName    : string
-    ): Observable<Set<keyof IErrors>>
+    ontology: IOntology,
+    store   : IStore
+    ): Observable<Map<object, Map<string, Set<keyof IErrors>>>>
 {
     const generator = new ObservableGenerator(
         ontology,
         store);
 
-            for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
-                for(let annotation of subClassOf.Annotations)
-                    if(annotation.Property === annotations.RestrictedfromStage)
+    let observables: Observable<[string, keyof IErrors, Set<any>]>[] = [];
+
+    for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
+        for(let annotation of subClassOf.Annotations)
+            if(annotation.Property === annotations.RestrictedfromStage)
+            {
+                let propertyName;
+                for(let annotationAnnotation of annotation.Annotations)
+                    if(annotationAnnotation.Property === annotations.NominalProperty)
                     {
-                        let name;
-                        for(let annotationAnnotation of annotation.Annotations)
-                            if(annotationAnnotation.Property === annotations.NominalProperty)
-                            {
-                                name = annotationAnnotation.Value;
-                                break;
-                            }
+                        propertyName = annotationAnnotation.Value;
+                        break;
+                    }
 
-                        if(!name && ontology.IsClassExpression.IPropertyRestriction(subClassOf.SuperClassExpression))
-                            name = subClassOf.SuperClassExpression.PropertyExpression.LocalName;
+                if(!propertyName && ontology.IsClassExpression.IPropertyRestriction(subClassOf.SuperClassExpression))
+                    propertyName = subClassOf.SuperClassExpression.PropertyExpression.LocalName;
 
-                        if()
-                        let x = combineLatest(
-                            subClassOf.SuperClassExpression.Select(generator),
-                            subClassOf.SubClassExpression.Select(generator),
-                            (superClassExpression, subClassExpression) => new Set<any>([...subClassExpression].filter(element => superClassExpression.has(element))));
+                let errorAnnotation = annotation.Annotations.find(annotation => annotation.Property === annotations.Error);
+                let error = errorAnnotation ? errorAnnotation.Value : "Mandatory";
 
+                observables.push(ObserveRestrictedFromStage(
+                    generator,
+                    subClassOf,
+                    propertyName,
+                    error));
+            }
+
+    return combineLatest(
+        observables,
+        (...observables) =>
+        {
+            let errors = new Map<object, Map<string, Set<keyof IErrors>>>();
+            observables.forEach(
+                observable =>
+                {
+                    observable[2].forEach(
+                        individual =>
+                        {
                             let individualErrors = errors.get(individual);
                             if(!individualErrors)
                             {
@@ -54,20 +75,18 @@ export function ObserveErrors(
                                     individualErrors);
                             }
 
-                            let propertyErrors = individualErrors.get(propertyName);
+                            let propertyErrors = individualErrors.get(observable[0]);
                             if(!propertyErrors)
                             {
                                 propertyErrors = new Set<keyof IErrors>();
                                 individualErrors.set(
-                                    propertyName,
+                                    observable[0],
                                     propertyErrors);
                             }
 
-                            let errorAnnotation = annotation.Annotations.find(annotation => annotation.Property === annotations.Error);
-                            propertyErrors.add(errorAnnotation ? errorAnnotation.Value : "Mandatory");
-                        }
-                }
-    }
-
-    return errors;
+                            propertyErrors.add(observable[1]);
+                        });
+                });
+            return errors;
+        });
 }
