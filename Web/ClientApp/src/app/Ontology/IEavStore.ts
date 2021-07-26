@@ -25,7 +25,6 @@ export interface IEavStore
 export class EavStore
 {
     private _nextEntityId       = 1;
-    private _eav                = new Map<any, Map<string, any>>();
     private _aev                = new Map<string, Map<any, any>>();
     private _observedEntites    = new BehaviorSubject<Set<any>>(new Set<any>());
     private _observedAttributes = new Map<string, BehaviorSubject<[any, any][]>>();
@@ -90,19 +89,12 @@ export class EavStore
         }
 
         const entity = this._nextEntityId++;
-        const av = new Map<any, any>();
-        this._eav.set(
-            entity,
-            av);
-
-        this._observedEntites.next(new Set<any>(this._eav.keys()));
+        const entities = this._observedEntites.getValue();
+        entities.add(entity);
+        this._observedEntites.next(entities);
 
         if(keyProperty)
         {
-            av.set(
-                keyProperty,
-                keyValue);
-
             this._aev.set(
                 keyProperty,
                 new Map<any, any>([[entity, keyValue]]));
@@ -118,7 +110,6 @@ export class EavStore
         value    : any
         ): void
     {
-        const av = this._eav.get(entity);
         let ev = this._aev.get(attribute);
 
         if(!ev) // Attribute never added before.
@@ -129,14 +120,11 @@ export class EavStore
                 ev);
         }
 
-        let currentValue = av.get(attribute);
+        let currentValue = ev.get(entity);
 
         if(typeof currentValue === 'undefined' && this.Cardinality(attribute) === Cardinality.Many)
         {
             currentValue = [];
-            av.set(
-                attribute,
-                currentValue);
             ev.set(
                 entity,
                 currentValue);
@@ -146,14 +134,9 @@ export class EavStore
             currentValue.push(value);
 
         else
-        {
-            av.set(
-                attribute,
-                value);
             ev.set(
                 entity,
                 value);
-        }
 
         this.Publish(attribute);
     }
@@ -164,8 +147,14 @@ export class EavStore
         value    : any
         ): void
     {
-        const av = this._eav.get(entity);
-        let currentValue = av.get(attribute);
+        const ev = this._aev.get(attribute);
+        if(!ev)
+            return;
+
+        let currentValue = ev.get(entity);
+
+        if(typeof currentValue === 'undefined')
+            return;
 
         if(currentValue instanceof Array)
         {
@@ -174,16 +163,10 @@ export class EavStore
                 1);
 
             if(!currentValue.length)
-            {
-                av.delete(attribute);
-                this._aev.get(attribute).delete(entity);
-            }
+                ev.delete(entity);
         }
         else
-        {
-            av.delete(attribute);
-            this._aev.get(attribute).delete(entity);
-        };
+            ev.delete(entity);
 
         this.Publish(attribute);
     }
@@ -192,13 +175,13 @@ export class EavStore
         attribute: string
         )
     {
-        const propertySubject = this._observedAttributes.get(attribute);
-        if(!propertySubject)
+        const attributeSubject = this._observedAttributes.get(attribute);
+        if(!attributeSubject)
             return;
 
         const cardinality = this.Cardinality(attribute);
 
-        propertySubject.next([...this._aev.get(attribute)]
+        attributeSubject.next([...this._aev.get(attribute)]
             .reduce((list, pair) =>
             {
                 const [entity, value] = pair;
