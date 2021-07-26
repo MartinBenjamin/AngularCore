@@ -194,6 +194,7 @@
     <None Remove="ClientApp\src\app\Ontology\IDatatypeRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\IDataUnionOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\IDisjointClasses.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IEavStore.ts" />
     <None Remove="ClientApp\src\app\Ontology\IEntity.ts" />
     <None Remove="ClientApp\src\app\Ontology\IEquivalentClasses.ts" />
     <None Remove="ClientApp\src\app\Ontology\IFunctionalDataProperty.ts" />
@@ -476,6 +477,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDatatypeRestriction.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDataUnionOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IDisjointClasses.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IEavStore.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IEntity.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IEquivalentClasses.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IFunctionalDataProperty.ts" />
