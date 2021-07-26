@@ -8,16 +8,17 @@ export enum Cardinality
 
 export interface IEavStore
 {
-    AddEntity(): number;
+    ObserveAttribute(attribute: string): Observable<[any, any][]>
+    AddEntity(): any;
     AddEntity(
         keyProperty: string,
-        keyValue   : any): number;
+        keyValue   : any): any;
     Add(
-        entity   : number,
+        entity   : any,
         attribute: string,
         value    : any): void;
     Remove(
-        entity   : number,
+        entity   : any,
         attribute: string,
         value    : any): void
 }
@@ -68,14 +69,14 @@ export class EavStore
         return subject;
     }
 
-    AddEntity(): number;
+    AddEntity(): any;
     AddEntity(
         keyProperty: string,
-        keyValue   : any): number;
+        keyValue   : any): any;
     AddEntity(
         keyProperty?: string,
         keyValue   ?: any
-        ): number
+        ): any
     {
         if(keyProperty)
         {
@@ -105,7 +106,7 @@ export class EavStore
     }
     
     Add(
-        entity   : number,
+        entity   : any,
         attribute: string,
         value    : any
         ): void
@@ -142,7 +143,7 @@ export class EavStore
     }
 
     Remove(
-        entity   : number,
+        entity   : any,
         attribute: string,
         value    : any
         ): void
