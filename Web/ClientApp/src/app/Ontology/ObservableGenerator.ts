@@ -141,6 +141,10 @@ export class Store implements IStore
         return subject;
     }
 
+    NewEntity<TEntity>(): TEntity;
+    NewEntity<TEntity>(
+        keyProperty: string,
+        keyValue   : any): TEntity;
     NewEntity<TEntity>(
         keyProperty?: string,
         keyValue   ?: any
