@@ -113,9 +113,18 @@ export class Exclusivity implements OnDestroy
 
     private ComputeExclusive(): void
     {
-        if(!(this._classificationSchemeClassifiers && this._classifier))
+        if(!this._classificationSchemeClassifiers)
+            return;
+
+        if(!this._classifier)
         {
-            this._exclusivity = null;
+            if(this._exclusivity !== null)
+            {
+                this._deal.Confers.splice(
+                    this._deal.Confers.indexOf(this._exclusivity),
+                    1);
+                this._exclusivity = null;
+            }
             return;
         }
 

@@ -108,6 +108,29 @@ export class Deal
 
     Save(): void
     {
+        //const store = new Store(
+        //    null,
+        //    null,
+        //    Individuals(this.Deal));
+
+        //const errorsObservable: Observable<Map<object, Map<string, Set<keyof IErrors>>>> = ObserveErrors(
+        //    this.Deal.Ontology,
+        //    store);
+
+        //let subscription: Subscription;
+        //try
+        //{
+        //    subscription = errorsObservable.subscribe(
+        //        errors =>
+        //        {
+        //            this._errorsService.next(errors.size ? errors : null);
+        //        });
+        //}
+        //finally
+        //{
+        //    subscription.unsubscribe();
+        //}
+
         let classifications = this.Deal.Ontology.Classify(this.Deal);
         let applicableStages = new Set<Guid>();
         for(let lifeCycleStage of this.Deal.LifeCycle.Stages)
