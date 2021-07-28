@@ -32,7 +32,7 @@ export function ObserveDataRangeError(
     ): Observable<[string, keyof IErrors, Set<any>]>
 {
     return store.ObserveProperty(propertyName).pipe(
-        map(elements => [propertyName, "Invalid", new Set<any>(elements.filter(element => !dataRange.HasMember(element[1])).map(element => element[0]))));
+        map(elements => [propertyName, "Invalid", new Set<any>(elements.filter(element => !dataRange.HasMember(element[1])).map(element => element[0]))]));
 }
 
 export function ObserveErrors(

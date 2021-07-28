@@ -127,10 +127,11 @@ export class Store implements IStore
                 .filter(entity => property in entity)
                 .reduce((list, entity) =>
                 {
-                    if(entity[property] instanceof Array)
-                        list.push(...entity[property].map(value => [entity, value]));
+                    const value = entity[property];
+                    if(value instanceof Array)
+                        list.push(...value.map(value => [entity, value]));
 
-                    else
+                    else if(value !== null)
                         list.push([entity, entity[property]]);
 
                     return list;
@@ -260,11 +261,12 @@ export class Store implements IStore
                 .filter(entity => property in entity)
                 .reduce((list, entity) =>
                 {
-                    if(entity[property] instanceof Array)
-                        list.push(...entity[property].map(value => [entity, value]));
+                    const value = entity[property];
+                    if(value instanceof Array)
+                        list.push(...value.map(value => [entity, value]));
 
-                    else
-                        list.push([entity, entity[property]]);
+                    else if(value !== null)
+                        list.push([entity, value]);
 
                     return list;
                 },
