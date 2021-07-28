@@ -52,7 +52,16 @@ export class Exclusivity implements OnDestroy
                 deal =>
                 {
                     this._deal = deal;
-                    this.ComputeClassifier();
+                    if(!this._deal)
+                    {
+                        this._classifier = null;
+                        this._exclusivity = null;
+                        return;
+                    }
+
+                    this._classifier = this._deal.Classifiers.find(classifer => (<any>classifer).$type == 'Web.Model.ExclusivityClassifier, Web');
+                    this._exclusivity = <ExclusivityCommitment>this._deal.Confers.find(commitment => (<any>commitment).$type == 'Web.Model.Exclusivity, Web');
+                    this.ComputeExclusive();
                 }));
     }
 
@@ -95,20 +104,6 @@ export class Exclusivity implements OnDestroy
     get Exclusivity(): ExclusivityCommitment
     {
         return this._exclusivity;
-    }
-
-    private ComputeClassifier(): void
-    {
-        if(!this._deal)
-        {
-            this._classifier = null;
-            this._exclusivity = null;
-            return;
-        }
-
-        this._classifier = this._deal.Classifiers.find(classifer => (<any>classifer).$type == 'Web.Model.ExclusivityClassifier, Web');
-        this._exclusivity = <ExclusivityCommitment>this._deal.Confers.find(commitment => (<any>commitment).$type == 'Web.Model.Exclusivity, Web');
-        this.ComputeExclusive();
     }
 
     private ComputeExclusive(): void
