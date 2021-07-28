@@ -52,7 +52,7 @@ describe(
                     'Given x ∈ ΔI:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         for(const ce of ces)
                             it(
                                 ce.Cardinality === 0 ?
@@ -64,7 +64,7 @@ describe(
                     'Given (op1)OP = {(x, y)}:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         const y = 2;
                         store.Add(x, op1.LocalName, y);
                         for(const ce of ces)
@@ -78,7 +78,7 @@ describe(
                     'Given (op1)OP = {(x, y), (x, z)}:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         const y = 2;
                         const z = 3;
                         store.Add(x, op1.LocalName, y);
@@ -134,7 +134,7 @@ describe(
                     'Given (op1)OP = {(x, y)}:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         const y = 2;
                         store.Add(x, op1.LocalName, y);
                         it(
@@ -146,7 +146,7 @@ describe(
                     'Given (op1)OP = {(x, (i)I)}:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         store.Add(x, op1.LocalName, iInterpretation);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
@@ -157,7 +157,7 @@ describe(
                     'Given (op1)OP = {(x, (i)I), (x, y)}:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         const y = 2;
                         store.Add(x, op1.LocalName, iInterpretation);
                         store.Add(x, op1.LocalName, y              );

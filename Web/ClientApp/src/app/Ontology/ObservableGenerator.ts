@@ -73,9 +73,9 @@ export interface IStore
 {
     ObjectDomain: Observable<Set<any>>;
     ObserveProperty(property: string): Observable<[any, any][]>;
-    NewEntity<TEntity>(
+    NewEntity(
         keyProperty?: string,
-        keyValue   ?: any): TEntity;
+        keyValue   ?: any): any;
     Add(
         entity  : object,
         property: string,
@@ -141,14 +141,14 @@ export class Store implements IStore
         return subject;
     }
 
-    NewEntity<TEntity>(): TEntity;
-    NewEntity<TEntity>(
+    NewEntity(): any;
+    NewEntity(
         keyProperty: string,
-        keyValue   : any): TEntity;
-    NewEntity<TEntity>(
+        keyValue   : any): any;
+    NewEntity(
         keyProperty?: string,
         keyValue   ?: any
-        ): TEntity
+        ): any
     {
         const objectDomain = this._objectDomain.getValue();
         if(keyProperty)
@@ -169,7 +169,7 @@ export class Store implements IStore
             this.Publish(keyProperty);
         }
 
-        return <TEntity>entity;
+        return entity;
     }
 
     Add(
@@ -754,7 +754,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         for(const dataPropertyAssertion of this._ontology.Get(this._ontology.IsAxiom.IDataPropertyAssertion))
             if(dataPropertyAssertion.DataPropertyExpression.LocalName === 'Id' &&
                 dataPropertyAssertion.SourceIndividual === individual)
-                return this._store.NewEntity<any>(
+                return this._store.NewEntity(
                     dataPropertyAssertion.DataPropertyExpression.LocalName,
                     dataPropertyAssertion.TargetValue);
 

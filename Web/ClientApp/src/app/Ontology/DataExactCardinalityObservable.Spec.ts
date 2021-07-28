@@ -48,7 +48,7 @@ describe(
                     'Given x ∈ ΔI:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         for(const ce of ces)
                             it(
                                 ce.Cardinality === 0 ?
@@ -60,7 +60,7 @@ describe(
                     'Given (dp1)DP = {(x, 1)}:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         store.Add(x, dp1.LocalName, 1);
                         for(const ce of ces)
                             it(
@@ -73,7 +73,7 @@ describe(
                     'Given (dp1)DP = {(x, 1), (x, 2)}:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         store.Add(x, dp1.LocalName, 1);
                         store.Add(x, dp1.LocalName, 2);
                         for(const ce of ces)
@@ -119,7 +119,7 @@ describe(
                     'Given x ∈ ΔI:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         it(
                            `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
                             () => expect(elements(ce).has(x)).toBe(false));
@@ -129,7 +129,7 @@ describe(
                     'Given (dp1)DP = {(x, 1)}:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         store.Add(x, dp1.LocalName, 1);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
@@ -140,7 +140,7 @@ describe(
                     'Given (dp1)DP = {(x, 1), (x, 2)}:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         store.Add(x, dp1.LocalName, 1);
                         store.Add(x, dp1.LocalName, 2);
                         it(
@@ -190,7 +190,7 @@ describe(
                         'Given (dp1)DP = {(x, 2)}:',
                         () =>
                         {
-                            const x = store.NewEntity<any>();
+                            const x = store.NewEntity();
                             store.Add(x, dp1.LocalName, 2);
                             it(
                                 `x ∈ (${classExpressionWriter.Write(ce)})C`,
@@ -201,7 +201,7 @@ describe(
                         'Given (dp1)DP = {(x, 1)}:',
                         () =>
                         {
-                            const x = store.NewEntity<any>();
+                            const x = store.NewEntity();
                             store.Add(x, dp1.LocalName, 1);
                             it(
                                 `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
@@ -215,7 +215,7 @@ describe(
                         'Given (dp1)OP = {(x, 0)}:',
                         () =>
                         {
-                            const x = store.NewEntity<any>();
+                            const x = store.NewEntity();
                             store.Add(x, dp1.LocalName, 3);
                             it(
                                 `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
@@ -226,7 +226,7 @@ describe(
                         'Given (dp1)OP = {(x, 1)}:',
                         () =>
                         {
-                            const x = store.NewEntity<any>();
+                            const x = store.NewEntity();
                             store.Add(x, dp1.LocalName, 1);
                             it(
                                 `x ∈ (${classExpressionWriter.Write(ce)})C`,
@@ -237,7 +237,7 @@ describe(
                         'Given (dp1)OP = {(x, 0), (x, 1)}:',
                         () =>
                         {
-                            const x = store.NewEntity<any>();
+                            const x = store.NewEntity();
                             store.Add(x, dp1.LocalName, 0);
                             store.Add(x, dp1.LocalName, 1);
                             it(
@@ -249,7 +249,7 @@ describe(
                         'Given (dp1)OP = {(x, 2)}:',
                         () =>
                         {
-                            const x = store.NewEntity<any>();
+                            const x = store.NewEntity();
                             store.Add(x, dp1.LocalName, 2);
                             it(
                                 `x ∈ (${classExpressionWriter.Write(ce)})C`,
@@ -260,7 +260,7 @@ describe(
                         'Given (dp1)OP = {(x, 0), (x, 2)}:',
                         () =>
                         {
-                            const x = store.NewEntity<any>();
+                            const x = store.NewEntity();
                             store.Add(x, dp1.LocalName, 0);
                             store.Add(x, dp1.LocalName, 2);
                             it(
@@ -272,7 +272,7 @@ describe(
                         'Given (dp1)OP = {(x, 1), (x, 2)}:',
                         () =>
                         {
-                            const x = store.NewEntity<any>();
+                            const x = store.NewEntity();
                             store.Add(x, dp1.LocalName, 1);
                             store.Add(x, dp1.LocalName, 2);
                             it(

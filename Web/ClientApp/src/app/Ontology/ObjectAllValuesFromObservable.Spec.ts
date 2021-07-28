@@ -58,7 +58,7 @@ describe(
                     'Given (op1)OP = {}',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
                             () => expect(elements(ce).has(x)).toBe(true));
@@ -68,7 +68,7 @@ describe(
                     'Given (op1)OP = {(x, i1)}',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         store.Add(x, op1.LocalName, i1Interpretation)
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
@@ -79,7 +79,7 @@ describe(
                     'Given (op1)OP = {(x, i2)}',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         store.Add(x, op1.LocalName, i2Interpretation);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
@@ -90,7 +90,7 @@ describe(
                     'Given (op1)OP = {(x, i1), (x, i2)}',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         store.Add(x, op1.LocalName, i1Interpretation);
                         store.Add(x, op1.LocalName, i2Interpretation);
                         it(
@@ -102,7 +102,7 @@ describe(
                     'Given (op1)OP = {(x, i1), (x, i2), (x, i3)}',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         store.Add(x, op1.LocalName, i1Interpretation);
                         store.Add(x, op1.LocalName, i2Interpretation);
                         store.Add(x, op1.LocalName, i3Interpretation);

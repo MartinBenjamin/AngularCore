@@ -47,7 +47,7 @@ describe(
                     'Given x ∈ ΔI:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         for(const ce of ces)
                         {
                             let members: Set<any> = null;
@@ -64,7 +64,7 @@ describe(
                     'Given (dp1)DP = {(x, 2)}:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         store.Add(x, dp1.LocalName, 2);
                         for(const ce of ces)
                         {
@@ -82,7 +82,7 @@ describe(
                     'Given (dp1)DP = {(x, 1), (x, 2)}:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         store.Add(x, dp1.LocalName, 1);
                         store.Add(x, dp1.LocalName, 2);
                         for(const ce of ces)
@@ -138,7 +138,7 @@ describe(
                     'Given (dp1)DP = {(x, 3)}:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         store.Add(x, dp1.LocalName, 3);
                         let members: Set<any> = null;
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
@@ -152,7 +152,7 @@ describe(
                     'Given (dp1)DP = {(x, 1)}:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         store.Add(x, dp1.LocalName, 1);
                         let members: Set<any> = null;
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
@@ -166,7 +166,7 @@ describe(
                     'Given (dp1)DP = {(x, 1), (x, 3)}:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         store.Add(x, dp1.LocalName, 1);
                         store.Add(x, dp1.LocalName, 3);
                         let members: Set<any> = null;
@@ -181,7 +181,7 @@ describe(
                     'Given (dp1)DP = {(x, 2)}:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         store.Add(x, dp1.LocalName, 2);
                         let members: Set<any> = null;
                         const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
@@ -195,7 +195,7 @@ describe(
                     'Given (dp1)DP = {(x, 2), (x, 3)}:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         store.Add(x, dp1.LocalName, 2);
                         store.Add(x, dp1.LocalName, 3);
                         let members: Set<any> = null;
@@ -210,7 +210,7 @@ describe(
                     'Given (dp1)DP = {(x, 1), (x, 2)}:',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         store.Add(x, dp1.LocalName, 1);
                         store.Add(x, dp1.LocalName, 2);
                         let members: Set<any> = null;

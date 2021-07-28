@@ -51,7 +51,7 @@ describe(
                     'Given (op1)OP = {}',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         it(
                             `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
                             () => expect(elements(ce).has(x)).toBe(false));
@@ -61,7 +61,7 @@ describe(
                     'Given (op1)OP = {(x, i1)}',
                     () =>
                     {
-                        const x = store.NewEntity<any>();
+                        const x = store.NewEntity();
                         store.Add(x, op1.LocalName, i1Interpretation)
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
