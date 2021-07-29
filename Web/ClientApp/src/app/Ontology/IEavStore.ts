@@ -172,7 +172,7 @@ export class EavStore
         this.Publish(attribute);
     }
 
-    private Publish(
+    public Publish(
         attribute: string
         )
     {
@@ -203,4 +203,38 @@ export class EavStore
     {
         return this._cardinalities.has(property) ? this._cardinalities.get(property) : this._defaultCardinality;
     }
+}
+
+function EntityProxyFactory(
+    store: EavStore,
+    av   : Map<string, any>
+    )
+{
+    let handler: ProxyHandler<object> = {
+        get: function(
+            target,
+            p
+            ): any
+        {
+            let value = av.get(<string>p);
+            return value ? value : null;
+        },
+        set: function(
+            target,
+            p,
+            value
+            ): boolean
+        {
+            if(value === null)
+                av.delete(p);
+
+            else
+                av.set(
+                    p,
+                    value);
+
+            store.Publish()
+            return true;
+        }
+    };
 }

@@ -1,6 +1,6 @@
 import { combineLatest, Observable } from "rxjs";
 import { map } from 'rxjs/operators';
-import { IDataRange } from '../Ontology/IDataRange';
+import { Guid } from "../CommonDomainObjects";
 import { IOntology } from "../Ontology/IOntology";
 import { ISubClassOf } from "../Ontology/ISubClassOf";
 import { IStore, ObservableGenerator } from "../Ontology/ObservableGenerator";
@@ -25,19 +25,10 @@ export function ObserveRestrictedFromStage(
             ]);
 }
 
-export function ObserveDataRangeError(
-    store       : IStore,
-    dataRange   : IDataRange,
-    propertyName: string
-    ): Observable<[string, keyof IErrors, Set<any>]>
-{
-    return store.ObserveProperty(propertyName).pipe(
-        map(elements => [propertyName, "Invalid", new Set<any>(elements.filter(element => !dataRange.HasMember(element[1])).map(element => element[0]))]));
-}
-
 export function ObserveErrors(
-    ontology: IOntology,
-    store   : IStore
+    ontology        : IOntology,
+    store           : IStore,
+    applicableStages: Set<Guid>
     ): Observable<Map<object, Map<string, Set<keyof IErrors>>>>
 {
     const generator = new ObservableGenerator(
@@ -55,7 +46,8 @@ export function ObserveErrors(
 
     for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
         for(let annotation of subClassOf.Annotations)
-            if(annotation.Property === annotations.RestrictedfromStage)
+            if(annotation.Property === annotations.RestrictedfromStage &&
+               applicableStages.has(annotation.Value))
             {
                 let propertyName;
                 for(let annotationAnnotation of annotation.Annotations)

@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, forwardRef, Inject, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
@@ -18,6 +18,9 @@ import { MoreTabs } from '../MoreTabs';
 import { Origination } from '../Origination';
 import { OriginationTab } from '../OriginationTab';
 import { TransactionDetails } from '../TransactionDetails';
+import { Individuals } from '../../Ontology/Ontology';
+import { ObserveErrors } from '../../Ontologies/ObserveErrors';
+import { Store } from '../../Ontology/ObservableGenerator';
 
 @Component(
     {
@@ -108,6 +111,14 @@ export class Deal
 
     Save(): void
     {
+        let applicableStages = new Set<Guid>();
+        for(let lifeCycleStage of this.Deal.LifeCycle.Stages)
+        {
+            applicableStages.add(lifeCycleStage.Id);
+            if(lifeCycleStage.Id === this.Deal.Stage.Id)
+                break;
+        }
+
         //const store = new Store(
         //    null,
         //    null,
@@ -115,7 +126,8 @@ export class Deal
 
         //const errorsObservable: Observable<Map<object, Map<string, Set<keyof IErrors>>>> = ObserveErrors(
         //    this.Deal.Ontology,
-        //    store);
+        //    store,
+        //    applicableStages);
 
         //let subscription: Subscription;
         //try
@@ -123,6 +135,32 @@ export class Deal
         //    subscription = errorsObservable.subscribe(
         //        errors =>
         //        {
+        //            this.Deal.Confers.filter(
+        //                commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
+        //                .forEach(
+        //                    commitment =>
+        //                    {
+        //                        for(let object of Deal.FacilitySubgraphQuery(commitment))
+        //                            if(errors.has(object))
+        //                            {
+        //                                let facilityErrors = errors.get(commitment);
+        //                                if(!facilityErrors)
+        //                                {
+        //                                    facilityErrors = new Map<string, Set<keyof IErrors>>();
+        //                                    errors.set(
+        //                                        commitment,
+        //                                        facilityErrors);
+        //                                }
+
+        //                                let hasErrors = facilityErrors.get('$HasErrors');
+        //                                if(!hasErrors)
+        //                                    facilityErrors.set(
+        //                                        '$HasErrors',
+        //                                        new Set<keyof IErrors>());
+        //                                break;
+        //                            }
+        //                    });
+
         //            this._errorsService.next(errors.size ? errors : null);
         //        });
         //}
@@ -132,14 +170,6 @@ export class Deal
         //}
 
         let classifications = this.Deal.Ontology.Classify(this.Deal);
-        let applicableStages = new Set<Guid>();
-        for(let lifeCycleStage of this.Deal.LifeCycle.Stages)
-        {
-            applicableStages.add(lifeCycleStage.Id);
-            if(lifeCycleStage.Id === this.Deal.Stage.Id)
-                break;
-        }
-
         let errors = Validate(
             this.Deal.Ontology,
             classifications,
