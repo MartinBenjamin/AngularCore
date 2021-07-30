@@ -256,7 +256,8 @@ function ArrayMethodHandlerFactory(
                 const result = targetMethod.call(
                     targetArray,
                     ...argArray);
-                //store.Publish(attribute);
+                if(store)
+                    store.Publish(attribute);
                 return result;
             }
         };
@@ -301,16 +302,9 @@ export function ArrayProxyFactory(
             value
             ): boolean
         {
-            //if(value === null)
-            //    av.delete(<string>p);
-
-            //else
-            //    av.set(
-            //        <string>p,
-            //        value);
-
-            //store.Publish(<string>p);
             target[p] = value;
+            if(store)
+                store.Publish(attribute);
             return true;
         }
     };
