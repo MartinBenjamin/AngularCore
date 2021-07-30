@@ -48,15 +48,14 @@ export class EavStore
         let subject = this._observedAttributes.get(attribute);
         if(!subject)
         {
-            const cardinality = this.Cardinality(attribute);
             subject = new BehaviorSubject<[any, any][]>([...this._aev.get(attribute)]
                 .reduce((list, pair) =>
                 {
                     const [entity, value] = pair;
-                    if(cardinality === Cardinality.Many)
-                        list.push(...(<Array<any>>value).map(value => [entity, value]));
+                    if(value instanceof Array)
+                        list.push(...value.map(value => [entity, value]));
 
-                    else
+                    else if(value !== null)
                         list.push([entity, value]);
 
                     return list;
@@ -177,24 +176,20 @@ export class EavStore
         )
     {
         const attributeSubject = this._observedAttributes.get(attribute);
-        if(!attributeSubject)
-            return;
+        if(attributeSubject)
+            attributeSubject.next([...this._aev.get(attribute)]
+                .reduce((list, pair) =>
+                {
+                    const [entity, value] = pair;
+                    if(value instanceof Array)
+                        list.push(...value.map(value => [entity, value]));
 
-        const cardinality = this.Cardinality(attribute);
+                    else if(value !== null)
+                        list.push([entity, value]);
 
-        attributeSubject.next([...this._aev.get(attribute)]
-            .reduce((list, pair) =>
-            {
-                const [entity, value] = pair;
-                if(cardinality === Cardinality.Many)
-                    list.push(...(<Array<any>>value).map(value => [entity, value]));
-
-                else
-                    list.push([entity, value]);
-
-                return list;
-            },
-            []));
+                    return list;
+                },
+                []));
     }
 
     private Cardinality(
@@ -216,7 +211,9 @@ function EntityProxyFactory(
             p
             ): any
         {
-            let value = av.get(<string>p);
+            let value;
+            if(typeof p === 'string')
+                value = av.get(p);
             return value ? value : null;
         },
         set: function(
@@ -225,15 +222,15 @@ function EntityProxyFactory(
             value
             ): boolean
         {
-            if(value === null)
-                av.delete(<string>p);
-
-            else
+            if(typeof p === 'string')
+            {
                 av.set(
-                    <string>p,
+                    p,
                     value);
+                if(store)
+                    store.Publish(p);
 
-            store.Publish(<string>p);
+            }
             return true;
         }
     };
