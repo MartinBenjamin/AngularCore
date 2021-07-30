@@ -226,15 +226,96 @@ function EntityProxyFactory(
             ): boolean
         {
             if(value === null)
-                av.delete(p);
+                av.delete(<string>p);
 
             else
                 av.set(
-                    p,
+                    <string>p,
                     value);
 
-            store.Publish()
+            store.Publish(<string>p);
             return true;
         }
     };
+}
+
+function ArrayMethodHandlerFactory(
+    store      : EavStore,
+    attribute  : string,
+    targetArray: any[]
+    ): ProxyHandler<{ (...args): any }>
+{
+    return <ProxyHandler<{ (...args): any }>>
+        {
+            apply(
+                targetMethod,
+                thisArg,
+                argArray
+                ): any
+            {
+                const result = targetMethod.call(
+                    targetArray,
+                    ...argArray);
+                //store.Publish(attribute);
+                return result;
+            }
+        };
+}
+
+export function ArrayProxyFactory(
+    store      : EavStore,
+    attribute  : string,
+    targetArray: any[]
+    )
+{
+    const methodHandler = ArrayMethodHandlerFactory(
+        store,
+        attribute,
+        targetArray);
+
+    const interceptors = new Map<PropertyKey, object>(
+        [
+            'push',
+            'pop',
+            'shift',
+            'unshift',
+            'splice',
+        ].map(methodName => [methodName, new Proxy(
+            targetArray[methodName],
+            methodHandler)]));
+    let handler: ProxyHandler<[]> = {
+        get: function(
+            target,
+            p
+            ): any
+        {
+            const interceptor = interceptors.get(p);
+            if(interceptor)
+                return interceptor;
+
+            return target[p];
+        },
+        set: function(
+            target,
+            p,
+            value
+            ): boolean
+        {
+            //if(value === null)
+            //    av.delete(<string>p);
+
+            //else
+            //    av.set(
+            //        <string>p,
+            //        value);
+
+            //store.Publish(<string>p);
+            target[p] = value;
+            return true;
+        }
+    };
+
+    return new Proxy(
+        targetArray,
+        handler);
 }

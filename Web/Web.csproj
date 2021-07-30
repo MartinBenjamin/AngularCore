@@ -158,6 +158,7 @@
     <None Remove="ClientApp\src\app\Ontology\DataUnionOf.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataUnionOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\DisjointClasses.ts" />
+    <None Remove="ClientApp\src\app\Ontology\EavStore.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Entity.ts" />
     <None Remove="ClientApp\src\app\Ontology\EquivalentClasses.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\EquivalentClasses.ts" />
@@ -441,6 +442,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataUnionOf.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataUnionOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DisjointClasses.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\EavStore.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Entity.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\EquivalentClasses.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\EquivalentClasses.ts" />
