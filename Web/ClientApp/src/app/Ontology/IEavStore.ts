@@ -8,37 +8,30 @@ export enum Cardinality
 
 export interface IEavStore
 {
+    Entities: Observable<Set<any>>;
     ObserveAttribute(attribute: string): Observable<[any, any][]>
-    AddEntity(): any;
-    AddEntity(
-        keyProperty: string,
-        keyValue   : any): any;
-    Add(
-        entity   : any,
-        attribute: string,
-        value    : any): void;
-    Remove(
-        entity   : any,
-        attribute: string,
-        value    : any): void
+    Import(object: object);
 }
 
 export class EavStore
 {
-    private _nextEntityId       = 1;
+    private _eav                = new Map<any, Map<string, any>>();
     private _aev                = new Map<string, Map<any, any>>();
+    private _ave                = new Map<string, Map<any, any>>();
     private _observedEntites    = new BehaviorSubject<Set<any>>(new Set<any>());
     private _observedAttributes = new Map<string, BehaviorSubject<[any, any][]>>();
-    private _cardinalities      : Map<string, Cardinality>;
-    private _defaultCardinality : Cardinality;
 
     constructor(
-        cardinalities     ?: Map<string, Cardinality>,
-        defaultCardinality?: Cardinality
+        uniqueAttributes: Set<string>
         )
     {
-        this._cardinalities      = cardinalities      ? cardinalities      : new Map<string, Cardinality>();
-        this._defaultCardinality = defaultCardinality ? defaultCardinality : Cardinality.Many;
+        this._ave = new Map<string, Map<any, any>>(
+            [...uniqueAttributes].map(uniqueAttribute => [uniqueAttribute, new Map<any, any>()]));
+    }
+
+    get Entities(): Observable<Set<any>>
+    {
+        return this._observedEntites;
     }
 
     ObserveAttribute(
@@ -68,107 +61,102 @@ export class EavStore
         return subject;
     }
 
-    AddEntity(): any;
-    AddEntity(
-        keyProperty: string,
-        keyValue   : any): any;
-    AddEntity(
-        keyProperty?: string,
-        keyValue   ?: any
+    Import(
+        object   : object,
+        imported?: Map<object, any>
         ): any
     {
-        if(keyProperty)
-        {
-            const ev = this._aev.get(keyProperty);
-            if(ev)
+        let top = typeof imported === 'undefined';
+        imported = imported ? imported : new Map<object, any>();
+        if(typeof object !== "object" ||
+            object === null ||
+            object instanceof Date)
+            return object;
+
+        let entity = imported.get(object);
+        let av: Map<string, any>;
+        if(entity)
+            return entity;
+
+        for(const [attribute, ve] of this._ave)
+            if(attribute in object)
             {
-                const existing = [...ev].find(element => element[1] === keyValue);
-                if(existing)
-                    return existing[0]
+                const value = object[attribute];
+                entity = ve.get(value);
+                if(!entity)
+                {
+                    av = new Map<string, any>([[attribute, value]]);
+                    entity = EntityProxyFactory(
+                        this,
+                        av,
+                        this._aev);
+                    this._eav.set(
+                        entity,
+                        av);
+                    ve.set(
+                        value,
+                        entity);
+
+                    let ev = this._aev.get(attribute);
+                    if(!ev)
+                    {
+                        ev = new Map<any, any>();
+                        this._aev.set(
+                            attribute,
+                            ev);
+                    }
+
+                    ev.set(
+                        entity,
+                        value);
+
+                }
+                else
+                    av = this._eav.get(entity);
+
+                break;
             }
+
+        if(!entity)
+        {
+            av = new Map<string, any>();
+            entity = EntityProxyFactory(
+                this,
+                av,
+                this._aev);
+            this._eav.set(
+                entity,
+                av);
         }
 
-        const entity = this._nextEntityId++;
-        const entities = this._observedEntites.getValue();
-        entities.add(entity);
-        this._observedEntites.next(entities);
-
-        if(keyProperty)
+        for(let key in object)
         {
-            this._aev.set(
-                keyProperty,
-                new Map<any, any>([[entity, keyValue]]));
-            this.Publish(keyProperty);
+            let value = object[key];
+            if(value instanceof Array)
+                entity[key] = ArrayProxyFactory(
+                    this,
+                    key,
+                    value.map(element => this.Import(
+                        element,
+                        imported)));
+
+            else
+                entity[key] = this.Import(
+                    value,
+                    imported);
+        }
+
+        imported.set(
+            object,
+            entity);
+
+        if(top)
+        {
+            this._observedEntites.next(new Set<any>(this._eav.keys()));
+            [...this._aev.keys()].forEach(this.Publish)
         }
 
         return entity;
-    }
-    
-    Add(
-        entity   : any,
-        attribute: string,
-        value    : any
-        ): void
-    {
-        let ev = this._aev.get(attribute);
-
-        if(!ev) // Attribute never added before.
-        {
-            ev = new Map<any, any>();
-            this._aev.set(
-                attribute,
-                ev);
-        }
-
-        let currentValue = ev.get(entity);
-
-        if(typeof currentValue === 'undefined' && this.Cardinality(attribute) === Cardinality.Many)
-        {
-            currentValue = [];
-            ev.set(
-                entity,
-                currentValue);
-        }
-
-        if(currentValue instanceof Array)
-            currentValue.push(value);
-
-        else
-            ev.set(
-                entity,
-                value);
-
-        this.Publish(attribute);
-    }
-
-    Remove(
-        entity   : any,
-        attribute: string,
-        value    : any
-        ): void
-    {
-        const ev = this._aev.get(attribute);
-        if(!ev)
-            return;
-
-        let currentValue = ev.get(entity);
-
-        if(typeof currentValue === 'undefined')
-            return;
-
-        if(currentValue instanceof Array)
-        {
-            currentValue.splice(
-                currentValue.indexOf(value),
-                1);
-
-            if(!currentValue.length)
-                ev.delete(entity);
-        }
-        else
-            ev.delete(entity);
-
-        this.Publish(attribute);
     }
 
     public Publish(
@@ -191,18 +179,12 @@ export class EavStore
                 },
                 []));
     }
-
-    private Cardinality(
-        property: string
-        ): Cardinality
-    {
-        return this._cardinalities.has(property) ? this._cardinalities.get(property) : this._defaultCardinality;
-    }
 }
 
 function EntityProxyFactory(
     store: EavStore,
-    av   : Map<string, any>
+    av   : Map<string, any>,
+    aev  : Map<string, Map<any, any>>
     )
 {
     let handler: ProxyHandler<object> = {
@@ -219,7 +201,8 @@ function EntityProxyFactory(
         set: function(
             target,
             p,
-            value
+            value,
+            receiver
             ): boolean
         {
             if(typeof p === 'string')
@@ -227,9 +210,21 @@ function EntityProxyFactory(
                 av.set(
                     p,
                     value);
+
+                let ev = aev.get(p);
+                if(!ev)
+                {
+                    ev = new Map<any, any>();
+                    aev.set(
+                        p,
+                        ev);
+                }
+                ev.set(
+                    receiver,
+                    value);
+
                 if(store)
                     store.Publish(p);
-
             }
             return true;
         }
