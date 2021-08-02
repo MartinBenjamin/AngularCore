@@ -102,19 +102,6 @@ export class EavStore
                 av);
         }
 
-        if(!entity)
-        {
-            av = new Map<string, any>();
-            entity = EntityProxyFactory(
-                this,
-                av,
-                this._aev,
-                this._ave);
-            this._eav.set(
-                entity,
-                av);
-        }
-
         for(let key in object)
         {
             let value = object[key];
