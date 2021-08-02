@@ -100,6 +100,8 @@ export class EavStore
             this._eav.set(
                 entity,
                 av);
+
+            this._observedEntites.next(new Set<any>(this._eav.keys()));
         }
 
         for(let key in object)
