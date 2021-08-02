@@ -15,11 +15,11 @@ export interface IEavStore
 
 export class EavStore
 {
-    private _eav                = new Map<any, Map<string, any>>();
-    private _aev                = new Map<string, Map<any, any>>();
-    private _ave                = new Map<string, Map<any, any>>();
-    private _observedEntites    = new BehaviorSubject<Set<any>>(new Set<any>());
-    private _observedAttributes = new Map<string, BehaviorSubject<[any, any][]>>();
+    private _eav                 = new Map<any, Map<string, any>>();
+    private _aev                 = new Map<string, Map<any, any>>();
+    private _ave                 = new Map<string, Map<any, any>>();
+    private _entitiesObservable  = new BehaviorSubject<Set<any>>(new Set<any>());
+    private _attributeObservable = new Map<string, BehaviorSubject<[any, any][]>>();
 
     constructor(
         uniqueAttributes: Set<string>
@@ -31,14 +31,14 @@ export class EavStore
 
     get Entities(): Observable<Set<any>>
     {
-        return this._observedEntites;
+        return this._entitiesObservable;
     }
 
     ObserveAttribute(
         attribute: string
         ): Observable<[any, any][]>
     {
-        let subject = this._observedAttributes.get(attribute);
+        let subject = this._attributeObservable.get(attribute);
         if(!subject)
         {
             subject = new BehaviorSubject<[any, any][]>([...this._aev.get(attribute)]
@@ -54,7 +54,7 @@ export class EavStore
                     return list;
                 },
                 []));
-            this._observedAttributes.set(
+            this._attributeObservable.set(
                 attribute,
                 subject);
         }
@@ -66,9 +66,8 @@ export class EavStore
         imported?: Map<object, any>
         ): any
     {
-        let top = typeof imported === 'undefined';
         imported = imported ? imported : new Map<object, any>();
-        if(typeof object !== "object" ||
+        if(typeof object !== 'object' ||
             object === null ||
             object instanceof Date)
             return object;
@@ -101,7 +100,7 @@ export class EavStore
                 entity,
                 av);
 
-            this._observedEntites.next(new Set<any>(this._eav.keys()));
+            this._entitiesObservable.next(new Set<any>(this._eav.keys()));
         }
 
         for(let key in object)
@@ -138,7 +137,7 @@ export class EavStore
         attribute: string
         )
     {
-        const attributeSubject = this._observedAttributes.get(attribute);
+        const attributeSubject = this._attributeObservable.get(attribute);
         if(attributeSubject)
             attributeSubject.next([...this._aev.get(attribute)]
                 .reduce((list, pair) =>
