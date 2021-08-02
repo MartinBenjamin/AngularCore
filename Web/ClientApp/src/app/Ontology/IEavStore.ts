@@ -95,7 +95,8 @@ export class EavStore
             entity = EntityProxyFactory(
                 this,
                 av,
-                this._aev);
+                this._aev,
+                this._ave);
             this._eav.set(
                 entity,
                 av);
@@ -107,7 +108,8 @@ export class EavStore
             entity = EntityProxyFactory(
                 this,
                 av,
-                this._aev);
+                this._aev,
+                this._ave);
             this._eav.set(
                 entity,
                 av);
@@ -140,12 +142,6 @@ export class EavStore
             object,
             entity);
 
-        if(top)
-        {
-            this._observedEntites.next(new Set<any>(this._eav.keys()));
-            [...this._aev.keys()].forEach(this.Publish)
-        }
-
         return entity;
     }
 
@@ -174,7 +170,8 @@ export class EavStore
 function EntityProxyFactory(
     store: EavStore,
     av   : Map<string, any>,
-    aev  : Map<string, Map<any, any>>
+    aev  : Map<string, Map<any, any>>,
+    ave  : Map<string, Map<any, any>>
     ): object
 {
     let handler: ProxyHandler<object> = {
@@ -197,6 +194,23 @@ function EntityProxyFactory(
         {
             if(typeof p === 'string')
             {
+                const ve = ave.get(p);
+                if(ve)
+                {
+                    const currentValue = av.get(p);
+                    if(currentValue !== value)
+                    {
+                        ve.delete(currentValue);
+                        const identified = ve.get(value);
+                        if(typeof identified !== 'undefined')
+                            throw 'Key Conflict';
+
+                        ve.set(
+                            value,
+                            receiver);
+                    }
+                }
+
                 av.set(
                     p,
                     value);
