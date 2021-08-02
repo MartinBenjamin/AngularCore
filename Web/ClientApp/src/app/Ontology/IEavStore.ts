@@ -185,7 +185,7 @@ function EntityProxyFactory(
     store: EavStore,
     av   : Map<string, any>,
     aev  : Map<string, Map<any, any>>
-    )
+    ): object
 {
     let handler: ProxyHandler<object> = {
         get: function(
@@ -229,6 +229,10 @@ function EntityProxyFactory(
             return true;
         }
     };
+
+    return new Proxy(
+        null,
+        handler);
 }
 
 function ArrayMethodHandlerFactory(
