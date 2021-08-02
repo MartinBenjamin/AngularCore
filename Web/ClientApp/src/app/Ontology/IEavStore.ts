@@ -78,44 +78,28 @@ export class EavStore
         if(entity)
             return entity;
 
-        for(const [attribute, ve] of this._ave)
-            if(attribute in object)
+        [...this._ave]
+            .filter(([attribute,]) => attribute in object)
+            .forEach(([attribute,ve]) =>
             {
-                const value = object[attribute];
-                entity = ve.get(value);
-                if(!entity)
-                {
-                    av = new Map<string, any>([[attribute, value]]);
-                    entity = EntityProxyFactory(
-                        this,
-                        av,
-                        this._aev);
-                    this._eav.set(
-                        entity,
-                        av);
-                    ve.set(
-                        value,
-                        entity);
+                if(typeof entity === 'undefined')
+                    entity = ve[object[attribute]];
 
-                    let ev = this._aev.get(attribute);
-                    if(!ev)
-                    {
-                        ev = new Map<any, any>();
-                        this._aev.set(
-                            attribute,
-                            ev);
-                    }
+                else if(entity != ve[object[attribute]])
+                    throw 'Key Conflict';
+            });
 
-                    ev.set(
-                        entity,
-                        value);
-
-                }
-                else
-                    av = this._eav.get(entity);
-
-                break;
-            }
+        if(!entity)
+        {
+            av = new Map<string, any>();
+            entity = EntityProxyFactory(
+                this,
+                av,
+                this._aev);
+            this._eav.set(
+                entity,
+                av);
+        }
 
         if(!entity)
         {
@@ -133,13 +117,19 @@ export class EavStore
         {
             let value = object[key];
             if(value instanceof Array)
-                entity[key] = ArrayProxyFactory(
-                    this,
-                    key,
-                    value.map(element => this.Import(
-                        element,
-                        imported)));
+            {
+                if(!entity[key])
+                    entity[key] = ArrayProxyFactory(
+                        this,
+                        key,
+                        []);
 
+                entity[key].push(...value
+                    .map(element => this.Import(
+                        element,
+                        imported))
+                    .filter(element => !entity[key].includes(element)));
+            }
             else
                 entity[key] = this.Import(
                     value,
