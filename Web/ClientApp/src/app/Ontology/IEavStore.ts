@@ -88,6 +88,27 @@ export class EavStore
         this._entitiesObservable.next(new Set<any>(this._eav.keys()));
     }
 
+    Add(
+        entity   : any,
+        attribute: string,
+        value    : any
+        )
+    {
+        let currentValue = entity[attribute];
+
+        if(typeof currentValue === 'undefined' && this.Cardinality(attribute) === Cardinality.Many)
+            currentValue = entity[attribute] = ArrayProxyFactory(
+                this,
+                attribute,
+                []);
+
+        if(currentValue instanceof Array)
+            currentValue.push(value);
+
+        else
+            entity[attribute] = value;
+    }
+
     Import(
         object   : object,
         imported?: Map<object, any>
@@ -166,6 +187,17 @@ export class EavStore
                     return list;
                 },
                 []));
+    }
+
+    private Cardinality(
+        attribute: string
+        ): Cardinality
+    {
+        const attributeSchema = this._schema.get(attribute);
+        if(attributeSchema && typeof attributeSchema.Cardinality !== 'undefined')
+            return attributeSchema.Cardinality;
+
+        return Cardinality.Many;
     }
 }
 
