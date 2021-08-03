@@ -86,6 +86,7 @@ export class EavStore
             av);
 
         this._entitiesObservable.next(new Set<any>(this._eav.keys()));
+        return entity;
     }
 
     Add(
@@ -129,7 +130,7 @@ export class EavStore
             .forEach(([attribute,ve]) =>
             {
                 if(typeof entity === 'undefined')
-                    entity = ve[object[attribute]];
+                    entity = ve.get(object[attribute]);
 
                 else if(entity != ve[object[attribute]])
                     throw 'Unique Identity Conflict';
@@ -269,7 +270,7 @@ function EntityProxyFactory(
     };
 
     return new Proxy(
-        null,
+        {},
         handler);
 }
 
