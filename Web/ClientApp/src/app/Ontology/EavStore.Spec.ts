@@ -8,7 +8,7 @@ describe(
     () =>
     {
         describe(
-            'Given array = [] and arrayProxy = ArrayProxyFactory(null, null, array)',
+            'Given array = [] and arrayProxy = ArrayProxyFactory(null, null, array):',
             () =>
             {
                 const array = [];
@@ -41,7 +41,7 @@ describe(
             });
 
         describe(
-            'Given store = new EavStore() and e = store.Import({ a1:1, a2: [{a3: 2}], a4: null })',
+            'Given store = new EavStore() and e = store.Import({ a1:1, a2: [{a3: 2}], a4: null }):',
             () =>
             {
                 const store = new EavStore();
@@ -59,7 +59,7 @@ describe(
                 assert("typeof e.a5 === 'undefined'");
 
                 describe(
-                    'Given entities: Set<any> and store.Entities.subscribe(value => entities = value)',
+                    'Given entities: Set<any> and store.Entities.subscribe(value => entities = value):',
                     () =>
                     {
                         let entities: Set<any>;
