@@ -67,6 +67,7 @@ describe(
                         let assert = assertBuilder('store', 'e', 'entities')
                             (store, e, entities);
 
+                        assert('entities.size === 2');
                         assert('entities.has(e)');
                         assert('entities.has(e.a2[0])');
                         assert('!entities.has(e.a4)');
