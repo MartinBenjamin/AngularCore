@@ -41,11 +41,11 @@ describe(
             });
 
         describe(
-            'Given store = new EavStore() and e = store.Import({ a1:1, a2: [{a3: 2}], a4: null }):',
+            'Given store = new EavStore() and e = store.Import({ a1:1, a2: [{ a1: 2, a3: 3}], a4: null }):',
             () =>
             {
                 const store = new EavStore();
-                const e = store.Import({ a1: 1, a2: [{ a3: 2 }], a4: null });
+                const e = store.Import({ a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null });
                 let assert = assertBuilder('store', 'e')
                     (store, e);
                 assert('e.a1 === 1');
@@ -54,7 +54,8 @@ describe(
                 assert('Array.isArray(e.a2)');
                 assert('e.a2.length === 1');
                 assert("typeof e.a2[0] === 'object'");
-                assert("e.a2[0].a3 === 2");
+                assert("e.a2[0].a1 === 2");
+                assert("e.a2[0].a3 === 3");
                 assert("e.a4 === null");
                 assert("typeof e.a5 === 'undefined'");
 
@@ -73,18 +74,33 @@ describe(
                         assert('!entities.has(e.a4)');
                         subscription.unsubscribe();
                     });
+
+                describe(
+                    "Given a1: [any, any][] and store.ObserveAttribute('a4').subscribe(value => a1 = value):",
+                    () =>
+                    {
+                        let a1: [any, any][];
+                        const subscription: Subscription = store.ObserveAttribute('a1').subscribe(value => a1 = value);
+                        let assert = assertBuilder('store', 'e', 'a1')
+                            (store, e, a1);
+
+                        assert('a1.length === 2');
+                        assert('a1.find(element => element[0] === e && element[1] === e.a1) !== null');
+                        assert('a1.find(element => element[0] === e.a2[0] && element[1] === e.a2[0].a1) !== null');
+                        subscription.unsubscribe();
+                    });
             });
 
         describe(
-            "Given store = new EavStore({ Name: 'Id', UniqueIdentity: true}) and p = store.Import({ Id: 1 })",
+            "Given store = new EavStore({ Name: 'Id', UniqueIdentity: true}) and e = store.Import({ Id: 1 })",
             () =>
             {
                 const store = new EavStore({ Name: 'Id', UniqueIdentity: true });
-                const p = store.Import({ Id: 1 });
-                let assert = assertBuilder('store', 'p')
-                    (store, p);
-                assert('p.Id === 1');
-                assert('p === store.Import({ Id: 1 })');
+                const e = store.Import({ Id: 1 });
+                let assert = assertBuilder('store', 'e')
+                    (store, e);
+                assert('e.Id === 1');
+                assert('e === store.Import({ Id: 1 })');
                 assert('store.Import({ Id: 1, a1: 2 }).a1 === 2');
             });
     });
