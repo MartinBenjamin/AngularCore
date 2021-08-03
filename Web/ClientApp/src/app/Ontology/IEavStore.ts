@@ -6,10 +6,18 @@ export enum Cardinality
     Many
 }
 
+export interface AttributeSchema
+{
+    Name           : string,
+    UniqueIdentity?: boolean,
+    Cardinality   ?: Cardinality
+}
+
 export interface IEavStore
 {
     Entities: Observable<Set<any>>;
     ObserveAttribute(attribute: string): Observable<[any, any][]>
+    NewEntity(): any;
     Import(object: object);
 }
 
@@ -17,16 +25,20 @@ export class EavStore
 {
     private _eav                 = new Map<any, Map<string, any>>();
     private _aev                 = new Map<string, Map<any, any>>();
-    private _ave                 = new Map<string, Map<any, any>>();
+    private _ave                 : Map<string, Map<any, any>>;
     private _entitiesObservable  = new BehaviorSubject<Set<any>>(new Set<any>());
     private _attributeObservable = new Map<string, BehaviorSubject<[any, any][]>>();
+    private _schema              : Map<string, AttributeSchema>;
 
     constructor(
-        uniqueAttributes: Set<string>
+        ...attributeSchema: AttributeSchema[]
         )
     {
-        this._ave = new Map<string, Map<any, any>>(
-            [...uniqueAttributes].map(uniqueAttribute => [uniqueAttribute, new Map<any, any>()]));
+        this._schema = new Map<string, AttributeSchema>(attributeSchema.map(attributeSchema => [attributeSchema.Name, attributeSchema]));
+        this._ave    = new Map<string, Map<any, any>>(
+            attributeSchema
+                .filter(attributeSchema => attributeSchema.UniqueIdentity)
+                .map(attributeSchema => [attributeSchema.Name, new Map<any, any>()]));
     }
 
     get Entities(): Observable<Set<any>>
@@ -48,7 +60,7 @@ export class EavStore
                     if(value instanceof Array)
                         list.push(...value.map(value => [entity, value]));
 
-                    else if(value !== null)
+                    else if(typeof value !== 'undefined' && value !== null)
                         list.push([entity, value]);
 
                     return list;
@@ -59,6 +71,21 @@ export class EavStore
                 subject);
         }
         return subject;
+    }
+
+    NewEntity(): any
+    {
+        const av = new Map<string, any>();
+        const entity = EntityProxyFactory(
+            this,
+            av,
+            this._aev,
+            this._ave);
+        this._eav.set(
+            entity,
+            av);
+
+        this._entitiesObservable.next(new Set<any>(this._eav.keys()));
     }
 
     Import(
@@ -73,7 +100,6 @@ export class EavStore
             return object;
 
         let entity = imported.get(object);
-        let av: Map<string, any>;
         if(entity)
             return entity;
 
@@ -85,23 +111,11 @@ export class EavStore
                     entity = ve[object[attribute]];
 
                 else if(entity != ve[object[attribute]])
-                    throw 'Key Conflict';
+                    throw 'Unique Identity Conflict';
             });
 
         if(!entity)
-        {
-            av = new Map<string, any>();
-            entity = EntityProxyFactory(
-                this,
-                av,
-                this._aev,
-                this._ave);
-            this._eav.set(
-                entity,
-                av);
-
-            this._entitiesObservable.next(new Set<any>(this._eav.keys()));
-        }
+            entity = this.NewEntity();
 
         for(let key in object)
         {
@@ -146,7 +160,7 @@ export class EavStore
                     if(value instanceof Array)
                         list.push(...value.map(value => [entity, value]));
 
-                    else if(value !== null)
+                    else if(typeof value !== 'undefined' && value !== null)
                         list.push([entity, value]);
 
                     return list;
@@ -171,7 +185,7 @@ function EntityProxyFactory(
             let value;
             if(typeof p === 'string')
                 value = av.get(p);
-            return value ? value : null;
+            return value;
         },
         set: function(
             target,
@@ -191,7 +205,7 @@ function EntityProxyFactory(
                         ve.delete(currentValue);
                         const identified = ve.get(value);
                         if(typeof identified !== 'undefined')
-                            throw 'Key Conflict';
+                            throw 'Unique Identity Conflict';
 
                         ve.set(
                             value,
