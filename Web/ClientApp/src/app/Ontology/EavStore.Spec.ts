@@ -1,4 +1,5 @@
 import { } from 'jasmine';
+import { Observable, Subscription } from 'rxjs';
 import { ArrayProxyFactory, EavStore } from './IEavStore';
 import { assertBuilder } from './assertBuilder';
 
@@ -40,22 +41,37 @@ describe(
             });
 
         describe(
-            'Given store = new EavStore() and p = store.Import({ a1:1, a2: [{a3: 2}], a4: null })',
+            'Given store = new EavStore() and e = store.Import({ a1:1, a2: [{a3: 2}], a4: null })',
             () =>
             {
                 const store = new EavStore();
-                const p = store.Import({ a1: 1, a2: [{ a3: 2 }], a4: null });
-                let assert = assertBuilder('store', 'p')
-                    (store, p);
-                assert('p.a1 === 1');
-                assert("typeof p.a2 === 'object'");
-                assert('p.a2 instanceof Array');
-                assert('Array.isArray(p.a2)');
-                assert('p.a2.length === 1');
-                assert("typeof p.a2[0] === 'object'");
-                assert("p.a2[0].a3 === 2");
-                assert("p.a4 === null");
-                assert("typeof p.a5 === 'undefined'");
+                const e = store.Import({ a1: 1, a2: [{ a3: 2 }], a4: null });
+                let assert = assertBuilder('store', 'e')
+                    (store, e);
+                assert('e.a1 === 1');
+                assert("typeof e.a2 === 'object'");
+                assert('e.a2 instanceof Array');
+                assert('Array.isArray(e.a2)');
+                assert('e.a2.length === 1');
+                assert("typeof e.a2[0] === 'object'");
+                assert("e.a2[0].a3 === 2");
+                assert("e.a4 === null");
+                assert("typeof e.a5 === 'undefined'");
+
+                describe(
+                    'Given entities: Set<any> and store.Entities.subscribe(value => entities = value)',
+                    () =>
+                    {
+                        let entities: Set<any>;
+                        const subscription: Subscription = store.Entities.subscribe(value => entities = value);
+                        let assert = assertBuilder('store', 'e', 'entities')
+                            (store, e, entities);
+
+                        assert('entities.has(e)');
+                        assert('entities.has(e.a2[0])');
+                        assert('!entities.has(e.a4)');
+                        subscription.unsubscribe();
+                    });
             });
 
         describe(

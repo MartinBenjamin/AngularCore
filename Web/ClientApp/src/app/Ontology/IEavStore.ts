@@ -93,7 +93,7 @@ export class EavStore
         entity   : any,
         attribute: string,
         value    : any
-        )
+        ): void
     {
         let currentValue = entity[attribute];
 
