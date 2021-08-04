@@ -18,7 +18,11 @@ export interface IEavStore
     Entities: Observable<Set<any>>;
     ObserveAttribute(attribute: string): Observable<[any, any][]>
     NewEntity(): any;
-    Import(object: object);
+    Add(
+        entity   : object,
+        attribute: string,
+        value    : any): void;
+    Import(object: object): any;
 }
 
 export class EavStore
