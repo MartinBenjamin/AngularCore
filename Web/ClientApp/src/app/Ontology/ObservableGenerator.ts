@@ -90,9 +90,7 @@ export interface IStore
 export class Store implements IStore
 {
     private _objectDomain        : BehaviorSubject<Set<any>>;
-    private _properties          = new Map<string, BehaviorSubject<[any, any][]>>();
-    private _propertySubscribers = new Map<string, Subscriber<[any, any][]>>();
-    private _incremental         = false;
+    private _propertySubscribers = new Map<string, Subscriber<[any, any][]>[]>();
     private _cardinalities       : Map<string, Cardinality>;
     private _defaultCardinality  : Cardinality;
 
@@ -116,15 +114,35 @@ export class Store implements IStore
         property: string
         ): Observable<[any, any][]>
     {
-        let subject = this._properties.get(property);
-        if(!subject)
-        {
-            subject = new BehaviorSubject<[any, any][]>(this.PropertyValues(property));
-            this._properties.set(
-                property,
-                subject);
-        }
-        return subject;
+        return new Observable<[any, any][]>(
+            subscriber =>
+            {
+                let subscribers = this._propertySubscribers.get(property);
+                if(!subscribers)
+                {
+                    subscribers = [];
+                    this._propertySubscribers.set(
+                        property,
+                        subscribers);
+                }
+
+                subscribers.push(subscriber);
+                subscriber.next(this.PropertyValues(property));
+
+                subscriber.add(
+                    () =>
+                    {
+                        const index = subscribers.indexOf(subscriber);
+
+                        if(index != -1)
+                            subscribers.splice(
+                                index,
+                                1);
+
+                        if(!subscribers.length)
+                            this._propertySubscribers.delete(property);
+                    });
+            });
     }
 
     NewEntity(): any;
@@ -175,19 +193,7 @@ export class Store implements IStore
         else
             entity[property] = value;
 
-        if(!this._incremental)
-            this.Publish(property);
-
-        else
-        {
-            const propertySubject = this._properties.get(property);
-            if(propertySubject)
-            {
-                const values = propertySubject.getValue();
-                values.push([entity, value]);
-                propertySubject.next(values);
-            }
-        }
+        this.Publish(property);
     }
 
     Remove(
@@ -206,25 +212,7 @@ export class Store implements IStore
         else
             delete entity[property];
 
-        if(!this._incremental)
-            this.Publish(property);
-
-        else
-        {
-            const propertySubject = this._properties.get(property);
-            if(propertySubject)
-            {
-                const values = propertySubject.getValue();
-                const index = values.findIndex(value => value[0] === entity && value[1] === value);
-                if(index != -1)
-                {
-                    values.splice(
-                        index,
-                        1);
-                    propertySubject.next(values);
-                }
-            }
-        }
+        this.Publish(property);
     }
 
     private Cardinality(
@@ -238,9 +226,12 @@ export class Store implements IStore
         property: string
         )
     {
-        const propertySubject = this._properties.get(property);
-        if(propertySubject)
-            propertySubject.next(this.PropertyValues(property));
+        const subscribers = this._propertySubscribers.get(property);
+        if(subscribers)
+        {
+            const propertyValues = this.PropertyValues(property);
+            subscribers.forEach(subscriber => subscriber.next(propertyValues));
+        }
     }
 
     private PropertyValues(
