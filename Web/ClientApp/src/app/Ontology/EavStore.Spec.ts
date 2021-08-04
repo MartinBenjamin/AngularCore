@@ -76,7 +76,7 @@ describe(
                     });
 
                 describe(
-                    "Given a1: [any, any][] and store.ObserveAttribute('a4').subscribe(value => a1 = value):",
+                    "Given a1: [any, any][] and store.ObserveAttribute('a1').subscribe(value => a1 = value):",
                     () =>
                     {
                         let a1: [any, any][];
@@ -87,6 +87,30 @@ describe(
                         assert('a1.length === 2');
                         assert('a1.find(element => element[0] === e && element[1] === e.a1) !== null');
                         assert('a1.find(element => element[0] === e.a2[0] && element[1] === e.a2[0].a1) !== null');
+
+                        describe(
+                            'Given e1 = store.Import({ a1: 3 }):',
+                            () =>
+                            {
+                                const e1 = store.Import({ a1: 3 });
+                                let assert = assertBuilder('store', 'e1', 'a1')
+                                    (store, e1, a1);
+                                assert('a1.find(element => element[0] === e1 && element[1] === e1.a1) !== null');
+                            });
+                        subscription.unsubscribe();
+                    });
+
+                describe(
+                    "Given a2: [any, any][] and store.ObserveAttribute('a2').subscribe(value => a2 = value):",
+                    () =>
+                    {
+                        let a2: [any, any][];
+                        const subscription: Subscription = store.ObserveAttribute('a2').subscribe(value => a2 = value);
+                        let assert = assertBuilder('store', 'e', 'a2')
+                            (store, e, a2);
+
+                        assert('a2.length === 1');
+                        assert('a2.find(element => element[0] === e.a2[0] && element[1] === e.a2[0].a1) !== null');
                         subscription.unsubscribe();
                     });
             });
