@@ -64,7 +64,7 @@ describe(
                     () =>
                     {
                         let entities: Set<any>;
-                        const subscription: Subscription = store.Entities.subscribe(value => entities = value);
+                        const subscription: Subscription = store.ObserveEntities().subscribe(value => entities = value);
                         let assert = assertBuilder('store', 'e', 'entities')
                             (store, e, entities);
 

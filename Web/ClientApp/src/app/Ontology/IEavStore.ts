@@ -1,4 +1,4 @@
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subscriber } from 'rxjs';
 
 export enum Cardinality
 {
@@ -15,7 +15,7 @@ export interface AttributeSchema
 
 export interface IEavStore
 {
-    Entities: Observable<Set<any>>;
+    ObserveEntities(): Observable<Set<any>>;
     ObserveAttribute(attribute: string): Observable<[any, any][]>
     NewEntity(): any;
     Add(
@@ -27,12 +27,12 @@ export interface IEavStore
 
 export class EavStore
 {
-    private _eav                 = new Map<any, Map<string, any>>();
-    private _aev                 = new Map<string, Map<any, any>>();
-    private _ave                 : Map<string, Map<any, any>>;
-    private _entitiesObservable  = new BehaviorSubject<Set<any>>(new Set<any>());
-    private _attributeObservable = new Map<string, BehaviorSubject<[any, any][]>>();
-    private _schema              : Map<string, AttributeSchema>;
+    private _eav                  = new Map<any, Map<string, any>>();
+    private _aev                  = new Map<string, Map<any, any>>();
+    private _ave                  : Map<string, Map<any, any>>;
+    private _entitiesSubscribers  : Subscriber<Set<any>>[] = [];
+    private _attributeSubscribers = new Map<string, Subscriber<[any, any][]>[]>();
+    private _schema               : Map<string, AttributeSchema>;
 
     constructor(
         ...attributeSchema: AttributeSchema[]
@@ -45,36 +45,60 @@ export class EavStore
                 .map(attributeSchema => [attributeSchema.Name, new Map<any, any>()]));
     }
 
-    get Entities(): Observable<Set<any>>
+    ObserveEntities(): Observable<Set<any>>
     {
-        return this._entitiesObservable;
+        return new Observable<Set<any>>(
+            subscriber =>
+            {
+                this._entitiesSubscribers.push(subscriber);
+                subscriber.next(new Set<any>(this._eav.keys()));
+
+                subscriber.add(
+                    () =>
+                    {
+                        const index = this._entitiesSubscribers.indexOf(subscriber);
+
+                        if(index != -1)
+                            this._entitiesSubscribers.splice(
+                                index,
+                                1);
+                    });
+            });
     }
 
     ObserveAttribute(
         attribute: string
         ): Observable<[any, any][]>
     {
-        let subject = this._attributeObservable.get(attribute);
-        if(!subject)
-        {
-            subject = new BehaviorSubject<[any, any][]>([...this._aev.get(attribute)]
-                .reduce((list, pair) =>
+        return new Observable<[any, any][]>(
+            subscriber =>
+            {
+                let subscribers = this._attributeSubscribers.get(attribute);
+                if(!subscribers)
                 {
-                    const [entity, value] = pair;
-                    if(value instanceof Array)
-                        list.push(...value.map(value => [entity, value]));
+                    subscribers = [];
+                    this._attributeSubscribers.set(
+                        attribute,
+                        subscribers);
+                }
 
-                    else if(typeof value !== 'undefined' && value !== null)
-                        list.push([entity, value]);
+                subscribers.push(subscriber);
+                subscriber.next(this.AttributeValues(attribute));
 
-                    return list;
-                },
-                []));
-            this._attributeObservable.set(
-                attribute,
-                subject);
-        }
-        return subject;
+                subscriber.add(
+                    () =>
+                    {
+                        const index = subscribers.indexOf(subscriber);
+
+                        if(index != -1)
+                            subscribers.splice(
+                                index,
+                                1);
+
+                        if(!subscribers.length)
+                            this._attributeSubscribers.delete(attribute);
+                    });
+            });
     }
 
     NewEntity(): any
@@ -89,7 +113,8 @@ export class EavStore
             entity,
             av);
 
-        this._entitiesObservable.next(new Set<any>(this._eav.keys()));
+        const entities = new Set<any>(this._eav.keys());
+        this._entitiesSubscribers.forEach(subscriber => subscriber.next(entities));
         return entity;
     }
 
@@ -177,21 +202,28 @@ export class EavStore
         attribute: string
         )
     {
-        const attributeSubject = this._attributeObservable.get(attribute);
-        if(attributeSubject)
-            attributeSubject.next([...this._aev.get(attribute)]
-                .reduce((list, pair) =>
-                {
-                    const [entity, value] = pair;
-                    if(value instanceof Array)
-                        list.push(...value.map(value => [entity, value]));
+        const subscribers = this._attributeSubscribers.get(attribute);
+        if(subscribers)
+        {
+            const attributeValues = this.AttributeValues(attribute);
+            subscribers.forEach(subscriber => subscriber.next(attributeValues));
+        }
+    }
 
-                    else if(typeof value !== 'undefined' && value !== null)
-                        list.push([entity, value]);
+    private AttributeValues(
+        attribute: string
+        ): [any, any][]
+    {
+        const list: [any, any][] = [];
+        for(const [entity, value] of this._aev.get(attribute))
+        {
+            if(value instanceof Array)
+                list.push(...value.map<[any, any]>(value => [entity, value]));
 
-                    return list;
-                },
-                []));
+            else if(typeof value !== 'undefined' && value !== null)
+                list.push([entity, value]);
+        }
+        return list;
     }
 
     private Cardinality(
