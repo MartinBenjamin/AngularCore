@@ -1,4 +1,4 @@
-import { BehaviorSubject, combineLatest, Observable } from "rxjs";
+import { BehaviorSubject, combineLatest, Observable, Subscriber } from "rxjs";
 import { map } from 'rxjs/operators';
 import { Group } from './Group';
 import { IClass } from "./IClass";
@@ -89,11 +89,12 @@ export interface IStore
 
 export class Store implements IStore
 {
-    private _objectDomain      : BehaviorSubject<Set<any>>;
-    private _properties        = new Map<string, BehaviorSubject<[any, any][]>>();
-    private _incremental       = false;
-    private _cardinalities     : Map<string, Cardinality>;
-    private _defaultCardinality: Cardinality;
+    private _objectDomain        : BehaviorSubject<Set<any>>;
+    private _properties          = new Map<string, BehaviorSubject<[any, any][]>>();
+    private _propertySubscribers = new Map<string, Subscriber<[any, any][]>>();
+    private _incremental         = false;
+    private _cardinalities       : Map<string, Cardinality>;
+    private _defaultCardinality  : Cardinality;
 
     constructor(
         cardinalities     ?: Map<string, Cardinality>,
@@ -118,20 +119,7 @@ export class Store implements IStore
         let subject = this._properties.get(property);
         if(!subject)
         {
-            subject = new BehaviorSubject<[any, any][]>([...this._objectDomain.getValue()]
-                .filter(entity => property in entity)
-                .reduce((list, entity) =>
-                {
-                    const value = entity[property];
-                    if(value instanceof Array)
-                        list.push(...value.map(value => [entity, value]));
-
-                    else if(value !== null)
-                        list.push([entity, entity[property]]);
-
-                    return list;
-                },
-                []));
+            subject = new BehaviorSubject<[any, any][]>(this.PropertyValues(property));
             this._properties.set(
                 property,
                 subject);
@@ -252,20 +240,25 @@ export class Store implements IStore
     {
         const propertySubject = this._properties.get(property);
         if(propertySubject)
-            propertySubject.next([...this._objectDomain.getValue()]
-                .filter(entity => property in entity)
-                .reduce((list, entity) =>
-                {
-                    const value = entity[property];
-                    if(value instanceof Array)
-                        list.push(...value.map(value => [entity, value]));
+            propertySubject.next(this.PropertyValues(property));
+    }
 
-                    else if(value !== null)
-                        list.push([entity, value]);
+    private PropertyValues(
+        property: string
+        ): [any, any][]
+    {
+        const list: [any, any][] = [];
+        for(const entity of this._objectDomain.getValue())
+            if(property in entity)
+            {
+                const value = entity[property];
+                if(value instanceof Array)
+                    list.push(...value.map<[any, any]>(value => [entity, value]));
 
-                    return list;
-                },
-                []));
+                else if(value !== null)
+                    list.push([entity, value]);
+            }
+        return list;
     }
 }
 
