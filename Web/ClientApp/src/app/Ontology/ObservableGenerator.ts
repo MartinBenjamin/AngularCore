@@ -8,6 +8,7 @@ import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
 import { IDataHasValue } from "./IDataHasValue";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
+import { Cardinality } from "./IEavStore";
 import { IObjectAllValuesFrom } from "./IObjectAllValuesFrom";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectComplementOf } from "./IObjectComplementOf";
@@ -84,12 +85,6 @@ export interface IStore
         entity  : object,
         property: string,
         value   : any);
-}
-
-export enum Cardinality
-{
-    One = 1,
-    Many
 }
 
 export class Store implements IStore
