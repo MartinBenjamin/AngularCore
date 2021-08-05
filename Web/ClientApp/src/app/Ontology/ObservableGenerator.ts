@@ -224,7 +224,7 @@ export class Store implements IStore
 
         else for(const key in object)
         {
-            let value = object[key];
+            const value = object[key];
             if(value instanceof Array)
             {
                 if(!entity[key])
@@ -300,32 +300,32 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         if(!this._store)
             this._store = new Store();
 
-        for(let functionalDataProperty of this._ontology.Get(this._ontology.IsAxiom.IFunctionalDataProperty))
+        for(const functionalDataProperty of this._ontology.Get(this._ontology.IsAxiom.IFunctionalDataProperty))
             this._functionalDataProperties.add(functionalDataProperty.DataPropertyExpression);
 
-        let classes = [...this._ontology.Get(this._ontology.IsAxiom.IClass)];
-        let adjacencyList = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, new Set<IClass>()]));
-        for(let equivalentClassExpressions of this._ontology.Get(this._ontology.IsAxiom.IEquivalentClasses))
+        const classes = [...this._ontology.Get(this._ontology.IsAxiom.IClass)];
+        const adjacencyList = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, new Set<IClass>()]));
+        for(const equivalentClassExpressions of this._ontology.Get(this._ontology.IsAxiom.IEquivalentClasses))
         {
-            let equivalentClasses = <IClass[]>equivalentClassExpressions.ClassExpressions.filter(classExpression => this._ontology.IsAxiom.IClass(classExpression));
+            const equivalentClasses = <IClass[]>equivalentClassExpressions.ClassExpressions.filter(classExpression => this._ontology.IsAxiom.IClass(classExpression));
             for(let index1 = 0; index1 < equivalentClasses.length; ++index1)
                 for(let index2 = index1; index2 < equivalentClasses.length; ++index2)
                 {
-                    let class1 = equivalentClasses[index1];
-                    let class2 = equivalentClasses[index2];
+                    const class1 = equivalentClasses[index1];
+                    const class2 = equivalentClasses[index2];
                     adjacencyList.get(class1).add(class2);
                     adjacencyList.get(class2).add(class1);
                 }
         }
 
-        let transitiveClosure = TransitiveClosure3(adjacencyList);
+        const transitiveClosure = TransitiveClosure3(adjacencyList);
 
-        let definitions: [IClass, IClassExpression][] = [];
-        for(let equivalentClasses of this._ontology.Get(this._ontology.IsAxiom.IEquivalentClasses))
-            for(let class$ of equivalentClasses.ClassExpressions.filter(classExpression => this._ontology.IsAxiom.IClass(classExpression)))
+        const definitions: [IClass, IClassExpression][] = [];
+        for(const equivalentClasses of this._ontology.Get(this._ontology.IsAxiom.IEquivalentClasses))
+            for(const class$ of equivalentClasses.ClassExpressions.filter(classExpression => this._ontology.IsAxiom.IClass(classExpression)))
             {
-                for(let classExpression of equivalentClasses.ClassExpressions.filter(classExpression => !this._ontology.IsAxiom.IClass(classExpression)))
-                    for(let equivalentClass of transitiveClosure.get(<IClass>class$))
+                for(const classExpression of equivalentClasses.ClassExpressions.filter(classExpression => !this._ontology.IsAxiom.IClass(classExpression)))
+                    for(const equivalentClass of transitiveClosure.get(<IClass>class$))
                         definitions.push(
                             [
                                 equivalentClass,
@@ -710,6 +710,9 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
 
                     if(object[propertyName] instanceof Array)
                         object[propertyName].push(dataPropertyAssertion.TargetValue);
+
+                    else
+                        object[propertyName] = dataPropertyAssertion.TargetValue;
                 }
 
             individualInterpretation.set(
