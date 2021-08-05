@@ -349,7 +349,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         let classObservable = this._classObservables.get(class$);
         if(!classObservable)
         {
-            let classDefinitions = this._classDefinitions.get(class$);
+            const classDefinitions = this._classDefinitions.get(class$);
             if(classDefinitions)
             {
                 classObservable = classDefinitions[0].Select(this);
@@ -359,7 +359,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
             }
             else
             {
-                let subClassExpressions = [...this._ontology.Get(this._ontology.IsAxiom.ISubClassOf)]
+                const subClassExpressions = [...this._ontology.Get(this._ontology.IsAxiom.ISubClassOf)]
                     .filter(subClassOf => subClassOf.SuperClassExpression === class$)
                     .map(subClassOf => subClassOf.SubClassExpression);
 
