@@ -1,5 +1,6 @@
 import { IAnnotationAssertion } from "./IAnnotationAssertion";
 import { IAnnotationProperty } from "./IAnnotationProperty";
+import { IClassAssertion, IDataPropertyAssertion, IObjectPropertyAssertion } from "./IAssertion";
 import { IAxiom } from "./IAxiom";
 import { IClass } from "./IClass";
 import { IDataPropertyDomain } from "./IDataPropertyDomain";
@@ -9,7 +10,7 @@ import { IEntity } from "./IEntity";
 import { IEquivalentClasses } from "./IEquivalentClasses";
 import { IFunctionalDataProperty } from "./IFunctionalDataProperty";
 import { IHasKey } from "./IHasKey";
-import { IClassAssertion, IDataPropertyAssertion, INamedIndividual, IObjectPropertyAssertion } from "./INamedIndividual";
+import { INamedIndividual } from "./INamedIndividual";
 import { IObjectPropertyDomain } from "./IObjectPropertyDomain";
 import { IObjectPropertyRange } from "./IObjectPropertyRange";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";

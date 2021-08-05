@@ -171,6 +171,7 @@
     <None Remove="ClientApp\src\app\Ontology\IAnnotationAssertion.ts" />
     <None Remove="ClientApp\src\app\Ontology\IAnnotationAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IAnnotationProperty.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IAssertion.ts" />
     <None Remove="ClientApp\src\app\Ontology\IAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClass.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClassAxiom.ts" />
@@ -456,6 +457,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IAnnotationProperty.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IAnnotated.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IAnnotation.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IAssertion.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IAxiom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IClass.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IClassAxiom.ts" />

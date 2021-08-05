@@ -1,4 +1,4 @@
-import { IDataPropertyAssertion, IObjectPropertyAssertion } from "./INamedIndividual";
+import { IDataPropertyAssertion, IObjectPropertyAssertion } from "./IAssertion";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
 
 export interface IIndividual

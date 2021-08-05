@@ -1,6 +1,7 @@
 import { Group } from "./Group";
+import { IDataPropertyAssertion, IObjectPropertyAssertion } from "./IAssertion";
 import { IIndividual } from "./IIndividual";
-import { IDataPropertyAssertion, INamedIndividual, IObjectPropertyAssertion } from "./INamedIndividual";
+import { INamedIndividual } from "./INamedIndividual";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
 

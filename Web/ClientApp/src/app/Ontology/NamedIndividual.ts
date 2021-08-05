@@ -1,8 +1,9 @@
 import { Axiom } from "./Axiom";
 import { Entity } from "./Entity";
+import { IClassAssertion, IDataPropertyAssertion, IObjectPropertyAssertion, IPropertyAssertion } from "./IAssertion";
 import { IClassExpression } from "./IClassExpression";
 import { IIndividual } from "./IIndividual";
-import { IClassAssertion, IDataPropertyAssertion, INamedIndividual, IObjectPropertyAssertion, IPropertyAssertion } from "./INamedIndividual";
+import { INamedIndividual } from "./INamedIndividual";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
 
