@@ -1,3 +1,4 @@
+import { ClassAssertion } from "./Assertion";
 import { Entity } from "./Entity";
 import { EquivalentClasses } from "./EquivalentClasses";
 import { HasKey } from "./HasKey";
@@ -15,7 +16,6 @@ import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression } from "./IPropertyExpression";
 import { ISubClassOf } from "./ISubClassOf";
-import { ClassAssertion } from "./NamedIndividual";
 import { ObjectComplementOf } from "./ObjectComplementOf";
 import { ObjectIntersectionOf } from "./ObjectIntersectionOf";
 import { ObjectUnionOf } from "./ObjectUnionOf";

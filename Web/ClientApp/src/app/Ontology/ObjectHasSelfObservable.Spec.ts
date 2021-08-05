@@ -2,12 +2,10 @@ import { } from 'jasmine';
 import { Subscription } from 'rxjs';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { IClassExpression } from './IClassExpression';
-import { DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
-import { ObjectHasValue } from './ObjectHasValue';
+import { ObjectHasSelf } from './ObjectHasSelf';
 import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
-import { DataProperty, ObjectProperty } from './Property';
-import { ObjectHasSelf } from './ObjectHasSelf';
+import { ObjectProperty } from './Property';
 
 describe(
     'ObjectHasSelf( OPE ) ({ x | ( x , x ) ∈ (OPE)OP })',

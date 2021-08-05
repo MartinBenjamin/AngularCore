@@ -1,11 +1,12 @@
 import { } from 'jasmine';
 import { assertBuilder } from './assertBuilder';
+import { DataPropertyAssertion } from './Assertion';
 import { Class } from './Class';
 import { ClassMembershipEvaluator } from './ClassMembershipEvaluator';
 import { DataMinCardinality } from './DataMinCardinality';
 import { FunctionalDataProperty } from './FunctionalDataProperty';
 import { HasKey } from './HasKey';
-import { ClassAssertion, DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
+import { NamedIndividual } from './NamedIndividual';
 import { Ontology } from './Ontology';
 import { DataProperty } from './Property';
 

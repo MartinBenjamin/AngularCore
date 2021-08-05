@@ -112,6 +112,7 @@
     <None Remove="ClientApp\src\app\Ontology\AnnotationAssertion.ts" />
     <None Remove="ClientApp\src\app\Ontology\AnnotationProperty.ts" />
     <None Remove="ClientApp\src\app\Ontology\assertBuilder.ts" />
+    <None Remove="ClientApp\src\app\Ontology\Assertion.ts" />
     <None Remove="ClientApp\src\app\Ontology\Axiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\BuiltIn.ts" />
     <None Remove="ClientApp\src\app\Ontology\Class.Spec.ts" />
@@ -393,6 +394,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\StructuredTradeFinance.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Validate.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AnnotationAssertion.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\Assertion.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassExpressionWriter.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AdjacencyList.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AdjacencyList.ts" />

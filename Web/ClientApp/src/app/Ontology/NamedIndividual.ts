@@ -1,11 +1,10 @@
-import { Axiom } from "./Axiom";
+import { DataPropertyAssertion, ObjectPropertyAssertion } from "./Assertion";
 import { Entity } from "./Entity";
-import { IClassAssertion, IDataPropertyAssertion, IObjectPropertyAssertion, IPropertyAssertion } from "./IAssertion";
-import { IClassExpression } from "./IClassExpression";
+import { IDataPropertyAssertion, IObjectPropertyAssertion } from "./IAssertion";
 import { IIndividual } from "./IIndividual";
 import { INamedIndividual } from "./INamedIndividual";
 import { IOntology } from "./IOntology";
-import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
+import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
 
 export class NamedIndividual
     extends Entity
@@ -43,69 +42,5 @@ export class NamedIndividual
             dataPropertyExpression,
             this,
             targetValue);
-    }
-}
-
-export class ClassAssertion
-    extends Axiom
-    implements IClassAssertion
-{
-    public constructor(
-        ontology              : IOntology,
-        public ClassExpression: IClassExpression,
-        public Individual     : IIndividual
-        )
-    {
-        super(ontology);
-    }
-}
-
-export class PropertyAssertion
-    extends Axiom
-    implements IPropertyAssertion
-{
-    protected constructor(
-        ontology                 : IOntology,
-        public PropertyExpression: IPropertyExpression,
-        public SourceIndividual  : IIndividual
-        )
-    {
-        super(ontology);
-    }
-}
-
-export class ObjectPropertyAssertion
-    extends PropertyAssertion
-    implements IObjectPropertyAssertion
-{
-    constructor(
-        ontology                       : IOntology,
-        public ObjectPropertyExpression: IObjectPropertyExpression,
-        public SourceIndividual        : IIndividual,
-        public TargetIndividual        : IIndividual
-        )
-    {
-        super(
-            ontology,
-            ObjectPropertyExpression,
-            SourceIndividual);
-    }
-}
-
-export class DataPropertyAssertion
-    extends PropertyAssertion
-    implements IDataPropertyAssertion
-{
-    constructor(
-        ontology                     : IOntology,
-        public DataPropertyExpression: IDataPropertyExpression,
-        public SourceIndividual      : INamedIndividual,
-        public TargetValue           : any
-        )
-    {
-        super(
-            ontology,
-            DataPropertyExpression,
-            SourceIndividual);
     }
 }

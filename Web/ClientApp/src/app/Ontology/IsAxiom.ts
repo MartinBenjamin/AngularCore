@@ -1,5 +1,6 @@
 import { AnnotationAssertion } from "./AnnotationAssertion";
 import { AnnotationProperty } from "./AnnotationProperty";
+import { ClassAssertion, DataPropertyAssertion, ObjectPropertyAssertion } from "./Assertion";
 import { Axiom } from "./Axiom";
 import { Class } from "./Class";
 import { DataPropertyDomain } from "./DataPropertyDomain";
@@ -26,7 +27,7 @@ import { IObjectPropertyDomain } from "./IObjectPropertyDomain";
 import { IObjectPropertyRange } from "./IObjectPropertyRange";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
 import { ISubClassOf } from "./ISubClassOf";
-import { ClassAssertion, DataPropertyAssertion, NamedIndividual, ObjectPropertyAssertion } from "./NamedIndividual";
+import { NamedIndividual } from "./NamedIndividual";
 import { ObjectPropertyDomain } from "./ObjectPropertyDomain";
 import { ObjectPropertyRange } from "./ObjectPropertyRange";
 import { DataProperty, ObjectProperty } from "./Property";
