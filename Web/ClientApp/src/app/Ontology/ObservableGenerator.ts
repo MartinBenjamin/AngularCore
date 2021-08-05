@@ -220,12 +220,8 @@ export class Store implements IStore
             });
 
         if(!entity)
-        {
-            entity = object;
-            const objectDomain = this._objectDomain.getValue();
-            objectDomain.add(entity);
-            this._objectDomain.next(objectDomain);
-        }
+            entity = this.NewEntity();
+
         else for(const key in object)
         {
             let value = object[key];

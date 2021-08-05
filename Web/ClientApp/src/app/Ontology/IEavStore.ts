@@ -168,7 +168,7 @@ export class EavStore
         if(!entity)
             entity = this.NewEntity();
 
-        for(let key in object)
+        for(const key in object)
         {
             let value = object[key];
             if(value instanceof Array)
