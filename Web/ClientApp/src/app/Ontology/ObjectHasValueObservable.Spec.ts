@@ -2,11 +2,11 @@ import { } from 'jasmine';
 import { Subscription } from 'rxjs';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { IClassExpression } from './IClassExpression';
-import { DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
+import { NamedIndividual } from './NamedIndividual';
 import { ObjectHasValue } from './ObjectHasValue';
 import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
-import { DataProperty, ObjectProperty } from './Property';
+import { ObjectProperty } from './Property';
 
 describe(
     'ObjectHasValue( OPE a ) ({ x | ( x , (a)I ) ∈ (OPE)OP })',
@@ -20,9 +20,7 @@ describe(
             {
                 const o1 = new Ontology('o1');
                 const op1 = new ObjectProperty(o1, 'op1');
-                const id = new DataProperty(o1, 'Id');
                 const i1 = new NamedIndividual(o1, 'i1');
-                new DataPropertyAssertion(o1, id, i1, 1);
                 const ce = new ObjectHasValue(op1, i1);
                 const store: IStore = new Store();
                 const generator = new ObservableGenerator(

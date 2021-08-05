@@ -4,11 +4,10 @@ import { Class } from './Class';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { EquivalentClasses } from './EquivalentClasses';
 import { IClassExpression } from './IClassExpression';
-import { DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
+import { NamedIndividual } from './NamedIndividual';
 import { ObjectOneOf } from './ObjectOneOf';
 import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
-import { DataProperty } from './Property';
 import { SubClassOf } from './SubClassOf';
 
 describe(
@@ -24,11 +23,8 @@ describe(
                 const o1 = new Ontology('o1');
                 const c1 = new Class(o1, 'c1');
                 const c2 = new Class(o1, 'c2');
-                const id = new DataProperty(o1, 'Id');
                 const i1 = new NamedIndividual(o1, 'i1');
                 const i2 = new NamedIndividual(o1, 'i2');
-                new DataPropertyAssertion(o1, id, i1, 1);
-                new DataPropertyAssertion(o1, id, i2, 2);
                 new EquivalentClasses(o1, [c1, c2]);
                 new EquivalentClasses(o1, [c1, new ObjectOneOf([i1])]);
                 const store: IStore = new Store();
@@ -86,11 +82,8 @@ describe(
             {
                 const o1 = new Ontology('o1');
                 const c1 = new Class(o1, 'c1');
-                const id = new DataProperty(o1, 'Id');
                 const i1 = new NamedIndividual(o1, 'i1');
                 const i2 = new NamedIndividual(o1, 'i2');
-                new DataPropertyAssertion(o1, id, i1, 1);
-                new DataPropertyAssertion(o1, id, i2, 2);
                 new SubClassOf(o1, new ObjectOneOf([i1]), c1);
                 const store: IStore = new Store();
                 const generator = new ObservableGenerator(

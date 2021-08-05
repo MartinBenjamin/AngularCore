@@ -3,11 +3,10 @@ import { Subscription } from 'rxjs';
 import { ObjectComplementOf } from './ClassExpression';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { IClassExpression } from './IClassExpression';
-import { DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
+import { NamedIndividual } from './NamedIndividual';
 import { ObjectOneOf } from './ObjectOneOf';
 import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
-import { DataProperty } from './Property';
 
 describe(
     'ObjectComplementOf( CE ) (ΔI \ (CE)C)',
@@ -20,11 +19,8 @@ describe(
             () =>
             {
                 const o1 = new Ontology('o1');
-                const id = new DataProperty(o1, 'Id');
                 const i1 = new NamedIndividual(o1, 'i1');
                 const i2 = new NamedIndividual(o1, 'i2');
-                new DataPropertyAssertion(o1, id, i1, 1);
-                new DataPropertyAssertion(o1, id, i2, 2);
                 const ce1 = new ObjectOneOf([i1]);
                 const ce2 = new ObjectOneOf([i2]);
                 const ce1Complement = new ObjectComplementOf(ce1);

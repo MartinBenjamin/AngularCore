@@ -2,12 +2,12 @@ import { } from 'jasmine';
 import { Subscription } from 'rxjs';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { IClassExpression } from './IClassExpression';
-import { DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
+import { NamedIndividual } from './NamedIndividual';
 import { ObjectAllValuesFrom } from './ObjectAllValuesFrom';
 import { ObjectOneOf } from './ObjectOneOf';
 import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
-import { DataProperty, ObjectProperty } from './Property';
+import { ObjectProperty } from './Property';
 
 describe(
     'ObjectAllValuesFrom( OPE CE ) ({ x | ∀ y : ( x, y ) ∈ (OPE)OP implies y ∈ (CE)C })',
@@ -21,13 +21,9 @@ describe(
             {
                 const o1 = new Ontology('o1');
                 const op1 = new ObjectProperty(o1, 'op1');
-                const id = new DataProperty(o1, 'Id');
                 const i1 = new NamedIndividual(o1, 'i1');
                 const i2 = new NamedIndividual(o1, 'i2');
                 const i3 = new NamedIndividual(o1, 'i3');
-                new DataPropertyAssertion(o1, id, i1, 1);
-                new DataPropertyAssertion(o1, id, i2, 2);
-                new DataPropertyAssertion(o1, id, i2, 3);
                 const ce = new ObjectAllValuesFrom(op1, new ObjectOneOf([i1, i2]));
                 const store: IStore = new Store();
                 const generator = new ObservableGenerator(

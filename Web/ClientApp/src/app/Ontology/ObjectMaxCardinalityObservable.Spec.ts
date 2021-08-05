@@ -2,12 +2,12 @@ import { } from 'jasmine';
 import { Subscription } from 'rxjs';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { IClassExpression } from './IClassExpression';
-import { DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
+import { NamedIndividual } from './NamedIndividual';
 import { ObjectMaxCardinality } from './ObjectMaxCardinality';
 import { ObjectOneOf } from './ObjectOneOf';
 import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
-import { DataProperty, ObjectProperty } from './Property';
+import { ObjectProperty } from './Property';
 
 describe(
     'ObjectMaxCardinality( n OPE ) ({ x | #{ y | ( x , y ) ∈ (OPE)OP } ≤ n })',
@@ -99,11 +99,8 @@ describe(
             () =>
             {
                 const o1 = new Ontology('o1');
-                const id = new DataProperty(o1, 'Id');
                 const i1 = new NamedIndividual(o1, 'i1');
                 const i2 = new NamedIndividual(o1, 'i2');
-                new DataPropertyAssertion(o1, id, i1, 10);
-                new DataPropertyAssertion(o1, id, i2, 11);
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ce = new ObjectMaxCardinality(op1, 1, new ObjectOneOf([i1, i2]));
                 const store: IStore = new Store();

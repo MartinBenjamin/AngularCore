@@ -2,12 +2,12 @@ import { } from 'jasmine';
 import { Subscription } from 'rxjs';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { IClassExpression } from './IClassExpression';
-import { DataPropertyAssertion, NamedIndividual } from './NamedIndividual';
+import { NamedIndividual } from './NamedIndividual';
 import { ObjectMinCardinality } from './ObjectMinCardinality';
 import { ObjectOneOf } from './ObjectOneOf';
 import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
-import { DataProperty, ObjectProperty } from './Property';
+import { ObjectProperty } from './Property';
 
 describe(
     'ObjectMinCardinality(n OPE) ({ x | #{ y | ( x , y ) ∈ (OPE)OP } ≥ n })',
@@ -104,7 +104,6 @@ describe(
             {
                 const o1 = new Ontology('o1');
                 const i = new NamedIndividual(o1, 'i');
-                new DataPropertyAssertion(o1, new DataProperty(o1, 'Id'), i, 10);
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ce = new ObjectMinCardinality(op1, 1, new ObjectOneOf([i]));
                 const store: IStore = new Store();
