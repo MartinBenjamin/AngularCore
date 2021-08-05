@@ -8,7 +8,7 @@ import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
 import { IDataHasValue } from "./IDataHasValue";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
-import { Cardinality } from "./IEavStore";
+import { AttributeSchema, Cardinality } from "./IEavStore";
 import { IObjectAllValuesFrom } from "./IObjectAllValuesFrom";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectComplementOf } from "./IObjectComplementOf";
@@ -84,25 +84,28 @@ export interface IStore
     Remove(
         entity  : object,
         property: string,
-        value   : any);
+        value: any);
+    Import(object: object): any;
 }
 
 export class Store implements IStore
 {
     private _objectDomain        : BehaviorSubject<Set<any>>;
+    private _ave                 : Map<string, Map<any, any>>;
     private _propertySubscribers = new Map<string, Subscriber<[any, any][]>[]>();
-    private _cardinalities       : Map<string, Cardinality>;
-    private _defaultCardinality  : Cardinality;
+    private _schema              : Map<string, AttributeSchema>;
 
     constructor(
-        cardinalities     ?: Map<string, Cardinality>,
-        defaultCardinality?: Cardinality,
-        objectDomain      ?: Set<any>
+        attributeSchema?: AttributeSchema[],
+        objectDomain   ?: Set<any>
         )
     {
-        this._cardinalities      = cardinalities ? cardinalities : new Map<string, Cardinality>();
-        this._defaultCardinality = defaultCardinality ? defaultCardinality : Cardinality.Many;
-        this._objectDomain       = new BehaviorSubject(objectDomain ? objectDomain : new Set<any>());
+        this._schema = new Map<string, AttributeSchema>((attributeSchema || []).map(attributeSchema => [attributeSchema.Name, attributeSchema]));
+        this._ave = new Map<string, Map<any, any>>(
+            [...this._schema.values()]
+                .filter(attributeSchema => attributeSchema.UniqueIdentity)
+                .map(attributeSchema => [attributeSchema.Name, new Map<any, any>()]));
+        this._objectDomain = new BehaviorSubject(objectDomain || new Set<any>());
     }
 
     get ObjectDomain(): Observable<Set<any>>
@@ -215,11 +218,65 @@ export class Store implements IStore
         this.Publish(property);
     }
 
+    Import(
+        object: object
+        ): any
+    {
+        if(typeof object !== 'object' ||
+            object === null ||
+            object instanceof Date)
+            return object;
+
+        if(this._objectDomain.getValue().has(object))
+            return object;
+
+        let entity: any;
+        [...this._ave]
+            .filter(([attribute,]) => attribute in object)
+            .forEach(([attribute,ve]) =>
+            {
+                if(typeof entity === 'undefined')
+                    entity = ve.get(object[attribute]);
+
+                else if(entity != ve[object[attribute]])
+                    throw 'Unique Identity Conflict';
+            });
+
+        if(!entity)
+        {
+            entity = object;
+            const objectDomain = this._objectDomain.getValue();
+            objectDomain.add(entity);
+            this._objectDomain.next(objectDomain);
+        }
+        else for(const key in object)
+        {
+            let value = object[key];
+            if(value instanceof Array)
+            {
+                if(!entity[key])
+                    entity[key] = [];
+
+                entity[key].push(...value
+                    .map(element => this.Import(element))
+                    .filter(element => !entity[key].includes(element)));
+            }
+            else
+                entity[key] = this.Import(value);
+        }
+
+        return entity;
+    }
+
     private Cardinality(
         property: string
         ): Cardinality
     {
-        return this._cardinalities.has(property) ? this._cardinalities.get(property) : this._defaultCardinality;
+        const attributeSchema = this._schema.get(property);
+        if(attributeSchema && typeof attributeSchema.Cardinality !== 'undefined')
+            return attributeSchema.Cardinality;
+
+        return Cardinality.Many;
     }
 
     private Publish(

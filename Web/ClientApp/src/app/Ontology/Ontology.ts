@@ -18,7 +18,7 @@ export function Individuals(
     individuals?: Set<object>
     ): Set<object>
 {
-    individuals = individuals ? individuals : new Set<object>();
+    individuals = individuals || new Set<object>();
 
     if(typeof individual !== "object" ||
         individual === null ||
