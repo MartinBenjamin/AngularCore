@@ -200,6 +200,7 @@
     <None Remove="ClientApp\src\app\Ontology\IEquivalentClasses.ts" />
     <None Remove="ClientApp\src\app\Ontology\IFunctionalDataProperty.ts" />
     <None Remove="ClientApp\src\app\Ontology\IHasKey.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IIndividual.ts" />
     <None Remove="ClientApp\src\app\Ontology\IIsAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IIsClassExpression.ts" />
     <None Remove="ClientApp\src\app\Ontology\INamedIndividual.ts" />
@@ -487,6 +488,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IIsAxiom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IIsClassExpression.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\INamedIndividual.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IIndividual.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectAllValuesFrom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectCardinality.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectComplementOf.ts" />

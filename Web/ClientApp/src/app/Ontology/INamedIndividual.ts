@@ -1,18 +1,11 @@
 import { IAxiom } from "./IAxiom";
 import { IClassExpression } from "./IClassExpression";
 import { IEntity } from "./IEntity";
+import { IIndividual } from "./IIndividual";
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
 
-export interface INamedIndividual extends IEntity
+export interface INamedIndividual extends IEntity, IIndividual
 {
-    // Provided to assist construction of ontologies.
-    ObjectPropertyValue(
-        objectPropertyExpression: IObjectPropertyExpression,
-        targetIndividual        : object): IObjectPropertyAssertion;
-
-    DataPropertyValue(
-        dataPropertyExpression: IDataPropertyExpression,
-        targetValue           : any): IDataPropertyAssertion;
 }
 
 export interface IAssertion extends IAxiom
@@ -22,19 +15,19 @@ export interface IAssertion extends IAxiom
 export interface IClassAssertion extends IAssertion
 {
     readonly ClassExpression: IClassExpression;
-    readonly NamedIndividual: INamedIndividual;
+    readonly Individual     : IIndividual;
 }
 
 export interface IPropertyAssertion extends IAssertion
 {
     readonly PropertyExpression: IPropertyExpression;
-    readonly SourceIndividual  : INamedIndividual;
+    readonly SourceIndividual  : IIndividual;
 }
 
 export interface IObjectPropertyAssertion extends IPropertyAssertion
 {
     readonly ObjectPropertyExpression: IObjectPropertyExpression;
-    readonly TargetIndividual        : object;
+    readonly TargetIndividual        : IIndividual;
 }
 
 export interface IDataPropertyAssertion extends IPropertyAssertion

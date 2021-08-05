@@ -1,6 +1,7 @@
 import { Axiom } from "./Axiom";
 import { Entity } from "./Entity";
 import { IClassExpression } from "./IClassExpression";
+import { IIndividual } from "./IIndividual";
 import { IClassAssertion, IDataPropertyAssertion, INamedIndividual, IObjectPropertyAssertion, IPropertyAssertion } from "./INamedIndividual";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
@@ -21,7 +22,7 @@ export class NamedIndividual
 
     ObjectPropertyValue(
         objectPropertyExpression: IObjectPropertyExpression,
-        targetIndividual        : object
+        targetIndividual        : IIndividual
         ): IObjectPropertyAssertion
     {
         return new ObjectPropertyAssertion(
@@ -51,7 +52,7 @@ export class ClassAssertion
     public constructor(
         ontology              : IOntology,
         public ClassExpression: IClassExpression,
-        public NamedIndividual: INamedIndividual
+        public Individual     : IIndividual
         )
     {
         super(ontology);
@@ -65,7 +66,7 @@ export class PropertyAssertion
     protected constructor(
         ontology                 : IOntology,
         public PropertyExpression: IPropertyExpression,
-        public SourceIndividual  : INamedIndividual
+        public SourceIndividual  : IIndividual
         )
     {
         super(ontology);
@@ -79,8 +80,8 @@ export class ObjectPropertyAssertion
     constructor(
         ontology                       : IOntology,
         public ObjectPropertyExpression: IObjectPropertyExpression,
-        public SourceIndividual        : INamedIndividual,
-        public TargetIndividual        : object
+        public SourceIndividual        : IIndividual,
+        public TargetIndividual        : IIndividual
         )
     {
         super(

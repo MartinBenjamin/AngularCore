@@ -9,6 +9,7 @@ import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from 
 import { IDataHasValue } from "./IDataHasValue";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
 import { AttributeSchema, Cardinality } from "./IEavStore";
+import { IIndividual } from "./IIndividual";
 import { IObjectAllValuesFrom } from "./IObjectAllValuesFrom";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectComplementOf } from "./IObjectComplementOf";
@@ -315,6 +316,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
     private _classDefinitions         : Map<IClass, IClassExpression[]>;
     private _functionalDataProperties = new Set<IDataPropertyExpression>();
     private _classObservables         = new Map<IClass, Observable<Set<any>>>();
+    private _individualInterpretation : Map<IIndividual, any>;
 
     private static _nothing = new BehaviorSubject<Set<any>>(new Set<any>()).asObservable();
 
@@ -364,6 +366,8 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
             definitions,
             definition => definition[0],
             definition => definition[1]);
+
+        this._individualInterpretation = this.ImportIndividuals();
     }
 
     Class(
@@ -718,6 +722,32 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         return this._store.ObserveProperty(propertyExpression.LocalName);
     }
 
+    private ImportIndividuals(): Map<IIndividual, any>
+    {
+        const individualInterpretation = new Map<IIndividual, any>();
+        for(const namedIndividual of this._ontology.Get(this._ontology.IsAxiom.INamedIndividual))
+        {
+            const object = {};
+            for(const dataPropertyAssertion of this._ontology.Get(this._ontology.IsAxiom.IDataPropertyAssertion))
+                if(dataPropertyAssertion.SourceIndividual === namedIndividual)
+                {
+                    const propertyName = dataPropertyAssertion.DataPropertyExpression.LocalName;
+                    if(typeof object[propertyName] === 'undefined' &&
+                        !this._functionalDataProperties.has(dataPropertyAssertion.DataPropertyExpression))
+                        object[propertyName] = [];
+
+                    if(object[propertyName] instanceof Array)
+                        object[propertyName].push(dataPropertyAssertion.TargetValue);
+                }
+
+            individualInterpretation.set(
+                namedIndividual,
+                this._store.Import(object));
+        }
+
+        return individualInterpretation;
+    }
+
     ClassExpression(
         classExpression: IClassExpression
         ): Observable<Set<any>>
@@ -726,17 +756,10 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
     }
 
     InterpretIndividual(
-        individual: object
+        individual: IIndividual
         ): any
     {
-        for(const dataPropertyAssertion of this._ontology.Get(this._ontology.IsAxiom.IDataPropertyAssertion))
-            if(dataPropertyAssertion.DataPropertyExpression.LocalName === 'Id' &&
-                dataPropertyAssertion.SourceIndividual === individual)
-                return this._store.NewEntity(
-                    dataPropertyAssertion.DataPropertyExpression.LocalName,
-                    dataPropertyAssertion.TargetValue);
-
-        return individual;
+        return this._individualInterpretation.get(individual);
     }
 
     private GroupByDomain(

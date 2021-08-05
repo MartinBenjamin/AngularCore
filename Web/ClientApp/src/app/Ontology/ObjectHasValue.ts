@@ -1,6 +1,7 @@
 import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
+import { IIndividual } from './IIndividual';
 import { IObjectHasValue } from "./IObjectHasValue";
 import { IObjectPropertyExpression } from "./IPropertyExpression";
 import { ObjectPropertyRestriction } from "./ObjectPropertyRestriction";
@@ -11,7 +12,7 @@ export class ObjectHasValue
 {
     public constructor(
         objectPropertyExpression: IObjectPropertyExpression,
-        public Individual       : object
+        public Individual       : IIndividual
         )
     {
         super(objectPropertyExpression)

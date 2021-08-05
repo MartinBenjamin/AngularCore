@@ -2,6 +2,7 @@ import { ClassExpression } from "./ClassExpression";
 import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
+import { IIndividual } from "./IIndividual";
 import { IObjectOneOf } from "./IObjectOneOf";
 
 export class ObjectOneOf
@@ -9,7 +10,7 @@ export class ObjectOneOf
     implements IObjectOneOf
 {
     public constructor(
-        public Individuals: object[]
+        public Individuals: IIndividual[]
         )
     {
         super();

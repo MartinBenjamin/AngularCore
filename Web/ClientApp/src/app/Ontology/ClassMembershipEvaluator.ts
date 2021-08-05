@@ -10,7 +10,7 @@ import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from 
 import { IDataHasValue } from "./IDataHasValue";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
 import { IHasKey } from "./IHasKey";
-import { INamedIndividual } from "./INamedIndividual";
+import { IIndividual } from "./IIndividual";
 import { IObjectAllValuesFrom } from "./IObjectAllValuesFrom";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectComplementOf } from "./IObjectComplementOf";
@@ -50,7 +50,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
     public  readonly Store                     : IStore;
     private readonly _ontology                 : IOntology;
     private readonly _classes                  = new Map<string, IClass>();
-    private readonly _classAssertions          : Map<INamedIndividual, IClassExpression[]>;
+    private readonly _classAssertions          : Map<IIndividual, IClassExpression[]>;
     private readonly _hasKeys                  : IHasKey[];
     private readonly _superClassExpressions    : Map<IClassExpression, IClassExpression[]>;
     private readonly _subClassExpressions      : Map<IClassExpression, IClassExpression[]>;
@@ -82,7 +82,7 @@ export class ClassMembershipEvaluator implements IClassMembershipEvaluator
 
         this._classAssertions = Group(
             ontology.Get(ontology.IsAxiom.IClassAssertion),
-            classAssertion => classAssertion.NamedIndividual,
+            classAssertion => classAssertion.Individual,
             classAssertion => classAssertion.ClassExpression);
         this._hasKeys = [...ontology.Get(ontology.IsAxiom.IHasKey)];
         this._superClassExpressions = Group(

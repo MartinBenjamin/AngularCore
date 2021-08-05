@@ -9,6 +9,7 @@ import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from 
 import { IDataHasValue } from "./IDataHasValue";
 import { IDataPropertyRange } from "./IDataPropertyRange";
 import { IDataRange } from "./IDataRange";
+import { IIndividual } from "./IIndividual";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectHasValue } from "./IObjectHasValue";
 import { IOntology } from "./IOntology";
@@ -33,7 +34,7 @@ export class ObjectProperty
     }
 
     HasValue(
-        individual: object
+        individual: IIndividual
         ): IObjectHasValue
     {
         return new ObjectHasValue(

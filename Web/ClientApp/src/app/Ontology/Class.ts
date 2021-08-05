@@ -63,10 +63,12 @@ export class Class
         localName: string
         ): INamedIndividual
     {
-        return new ClassAssertion(
+        const namedIndividual = this.Ontology.DeclareNamedIndividual(localName);
+        new ClassAssertion(
             this.Ontology,
             this,
-            this.Ontology.DeclareNamedIndividual(localName)).NamedIndividual;
+            namedIndividual);
+        return namedIndividual;
     }
 
     HasKey(

@@ -1,4 +1,5 @@
 import { Group } from "./Group";
+import { IIndividual } from "./IIndividual";
 import { IDataPropertyAssertion, INamedIndividual, IObjectPropertyAssertion } from "./INamedIndividual";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
@@ -69,8 +70,8 @@ export class Store implements IStore
 
 export class StoreDecorator implements IStore
 {
-    private readonly _objectPropertyAssertions: Map<INamedIndividual, IObjectPropertyAssertion[]>;
-    private readonly _dataPropertyAssertions  : Map<INamedIndividual, IDataPropertyAssertion[]>;
+    private readonly _objectPropertyAssertions: Map<IIndividual, IObjectPropertyAssertion[]>;
+    private readonly _dataPropertyAssertions  : Map<IIndividual, IDataPropertyAssertion[]>;
 
     constructor(
         private _ontology : IOntology,
