@@ -75,9 +75,7 @@ export interface IStore
 {
     ObjectDomain: Observable<Set<any>>;
     ObserveProperty(property: string): Observable<[any, any][]>;
-    NewEntity(
-        keyProperty?: string,
-        keyValue   ?: any): any;
+    NewEntity(): any;
     Add(
         entity  : object,
         property: string,
@@ -149,34 +147,12 @@ export class Store implements IStore
             });
     }
 
-    NewEntity(): any;
-    NewEntity(
-        keyProperty: string,
-        keyValue   : any): any;
-    NewEntity(
-        keyProperty?: string,
-        keyValue   ?: any
-        ): any
+    NewEntity(): any
     {
         const objectDomain = this._objectDomain.getValue();
-        if(keyProperty)
-        {
-            const existing = [...objectDomain].find(entity => entity[keyProperty] === keyValue);
-            if(existing)
-                // Upsert.
-                return existing;
-        }
-
         const entity: any = {};
         objectDomain.add(entity);
         this._objectDomain.next(objectDomain);
-
-        if(keyProperty)
-        {
-            entity[keyProperty] = keyValue;
-            this.Publish(keyProperty);
-        }
-
         return entity;
     }
 
