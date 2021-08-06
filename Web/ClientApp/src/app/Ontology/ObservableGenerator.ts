@@ -89,14 +89,13 @@ export interface IStore
 
 export class Store implements IStore
 {
-    private _objectDomain        : BehaviorSubject<Set<any>>;
+    private _objectDomain        = new BehaviorSubject(new Set<any>());
     private _ave                 : Map<string, Map<any, any>>;
     private _propertySubscribers = new Map<string, Subscriber<[any, any][]>[]>();
     private _schema              : Map<string, AttributeSchema>;
 
     constructor(
-        attributeSchema?: AttributeSchema[],
-        objectDomain   ?: Set<any>
+        attributeSchema?: AttributeSchema[]
         )
     {
         this._schema = new Map<string, AttributeSchema>((attributeSchema || []).map(attributeSchema => [attributeSchema.Name, attributeSchema]));
@@ -104,7 +103,6 @@ export class Store implements IStore
             [...this._schema.values()]
                 .filter(attributeSchema => attributeSchema.UniqueIdentity)
                 .map(attributeSchema => [attributeSchema.Name, new Map<any, any>()]));
-        this._objectDomain = new BehaviorSubject(objectDomain || new Set<any>());
     }
 
     get ObjectDomain(): Observable<Set<any>>
@@ -220,9 +218,14 @@ export class Store implements IStore
             });
 
         if(!entity)
-            entity = this.NewEntity();
+        {
+            entity = object;
+            const objectDomain = this._objectDomain.getValue();
+            objectDomain.add(entity);
+            this._objectDomain.next(objectDomain);
+        }
 
-        else for(const key in object)
+        for(const key in object)
         {
             const value = object[key];
             if(value instanceof Array)
@@ -235,7 +238,14 @@ export class Store implements IStore
                     .filter(element => !entity[key].includes(element)));
             }
             else
+            {
                 entity[key] = this.Import(value);
+                const ve = this._ave.get(key);
+                if(ve)
+                    ve.set(
+                        value,
+                        entity);
+            }
         }
 
         return entity;
