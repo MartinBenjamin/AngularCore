@@ -19,10 +19,10 @@ export interface IEavStore
     ObserveAttribute(attribute: string): Observable<[any, any][]>
     NewEntity(): any;
     Add(
-        entity   : object,
+        entity   : any,
         attribute: string,
         value    : any): void;
-    Import(object: object): any;
+    Add(entity: object): any;
 }
 
 export class EavStore
@@ -123,9 +123,17 @@ export class EavStore
     Add(
         entity   : any,
         attribute: string,
-        value    : any
+        value    : any): void;
+    Add(entity: object): any;
+    Add(
+        entity    : any,
+        attribute?: string,
+        value    ?: any
         ): void
     {
+        if(typeof attribute === 'undefined')
+            return this.Import(entity);
+
         let currentValue = entity[attribute];
 
         if(typeof currentValue === 'undefined' && this.Cardinality(attribute) === Cardinality.Many)
@@ -141,7 +149,7 @@ export class EavStore
             entity[attribute] = value;
     }
 
-    Import(
+    private Import(
         object   : object,
         imported?: Map<object, any>
         ): any
@@ -200,23 +208,23 @@ export class EavStore
         return entity;
     }
 
-    public StartImport(): void
+    StartImport(): void
     {
         this._importing       = true;
         this._publishEntities = false;
         this._attributesToPublish.clear();
     }
 
-    public EndImport(): void
+    EndImport(): void
     {
         this._importing = false;
         if(this._publishEntities)
             this.PublishEntities();
 
-        this._attributesToPublish.forEach(this.Publish);
+        this._attributesToPublish.forEach(this.PublishAttribute);
     }
 
-    public PublishEntities()
+    PublishEntities()
     {
         if(this._importing)
         {
@@ -231,7 +239,7 @@ export class EavStore
         }
     }
 
-    public Publish(
+    PublishAttribute(
         attribute: string
         )
     {
@@ -338,7 +346,7 @@ function EntityProxyFactory(
                     value);
 
                 if(store)
-                    store.Publish(p);
+                    store.PublishAttribute(p);
             }
             return true;
         }
@@ -367,7 +375,7 @@ function ArrayMethodHandlerFactory(
                     targetArray,
                     ...argArray);
                 if(store)
-                    store.Publish(attribute);
+                    store.PublishAttribute(attribute);
                 return result;
             }
         };
@@ -414,7 +422,7 @@ export function ArrayProxyFactory(
         {
             target[p] = value;
             if(store)
-                store.Publish(attribute);
+                store.PublishAttribute(attribute);
             return true;
         }
     };

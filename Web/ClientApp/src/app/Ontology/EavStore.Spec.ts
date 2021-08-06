@@ -1,6 +1,6 @@
 import { } from 'jasmine';
 import { Observable, Subscription } from 'rxjs';
-import { ArrayProxyFactory, EavStore } from './IEavStore';
+import { ArrayProxyFactory, EavStore, IEavStore } from './IEavStore';
 import { assertBuilder } from './assertBuilder';
 
 describe(
@@ -44,8 +44,8 @@ describe(
             'Given store = new EavStore() and e = store.Import({ a1:1, a2: [{ a1: 2, a3: 3}], a4: null }):',
             () =>
             {
-                const store = new EavStore();
-                const e = store.Import({ a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null });
+                const store: IEavStore = new EavStore();
+                const e = store.Add({ a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null });
                 let assert = assertBuilder('store', 'e')
                     (store, e);
                 assert('e.a1 === 1');
@@ -92,7 +92,7 @@ describe(
                             'Given e1 = store.Import({ a1: 3 }):',
                             () =>
                             {
-                                const e1 = store.Import({ a1: 3 });
+                                const e1 = store.Add({ a1: 3 });
                                 let assert = assertBuilder('store', 'e1', 'a1')
                                     (store, e1, a1);
                                 assert('a1.find(element => element[0] === e1 && element[1] === e1.a1) !== null');
@@ -119,8 +119,8 @@ describe(
             "Given store = new EavStore({ Name: 'Id', UniqueIdentity: true}) and e = store.Import({ Id: 1 })",
             () =>
             {
-                const store = new EavStore({ Name: 'Id', UniqueIdentity: true });
-                const e = store.Import({ Id: 1 });
+                const store: IEavStore = new EavStore({ Name: 'Id', UniqueIdentity: true });
+                const e = store.Add({ Id: 1 });
                 let assert = assertBuilder('store', 'e')
                     (store, e);
                 assert('e.Id === 1');
