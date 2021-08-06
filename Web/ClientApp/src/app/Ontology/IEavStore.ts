@@ -33,7 +33,7 @@ export class EavStore
     private _entitiesSubscribers  : Subscriber<Set<any>>[] = [];
     private _attributeSubscribers = new Map<string, Subscriber<[any, any][]>[]>();
     private _schema               : Map<string, AttributeSchema>;
-    private _adding               : boolean;
+    private _publishSuspended     : boolean;
     private _publishEntities      : boolean;
     private _attributesToPublish  = new Set<string>();
 
@@ -134,14 +134,14 @@ export class EavStore
         if(typeof attribute === 'undefined')
             try
             {
-                this._adding          = true;
-                this._publishEntities = false;
+                this._publishSuspended = true;
+                this._publishEntities  = false;
                 this._attributesToPublish.clear();
                 return this.AddObject(entity);
             }
             finally
             {
-                this._adding = false;
+                this._publishSuspended = false;
                 if(this._publishEntities)
                     this.PublishEntities();
 
@@ -224,7 +224,7 @@ export class EavStore
 
     PublishEntities()
     {
-        if(this._adding)
+        if(this._publishSuspended)
         {
             this._publishEntities = true;
             return;
@@ -241,7 +241,7 @@ export class EavStore
         attribute: string
         )
     {
-        if(this._adding)
+        if(this._publishSuspended)
         {
             this._attributesToPublish.add(attribute);
             return;
