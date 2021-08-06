@@ -23,6 +23,7 @@ export interface IEavStore
         attribute: string,
         value    : any): void;
     Add(object: object): any;
+    Add(objects: object[]): any[];
 }
 
 export class EavStore
@@ -125,6 +126,7 @@ export class EavStore
         attribute: string,
         value    : any): void;
     Add(object: object): any;
+    Add(objects: object[]): any[];
     Add(
         entity    : any,
         attribute?: string,
@@ -137,7 +139,16 @@ export class EavStore
                 this._publishSuspended = true;
                 this._publishEntities  = false;
                 this._attributesToPublish.clear();
-                return this.AddObject(entity);
+                const added = new Map<object, any>();
+                if(entity instanceof Array)
+                    return entity.map(object =>
+                        this.AddObject(
+                            object,
+                            added));
+  
+                return this.AddObject(
+                    entity,
+                    added);
             }
             finally
             {
@@ -165,10 +176,9 @@ export class EavStore
 
     private AddObject(
         object: object,
-        added?: Map<object, any>
+        added : Map<object, any>
         ): any
     {
-        added = added ? added : new Map<object, any>();
         if(typeof object !== 'object' ||
             object === null ||
             object instanceof Date)
