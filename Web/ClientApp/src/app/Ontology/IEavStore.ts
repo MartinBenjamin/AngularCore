@@ -129,7 +129,7 @@ export class EavStore
         entity    : any,
         attribute?: string,
         value    ?: any
-        ): void
+        ): any
     {
         if(typeof attribute === 'undefined')
             return this.Import(entity);
