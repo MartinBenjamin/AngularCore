@@ -124,7 +124,7 @@ describe(
                 let assert = assertBuilder('store', 'e')
                     (store, e);
                 assert('e.Id === 1');
-                assert('e === store.Import({ Id: 1 })');
-                assert('store.Import({ Id: 1, a1: 2 }).a1 === 2');
+                assert('e === store.Add({ Id: 1 })');
+                assert('store.Add({ Id: 1, a1: 2 }).a1 === 2');
             });
     });

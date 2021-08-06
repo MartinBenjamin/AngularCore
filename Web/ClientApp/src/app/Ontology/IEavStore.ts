@@ -22,7 +22,7 @@ export interface IEavStore
         entity   : any,
         attribute: string,
         value    : any): void;
-    Add(entity: object): any;
+    Add(object: object): any;
 }
 
 export class EavStore
@@ -33,7 +33,7 @@ export class EavStore
     private _entitiesSubscribers  : Subscriber<Set<any>>[] = [];
     private _attributeSubscribers = new Map<string, Subscriber<[any, any][]>[]>();
     private _schema               : Map<string, AttributeSchema>;
-    private _importing            : boolean;
+    private _adding               : boolean;
     private _publishEntities      : boolean;
     private _attributesToPublish  = new Set<string>();
 
@@ -124,7 +124,7 @@ export class EavStore
         entity   : any,
         attribute: string,
         value    : any): void;
-    Add(entity: object): any;
+    Add(object: object): any;
     Add(
         entity    : any,
         attribute?: string,
@@ -132,7 +132,21 @@ export class EavStore
         ): any
     {
         if(typeof attribute === 'undefined')
-            return this.Import(entity);
+            try
+            {
+                this._adding          = true;
+                this._publishEntities = false;
+                this._attributesToPublish.clear();
+                return this.AddObject(entity);
+            }
+            finally
+            {
+                this._adding = false;
+                if(this._publishEntities)
+                    this.PublishEntities();
+
+                this._attributesToPublish.forEach(attribute => this.PublishAttribute(attribute));               
+            }
 
         let currentValue = entity[attribute];
 
@@ -149,18 +163,18 @@ export class EavStore
             entity[attribute] = value;
     }
 
-    private Import(
-        object   : object,
-        imported?: Map<object, any>
+    private AddObject(
+        object: object,
+        added?: Map<object, any>
         ): any
     {
-        imported = imported ? imported : new Map<object, any>();
+        added = added ? added : new Map<object, any>();
         if(typeof object !== 'object' ||
             object === null ||
             object instanceof Date)
             return object;
 
-        let entity = imported.get(object);
+        let entity = added.get(object);
         if(entity)
             return entity;
 
@@ -190,43 +204,27 @@ export class EavStore
                         []);
 
                 entity[key].push(...value
-                    .map(element => this.Import(
+                    .map(element => this.AddObject(
                         element,
-                        imported))
+                        added))
                     .filter(element => !entity[key].includes(element)));
             }
             else
-                entity[key] = this.Import(
+                entity[key] = this.AddObject(
                     value,
-                    imported);
+                    added);
         }
 
-        imported.set(
+        added.set(
             object,
             entity);
 
         return entity;
     }
 
-    StartImport(): void
-    {
-        this._importing       = true;
-        this._publishEntities = false;
-        this._attributesToPublish.clear();
-    }
-
-    EndImport(): void
-    {
-        this._importing = false;
-        if(this._publishEntities)
-            this.PublishEntities();
-
-        this._attributesToPublish.forEach(this.PublishAttribute);
-    }
-
     PublishEntities()
     {
-        if(this._importing)
+        if(this._adding)
         {
             this._publishEntities = true;
             return;
@@ -243,7 +241,7 @@ export class EavStore
         attribute: string
         )
     {
-        if(this._importing)
+        if(this._adding)
         {
             this._attributesToPublish.add(attribute);
             return;
