@@ -33,6 +33,9 @@ export class EavStore
     private _entitiesSubscribers  : Subscriber<Set<any>>[] = [];
     private _attributeSubscribers = new Map<string, Subscriber<[any, any][]>[]>();
     private _schema               : Map<string, AttributeSchema>;
+    private _importing            : boolean;
+    private _publishEntities      : boolean;
+    private _attributesToPublish  = new Set<string>();
 
     constructor(
         ...attributeSchema: AttributeSchema[]
@@ -113,8 +116,7 @@ export class EavStore
             entity,
             av);
 
-        const entities = new Set<any>(this._eav.keys());
-        this._entitiesSubscribers.forEach(subscriber => subscriber.next(entities));
+        this.PublishEntities();
         return entity;
     }
 
@@ -198,10 +200,47 @@ export class EavStore
         return entity;
     }
 
+    public StartImport(): void
+    {
+        this._importing       = true;
+        this._publishEntities = false;
+        this._attributesToPublish.clear();
+    }
+
+    public EndImport(): void
+    {
+        this._importing = false;
+        if(this._publishEntities)
+            this.PublishEntities();
+
+        this._attributesToPublish.forEach(this.Publish);
+    }
+
+    public PublishEntities()
+    {
+        if(this._importing)
+        {
+            this._publishEntities = true;
+            return;
+        }
+
+        if(this._entitiesSubscribers.length)
+        {
+            const entities = new Set<any>(this._eav.keys());
+            this._entitiesSubscribers.forEach(subscriber => subscriber.next(entities));
+        }
+    }
+
     public Publish(
         attribute: string
         )
     {
+        if(this._importing)
+        {
+            this._attributesToPublish.add(attribute);
+            return;
+        };
+
         const subscribers = this._attributeSubscribers.get(attribute);
         if(subscribers)
         {
