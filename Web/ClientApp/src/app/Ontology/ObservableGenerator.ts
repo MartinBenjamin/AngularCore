@@ -413,7 +413,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         ): Observable<Set<any>>
     {
         return combineLatest(
-            this._store.ObjectDomain,
+            this.ObserveObjectDomain(),
             objectComplementOf.ClassExpression.Select(this),
             (objectDomain, classExpression) => new Set<any>([...objectDomain].filter(element => !classExpression.has(element))));
     }
@@ -444,7 +444,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         ): Observable<Set<any>>
     {
         const groupedByDomain = combineLatest(
-            this._store.ObjectDomain,
+            this.ObserveObjectDomain(),
             this.ObservePropertyExpression(objectAllValuesFrom.ObjectPropertyExpression),
             (objectDomain, objectPropertyExpression) =>
                 GroupJoin(
@@ -491,7 +491,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         ): Observable<Set<any>>
     {
         if(objectMinCardinality.Cardinality === 0)
-            return this._store.ObjectDomain;
+            return this.ObserveObjectDomain();
 
         let observableObjectPropertyExpression: Observable<[any, any][]> = this.ObservePropertyExpression(objectMinCardinality.ObjectPropertyExpression);
         if(objectMinCardinality.ClassExpression)
@@ -527,7 +527,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
                     objectPropertyExpression.filter(element => classExpression.has(element[1])));
 
         return combineLatest(
-            this._store.ObjectDomain,
+            this.ObserveObjectDomain(),
             observableObjectPropertyExpression,
             (objectDomain, objectPropertyExpression) =>
                 GroupJoin(
@@ -555,7 +555,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
 
         if(objectExactCardinality.Cardinality === 0)
             return combineLatest(
-                this._store.ObjectDomain,
+                this.ObserveObjectDomain(),
                 observableObjectPropertyExpression,
                 (objectDomain, objectPropertyExpression) =>
                     GroupJoin(
@@ -616,7 +616,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         ): Observable<Set<any>>
     {
         if(dataMinCardinality.Cardinality === 0)
-            return this._store.ObjectDomain;
+            return this.ObserveObjectDomain();
 
         let observableDataPropertyExpression: Observable<[any, any][]> = this.ObservePropertyExpression(dataMinCardinality.DataPropertyExpression);
         if(dataMinCardinality.DataRange)
@@ -646,7 +646,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
                 map(dataPropertyExpression => dataPropertyExpression.filter(element => dataMaxCardinality.DataRange.HasMember(element[1]))));
 
         return combineLatest(
-            this._store.ObjectDomain,
+            this.ObserveObjectDomain(),
             observableDataPropertyExpression,
             (objectDomain, dataPropertyExpression) =>
                 GroupJoin(
@@ -671,7 +671,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
 
         if(dataExactCardinality.Cardinality === 0)
             return combineLatest(
-                this._store.ObjectDomain,
+                this.ObserveObjectDomain(),
                 observableDataPropertyExpression,
                 (objectDomain, dataPropertyExpression) =>
                     GroupJoin(
@@ -695,6 +695,12 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
                 new Set<any>([...groupedByDomain.entries()]
                     .filter(entry => entry[1].length === dataExactCardinality.Cardinality)
                     .map(entry => entry[0]))));
+    }
+
+
+    private ObserveObjectDomain(): Observable<Set<any>>
+    {
+        return this._store.ObjectDomain;
     }
 
     private ObservePropertyExpression(
