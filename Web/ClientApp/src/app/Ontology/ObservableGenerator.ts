@@ -85,12 +85,9 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
 
     constructor(
         private _ontology: IOntology,
-        private _store  ?: IEavStore
+        private _store   : IEavStore
         )
     {
-        if(!this._store)
-            this._store = new EavStore();
-
         this._objectDomain = this._store.ObserveEntities();
 
         for(const functionalDataProperty of this._ontology.Get(this._ontology.IsAxiom.IFunctionalDataProperty))
