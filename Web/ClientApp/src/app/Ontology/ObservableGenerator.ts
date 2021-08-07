@@ -129,7 +129,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
             definition => definition[0],
             definition => definition[1]);
 
-        this._individualInterpretation = this.ImportIndividuals();
+        this._individualInterpretation = this.AddIndividuals();
     }
 
     Class(
@@ -490,7 +490,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         return this._store.ObserveAttribute(propertyExpression.LocalName);
     }
 
-    private ImportIndividuals(): Map<IIndividual, any>
+    private AddIndividuals(): Map<IIndividual, any>
     {
         const individualInterpretation = new Map<IIndividual, any>();
         for(const namedIndividual of this._ontology.Get(this._ontology.IsAxiom.INamedIndividual))
