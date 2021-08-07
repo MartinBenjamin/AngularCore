@@ -357,6 +357,21 @@ function EntityProxyFactory(
                     store.PublishAttribute(p);
             }
             return true;
+        },
+        ownKeys: function(): PropertyKey[]
+        {
+            return [...av.keys()];
+        },
+        getOwnPropertyDescriptor: function(
+            target,
+            key
+            ): PropertyDescriptor
+        {
+            return {
+                value       : av.get(<string>key),
+                configurable: true,
+                enumerable  : true
+            };
         }
     };
 

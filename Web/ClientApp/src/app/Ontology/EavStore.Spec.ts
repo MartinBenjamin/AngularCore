@@ -48,16 +48,32 @@ describe(
                 const e = store.Add({ a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null });
                 let assert = assertBuilder('store', 'e')
                     (store, e);
+                let keys = new Set<PropertyKey>();
+                for(const key in e)
+                    keys.add(key);
                 assert('e.a1 === 1');
                 assert("typeof e.a2 === 'object'");
                 assert('e.a2 instanceof Array');
                 assert('Array.isArray(e.a2)');
                 assert('e.a2.length === 1');
                 assert("typeof e.a2[0] === 'object'");
-                assert("e.a2[0].a1 === 2");
-                assert("e.a2[0].a3 === 3");
-                assert("e.a4 === null");
+                assert('e.a2[0].a1 === 2');
+                assert('e.a2[0].a3 === 3');
+                assert('e.a4 === null');
                 assert("typeof e.a5 === 'undefined'");
+                assert("Reflect.ownKeys(e).includes('a1')");
+                it(
+                    "for...in includes 'a1'",
+                    () => expect(keys.has('a1')).toBe(true));
+                it(
+                    "for...in includes 'a2'",
+                    () => expect(keys.has('a2')).toBe(true));
+                it(
+                    "for...in includes 'a4'",
+                    () => expect(keys.has('a4')).toBe(true));
+                it(
+                    "for...in does not includes 'a3'",
+                    () => expect(keys.has('a3')).toBe(false));
 
                 describe(
                     'Given entities: Set<any> and store.Entities.subscribe(value => entities = value):',
