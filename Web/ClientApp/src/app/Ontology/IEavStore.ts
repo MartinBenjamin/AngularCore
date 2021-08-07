@@ -28,9 +28,9 @@ export interface IEavStore
 
 export class EavStore
 {
-    private _eav                  = new Map<any, Map<string, any>>();
-    private _aev                  = new Map<string, Map<any, any>>();
-    private _ave                  : Map<string, Map<any, any>>;
+    private _eav                  = new Map<any, Map<PropertyKey, any>>();
+    private _aev                  = new Map<PropertyKey, Map<any, any>>();
+    private _ave                  : Map<PropertyKey, Map<any, any>>;
     private _entitiesSubscribers  : Subscriber<Set<any>>[] = [];
     private _attributeSubscribers = new Map<string, Subscriber<[any, any][]>[]>();
     private _schema               : Map<string, AttributeSchema>;
@@ -295,9 +295,9 @@ export class EavStore
 
 function EntityProxyFactory(
     store: EavStore,
-    av   : Map<string, any>,
-    aev  : Map<string, Map<any, any>>,
-    ave  : Map<string, Map<any, any>>
+    av   : Map<PropertyKey, any>,
+    aev  : Map<PropertyKey, Map<any, any>>,
+    ave  : Map<PropertyKey, Map<any, any>>
     ): object
 {
     let handler: ProxyHandler<object> = {
@@ -306,10 +306,7 @@ function EntityProxyFactory(
             p
             ): any
         {
-            let value;
-            if(typeof p === 'string')
-                value = av.get(p);
-            return value;
+            return av.get(p);
         },
         set: function(
             target,
@@ -318,44 +315,42 @@ function EntityProxyFactory(
             receiver
             ): boolean
         {
-            if(typeof p === 'string')
+            const ve = ave.get(p);
+            if(ve)
             {
-                const ve = ave.get(p);
-                if(ve)
+                const currentValue = av.get(p);
+                if(currentValue !== value)
                 {
-                    const currentValue = av.get(p);
-                    if(currentValue !== value)
-                    {
-                        ve.delete(currentValue);
-                        const identified = ve.get(value);
-                        if(typeof identified !== 'undefined')
-                            throw 'Unique Identity Conflict';
+                    ve.delete(currentValue);
+                    const identified = ve.get(value);
+                    if(typeof identified !== 'undefined')
+                        throw 'Unique Identity Conflict';
 
-                        ve.set(
-                            value,
-                            receiver);
-                    }
+                    ve.set(
+                        value,
+                        receiver);
                 }
-
-                av.set(
-                    p,
-                    value);
-
-                let ev = aev.get(p);
-                if(!ev)
-                {
-                    ev = new Map<any, any>();
-                    aev.set(
-                        p,
-                        ev);
-                }
-                ev.set(
-                    receiver,
-                    value);
-
-                if(store)
-                    store.PublishAttribute(p);
             }
+
+            av.set(
+                p,
+                value);
+
+            let ev = aev.get(p);
+            if(!ev)
+            {
+                ev = new Map<any, any>();
+                aev.set(
+                    p,
+                    ev);
+            }
+            ev.set(
+                receiver,
+                value);
+
+            if(typeof p === 'string')
+                store.PublishAttribute(p);
+
             return true;
         },
         ownKeys: function(): PropertyKey[]
