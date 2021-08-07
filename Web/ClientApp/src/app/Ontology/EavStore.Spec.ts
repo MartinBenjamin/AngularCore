@@ -1,7 +1,7 @@
 import { } from 'jasmine';
-import { Observable, Subscription } from 'rxjs';
-import { ArrayProxyFactory, EavStore, IEavStore } from './IEavStore';
+import { Subscription } from 'rxjs';
 import { assertBuilder } from './assertBuilder';
+import { ArrayProxyFactory, EavStore, IEavStore } from './IEavStore';
 
 describe(
     'Entity Attribute Value Store',
@@ -46,8 +46,8 @@ describe(
             {
                 const store: IEavStore = new EavStore();
                 const e = store.Add({ a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null });
-                let assert = assertBuilder('store', 'e')
-                    (store, e);
+                let assert = assertBuilder('EavStore', 'store', 'e')
+                    (EavStore, store, e);
                 let keys = new Set<PropertyKey>();
                 for(const key in e)
                     keys.add(key);
@@ -77,6 +77,10 @@ describe(
                 for(const key in e)
                     assert(`'${key}' in e`);
                 assert("!('a3' in e)");
+                assert('EavStore.Store in e');
+                assert('e[EavStore.Store] === store');
+                assert('EavStore.Get(e) === store');
+                assert('EavStore.Get(e.a2[0]) === store');
 
                 describe(
                     'Given entities: Set<any> and store.Entities.subscribe(value => entities = value):',
@@ -135,7 +139,7 @@ describe(
             });
 
         describe(
-            "Given store = new EavStore({ Name: 'Id', UniqueIdentity: true}) and e = store.Import({ Id: 1 })",
+            "Given store = new EavStore({ Name: 'Id', UniqueIdentity: true}) and e = store.Add({ Id: 1 })",
             () =>
             {
                 const store: IEavStore = new EavStore({ Name: 'Id', UniqueIdentity: true });
@@ -144,6 +148,7 @@ describe(
                     (store, e);
                 assert('e.Id === 1');
                 assert('e === store.Add({ Id: 1 })');
-                assert('store.Add({ Id: 1, a1: 2 }).a1 === 2');
+                assert('e !== store.Add({ Id: 2 })');
+                assert("typeof e.a1 === 'undefined' && e === store.Add({ Id: 1, a1: 2 }) && e.a1 === 2");
             });
     });

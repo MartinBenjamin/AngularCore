@@ -38,6 +38,8 @@ export class EavStore
     private _publishEntities      : boolean;
     private _attributesToPublish  = new Set<string>();
 
+    public static readonly Store = Symbol('Store');
+
     constructor(
         ...attributeSchema: AttributeSchema[]
         )
@@ -107,7 +109,7 @@ export class EavStore
 
     NewEntity(): any
     {
-        const av = new Map<string, any>();
+        const av = new Map<PropertyKey, any>([[EavStore.Store, this]]);
         const entity = EntityProxyFactory(
             this,
             av,
@@ -290,6 +292,13 @@ export class EavStore
             return attributeSchema.Cardinality;
 
         return Cardinality.Many;
+    }
+
+    static Get(
+        entity: object
+        ): IEavStore
+    {
+        return <IEavStore>entity[this.Store];
     }
 }
 
