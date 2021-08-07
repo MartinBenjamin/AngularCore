@@ -308,6 +308,28 @@ function EntityProxyFactory(
         {
             return av.get(p);
         },
+        getOwnPropertyDescriptor: function(
+            target,
+            key
+            ): PropertyDescriptor
+        {
+            return {
+                value       : av.get(<string>key),
+                configurable: true,
+                enumerable  : true
+            };
+        },
+        has: function(
+            target,
+            p
+            ): boolean
+        {
+            return av.has(p);
+        },
+        ownKeys: function(): PropertyKey[]
+        {
+            return [...av.keys()];
+        },
         set: function(
             target,
             p,
@@ -352,21 +374,6 @@ function EntityProxyFactory(
                 store.PublishAttribute(p);
 
             return true;
-        },
-        ownKeys: function(): PropertyKey[]
-        {
-            return [...av.keys()];
-        },
-        getOwnPropertyDescriptor: function(
-            target,
-            key
-            ): PropertyDescriptor
-        {
-            return {
-                value       : av.get(<string>key),
-                configurable: true,
-                enumerable  : true
-            };
         }
     };
 

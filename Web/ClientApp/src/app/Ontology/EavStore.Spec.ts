@@ -74,6 +74,9 @@ describe(
                 it(
                     "for...in does not includes 'a3'",
                     () => expect(keys.has('a3')).toBe(false));
+                for(const key in e)
+                    assert(`'${key}' in e`);
+                assert("!('a3' in e)");
 
                 describe(
                     'Given entities: Set<any> and store.Entities.subscribe(value => entities = value):',
