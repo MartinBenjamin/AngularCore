@@ -1,4 +1,4 @@
-import { BehaviorSubject, combineLatest, Observable, Subscriber } from "rxjs";
+import { BehaviorSubject, combineLatest, Observable } from "rxjs";
 import { map } from 'rxjs/operators';
 import { Group } from './Group';
 import { IClass } from "./IClass";
@@ -8,7 +8,7 @@ import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
 import { IDataHasValue } from "./IDataHasValue";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
-import { AttributeSchema, Cardinality } from "./IEavStore";
+import { EavStore, IEavStore } from "./IEavStore";
 import { IIndividual } from "./IIndividual";
 import { IObjectAllValuesFrom } from "./IObjectAllValuesFrom";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
@@ -71,227 +71,7 @@ export function GroupJoin<TLeft, TRight, TKey>(
     return join;
 }
 
-export interface IStore
-{
-    ObjectDomain: Observable<Set<any>>;
-    ObserveProperty(property: string): Observable<[any, any][]>;
-    NewEntity(): any;
-    Add(
-        entity  : object,
-        property: string,
-        value   : any);
-    Remove(
-        entity  : object,
-        property: string,
-        value: any);
-    Import(object: object): any;
-}
-
-export class Store implements IStore
-{
-    private _objectDomain        = new BehaviorSubject(new Set<any>());
-    private _ave                 : Map<string, Map<any, any>>;
-    private _propertySubscribers = new Map<string, Subscriber<[any, any][]>[]>();
-    private _schema              : Map<string, AttributeSchema>;
-
-    constructor(
-        attributeSchema?: AttributeSchema[]
-        )
-    {
-        this._schema = new Map<string, AttributeSchema>((attributeSchema || []).map(attributeSchema => [attributeSchema.Name, attributeSchema]));
-        this._ave = new Map<string, Map<any, any>>(
-            [...this._schema.values()]
-                .filter(attributeSchema => attributeSchema.UniqueIdentity)
-                .map(attributeSchema => [attributeSchema.Name, new Map<any, any>()]));
-    }
-
-    get ObjectDomain(): Observable<Set<any>>
-    {
-        return this._objectDomain;
-    }
-
-    ObserveProperty(
-        property: string
-        ): Observable<[any, any][]>
-    {
-        return new Observable<[any, any][]>(
-            subscriber =>
-            {
-                let subscribers = this._propertySubscribers.get(property);
-                if(!subscribers)
-                {
-                    subscribers = [];
-                    this._propertySubscribers.set(
-                        property,
-                        subscribers);
-                }
-
-                subscribers.push(subscriber);
-                subscriber.next(this.PropertyValues(property));
-
-                subscriber.add(
-                    () =>
-                    {
-                        const index = subscribers.indexOf(subscriber);
-
-                        if(index != -1)
-                            subscribers.splice(
-                                index,
-                                1);
-
-                        if(!subscribers.length)
-                            this._propertySubscribers.delete(property);
-                    });
-            });
-    }
-
-    NewEntity(): any
-    {
-        const objectDomain = this._objectDomain.getValue();
-        const entity: any = {};
-        objectDomain.add(entity);
-        this._objectDomain.next(objectDomain);
-        return entity;
-    }
-
-    Add(
-        entity  : object,
-        property: string,
-        value   : any
-        )
-    {
-        let currentValue = entity[property];
-
-        if(typeof currentValue === 'undefined' && this.Cardinality(property) === Cardinality.Many)
-            currentValue = entity[property] = [];
-
-        if(currentValue instanceof Array)
-            currentValue.push(value);
-
-        else
-            entity[property] = value;
-
-        this.Publish(property);
-    }
-
-    Remove(
-        entity  : object,
-        property: string,
-        value   : any
-        )
-    {
-        let currentValue = entity[property];
-
-        if(currentValue instanceof Array)
-            currentValue.splice(
-                currentValue.indexOf(value),
-                1);
-
-        else
-            delete entity[property];
-
-        this.Publish(property);
-    }
-
-    Import(
-        object: object
-        ): any
-    {
-        if(typeof object !== 'object' ||
-            object === null ||
-            object instanceof Date)
-            return object;
-
-        if(this._objectDomain.getValue().has(object))
-            return object;
-
-        let entity: any;
-        [...this._ave]
-            .filter(([attribute,]) => attribute in object)
-            .forEach(([attribute,ve]) =>
-            {
-                if(typeof entity === 'undefined')
-                    entity = ve.get(object[attribute]);
-
-                else if(entity != ve[object[attribute]])
-                    throw 'Unique Identity Conflict';
-            });
-
-        if(!entity)
-        {
-            entity = object;
-            const objectDomain = this._objectDomain.getValue();
-            objectDomain.add(entity);
-            this._objectDomain.next(objectDomain);
-        }
-
-        for(const key in object)
-        {
-            const value = object[key];
-            if(value instanceof Array)
-            {
-                if(!entity[key])
-                    entity[key] = [];
-
-                entity[key].push(...value
-                    .map(element => this.Import(element))
-                    .filter(element => !entity[key].includes(element)));
-            }
-            else
-            {
-                entity[key] = this.Import(value);
-                const ve = this._ave.get(key);
-                if(ve)
-                    ve.set(
-                        value,
-                        entity);
-            }
-        }
-
-        return entity;
-    }
-
-    private Cardinality(
-        property: string
-        ): Cardinality
-    {
-        const attributeSchema = this._schema.get(property);
-        if(attributeSchema && typeof attributeSchema.Cardinality !== 'undefined')
-            return attributeSchema.Cardinality;
-
-        return Cardinality.Many;
-    }
-
-    private Publish(
-        property: string
-        )
-    {
-        const subscribers = this._propertySubscribers.get(property);
-        if(subscribers)
-        {
-            const propertyValues = this.PropertyValues(property);
-            subscribers.forEach(subscriber => subscriber.next(propertyValues));
-        }
-    }
-
-    private PropertyValues(
-        property: string
-        ): [any, any][]
-    {
-        const list: [any, any][] = [];
-        for(const entity of this._objectDomain.getValue())
-            if(property in entity)
-            {
-                const value = entity[property];
-                if(value instanceof Array)
-                    list.push(...value.map<[any, any]>(value => [entity, value]));
-
-                else if(value !== null)
-                    list.push([entity, value]);
-            }
-        return list;
-    }
-}
+export { IEavStore as IStore, EavStore as Store };
 
 export class ObservableGenerator implements IClassExpressionSelector<Observable<Set<any>>>
 {
@@ -299,16 +79,19 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
     private _functionalDataProperties = new Set<IDataPropertyExpression>();
     private _classObservables         = new Map<IClass, Observable<Set<any>>>();
     private _individualInterpretation : Map<IIndividual, any>;
+    private _objectDomain             : Observable<Set<any>>;
 
     private static _nothing = new BehaviorSubject<Set<any>>(new Set<any>()).asObservable();
 
     constructor(
         private _ontology: IOntology,
-        private _store  ?: IStore
+        private _store  ?: IEavStore
         )
     {
         if(!this._store)
-            this._store = new Store();
+            this._store = new EavStore();
+
+        this._objectDomain = this._store.ObserveEntities();
 
         for(const functionalDataProperty of this._ontology.Get(this._ontology.IsAxiom.IFunctionalDataProperty))
             this._functionalDataProperties.add(functionalDataProperty.DataPropertyExpression);
@@ -413,7 +196,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         ): Observable<Set<any>>
     {
         return combineLatest(
-            this.ObserveObjectDomain(),
+            this._objectDomain,
             objectComplementOf.ClassExpression.Select(this),
             (objectDomain, classExpression) => new Set<any>([...objectDomain].filter(element => !classExpression.has(element))));
     }
@@ -444,7 +227,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         ): Observable<Set<any>>
     {
         const groupedByDomain = combineLatest(
-            this.ObserveObjectDomain(),
+            this._objectDomain,
             this.ObservePropertyExpression(objectAllValuesFrom.ObjectPropertyExpression),
             (objectDomain, objectPropertyExpression) =>
                 GroupJoin(
@@ -491,7 +274,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         ): Observable<Set<any>>
     {
         if(objectMinCardinality.Cardinality === 0)
-            return this.ObserveObjectDomain();
+            return this._objectDomain;
 
         let observableObjectPropertyExpression: Observable<[any, any][]> = this.ObservePropertyExpression(objectMinCardinality.ObjectPropertyExpression);
         if(objectMinCardinality.ClassExpression)
@@ -527,7 +310,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
                     objectPropertyExpression.filter(element => classExpression.has(element[1])));
 
         return combineLatest(
-            this.ObserveObjectDomain(),
+            this._objectDomain,
             observableObjectPropertyExpression,
             (objectDomain, objectPropertyExpression) =>
                 GroupJoin(
@@ -555,7 +338,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
 
         if(objectExactCardinality.Cardinality === 0)
             return combineLatest(
-                this.ObserveObjectDomain(),
+                this._objectDomain,
                 observableObjectPropertyExpression,
                 (objectDomain, objectPropertyExpression) =>
                     GroupJoin(
@@ -616,7 +399,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         ): Observable<Set<any>>
     {
         if(dataMinCardinality.Cardinality === 0)
-            return this.ObserveObjectDomain();
+            return this._objectDomain;
 
         let observableDataPropertyExpression: Observable<[any, any][]> = this.ObservePropertyExpression(dataMinCardinality.DataPropertyExpression);
         if(dataMinCardinality.DataRange)
@@ -646,7 +429,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
                 map(dataPropertyExpression => dataPropertyExpression.filter(element => dataMaxCardinality.DataRange.HasMember(element[1]))));
 
         return combineLatest(
-            this.ObserveObjectDomain(),
+            this._objectDomain,
             observableDataPropertyExpression,
             (objectDomain, dataPropertyExpression) =>
                 GroupJoin(
@@ -671,7 +454,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
 
         if(dataExactCardinality.Cardinality === 0)
             return combineLatest(
-                this.ObserveObjectDomain(),
+                this._objectDomain,
                 observableDataPropertyExpression,
                 (objectDomain, dataPropertyExpression) =>
                     GroupJoin(
@@ -698,16 +481,16 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
     }
 
 
-    private ObserveObjectDomain(): Observable<Set<any>>
+    get ObjectDomain(): Observable<Set<any>>
     {
-        return this._store.ObjectDomain;
+        return this._objectDomain;
     }
 
     private ObservePropertyExpression(
         propertyExpression: IPropertyExpression
         ): Observable<[any, any][]>
     {
-        return this._store.ObserveProperty(propertyExpression.LocalName);
+        return this._store.ObserveAttribute(propertyExpression.LocalName);
     }
 
     private ImportIndividuals(): Map<IIndividual, any>
@@ -733,7 +516,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
 
             individualInterpretation.set(
                 namedIndividual,
-                this._store.Import(object));
+                this._store.Add(object));
         }
 
         return individualInterpretation;

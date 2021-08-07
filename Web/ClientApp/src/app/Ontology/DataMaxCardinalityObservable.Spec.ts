@@ -49,15 +49,10 @@ describe(
                     {
                         const x = store.NewEntity();
                         for(const ce of ces)
-                        {
-                            let members: Set<any> = null;
-                            const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                             it(
                                 ce.Cardinality === 0 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
                                 () => expect(elements(ce).has(x)).toBe(ce.Cardinality >= 0));
-                            subscription.unsubscribe();
-                        }
                     });
 
                 describe(
@@ -67,15 +62,10 @@ describe(
                         const x = store.NewEntity();
                         store.Add(x, dp1.LocalName, 2);
                         for(const ce of ces)
-                        {
-                            let members: Set<any> = null;
-                            const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                             it(
                                 ce.Cardinality === 1 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
                                 () => expect(elements(ce).has(x)).toBe(ce.Cardinality >= 1));
-                            subscription.unsubscribe();
-                        }
                     });
 
                 describe(
@@ -86,15 +76,10 @@ describe(
                         store.Add(x, dp1.LocalName, 1);
                         store.Add(x, dp1.LocalName, 2);
                         for(const ce of ces)
-                        {
-                            let members: Set<any> = null;
-                            const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                             it(
                                 ce.Cardinality === 2 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
                                 () => expect(elements(ce).has(x)).toBe(ce.Cardinality >= 2));
-                            subscription.unsubscribe();
-                        }
                     });
             });
     });
@@ -140,12 +125,9 @@ describe(
                     {
                         const x = store.NewEntity();
                         store.Add(x, dp1.LocalName, 3);
-                        let members: Set<any> = null;
-                        const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
                             () => expect(elements(ce).has(x)).toBe(true));
-                        subscription.unsubscribe();
                     });
 
                 describe(
@@ -154,12 +136,9 @@ describe(
                     {
                         const x = store.NewEntity();
                         store.Add(x, dp1.LocalName, 1);
-                        let members: Set<any> = null;
-                        const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
                             () => expect(elements(ce).has(x)).toBe(true));
-                        subscription.unsubscribe();
                     });
 
                 describe(
@@ -169,12 +148,9 @@ describe(
                         const x = store.NewEntity();
                         store.Add(x, dp1.LocalName, 1);
                         store.Add(x, dp1.LocalName, 3);
-                        let members: Set<any> = null;
-                        const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
                             () => expect(elements(ce).has(x)).toBe(true));
-                        subscription.unsubscribe();
                     });
 
                 describe(
@@ -183,12 +159,9 @@ describe(
                     {
                         const x = store.NewEntity();
                         store.Add(x, dp1.LocalName, 2);
-                        let members: Set<any> = null;
-                        const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
                             () => expect(elements(ce).has(x)).toBe(true));
-                        subscription.unsubscribe();
                     });
 
                 describe(
@@ -198,12 +171,9 @@ describe(
                         const x = store.NewEntity();
                         store.Add(x, dp1.LocalName, 2);
                         store.Add(x, dp1.LocalName, 3);
-                        let members: Set<any> = null;
-                        const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
                             () => expect(elements(ce).has(x)).toBe(true));
-                        subscription.unsubscribe();
                     });
 
                 describe(
@@ -213,12 +183,9 @@ describe(
                         const x = store.NewEntity();
                         store.Add(x, dp1.LocalName, 1);
                         store.Add(x, dp1.LocalName, 2);
-                        let members: Set<any> = null;
-                        const subscription = generator.ClassExpression(ce).subscribe(m => members = m);
                         it(
                             `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
                             () => expect(elements(ce).has(x)).toBe(false));
-                        subscription.unsubscribe();
                     });
             });
     });
