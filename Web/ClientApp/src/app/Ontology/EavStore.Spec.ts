@@ -69,7 +69,11 @@ describe(
                 assert('e.a2[0].a3 === 3');
                 assert('e.a4 === null');
                 assert("typeof e.a5 === 'undefined'");
-                assert("Reflect.ownKeys(e).includes('a1')");
+                //assert(`Reflect.ownKeys(e).length === ${Reflect.ownKeys(o).length}`);
+                for(const ownKey of Reflect.ownKeys(o))
+                    it(
+                        `Reflect.ownKeys(e).includes('${String(ownKey)}')`,
+                        () => expect(Reflect.ownKeys(e).includes(ownKey)));
                 it(
                     `for...in e has ${originalKeys.length} keys`,
                     () => expect(keys.size).toBe(originalKeys.length));
