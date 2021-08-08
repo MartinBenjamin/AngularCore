@@ -1,5 +1,5 @@
 import { Observable, Subscriber } from 'rxjs';
-import { AttributeSchema, Cardinality, IEavStore } from './IEavStore';
+import { AttributeSchema, Cardinality, IEavStore, StoreSymbol } from './IEavStore';
 
 
 export class EavStore implements IEavStore
@@ -13,8 +13,6 @@ export class EavStore implements IEavStore
     private _publishSuspended     : boolean;
     private _publishEntities      : boolean;
     private _attributesToPublish  = new Set<string>();
-
-    public static readonly Store = Symbol('Store');
 
     constructor(
         ...attributeSchema: AttributeSchema[]
@@ -85,7 +83,7 @@ export class EavStore implements IEavStore
 
     NewEntity(): any
     {
-        const av = new Map<PropertyKey, any>([[EavStore.Store, this]]);
+        const av = new Map<PropertyKey, any>([[StoreSymbol, this]]);
         const entity = EntityProxyFactory(
             this,
             av,
@@ -268,13 +266,6 @@ export class EavStore implements IEavStore
             return attributeSchema.Cardinality;
 
         return Cardinality.Many;
-    }
-
-    static Get(
-        entity: object
-        ): IEavStore
-    {
-        return <IEavStore>entity[this.Store];
     }
 }
 

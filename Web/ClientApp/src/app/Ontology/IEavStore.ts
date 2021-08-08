@@ -25,3 +25,7 @@ export interface IEavStore
     Add(object: object): any;
     Add(objects: object[]): any[];
 }
+
+export const StoreSymbol = Symbol('Store');
+
+export const Store = (object: object) => <IEavStore>object[StoreSymbol];

@@ -2,7 +2,7 @@ import { } from 'jasmine';
 import { Subscription } from 'rxjs';
 import { assertBuilder } from './assertBuilder';
 import { ArrayProxyFactory, EavStore } from './EavStore';
-import { IEavStore } from './IEavStore';
+import { IEavStore, Store } from './IEavStore';
 
 describe(
     'Entity Attribute Value Store',
@@ -48,8 +48,8 @@ describe(
                 const store: IEavStore = new EavStore();
                 const o = { a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null };
                 const e = store.Add(o);
-                let assert = assertBuilder('EavStore', 'store', 'e')
-                    (EavStore, store, e);
+                let assert = assertBuilder('Store', 'store', 'e')
+                    (Store, store, e);
 
                 const originalKeys: string[] = [];
                 for(const key in o)
@@ -80,10 +80,8 @@ describe(
                 for(const key in e)
                     assert(`'${key}' in e`);
                 assert("!('a3' in e)");
-                assert('EavStore.Store in e');
-                assert('e[EavStore.Store] === store');
-                assert('EavStore.Get(e) === store');
-                assert('EavStore.Get(e.a2[0]) === store');
+                assert('Store(e) === store');
+                assert('Store(e.a2[0]) === store');
 
                 describe(
                     'Given entities: Set<any> and store.Entities.subscribe(value => entities = value):',
