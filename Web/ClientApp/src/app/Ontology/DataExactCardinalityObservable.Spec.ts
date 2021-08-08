@@ -5,7 +5,7 @@ import { DataExactCardinality } from './DataExactCardinality';
 import { DataOneOf } from './DataOneOf';
 import { FunctionalDataProperty } from './FunctionalDataProperty';
 import { IClassExpression } from './IClassExpression';
-import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
+import { EavStore, IEavStore, ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { DataProperty } from './Property';
 
@@ -22,7 +22,7 @@ describe(
                 const o1 = new Ontology('o1');
                 const dp1 = new DataProperty(o1, 'dp1');
                 const ces = [0, 1, 2].map(cardinality => new DataExactCardinality(dp1, cardinality));
-                const store: IStore = new Store();
+                const store: IEavStore = new EavStore();
                 const generator = new ObservableGenerator(
                     o1,
                     store);
@@ -93,7 +93,7 @@ describe(
                 const dp1 = new DataProperty(o1, 'dp1');
                 new FunctionalDataProperty(o1, dp1);
                 const ce = new DataExactCardinality(dp1, 1);
-                const store: IStore = new Store();
+                const store: IEavStore = new EavStore();
                 const generator = new ObservableGenerator(
                     o1,
                     store);
@@ -162,7 +162,7 @@ describe(
             {
                 const o1 = new Ontology('o1');
                 const dp1 = new DataProperty(o1, 'dp1');
-                const store: IStore = new Store();
+                const store: IEavStore = new EavStore();
                 const generator = new ObservableGenerator(
                     o1,
                     store);

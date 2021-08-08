@@ -6,7 +6,7 @@ import { EquivalentClasses } from './EquivalentClasses';
 import { IClassExpression } from './IClassExpression';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectOneOf } from './ObjectOneOf';
-import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
+import { EavStore, IEavStore, ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { SubClassOf } from './SubClassOf';
 
@@ -27,7 +27,7 @@ describe(
                 const i2 = new NamedIndividual(o1, 'i2');
                 new EquivalentClasses(o1, [c1, c2]);
                 new EquivalentClasses(o1, [c1, new ObjectOneOf([i1])]);
-                const store: IStore = new Store();
+                const store: IEavStore = new EavStore();
                 const generator = new ObservableGenerator(
                     o1,
                     store);
@@ -85,7 +85,7 @@ describe(
                 const i1 = new NamedIndividual(o1, 'i1');
                 const i2 = new NamedIndividual(o1, 'i2');
                 new SubClassOf(o1, new ObjectOneOf([i1]), c1);
-                const store: IStore = new Store();
+                const store: IEavStore = new EavStore();
                 const generator = new ObservableGenerator(
                     o1,
                     store);

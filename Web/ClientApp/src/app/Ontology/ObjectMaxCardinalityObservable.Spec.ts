@@ -5,7 +5,7 @@ import { IClassExpression } from './IClassExpression';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectMaxCardinality } from './ObjectMaxCardinality';
 import { ObjectOneOf } from './ObjectOneOf';
-import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
+import { EavStore, IEavStore, ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { ObjectProperty } from './Property';
 
@@ -22,7 +22,7 @@ describe(
                 const o1 = new Ontology('o1');
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ces = [0, 1, 2].map(cardinality => new ObjectMaxCardinality(op1, cardinality));
-                const store: IStore = new Store();
+                const store: IEavStore = new EavStore();
                 const generator = new ObservableGenerator(
                     o1,
                     store);
@@ -103,7 +103,7 @@ describe(
                 const i2 = new NamedIndividual(o1, 'i2');
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ce = new ObjectMaxCardinality(op1, 1, new ObjectOneOf([i1, i2]));
-                const store: IStore = new Store();
+                const store: IEavStore = new EavStore();
                 const generator = new ObservableGenerator(
                     o1,
                     store);

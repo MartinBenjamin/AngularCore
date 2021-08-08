@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { DataHasValue } from './DataHasValue';
 import { IClassExpression } from './IClassExpression';
-import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
+import { EavStore, IEavStore, ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { DataProperty } from './Property';
 
@@ -20,7 +20,7 @@ describe(
                 const o1 = new Ontology('o1');
                 const dp1 = new DataProperty(o1, 'dp1');
                 const ce = new DataHasValue(dp1, 1);
-                const store: IStore = new Store();
+                const store: IEavStore = new EavStore();
                 const generator = new ObservableGenerator(
                     o1,
                     store);

@@ -5,7 +5,7 @@ import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { IClassExpression } from './IClassExpression';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectOneOf } from './ObjectOneOf';
-import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
+import { EavStore, IEavStore, ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 
 describe(
@@ -25,7 +25,7 @@ describe(
                 const ce1 = new ObjectOneOf([i1, i3]);
                 const ce2 = new ObjectOneOf([i2, i3]);
                 const ce3 = new ObjectIntersectionOf([ce1, ce2]);
-                const store: IStore = new Store();
+                const store: IEavStore = new EavStore();
                 const generator = new ObservableGenerator(
                     o1,
                     store);

@@ -5,7 +5,7 @@ import { IClassExpression } from './IClassExpression';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectAllValuesFrom } from './ObjectAllValuesFrom';
 import { ObjectOneOf } from './ObjectOneOf';
-import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
+import { EavStore, IEavStore, ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { ObjectProperty } from './Property';
 
@@ -25,7 +25,7 @@ describe(
                 const i2 = new NamedIndividual(o1, 'i2');
                 const i3 = new NamedIndividual(o1, 'i3');
                 const ce = new ObjectAllValuesFrom(op1, new ObjectOneOf([i1, i2]));
-                const store: IStore = new Store();
+                const store: IEavStore = new EavStore();
                 const generator = new ObservableGenerator(
                     o1,
                     store);

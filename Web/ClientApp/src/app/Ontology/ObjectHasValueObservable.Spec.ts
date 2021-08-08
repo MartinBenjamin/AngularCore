@@ -4,7 +4,7 @@ import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { IClassExpression } from './IClassExpression';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectHasValue } from './ObjectHasValue';
-import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
+import { EavStore, IEavStore, ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { ObjectProperty } from './Property';
 
@@ -22,7 +22,7 @@ describe(
                 const op1 = new ObjectProperty(o1, 'op1');
                 const i1 = new NamedIndividual(o1, 'i1');
                 const ce = new ObjectHasValue(op1, i1);
-                const store: IStore = new Store();
+                const store: IEavStore = new EavStore();
                 const generator = new ObservableGenerator(
                     o1,
                     store);

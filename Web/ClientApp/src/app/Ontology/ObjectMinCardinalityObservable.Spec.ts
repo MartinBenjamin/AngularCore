@@ -5,7 +5,7 @@ import { IClassExpression } from './IClassExpression';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectMinCardinality } from './ObjectMinCardinality';
 import { ObjectOneOf } from './ObjectOneOf';
-import { IStore, ObservableGenerator, Store } from './ObservableGenerator';
+import { EavStore, IEavStore, ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { ObjectProperty } from './Property';
 
@@ -22,7 +22,7 @@ describe(
                 const o1 = new Ontology('o1');
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ces = [0, 1, 2].map(cardinality => new ObjectMinCardinality(op1, cardinality));
-                const store: IStore = new Store();
+                const store: IEavStore = new EavStore();
                 const generator = new ObservableGenerator(
                     o1,
                     store);
@@ -106,7 +106,7 @@ describe(
                 const i = new NamedIndividual(o1, 'i');
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ce = new ObjectMinCardinality(op1, 1, new ObjectOneOf([i]));
-                const store: IStore = new Store();
+                const store: IEavStore = new EavStore();
                 const generator = new ObservableGenerator(
                     o1,
                     store);

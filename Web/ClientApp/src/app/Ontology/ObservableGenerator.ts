@@ -72,7 +72,7 @@ export function GroupJoin<TLeft, TRight, TKey>(
     return join;
 }
 
-export { IEavStore as IStore, EavStore as Store };
+export { IEavStore, EavStore };
 
 export class ObservableGenerator implements IClassExpressionSelector<Observable<Set<any>>>
 {
