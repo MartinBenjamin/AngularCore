@@ -1,9 +1,10 @@
 import { combineLatest, Observable } from "rxjs";
 import { map } from 'rxjs/operators';
 import { Guid } from "../CommonDomainObjects";
+import { IEavStore } from "../Ontology/IEavStore";
 import { IOntology } from "../Ontology/IOntology";
 import { ISubClassOf } from "../Ontology/ISubClassOf";
-import { IStore, ObservableGenerator } from "../Ontology/ObservableGenerator";
+import { ObservableGenerator } from "../Ontology/ObservableGenerator";
 import { annotations } from './Annotations';
 import { IErrors } from './Validate';
 
@@ -27,7 +28,7 @@ export function ObserveRestrictedFromStage(
 
 export function ObserveErrors(
     ontology        : IOntology,
-    store           : IStore,
+    store           : IEavStore,
     applicableStages: Set<Guid>
     ): Observable<Map<object, Map<string, Set<keyof IErrors>>>>
 {
@@ -36,7 +37,7 @@ export function ObserveErrors(
         store);
 
     let observables: Observable<[string, keyof IErrors, Set<any>]>[] = [...ontology.Get(ontology.IsAxiom.IDataPropertyRange)].map(
-        dataPropertyRange => store.ObserveProperty(dataPropertyRange.DataPropertyExpression.LocalName).pipe(
+        dataPropertyRange => store.ObserveAttribute(dataPropertyRange.DataPropertyExpression.LocalName).pipe(
             map(elements =>
                 [
                     dataPropertyRange.DataPropertyExpression.LocalName,

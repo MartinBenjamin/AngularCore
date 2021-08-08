@@ -120,7 +120,6 @@
     <None Remove="ClientApp\src\app\Ontology\ClassExpression.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassExpressionNavigator.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassExpressionWriter.ts" />
-    <None Remove="ClientApp\src\app\Ontology\ClassifierGenerator.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassMembershipEvaluator.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataAllValuesFrom.Spec.ts" />
@@ -554,7 +553,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectSomeValuesFromObservable.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectUnionOf.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectUnionOf.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassifierGenerator.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectUnionOfObservable.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObservableGenerator.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Ontology.Spec.ts" />
