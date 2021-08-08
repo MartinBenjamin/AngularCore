@@ -4,7 +4,7 @@ export { EmptyGuid };
 
 export interface DomainObject<TId>
 {
-    Id: TId;
+    Id?: TId;
 }
 
 export interface Named<TId> extends DomainObject<TId>

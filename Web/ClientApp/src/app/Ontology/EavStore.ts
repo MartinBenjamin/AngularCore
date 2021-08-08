@@ -14,6 +14,8 @@ export class EavStore implements IEavStore
     private _publishEntities      : boolean;
     private _attributesToPublish  = new Set<string>();
 
+    private static _empty: [any, any][] = [];
+
     constructor(
         ...attributeSchema: AttributeSchema[]
         )
@@ -245,8 +247,12 @@ export class EavStore implements IEavStore
         attribute: string
         ): [any, any][]
     {
+        const ev = this._aev.get(attribute);
+        if(!ev)
+            return EavStore._empty;
+
         const list: [any, any][] = [];
-        for(const [entity, value] of this._aev.get(attribute))
+        for(const [entity, value] of ev)
         {
             if(value instanceof Array)
                 list.push(...value.map<[any, any]>(value => [entity, value]));

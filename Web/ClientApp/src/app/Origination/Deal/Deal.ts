@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, forwardRef, Inject, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
@@ -18,9 +18,6 @@ import { MoreTabs } from '../MoreTabs';
 import { Origination } from '../Origination';
 import { OriginationTab } from '../OriginationTab';
 import { TransactionDetails } from '../TransactionDetails';
-import { Individuals } from '../../Ontology/Ontology';
-import { ObserveErrors } from '../../Ontologies/ObserveErrors';
-import { Store } from '../../Ontology/ObservableGenerator';
 
 @Component(
     {
