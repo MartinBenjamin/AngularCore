@@ -105,6 +105,7 @@
     <None Remove="ClientApp\src\app\Ontologies\Roles.ts" />
     <None Remove="ClientApp\src\app\Ontologies\StructuredTradeFinance.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Validate.ts" />
+    <None Remove="ClientApp\src\app\Ontology\AddIndividuals.ts" />
     <None Remove="ClientApp\src\app\Ontology\AdjacencyList.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\AdjacencyList.ts" />
     <None Remove="ClientApp\src\app\Ontology\Annotated.ts" />
@@ -393,6 +394,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Roles.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\StructuredTradeFinance.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Validate.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\AddIndividuals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AnnotationAssertion.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Assertion.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassExpressionWriter.ts" />

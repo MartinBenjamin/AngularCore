@@ -1,5 +1,6 @@
 import { BehaviorSubject, combineLatest, Observable } from "rxjs";
 import { map } from 'rxjs/operators';
+import { AddIndividuals } from "./AddIndividuals";
 import { EavStore } from './EavStore';
 import { Group } from './Group';
 import { IClass } from "./IClass";
@@ -130,7 +131,9 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
             definition => definition[0],
             definition => definition[1]);
 
-        this._individualInterpretation = this.AddIndividuals();
+        this._individualInterpretation = AddIndividuals(
+            this._ontology,
+            this._store);
     }
 
     Class(
@@ -478,7 +481,6 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
                     .map(entry => entry[0]))));
     }
 
-
     get ObjectDomain(): Observable<Set<any>>
     {
         return this._objectDomain;
@@ -489,35 +491,6 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         ): Observable<[any, any][]>
     {
         return this._store.ObserveAttribute(propertyExpression.LocalName);
-    }
-
-    private AddIndividuals(): Map<IIndividual, any>
-    {
-        const individualInterpretation = new Map<IIndividual, any>();
-        for(const namedIndividual of this._ontology.Get(this._ontology.IsAxiom.INamedIndividual))
-        {
-            const object = {};
-            for(const dataPropertyAssertion of this._ontology.Get(this._ontology.IsAxiom.IDataPropertyAssertion))
-                if(dataPropertyAssertion.SourceIndividual === namedIndividual)
-                {
-                    const propertyName = dataPropertyAssertion.DataPropertyExpression.LocalName;
-                    if(typeof object[propertyName] === 'undefined' &&
-                        !this._functionalDataProperties.has(dataPropertyAssertion.DataPropertyExpression))
-                        object[propertyName] = [];
-
-                    if(object[propertyName] instanceof Array)
-                        object[propertyName].push(dataPropertyAssertion.TargetValue);
-
-                    else
-                        object[propertyName] = dataPropertyAssertion.TargetValue;
-                }
-
-            individualInterpretation.set(
-                namedIndividual,
-                this._store.Add(object));
-        }
-
-        return individualInterpretation;
     }
 
     ClassExpression(
