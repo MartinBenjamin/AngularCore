@@ -1,7 +1,8 @@
 import { } from 'jasmine';
 import { Subscription } from 'rxjs';
 import { assertBuilder } from './assertBuilder';
-import { ArrayProxyFactory, EavStore, IEavStore } from './IEavStore';
+import { ArrayProxyFactory, EavStore } from './EavStore';
+import { IEavStore } from './IEavStore';
 
 describe(
     'Entity Attribute Value Store',

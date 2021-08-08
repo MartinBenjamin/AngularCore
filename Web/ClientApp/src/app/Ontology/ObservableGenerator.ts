@@ -1,5 +1,6 @@
 import { BehaviorSubject, combineLatest, Observable } from "rxjs";
 import { map } from 'rxjs/operators';
+import { EavStore } from './EavStore';
 import { Group } from './Group';
 import { IClass } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
@@ -8,7 +9,7 @@ import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
 import { IDataHasValue } from "./IDataHasValue";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
-import { EavStore, IEavStore } from "./IEavStore";
+import { IEavStore } from "./IEavStore";
 import { IIndividual } from "./IIndividual";
 import { IObjectAllValuesFrom } from "./IObjectAllValuesFrom";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
