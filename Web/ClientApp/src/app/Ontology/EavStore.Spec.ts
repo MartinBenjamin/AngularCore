@@ -45,12 +45,19 @@ describe(
             () =>
             {
                 const store: IEavStore = new EavStore();
-                const e = store.Add({ a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null });
+                const o = { a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null };
+                const e = store.Add(o);
                 let assert = assertBuilder('EavStore', 'store', 'e')
                     (EavStore, store, e);
-                let keys = new Set<PropertyKey>();
+
+                const originalKeys: string[] = [];
+                for(const key in o)
+                    originalKeys.push(key);
+
+                const keys = new Set<PropertyKey>();
                 for(const key in e)
                     keys.add(key);
+
                 assert('e.a1 === 1');
                 assert("typeof e.a2 === 'object'");
                 assert('e.a2 instanceof Array');
@@ -63,17 +70,12 @@ describe(
                 assert("typeof e.a5 === 'undefined'");
                 assert("Reflect.ownKeys(e).includes('a1')");
                 it(
-                    "for...in includes 'a1'",
-                    () => expect(keys.has('a1')).toBe(true));
-                it(
-                    "for...in includes 'a2'",
-                    () => expect(keys.has('a2')).toBe(true));
-                it(
-                    "for...in includes 'a4'",
-                    () => expect(keys.has('a4')).toBe(true));
-                it(
-                    "for...in does not includes 'a3'",
-                    () => expect(keys.has('a3')).toBe(false));
+                    `for...in e has ${originalKeys.length} keys`,
+                    () => expect(keys.size).toBe(originalKeys.length));
+                for(const key of originalKeys)
+                    it(
+                        `for...in e includes '${key}'`,
+                        () => expect(keys.has(key)).toBe(true));
                 for(const key in e)
                     assert(`'${key}' in e`);
                 assert("!('a3' in e)");

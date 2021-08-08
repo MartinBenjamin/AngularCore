@@ -323,7 +323,7 @@ function EntityProxyFactory(
             ): PropertyDescriptor
         {
             return {
-                value       : av.get(<string>key),
+                value       : av.get(key),
                 configurable: true,
                 enumerable  : true
             };
