@@ -16,7 +16,7 @@ export interface AttributeSchema
 export interface IEavStore
 {
     ObserveEntities(): Observable<Set<any>>;
-    ObserveAttribute(attribute: string): Observable<[any, any][]>
+    ObserveAttribute<TDomain = any, TRange = any>(attribute: string): Observable<[TDomain, TRange][]>
     NewEntity(): any;
     Add(
         entity   : any,
