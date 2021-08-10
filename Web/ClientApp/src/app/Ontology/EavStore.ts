@@ -18,10 +18,10 @@ export class EavStore implements IEavStore
 
     constructor(
         ...attributeSchema: AttributeSchema[]
-        )
+    )
     {
         this._schema = new Map<string, AttributeSchema>(attributeSchema.map(attributeSchema => [attributeSchema.Name, attributeSchema]));
-        this._ave    = new Map<string, Map<any, any>>(
+        this._ave = new Map<string, Map<any, any>>(
             attributeSchema
                 .filter(attributeSchema => attributeSchema.UniqueIdentity)
                 .map(attributeSchema => [attributeSchema.Name, new Map<any, any>()]));
@@ -50,7 +50,7 @@ export class EavStore implements IEavStore
 
     ObserveAttribute(
         attribute: string
-        ): Observable<[any, any][]>
+    ): Observable<[any, any][]>
     {
         return new Observable<[any, any][]>(
             subscriber =>
@@ -85,7 +85,7 @@ export class EavStore implements IEavStore
 
     NewEntity(): any
     {
-        const av = new Map<PropertyKey, any>([[StoreSymbol, this]]);
+        const av = new Map<PropertyKey, any>();
         const entity = EntityProxyFactory(
             this,
             av,
@@ -95,8 +95,37 @@ export class EavStore implements IEavStore
             entity,
             av);
 
+        entity[StoreSymbol] = this;
+
         this.PublishEntities();
         return entity;
+    }
+
+    DeleteEntity(
+        entity: any
+        ): void
+    {
+        const av = this._eav.get(entity);
+        if(av)
+        {
+            const attributesToPublish: string[] = [];
+            for(const attributeValue of av)
+            {
+                const [attribute, value] = attributeValue;
+                const ve = this._ave.get(attribute);
+                if(ve)
+                    ve.delete(value);
+
+                this._aev.get(attribute).delete(entity);
+
+                if(typeof attribute === 'string')
+                    attributesToPublish.push(attribute);
+            }
+
+            this._eav.delete(entity);
+            this.PublishEntities();
+            this._attributesToPublish.forEach(attribute => this.PublishAttribute(attribute));               
+        }
     }
 
     Add(

@@ -21,6 +21,7 @@ import { FacilityTab1 } from '../Deal/FacilityTab1';
 import { FacilityTab3 } from '../Deal/FacilityTab3';
 import { GeographicRegionSelector } from '../Deal/GeographicRegionSelector';
 import { Sponsors } from '../Deal/Sponsors';
+import { Sponsors_s } from '../Deal/Sponsors_s';
 import { LegalEntityFinder, LegalEntityFinderButtons } from '../LegalEntityFinder';
 import { Common } from './Common';
 import { DealGeographicRegion } from './DealGeographicRegion';
@@ -60,6 +61,7 @@ import { TransactionDetails } from './TransactionDetails';
                 MoreTabs,
                 OriginationTab,
                 Sponsors,
+                Sponsors_s,
                 TransactionDetails,
                 YesNoPipe
             ],

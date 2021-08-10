@@ -60,6 +60,7 @@
     <None Remove="ClientApp\src\app\Deal\FacilityTab1.ts" />
     <None Remove="ClientApp\src\app\Deal\FacilityTab3.ts" />
     <None Remove="ClientApp\src\app\Deal\GeographicRegionSelector.ts" />
+    <None Remove="ClientApp\src\app\Deal\Sponsors_s.ts" />
     <None Remove="ClientApp\src\app\FacilityAgreements.ts" />
     <None Remove="ClientApp\src\app\FacilityFeeTypeServiceProvider.ts" />
     <None Remove="ClientApp\src\app\FacilityProvider.ts" />
@@ -349,6 +350,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Deal\FacilityTab1.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Deal\FacilityTab3.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Deal\GeographicRegionSelector.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Deal\Sponsors_s.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\FacilityAgreements.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\FacilityFeeTypeServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\FacilityProvider.ts" />

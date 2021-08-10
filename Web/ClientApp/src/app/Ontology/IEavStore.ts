@@ -18,6 +18,7 @@ export interface IEavStore
     ObserveEntities(): Observable<Set<any>>;
     ObserveAttribute<TDomain = any, TRange = any>(attribute: string): Observable<[TDomain, TRange][]>
     NewEntity(): any;
+    DeleteEntity(entity: any): void
     Add(
         entity   : any,
         attribute: string,

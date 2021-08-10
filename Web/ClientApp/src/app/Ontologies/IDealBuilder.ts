@@ -194,16 +194,15 @@ export class DealBuilder2 implements IDealBuilder
         deal = <Deal>store.Add(deal);
         deal.Ontology = ontology;
 
-        // Need to move to Deal Component.
         store.ObserveAttribute('Equity')
             .pipe(map((sponsorEquity: [any, any][]) =>
                 sponsorEquity.reduce(
-                    (totalSponsorEquity, sponsorEquity) =>
+                    (totalSponsorEquity, [, equity]) =>
                     {
                         if(typeof totalSponsorEquity === 'number' &&
-                            typeof sponsorEquity[1] == 'number' &&
-                            !isNaN(sponsorEquity[1]))
-                            return totalSponsorEquity + sponsorEquity[1];
+                            typeof equity == 'number' &&
+                            !isNaN(equity))
+                            return totalSponsorEquity + equity;
 
                         return null;
                     },
