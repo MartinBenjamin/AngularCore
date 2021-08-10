@@ -6,6 +6,7 @@ import { DealOntologyServiceProvider } from '../../Ontologies/DealOntologyServic
 import { DealBuilderProvider } from '../../Ontologies/IDealBuilder';
 import { DealModule } from '../Deal.Module';
 import { Deal } from './Deal';
+import { EavStoreProvider } from './EavStoreProvider';
 import { Errors } from './Errors';
 
 const routes: Routes =
@@ -34,7 +35,8 @@ const routes: Routes =
         providers:
             [
                 DealOntologyServiceProvider,
-                DealBuilderProvider
+                DealBuilderProvider,
+                EavStoreProvider
             ]
     })
 export class DealComponentModule

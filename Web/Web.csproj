@@ -286,6 +286,7 @@
     <None Remove="ClientApp\src\app\Origination\Common.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\DealGeographicRegion.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\EavStoreProvider.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal\Errors.ts" />
     <None Remove="ClientApp\src\app\Origination\Exclusivity.ts" />
     <None Remove="ClientApp\src\app\Origination\Facilities.ts" />
@@ -573,6 +574,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Common.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\DealGeographicRegion.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\EavStoreProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\Errors.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Exclusivity.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Facilities.ts" />
