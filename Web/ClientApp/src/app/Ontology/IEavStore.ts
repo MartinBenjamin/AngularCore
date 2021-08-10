@@ -25,6 +25,7 @@ export interface IEavStore
         value    : any): void;
     Add(object: object): any;
     Add(objects: object[]): any[];
+    Clear(): void;
 }
 
 export const StoreSymbol = Symbol('Store');

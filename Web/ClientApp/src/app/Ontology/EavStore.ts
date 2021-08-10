@@ -181,6 +181,19 @@ export class EavStore implements IEavStore
             entity[attribute] = value;
     }
 
+    Clear(): void
+    {
+        this._eav.clear();
+        this._aev.clear();
+
+        for(const ve of this._ave.values())
+            ve.clear();
+
+        this.PublishEntities();
+        for(const attribute of this._attributeSubscribers.keys())
+            this.PublishAttribute(attribute);
+    }
+
     private AddObject(
         object: object,
         added : Map<object, any>
