@@ -122,7 +122,6 @@ export class Sponsors_s implements OnDestroy
                 let today = new Date();
                 today.setUTCHours(0, 0, 0, 0);
                 let sponsor = <Sponsor>{
-                    Id             : EmptyGuid,
                     AutonomousAgent: legalEntity,
                     Organisation   : legalEntity,
                     Person         : null,
