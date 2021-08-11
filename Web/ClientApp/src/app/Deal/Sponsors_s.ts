@@ -1,8 +1,8 @@
-import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
-import { EmptyGuid } from '../CommonDomainObjects';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { DealProvider } from '../DealProvider';
-import { Deal, percentage, Sponsor } from '../Deals';
+import { Deal, Sponsor } from '../Deals';
 import { LegalEntityFinder } from '../LegalEntityFinder';
 import { annotations } from '../Ontologies/Annotations';
 import { deals } from '../Ontologies/Deals';
@@ -13,7 +13,6 @@ import { Store } from '../Ontology/IEavStore';
 import { ObservableGenerator } from '../Ontology/ObservableGenerator';
 import { Sort } from '../Parties';
 import { Role } from '../Roles';
-import { RolesToken } from '../RoleServiceProvider';
 
 @Component(
     {
@@ -53,13 +52,9 @@ export class Sponsors_s implements OnDestroy
                             deals,
                             store);
 
-                        deals.SponsorParty.Select(generator).subscribe(
-                            (sponsors: Set<Sponsor>) =>
-                            {
-                                this._sponsors = [...sponsors].sort(Sort);
-                                if(this._sponsors.length > 0)
-                                    this._deal.SponsorsNA = false;
-                            });
+                        deals.SponsorParty.Select(generator)
+                            .pipe(map(sponsors => [...sponsors].sort(Sort)))
+                            .subscribe(sponsors => this._sponsors = sponsors);
                     }
                 }));
     }
@@ -124,6 +119,7 @@ export class Sponsors_s implements OnDestroy
 
                 sponsor = <Sponsor>Store(this._deal).Add(sponsor);
                 this._deal.Parties.push(sponsor);
+                this._deal.SponsorsNA = false;
             });
     }
 
