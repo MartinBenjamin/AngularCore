@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, forwardRef, Inject, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
@@ -10,7 +10,9 @@ import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServicePr
 import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
 import { IDealOntologyService } from '../../Ontologies/IDealOntologyService';
+import { ObserveErrors } from '../../Ontologies/ObserveErrors';
 import { IErrors, Validate } from '../../Ontologies/Validate';
+import { Store } from '../../Ontology/IEavStore';
 import { Alternative, Empty, Property, Query2, Sequence, ZeroOrMore } from '../../RegularPathExpression';
 import { KeyCounterparties } from '../KeyCounterparties';
 import { KeyDealData } from '../KeyDealData';
@@ -116,55 +118,48 @@ export class Deal
                 break;
         }
 
-        //const store = new Store(
-        //    null,
-        //    null,
-        //    Individuals(this.Deal));
+        const store = Store(this.Deal);
+        if(store)
+        {
+            const errorsObservable: Observable<Map<object, Map<string, Set<keyof IErrors>>>> = ObserveErrors(
+                this.Deal.Ontology,
+                store,
+                applicableStages);
 
-        //const errorsObservable: Observable<Map<object, Map<string, Set<keyof IErrors>>>> = ObserveErrors(
-        //    this.Deal.Ontology,
-        //    store,
-        //    applicableStages);
+            const subscription = errorsObservable.subscribe(
+                errors =>
+                {
+                    this.Deal.Confers.filter(
+                        commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
+                        .forEach(
+                            commitment =>
+                            {
+                                for(let object of Deal.FacilitySubgraphQuery(commitment))
+                                    if(errors.has(object))
+                                    {
+                                        let facilityErrors = errors.get(commitment);
+                                        if(!facilityErrors)
+                                        {
+                                            facilityErrors = new Map<string, Set<keyof IErrors>>();
+                                            errors.set(
+                                                commitment,
+                                                facilityErrors);
+                                        }
 
-        //let subscription: Subscription;
-        //try
-        //{
-        //    subscription = errorsObservable.subscribe(
-        //        errors =>
-        //        {
-        //            this.Deal.Confers.filter(
-        //                commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
-        //                .forEach(
-        //                    commitment =>
-        //                    {
-        //                        for(let object of Deal.FacilitySubgraphQuery(commitment))
-        //                            if(errors.has(object))
-        //                            {
-        //                                let facilityErrors = errors.get(commitment);
-        //                                if(!facilityErrors)
-        //                                {
-        //                                    facilityErrors = new Map<string, Set<keyof IErrors>>();
-        //                                    errors.set(
-        //                                        commitment,
-        //                                        facilityErrors);
-        //                                }
+                                        let hasErrors = facilityErrors.get('$HasErrors');
+                                        if(!hasErrors)
+                                            facilityErrors.set(
+                                                '$HasErrors',
+                                                new Set<keyof IErrors>());
+                                        break;
+                                    }
+                            });
 
-        //                                let hasErrors = facilityErrors.get('$HasErrors');
-        //                                if(!hasErrors)
-        //                                    facilityErrors.set(
-        //                                        '$HasErrors',
-        //                                        new Set<keyof IErrors>());
-        //                                break;
-        //                            }
-        //                    });
+                    this._errorsService.next(errors.size ? errors : null);
+                });
 
-        //            this._errorsService.next(errors.size ? errors : null);
-        //        });
-        //}
-        //finally
-        //{
-        //    subscription.unsubscribe();
-        //}
+            return;
+        }
 
         let classifications = this.Deal.Ontology.Classify(this.Deal);
         let errors = Validate(
