@@ -18,7 +18,7 @@ import { RolesToken } from '../RoleServiceProvider';
 @Component(
     {
         selector: 'sponsors-s',
-        templateUrl: './Sponsors.html'
+        templateUrl: './Sponsors_s.html'
     })
 export class Sponsors_s implements OnDestroy
 {
@@ -32,8 +32,6 @@ export class Sponsors_s implements OnDestroy
     private _legalEntityFinder: LegalEntityFinder;
 
     constructor(
-        @Inject(RolesToken)
-        roles: Observable<Role[]>,
         dealProvider: DealProvider
         )
     {
@@ -81,11 +79,6 @@ export class Sponsors_s implements OnDestroy
         return this._naEnabled;
     }
 
-    get Initialised(): boolean
-    {
-        return this._sponsorRole != null;
-    }
-
     get Sponsors(): Sponsor[]
     {
         return this._sponsors;
@@ -101,11 +94,6 @@ export class Sponsors_s implements OnDestroy
         )
     {
         this._deal.SponsorsNA = na;
-    }
-
-    get TotalEquity(): number
-    {
-        return this._deal.TotalSponsorEquity;
     }
 
     Add(): void
@@ -151,14 +139,6 @@ export class Sponsors_s implements OnDestroy
             1);
 
         Store(this._deal).DeleteEntity(sponsor);
-    }
-
-    UpdateEquity(
-        sponsor: Sponsor,
-        equity : percentage
-        ): void
-    {
-        sponsor.Equity = equity;
     }
 
     Build(
