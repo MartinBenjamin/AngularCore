@@ -18,7 +18,7 @@ export class EavStore implements IEavStore
 
     constructor(
         ...attributeSchema: AttributeSchema[]
-    )
+        )
     {
         this._schema = new Map<string, AttributeSchema>(attributeSchema.map(attributeSchema => [attributeSchema.Name, attributeSchema]));
         this._ave = new Map<string, Map<any, any>>(
@@ -50,7 +50,7 @@ export class EavStore implements IEavStore
 
     ObserveAttribute(
         attribute: string
-    ): Observable<[any, any][]>
+        ): Observable<[any, any][]>
     {
         return new Observable<[any, any][]>(
             subscriber =>
