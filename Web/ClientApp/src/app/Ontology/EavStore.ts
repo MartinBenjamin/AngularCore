@@ -164,11 +164,11 @@ export class EavStore implements IEavStore
                     ([element, ]) => IsVariable(element)).map(
                         ([element, elementIndex]) => [element, elementIndex === 2 ? 1 : elementIndex]));
 
-        //head.filter(variable => !variables.has(variable)).forEach(
-        //    variable =>
-        //    {
-        //        throw `Head variable not in body: ${variable}`;
-        //    });
+        head.filter(headVariable => variables.every(variables => variables.every(([variable,]) => variable != headVariable))).forEach(
+            headVariable =>
+            {
+                throw `Head variable not in body: ${headVariable}`;
+            });
 
         const atomObservables = body.map(atom =>
         {
