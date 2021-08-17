@@ -1,6 +1,45 @@
-import { Observable, Subscriber } from 'rxjs';
+import { combineLatest, Observable, Subscriber } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { AttributeSchema, Cardinality, IEavStore, StoreSymbol } from './IEavStore';
 
+type Fact = [any, string, any];
+
+const IsVariable = element => typeof element === 'string' && element[0] === '?';
+const IsConstant = element => !(typeof element === undefined || IsVariable(element));
+
+function FactFilter(
+    atom: Fact
+    ): (fact: [any, any]) => boolean
+{
+    const [entity,, value] = atom;
+    if(IsConstant(entity))
+        return IsConstant(value) ?
+            (fact) => entity === fact[0] && value === fact[1] : (fact) => entity === fact[0];
+
+    else
+        IsConstant(value) ? (fact) => value === fact[1] : null;
+}
+
+function Increment(
+    indices: number[],
+    counts : number[],
+    index  : number
+    )
+{
+    if(index < indices.length - 1)
+        indices.fill(
+            0,
+            index);
+    while(index >= 0)
+    {
+        if(++indices[index] < counts[index])
+            return true;
+
+        indices[index--] = 0;
+    }
+
+    return false;
+}
 
 export class EavStore implements IEavStore
 {
@@ -27,13 +66,38 @@ export class EavStore implements IEavStore
                 .map(attributeSchema => [attributeSchema.Name, new Map<any, any>()]));
     }
 
+    public Entities(): Set<any>
+    {
+        return new Set<any>(this._eav.keys());
+    }
+
+    public Attribute(
+        attribute: string
+        ): [any, any][]
+    {
+        const ev = this._aev.get(attribute);
+        if(!ev)
+            return EavStore._empty;
+
+        const list: [any, any][] = [];
+        for(const [entity, value] of ev)
+        {
+            if(value instanceof Array)
+                list.push(...value.map<[any, any]>(value => [entity, value]));
+
+            else if(typeof value !== 'undefined' && value !== null)
+                list.push([entity, value]);
+        }
+        return list;
+    }
+
     ObserveEntities(): Observable<Set<any>>
     {
         return new Observable<Set<any>>(
             subscriber =>
             {
                 this._entitiesSubscribers.push(subscriber);
-                subscriber.next(new Set<any>(this._eav.keys()));
+                subscriber.next(new Set<any>(this.Entities()));
 
                 subscriber.add(
                     () =>
@@ -65,7 +129,7 @@ export class EavStore implements IEavStore
                 }
 
                 subscribers.push(subscriber);
-                subscriber.next(this.AttributeValues(attribute));
+                subscriber.next(this.Attribute(attribute));
 
                 subscriber.add(
                     () =>
@@ -80,6 +144,114 @@ export class EavStore implements IEavStore
                         if(!subscribers.length)
                             this._attributeSubscribers.delete(attribute);
                     });
+            });
+    }
+
+    Observe(
+        head: string[],
+        ...body: Fact[]
+        ): Observable<any[]>
+    {
+        head.filter(variable => !IsVariable(variable)).forEach(
+            variable =>
+            {
+                throw `Invalid head variable name: ${variable}.`;
+            });
+
+        const variables = body.map(
+            fact => fact.map(
+                (element, elementIndex) => [element, elementIndex]).filter(
+                    ([element, ]) => IsVariable(element)).map(
+                        ([element, elementIndex]) => [element, elementIndex === 2 ? 1 : elementIndex]));
+
+        //head.filter(variable => !variables.has(variable)).forEach(
+        //    variable =>
+        //    {
+        //        throw `Head variable not in body: ${variable}`;
+        //    });
+
+        const atomObservables = body.map(atom =>
+        {
+            const [, attribute,] = atom;
+            let observable = this.ObserveAttribute(attribute);
+            const factFilter = FactFilter(atom);
+            if(factFilter)
+                observable = observable.pipe(map(facts => facts.filter(factFilter)));
+
+            return observable;
+        });
+
+        return combineLatest(
+            atomObservables,
+            (...factArrays) =>
+            {
+                //let outerArray = [];
+                //for(const innerArray of factArrays)
+                //{
+                //    if(innerArray === factArrays[0])
+                //        outerArray = innerArray.map(
+                //            inner => variables[0].reduce(
+                //                (previousValue, [variable, variableIndex]) => previousValue[variable] = inner[variableIndex],
+                //                {}));
+
+                //    else
+                //    {
+                //        const nextOuter = [];
+                //        for(const outer of outerArray)
+                //            for(const inner of innerArray)
+                //                ;
+                //    }
+                //}
+
+                const indices = factArrays.map(() => 0);
+                const lengths = factArrays.map(factArray => factArray.length);
+                const result = [];
+                let cont = true;
+                while(cont)
+                {
+                    let factArrayIndex = 0;
+                    const accumulator = {};
+                    while(factArrayIndex < factArrays.length && cont)
+                    {
+                        const factArray = factArrays[factArrayIndex];
+                        const index = indices[factArrayIndex];
+                        const fact = factArray[index];
+
+                        for(let [variable, variableIndex] of variables[factArrayIndex])
+                        {
+                            let value = fact[variableIndex];
+
+                            if(typeof accumulator[variable] === 'undefined')
+                                accumulator[variable] = value;
+
+                            else if(accumulator[variable] !== value)
+                            {
+                                cont = false;
+                                break;
+                            }
+                        }
+
+                        if(cont)
+                            factArrayIndex += 1;
+                    }
+
+                    if(factArrayIndex === factArrays.length)
+                    {
+                        result.push(head.map(headVariable => accumulator[headVariable]));
+
+                        cont = Increment(
+                            indices,
+                            lengths,
+                            indices.length - 1);
+                    }
+                    else
+                        cont = Increment(
+                            indices,
+                            lengths,
+                            factArrayIndex);
+                }
+
+                return result;
             });
     }
 
@@ -262,7 +434,7 @@ export class EavStore implements IEavStore
 
         if(this._entitiesSubscribers.length)
         {
-            const entities = new Set<any>(this._eav.keys());
+            const entities = this.Entities();
             this._entitiesSubscribers.forEach(subscriber => subscriber.next(entities));
         }
     }
@@ -280,29 +452,9 @@ export class EavStore implements IEavStore
         const subscribers = this._attributeSubscribers.get(attribute);
         if(subscribers)
         {
-            const attributeValues = this.AttributeValues(attribute);
+            const attributeValues = this.Attribute(attribute);
             subscribers.forEach(subscriber => subscriber.next(attributeValues));
         }
-    }
-
-    private AttributeValues(
-        attribute: string
-        ): [any, any][]
-    {
-        const ev = this._aev.get(attribute);
-        if(!ev)
-            return EavStore._empty;
-
-        const list: [any, any][] = [];
-        for(const [entity, value] of ev)
-        {
-            if(value instanceof Array)
-                list.push(...value.map<[any, any]>(value => [entity, value]));
-
-            else if(typeof value !== 'undefined' && value !== null)
-                list.push([entity, value]);
-        }
-        return list;
     }
 
     private Cardinality(
