@@ -210,8 +210,8 @@ export class EavStore implements IEavStore
                 while(cont)
                 {
                     let factArrayIndex = 0;
-                    const accumulator = {};
-                    while(factArrayIndex < factArrays.length && cont)
+                    let accumulator = {};
+                    while(factArrayIndex < factArrays.length && accumulator)
                     {
                         const factArray = factArrays[factArrayIndex];
                         const index = indices[factArrayIndex];
@@ -226,16 +226,17 @@ export class EavStore implements IEavStore
 
                             else if(accumulator[variable] !== value)
                             {
-                                cont = false;
+                                // Conflict.
+                                accumulator = null;
                                 break;
                             }
                         }
 
-                        if(cont)
+                        if(accumulator)
                             factArrayIndex += 1;
                     }
 
-                    if(factArrayIndex === factArrays.length)
+                    if(accumulator)
                     {
                         result.push(head.map(headVariable => accumulator[headVariable]));
 
