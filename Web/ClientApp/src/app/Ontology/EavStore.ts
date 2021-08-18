@@ -7,40 +7,6 @@ type Fact = [any, PropertyKey, any];
 const IsVariable = element => typeof element === 'string' && element[0] === '?';
 const IsConstant = element => !(typeof element === undefined || IsVariable(element));
 
-function FactFilter(
-    atom: Fact
-    ): (fact: [any, any]) => boolean
-{
-    const [entity,, value] = atom;
-    if(IsConstant(entity))
-        return IsConstant(value) ?
-            (fact) => entity === fact[0] && value === fact[1] : (fact) => entity === fact[0];
-
-    else
-        IsConstant(value) ? (fact) => value === fact[1] : null;
-}
-
-function Increment(
-    indices: number[],
-    counts : number[],
-    index  : number
-    )
-{
-    if(index < indices.length - 1)
-        indices.fill(
-            0,
-            index);
-    while(index >= 0)
-    {
-        if(++indices[index] < counts[index])
-            return true;
-
-        indices[index--] = 0;
-    }
-
-    return false;
-}
-
 export class EavStore implements IEavStore
 {
     private _eav                  = new Map<any, Map<PropertyKey, any>>();
