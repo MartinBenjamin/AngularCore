@@ -1,8 +1,7 @@
-import { combineLatest, Observable, Subscriber } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, Subscriber } from 'rxjs';
 import { AttributeSchema, Cardinality, IEavStore, StoreSymbol } from './IEavStore';
 
-type Fact = [any, PropertyKey, any];
+type Fact = [any, string, any];
 
 const IsVariable = element => typeof element === 'string' && element[0] === '?';
 const IsConstant = element => !(typeof element === undefined || IsVariable(element));
@@ -13,11 +12,11 @@ export class EavStore implements IEavStore
     private _aev                  = new Map<PropertyKey, Map<any, any>>();
     private _ave                  : Map<PropertyKey, Map<any, any>>;
     private _entitiesSubscribers  : Subscriber<Set<any>>[] = [];
-    private _attributeSubscribers = new Map<PropertyKey, Subscriber<[any, any][]>[]>();
+    private _attributeSubscribers = new Map<string, Subscriber<[any, any][]>[]>();
     private _schema               : Map<string, AttributeSchema>;
     private _publishSuspended     : boolean;
     private _publishEntities      : boolean;
-    private _attributesToPublish  = new Set<PropertyKey>();
+    private _attributesToPublish  = new Set<string>();
 
     private static _empty: [any, any][] = [];
 
@@ -38,7 +37,7 @@ export class EavStore implements IEavStore
     }
 
     public Attribute(
-        attribute: PropertyKey
+        attribute: string
         ): [any, any][]
     {
         const ev = this._aev.get(attribute);
@@ -79,7 +78,7 @@ export class EavStore implements IEavStore
     }
 
     ObserveAttribute(
-        attribute: PropertyKey
+        attribute: string
         ): Observable<[any, any][]>
     {
         return new Observable<[any, any][]>(
@@ -135,13 +134,14 @@ export class EavStore implements IEavStore
                     }
                 }
                 else for(const [attribute, value] of av)
-                {
-                    if(value instanceof Array)
-                        facts.push(...value.map<Fact>(value => [pattern[0], attribute, value]));
+                    if(typeof attribute === 'string')
+                    {
+                        if(value instanceof Array)
+                            facts.push(...value.map<Fact>(value => [pattern[0], attribute, value]));
 
-                    else if(typeof value !== 'undefined' && value !== null)
-                        facts.push([pattern[0], attribute, value]);
-                }
+                        else if(typeof value !== 'undefined' && value !== null)
+                            facts.push([pattern[0], attribute, value]);
+                    }
         }
         else if(IsConstant(pattern[1]))
         {
@@ -161,11 +161,14 @@ export class EavStore implements IEavStore
         }
         else for(const [entity, av] of this._eav)
             for(const [attribute, value] of av)
-                if(value instanceof Array)
-                    facts.push(...value.map<Fact>(value => [entity, <string>attribute, value]));
+                if(typeof attribute === 'string')
+                {
+                    if(value instanceof Array)
+                        facts.push(...value.map<Fact>(value => [entity, attribute, value]));
 
-                else if(typeof value !== 'undefined' && value !== null)
-                    facts.push([pattern[0], <string>attribute, value]);
+                    else if(typeof value !== 'undefined' && value !== null)
+                        facts.push([pattern[0], attribute, value]);
+                }
 
         return IsConstant(pattern[2]) ? facts.filter(fact => fact[2] === pattern[2]) : facts;
     }
@@ -408,7 +411,7 @@ export class EavStore implements IEavStore
     }
 
     PublishAttribute(
-        attribute: PropertyKey
+        attribute: string
         )
     {
         if(this._publishSuspended)
