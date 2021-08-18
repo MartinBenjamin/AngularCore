@@ -2,7 +2,7 @@ import { combineLatest, Observable, Subscriber } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AttributeSchema, Cardinality, IEavStore, StoreSymbol } from './IEavStore';
 
-type Fact = [any, string, any];
+type Fact = [any, PropertyKey, any];
 
 const IsVariable = element => typeof element === 'string' && element[0] === '?';
 const IsConstant = element => !(typeof element === undefined || IsVariable(element));
@@ -47,11 +47,11 @@ export class EavStore implements IEavStore
     private _aev                  = new Map<PropertyKey, Map<any, any>>();
     private _ave                  : Map<PropertyKey, Map<any, any>>;
     private _entitiesSubscribers  : Subscriber<Set<any>>[] = [];
-    private _attributeSubscribers = new Map<string, Subscriber<[any, any][]>[]>();
+    private _attributeSubscribers = new Map<PropertyKey, Subscriber<[any, any][]>[]>();
     private _schema               : Map<string, AttributeSchema>;
     private _publishSuspended     : boolean;
     private _publishEntities      : boolean;
-    private _attributesToPublish  = new Set<string>();
+    private _attributesToPublish  = new Set<PropertyKey>();
 
     private static _empty: [any, any][] = [];
 
@@ -72,7 +72,7 @@ export class EavStore implements IEavStore
     }
 
     public Attribute(
-        attribute: string
+        attribute: PropertyKey
         ): [any, any][]
     {
         const ev = this._aev.get(attribute);
@@ -113,7 +113,7 @@ export class EavStore implements IEavStore
     }
 
     ObserveAttribute(
-        attribute: string
+        attribute: PropertyKey
         ): Observable<[any, any][]>
     {
         return new Observable<[any, any][]>(
@@ -145,6 +145,63 @@ export class EavStore implements IEavStore
                             this._attributeSubscribers.delete(attribute);
                     });
             });
+    }
+
+    QueryFacts(
+        pattern: Fact
+        ): Fact[]
+    {
+        const facts: Fact[] = [];
+        if(IsConstant(pattern[0]))
+        {
+            const av = this._eav.get(pattern[0])
+            if(av)
+                if(IsConstant(pattern[1]))
+                {
+                    const value = av.get(pattern[1]);
+                    if(value)
+                    {
+                        if(value instanceof Array)
+                            facts.push(...value.map<Fact>(value => [pattern[0], pattern[1], value]));
+
+                        else if(typeof value !== 'undefined' && value !== null)
+                            facts.push([pattern[0], pattern[1], value]);
+                    }
+                }
+                else for(const [attribute, value] of av)
+                {
+                    if(value instanceof Array)
+                        facts.push(...value.map<Fact>(value => [pattern[0], attribute, value]));
+
+                    else if(typeof value !== 'undefined' && value !== null)
+                        facts.push([pattern[0], attribute, value]);
+                }
+        }
+        else if(IsConstant(pattern[1]))
+        {
+            const ev = this._aev.get(pattern[1]);
+            if(ev)
+            {
+                for(const [entity, value] of ev)
+                {
+                    if(value instanceof Array)
+                        facts.push(...value.map<Fact>(value => [entity, pattern[1], value]));
+
+                    else if(typeof value !== 'undefined' && value !== null)
+                        facts.push([entity, pattern[1], value]);
+                }
+            }
+
+        }
+        else for(const [entity, av] of this._eav)
+            for(const [attribute, value] of av)
+                if(value instanceof Array)
+                    facts.push(...value.map<Fact>(value => [entity, <string>attribute, value]));
+
+                else if(typeof value !== 'undefined' && value !== null)
+                    facts.push([pattern[0], <string>attribute, value]);
+
+        return IsConstant(pattern[2]) ? facts.filter(fact => fact[2] === pattern[2]) : facts;
     }
 
     Observe(
@@ -441,7 +498,7 @@ export class EavStore implements IEavStore
     }
 
     PublishAttribute(
-        attribute: string
+        attribute: PropertyKey
         )
     {
         if(this._publishSuspended)
