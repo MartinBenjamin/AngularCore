@@ -147,7 +147,7 @@ export class EavStore implements IEavStore
             });
     }
 
-    QueryFacts(
+    Facts(
         pattern: Fact
         ): Fact[]
     {
@@ -204,113 +204,57 @@ export class EavStore implements IEavStore
         return IsConstant(pattern[2]) ? facts.filter(fact => fact[2] === pattern[2]) : facts;
     }
 
-    Observe(
-        head: string[],
+    Query(
+        head: any[],
         ...body: Fact[]
-        ): Observable<any[]>
+        ): any[][]
     {
-        head.filter(variable => !IsVariable(variable)).forEach(
-            variable =>
-            {
-                throw `Invalid head variable name: ${variable}.`;
-            });
+        const headVariables = head.filter(element => IsVariable(element));
 
-        const variables = body.map(
-            fact => fact.map(
-                (element, elementIndex) => [element, elementIndex]).filter(
-                    ([element, ]) => IsVariable(element)).map(
-                        ([element, elementIndex]) => [element, elementIndex === 2 ? 1 : elementIndex]));
-
-        head.filter(headVariable => variables.every(variables => variables.every(([variable,]) => variable != headVariable))).forEach(
+        headVariables.filter(headVariable => body.every(elements => !elements.includes(headVariable))).forEach(
             headVariable =>
             {
                 throw `Head variable not in body: ${headVariable}`;
             });
 
-        const atomObservables = body.map(atom =>
+        let outerArray = [];
+        for(const pattern of body)
         {
-            const [, attribute,] = atom;
-            let observable = this.ObserveAttribute(attribute);
-            const factFilter = FactFilter(atom);
-            if(factFilter)
-                observable = observable.pipe(map(facts => facts.filter(factFilter)));
-
-            return observable;
-        });
-
-        return combineLatest(
-            atomObservables,
-            (...factArrays) =>
-            {
-                //let outerArray = [];
-                //for(const innerArray of factArrays)
-                //{
-                //    if(innerArray === factArrays[0])
-                //        outerArray = innerArray.map(
-                //            inner => variables[0].reduce(
-                //                (previousValue, [variable, variableIndex]) => previousValue[variable] = inner[variableIndex],
-                //                {}));
-
-                //    else
-                //    {
-                //        const nextOuter = [];
-                //        for(const outer of outerArray)
-                //            for(const inner of innerArray)
-                //                ;
-                //    }
-                //}
-
-                const indices = factArrays.map(() => 0);
-                const lengths = factArrays.map(factArray => factArray.length);
-                const result = [];
-                let cont = true;
-                while(cont)
-                {
-                    let factArrayIndex = 0;
-                    let accumulator = {};
-                    while(factArrayIndex < factArrays.length && accumulator)
-                    {
-                        const factArray = factArrays[factArrayIndex];
-                        const index = indices[factArrayIndex];
-                        const fact = factArray[index];
-
-                        for(let [variable, variableIndex] of variables[factArrayIndex])
+            if(pattern === body[0])
+                outerArray = this.Facts(pattern).map(
+                    inner => pattern.reduce(
+                        (previousValue, element, elementIndex) =>
                         {
-                            let value = fact[variableIndex];
+                            if(IsVariable(element))
+                                previousValue[element] = inner[elementIndex];
 
-                            if(typeof accumulator[variable] === 'undefined')
-                                accumulator[variable] = value;
+                            return previousValue;
+                        },
+                        {}));
 
-                            else if(accumulator[variable] !== value)
+            else
+            {
+                let count = outerArray.length;
+                while(count--)
+                {
+                    const outer = outerArray.shift();
+                    // Substitute known variables.
+                    const queryPattern = <Fact>pattern.map(element => (element in outer) ? outer[element] : element);
+                    for(const inner of this.Facts(queryPattern))
+                        outerArray.push(queryPattern.reduce(
+                            (previousValue, element, elementIndex) =>
                             {
-                                // Conflict.
-                                accumulator = null;
-                                break;
-                            }
-                        }
+                                if(IsVariable(element))
+                                    previousValue[element] = inner[elementIndex];
 
-                        if(accumulator)
-                            factArrayIndex += 1;
-                    }
-
-                    if(accumulator)
-                    {
-                        result.push(head.map(headVariable => accumulator[headVariable]));
-
-                        cont = Increment(
-                            indices,
-                            lengths,
-                            indices.length - 1);
-                    }
-                    else
-                        cont = Increment(
-                            indices,
-                            lengths,
-                            factArrayIndex);
+                                return previousValue;
+                            },
+                            { ...outer }));
                 }
+            }
+        }
 
-                return result;
-            });
+        return outerArray.map(outer => head.map(headVariable => outer[headVariable]));
     }
 
     NewEntity(): any
@@ -511,6 +455,7 @@ export class EavStore implements IEavStore
         if(subscribers)
         {
             const attributeValues = this.Attribute(attribute);
+            //const attributeValues = <[any, any][]>this.Query(['?entity', '?value'], ['?entity', attribute, '?value']);
             subscribers.forEach(subscriber => subscriber.next(attributeValues));
         }
     }
