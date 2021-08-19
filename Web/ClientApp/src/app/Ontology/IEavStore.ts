@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { Fact } from './EavStore';
 
 export enum Cardinality
 {
@@ -16,7 +17,10 @@ export interface AttributeSchema
 export interface IEavStore
 {
     ObserveEntities(): Observable<Set<any>>;
-    ObserveAttribute<TDomain = any, TRange = any>(attribute: string): Observable<[TDomain, TRange][]>
+    ObserveAttribute<TDomain = any, TRange = any>(attribute: string): Observable<[TDomain, TRange][]>;
+    Query(
+        head: any[],
+        ...body: Fact[]): any[][];
     NewEntity(): any;
     DeleteEntity(entity: any): void
     Add(

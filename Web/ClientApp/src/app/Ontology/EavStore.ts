@@ -1,7 +1,7 @@
 import { Observable, Subscriber } from 'rxjs';
 import { AttributeSchema, Cardinality, IEavStore, StoreSymbol } from './IEavStore';
 
-type Fact = [any, string, any];
+export type Fact = [any, string, any];
 
 const IsVariable = element => typeof element === 'string' && element[0] === '?';
 const IsConstant = element => !(typeof element === undefined || IsVariable(element));

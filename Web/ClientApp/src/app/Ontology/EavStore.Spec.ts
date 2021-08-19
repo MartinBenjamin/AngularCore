@@ -95,6 +95,13 @@ describe(
                 assert('Store(e) === store');
                 assert('Store(e.a2[0]) === store');
 
+                assert("store.Query(['?result'], [e, 'a1', '?result']).length === 1");
+                assert("store.Query(['?result'], [e, 'a1', '?result'])[0].length === 1");
+                assert("store.Query(['?result'], [e, 'a1', '?result'])[0][0] === 1");
+                assert("store.Query(['?result'], [e, 'a2', '?a2'], ['?a2', 'a3', '?result']).length === 1");
+                assert("store.Query(['?result'], [e, 'a2', '?a2'], ['?a2', 'a3', '?result'])[0].length === 1");
+                assert("store.Query(['?result'], [e, 'a2', '?a2'], ['?a2', 'a3', '?result'])[0][0] === 3");
+
                 describe(
                     'Given entities: Set<any> and store.Entities.subscribe(value => entities = value):',
                     () =>
