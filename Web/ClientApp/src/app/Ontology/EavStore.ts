@@ -178,24 +178,24 @@ export class EavStore implements IEavStore
         ...body: Fact[]
         ): any[][]
     {
-        const headVariables = head.filter(element => IsVariable(element));
+        const headVariables = head.filter(term => IsVariable(term));
 
-        headVariables.filter(headVariable => body.every(elements => !elements.includes(headVariable))).forEach(
+        headVariables.filter(headVariable => body.every(atom => !atom.includes(headVariable))).forEach(
             headVariable =>
             {
                 throw `Head variable not in body: ${headVariable}`;
             });
 
         let outerArray = [];
-        for(const pattern of body)
+        for(const atom of body)
         {
-            if(pattern === body[0])
-                outerArray = this.Facts(pattern).map(
-                    inner => pattern.reduce(
-                        (previousValue, element, elementIndex) =>
+            if(atom === body[0])
+                outerArray = this.Facts(atom).map(
+                    inner => atom.reduce(
+                        (previousValue, term, termIndex) =>
                         {
-                            if(IsVariable(element))
-                                previousValue[element] = inner[elementIndex];
+                            if(IsVariable(term))
+                                previousValue[term] = inner[termIndex];
 
                             return previousValue;
                         },
@@ -208,13 +208,13 @@ export class EavStore implements IEavStore
                 {
                     const outer = outerArray.shift();
                     // Substitute known variables.
-                    const queryPattern = <Fact>pattern.map(element => (element in outer) ? outer[element] : element);
+                    const queryPattern = <Fact>atom.map(term => (term in outer) ? outer[term] : term);
                     for(const inner of this.Facts(queryPattern))
                         outerArray.push(queryPattern.reduce(
-                            (previousValue, element, elementIndex) =>
+                            (previousValue, term, termIndex) =>
                             {
-                                if(IsVariable(element))
-                                    previousValue[element] = inner[elementIndex];
+                                if(IsVariable(term))
+                                    previousValue[term] = inner[termIndex];
 
                                 return previousValue;
                             },
@@ -223,7 +223,7 @@ export class EavStore implements IEavStore
             }
         }
 
-        return outerArray.map(outer => head.map(headVariable => outer[headVariable]));
+        return outerArray.map(outer => head.map(term => (term in outer) ? outer[term] : term));
     }
 
     NewEntity(): any
