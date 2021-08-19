@@ -25,6 +25,8 @@ describe(
                 assert('arrayProxy.pop() === x');
                 assert('array.length === 0');
                 assert('arrayProxy.length === 0');
+                assert('array.pop() === undefined');
+                assert('arrayProxy.pop() === undefined');
 
                 assert('arrayProxy.unshift(x) === 1');
                 assert('array.includes(x)');
@@ -34,8 +36,14 @@ describe(
                 assert('arrayProxy.shift() === x');
                 assert('array.length === 0');
                 assert('arrayProxy.length === 0');
+                assert('array.shift() === undefined');
+                assert('arrayProxy.shift() === undefined');
 
-                assert('arrayProxy.push(x) === 1');
+                assert('arrayProxy.splice(0, 0, x).length === 0');
+                assert('array.includes(x)');
+                assert('arrayProxy.includes(x)');
+                assert('arrayProxy.length === 1');
+                assert('arrayProxy[0] === x')
                 assert('arrayProxy.splice(0, 1).includes(x)');
                 assert('array.length === 0');
                 assert('arrayProxy.length === 0');
