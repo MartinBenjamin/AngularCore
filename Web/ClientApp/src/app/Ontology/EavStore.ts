@@ -459,6 +459,15 @@ export class EavStore implements IEavStore
         }
     }
 
+    Publish(
+        operation: boolean,
+        entity   : any,
+        attribute: PropertyKey,
+        value    : any
+        )
+    {
+    }
+
     private Cardinality(
         attribute: string
         ): Cardinality
@@ -583,6 +592,104 @@ function ArrayMethodHandlerFactory(
             }
         };
 }
+
+function PushUnshiftMethodHandlerFactory(
+    store      : EavStore,
+    entity     : any,
+    attribute  : string,
+    targetArray: any[]
+    ): ProxyHandler<{ (...args): any }>
+{
+    return <ProxyHandler<{ (...args): any }>>
+        {
+            apply(
+                targetMethod,
+                thisArg,
+                argArray
+                ): any
+            {
+                const result = targetMethod.call(
+                    targetArray,
+                    ...argArray);
+                if(store)
+                    [...argArray].forEach(
+                        value => store.Publish(
+                            true,
+                            entity,
+                            attribute,
+                            value))
+                return result;
+            }
+        };
+}
+
+function PopShiftMethodHandlerFactory(
+    store      : EavStore,
+    entity     : any,
+    attribute  : string,
+    targetArray: any[]
+    ): ProxyHandler<{ (...args): any }>
+{
+    return <ProxyHandler<{ (...args): any }>>
+        {
+            apply(
+                targetMethod,
+                thisArg,
+                argArray
+                ): any
+            {
+                const result = targetMethod.call(
+                    targetArray,
+                    ...argArray);
+                if(store && typeof result !== 'undefined')
+                    store.Publish(
+                        false,
+                        entity,
+                        attribute,
+                        result);
+                return result;
+            }
+        };
+}
+
+function SpliceMethodHandlerFactory(
+    store      : EavStore,
+    entity     : any,
+    attribute  : string,
+    targetArray: any[]
+    ): ProxyHandler<{ (...args): any }>
+{
+    return <ProxyHandler<{ (...args): any }>>
+        {
+            apply(
+                targetMethod,
+                thisArg,
+                argArray
+                ): any
+            {
+                const result = targetMethod.call(
+                    targetArray,
+                    ...argArray);
+                if(store)
+                {
+                    [...result].forEach(
+                        deleted => store.Publish(
+                            false,
+                            entity,
+                            attribute,
+                            deleted));
+                    [...argArray].slice(2).forEach(
+                        added => store.Publish(
+                            true,
+                            entity,
+                            attribute,
+                            added));
+                }
+                return result;
+            }
+        };
+}
+
 
 export function ArrayProxyFactory(
     store      : EavStore,
