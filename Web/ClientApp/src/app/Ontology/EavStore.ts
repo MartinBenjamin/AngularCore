@@ -190,17 +190,31 @@ export class EavStore implements IEavStore
         for(const atom of body)
         {
             if(atom === body[0])
-                outerArray = this.Facts(atom).map(
-                    inner => atom.reduce(
+                for(const inner of this.Facts(atom))
+                {
+                    const combined = atom.reduce(
                         (previousValue, term, termIndex) =>
                         {
+                            if(!previousValue)
+                                return previousValue;
+
                             if(IsVariable(term))
-                                previousValue[term] = inner[termIndex];
+                            {
+                                if(typeof previousValue[term] === 'undefined')
+                                    previousValue[term] = inner[termIndex];
+
+                                else if(previousValue[term] !== inner[termIndex])
+                                    // Inner does not match query pattern.
+                                    return null;
+                            }
 
                             return previousValue;
                         },
-                        {}));
+                        {});
 
+                    if(combined)
+                        outerArray.push(combined);
+                }
             else
             {
                 let count = outerArray.length;
@@ -210,15 +224,31 @@ export class EavStore implements IEavStore
                     // Substitute known variables.
                     const queryPattern = <Fact>atom.map(term => (term in outer) ? outer[term] : term);
                     for(const inner of this.Facts(queryPattern))
-                        outerArray.push(queryPattern.reduce(
+                    {
+                        const combined = queryPattern.reduce(
                             (previousValue, term, termIndex) =>
                             {
+                                if(!previousValue)
+                                    return previousValue;
+
                                 if(IsVariable(term))
-                                    previousValue[term] = inner[termIndex];
+                                {
+                                    if(typeof previousValue[term] === 'undefined')
+                                        previousValue[term] = inner[termIndex];
+
+                                    else if(previousValue[term] !== inner[termIndex])
+                                        // Inner does not match query pattern.
+                                        return null;
+                                }
 
                                 return previousValue;
                             },
-                            { ...outer }));
+                            { ...outer });
+
+                        if(combined)
+                            outerArray.push(combined);
+
+                    }
                 }
             }
         }
