@@ -627,12 +627,16 @@ function PushUnshiftMethodHandlerFactory(
                     targetArray,
                     ...argArray);
                 if(store)
+                {
+                    store.SuspendPublish();
                     [...argArray].forEach(
                         value => store.Publish(
                             entity,
                             attribute,
                             value,
                             undefined));
+                    store.UnsuspendPublish();
+                }
                 return result;
             }
         };
@@ -687,6 +691,7 @@ function SpliceMethodHandlerFactory(
                     ...argArray);
                 if(store)
                 {
+                    store.SuspendPublish();
                     [...result].forEach(
                         deleted => store.Publish(
                             entity,
@@ -699,12 +704,12 @@ function SpliceMethodHandlerFactory(
                             attribute,
                             added,
                             undefined));
+                    store.UnsuspendPublish();
                 }
                 return result;
             }
         };
 }
-
 
 export function ArrayProxyFactory(
     store      : EavStore,
