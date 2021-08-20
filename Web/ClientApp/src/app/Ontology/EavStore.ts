@@ -556,7 +556,7 @@ function EntityProxyFactory(
                 receiver,
                 value);
 
-            if(typeof p === 'string')
+            if(typeof p === 'string' && !(value instanceof Array))
                 store.PublishAttribute(p);
 
             return true;
