@@ -14,7 +14,7 @@ export class EavStore implements IEavStore
     private _entitiesSubscribers  : Subscriber<Set<any>>[] = [];
     private _attributeSubscribers = new Map<string, Subscriber<[any, any][]>[]>();
     private _schema               : Map<string, AttributeSchema>;
-    private _publishSuspended     : boolean;
+    private _publishSuspended     : number;
     private _publishEntities      : boolean;
     private _attributesToPublish  = new Set<string>();
 
@@ -315,9 +315,7 @@ export class EavStore implements IEavStore
         if(typeof attribute === 'undefined')
             try
             {
-                this._publishSuspended = true;
-                this._publishEntities  = false;
-                this._attributesToPublish.clear();
+                this.SuspendPublish();
                 const added = new Map<object, any>();
                 if(entity instanceof Array)
                     return entity.map(object =>
@@ -331,11 +329,7 @@ export class EavStore implements IEavStore
             }
             finally
             {
-                this._publishSuspended = false;
-                if(this._publishEntities)
-                    this.PublishEntities();
-
-                this._attributesToPublish.forEach(attribute => this.PublishAttribute(attribute));               
+                this.UnsuspendPublish();               
             }
 
         let currentValue = entity[attribute];
@@ -422,6 +416,28 @@ export class EavStore implements IEavStore
             entity);
 
         return entity;
+    }
+
+    SuspendPublish(): void
+    {
+        if(!this._publishSuspended)
+        {
+            this._publishEntities = false;
+            this._attributesToPublish.clear();
+        }
+        ++this._publishSuspended;
+    }
+
+    UnsuspendPublish(): void
+    {
+        --this._publishSuspended;
+        if(!this._publishSuspended)
+        {
+            if(this._publishEntities)
+                this.PublishEntities();
+
+            this._attributesToPublish.forEach(attribute => this.PublishAttribute(attribute));
+        }
     }
 
     PublishEntities()
