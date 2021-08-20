@@ -460,10 +460,10 @@ export class EavStore implements IEavStore
     }
 
     Publish(
-        operation: boolean,
-        entity   : any,
-        attribute: PropertyKey,
-        value    : any
+        entity       : any,
+        attribute    : PropertyKey,
+        value        : any,
+        previousValue: any
         )
     {
     }
@@ -614,10 +614,10 @@ function PushUnshiftMethodHandlerFactory(
                 if(store)
                     [...argArray].forEach(
                         value => store.Publish(
-                            true,
                             entity,
                             attribute,
-                            value))
+                            value,
+                            undefined));
                 return result;
             }
         };
@@ -643,9 +643,9 @@ function PopShiftMethodHandlerFactory(
                     ...argArray);
                 if(store && typeof result !== 'undefined')
                     store.Publish(
-                        false,
                         entity,
                         attribute,
+                        undefined,
                         result);
                 return result;
             }
@@ -674,16 +674,16 @@ function SpliceMethodHandlerFactory(
                 {
                     [...result].forEach(
                         deleted => store.Publish(
-                            false,
                             entity,
                             attribute,
+                            undefined,
                             deleted));
                     [...argArray].slice(2).forEach(
                         added => store.Publish(
-                            true,
                             entity,
                             attribute,
-                            added));
+                            added,
+                            undefined));
                 }
                 return result;
             }
@@ -710,7 +710,7 @@ export function ArrayProxyFactory(
             'unshift',
             'splice',
         ].map(methodName => [methodName, new Proxy(
-            targetArray[methodName],
+            Array.prototype[methodName],
             methodHandler)]));
     let handler: ProxyHandler<[]> = {
         get: function(
