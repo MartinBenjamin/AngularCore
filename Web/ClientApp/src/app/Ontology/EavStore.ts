@@ -113,48 +113,48 @@ export class EavStore implements IEavStore
     }
 
     Facts(
-        pattern: Fact
+        [entity, attribute, value]: Fact
         ): Fact[]
     {
         const facts: Fact[] = [];
-        if(IsConstant(pattern[0]))
+        if(IsConstant(entity))
         {
-            const av = this._eav.get(pattern[0])
+            const av = this._eav.get(entity)
             if(av)
-                if(IsConstant(pattern[1]))
+                if(IsConstant(attribute))
                 {
-                    const value = av.get(pattern[1]);
+                    const value = av.get(attribute);
                     if(value)
                     {
                         if(value instanceof Array)
-                            facts.push(...value.map<Fact>(value => [pattern[0], pattern[1], value]));
+                            facts.push(...value.map<Fact>(value => [entity, attribute, value]));
 
                         else if(typeof value !== 'undefined' && value !== null)
-                            facts.push([pattern[0], pattern[1], value]);
+                            facts.push([entity, attribute, value]);
                     }
                 }
                 else for(const [attribute, value] of av)
                     if(typeof attribute === 'string')
                     {
                         if(value instanceof Array)
-                            facts.push(...value.map<Fact>(value => [pattern[0], attribute, value]));
+                            facts.push(...value.map<Fact>(value => [entity, attribute, value]));
 
                         else if(typeof value !== 'undefined' && value !== null)
-                            facts.push([pattern[0], attribute, value]);
+                            facts.push([entity, attribute, value]);
                     }
         }
-        else if(IsConstant(pattern[1]))
+        else if(IsConstant(attribute))
         {
-            const ev = this._aev.get(pattern[1]);
+            const ev = this._aev.get(attribute);
             if(ev)
             {
                 for(const [entity, value] of ev)
                 {
                     if(value instanceof Array)
-                        facts.push(...value.map<Fact>(value => [entity, pattern[1], value]));
+                        facts.push(...value.map<Fact>(value => [entity, attribute, value]));
 
                     else if(typeof value !== 'undefined' && value !== null)
-                        facts.push([entity, pattern[1], value]);
+                        facts.push([entity, attribute, value]);
                 }
             }
 
@@ -167,10 +167,10 @@ export class EavStore implements IEavStore
                         facts.push(...value.map<Fact>(value => [entity, attribute, value]));
 
                     else if(typeof value !== 'undefined' && value !== null)
-                        facts.push([pattern[0], attribute, value]);
+                        facts.push([entity, attribute, value]);
                 }
 
-        return IsConstant(pattern[2]) ? facts.filter(fact => fact[2] === pattern[2]) : facts;
+        return IsConstant(value) ? facts.filter(fact => fact[2] === value) : facts;
     }
 
     Query(
@@ -247,7 +247,6 @@ export class EavStore implements IEavStore
 
                         if(combined)
                             outerArray.push(combined);
-
                     }
                 }
             }
