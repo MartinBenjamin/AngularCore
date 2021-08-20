@@ -4,7 +4,7 @@ import { AttributeSchema, Cardinality, IEavStore, StoreSymbol } from './IEavStor
 export type Fact = [any, string, any];
 
 const IsVariable = element => typeof element === 'string' && element[0] === '?';
-const IsConstant = element => !(typeof element === undefined || IsVariable(element));
+const IsConstant = element => !(typeof element === 'undefined' || IsVariable(element));
 
 export class EavStore implements IEavStore
 {
