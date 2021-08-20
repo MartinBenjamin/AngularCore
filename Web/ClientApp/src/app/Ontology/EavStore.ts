@@ -529,11 +529,11 @@ function EntityProxyFactory(
                 const currentValue = av.get(p);
                 if(currentValue !== value)
                 {
-                    ve.delete(currentValue);
                     const identified = ve.get(value);
                     if(typeof identified !== 'undefined')
                         throw 'Unique Identity Conflict';
 
+                    ve.delete(currentValue);
                     ve.set(
                         value,
                         receiver);
