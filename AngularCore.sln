@@ -59,7 +59,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Deals", "Deals\Deals.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ontology", "Ontology\Ontology.csproj", "{659331C8-3F42-40A3-BFBC-D989DDC0055C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LifeCycles", "LifeCycles\LifeCycles.csproj", "{ADB951B0-A3D1-4B28-AD7C-C2DCEDF7FF9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LifeCycles", "LifeCycles\LifeCycles.csproj", "{ADB951B0-A3D1-4B28-AD7C-C2DCEDF7FF9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Naics", "Naics\Naics.csproj", "{F5885680-1169-474D-BD01-864630C0274D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -183,6 +185,10 @@ Global
 		{ADB951B0-A3D1-4B28-AD7C-C2DCEDF7FF9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADB951B0-A3D1-4B28-AD7C-C2DCEDF7FF9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADB951B0-A3D1-4B28-AD7C-C2DCEDF7FF9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5885680-1169-474D-BD01-864630C0274D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5885680-1169-474D-BD01-864630C0274D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5885680-1169-474D-BD01-864630C0274D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5885680-1169-474D-BD01-864630C0274D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

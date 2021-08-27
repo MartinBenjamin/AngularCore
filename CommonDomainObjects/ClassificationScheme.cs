@@ -10,7 +10,7 @@ namespace CommonDomainObjects
         where TClassificationScheme : ClassificationScheme<TId, TClassificationScheme, TClassificationSchemeClassifier, TClassifier>
         where TClassificationSchemeClassifier : ClassificationSchemeClassifier<TId, TClassificationScheme, TClassificationSchemeClassifier, TClassifier>
     {
-        private IList<TClassificationSchemeClassifier> _classifiers;
+        private readonly IList<TClassificationSchemeClassifier> _classifiers;
 
         public virtual IReadOnlyList<TClassificationSchemeClassifier> Classifiers
             => new ReadOnlyCollection<TClassificationSchemeClassifier>(_classifiers);
@@ -94,7 +94,7 @@ namespace CommonDomainObjects
         where TClassificationScheme : ClassificationScheme<TId, TClassificationScheme, TClassificationSchemeClassifier, TClassifier>
         where TClassificationSchemeClassifier : ClassificationSchemeClassifier<TId, TClassificationScheme, TClassificationSchemeClassifier, TClassifier>
     {
-        private IList<TClassificationSchemeClassifier> _sub;
+        private readonly IList<TClassificationSchemeClassifier> _sub;
 
         public virtual TClassificationScheme           ClassificationScheme { get; protected set; }
         public virtual TClassifier                     Classifier           { get; protected set; }
