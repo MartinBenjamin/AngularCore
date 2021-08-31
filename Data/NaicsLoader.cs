@@ -34,22 +34,22 @@ namespace Data
                     var components = record[1].Split('-');
                     var start = int.Parse(components[0]);
                     var end   = components.Length == 1 ? start : int.Parse(components[1]);
-                    return new Classifier(
+                    return new NaicsClassifier(
                         Guid.NewGuid(),
                         record[2],
                         new Range<int>(start, end));
                 });
 
-            var parents = new Classifier[7];
-            var super = new Dictionary<CommonDomainObjects.Classifier, IList<CommonDomainObjects.Classifier>>();
-            var empty = new List<CommonDomainObjects.Classifier>();
+            var parents = new NaicsClassifier[7];
+            var super = new Dictionary<Classifier, IList<Classifier>>();
+            var empty = new List<Classifier>();
 
             // Take advantage of the fact that a parent appears directly before its children in the CSV file.
             foreach(var classifier in classifiers)
             {
                 var length = classifier.CodeRange.Start.ToString().Length;
                 var parent = parents[length - 1];
-                super[classifier] = parent == null ? empty : new List<CommonDomainObjects.Classifier> { parent };
+                super[classifier] = parent == null ? empty : new List<Classifier> { parent };
                 parents[length] = classifier;
             }
 

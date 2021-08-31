@@ -155,7 +155,7 @@ namespace Test
         {
             var loaders = _container.Resolve<IEnumerable<IEtl<ClassificationScheme>>>();
 
-            Assert.That(loaders.Count(), Is.EqualTo(3));
+            Assert.That(loaders.Count(), Is.EqualTo(4));
 
             foreach(var loader in loaders)
             {

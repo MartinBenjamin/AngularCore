@@ -60,6 +60,11 @@ namespace Data
                 .SingleInstance();
 
             builder
+                .RegisterType<NaicsLoader>()
+                .As<IEtl<ClassificationScheme>>()
+                .SingleInstance();
+
+            builder
                 .RegisterType<DealTypeLoader>()
                 .As<IEtl<ClassificationScheme>>()
                 .SingleInstance();

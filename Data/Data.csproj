@@ -18,6 +18,7 @@
     <None Remove="ISO3166-2-PT.csv" />
     <None Remove="ISO3166-2-US.csv" />
     <None Remove="ISO4217.csv" />
+    <None Remove="NAICS2017.csv" />
     <None Remove="Role.csv" />
     <None Remove="UNSDM49.csv" />
   </ItemGroup>
@@ -36,6 +37,7 @@
     <EmbeddedResource Include="ISO3166-2-PT.csv" />
     <EmbeddedResource Include="ISO3166-2-US.csv" />
     <EmbeddedResource Include="ISO4217.csv" />
+    <EmbeddedResource Include="NAICS2017.csv" />
     <EmbeddedResource Include="Role.csv" />
     <EmbeddedResource Include="UNSDM49.csv" />
   </ItemGroup>
