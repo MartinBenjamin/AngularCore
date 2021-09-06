@@ -1,5 +1,4 @@
-﻿using Agents;
-using Autofac;
+﻿using Autofac;
 using CommonDomainObjects;
 using Data;
 using FacilityAgreements;
