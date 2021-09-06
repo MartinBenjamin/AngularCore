@@ -2,7 +2,7 @@
 
 namespace CommonDomainObjects.Mapping
 {
-    public class IdentificationScheme: ClassMapping<Agents.IdentificationScheme>
+    public class IdentificationScheme: ClassMapping<Identifiers.IdentificationScheme>
     {
         public IdentificationScheme()
         {

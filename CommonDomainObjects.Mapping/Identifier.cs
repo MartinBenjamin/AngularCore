@@ -2,24 +2,18 @@
 
 namespace CommonDomainObjects.Mapping
 {
-    public class Identifier: ClassMapping<Agents.Identifier>
+    public class Identifier: ClassMapping<Identifiers.Identifier>
     {
-        private static readonly string _uniqueKeyName = "IdentificationScheme_Identifier";
+        public static readonly string UniqueKeyNames = "AutonomousAgent";
 
         public Identifier()
         {
             ComposedId(
                 composedIdMapper =>
                 {
-                    composedIdMapper.ManyToOne(
-                        identifier => identifier.Scheme,
-                        manyToOneMapper => manyToOneMapper.UniqueKey(_uniqueKeyName));
-                    composedIdMapper.Property(identifier => identifier.Value);
+                    composedIdMapper.ManyToOne(identifier => identifier.Scheme);
+                    composedIdMapper.Property(identifier => identifier.Tag);
                 });
-
-            ManyToOne(
-                identifier => identifier.Identifies,
-                manyToOneMapper => manyToOneMapper.UniqueKey(_uniqueKeyName));
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿namespace Agents
+﻿using System;
+
+namespace Identifiers
 {
-    public class Identifier
+    public abstract class Identifier
     {
-        public virtual IdentificationScheme Scheme     { get; protected set; }
-        public virtual string               Value      { get; protected set; }
-        public virtual AutonomousAgent      Identifies { get; protected set; }
+        public virtual IdentificationScheme Scheme { get; protected set; }
+        public virtual string               Tag    { get; protected set; }
 
         protected Identifier()
         {
@@ -12,23 +13,23 @@
 
         public Identifier(
             IdentificationScheme scheme,
-            string               value,
-            AutonomousAgent      identifies
+            string               tag
             )
         {
-            Scheme     = scheme;
-            Value      = value;
-            Identifies = identifies;
+            Scheme = scheme;
+            Tag    = tag;
         }
 
         public override bool Equals(
             object obj
             ) => obj is Identifier identifier &&
                 Scheme == identifier.Scheme &&
-                Value  == identifier.Value;
+                Tag    == identifier.Tag;
 
         public override int GetHashCode()
-            => Value.GetHashCode();
+            => HashCode.Combine(
+                    Scheme.Id,
+                    Tag);
 
         public static bool operator ==(
             Identifier lhs,

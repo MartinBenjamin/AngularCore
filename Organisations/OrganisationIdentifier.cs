@@ -1,28 +1,26 @@
 ﻿using Agents;
+using Identifiers;
 
 namespace Organisations
 {
-    public class OrganisationIdentifier: Identifier
+    public class OrganisationIdentifier: AutonomousAgentIdentifier
     {
-        new public virtual OrganisationIdentificationScheme Scheme     { get; protected set; }
-        new public virtual Organisation                     Identifies { get; protected set; }
+        public virtual Organisation Organisation { get; protected set; }
 
-        protected OrganisationIdentifier()
+        protected OrganisationIdentifier() : base()
         {
         }
 
         public OrganisationIdentifier(
-            OrganisationIdentificationScheme scheme,
-            string                           value,
-            Organisation                     identifies
-            ): base(
+            IdentificationScheme scheme,
+            string               tag,
+            Organisation         organisation
+            ) : base(
                 scheme,
-                value,
-                identifies)
+                tag,
+                organisation)
         {
-            Scheme     = scheme;
-            Value      = value;
-            Identifies = identifies;
+            Organisation = organisation;
         }
     }
 }

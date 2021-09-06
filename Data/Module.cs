@@ -51,7 +51,7 @@ namespace Data
 
             builder
                 .RegisterType<BranchLoader>()
-                .As<IEtl<IEnumerable<(Branch, Identifier)>>>()
+                .As<IEtl<IEnumerable<(Branch, AutonomousAgentIdentifier)>>>()
                 .SingleInstance();
 
             builder

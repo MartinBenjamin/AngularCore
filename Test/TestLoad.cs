@@ -134,7 +134,7 @@ namespace Test
         [Test]
         public async Task Branch()
         {
-            var branches = await _container.Resolve<IEtl<IEnumerable<(Branch, Identifier)>>>().ExecuteAsync();
+            var branches = await _container.Resolve<IEtl<IEnumerable<(Branch, AutonomousAgentIdentifier)>>>().ExecuteAsync();
             Assert.That(branches.Count, Is.GreaterThan(0));
 
             using(var scope = _container.BeginLifetimeScope())
@@ -146,7 +146,7 @@ namespace Test
                 var session = scope.Resolve<ISession>();
 
                 foreach(var (branch, identifier) in branches)
-                    Assert.That(session.Get<Identifier>(identifier).Identifies, Is.EqualTo(branch));
+                    Assert.That(session.Get<AutonomousAgentIdentifier>(identifier).AutonomousAgent, Is.EqualTo(branch));
             }
         }
 
@@ -214,7 +214,7 @@ namespace Test
             await _container.Resolve<IEtl<IEnumerable<Subdivision>>>().ExecuteAsync();
             await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
             await _container.Resolve<IEtl<IEnumerable<Currency>>>().ExecuteAsync();
-            await _container.Resolve<IEtl<IEnumerable<(Branch, Identifier)>>>().ExecuteAsync();
+            await _container.Resolve<IEtl<IEnumerable<(Branch, AutonomousAgentIdentifier)>>>().ExecuteAsync();
             await _container.Resolve<IEnumerable<IEtl<ClassificationScheme>>>().ForEachAsync(loader => loader.ExecuteAsync());
             await _container.Resolve<IEtl<IEnumerable<LifeCycle>>>().ExecuteAsync();
             //await new LegalEntityLoader(

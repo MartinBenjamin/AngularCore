@@ -1,4 +1,5 @@
 ﻿using Agents;
+using Identifiers;
 using NHibernate;
 using Organisations;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    public class BranchLoader: IEtl<IEnumerable<(Branch, Identifier)>>
+    public class BranchLoader: IEtl<IEnumerable<(Branch, AutonomousAgentIdentifier)>>
     {
         private readonly ICsvExtractor   _csvExtractor;
         private readonly ISessionFactory _sessionFactory;
@@ -20,7 +21,7 @@ namespace Data
             _sessionFactory = sessionFactory;
         }
 
-        async Task<IEnumerable<(Branch, Identifier)>> IEtl<IEnumerable<(Branch, Identifier)>>.ExecuteAsync()
+        async Task<IEnumerable<(Branch, AutonomousAgentIdentifier)>> IEtl<IEnumerable<(Branch, AutonomousAgentIdentifier)>>.ExecuteAsync()
         {
             var identificationScheme = new IdentificationScheme("OVS Branch");
             var extracted = await _csvExtractor.ExtractAsync(
@@ -34,7 +35,7 @@ namespace Data
 
                     return (
                         branch,
-                        new Identifier(
+                        new AutonomousAgentIdentifier(
                             identificationScheme,
                             record[1],
                             branch));

@@ -1,7 +1,7 @@
 ﻿using CommonDomainObjects;
 using System;
 
-namespace Agents
+namespace Identifiers
 {
     public class IdentificationScheme: Named<Guid>
     {
@@ -10,7 +10,7 @@ namespace Agents
         }
 
         public IdentificationScheme(
-            Guid   id,
+            Guid id,
             string name
             ) : base(
                 id,
@@ -27,3 +27,4 @@ namespace Agents
         }
     }
 }
+
