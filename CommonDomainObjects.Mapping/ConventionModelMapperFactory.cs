@@ -56,6 +56,7 @@ namespace CommonDomainObjects.Mapping
             mapper.AddMapping<AutonomousAgent                >();
             mapper.AddMapping<AutonomousAgentIdentifier      >();
             mapper.AddMapping<Organisation                   >();
+            mapper.AddMapping<OrganisationIdentifier         >();
             mapper.AddMapping<OrganisationalSubUnit          >();
             mapper.AddMapping<Branch                         >();
             mapper.AddMapping<Hierarchy                      >();

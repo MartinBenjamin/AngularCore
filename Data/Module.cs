@@ -1,5 +1,4 @@
-﻿using Agents;
-using Autofac;
+﻿using Autofac;
 using CommonDomainObjects;
 using FacilityAgreements;
 using Iso3166._1;
@@ -51,7 +50,7 @@ namespace Data
 
             builder
                 .RegisterType<BranchLoader>()
-                .As<IEtl<IEnumerable<(Branch, AutonomousAgentIdentifier)>>>()
+                .As<IEtl<IEnumerable<(Branch, OrganisationIdentifier)>>>()
                 .SingleInstance();
 
             builder
