@@ -2,7 +2,7 @@
 
 namespace Identifiers
 {
-    public abstract class Identifier
+    public class Identifier
     {
         public virtual IdentificationScheme Scheme { get; protected set; }
         public virtual string               Tag    { get; protected set; }
@@ -42,5 +42,25 @@ namespace Identifiers
             Identifier lhs,
             Identifier rhs
             ) => !(lhs == rhs);
+    }
+
+    public class Identifier<TIdentified>: Identifier where TIdentified: class
+    {
+        public virtual TIdentified Identified { get; protected set; }
+
+        protected Identifier(): base()
+        {
+        }
+
+        public Identifier(
+            IdentificationScheme scheme,
+            string               tag,
+            TIdentified          identified
+            ): base(
+                scheme,
+                tag)
+        {
+            Identified = identified;
+        }
     }
 }

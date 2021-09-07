@@ -10,13 +10,17 @@ namespace CommonDomainObjects.Mapping
                 keyMapper =>
                 {
                     keyMapper.Columns(
-                        columnMapper => columnMapper.Name("Scheme"),
-                        columnMapper => columnMapper.Name("Tag"   ));
+                        columnMapper => columnMapper.Name("SchemeId"),
+                        columnMapper => columnMapper.Name("Tag"     ));
                 });
 
             ManyToOne(
                 identifier => identifier.AutonomousAgent,
-                manyToOneMapper => manyToOneMapper.Unique(true));
+                manyToOneMapper =>
+                {
+                    manyToOneMapper.Column("IdentifiedId");
+                    manyToOneMapper.Unique(true);
+                });
         }
     }
 }

@@ -2,6 +2,7 @@
 using CommonDomainObjects;
 using Data;
 using FacilityAgreements;
+using Identifiers;
 using Iso3166._1;
 using Iso3166._2;
 using Iso4217;
@@ -145,7 +146,7 @@ namespace Test
                 var session = scope.Resolve<ISession>();
 
                 foreach(var (branch, identifier) in branches)
-                    Assert.That(session.Get<OrganisationIdentifier>(identifier).AutonomousAgent, Is.EqualTo(branch));
+                    Assert.That(session.Get<OrganisationIdentifier>(new Identifier(identifier.Scheme, identifier.Tag)).Organisation, Is.EqualTo(branch));
             }
         }
 
