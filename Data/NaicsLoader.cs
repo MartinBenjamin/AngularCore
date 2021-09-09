@@ -2,6 +2,7 @@
 using NHibernate;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Data
@@ -27,6 +28,12 @@ namespace Data
 
         async Task<ClassificationScheme> IEtl<ClassificationScheme>.ExecuteAsync()
         {
+            var descriptions = (await _csvExtractor.ExtractAsync(
+                "NAICS2017Descriptions.csv",
+                record => record.ToList())).ToDictionary(
+                record => record[0],
+                record => record[2] == "NULL" ? null : record[2]);
+
             var classifiers = await _csvExtractor.ExtractAsync(
                 "NAICS2017.csv",
                 record =>
@@ -37,7 +44,8 @@ namespace Data
                     return new NaicsClassifier(
                         Guid.NewGuid(),
                         record[2],
-                        new Range<int>(start, end));
+                        new Range<int>(start, end),
+                        descriptions[record[1]]);
                 });
 
             var parents = new NaicsClassifier[7];
