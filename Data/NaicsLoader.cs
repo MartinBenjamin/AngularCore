@@ -25,7 +25,6 @@ namespace Data
             _sessionFactory = sessionFactory;
         }
 
-
         async Task<ClassificationScheme> IEtl<ClassificationScheme>.ExecuteAsync()
         {
             var descriptions = (await _csvExtractor.ExtractAsync(
