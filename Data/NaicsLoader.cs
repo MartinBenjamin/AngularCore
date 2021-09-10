@@ -34,6 +34,17 @@ namespace Data
                 record => record[0],
                 record => record[2] == "NULL" ? null : record[2]);
 
+            var crossReferences = (
+                from crossReference in (await _csvExtractor.ExtractAsync(
+                "NAICS2017CrossReferences.csv",
+                record => record.ToList()))
+                group crossReference[1] by crossReference[0] into crossReferencesGroupedByCode
+                select crossReferencesGroupedByCode).ToDictionary(
+                    grouping => grouping.Key,
+                    grouping => grouping.ToList());
+
+            var emptyCrossReferences = new List<string>();
+
             var classifiers = await _csvExtractor.ExtractAsync(
                 "NAICS2017.csv",
                 record =>
@@ -41,11 +52,18 @@ namespace Data
                     var components = record[1].Split('-');
                     var start = int.Parse(components[0]);
                     var end   = components.Length == 1 ? start : int.Parse(components[1]);
+                    var range = new Range<int>(start, end);
+                    if(!crossReferences.TryGetValue(
+                        record[1],
+                        out var classifierCrossReferences))
+                        classifierCrossReferences = emptyCrossReferences;
+
                     return new NaicsClassifier(
                         Guid.NewGuid(),
                         record[2],
-                        new Range<int>(start, end),
-                        descriptions[record[1]]);
+                        range,
+                        descriptions[record[1]],
+                        classifierCrossReferences);
                 });
 
             var parents = new NaicsClassifier[7];

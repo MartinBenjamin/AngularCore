@@ -6,6 +6,11 @@ namespace CommonDomainObjects.Mapping
     {
         public NaicsClassifier()
         {
+            Bag(
+                naicsClassifier => naicsClassifier.CrossReferences,
+                bagMapper => bagMapper.Table("NaicsClassifierCrossReference"),
+                relation => relation.Element(
+                    elementMapper => elementMapper.Column("CrossReference")));
         }
     }
 }
