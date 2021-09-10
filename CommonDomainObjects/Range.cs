@@ -18,8 +18,8 @@ namespace CommonDomainObjects
         {
             if(end.CompareTo(start) < 0)
                 throw new ArgumentOutOfRangeException(
-                    "end",
-                    "end must be greater than or equal to start.");
+                    nameof(end),
+                    $"{ nameof(end) } must be greater than or equal to { nameof(start) }.");
 
             Start = start;
             End   = end;
@@ -91,8 +91,8 @@ namespace CommonDomainObjects
         {
             if(start.HasValue && end.HasValue && end.Value.CompareTo(start.Value) < 0)
                 throw new ArgumentOutOfRangeException(
-                    "end",
-                    "end must be greater than or equal to start.");
+                    nameof(end),
+                    $"{ nameof(end) } must be greater than or equal to { nameof(start) }.");
 
             Start = start;
             End   = end;
