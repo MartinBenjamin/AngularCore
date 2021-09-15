@@ -29,10 +29,10 @@ export interface IEavStore
     ObserveAttribute<TDomain = any, TRange = any>(attribute: string): Observable<[TDomain, TRange][]>;
     Observe<T extends [any, ...any[]]>(
         head: T,
-        ...body: Fact[]): Observable<{ [K in keyof T]: T[K] extends Variable<infer X> ? X : T[K]; }>
-    Query(
-        head: any[],
-        ...body: Fact[]): any[][];
+        ...body: Fact[]): Observable<{ [K in keyof T]: any; }[]>
+    Query<T extends [any, ...any[]]>(
+        head: T,
+        ...body: Fact[]): { [K in keyof T]: any; }[];
     NewEntity(): any;
     DeleteEntity(entity: any): void
     Add(

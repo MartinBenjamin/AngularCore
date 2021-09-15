@@ -173,10 +173,9 @@ export class EavStore implements IEavStore
         return IsConstant(value) ? facts.filter(fact => fact[2] === value) : facts;
     }
 
-    Query(
-        head: any[],
-        ...body: Fact[]
-        ): any[][]
+    Query<T extends [any, ...any[]]>(
+        head: T,
+        ...body: Fact[]): { [K in keyof T]: any; }[]
     {
         const headVariables = head.filter(term => IsVariable(term));
 
@@ -252,12 +251,12 @@ export class EavStore implements IEavStore
             }
         }
 
-        return outerArray.map(outer => head.map(term => (term in outer) ? outer[term] : term));
+        return outerArray.map(outer => <{ [K in keyof T]: any; }>head.map(term => (term in outer) ? outer[term] : term));
     }
 
     Observe<T extends [any, ...any[]]>(
         head   : T,
-        ...body: Fact[]): Observable<{ [K in keyof T]: T[K] extends Variable<infer X> ? X : T[K]; }>
+        ...body: Fact[]): Observable<{ [K in keyof T]: any; }[]>
     {
         //let x = this.Observe([1, 2, new Variable<number>('')]);
         //let y = this.Observe([1, 2, '', false]);
