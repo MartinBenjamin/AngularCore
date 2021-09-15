@@ -14,13 +14,22 @@ export interface AttributeSchema
     Cardinality   ?: Cardinality
 }
 
-export type MapToAny<T> = { [K in keyof T]: any };
+export class Parameter<T>
+{
+    constructor(
+        public Name: string
+        )
+    {
+    }
+}
 
 export interface IEavStore
 {
     ObserveEntities(): Observable<Set<any>>;
     ObserveAttribute<TDomain = any, TRange = any>(attribute: string): Observable<[TDomain, TRange][]>;
-    Observe<T extends [any, ...any[]]>(head: MapToAny<T>, ...body: Fact[]): Observable<T[]>;
+    Observe<T extends [any, ...any[]]>(
+        head: T,
+        ...body: Fact[]): Observable<{ [K in keyof T]: T[K] extends Parameter<infer X> ? X : T[K]; }>
     Query(
         head: any[],
         ...body: Fact[]): any[][];
