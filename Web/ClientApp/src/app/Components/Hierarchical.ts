@@ -1,10 +1,7 @@
-﻿interface IHierarchical<T>
-{
+export type Hierarchical<T> = T & {
     Parent  : Hierarchical<T>;
     Children: Hierarchical<T>[];
-}
-
-export type Hierarchical<T> = T & IHierarchical<T>;
+};
 
 export function Visit<T>(
     hierarchical: Hierarchical<T>,

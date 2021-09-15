@@ -1,5 +1,5 @@
 import { Observable, Subscriber } from 'rxjs';
-import { AttributeSchema, Cardinality, IEavStore, StoreSymbol } from './IEavStore';
+import { AttributeSchema, Cardinality, IEavStore, MapToAny, StoreSymbol } from './IEavStore';
 
 export type Fact = [any, string, any];
 
@@ -253,6 +253,15 @@ export class EavStore implements IEavStore
         }
 
         return outerArray.map(outer => head.map(term => (term in outer) ? outer[term] : term));
+    }
+
+    Observe<T extends [any, ...any[]]>(
+        head: MapToAny<T>,
+        ...body: Fact[]): Observable<T[]>
+    {
+        //let x = this.Observe([1, 2, '']);
+        //let y = this.Observe<[string, string, string]>([1, 2, '']);
+        return null;
     }
 
     NewEntity(): any
