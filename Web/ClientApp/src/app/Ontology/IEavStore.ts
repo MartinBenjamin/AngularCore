@@ -14,7 +14,7 @@ export interface AttributeSchema
     Cardinality   ?: Cardinality
 }
 
-export class Parameter<T>
+export class Variable<T>
 {
     constructor(
         public Name: string
@@ -29,7 +29,7 @@ export interface IEavStore
     ObserveAttribute<TDomain = any, TRange = any>(attribute: string): Observable<[TDomain, TRange][]>;
     Observe<T extends [any, ...any[]]>(
         head: T,
-        ...body: Fact[]): Observable<{ [K in keyof T]: T[K] extends Parameter<infer X> ? X : T[K]; }>
+        ...body: Fact[]): Observable<{ [K in keyof T]: T[K] extends Variable<infer X> ? X : T[K]; }>
     Query(
         head: any[],
         ...body: Fact[]): any[][];

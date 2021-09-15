@@ -1,5 +1,5 @@
 import { Observable, Subscriber } from 'rxjs';
-import { AttributeSchema, Cardinality, IEavStore, Parameter, StoreSymbol } from './IEavStore';
+import { AttributeSchema, Cardinality, IEavStore, Variable, StoreSymbol } from './IEavStore';
 
 export type Fact = [any, string, any];
 
@@ -257,9 +257,9 @@ export class EavStore implements IEavStore
 
     Observe<T extends [any, ...any[]]>(
         head   : T,
-        ...body: Fact[]): Observable<{ [K in keyof T]: T[K] extends Parameter<infer X> ? X : T[K]; }>
+        ...body: Fact[]): Observable<{ [K in keyof T]: T[K] extends Variable<infer X> ? X : T[K]; }>
     {
-        //let x = this.Observe([1, 2, new Parameter<number>('')]);
+        //let x = this.Observe([1, 2, new Variable<number>('')]);
         //let y = this.Observe([1, 2, '', false]);
         return null;
     }
