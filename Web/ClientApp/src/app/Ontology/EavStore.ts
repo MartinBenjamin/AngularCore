@@ -185,6 +185,9 @@ export class EavStore implements IEavStore
                 throw `Head variable not in body: ${headVariable}`;
             });
 
+        if(!body.length)
+            return head;
+
         let outerArray = [];
         for(const atom of body)
         {
@@ -477,7 +480,7 @@ export class EavStore implements IEavStore
         if(subscribers)
         {
             const attributeValues = this.Attribute(attribute);
-            //const attributeValues = <[any, any][]>this.Query(['?entity', '?value'], ['?entity', attribute, '?value']);
+            //const attributeValues = this.Query(['?entity', '?value'], ['?entity', attribute, '?value']);
             subscribers.forEach(subscriber => subscriber.next(attributeValues));
         }
     }
