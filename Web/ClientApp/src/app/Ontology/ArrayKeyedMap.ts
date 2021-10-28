@@ -86,7 +86,7 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>
         ): boolean
     {
         if(key.length === 0)
-            return this._map.get(ValueKey);
+            return this._map.has(ValueKey);
 
         const [first, ...rest] = key;
         const next: Map<any[], V> = this._map.get(first);
@@ -123,7 +123,7 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>
         next.set(
             rest,
             value);
-        this._size += next.size - beforeSize
+        this._size += next.size - beforeSize;
     }
 
     get size(): number
