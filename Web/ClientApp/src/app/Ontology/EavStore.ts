@@ -697,13 +697,13 @@ function SpliceMethodHandlerFactory(
                 argArray
                 ): any
             {
-                const result = targetMethod.call(
+                const result: any[] = targetMethod.call(
                     targetArray,
                     ...argArray);
                 if(store)
                 {
                     store.SuspendPublish();
-                    [...result].forEach(
+                    result.forEach(
                         deleted => store.Publish(
                             entity,
                             attribute,
@@ -722,36 +722,71 @@ function SpliceMethodHandlerFactory(
         };
 }
 
-export function ArrayProxyFactory(
+function methodHandlersFactory(
     store      : EavStore,
+    entity     : any,
     attribute  : string,
     targetArray: any[]
-    )
+    ): Map<PropertyKey, any>
 {
     const methodHandler = ArrayMethodHandlerFactory(
         store,
         attribute,
         targetArray);
 
-    const interceptors = new Map<PropertyKey, object>(
+    return new Map(
         [
             'push',
             'pop',
             'shift',
             'unshift',
-            'splice',
+            'splice'
         ].map(methodName => [methodName, new Proxy(
             Array.prototype[methodName],
             methodHandler)]));
-    let handler: ProxyHandler<[]> = {
+}
+
+function methodHandlersFactory2(
+    store      : EavStore,
+    entity     : any,
+    attribute  : string,
+    targetArray: any[]
+    ): Map<PropertyKey, ProxyHandler<{ (...args): any }>>
+{
+    const pushUnshiftMethodHandler = PushUnshiftMethodHandlerFactory(store, entity, attribute, targetArray);
+    const popShiftMethodHandler    = PopShiftMethodHandlerFactory   (store, entity, attribute, targetArray);
+    const spliceMethodHandler      = SpliceMethodHandlerFactory     (store, entity, attribute, targetArray);
+    return new Map<PropertyKey, any>(
+        [
+            ['push'   , new Proxy(Array.prototype['push'   ], pushUnshiftMethodHandler)],
+            ['pop'    , new Proxy(Array.prototype['pop'    ], popShiftMethodHandler   )],
+            ['shift'  , new Proxy(Array.prototype['shift'  ], popShiftMethodHandler   )],
+            ['unshift', new Proxy(Array.prototype['unshift'], pushUnshiftMethodHandler)],
+            ['splice' , new Proxy(Array.prototype['splice' ], spliceMethodHandler     )]
+        ]);
+}
+
+export function ArrayProxyFactory(
+    store      : EavStore,
+    attribute  : string,
+    targetArray: any[]
+    )
+{
+    const methodHandlers = methodHandlersFactory(
+        store,
+        null,
+        attribute,
+        targetArray);
+
+    const handler: ProxyHandler<[]> = {
         get: function(
             target,
             p
             ): any
         {
-            const interceptor = interceptors.get(p);
-            if(interceptor)
-                return interceptor;
+            const methodHandler = methodHandlers.get(p);
+            if(methodHandler)
+                return methodHandler;
 
             return target[p];
         },
