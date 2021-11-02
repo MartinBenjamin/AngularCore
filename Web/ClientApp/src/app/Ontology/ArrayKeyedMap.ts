@@ -1,8 +1,7 @@
-const ValueKey = Symbol("ValueKey")
-
 export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>
 {
-    private _map  = new Map();
+    private _value: V;
+    private _map  = new Map<any, ArrayKeyedMap<any[], V>>();
     private _size = 0;
 
     constructor(
@@ -18,7 +17,9 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>
 
     clear(): void
     {
+        this._value = undefined;
         this._map.clear();
+        this._size = 0;
     }
 
     delete(
@@ -27,14 +28,18 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>
     {
         if(key.length === 0)
         {
-            const deleted = this._map.delete(ValueKey);
-            if(deleted)
+            if(this._value !== undefined)
+            {
+                this._value = undefined;
                 this._size -= 1;
-            return deleted;
+                return true;
+            }
+
+            return false;
         }
 
         const [first, ...rest] = key;
-        const next: Map<any[], V> = this._map.get(first);
+        const next = this._map.get(first);
 
         if(next)
         {
@@ -74,10 +79,10 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>
         ): V
     {
         if(key.length === 0)
-            return this._map.get(ValueKey);
+            return this._value;
 
         const [first, ...rest] = key;
-        const next: Map<any[], V> = this._map.get(first);
+        const next = this._map.get(first);
         return next ? next.get(rest) : undefined;
     }
 
@@ -86,10 +91,10 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>
         ): boolean
     {
         if(key.length === 0)
-            return this._map.has(ValueKey);
+            return this._value !== undefined;
 
         const [first, ...rest] = key;
-        const next: Map<any[], V> = this._map.get(first);
+        const next = this._map.get(first);
         return next ? next.has(rest) : false;
     }
 
@@ -100,18 +105,15 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>
     {
         if(key.length === 0)
         {
-            if(!this._map.has(ValueKey))
+            if(this._value === undefined)
                 this._size += 1;
 
-            this._map.set(
-                ValueKey,
-                value);
-
+            this._value = value;
             return this;
         }
 
         const [first, ...rest] = key;
-        let next: Map<any[], V> = this._map.get(first);
+        let next = this._map.get(first);
         if(!next)
         {
             next = new ArrayKeyedMap();
@@ -138,31 +140,31 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>
 
     *entries(): IterableIterator<[K, V]>
     {
-        for(const [key, value] of this._map.entries())
-            if(key === ValueKey)
-                yield [<K>[], value];
+        if(this._value !== undefined)
+            yield [<K>[], this._value];
 
-            else for(const entry of value.entries())
-                yield [<K>[key, ...entry[0]], entry[1]];
+        for(const [key, next] of this._map.entries())
+            for(const [childKey, value] of next.entries())
+                yield [<K>[key, ...childKey], value];
     }
 
     *keys(): IterableIterator<K>
     {
-        for(const [key, value] of this._map.entries())
-            if(key === ValueKey)
-                yield <K>[];
+        if(this._value !== undefined)
+            yield <K>[];
 
-            else for(const childKey of value.keys())
+        for(const [key, next] of this._map.entries())
+            for(const childKey of next.keys())
                 yield <K>[key, ...childKey];
     }
 
     *values(): IterableIterator<V>
     {
-        for(const [key, value] of this._map.entries())
-            if(key === ValueKey)
-                yield value;
+        if(this._value !== undefined)
+            yield this._value;
 
-            else yield* value.values();
+        for(const next of this._map.values())
+            yield* next.values();
     }
 
     [Symbol.toStringTag]: string;
