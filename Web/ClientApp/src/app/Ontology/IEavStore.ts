@@ -14,15 +14,6 @@ export interface AttributeSchema
     Cardinality   ?: Cardinality
 }
 
-export class Variable<T>
-{
-    constructor(
-        public Name: string
-        )
-    {
-    }
-}
-
 export interface IEavStore
 {
     ObserveEntities(): Observable<Set<any>>;

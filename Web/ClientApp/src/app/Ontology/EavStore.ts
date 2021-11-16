@@ -1,5 +1,5 @@
 import { Observable, Subscriber } from 'rxjs';
-import { AttributeSchema, Cardinality, IEavStore, Variable, StoreSymbol } from './IEavStore';
+import { AttributeSchema, Cardinality, IEavStore, StoreSymbol } from './IEavStore';
 
 export type Fact = [any, string, any];
 
