@@ -274,11 +274,13 @@ export class EavStore implements IEavStore
         head   : T,
         ...body: Fact[]): Observable<{ [K in keyof T]: any; }[]>
     {
+        // Need to store fact patterns in a tree where blanks are wildcards.
         const rule: Rule = {
             Head: head,
             Body: body
         };
 
+        // Transform variables to blamks (undefined);
         const transformed = rule.Body.map(fact => <Fact>fact.map(element => IsVariable(element) ? undefined : element));
         return new Observable<{ [K in keyof T]: any; }[]>(
             subscriber =>
