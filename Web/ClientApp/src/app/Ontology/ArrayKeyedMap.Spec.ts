@@ -7,12 +7,12 @@ describe(
     () =>
     {
         describe(
-            "Given map = new ArrayKeyedMap([[[], 'A'], [[0], 'B'], [[0, 1], 'C'], [[0, 2], 'D']]):",
+            "Given entries: [any[], any][] = [[[], 'A'], [[0], 'B'], [[0, 1], 'C'], [[0, 2], 'D']] and map = new ArrayKeyedMap(entries):",
             () =>
             {
                 const entries: [any[], any][] = [[[], 'A'], [[0], 'B'], [[0, 1], 'C'], [[0, 2], 'D']];
                 const map = new ArrayKeyedMap(entries);
-                let assert = assertBuilder('map')(map);
+                let assert = assertBuilder('entries', 'map')(entries, map);
                 assert('map.size === 4');
                 assert('map.has([])');
                 assert('map.get([]) === \'A\'');
@@ -32,8 +32,15 @@ describe(
                 assert('[...map.keys()].some(key => key.length === [0].length && key.every((value, index) => value === [0][index]))');
                 assert('[...map.keys()].some(key => key.length === [0, 1].length && key.every((value, index) => value === [0, 1][index]))');
                 assert('[...map.keys()].some(key => key.length === [0, 2].length && key.every((value, index) => value === [0, 2][index]))');
+                assert('[...map.keys()].every(key => entries.some(entry => key.length === entry[0].length && key.every((value, index) => value === entry[0][index])))');
                 assert('[...map.values()].length === 4');
                 assert('[...map.values()].includes(\'A\')');
+                assert('[...map.values()].includes(\'B\')');
+                assert('[...map.values()].includes(\'C\')');
+                assert('[...map.values()].includes(\'D\')');
+                assert('![...map.values()].includes(\'E\')');
+                assert('[...map.values()].every(value => entries.map(entry => entry[1]).includes(value))');
+
             });
 
         describe(
