@@ -13,7 +13,9 @@ describe(
                 const entries: [any[], any][] = [[[], 'A'], [[0], 'B'], [[0, 1], 'C'], [[0, 2], 'D']];
                 const map = new ArrayKeyedMap(entries);
                 let assert = assertBuilder('entries', 'map')(entries, map);
-                assert('map.size === 4');
+                assert('map.size === entries.length');
+                assert('entries.every(entry => map.has(entry[0]))');
+                assert('entries.every(entry => map.get(entry[0]) === entry[1])');
                 assert('map.has([])');
                 assert('map.get([]) === \'A\'');
                 assert('map.has([0])');
