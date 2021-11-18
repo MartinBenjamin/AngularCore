@@ -29,19 +29,20 @@ describe(
                 assert('typeof map.get([0, 3]) === \'undefined\'');
                 assert('map.get([1, 2]) === undefined');
 
-                assert('[...map.keys()].length === 4');
+                assert('[...map.keys()].length === entries.length');
+                assert('[...map.keys()].every(key => entries.some(entry => key.length === entry[0].length && key.every((value, index) => value === entry[0][index])))');
                 assert('[...map.keys()].some(key => key.length === [].length && key.every((value, index) => value === [][index]))');
                 assert('[...map.keys()].some(key => key.length === [0].length && key.every((value, index) => value === [0][index]))');
                 assert('[...map.keys()].some(key => key.length === [0, 1].length && key.every((value, index) => value === [0, 1][index]))');
                 assert('[...map.keys()].some(key => key.length === [0, 2].length && key.every((value, index) => value === [0, 2][index]))');
-                assert('[...map.keys()].every(key => entries.some(entry => key.length === entry[0].length && key.every((value, index) => value === entry[0][index])))');
-                assert('[...map.values()].length === 4');
+
+                assert('[...map.values()].length === entries.length');
+                assert('[...map.values()].every(value => entries.map(entry => entry[1]).includes(value))');
                 assert('[...map.values()].includes(\'A\')');
                 assert('[...map.values()].includes(\'B\')');
                 assert('[...map.values()].includes(\'C\')');
                 assert('[...map.values()].includes(\'D\')');
                 assert('![...map.values()].includes(\'E\')');
-                assert('[...map.values()].every(value => entries.map(entry => entry[1]).includes(value))');
 
             });
 
