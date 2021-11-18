@@ -1,10 +1,25 @@
 import { Observable, Subscriber } from 'rxjs';
 import { AttributeSchema, Cardinality, IEavStore, StoreSymbol } from './IEavStore';
+import { ArrayKeyedMap } from './ArrayKeyedMap';
 
 export type Fact = [any, string, any];
 
 const IsVariable = element => typeof element === 'string' && element[0] === '?';
 const IsConstant = element => !(typeof element === 'undefined' || IsVariable(element));
+
+const BlankSymbol = Symbol('Blank');
+
+export interface Rule
+{
+    Head: [any, ...any[]],
+    Body: Fact[]
+}
+
+export interface RuleSubscriber
+{
+    Rule      : Rule,
+    Subscriber: Subscriber<[any, ...any[]][]>
+}
 
 export class EavStore implements IEavStore
 {
@@ -13,6 +28,7 @@ export class EavStore implements IEavStore
     private _ave                  : Map<PropertyKey, Map<any, any>>;
     private _entitiesSubscribers  : Subscriber<Set<any>>[] = [];
     private _attributeSubscribers = new Map<string, Subscriber<[any, any][]>[]>();
+    private _ruleSubscribers      = new ArrayKeyedMap<Fact, Set<RuleSubscriber>>();
     private _schema               : Map<string, AttributeSchema>;
     private _publishSuspended     : number;
     private _publishEntities      : boolean;
@@ -260,9 +276,55 @@ export class EavStore implements IEavStore
         head   : T,
         ...body: Fact[]): Observable<{ [K in keyof T]: any; }[]>
     {
-        //let x = this.Observe([1, 2, new Variable<number>('')]);
-        //let y = this.Observe([1, 2, '', false]);
-        return null;
+        const rule: Rule = {
+            Head: head,
+            Body: body
+        };
+
+        const transformed = rule.Body.map(fact => <Fact>fact.map(element => IsVariable(element) || typeof element === 'undefined' ? BlankSymbol : element));
+        return new Observable<{ [K in keyof T]: any; }[]>(
+            subscriber =>
+            {
+                const ruleSubscriber: RuleSubscriber =
+                {
+                    Rule      : rule,
+                    Subscriber: subscriber
+                };
+
+                transformed.forEach(
+                    fact =>
+                    {
+                        let ruleSubscribers = this._ruleSubscribers.get(fact);
+                        if(!ruleSubscribers)
+                        {
+                            ruleSubscribers = new Set<RuleSubscriber>();
+                            this._ruleSubscribers.set(
+                                fact,
+                                ruleSubscribers);
+                        }
+
+                        ruleSubscribers.add(ruleSubscriber);
+                    });
+
+
+                subscriber.add(
+                    () =>
+                    {
+                        transformed.forEach(
+                            fact =>
+                            {
+                                let ruleSubscribers = this._ruleSubscribers.get(fact);
+                                ruleSubscribers.delete(ruleSubscriber);
+                                if(!ruleSubscribers.size)
+                                    this._ruleSubscribers.delete(fact);
+                            });
+                    });
+
+                subscriber.next(
+                    <{ [K in keyof T]: any; }[]>this.Query(
+                        rule.Head,
+                        ...rule.Body));
+            });
     }
 
     NewEntity(): any
