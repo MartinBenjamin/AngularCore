@@ -157,7 +157,6 @@ export class EavStore implements IEavStore
                         facts.push([entity, attribute, value]);
                 }
             }
-
         }
         else for(const [entity, av] of this._eav)
             for(const [attribute, value] of av)
