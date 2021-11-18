@@ -1,8 +1,6 @@
 import { Observable, Subscriber } from 'rxjs';
-import { AttributeSchema, Cardinality, IEavStore, StoreSymbol } from './IEavStore';
 import { ArrayKeyedMap } from './ArrayKeyedMap';
-
-export type Fact = [any, PropertyKey, any];
+import { AttributeSchema, Cardinality, Fact, IEavStore, StoreSymbol } from './IEavStore';
 
 const IsVariable = element => typeof element === 'string' && element[0] === '?';
 const IsConstant = element => !(typeof element === 'undefined' || IsVariable(element));

@@ -1,5 +1,4 @@
 import { Observable } from 'rxjs';
-import { Fact } from './EavStore';
 
 export enum Cardinality
 {
@@ -13,6 +12,8 @@ export interface AttributeSchema
     UniqueIdentity?: boolean,
     Cardinality   ?: Cardinality
 }
+
+export type Fact = [any, PropertyKey, any];
 
 export interface IEavStore
 {
