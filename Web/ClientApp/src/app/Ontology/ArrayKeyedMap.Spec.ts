@@ -32,6 +32,8 @@ describe(
                 assert('[...map.keys()].some(key => key.length === [0].length && key.every((value, index) => value === [0][index]))');
                 assert('[...map.keys()].some(key => key.length === [0, 1].length && key.every((value, index) => value === [0, 1][index]))');
                 assert('[...map.keys()].some(key => key.length === [0, 2].length && key.every((value, index) => value === [0, 2][index]))');
+                assert('[...map.values()].length === 4');
+                assert('[...map.values()].includes(\'A\')');
             });
 
         describe(
