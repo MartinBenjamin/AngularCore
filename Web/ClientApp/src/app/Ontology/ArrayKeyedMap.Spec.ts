@@ -26,4 +26,18 @@ describe(
                 assert('typeof map.get([0, 3]) === \'undefined\'');
                 assert('map.get([1, 2]) === undefined');
             });
+
+        describe(
+            "Given map = new ArrayKeyedMap() and map.set([0, 1], 'A'):",
+            () =>
+            {
+                const map = new ArrayKeyedMap();
+                map.set(
+                    [0, 1],
+                    'A');
+                let assert = assertBuilder('map')(map);
+                assert('map.size === 1');
+                assert('map.has([0, 1])');
+                assert('map.get([0, 1]) === \'A\'');
+            });
     });
