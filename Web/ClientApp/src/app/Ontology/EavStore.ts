@@ -2,12 +2,10 @@ import { Observable, Subscriber } from 'rxjs';
 import { AttributeSchema, Cardinality, IEavStore, StoreSymbol } from './IEavStore';
 import { ArrayKeyedMap } from './ArrayKeyedMap';
 
-export type Fact = [any, string, any];
+export type Fact = [any, PropertyKey, any];
 
 const IsVariable = element => typeof element === 'string' && element[0] === '?';
 const IsConstant = element => !(typeof element === 'undefined' || IsVariable(element));
-
-const BlankSymbol = Symbol('Blank');
 
 export interface Rule
 {
@@ -281,7 +279,7 @@ export class EavStore implements IEavStore
             Body: body
         };
 
-        const transformed = rule.Body.map(fact => <Fact>fact.map(element => IsVariable(element) || typeof element === 'undefined' ? BlankSymbol : element));
+        const transformed = rule.Body.map(fact => <Fact>fact.map(element => IsVariable(element) ? undefined : element));
         return new Observable<{ [K in keyof T]: any; }[]>(
             subscriber =>
             {
