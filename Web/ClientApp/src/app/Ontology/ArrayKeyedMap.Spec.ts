@@ -44,6 +44,8 @@ describe(
                 assert('[...map.values()].includes(\'D\')');
                 assert('![...map.values()].includes(\'E\')');
 
+                assert('[...map.entries()].length === entries.length');
+                assert('[...map.entries()].every(entry0 => entries.some(entry1 => entry0[0].length === entry1[0].length && entry0[0].every((value, index) => value === entry1[0][index]) && entry0[1] === entry1[1]))');
             });
 
         describe(
