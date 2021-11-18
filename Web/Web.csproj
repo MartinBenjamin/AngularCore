@@ -113,6 +113,7 @@
     <None Remove="ClientApp\src\app\Ontology\Annotation.ts" />
     <None Remove="ClientApp\src\app\Ontology\AnnotationAssertion.ts" />
     <None Remove="ClientApp\src\app\Ontology\AnnotationProperty.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ArrayKeyedMap.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ArrayKeyedMap.ts" />
     <None Remove="ClientApp\src\app\Ontology\ArraySet.ts" />
     <None Remove="ClientApp\src\app\Ontology\assertBuilder.ts" />
@@ -398,6 +399,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Validate.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AddIndividuals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AnnotationAssertion.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ArrayKeyedMap.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ArrayKeyedMap.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ArraySet.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Assertion.ts" />

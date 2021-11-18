@@ -173,7 +173,7 @@ export class EavStore implements IEavStore
     }
 
     Query<T extends [any, ...any[]]>(
-        head: T,
+        head   : T,
         ...body: Fact[]): { [K in keyof T]: any; }[]
     {
         const headVariables = head.filter(term => IsVariable(term));
