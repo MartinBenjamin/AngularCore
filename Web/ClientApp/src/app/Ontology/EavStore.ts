@@ -573,6 +573,18 @@ export class EavStore implements IEavStore
         previousValue: any
         )
     {
+        Match(
+            this._ruleSubscribers,
+            [entity, attribute, value],
+            (ruleSubscribers: Set<RuleSubscriber>) =>
+            {
+            });
+        Match(
+            this._ruleSubscribers,
+            [entity, attribute, previousValue],
+            (ruleSubscribers: Set<RuleSubscriber>) =>
+            {
+            });
     }
 
     private Cardinality(
