@@ -1,8 +1,14 @@
-export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>
+interface TrieNode<TTrieNode extends TrieNode<TTrieNode, V>, V>
 {
-    private _value: V;
-    private _map  = new Map<any, ArrayKeyedMap<any[], V>>();
-    private _size = 0;
+    value   : V,
+    children: Map<any[], TrieNode<TTrieNode, V>>
+}
+
+export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>, TrieNode<ArrayKeyedMap<K, V>, V>
+{
+    private _value     : V;
+    private _children  = new Map<any, ArrayKeyedMap<any[], V>>();
+    private _size      = 0;
 
     constructor(
         entries?: Iterable<[K, V]>
@@ -18,7 +24,7 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>
     clear(): void
     {
         this._value = undefined;
-        this._map.clear();
+        this._children.clear();
         this._size = 0;
     }
 
@@ -39,15 +45,15 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>
         }
 
         const [first, ...rest] = key;
-        const next = this._map.get(first);
+        const child = this._children.get(first);
 
-        if(next)
+        if(child)
         {
-            const deleted = next.delete(rest);
+            const deleted = child.delete(rest);
             if(deleted)
             {
-                if(!next.size)
-                    this._map.delete(first);
+                if(!child.size)
+                    this._children.delete(first);
 
                 this._size -= 1;
             }
@@ -82,8 +88,8 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>
             return this._value;
 
         const [first, ...rest] = key;
-        const next = this._map.get(first);
-        return next ? next.get(rest) : undefined;
+        const child = this._children.get(first);
+        return child ? child.get(rest) : undefined;
     }
 
     has(
@@ -94,8 +100,8 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>
             return this._value !== undefined;
 
         const [first, ...rest] = key;
-        const next = this._map.get(first);
-        return next ? next.has(rest) : false;
+        const child = this._children.get(first);
+        return child ? child.has(rest) : false;
     }
 
     set(
@@ -113,19 +119,19 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>
         }
 
         const [first, ...rest] = key;
-        let next = this._map.get(first);
-        if(!next)
+        let child = this._children.get(first);
+        if(!child)
         {
-            next = new ArrayKeyedMap();
-            this._map.set(
+            child = new ArrayKeyedMap();
+            this._children.set(
                 first,
-                next);
+                child);
         }
-        const beforeSize = next.size;
-        next.set(
+        const beforeSize = child.size;
+        child.set(
             rest,
             value);
-        this._size += next.size - beforeSize;
+        this._size += child.size - beforeSize;
     }
 
     get size(): number
@@ -143,8 +149,8 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>
         if(this._value !== undefined)
             yield [<K>[], this._value];
 
-        for(const [key, next] of this._map.entries())
-            for(const [childKey, value] of next.entries())
+        for(const [key, child] of this._children.entries())
+            for(const [childKey, value] of child.entries())
                 yield [<K>[key, ...childKey], value];
     }
 
@@ -153,8 +159,8 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>
         if(this._value !== undefined)
             yield <K>[];
 
-        for(const [key, next] of this._map.entries())
-            for(const childKey of next.keys())
+        for(const [key, child] of this._children.entries())
+            for(const childKey of child.keys())
                 yield <K>[key, ...childKey];
     }
 
@@ -163,9 +169,19 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>
         if(this._value !== undefined)
             yield this._value;
 
-        for(const next of this._map.values())
-            yield* next.values();
+        for(const child of this._children.values())
+            yield* child.values();
     }
 
     [Symbol.toStringTag]: string;
+
+    get value(): V
+    {
+        return this._value;
+    }
+
+    get children(): Map<any, ArrayKeyedMap<any[], V>>
+    {
+        return this._children;
+    }
 }
