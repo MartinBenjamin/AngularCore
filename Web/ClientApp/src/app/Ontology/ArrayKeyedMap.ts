@@ -1,4 +1,4 @@
-interface TrieNode<TTrieNode extends TrieNode<TTrieNode, V>, V>
+export interface TrieNode<TTrieNode extends TrieNode<TTrieNode, V>, V>
 {
     value   : V,
     children: Map<any[], TrieNode<TTrieNode, V>>

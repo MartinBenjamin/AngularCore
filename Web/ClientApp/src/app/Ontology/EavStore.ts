@@ -1,5 +1,5 @@
 import { Observable, Subscriber } from 'rxjs';
-import { ArrayKeyedMap } from './ArrayKeyedMap';
+import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
 import { AttributeSchema, Cardinality, Fact, IEavStore, StoreSymbol } from './IEavStore';
 
 const IsVariable = element => typeof element === 'string' && element[0] === '?';
@@ -15,6 +15,28 @@ export interface RuleSubscriber
 {
     Rule      : Rule,
     Subscriber: Subscriber<[any, ...any[]][]>
+}
+
+function Match<TTrieNode extends TrieNode<TTrieNode, V>, V>(
+    trieNode: TTrieNode,
+    path    : any[],
+    callback: (value: V) => void): void
+{
+    if(path.length === 0)
+    {
+        if(trieNode.value !== undefined)
+            callback(trieNode.value);
+
+        return;
+    }
+
+    const [first, ...rest] = path;
+    const child = trieNode.children[first];
+    if(child)
+        Match(
+            child,
+            rest,
+            callback);
 }
 
 export class EavStore implements IEavStore
