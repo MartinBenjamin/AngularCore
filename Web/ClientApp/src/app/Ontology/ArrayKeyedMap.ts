@@ -6,9 +6,9 @@ interface TrieNode<TTrieNode extends TrieNode<TTrieNode, V>, V>
 
 export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>, TrieNode<ArrayKeyedMap<K, V>, V>
 {
-    private _value     : V;
-    private _children  = new Map<any, ArrayKeyedMap<any[], V>>();
-    private _size      = 0;
+    private _value    : V;
+    private _children = new Map<any, ArrayKeyedMap<any[], V>>();
+    private _size     = 0;
 
     constructor(
         entries?: Iterable<[K, V]>
