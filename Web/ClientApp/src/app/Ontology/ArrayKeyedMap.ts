@@ -8,7 +8,6 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>, TrieNode<Ar
 {
     private _value    : V;
     private _children = new Map<any, ArrayKeyedMap<any[], V>>();
-    private _size     = 0;
 
     constructor(
         entries?: Iterable<[K, V]>
@@ -25,7 +24,6 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>, TrieNode<Ar
     {
         this._value = undefined;
         this._children.clear();
-        this._size = 0;
     }
 
     delete(
@@ -37,7 +35,6 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>, TrieNode<Ar
             if(this._value !== undefined)
             {
                 this._value = undefined;
-                this._size -= 1;
                 return true;
             }
 
@@ -50,13 +47,9 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>, TrieNode<Ar
         if(child)
         {
             const deleted = child.delete(rest);
-            if(deleted)
-            {
-                if(!child.size)
-                    this._children.delete(first);
+            if(deleted && !child.size)
+                this._children.delete(first);
 
-                this._size -= 1;
-            }
             return deleted;
         }
         return false;
@@ -111,9 +104,6 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>, TrieNode<Ar
     {
         if(key.length === 0)
         {
-            if(this._value === undefined)
-                this._size += 1;
-
             this._value = value;
             return this;
         }
@@ -127,16 +117,17 @@ export class ArrayKeyedMap<K extends any[], V> implements Map<K, V>, TrieNode<Ar
                 first,
                 child);
         }
-        const beforeSize = child.size;
+
         child.set(
             rest,
             value);
-        this._size += child.size - beforeSize;
     }
 
     get size(): number
     {
-        return this._size;
+        let size = this._value === undefined ? 0 : 1;
+        this._children.forEach(child => size += child.size);
+        return size;
     }
 
     [Symbol.iterator](): IterableIterator<[K, V]>
