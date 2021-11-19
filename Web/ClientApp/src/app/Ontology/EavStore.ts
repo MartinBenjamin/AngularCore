@@ -278,7 +278,7 @@ export class EavStore implements IEavStore
             Body: body
         };
 
-        // Transform variables to blamks (undefined);
+        // Transform variables to blanks (undefined);
         const transformed = rule.Body.map(fact => <Fact>fact.map(element => IsVariable(element) ? undefined : element));
         return new Observable<{ [K in keyof T]: any; }[]>(
             subscriber =>
