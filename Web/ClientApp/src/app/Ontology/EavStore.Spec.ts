@@ -95,6 +95,9 @@ describe(
                 assert('Store(e) === store');
                 assert('Store(e.a2[0]) === store');
 
+                assert("store.Query(['?result']).length === 1");
+                assert("store.Query(['?result'])[0].length === 1");
+                assert("store.Query(['?result'])[0][0] === '?result'");
                 assert("store.Query(['?result'], [e, 'a1', '?result']).length === 1");
                 assert("store.Query(['?result'], [e, 'a1', '?result'])[0].length === 1");
                 assert("store.Query(['?result'], [e, 'a1', '?result'])[0][0] === e.a1");

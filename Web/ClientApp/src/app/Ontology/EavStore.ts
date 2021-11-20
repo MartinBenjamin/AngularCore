@@ -210,84 +210,44 @@ export class EavStore implements IEavStore
         head   : T,
         ...body: Fact[]): { [K in keyof T]: any; }[]
     {
-        const headVariables = head.filter(term => IsVariable(term));
-
-        headVariables.filter(headVariable => body.every(atom => !atom.includes(headVariable))).forEach(
-            headVariable =>
-            {
-                throw `Head variable not in body: ${headVariable}`;
-            });
-
-        if(!body.length)
-            return head;
-
-        let outerArray = [];
+        let substitutions = [{}];
         for(const atom of body)
         {
-            if(atom === body[0])
-                for(const inner of this.Facts(atom))
+            let count = substitutions.length;
+            while(count--)
+            {
+                const substitution = substitutions.shift();
+                // Substitute known variables.
+                const queryPattern = <Fact>atom.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term);
+                for(const fact of this.Facts(queryPattern))
                 {
-                    const combined = atom.reduce(
-                        (previousValue, term, termIndex) =>
+                    const combined = queryPattern.reduce(
+                        (substitution, term, termIndex) =>
                         {
-                            if(!previousValue)
-                                return previousValue;
+                            if(!substitution)
+                                return substitution;
 
                             if(IsVariable(term))
                             {
-                                if(typeof previousValue[term] === 'undefined')
-                                    previousValue[term] = inner[termIndex];
+                                if(typeof substitution[term] === 'undefined')
+                                    substitution[term] = fact[termIndex];
 
-                                else if(previousValue[term] !== inner[termIndex])
-                                    // Inner does not match query pattern.
+                                else if(substitution[term] !== fact[termIndex])
+                                    // Fact does not match query pattern.
                                     return null;
                             }
 
-                            return previousValue;
+                            return substitution;
                         },
-                        {});
+                        { ...substitution });
 
                     if(combined)
-                        outerArray.push(combined);
-                }
-            else
-            {
-                let count = outerArray.length;
-                while(count--)
-                {
-                    const outer = outerArray.shift();
-                    // Substitute known variables.
-                    const queryPattern = <Fact>atom.map(term => (term in outer) ? outer[term] : term);
-                    for(const inner of this.Facts(queryPattern))
-                    {
-                        const combined = queryPattern.reduce(
-                            (previousValue, term, termIndex) =>
-                            {
-                                if(!previousValue)
-                                    return previousValue;
-
-                                if(IsVariable(term))
-                                {
-                                    if(typeof previousValue[term] === 'undefined')
-                                        previousValue[term] = inner[termIndex];
-
-                                    else if(previousValue[term] !== inner[termIndex])
-                                        // Inner does not match query pattern.
-                                        return null;
-                                }
-
-                                return previousValue;
-                            },
-                            { ...outer });
-
-                        if(combined)
-                            outerArray.push(combined);
-                    }
+                        substitutions.push(combined);
                 }
             }
         }
 
-        return outerArray.map(outer => <{ [K in keyof T]: any; }>head.map(term => (term in outer) ? outer[term] : term));
+        return substitutions.map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
     }
 
     Observe<T extends [any, ...any[]]>(
