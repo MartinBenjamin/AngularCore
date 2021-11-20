@@ -158,24 +158,20 @@ export class EavStore implements IEavStore
                 if(IsConstant(attribute))
                 {
                     const value = av.get(attribute);
-                    if(value)
-                    {
-                        if(value instanceof Array)
-                            facts.push(...value.map<Fact>(value => [entity, attribute, value]));
+                    if(value instanceof Array)
+                        facts.push(...value.map<Fact>(value => [entity, attribute, value]));
 
-                        else if(typeof value !== 'undefined' && value !== null)
-                            facts.push([entity, attribute, value]);
-                    }
+                    else if(typeof value !== 'undefined' && value !== null)
+                        facts.push([entity, attribute, value]);
                 }
                 else for(const [attribute, value] of av)
-                    if(typeof attribute === 'string')
-                    {
-                        if(value instanceof Array)
-                            facts.push(...value.map<Fact>(value => [entity, attribute, value]));
+                {
+                    if(value instanceof Array)
+                        facts.push(...value.map<Fact>(value => [entity, attribute, value]));
 
-                        else if(typeof value !== 'undefined' && value !== null)
-                            facts.push([entity, attribute, value]);
-                    }
+                    else if(typeof value !== 'undefined' && value !== null)
+                        facts.push([entity, attribute, value]);
+                }
         }
         else if(IsConstant(attribute))
         {
@@ -194,14 +190,13 @@ export class EavStore implements IEavStore
         }
         else for(const [entity, av] of this._eav)
             for(const [attribute, value] of av)
-                if(typeof attribute === 'string')
-                {
-                    if(value instanceof Array)
-                        facts.push(...value.map<Fact>(value => [entity, attribute, value]));
+            {
+                if(value instanceof Array)
+                    facts.push(...value.map<Fact>(value => [entity, attribute, value]));
 
-                    else if(typeof value !== 'undefined' && value !== null)
-                        facts.push([entity, attribute, value]);
-                }
+                else if(typeof value !== 'undefined' && value !== null)
+                    facts.push([entity, attribute, value]);
+            }
 
         return IsConstant(value) ? facts.filter(fact => fact[2] === value) : facts;
     }
