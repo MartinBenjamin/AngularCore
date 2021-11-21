@@ -1,9 +1,8 @@
-const ValueKey = Symbol("ValueKey")
+import { ArrayKeyedMap } from './ArrayKeyedMap';
 
-export class ArraySet<T extends any[]> implements Set<T>
+export class ArraySet implements Set<any[]>
 {
-    private _map  = new Map();
-    private _size = 0;
+    private _map = new ArrayKeyedMap<any[], any[]>();
 
     constructor(
         values?: Iterable<T>
@@ -15,33 +14,13 @@ export class ArraySet<T extends any[]> implements Set<T>
     }
 
     add(
-        value: T
+        value: any[]
         ): this
     {
-        if(value.length === 0)
-        {
-            if(!this._map.has(ValueKey))
-                this._size += 1;
-
-            this._map.set(
-                ValueKey,
-                null);
-
-            return this;
-        }
-
-        const [first, ...rest] = value;
-        let next: Set<any[]> = this._map.get(first);
-        if(!next)
-        {
-            next = new ArraySet();
-            this._map.set(
-                first,
-                next);
-        }
-        const beforeSize = next.size;
-        next.add(rest);
-        this._size += next.size - beforeSize;
+        this._map.set(
+            value,
+            value);
+        return this;
     }
 
     clear(): void
@@ -50,37 +29,14 @@ export class ArraySet<T extends any[]> implements Set<T>
     }
 
     delete(
-        value: T
+        value: any[]
         ): boolean
     {
-        if(value.length === 0)
-        {
-            const deleted = this._map.delete(ValueKey);
-            if(deleted)
-                this._size -= 1;
-            return deleted;
-        }
-
-        const [first, ...rest] = value;
-        const next: Set<any[]> = this._map.get(first);
-
-        if(next)
-        {
-            const deleted = next.delete(rest);
-            if(deleted)
-            {
-                if(!next.size)
-                    this._map.delete(first);
-
-                this._size -= 1;
-            }
-            return deleted;
-        }
-        return false;
+        return this._map.delete(value);
     }
 
     forEach(
-        callbackfn: (value: T, key: T, set: Set<T>) => void,
+        callbackfn: (value: any[], key: any[], set: Set<any[]>) => void,
         thisArg?  : any
         ): void
     {
@@ -99,46 +55,36 @@ export class ArraySet<T extends any[]> implements Set<T>
     }
 
     has(
-        value: T
+        value: any[]
         ): boolean
     {
-        if(value.length === 0)
-            return this._map.has(ValueKey);
-
-        const [first, ...rest] = value;
-        const next: Set<any[]> = this._map.get(first);
-        return next ? next.has(rest) : false;
+        return this._map.has(value);
     }
 
     get size(): number
     {
-        return this._size;
+        return this._map.size;
     }
 
-    [Symbol.iterator](): IterableIterator<T>
+    [Symbol.iterator](): IterableIterator<any[]>
     {
         return this.values();
     }
 
-    *entries(): IterableIterator<[T, T]>
+    *entries(): IterableIterator<[any[], any[]]>
     {
         for(const value of this.values())
             yield [value, value];
     }
 
-    keys(): IterableIterator<T>
+    keys(): IterableIterator<any[]>
     {
         return this.values();
     }
 
-    *values(): IterableIterator<T>
+    values(): IterableIterator<any[]>
     {
-        for(const [key, value] of this._map.entries())
-            if(key === ValueKey)
-                yield <T>[];
-
-            else for(const childValue of value.values())
-                yield <T>[key, ...childValue];
+        return this._map.values();
     }
 
     [Symbol.toStringTag]: string;
