@@ -2,8 +2,8 @@ import { Observable, Subscriber } from 'rxjs';
 import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
 import { AttributeSchema, Cardinality, Fact, IEavStore, StoreSymbol } from './IEavStore';
 
-const IsVariable = element => typeof element === 'string' && element[0] === '?';
-const IsConstant = element => !(typeof element === 'undefined' || IsVariable(element));
+export const IsVariable = element => typeof element === 'string' && element[0] === '?';
+export const IsConstant = element => !(typeof element === 'undefined' || IsVariable(element));
 
 export interface Rule
 {
@@ -11,7 +11,7 @@ export interface Rule
     Body: Fact[]
 }
 
-export interface RuleSubscriber
+export interface AtomSubscriber
 {
     Rule      : Rule,
     Subscriber: Subscriber<[any, ...any[]][]>
@@ -46,7 +46,7 @@ export class EavStore implements IEavStore
     private _ave                  : Map<PropertyKey, Map<any, any>>;
     private _entitiesSubscribers  : Subscriber<Set<any>>[] = [];
     private _attributeSubscribers = new Map<string, Subscriber<[any, any][]>[]>();
-    private _ruleSubscribers      = new ArrayKeyedMap<Fact, Set<RuleSubscriber>>();
+    private _atomSubscribers      = new ArrayKeyedMap<Fact, Set<AtomSubscriber>>();
     private _schema               : Map<string, AttributeSchema>;
     private _publishSuspended     : number;
     private _publishEntities      : boolean;
@@ -256,42 +256,42 @@ export class EavStore implements IEavStore
         };
 
         // Transform variables to blanks (undefined);
-        const transformed = rule.Body.map(fact => <Fact>fact.map(element => IsVariable(element) ? undefined : element));
+        const atoms = rule.Body.map(atom => <Fact>atom.map(element => IsVariable(element) ? undefined : element));
         return new Observable<{ [K in keyof T]: any; }[]>(
             subscriber =>
             {
-                const ruleSubscriber: RuleSubscriber =
+                const atomSubscriber: AtomSubscriber =
                 {
                     Rule      : rule,
                     Subscriber: subscriber
                 };
 
-                transformed.forEach(
-                    fact =>
+                atoms.forEach(
+                    atom =>
                     {
-                        let ruleSubscribers = this._ruleSubscribers.get(fact);
-                        if(!ruleSubscribers)
+                        let subscribers = this._atomSubscribers.get(atom);
+                        if(!subscribers)
                         {
-                            ruleSubscribers = new Set<RuleSubscriber>();
-                            this._ruleSubscribers.set(
-                                fact,
-                                ruleSubscribers);
+                            subscribers = new Set<AtomSubscriber>();
+                            this._atomSubscribers.set(
+                                atom,
+                                subscribers);
                         }
 
-                        ruleSubscribers.add(ruleSubscriber);
+                        subscribers.add(atomSubscriber);
                     });
 
 
                 subscriber.add(
                     () =>
                     {
-                        transformed.forEach(
-                            fact =>
+                        atoms.forEach(
+                            atom =>
                             {
-                                let ruleSubscribers = this._ruleSubscribers.get(fact);
-                                ruleSubscribers.delete(ruleSubscriber);
-                                if(!ruleSubscribers.size)
-                                    this._ruleSubscribers.delete(fact);
+                                let subscribers = this._atomSubscribers.get(atom);
+                                subscribers.delete(atomSubscriber);
+                                if(!subscribers.size)
+                                    this._atomSubscribers.delete(atom);
                             });
                     });
 
@@ -529,15 +529,15 @@ export class EavStore implements IEavStore
         )
     {
         Match(
-            this._ruleSubscribers,
+            this._atomSubscribers,
             [entity, attribute, value],
-            (ruleSubscribers: Set<RuleSubscriber>) =>
+            (atomSubscribers: Set<AtomSubscriber>) =>
             {
             });
         Match(
-            this._ruleSubscribers,
+            this._atomSubscribers,
             [entity, attribute, previousValue],
-            (ruleSubscribers: Set<RuleSubscriber>) =>
+            (atomSubscribers: Set<AtomSubscriber>) =>
             {
             });
     }

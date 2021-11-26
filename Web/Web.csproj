@@ -118,6 +118,7 @@
     <None Remove="ClientApp\src\app\Ontology\ArraySet.ts" />
     <None Remove="ClientApp\src\app\Ontology\assertBuilder.ts" />
     <None Remove="ClientApp\src\app\Ontology\Assertion.ts" />
+    <None Remove="ClientApp\src\app\Ontology\Atom.ts" />
     <None Remove="ClientApp\src\app\Ontology\Axiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\BuiltIn.ts" />
     <None Remove="ClientApp\src\app\Ontology\Class.Spec.ts" />
@@ -567,6 +568,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Ontology.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Property.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\PropertyRestriction.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\Atom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ReservedVocabulary.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\PrefixIris.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\SubClassOf.Spec.ts" />
