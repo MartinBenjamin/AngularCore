@@ -1,4 +1,4 @@
-import { Observable, Subscriber } from 'rxjs';
+import { combineLatest, Observable, Subscriber } from 'rxjs';
 import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
 import { AttributeSchema, Cardinality, Fact, IEavStore, StoreSymbol } from './IEavStore';
 
@@ -13,8 +13,8 @@ export interface Rule
 
 export interface AtomSubscriber
 {
-    Rule      : Rule,
-    Subscriber: Subscriber<[any, ...any[]][]>
+    Atom      : Fact,
+    Subscriber: Subscriber<Fact[]>
 }
 
 function Match<TTrieNode extends TrieNode<TTrieNode, V>, V>(
@@ -205,101 +205,127 @@ export class EavStore implements IEavStore
         head   : T,
         ...body: Fact[]): { [K in keyof T]: any; }[]
     {
-        let substitutions = [{}];
-        for(const atom of body)
-        {
-            let count = substitutions.length;
-            while(count--)
+        return body.reduce(
+            (substitutions, atom) =>
             {
-                const substitution = substitutions.shift();
-                // Substitute known variables.
-                const queryPattern = <Fact>atom.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term);
-                for(const fact of this.Facts(queryPattern))
+                let count = substitutions.length;
+                while(count--)
                 {
-                    const combined = queryPattern.reduce(
-                        (substitution, term, termIndex) =>
-                        {
-                            if(!substitution)
-                                return substitution;
-
-                            if(IsVariable(term))
+                    const substitution = substitutions.shift();
+                    // Substitute known variables.
+                    const updatedAtom = <Fact>atom.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term);
+                    for(const fact of this.Facts(updatedAtom))
+                    {
+                        const combined = updatedAtom.reduce(
+                            (substitution, term, termIndex) =>
                             {
-                                if(typeof substitution[term] === 'undefined')
-                                    substitution[term] = fact[termIndex];
+                                if(!substitution)
+                                    return substitution;
 
-                                else if(substitution[term] !== fact[termIndex])
-                                    // Fact does not match query pattern.
-                                    return null;
-                            }
+                                if(IsVariable(term))
+                                {
+                                    if(typeof substitution[term] === 'undefined')
+                                        substitution[term] = fact[termIndex];
 
-                            return substitution;
-                        },
-                        { ...substitution });
+                                    else if(substitution[term] !== fact[termIndex])
+                                        // Fact does not match query pattern.
+                                        return null;
+                                }
 
-                    if(combined)
-                        substitutions.push(combined);
+                                return substitution;
+                            },
+                            { ...substitution });
+
+                        if(combined)
+                            substitutions.push(combined);
+                    }
                 }
-            }
-        }
 
-        return substitutions.map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
+                return substitutions;
+            },
+            [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
+    }
+
+    ObserveAtom(
+        atom: Fact
+        ): Observable<Fact[]>
+    {
+        return new Observable<Fact[]>(
+            subscriber =>
+            {
+                const atomSubscriber: AtomSubscriber =
+                {
+                    Atom      : atom,
+                    Subscriber: subscriber
+                };
+
+                let key = <Fact>atom.map(element => IsVariable(element) ? undefined : element);
+                let subscribers = this._atomSubscribers.get(key);
+                if(!subscribers)
+                {
+                    subscribers = new Set<AtomSubscriber>();
+                    this._atomSubscribers.set(
+                        key,
+                        subscribers);
+                }
+
+                subscribers.add(atomSubscriber);
+
+                subscriber.add(
+                    () =>
+                    {
+                        subscribers.delete(atomSubscriber);
+                        if(!subscribers.size)
+                            this._atomSubscribers.delete(atom);
+                    });
+
+                subscriber.next(this.Facts(atom));
+            });
     }
 
     Observe<T extends [any, ...any[]]>(
         head   : T,
         ...body: Fact[]): Observable<{ [K in keyof T]: any; }[]>
     {
-        // Need to store fact patterns in a tree where blanks are wildcards.
-        const rule: Rule = {
-            Head: head,
-            Body: body
-        };
-
-        // Transform variables to blanks (undefined);
-        const atoms = rule.Body.map(atom => <Fact>atom.map(element => IsVariable(element) ? undefined : element));
-        return new Observable<{ [K in keyof T]: any; }[]>(
-            subscriber =>
-            {
-                const atomSubscriber: AtomSubscriber =
+        return combineLatest(
+            body.map(atom => this.ObserveAtom(atom)),
+            (...facts) => body.reduce(
+                (substitutions, atom, atomIndex) =>
                 {
-                    Rule      : rule,
-                    Subscriber: subscriber
-                };
-
-                atoms.forEach(
-                    atom =>
+                    let count = substitutions.length;
+                    while(count--)
                     {
-                        let subscribers = this._atomSubscribers.get(atom);
-                        if(!subscribers)
+                        const substitution = substitutions.shift();
+                        for(const fact of facts[atomIndex])
                         {
-                            subscribers = new Set<AtomSubscriber>();
-                            this._atomSubscribers.set(
-                                atom,
-                                subscribers);
+                            const combined = atom.reduce(
+                                (substitution, term, termIndex) =>
+                                {
+                                    if(!substitution)
+                                        return substitution;
+
+                                    if(IsVariable(term))
+                                    {
+                                        if(typeof substitution[term] === 'undefined')
+                                            substitution[term] = fact[termIndex];
+
+                                        else if(substitution[term] !== fact[termIndex])
+                                            // Fact does not match query pattern.
+                                            return null;
+                                    }
+
+                                    return substitution;
+                                },
+                                { ...substitution });
+
+                            if(combined)
+                                substitutions.push(combined);
                         }
+                    }
 
-                        subscribers.add(atomSubscriber);
-                    });
-
-
-                subscriber.add(
-                    () =>
-                    {
-                        atoms.forEach(
-                            atom =>
-                            {
-                                let subscribers = this._atomSubscribers.get(atom);
-                                subscribers.delete(atomSubscriber);
-                                if(!subscribers.size)
-                                    this._atomSubscribers.delete(atom);
-                            });
-                    });
-
-                subscriber.next(
-                    <{ [K in keyof T]: any; }[]>this.Query(
-                        rule.Head,
-                        ...rule.Body));
-            });
+                    return substitutions;
+                },
+                [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term)));
     }
 
     NewEntity(): any
