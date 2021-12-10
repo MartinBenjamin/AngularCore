@@ -52,16 +52,16 @@ namespace Data
             using(var session = _sessionFactory.OpenSession())
             using(var transaction = session.BeginTransaction())
             {
-                foreach(var identificationScheme in _identificationSchemes)
-                    await session.SaveAsync(identificationScheme.Item1);
+                foreach(var (identificationScheme, _) in _identificationSchemes)
+                    await session.SaveAsync(identificationScheme);
 
                 foreach(var country in countries)
                 {
                     await session.SaveAsync(country);
-                    foreach(var identificationScheme in _identificationSchemes)
+                    foreach(var (identificationScheme, tagFactory) in _identificationSchemes)
                         await session.SaveAsync(new GeographicRegionIdentifier(
-                            identificationScheme.Item1,
-                            identificationScheme.Item2(country),
+                            identificationScheme,
+                            tagFactory(country),
                             country));
                 }
                 await transaction.CommitAsync();
