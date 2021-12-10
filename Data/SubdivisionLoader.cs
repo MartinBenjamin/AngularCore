@@ -69,7 +69,7 @@ namespace Data
                 await subdivisions.ForEachAsync(
                     subdivision => subdivision.VisitAsync(geographicRegion => session.SaveAsync(geographicRegion)));
 
-                transaction.Commit();
+                await transaction.CommitAsync();
 
                 IList<Subdivision> loaded = new List<Subdivision>();
                 subdivisions.ForEach(
