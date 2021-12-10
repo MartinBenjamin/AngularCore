@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CommonDomainObjects\CommonDomainObjects.csproj" />
+    <ProjectReference Include="..\Identifiers\Identifiers.csproj" />
   </ItemGroup>
 
 </Project>

@@ -35,6 +35,7 @@ namespace CommonDomainObjects.Mapping
             };
 
             mapper.AddMapping<GeographicRegion               >();
+            mapper.AddMapping<GeographicRegionIdentifier     >();
             mapper.AddMapping<GeographicSubregion            >();
             mapper.AddMapping<GeographicRegionHierarchy      >();
             mapper.AddMapping<GeographicRegionHierarchyMember>();

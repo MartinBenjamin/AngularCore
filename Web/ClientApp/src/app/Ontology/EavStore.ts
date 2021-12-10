@@ -31,7 +31,14 @@ function Match<TTrieNode extends TrieNode<TTrieNode, V>, V>(
     }
 
     const [first, ...rest] = path;
-    const child = trieNode.children[first];
+    let child = trieNode.children.get(first);
+    if(child)
+        Match(
+            child,
+            rest,
+            callback);
+
+    child = trieNode.children.get(undefined);
     if(child)
         Match(
             child,
@@ -554,18 +561,24 @@ export class EavStore implements IEavStore
         previousValue: any
         )
     {
-        Match(
-            this._atomSubscribers,
-            [entity, attribute, value],
-            (atomSubscribers: Set<AtomSubscriber>) =>
-            {
-            });
-        Match(
-            this._atomSubscribers,
-            [entity, attribute, previousValue],
-            (atomSubscribers: Set<AtomSubscriber>) =>
-            {
-            });
+        let atomsToPublish = new Set<AtomSubscriber>();
+        if(typeof value !== "undefined")
+            Match(
+                this._atomSubscribers,
+                [entity, attribute, value],
+                (atomSubscribers: Set<AtomSubscriber>) => atomSubscribers.forEach(atomSubscriber => this.PublishAtom(atomSubscriber)));
+        if(typeof previousValue !== "undefined")
+            Match(
+                this._atomSubscribers,
+                [entity, attribute, previousValue],
+                (atomSubscribers: Set<AtomSubscriber>) => atomSubscribers.forEach(atomSubscriber => this.PublishAtom(atomSubscriber)));
+    }
+
+    PublishAtom(
+        atomSubscriber: AtomSubscriber
+        ): void
+    {
+        atomSubscriber.Subscriber.next(this.Facts(atomSubscriber.Atom));
     }
 
     private Cardinality(
