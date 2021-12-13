@@ -9,6 +9,7 @@ using Iso4217;
 using LifeCycles;
 using Locations;
 using NHibernate;
+using NHibernate.Criterion;
 using NHibernate.Tool.hbm2ddl;
 using NHibernateIntegration;
 using NUnit.Framework;
@@ -105,6 +106,40 @@ namespace Test
                     Assert.That(country.Alpha3Code , Is.EqualTo(record[3]));
                     Assert.That(country.NumericCode, Is.EqualTo(int.Parse(record[4])));
                 }
+
+                var session = scope.Resolve<ISession>();
+                var alpha2Identifiers = (await session
+                    .CreateCriteria<GeographicRegionIdentifier>()
+                    .CreateCriteria("Scheme")
+                        .Add(Expression.Eq("Id", new Guid("6f8c62fd-b57f-482b-9a3f-5c2ef9bb8882")))
+                        .ListAsync<GeographicRegionIdentifier>());
+
+                var alpha2CodeCountry = loaded.Values.ToDictionary(country => country.Alpha2Code);
+                Assert.That(alpha2Identifiers.Count, Is.EqualTo(alpha2CodeCountry.Keys.Count));
+                foreach(var alpha2Identifier in alpha2Identifiers)
+                    Assert.That(alpha2Identifier.GeographicRegion, Is.EqualTo(alpha2CodeCountry[alpha2Identifier.Tag]));
+
+                var alpha3Identifiers = (await session
+                    .CreateCriteria<GeographicRegionIdentifier>()
+                    .CreateCriteria("Scheme")
+                        .Add(Expression.Eq("Id", new Guid("17ffe52a-93f2-4755-835f-f29f1aec41a1")))
+                        .ListAsync<GeographicRegionIdentifier>());
+
+                var alpha3CodeCountry = loaded.Values.ToDictionary(country => country.Alpha3Code);
+                Assert.That(alpha3Identifiers.Count, Is.EqualTo(alpha3CodeCountry.Keys.Count));
+                foreach(var alpha3Identifier in alpha3Identifiers)
+                    Assert.That(alpha3Identifier.GeographicRegion, Is.EqualTo(alpha3CodeCountry[alpha3Identifier.Tag]));
+
+                var numericIdentifiers = (await session
+                    .CreateCriteria<GeographicRegionIdentifier>()
+                    .CreateCriteria("Scheme")
+                        .Add(Expression.Eq("Id", new Guid("d8829a3c-f631-40a7-9230-7caae0ad857b")))
+                        .ListAsync<GeographicRegionIdentifier>());
+
+                var numericCodeCountry = loaded.Values.ToDictionary(country => country.NumericCode);
+                Assert.That(numericIdentifiers.Count, Is.EqualTo(numericCodeCountry.Keys.Count));
+                foreach(var numericIdentifier in numericIdentifiers)
+                    Assert.That(numericIdentifier.GeographicRegion, Is.EqualTo(numericCodeCountry[int.Parse(numericIdentifier.Tag)]));
             }
         }
 
