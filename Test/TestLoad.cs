@@ -147,7 +147,34 @@ namespace Test
         public async Task Iso3166_2()
         {
             await _container.Resolve<IEtl<IEnumerable<Country>>>().ExecuteAsync();
-            await Etl<string, Subdivision>();
+            await _container.Resolve<IEtl<IEnumerable<Subdivision>>>().ExecuteAsync();
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var csvExtractor = scope.Resolve<ICsvExtractor>();
+                var extracted = (await Task.WhenAll(new[]
+                 {
+                    "ISO3166-2-AE.csv",
+                    "ISO3166-2-CA.csv",
+                    "ISO3166-2-GB.csv",
+                    "ISO3166-2-PT.csv",
+                    "ISO3166-2-US.csv"
+                }.Select(csvExtractor.ExtractAsync))).SelectMany(extractedRecords => extractedRecords).ToList();
+                var service = scope.Resolve<INamedService<string, Subdivision, NamedFilters>>();
+                var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(subdivision => subdivision.Id);
+
+                Assert.That(extracted.Count, Is.EqualTo(loaded.Keys.Count));
+
+                foreach(var record in extracted)
+                {
+                    Assert.That(loaded.ContainsKey(record[1]), Is.True);
+                    var subdivision = loaded[record[1]];
+                    Assert.That(subdivision.Id        , Is.EqualTo(record[1]));
+                    Assert.That(subdivision.Country.Id, Is.EqualTo(record[1].Substring(0, 2)));
+                    Assert.That(subdivision.Category  , Is.EqualTo(record[0]));
+                    if(subdivision.ParentSubdivision != null)
+                        Assert.That(subdivision.ParentSubdivision.Id, Is.EqualTo(record[6]));
+                }
+            }
         }
 
         [Test]
