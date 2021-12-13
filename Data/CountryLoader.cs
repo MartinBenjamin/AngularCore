@@ -21,13 +21,6 @@ namespace Data
             (new IdentificationScheme(new Guid("d8829a3c-f631-40a7-9230-7caae0ad857b"), "ISO3166-1 Numeric"), country => country.NumericCode.ToString("000"))
         };
 
-        private static readonly IList<Func<Country, string>> _tagFactories = new List<Func<Country, string>>
-        {
-            country => country.Alpha2Code,
-            country => country.Alpha3Code,
-            country => country.NumericCode.ToString("000")
-        };
-
         public CountryLoader(
             ICsvExtractor   csvExtractor,
             ISessionFactory sessionFactory
