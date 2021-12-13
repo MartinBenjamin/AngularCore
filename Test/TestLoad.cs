@@ -86,7 +86,26 @@ namespace Test
         [Test]
         public async Task Iso3166_1()
         {
-            await Etl<string, Country>();
+            await _container.Resolve<IEtl<IEnumerable<Country>>>().ExecuteAsync();
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var csvExtractor = scope.Resolve<ICsvExtractor>();
+                var extracted = (await csvExtractor.ExtractAsync("ISO3166-1.csv")).ToList();
+                var service = scope.Resolve<INamedService<string, Country, NamedFilters>>();
+                var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(country => country.Id);
+
+                Assert.That(extracted.Count, Is.EqualTo(loaded.Keys.Count));
+
+                foreach(var record in extracted)
+                {
+                    Assert.That(loaded.ContainsKey(record[2]), Is.True);
+                    var country = loaded[record[2]];
+                    Assert.That(country.Id         , Is.EqualTo(record[2]));
+                    Assert.That(country.Alpha2Code , Is.EqualTo(record[2]));
+                    Assert.That(country.Alpha3Code , Is.EqualTo(record[3]));
+                    Assert.That(country.NumericCode, Is.EqualTo(int.Parse(record[4])));
+                }
+            }
         }
 
         [Test]
