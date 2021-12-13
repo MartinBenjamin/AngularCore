@@ -208,7 +208,7 @@ namespace Test
         public async Task GeographicRegionHierarchy()
         {
             await _container.Resolve<IEtl<IEnumerable<Country>>>().ExecuteAsync();
-            var subdivisions = await _container.Resolve<IEtl<IEnumerable<Subdivision>>>().ExecuteAsync();
+            await _container.Resolve<IEtl<IEnumerable<Subdivision>>>().ExecuteAsync();
 
             var hierarchy = await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
 
