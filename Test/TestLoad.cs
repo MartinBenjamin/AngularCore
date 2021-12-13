@@ -75,7 +75,24 @@ namespace Test
         [Test]
         public async Task Role()
         {
-            await Etl<Guid, Role>();
+            await _container.Resolve<IEtl<IEnumerable<Role>>>().ExecuteAsync();
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var csvExtractor = scope.Resolve<ICsvExtractor>();
+                var extracted = (await csvExtractor.ExtractAsync("Role.csv")).ToList();
+                var service = scope.Resolve<INamedService<Guid, Role, NamedFilters>>();
+                var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(role => role.Id);
+
+                Assert.That(extracted.Count, Is.EqualTo(loaded.Keys.Count));
+
+                foreach(var record in extracted)
+                {
+                    var id = new Guid(record[0]);
+                    Assert.That(loaded.ContainsKey(id), Is.True);
+                    var role = loaded[id];
+                    Assert.That(role.Name, Is.EqualTo(record[1]));
+                }
+            }
         }
 
         [Test]
