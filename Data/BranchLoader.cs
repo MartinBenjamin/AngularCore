@@ -1,6 +1,7 @@
 ﻿using Identifiers;
 using NHibernate;
 using Organisations;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -22,7 +23,9 @@ namespace Data
 
         async Task<IEnumerable<(Branch, OrganisationIdentifier)>> IEtl<IEnumerable<(Branch, OrganisationIdentifier)>>.ExecuteAsync()
         {
-            var identificationScheme = new IdentificationScheme("OVS Branch");
+            var identificationScheme = new IdentificationScheme(
+                new Guid("127c6a60-f00c-4cb2-8776-a64544aed5db"),
+                "OVS Branch");
             var extracted = await _csvExtractor.ExtractAsync(
                 "Branch.csv",
                 record =>

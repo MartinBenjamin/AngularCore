@@ -112,7 +112,7 @@ namespace Test
                 var service = scope.Resolve<INamedService<string, Country, NamedFilters>>();
                 var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(country => country.Id);
 
-                Assert.That(extracted.Count, Is.EqualTo(loaded.Keys.Count));
+                Assert.That(loaded.Keys.Count, Is.EqualTo(extracted.Count));
 
                 foreach(var record in extracted)
                 {
@@ -125,33 +125,33 @@ namespace Test
                 }
 
                 var session = scope.Resolve<ISession>();
-                var alpha2Identifiers = (await session
+                var alpha2Identifiers = await session
                     .CreateCriteria<GeographicRegionIdentifier>()
                     .CreateCriteria("Scheme")
                         .Add(Expression.Eq("Id", new Guid("6f8c62fd-b57f-482b-9a3f-5c2ef9bb8882")))
-                        .ListAsync<GeographicRegionIdentifier>());
+                        .ListAsync<GeographicRegionIdentifier>();
 
                 var alpha2CodeCountry = loaded.Values.ToDictionary(country => country.Alpha2Code);
                 Assert.That(alpha2Identifiers.Count, Is.EqualTo(alpha2CodeCountry.Keys.Count));
                 foreach(var alpha2Identifier in alpha2Identifiers)
                     Assert.That(alpha2Identifier.GeographicRegion, Is.EqualTo(alpha2CodeCountry[alpha2Identifier.Tag]));
 
-                var alpha3Identifiers = (await session
+                var alpha3Identifiers = await session
                     .CreateCriteria<GeographicRegionIdentifier>()
                     .CreateCriteria("Scheme")
                         .Add(Expression.Eq("Id", new Guid("17ffe52a-93f2-4755-835f-f29f1aec41a1")))
-                        .ListAsync<GeographicRegionIdentifier>());
+                        .ListAsync<GeographicRegionIdentifier>();
 
                 var alpha3CodeCountry = loaded.Values.ToDictionary(country => country.Alpha3Code);
                 Assert.That(alpha3Identifiers.Count, Is.EqualTo(alpha3CodeCountry.Keys.Count));
                 foreach(var alpha3Identifier in alpha3Identifiers)
                     Assert.That(alpha3Identifier.GeographicRegion, Is.EqualTo(alpha3CodeCountry[alpha3Identifier.Tag]));
 
-                var numericIdentifiers = (await session
+                var numericIdentifiers = await session
                     .CreateCriteria<GeographicRegionIdentifier>()
                     .CreateCriteria("Scheme")
                         .Add(Expression.Eq("Id", new Guid("d8829a3c-f631-40a7-9230-7caae0ad857b")))
-                        .ListAsync<GeographicRegionIdentifier>());
+                        .ListAsync<GeographicRegionIdentifier>();
 
                 var numericCodeCountry = loaded.Values.ToDictionary(country => country.NumericCode);
                 Assert.That(numericIdentifiers.Count, Is.EqualTo(numericCodeCountry.Keys.Count));
@@ -179,7 +179,7 @@ namespace Test
                 var service = scope.Resolve<INamedService<string, Subdivision, NamedFilters>>();
                 var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(subdivision => subdivision.Id);
 
-                Assert.That(extracted.Count, Is.EqualTo(loaded.Keys.Count));
+                Assert.That(loaded.Keys.Count, Is.EqualTo(extracted.Count));
 
                 foreach(var record in extracted)
                 {
@@ -242,19 +242,27 @@ namespace Test
         [Test]
         public async Task Branch()
         {
-            var branches = await _container.Resolve<IEtl<IEnumerable<(Branch, OrganisationIdentifier)>>>().ExecuteAsync();
-            Assert.That(branches.Count, Is.GreaterThan(0));
-
+            await _container.Resolve<IEtl<IEnumerable<(Branch, OrganisationIdentifier)>>>().ExecuteAsync();
             using(var scope = _container.BeginLifetimeScope())
             {
-                var service = scope.Resolve<INamedService<Guid, Branch, NamedFilters>>();
-                var loaded = await service.FindAsync(new NamedFilters());
-                Assert.That(loaded.ToHashSet().SetEquals(branches.Select(t => t.Item1)), Is.True);
-
+                var csvExtractor = scope.Resolve<ICsvExtractor>();
+                var extracted = (await csvExtractor.ExtractAsync("Branch.csv")).ToList();
                 var session = scope.Resolve<ISession>();
 
-                foreach(var (branch, identifier) in branches)
-                    Assert.That(session.Get<OrganisationIdentifier>(new Identifier(identifier.Scheme, identifier.Tag)).Organisation, Is.EqualTo(branch));
+                var loaded = (await session
+                    .CreateCriteria<OrganisationIdentifier>()
+                    .CreateCriteria("Scheme")
+                        .Add(Expression.Eq("Id", new Guid("127c6a60-f00c-4cb2-8776-a64544aed5db")))
+                        .ListAsync<OrganisationIdentifier>()).ToDictionary(identifier => identifier.Tag);
+
+                Assert.That(loaded.Keys.Count, Is.EqualTo(extracted.Count));
+
+                foreach(var record in extracted)
+                {
+                    Assert.That(loaded.ContainsKey(record[1]), Is.True);
+                    var identifier = loaded[record[1]];
+                    Assert.That(identifier.Organisation.Name, Is.EqualTo(record[0]));
+                }
             }
         }
 
