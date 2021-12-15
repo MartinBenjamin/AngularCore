@@ -340,14 +340,15 @@ namespace Test
         [Test]
         public async Task LifeCycles()
         {
-            await _container.ResolveKeyed<IEnumerable<IEtl>>(typeof(ClassificationScheme)).ForEachAsync(loader => loader.ExecuteAsync());
-            await _container.Resolve<IEtl<IEnumerable<LifeCycle>>>().ExecuteAsync();
+            await _container.ResolveKeyed<IEnumerable<IEtl>>(typeof(ClassificationScheme)).ForEachAsync(classificationSchemeloader => classificationSchemeloader.ExecuteAsync());
+            var loader = _container.ResolveKeyed<IEtl>(typeof(LifeCycle));
+            await loader.ExecuteAsync();
 
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
                 var csvExtractor = scope.Resolve<ICsvExtractor>();
-                var records = await csvExtractor.ExtractAsync("DealLifeCycles.csv");
+                var records = await csvExtractor.ExtractAsync(loader.FileName);
 
                 (
                     from record in records
@@ -382,8 +383,8 @@ namespace Test
             await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
             await _container.ResolveKeyed<IEtl>(typeof(Currency)).ExecuteAsync();
             await _container.ResolveKeyed<IEtl>(typeof(Branch)).ExecuteAsync();
-            await _container.Resolve<IEnumerable<IEtl<ClassificationScheme>>>().ForEachAsync(loader => loader.ExecuteAsync());
-            await _container.Resolve<IEtl<IEnumerable<LifeCycle>>>().ExecuteAsync();
+            await _container.ResolveKeyed<IEnumerable<IEtl>>(typeof(ClassificationScheme)).ForEachAsync(loader => loader.ExecuteAsync());
+            await _container.ResolveKeyed<IEtl>(typeof(LifeCycle)).ExecuteAsync();
             //await new LegalEntityLoader(
             //    _container.Resolve<ISessionFactory>(),
             //    100).LoadAsync();

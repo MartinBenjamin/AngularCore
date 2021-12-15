@@ -86,7 +86,7 @@ namespace Data
 
             builder
                 .RegisterType<LifeCycleLoader>()
-                .As<IEtl<IEnumerable<LifeCycle>>>()
+                .Keyed<IEtl>(typeof(LifeCycle))
                 .SingleInstance();
 
             builder

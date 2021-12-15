@@ -7,10 +7,12 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    public class LifeCycleLoader: IEtl<IEnumerable<LifeCycle>>
+    public class LifeCycleLoader: IEtl
     {
         private readonly ICsvExtractor   _csvExtractor;
         private readonly ISessionFactory _sessionFactory;
+
+        private static readonly string _fileName = "DealLifeCycles.csv";
 
         public LifeCycleLoader(
             ICsvExtractor   csvExtractor,
@@ -21,7 +23,12 @@ namespace Data
             _sessionFactory = sessionFactory;
         }
 
-        async Task<IEnumerable<LifeCycle>> IEtl<IEnumerable<LifeCycle>>.ExecuteAsync()
+        string IEtl.FileName
+        {
+            get => _fileName;
+        }
+
+        async Task IEtl.ExecuteAsync()
         {
             using(var session = _sessionFactory.OpenSession())
             using(var transaction = session.BeginTransaction())
@@ -31,7 +38,7 @@ namespace Data
                     .ListAsync();
 
                 var records = await _csvExtractor.ExtractAsync(
-                    "DealLifeCycles.csv",
+                    _fileName,
                     record =>
                     (
                         LifeCycleId   : new Guid(record[0]),
@@ -48,8 +55,6 @@ namespace Data
                 foreach(var lifeCycle in lifeCycles)
                     await session.SaveAsync(lifeCycle);
                 await transaction.CommitAsync();
-
-                return lifeCycles;
             }
         }
     }
