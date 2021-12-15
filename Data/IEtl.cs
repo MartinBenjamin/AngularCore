@@ -6,4 +6,11 @@ namespace Data
     {
         Task<T> ExecuteAsync();
     }
+
+    public interface IEtl
+    {
+        string FileName { get; }
+
+        Task ExecuteAsync();
+    }
 }

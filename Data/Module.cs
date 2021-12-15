@@ -35,7 +35,7 @@ namespace Data
 
             builder
                 .RegisterType<CountryLoader>()
-                .As<IEtl<IEnumerable<Country>>>()
+                .Keyed<IEtl>(typeof(Country))
                 .SingleInstance();
 
             builder

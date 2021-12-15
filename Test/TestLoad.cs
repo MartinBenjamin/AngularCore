@@ -104,11 +104,12 @@ namespace Test
         [Test]
         public async Task Iso3166_1()
         {
-            await _container.Resolve<IEtl<IEnumerable<Country>>>().ExecuteAsync();
+            var etl = _container.ResolveKeyed<IEtl>(typeof(Country));
+            await etl.ExecuteAsync();
             using(var scope = _container.BeginLifetimeScope())
             {
                 var csvExtractor = scope.Resolve<ICsvExtractor>();
-                var extracted = (await csvExtractor.ExtractAsync("ISO3166-1.csv")).ToList();
+                var extracted = await csvExtractor.ExtractAsync(etl.FileName);
                 var service = scope.Resolve<INamedService<string, Country, NamedFilters>>();
                 var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(country => country.Id);
 
@@ -163,7 +164,7 @@ namespace Test
         [Test]
         public async Task Iso3166_2()
         {
-            await _container.Resolve<IEtl<IEnumerable<Country>>>().ExecuteAsync();
+            await _container.ResolveKeyed<IEtl>(typeof(Country)).ExecuteAsync();
             await _container.Resolve<IEtl<IEnumerable<Subdivision>>>().ExecuteAsync();
             using(var scope = _container.BeginLifetimeScope())
             {
@@ -207,7 +208,7 @@ namespace Test
         [Test]
         public async Task GeographicRegionHierarchy()
         {
-            await _container.Resolve<IEtl<IEnumerable<Country>>>().ExecuteAsync();
+            await _container.ResolveKeyed<IEtl>(typeof(Country)).ExecuteAsync();
             await _container.Resolve<IEtl<IEnumerable<Subdivision>>>().ExecuteAsync();
 
             var hierarchy = await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
@@ -246,7 +247,7 @@ namespace Test
             using(var scope = _container.BeginLifetimeScope())
             {
                 var csvExtractor = scope.Resolve<ICsvExtractor>();
-                var extracted = (await csvExtractor.ExtractAsync("Branch.csv")).ToList();
+                var extracted = await csvExtractor.ExtractAsync("Branch.csv");
                 var session = scope.Resolve<ISession>();
 
                 var loaded = (await session
@@ -326,7 +327,7 @@ namespace Test
         {
             await _container.Resolve<IEtl<IEnumerable<Role>>>().ExecuteAsync();
             await _container.Resolve<IEtl<IEnumerable<FacilityFeeType>>>().ExecuteAsync();
-            await _container.Resolve<IEtl<IEnumerable<Country>>>().ExecuteAsync();
+            await _container.ResolveKeyed<IEtl>(typeof(Country)).ExecuteAsync();
             await _container.Resolve<IEtl<IEnumerable<Subdivision>>>().ExecuteAsync();
             await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
             await _container.Resolve<IEtl<IEnumerable<Currency>>>().ExecuteAsync();
