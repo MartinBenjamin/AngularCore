@@ -37,10 +37,8 @@ namespace Data
                     .CreateCriteria<LifeCycleStage>()
                     .ListAsync();
 
-                var records = await _csvExtractor.ExtractAsync(_fileName);
-
                 await (
-                    from record in records
+                    from record in await _csvExtractor.ExtractAsync(_fileName)
                     group session.Get<LifeCycleStage>(new Guid(record[1])) by new Guid(record[0]) into stagesGroupedbyLifeCycle
                     select new LifeCycle(
                         stagesGroupedbyLifeCycle.Key,
