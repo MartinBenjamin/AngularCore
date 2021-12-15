@@ -1,5 +1,4 @@
 ﻿using CommonDomainObjects;
-using Deals;
 using NHibernate;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    public abstract class ClassificationSchemeLoader: IEtl<ClassificationScheme>
+    public abstract class ClassificationSchemeLoader: IEtl
     {
         private readonly ICsvExtractor   _csvExtractor;
         private readonly ISessionFactory _sessionFactory;
@@ -28,7 +27,12 @@ namespace Data
             _fileName               = fileName;
         }
 
-        async Task<ClassificationScheme> IEtl<ClassificationScheme>.ExecuteAsync()
+        string IEtl.FileName
+        {
+            get => _fileName;
+        }
+
+        async Task IEtl.ExecuteAsync()
         {
             var classes = await _csvExtractor.ExtractAsync(
                 _fileName,
@@ -65,8 +69,6 @@ namespace Data
                     null);
                 await transaction.CommitAsync();
             }
-
-            return classificationScheme;
         }
 
         protected abstract Classifier NewClassifier(

@@ -63,7 +63,8 @@ namespace Data
 
             builder
                 .RegisterType<ExclusivityLoader>()
-                .As<IEtl<ClassificationScheme>>()
+                .Keyed<IEtl>(typeof(ClassificationScheme))
+                .Keyed<IEtl>(typeof(ExclusivityLoader))
                 .SingleInstance();
 
             builder
@@ -73,12 +74,14 @@ namespace Data
 
             builder
                 .RegisterType<DealTypeLoader>()
-                .As<IEtl<ClassificationScheme>>()
+                .Keyed<IEtl>(typeof(ClassificationScheme))
+                .Keyed<IEtl>(typeof(DealTypeLoader))
                 .SingleInstance();
 
             builder
                 .RegisterType<DealStageLoader>()
-                .As<IEtl<ClassificationScheme>>()
+                .Keyed<IEtl>(typeof(ClassificationScheme))
+                .Keyed<IEtl>(typeof(DealStageLoader))
                 .SingleInstance();
 
             builder

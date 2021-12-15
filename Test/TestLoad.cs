@@ -305,22 +305,34 @@ namespace Test
             }
         }
 
-        [Test]
-        public async Task ClassificationScheme()
+        [TestCase(typeof(DealStageLoader  ), "947b1353-bd48-4f36-a934-a03a942aaae2")]
+        [TestCase(typeof(DealTypeLoader   ), "e28b89e1-97e4-4820-aabc-af31e6959888")]
+        [TestCase(typeof(ExclusivityLoader), "f7c20b62-ffe8-4c20-86b4-e5c68ba2469d")]
+        public async Task ClassificationScheme(
+            Type   loaderType,
+            string id
+            )
         {
-            var loaders = _container.Resolve<IEnumerable<IEtl<ClassificationScheme>>>();
-
-            Assert.That(loaders.Count(), Is.EqualTo(4));
-
-            foreach(var loader in loaders)
+            var loader = _container.ResolveKeyed<IEtl>(loaderType);
+            Assert.That(loader, Is.Not.Null);
+            await loader.ExecuteAsync();
+            using(var scope = _container.BeginLifetimeScope())
             {
-                var classificationScheme = await loader.ExecuteAsync();
+                var csvExtractor = scope.Resolve<ICsvExtractor>();
+                var extracted = await csvExtractor.ExtractAsync(loader.FileName);
+                var service = scope.Resolve<IDomainObjectService<Guid, ClassificationScheme>>();
+                var loaded = (await service.GetAsync(new Guid(id))).Classifiers.ToDictionary(
+                    classificationSchemeClassifier => (classificationSchemeClassifier.Super?.Classifier.Id ?? Guid.Empty, classificationSchemeClassifier.Classifier.Name));
 
-                using(var scope = _container.BeginLifetimeScope())
+                Assert.That(extracted.Count, Is.GreaterThan(0));
+                foreach(var record in extracted)
                 {
-                    var service = scope.Resolve<IDomainObjectService<Guid, ClassificationScheme>>();
-                    var loaded = await service.GetAsync(classificationScheme.Id);
-                    Assert.That(loaded, Is.Not.Null);
+                    Guid superId = string.IsNullOrEmpty(record[1]) ? Guid.Empty : new Guid(record[1]);
+                    Assert.That(loaded.ContainsKey((superId, record[2])));
+                    var classificationSchemeClassifier = loaded[(superId, record[2])];
+
+                    if(!string.IsNullOrEmpty(record[0]))
+                        Assert.That(classificationSchemeClassifier.Classifier.Id, Is.EqualTo(new Guid(record[0])));
                 }
             }
         }
@@ -328,7 +340,7 @@ namespace Test
         [Test]
         public async Task LifeCycles()
         {
-            await _container.Resolve<IEnumerable<IEtl<ClassificationScheme>>>().ForEachAsync(loader => loader.ExecuteAsync());
+            await _container.ResolveKeyed<IEnumerable<IEtl>>(typeof(ClassificationScheme)).ForEachAsync(loader => loader.ExecuteAsync());
             await _container.Resolve<IEtl<IEnumerable<LifeCycle>>>().ExecuteAsync();
 
             using(var scope = _container.BeginLifetimeScope())
