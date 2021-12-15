@@ -1,15 +1,16 @@
 ﻿using NHibernate;
 using Roles;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Data
 {
-    public class RoleLoader: IEtl<IEnumerable<Role>>
+    public class RoleLoader: IEtl
     {
         private readonly ICsvExtractor   _csvExtractor;
         private readonly ISessionFactory _sessionFactory;
+
+        private readonly string _fileName = "Role.csv";
 
         public RoleLoader(
             ICsvExtractor   csvExtractor,
@@ -20,10 +21,15 @@ namespace Data
             _sessionFactory = sessionFactory;
         }
 
-        async Task<IEnumerable<Role>> IEtl<IEnumerable<Role>>.ExecuteAsync()
+        string IEtl.FileName
+        {
+            get => _fileName;
+        }
+
+        async Task IEtl.ExecuteAsync()
         {
             var roles = await _csvExtractor.ExtractAsync(
-                "Role.csv",
+                _fileName,
                 record => new Role(
                     new Guid(record[0]),
                     record[1]));
@@ -35,8 +41,6 @@ namespace Data
                     await session.SaveAsync(role);
                 await transaction.CommitAsync();
             }
-
-            return roles;
         }
     }
 }

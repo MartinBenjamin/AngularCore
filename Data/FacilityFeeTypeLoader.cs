@@ -1,15 +1,16 @@
 ﻿using FacilityAgreements;
 using NHibernate;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Data
 {
-    public class FacilityFeeTypeLoader: IEtl<IEnumerable<FacilityFeeType>>
+    public class FacilityFeeTypeLoader: IEtl
     {
         private readonly ICsvExtractor   _csvExtractor;
         private readonly ISessionFactory _sessionFactory;
+
+        private readonly string _fileName = "FacilityFeeType.csv";
 
         public FacilityFeeTypeLoader(
             ICsvExtractor   csvExtractor,
@@ -20,10 +21,15 @@ namespace Data
             _sessionFactory = sessionFactory;
         }
 
-        async Task<IEnumerable<FacilityFeeType>> IEtl<IEnumerable<FacilityFeeType>>.ExecuteAsync()
+        string IEtl.FileName
+        {
+            get => _fileName;
+        }
+
+        async Task IEtl.ExecuteAsync()
         {
             var facilityFeeTypes = await _csvExtractor.ExtractAsync(
-                "FacilityFeeType.csv",
+                _fileName,
                 record => new FacilityFeeType(
                     new Guid(record[0]),
                     record[1]));
@@ -35,8 +41,6 @@ namespace Data
                     await session.SaveAsync(facilityFeeType);
                 await transaction.CommitAsync();
             }
-
-            return facilityFeeTypes;
         }
     }
 }

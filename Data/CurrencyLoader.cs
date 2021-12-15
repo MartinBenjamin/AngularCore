@@ -1,6 +1,5 @@
 ﻿using Iso4217;
 using NHibernate;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,7 +29,7 @@ namespace Data
         async Task IEtl.ExecuteAsync()
         {
             var currencies = (await _csvExtractor.ExtractAsync(
-                "ISO4217.csv",
+                _fileName,
                 record => !string.IsNullOrEmpty(record[2]) ?
                     new Currency(
                         record[2],

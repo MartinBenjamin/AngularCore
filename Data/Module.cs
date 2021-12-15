@@ -25,7 +25,7 @@ namespace Data
 
             builder
                 .RegisterType<RoleLoader>()
-                .As<IEtl<IEnumerable<Role>>>()
+                .Keyed<IEtl>(typeof(Role))
                 .SingleInstance();
 
             builder
@@ -88,7 +88,7 @@ namespace Data
 
             builder
                 .RegisterType<FacilityFeeTypeLoader>()
-                .As<IEtl<IEnumerable<FacilityFeeType>>>()
+                .Keyed<IEtl>(typeof(FacilityFeeType))
                 .SingleInstance();
         }
     }

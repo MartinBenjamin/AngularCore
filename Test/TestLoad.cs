@@ -74,11 +74,12 @@ namespace Test
         [Test]
         public async Task Role()
         {
-            await _container.Resolve<IEtl<IEnumerable<Role>>>().ExecuteAsync();
+            var loader = _container.ResolveKeyed<IEtl>(typeof(Role));
+            await loader.ExecuteAsync();
             using(var scope = _container.BeginLifetimeScope())
             {
                 var csvExtractor = scope.Resolve<ICsvExtractor>();
-                var extracted = (await csvExtractor.ExtractAsync("Role.csv")).ToList();
+                var extracted = await csvExtractor.ExtractAsync(loader.FileName);
                 var service = scope.Resolve<INamedService<Guid, Role, NamedFilters>>();
                 var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(role => role.Id);
 
@@ -97,7 +98,25 @@ namespace Test
         [Test]
         public async Task FacilityFeeType()
         {
-            await Etl<Guid, FacilityFeeType>();
+            var loader = _container.ResolveKeyed<IEtl>(typeof(FacilityFeeType));
+            await loader.ExecuteAsync();
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var csvExtractor = scope.Resolve<ICsvExtractor>();
+                var extracted = await csvExtractor.ExtractAsync(loader.FileName);
+                var service = scope.Resolve<INamedService<Guid, FacilityFeeType, NamedFilters>>();
+                var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(facilityFeeType => facilityFeeType.Id);
+
+                Assert.That(extracted.Count, Is.EqualTo(loaded.Keys.Count));
+
+                foreach(var record in extracted)
+                {
+                    var id = new Guid(record[0]);
+                    Assert.That(loaded.ContainsKey(id), Is.True);
+                    var facilityFeeType = loaded[id];
+                    Assert.That(facilityFeeType.Name, Is.EqualTo(record[1]));
+                }
+            }
         }
 
         [Test]
@@ -357,8 +376,8 @@ namespace Test
         [Test]
         public async Task Load()
         {
-            await _container.Resolve<IEtl<IEnumerable<Role>>>().ExecuteAsync();
-            await _container.Resolve<IEtl<IEnumerable<FacilityFeeType>>>().ExecuteAsync();
+            await _container.ResolveKeyed<IEtl>(typeof(Role)).ExecuteAsync();
+            await _container.ResolveKeyed<IEtl>(typeof(FacilityFeeType)).ExecuteAsync();
             await _container.ResolveKeyed<IEtl>(typeof(Country)).ExecuteAsync();
             await _container.ResolveKeyed<IEnumerable<IEtl>>(typeof(Subdivision)).ForEachAsync(loader => loader.ExecuteAsync());
             await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
