@@ -167,6 +167,7 @@ namespace Test
             await _container.ResolveKeyed<IEtl>(typeof(Country)).ExecuteAsync();
             var loaders = _container.ResolveKeyed<IEnumerable<IEtl>>(typeof(Subdivision));
             Assert.That(loaders.Count(), Is.EqualTo(5));
+            int previous = 0;
             foreach(var loader in loaders)
             {
                 await loader.ExecuteAsync();
@@ -177,7 +178,8 @@ namespace Test
                     var service = scope.Resolve<INamedService<string, Subdivision, NamedFilters>>();
                     var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(subdivision => subdivision.Id);
 
-                    //Assert.That(loaded.Keys.Count, Is.EqualTo(extracted.Count));
+                    Assert.That(loaded.Keys.Count - previous, Is.EqualTo(extracted.Count));
+                    previous = loaded.Keys.Count;
 
                     foreach(var record in extracted)
                     {
