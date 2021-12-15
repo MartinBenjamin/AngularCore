@@ -58,19 +58,6 @@ namespace Test
                 true);
         }
 
-        private async Task Etl<TId, TNamed>() where TNamed: Named<TId>
-        {
-            var transformed = await _container.Resolve<IEtl<IEnumerable<TNamed>>>().ExecuteAsync();
-            Assert.That(transformed.Count, Is.GreaterThan(0));
-
-            using(var scope = _container.BeginLifetimeScope())
-            {
-                var service = scope.Resolve<INamedService<TId, TNamed, NamedFilters>>();
-                var loaded = await service.FindAsync(new NamedFilters());
-                Assert.That(loaded.ToHashSet().SetEquals(transformed), Is.True);
-            }
-        }
-
         [Test]
         public async Task Role()
         {
