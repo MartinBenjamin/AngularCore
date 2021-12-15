@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    public class CurrencyLoader: IEtl<IEnumerable<Currency>>
+    public class CurrencyLoader: IEtl
     {
         private readonly ICsvExtractor   _csvExtractor;
         private readonly ISessionFactory _sessionFactory;
+
+        private readonly string _fileName = "ISO4217.csv";
 
         public CurrencyLoader(
             ICsvExtractor   csvExtractor,
@@ -20,7 +22,12 @@ namespace Data
             _sessionFactory = sessionFactory;
         }
 
-        async Task<IEnumerable<Currency>> IEtl<IEnumerable<Currency>>.ExecuteAsync()
+        string IEtl.FileName
+        {
+            get => _fileName;
+        }
+
+        async Task IEtl.ExecuteAsync()
         {
             var currencies = (await _csvExtractor.ExtractAsync(
                 "ISO4217.csv",
@@ -40,8 +47,6 @@ namespace Data
                     await session.SaveAsync(currency);
                 await transaction.CommitAsync();
             }
-
-            return currencies;
         }
     }
 }

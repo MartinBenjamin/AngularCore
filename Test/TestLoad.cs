@@ -118,9 +118,10 @@ namespace Test
                 {
                     Assert.That(loaded.ContainsKey(record[2]), Is.True);
                     var country = loaded[record[2]];
-                    Assert.That(country.Id         , Is.EqualTo(record[2]));
-                    Assert.That(country.Alpha2Code , Is.EqualTo(record[2]));
-                    Assert.That(country.Alpha3Code , Is.EqualTo(record[3]));
+                    Assert.That(country.Id         , Is.EqualTo(record[2]           ));
+                    Assert.That(country.Name       , Is.EqualTo(record[0]           ));
+                    Assert.That(country.Alpha2Code , Is.EqualTo(record[2]           ));
+                    Assert.That(country.Alpha3Code , Is.EqualTo(record[3]           ));
                     Assert.That(country.NumericCode, Is.EqualTo(int.Parse(record[4])));
                 }
 
@@ -182,9 +183,10 @@ namespace Test
                     {
                         Assert.That(loaded.ContainsKey(record[1]), Is.True);
                         var subdivision = loaded[record[1]];
-                        Assert.That(subdivision.Id        , Is.EqualTo(record[1])                );
+                        Assert.That(subdivision.Id        , Is.EqualTo(record[1]                ));
+                        Assert.That(subdivision.Name      , Is.EqualTo(record[2]                ));
                         Assert.That(subdivision.Country.Id, Is.EqualTo(record[1].Substring(0, 2)));
-                        Assert.That(subdivision.Category  , Is.EqualTo(record[0])                );
+                        Assert.That(subdivision.Category  , Is.EqualTo(record[0]                ));
 
                         if(subdivision.ParentSubdivision != null)
                         {
@@ -234,13 +236,39 @@ namespace Test
         [Test]
         public async Task Iso4217()
         {
-            await Etl<string, Currency>();
+            var loader = _container.ResolveKeyed<IEtl>(typeof(Currency));
+            await loader.ExecuteAsync();
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var csvExtractor = scope.Resolve<ICsvExtractor>();
+                var extracted = (await csvExtractor.ExtractAsync(loader.FileName))
+                    .Where(record => !string.IsNullOrEmpty(record[2]))
+                    .ToList();
+                var service = scope.Resolve<INamedService<string, Currency, NamedFilters>>();
+                var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(currency => currency.Id);
+
+                //Assert.That(loaded.Keys.Count, Is.EqualTo(extracted.Count));
+
+                foreach(var record in extracted)
+                {
+                    Assert.That(loaded.ContainsKey(record[2]), Is.True);
+                    var currency = loaded[record[2]];
+                    Assert.That(currency.Id         , Is.EqualTo(record[2]           ));
+                    Assert.That(currency.Name       , Is.EqualTo(record[1]           ));
+                    Assert.That(currency.NumericCode, Is.EqualTo(int.Parse(record[3])));
+
+                    if(record[4] == "N.A.")
+                        Assert.That(currency.MinorUnit, Is.Null);
+
+                    else
+                        Assert.That(currency.MinorUnit, Is.EqualTo(int.Parse(record[4])));
+                }
+            }
         }
 
         [Test]
         public async Task Branch()
         {
-
             var loader = _container.ResolveKeyed<IEtl>(typeof(Branch));
             await loader.ExecuteAsync();
             using(var scope = _container.BeginLifetimeScope())
@@ -329,7 +357,7 @@ namespace Test
             await _container.ResolveKeyed<IEtl>(typeof(Country)).ExecuteAsync();
             await _container.ResolveKeyed<IEnumerable<IEtl>>(typeof(Subdivision)).ForEachAsync(loader => loader.ExecuteAsync());
             await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
-            await _container.Resolve<IEtl<IEnumerable<Currency>>>().ExecuteAsync();
+            await _container.ResolveKeyed<IEtl>(typeof(Currency)).ExecuteAsync();
             await _container.ResolveKeyed<IEtl>(typeof(Branch)).ExecuteAsync();
             await _container.Resolve<IEnumerable<IEtl<ClassificationScheme>>>().ForEachAsync(loader => loader.ExecuteAsync());
             await _container.Resolve<IEtl<IEnumerable<LifeCycle>>>().ExecuteAsync();

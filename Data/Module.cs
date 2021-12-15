@@ -30,7 +30,7 @@ namespace Data
 
             builder
                 .RegisterType<CurrencyLoader>()
-                .As<IEtl<IEnumerable<Currency>>>()
+                .Keyed<IEtl>(typeof(Currency))
                 .SingleInstance();
 
             builder
