@@ -188,13 +188,16 @@ namespace Test
                         Assert.That(subdivision.Country.Id, Is.EqualTo(record[1].Substring(0, 2)));
                         Assert.That(subdivision.Category  , Is.EqualTo(record[0]                ));
 
-                        if(subdivision.ParentSubdivision != null)
+                        if(string.IsNullOrEmpty(record[6]))
                         {
-                            Assert.That(subdivision.ParentSubdivision.Id, Is.EqualTo(record[6]));
-                            Assert.That(subdivision.Region, Is.EqualTo(subdivision.ParentSubdivision));
+                            Assert.That(subdivision.Region           , Is.EqualTo(subdivision.Country));
+                            Assert.That(subdivision.ParentSubdivision, Is.Null                        );
                         }
                         else
-                            Assert.That(subdivision.Region, Is.EqualTo(subdivision.Country));
+                        {
+                            Assert.That(subdivision.Region              , Is.EqualTo(subdivision.ParentSubdivision));
+                            Assert.That(subdivision.ParentSubdivision.Id, Is.EqualTo(record[6])                    );
+                        }
 
                         Assert.That(subdivision.Region.Subregions.Contains(subdivision), Is.True);
                         foreach(var subregion in subdivision.Subregions)
