@@ -1,6 +1,8 @@
-﻿using NHibernate;
+﻿using CommonDomainObjects;
+using NHibernate;
 using Roles;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Data
@@ -28,17 +30,14 @@ namespace Data
 
         async Task IEtl.ExecuteAsync()
         {
-            var roles = await _csvExtractor.ExtractAsync(
-                _fileName,
-                record => new Role(
-                    new Guid(record[0]),
-                    record[1]));
-
             using(var session = _sessionFactory.OpenSession())
             using(var transaction = session.BeginTransaction())
             {
-                foreach(var role in roles)
-                    await session.SaveAsync(role);
+                await (
+                    from record in await _csvExtractor.ExtractAsync(_fileName)
+                    select new Role(
+                        new Guid(record[0]),
+                        record[1])).ForEachAsync(role => session.SaveAsync(role));
                 await transaction.CommitAsync();
             }
         }
