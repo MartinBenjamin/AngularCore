@@ -9,6 +9,7 @@ using Locations;
 using Organisations;
 using Roles;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Data
 {
@@ -38,10 +39,18 @@ namespace Data
                 .Keyed<IEtl>(typeof(Country))
                 .SingleInstance();
 
-            builder
+            new[]
+            {
+                "ISO3166-2-AE.csv",
+                "ISO3166-2-CA.csv",
+                "ISO3166-2-GB.csv",
+                "ISO3166-2-PT.csv",
+                "ISO3166-2-US.csv"
+            }.ForEach(fileName => builder
                 .RegisterType<SubdivisionLoader>()
-                .As<IEtl<IEnumerable<Subdivision>>>()
-                .SingleInstance();
+                .Keyed<IEtl>(typeof(Subdivision))
+                .WithParameter("fileName", fileName)
+                .SingleInstance());
 
             builder
                 .RegisterType<Unsdm49Loader>()
@@ -50,7 +59,7 @@ namespace Data
 
             builder
                 .RegisterType<BranchLoader>()
-                .As<IEtl<IEnumerable<(Branch, OrganisationIdentifier)>>>()
+                .Keyed<IEtl>(typeof(Branch))
                 .SingleInstance();
 
             builder

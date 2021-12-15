@@ -8,21 +8,29 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    public class SubdivisionLoader: IEtl<IEnumerable<Subdivision>>
+    public class SubdivisionLoader: IEtl
     {
         private readonly ICsvExtractor   _csvExtractor;
         private readonly ISessionFactory _sessionFactory;
+        private readonly string          _fileName;
 
         public SubdivisionLoader(
             ICsvExtractor   csvExtractor,
-            ISessionFactory sessionFactory
+            ISessionFactory sessionFactory,
+            string          fileName
             )
         {
             _csvExtractor   = csvExtractor;
             _sessionFactory = sessionFactory;
+            _fileName       = fileName;
         }
 
-        async Task<IEnumerable<Subdivision>> IEtl<IEnumerable<Subdivision>>.ExecuteAsync()
+        string IEtl.FileName
+        {
+            get => _fileName;
+        }
+
+        async Task IEtl.ExecuteAsync()
         {
             using(var session = _sessionFactory.OpenSession())
             using(var transaction = session.BeginTransaction())
@@ -30,15 +38,7 @@ namespace Data
                 var countries = session
                     .CreateCriteria<Country>()
                     .List<Country>();
-                var records = (await Task.WhenAll(new[]
-                {
-                    "ISO3166-2-AE.csv",
-                    "ISO3166-2-CA.csv",
-                    "ISO3166-2-GB.csv",
-                    "ISO3166-2-PT.csv",
-                    "ISO3166-2-US.csv"
-                }.Select(_csvExtractor.ExtractAsync))).SelectMany(extractedRecords => extractedRecords);
-
+                var records = await _csvExtractor.ExtractAsync(_fileName);
                 var parentRecord = (
                     from child in records
                     join parent in records on child[6] equals parent[1] into parents
@@ -70,13 +70,7 @@ namespace Data
                     subdivision => subdivision.VisitAsync(geographicRegion => session.SaveAsync(geographicRegion)));
 
                 await transaction.CommitAsync();
-
-                IList<Subdivision> loaded = new List<Subdivision>();
-                subdivisions.ForEach(
-                    subdivision => subdivision.Visit(geographicRegion => loaded.Add((Subdivision)geographicRegion)));
-                return loaded;
             }
-
         }
 
         private Subdivision CreateSubdivision(
