@@ -1,7 +1,7 @@
-﻿using LifeCycles;
+﻿using CommonDomainObjects;
+using LifeCycles;
 using NHibernate;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -37,23 +37,15 @@ namespace Data
                     .CreateCriteria<LifeCycleStage>()
                     .ListAsync();
 
-                var records = await _csvExtractor.ExtractAsync(
-                    _fileName,
-                    record =>
-                    (
-                        LifeCycleId   : new Guid(record[0]),
-                        LifeCycleStage: session.Get<LifeCycleStage>(new Guid(record[1]))
-                    ));
+                var records = await _csvExtractor.ExtractAsync(_fileName);
 
-                var lifeCycles = (
+                await (
                     from record in records
-                    group record.LifeCycleStage by record.LifeCycleId into stagesGroupedbyLifeCycle
+                    group session.Get<LifeCycleStage>(new Guid(record[1])) by new Guid(record[0]) into stagesGroupedbyLifeCycle
                     select new LifeCycle(
                         stagesGroupedbyLifeCycle.Key,
-                        stagesGroupedbyLifeCycle.ToList())).ToList();
+                        stagesGroupedbyLifeCycle.ToList())).ForEachAsync(lifeCycle => session.SaveAsync(lifeCycle));
 
-                foreach(var lifeCycle in lifeCycles)
-                    await session.SaveAsync(lifeCycle);
                 await transaction.CommitAsync();
             }
         }
