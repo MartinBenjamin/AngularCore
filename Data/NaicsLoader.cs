@@ -9,7 +9,7 @@ namespace Data
 {
     using Naics;
 
-    public class NaicsLoader: IEtl<ClassificationScheme>
+    public class NaicsLoader: IEtl
     {
         private readonly ICsvExtractor   _csvExtractor;
         private readonly ISessionFactory _sessionFactory;
@@ -25,7 +25,12 @@ namespace Data
             _sessionFactory = sessionFactory;
         }
 
-        async Task<ClassificationScheme> IEtl<ClassificationScheme>.ExecuteAsync()
+        string IEtl.FileName
+        {
+            get => null;
+        }
+
+        async Task IEtl.ExecuteAsync()
         {
             var descriptions = (await _csvExtractor.ExtractAsync("NAICS2017Descriptions.csv")).ToDictionary(
                 record => record[0],
@@ -89,8 +94,6 @@ namespace Data
                     });
                 await transaction.CommitAsync();
             }
-
-            return classificationScheme;
         }
     }
 }

@@ -69,7 +69,8 @@ namespace Data
 
             builder
                 .RegisterType<NaicsLoader>()
-                .As<IEtl<ClassificationScheme>>()
+                .Keyed<IEtl>(typeof(ClassificationScheme))
+                .Keyed<IEtl>(typeof(NaicsLoader))
                 .SingleInstance();
 
             builder

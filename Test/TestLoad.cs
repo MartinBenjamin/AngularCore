@@ -7,6 +7,7 @@ using Iso3166._2;
 using Iso4217;
 using LifeCycles;
 using Locations;
+using Naics;
 using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Tool.hbm2ddl;
@@ -310,7 +311,7 @@ namespace Test
         [TestCase(typeof(ExclusivityLoader), "f7c20b62-ffe8-4c20-86b4-e5c68ba2469d")]
         public async Task ClassificationScheme(
             Type   loaderType,
-            string id
+            string schemeId
             )
         {
             var loader = _container.ResolveKeyed<IEtl>(loaderType);
@@ -321,7 +322,7 @@ namespace Test
                 var csvExtractor = scope.Resolve<ICsvExtractor>();
                 var extracted = await csvExtractor.ExtractAsync(loader.FileName);
                 var service = scope.Resolve<IDomainObjectService<Guid, ClassificationScheme>>();
-                var loaded = (await service.GetAsync(new Guid(id))).Classifiers.ToDictionary(
+                var loaded = (await service.GetAsync(new Guid(schemeId))).Classifiers.ToDictionary(
                     classificationSchemeClassifier => (classificationSchemeClassifier.Super?.Classifier.Id ?? Guid.Empty, classificationSchemeClassifier.Classifier.Name));
 
                 Assert.That(extracted.Count, Is.GreaterThan(0));
@@ -333,6 +334,31 @@ namespace Test
 
                     if(!string.IsNullOrEmpty(record[0]))
                         Assert.That(classificationSchemeClassifier.Classifier.Id, Is.EqualTo(new Guid(record[0])));
+                }
+            }
+        }
+
+        [Test]
+        public async Task Naics()
+        {
+            await _container.ResolveKeyed<IEtl>(typeof(NaicsLoader)).ExecuteAsync();
+
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var csvExtractor = scope.Resolve<ICsvExtractor>();
+                var extracted = await csvExtractor.ExtractAsync("NAICS2017.csv");
+                var service = scope.Resolve<IDomainObjectService<Guid, ClassificationScheme>>();
+                var loaded = (await service.GetAsync(new Guid("3833e9f7-ebab-4205-bfce-8464d0706f11"))).Classifiers.ToDictionary(
+                    classificationSchemeClassifier => ((NaicsClassifier)classificationSchemeClassifier.Classifier).Code);
+
+                Assert.That(extracted.Count, Is.GreaterThan(0));
+                foreach(var record in extracted)
+                {
+                    Assert.That(loaded.ContainsKey(record[1]));
+                    var classificationSchemeClassifier = loaded[record[1]];
+
+                    //if(!string.IsNullOrEmpty(record[0]))
+                    //    Assert.That(classificationSchemeClassifier.Classifier.Id, Is.EqualTo(new Guid(record[0])));
                 }
             }
         }
