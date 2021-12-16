@@ -27,16 +27,12 @@ namespace Data
 
         async Task<ClassificationScheme> IEtl<ClassificationScheme>.ExecuteAsync()
         {
-            var descriptions = (await _csvExtractor.ExtractAsync(
-                "NAICS2017Descriptions.csv",
-                record => record.ToList())).ToDictionary(
+            var descriptions = (await _csvExtractor.ExtractAsync("NAICS2017Descriptions.csv")).ToDictionary(
                 record => record[0],
                 record => record[2] == "NULL" ? null : record[2]);
 
             var crossReferences = (
-                from crossReference in (await _csvExtractor.ExtractAsync(
-                "NAICS2017CrossReferences.csv",
-                record => record.ToList()))
+                from crossReference in await _csvExtractor.ExtractAsync("NAICS2017CrossReferences.csv")
                 group crossReference[1] by crossReference[0] into crossReferencesGroupedByCode
                 select crossReferencesGroupedByCode).ToDictionary(
                     grouping => grouping.Key,
