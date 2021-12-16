@@ -407,7 +407,7 @@ namespace Test
         //[Test]
         public async Task Lei()
         {
-            await _container.Resolve<IEtl<IEnumerable<Country>>>().ExecuteAsync();
+            await _container.ResolveKeyed<IEtl>(typeof(Country)).ExecuteAsync();
             await new LegalEntityLoader(
                 _container.Resolve<ISessionFactory>(),
                 100).LoadAsync();
