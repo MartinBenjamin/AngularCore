@@ -357,8 +357,12 @@ namespace Test
                     Assert.That(loaded.ContainsKey(record[1]));
                     var classificationSchemeClassifier = loaded[record[1]];
 
-                    //if(!string.IsNullOrEmpty(record[0]))
-                    //    Assert.That(classificationSchemeClassifier.Classifier.Id, Is.EqualTo(new Guid(record[0])));
+                    var super = classificationSchemeClassifier.Super;
+                    if(super != null)
+                        Assert.That(
+                            Convert(((NaicsClassifier)super.Classifier).CodeRange).Contains(
+                                Convert(((NaicsClassifier)classificationSchemeClassifier.Classifier).CodeRange)),
+                            Is.True);
                 }
             }
         }
@@ -415,5 +419,11 @@ namespace Test
             //    _container.Resolve<ISessionFactory>(),
             //    100).LoadAsync();
         }
+
+        private static Range<int> Convert(
+            Range<int> range
+            ) => new Range<int>(
+                int.Parse(range.Start.ToString().PadRight(6, '0')),
+                int.Parse(range.End.ToString().PadRight(6, '9')));
     }
 }
