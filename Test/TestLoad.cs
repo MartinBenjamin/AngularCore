@@ -356,6 +356,7 @@ namespace Test
                 {
                     Assert.That(loaded.ContainsKey(record[1]));
                     var classificationSchemeClassifier = loaded[record[1]];
+                    Assert.That(classificationSchemeClassifier.Classifier.Name, Is.EqualTo(record[2]));
 
                     var super = classificationSchemeClassifier.Super;
                     if(super != null)
