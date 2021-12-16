@@ -420,7 +420,7 @@ namespace Test
             await _container.ResolveKeyed<IEtl>(typeof(FacilityFeeType)).ExecuteAsync();
             await _container.ResolveKeyed<IEtl>(typeof(Country)).ExecuteAsync();
             await _container.ResolveKeyed<IEnumerable<IEtl>>(typeof(Subdivision)).ForEachAsync(loader => loader.ExecuteAsync());
-            await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
+            await _container.ResolveKeyed<IEtl>(typeof(GeographicRegionHierarchy)).ExecuteAsync();
             await _container.ResolveKeyed<IEtl>(typeof(Currency)).ExecuteAsync();
             await _container.ResolveKeyed<IEtl>(typeof(Branch)).ExecuteAsync();
             await _container.ResolveKeyed<IEnumerable<IEtl>>(typeof(ClassificationScheme)).ForEachAsync(loader => loader.ExecuteAsync());
