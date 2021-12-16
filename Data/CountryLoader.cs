@@ -20,7 +20,7 @@ namespace Data
             (new IdentificationScheme(new Guid("d8829a3c-f631-40a7-9230-7caae0ad857b"), "ISO3166-1 Numeric"), record => record[4])
         };
 
-        private readonly string _fileName = "ISO3166-1.csv";
+        private static readonly string _fileName = "ISO3166-1.csv";
 
         public CountryLoader(
             ICsvExtractor   csvExtractor,

@@ -220,29 +220,38 @@ namespace Test
         public async Task GeographicRegionHierarchy()
         {
             await _container.ResolveKeyed<IEtl>(typeof(Country)).ExecuteAsync();
-            await _container.ResolveKeyed<IEnumerable<IEtl>>(typeof(Subdivision)).ForEachAsync(loader => loader.ExecuteAsync());
+            await _container.ResolveKeyed<IEnumerable<IEtl>>(typeof(Subdivision)).ForEachAsync(subdivisionLoader => subdivisionLoader.ExecuteAsync());
 
-            var hierarchy = await _container.Resolve<IEtl<GeographicRegionHierarchy>>().ExecuteAsync();
+            var loader = _container.ResolveKeyed<IEtl>(typeof(GeographicRegionHierarchy));
+            await loader.ExecuteAsync();
 
-            Func<GeographicRegion, GeographicRegionHierarchyMember> map = geographicRegion => hierarchy[geographicRegion];
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                //var csvExtractor = scope.Resolve<ICsvExtractor>();
+                //var extracted = await csvExtractor.ExtractAsync(loader.FileName);
+                var service = scope.Resolve<IDomainObjectService<Guid, GeographicRegionHierarchy>>();
+                var hierarchy = await service.GetAsync(new Guid("80bd57c5-7f3a-48d6-ba89-ad9ddaf12ebb"));
 
-            Assert.That(hierarchy.Members.Count, Is.GreaterThan(0));
-            Assert.That(hierarchy.Members
-                .Select(hierarchyMember => hierarchyMember.Member)
-                .Where(member => !member.Is<Country>())
-                .All(
-                    gr => map.PreservesStructure(
-                        geographicRegion => geographicRegion is GeographicSubregion geographicSubregion ? geographicSubregion.Region : null,
-                        hierarchyMember  => hierarchyMember.Parent,
-                        gr)), Is.True);
+                Func<GeographicRegion, GeographicRegionHierarchyMember> map = geographicRegion => hierarchy[geographicRegion];
 
-            Assert.That(hierarchy.Members
-                .Select(hierarchyMember => hierarchyMember.Member)
-                .All(
-                    gr => map.PreservesStructure(
-                        geographicRegion => geographicRegion.Subregions,
-                        hierarchyMember  => hierarchyMember.Children.Where(child => !child.Member.Is<Country>()),
-                        gr)), Is.True);
+                Assert.That(hierarchy.Members.Count, Is.GreaterThan(0));
+                Assert.That(hierarchy.Members
+                    .Select(hierarchyMember => hierarchyMember.Member)
+                    .Where(member => !member.Is<Country>())
+                    .All(
+                        gr => map.PreservesStructure(
+                            geographicRegion => geographicRegion is GeographicSubregion geographicSubregion ? geographicSubregion.Region : null,
+                            hierarchyMember  => hierarchyMember.Parent,
+                            gr)), Is.True);
+
+                Assert.That(hierarchy.Members
+                    .Select(hierarchyMember => hierarchyMember.Member)
+                    .All(
+                        gr => map.PreservesStructure(
+                            geographicRegion => geographicRegion.Subregions,
+                            hierarchyMember  => hierarchyMember.Children.Where(child => !child.Member.Is<Country>()),
+                            gr)), Is.True);
+            }
         }
 
         [Test]

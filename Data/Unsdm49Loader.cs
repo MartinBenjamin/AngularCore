@@ -10,7 +10,7 @@ using UnsdM49;
 
 namespace Data
 {
-    public class Unsdm49Loader: IEtl<GeographicRegionHierarchy>
+    public class Unsdm49Loader: IEtl
     {
         private static readonly Func<string, string, GeographicRegion, GeographicRegion>[] _levels = new Func<string, string, GeographicRegion, GeographicRegion>[]
             {
@@ -23,6 +23,8 @@ namespace Data
         private readonly ICsvExtractor   _csvExtractor;
         private readonly ISessionFactory _sessionFactory;
 
+        private static readonly string _fileName = "UNSDM49.csv";
+
         public Unsdm49Loader(
             ICsvExtractor   csvExtractor,
             ISessionFactory sessionFactory
@@ -32,7 +34,12 @@ namespace Data
             _sessionFactory = sessionFactory;
         }
 
-        async Task<GeographicRegionHierarchy> IEtl<GeographicRegionHierarchy>.ExecuteAsync()
+        string IEtl.FileName
+        {
+            get => _fileName;
+        }
+
+        async Task IEtl.ExecuteAsync()
         {
 
             using(var session = _sessionFactory.OpenSession())
@@ -53,7 +60,7 @@ namespace Data
                     country => (GeographicRegion)country);
 
                 var countryParent = (await _csvExtractor
-                    .ExtractAsync("UNSDM49.csv"))
+                    .ExtractAsync(_fileName))
                     .Where(record => countries.ContainsKey(record[10]))
                     .Select(
                         record =>
@@ -87,8 +94,6 @@ namespace Data
                 await session.SaveAsync(hierarchy);
                 await hierarchy.VisitAsync(async member => await session.SaveAsync(member));
                 await transaction.CommitAsync();
-
-                return hierarchy;
             }
         }
 

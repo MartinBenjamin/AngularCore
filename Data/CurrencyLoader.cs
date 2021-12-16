@@ -10,7 +10,7 @@ namespace Data
         private readonly ICsvExtractor   _csvExtractor;
         private readonly ISessionFactory _sessionFactory;
 
-        private readonly string _fileName = "ISO4217.csv";
+        private static readonly string _fileName = "ISO4217.csv";
 
         public CurrencyLoader(
             ICsvExtractor   csvExtractor,

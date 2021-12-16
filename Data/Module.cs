@@ -8,7 +8,6 @@ using LifeCycles;
 using Locations;
 using Organisations;
 using Roles;
-using System.Collections.Generic;
 
 namespace Data
 {
@@ -53,7 +52,7 @@ namespace Data
 
             builder
                 .RegisterType<Unsdm49Loader>()
-                .As<IEtl<GeographicRegionHierarchy>>()
+                .Keyed<IEtl>(typeof(GeographicRegionHierarchy))
                 .SingleInstance();
 
             builder

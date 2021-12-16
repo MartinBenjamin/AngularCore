@@ -12,7 +12,7 @@ namespace Data
         private readonly ICsvExtractor   _csvExtractor;
         private readonly ISessionFactory _sessionFactory;
 
-        private readonly string _fileName = "Role.csv";
+        private static readonly string _fileName = "Role.csv";
 
         public RoleLoader(
             ICsvExtractor   csvExtractor,
