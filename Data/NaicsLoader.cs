@@ -86,8 +86,7 @@ namespace Data
                     {
                         await session.SaveAsync(classificationSchemeClassifier.Classifier);
                         await session.SaveAsync(classificationSchemeClassifier);
-                    },
-                    null);
+                    });
                 await transaction.CommitAsync();
             }
 
