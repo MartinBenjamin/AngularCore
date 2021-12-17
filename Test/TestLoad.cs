@@ -227,10 +227,41 @@ namespace Test
 
             using(var scope = _container.BeginLifetimeScope())
             {
-                //var csvExtractor = scope.Resolve<ICsvExtractor>();
-                //var extracted = await csvExtractor.ExtractAsync(loader.FileName);
+                var csvExtractor = scope.Resolve<ICsvExtractor>();
+                var extracted = (await csvExtractor.ExtractAsync(loader.FileName))
+                    .Where(record => !string.IsNullOrEmpty(record[10]))
+                    .ToList();
                 var service = scope.Resolve<IDomainObjectService<Guid, GeographicRegionHierarchy>>();
                 var hierarchy = await service.GetAsync(new Guid("80bd57c5-7f3a-48d6-ba89-ad9ddaf12ebb"));
+                var geographicRegions = hierarchy.Members
+                    .Select(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Member)
+                    .ToDictionary(
+                        geographicRegion => geographicRegion.As<Country>()?.NumericCode.ToString("000") ?? geographicRegion.Id);
+
+                var levels = new GeographicRegion[5];
+                foreach(var record in extracted)
+                    for(var levelIndex = 0;levelIndex < 5;levelIndex++)
+                        if(levelIndex < 4)
+                        {
+                            var code = record[levelIndex * 2];
+                            if(!string.IsNullOrEmpty(code))
+                            {
+                                Assert.That(geographicRegions.ContainsKey(code), Is.True);
+                                var geographicRegion = geographicRegions[code];
+                                levels[levelIndex] = geographicRegion;
+                                if(levelIndex > 0)
+                                {
+                                    Assert.That(geographicRegion, Is.InstanceOf<GeographicSubregion>());
+                                    var geographicSubregion = geographicRegion.As<GeographicSubregion>();
+                                    Assert.That(geographicSubregion.Region, Is.EqualTo(levels[levelIndex - 1]));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var code = record[9];
+                            Assert.That(geographicRegions.ContainsKey(code), Is.True);
+                        }
 
                 Func<GeographicRegion, GeographicRegionHierarchyMember> map = geographicRegion => hierarchy[geographicRegion];
 
