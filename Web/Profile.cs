@@ -26,7 +26,7 @@ namespace Web
                 case UnsdM49.Global             global            : return Model.GeographicRegionType.UnsdM49Global;
                 case UnsdM49.Region             region            : return Model.GeographicRegionType.UnsdM49Region;
                 case UnsdM49.SubRegion          subRegion         : return Model.GeographicRegionType.UnsdM49SubRegion;
-                case UnsdM49.IntermediateRegion intermediateRegion: return Model.GeographicRegionType.UnsdM49SubRegion;
+                case UnsdM49.IntermediateRegion intermediateRegion: return Model.GeographicRegionType.UnsdM49IntermediateRegion;
                 default: return default;
             }
         }
