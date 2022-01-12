@@ -5,14 +5,14 @@ import { FunctionalDataProperty } from "./FunctionalDataProperty";
 import { IAnnotationProperty } from "./IAnnotationProperty";
 import { IAxiom } from "./IAxiom";
 import { IClass } from "./IClass";
-import { IsClassExpression } from "./IsClassExpression";
+import { IClassExpression } from "./IClassExpression";
 import { INamedIndividual } from "./INamedIndividual";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
 import { IsAxiom } from "./IsAxiom";
+import { IsClassExpression } from "./IsClassExpression";
 import { NamedIndividual } from "./NamedIndividual";
 import { DataProperty, ObjectProperty } from "./Property";
-import { IClassExpression } from "./IClassExpression";
 
 export function Individuals(
     individual  : object,
