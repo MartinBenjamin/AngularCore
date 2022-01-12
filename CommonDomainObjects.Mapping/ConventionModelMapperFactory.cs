@@ -44,6 +44,8 @@ namespace CommonDomainObjects.Mapping
             mapper.AddMapping<Classifier                     >();
             mapper.AddMapping<ExclusivityClassifier          >();
             mapper.AddMapping<NaicsClassifier                >();
+            mapper.AddMapping<RestrictedClassifier           >();
+            mapper.AddMapping<SponsoredClassifier            >();
             mapper.AddMapping<LifeCycleStage                 >();
             mapper.AddMapping<CountryJoin                    >();
             mapper.AddMapping<SubdivisionJoin                >();

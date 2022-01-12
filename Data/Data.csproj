@@ -21,7 +21,9 @@
     <None Remove="NAICS2017.csv" />
     <None Remove="NAICS2017CrossReferences.csv" />
     <None Remove="NAICS2017Descriptions.csv" />
+    <None Remove="Restricted.csv" />
     <None Remove="Role.csv" />
+    <None Remove="Sponsored.csv" />
     <None Remove="UNSDM49.csv" />
   </ItemGroup>
 
@@ -42,7 +44,9 @@
     <EmbeddedResource Include="NAICS2017.csv" />
     <EmbeddedResource Include="NAICS2017CrossReferences.csv" />
     <EmbeddedResource Include="NAICS2017Descriptions.csv" />
+    <EmbeddedResource Include="Restricted.csv" />
     <EmbeddedResource Include="Role.csv" />
+    <EmbeddedResource Include="Sponsored.csv" />
     <EmbeddedResource Include="UNSDM49.csv" />
   </ItemGroup>
 

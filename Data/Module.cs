@@ -73,6 +73,18 @@ namespace Data
                 .SingleInstance();
 
             builder
+                .RegisterType<RestrictedLoader>()
+                .Keyed<IEtl>(typeof(ClassificationScheme))
+                .Keyed<IEtl>(typeof(RestrictedLoader))
+                .SingleInstance();
+
+            builder
+                .RegisterType<SponsoredLoader>()
+                .Keyed<IEtl>(typeof(ClassificationScheme))
+                .Keyed<IEtl>(typeof(SponsoredLoader))
+                .SingleInstance();
+
+            builder
                 .RegisterType<DealTypeLoader>()
                 .Keyed<IEtl>(typeof(ClassificationScheme))
                 .Keyed<IEtl>(typeof(DealTypeLoader))

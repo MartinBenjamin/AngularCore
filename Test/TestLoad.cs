@@ -349,6 +349,8 @@ namespace Test
         [TestCase(typeof(DealStageLoader  ), "947b1353-bd48-4f36-a934-a03a942aaae2")]
         [TestCase(typeof(DealTypeLoader   ), "e28b89e1-97e4-4820-aabc-af31e6959888")]
         [TestCase(typeof(ExclusivityLoader), "f7c20b62-ffe8-4c20-86b4-e5c68ba2469d")]
+        [TestCase(typeof(RestrictedLoader ), "10414c1c-da0c-44f0-be02-7f70fe1b8649")]
+        [TestCase(typeof(SponsoredLoader  ), "3110ec17-e5d1-430d-ba95-7aedfddd2358")]
         public async Task ClassificationScheme(
             Type   loaderType,
             string schemeId
@@ -368,7 +370,7 @@ namespace Test
                 Assert.That(extracted.Count, Is.GreaterThan(0));
                 foreach(var record in extracted)
                 {
-                    Guid superId = string.IsNullOrEmpty(record[1]) ? Guid.Empty : new Guid(record[1]);
+                    var superId = string.IsNullOrEmpty(record[1]) ? Guid.Empty : new Guid(record[1]);
                     Assert.That(loaded.ContainsKey((superId, record[2])));
                     var classificationSchemeClassifier = loaded[(superId, record[2])];
 
