@@ -184,10 +184,11 @@ export class Sponsors implements OnDestroy
 
         let superClasses = ontology.SuperClasses(ontology.Deal);
         for(let superClass of superClasses)
-            for(let annotation of superClass.Annotations)
-                if(annotation.Property == annotations.ComponentBuildAction &&
-                    annotation.Value in this)
-                    this[annotation.Value]();
+            if(ontology.IsAxiom.IClass(superClass))
+                for(let annotation of superClass.Annotations)
+                    if(annotation.Property == annotations.ComponentBuildAction &&
+                        annotation.Value in this)
+                        this[annotation.Value]();
     }
 
     Reset(): void

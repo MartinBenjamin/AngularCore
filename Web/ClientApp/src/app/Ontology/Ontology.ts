@@ -12,6 +12,7 @@ import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyE
 import { IsAxiom } from "./IsAxiom";
 import { NamedIndividual } from "./NamedIndividual";
 import { DataProperty, ObjectProperty } from "./Property";
+import { IClassExpression } from "./IClassExpression";
 
 export function Individuals(
     individual  : object,
@@ -52,7 +53,7 @@ export class Ontology implements IOntology
     IsAxiom           = new IsAxiom();
     IsClassExpression = new IsClassExpression();
 
-    private readonly _superClasses = new Map<IClass, Set<IClass>>();
+    private readonly _superClasses = new Map<IClassExpression, Set<IClassExpression>>();
 
     constructor(
         public Iri: string,
@@ -103,29 +104,25 @@ export class Ontology implements IOntology
     }
 
     SuperClasses(
-        class$: IClass
-        ): Set<IClass>
+        classExpression: IClassExpression
+        ): Set<IClassExpression>
     {
-        let superClasses = this._superClasses.get(class$);
+        let superClasses = this._superClasses.get(classExpression);
 
         if(superClasses)
             return superClasses;
 
         superClasses = new Set<IClass>();
         this._superClasses.set(
-            class$,
+            classExpression,
             superClasses);
 
-        superClasses.add(class$);
+        superClasses.add(classExpression);
 
         for(let subClassOf of this.Get(this.IsAxiom.ISubClassOf))
-            if(subClassOf.SubClassExpression === class$)
-            {
-                let superClassExpression = subClassOf.SuperClassExpression;
-                if(this.IsAxiom.IClass(superClassExpression))
-                    for(let superClass of this.SuperClasses(superClassExpression))
-                        superClasses.add(superClass);
-            }
+            if(subClassOf.SubClassExpression === classExpression)
+                for(let superClass of this.SuperClasses(subClassOf.SuperClassExpression))
+                    superClasses.add(superClass);
 
         return superClasses;
     }

@@ -1,6 +1,7 @@
 import { IAnnotationProperty } from "./IAnnotationProperty";
 import { IAxiom } from "./IAxiom";
 import { IClass } from "./IClass";
+import { IClassExpression } from "./IClassExpression";
 import { IIsAxiom } from './IIsAxiom';
 import { IIsClassExpression } from './IIsClassExpression';
 import { INamedIndividual } from "./INamedIndividual";
@@ -18,7 +19,7 @@ export interface IOntology
     Get<TAxiom extends IAxiom>(typeGuard: (axiom: object) => axiom is TAxiom): Iterable<TAxiom>;
     Classify(individuals: Set<object>): Map<object, Set<IClass>>;
     Classify(individual: object): Map<object, Set<IClass>>;
-    SuperClasses(class$: IClass): Set<IClass>;
+    SuperClasses(class$: IClassExpression): Set<IClassExpression>;
 
     // Provided to assist construction of ontologies.
     DeclareClass(localName: string): IClass;
