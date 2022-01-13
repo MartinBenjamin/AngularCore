@@ -1,8 +1,8 @@
 import { ArrayKeyedMap } from './ArrayKeyedMap';
 
-export class ArraySet implements Set<any[]>
+export class ArraySet<T extends any[]> implements Set<T>
 {
-    private _map = new ArrayKeyedMap<any[], any[]>();
+    private _map = new ArrayKeyedMap<T, T>();
 
     constructor(
         values?: Iterable<T>
@@ -14,7 +14,7 @@ export class ArraySet implements Set<any[]>
     }
 
     add(
-        value: any[]
+        value: T
         ): this
     {
         this._map.set(
@@ -29,18 +29,17 @@ export class ArraySet implements Set<any[]>
     }
 
     delete(
-        value: any[]
+        value: T
         ): boolean
     {
         return this._map.delete(value);
     }
 
     forEach(
-        callbackfn: (value: any[], key: any[], set: Set<any[]>) => void,
-        thisArg?  : any
+        callbackfn: (value: T, value2: T, set: Set<T>) => void,
+        thisArg?: any
         ): void
     {
-
         for(const value of this.values())
             thisArg ?
                 callbackfn.call(
@@ -55,7 +54,7 @@ export class ArraySet implements Set<any[]>
     }
 
     has(
-        value: any[]
+        value: T
         ): boolean
     {
         return this._map.has(value);
@@ -66,23 +65,23 @@ export class ArraySet implements Set<any[]>
         return this._map.size;
     }
 
-    [Symbol.iterator](): IterableIterator<any[]>
+    [Symbol.iterator](): IterableIterator<T>
     {
         return this.values();
     }
 
-    *entries(): IterableIterator<[any[], any[]]>
+    *entries(): IterableIterator<[T, T]>
     {
         for(const value of this.values())
             yield [value, value];
     }
 
-    keys(): IterableIterator<any[]>
+    keys(): IterableIterator<T>
     {
         return this.values();
     }
 
-    values(): IterableIterator<any[]>
+    values(): IterableIterator<T>
     {
         return this._map.values();
     }
