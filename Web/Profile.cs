@@ -41,9 +41,13 @@ namespace Web
             CreateMap<ClassificationSchemeClassifier , Model.ClassificationSchemeClassifier >().PreserveReferences();
             CreateMap<Classifier                     , Model.Classifier                     >()
                 .Include<ExclusivityClassifier       , Model.ExclusivityClassifier          >()
+                .Include<RestrictedClassifier        , Model.RestrictedClassifier           >()
+                .Include<SponsoredClassifier         , Model.SponsoredClassifier            >()
                 .Include<LifeCycleStage              , Model.LifeCycleStage                 >()
                 .Include<DealType                    , Model.DealType                       >().PreserveReferences();
             CreateMap<ExclusivityClassifier          , Model.ExclusivityClassifier          >().PreserveReferences();
+            CreateMap<RestrictedClassifier           , Model.RestrictedClassifier           >().PreserveReferences();
+            CreateMap<SponsoredClassifier            , Model.SponsoredClassifier            >().PreserveReferences();
             CreateMap<LifeCycleStage                 , Model.LifeCycleStage                 >().PreserveReferences();
             CreateMap<DealType                       , Model.DealType                       >().PreserveReferences();
             CreateMap<Currency                       , Model.Currency                       >().PreserveReferences();
