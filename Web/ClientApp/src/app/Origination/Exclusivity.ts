@@ -15,12 +15,11 @@ import { IDomainObjectService } from '../IDomainObjectService';
 export class Exclusivity implements OnDestroy
 {
     private _subscriptions                  : Subscription[] = [];
-    private _classificationScheme           : ClassificationScheme;
     private _classificationSchemeClassifiers: ClassificationSchemeClassifier[];
     private _deal                           : Deal;
     private _classifier                     : Classifier;
     private _exclusivity                    : ExclusivityCommitment;
-    private _map                            = new Map<Guid, ClassificationSchemeClassifier>();
+    private _map                            : Map<Guid, ClassificationSchemeClassifier>;
     private _yes                            : ClassificationSchemeClassifier;
 
     constructor(
@@ -34,16 +33,18 @@ export class Exclusivity implements OnDestroy
             .subscribe(
                 classificationScheme =>
                 {
-                    this._classificationScheme = classificationScheme;
                     this._classificationSchemeClassifiers = classificationScheme.Classifiers.filter(
-                        classificationSchemeClassifier => classificationSchemeClassifier.Super == null);
-                    classificationScheme.Classifiers.forEach(
-                        classificationSchemeClassifier => this._map.set(
-                            classificationSchemeClassifier.Classifier.Id,
-                            classificationSchemeClassifier));
+                        classificationSchemeClassifier => classificationSchemeClassifier.Super === null);
+                    this._map = new Map<Guid, ClassificationSchemeClassifier>(
+                        classificationScheme.Classifiers.map(
+                            classificationSchemeClassifier =>
+                                [
+                                    classificationSchemeClassifier.Classifier.Id,
+                                    classificationSchemeClassifier
+                                ]));
                     this._yes = this._classificationSchemeClassifiers.find(
                         classificationSchemeClassifier =>
-                            classificationSchemeClassifier.Classifier.Id == ExclusivityClassifierIdentifier.Yes);
+                            classificationSchemeClassifier.Classifier.Id === ExclusivityClassifierIdentifier.Yes);
                     this.ComputeExclusive();
                 });
 
@@ -59,8 +60,8 @@ export class Exclusivity implements OnDestroy
                         return;
                     }
 
-                    this._classifier = this._deal.Classifiers.find(classifer => (<any>classifer).$type == 'Web.Model.ExclusivityClassifier, Web');
-                    this._exclusivity = <ExclusivityCommitment>this._deal.Confers.find(commitment => (<any>commitment).$type == 'Web.Model.Exclusivity, Web');
+                    this._classifier = this._deal.Classifiers.find(classifer => (<any>classifer).$type === 'Web.Model.ExclusivityClassifier, Web');
+                    this._exclusivity = <ExclusivityCommitment>this._deal.Confers.find(commitment => (<any>commitment).$type === 'Web.Model.Exclusivity, Web');
                     this.ComputeExclusive();
                 }));
     }
