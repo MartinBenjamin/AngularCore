@@ -32,6 +32,7 @@ import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
 import { OriginationTab } from './OriginationTab';
 import { TransactionDetails } from './TransactionDetails';
+import { Restricted } from './Restricted';
 
 @NgModule(
     {
@@ -60,6 +61,7 @@ import { TransactionDetails } from './TransactionDetails';
                 LegalEntityFinderButtons,
                 MoreTabs,
                 OriginationTab,
+                Restricted,
                 Sponsors,
                 Sponsors_s,
                 TransactionDetails,

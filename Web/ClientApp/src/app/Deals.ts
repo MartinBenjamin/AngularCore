@@ -37,6 +37,7 @@ export class ClassificationSchemeIdentifier
 {
     static readonly DealType    = 'e28b89e1-97e4-4820-aabc-af31e6959888';
     static readonly Exclusivity = 'f7c20b62-ffe8-4c20-86b4-e5c68ba2469d';
+    static readonly Restricted  = '10414c1c-da0c-44f0-be02-7f70fe1b8649';
 }
 
 export class ExclusivityClassifierIdentifier
