@@ -1,8 +1,8 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { DomainObject, Guid } from '../CommonDomainObjects';
-import { DealProvider } from '../DealProvider';
-import { Deal } from '../Deals';
+import { DomainObject, Guid } from '../../CommonDomainObjects';
+import { DealProvider } from '../../DealProvider';
+import { Deal } from '../../Deals';
 
 @Component(
     {

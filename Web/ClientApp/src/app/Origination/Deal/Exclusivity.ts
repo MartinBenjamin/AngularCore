@@ -1,11 +1,11 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ClassificationScheme, ClassificationSchemeClassifier, Classifier } from '../ClassificationScheme';
-import { ClassificationSchemeServiceToken } from '../ClassificationSchemeServiceProvider';
-import { Guid, EmptyGuid } from '../CommonDomainObjects';
-import { DealProvider } from '../DealProvider';
-import { ClassificationSchemeIdentifier, Deal, ExclusivityClassifierIdentifier, Exclusivity as ExclusivityCommitment } from '../Deals';
-import { IDomainObjectService } from '../IDomainObjectService';
+import { ClassificationScheme, ClassificationSchemeClassifier, Classifier } from '../../ClassificationScheme';
+import { ClassificationSchemeServiceToken } from '../../ClassificationSchemeServiceProvider';
+import { Guid, EmptyGuid } from '../../CommonDomainObjects';
+import { DealProvider } from '../../DealProvider';
+import { ClassificationSchemeIdentifier, Deal, ExclusivityClassifierIdentifier, Exclusivity as ExclusivityCommitment } from '../../Deals';
+import { IDomainObjectService } from '../../IDomainObjectService';
 
 @Component(
     {

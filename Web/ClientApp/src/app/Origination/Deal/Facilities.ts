@@ -1,11 +1,11 @@
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { EmptyGuid } from '../CommonDomainObjects';
-import { HighlightedPropertyObservableToken, Property } from '../Components/ValidatedProperty';
-import { ContractualCommitment } from '../Contracts';
-import { DealProvider } from '../DealProvider';
-import { Deal } from '../Deals';
-import { Facility, LenderParticipation } from '../FacilityAgreements';
+import { EmptyGuid } from '../../CommonDomainObjects';
+import { HighlightedPropertyObservableToken, Property } from '../../Components/ValidatedProperty';
+import { ContractualCommitment } from '../../Contracts';
+import { DealProvider } from '../../DealProvider';
+import { Deal } from '../../Deals';
+import { Facility, LenderParticipation } from '../../FacilityAgreements';
 
 @Component(
     {
@@ -19,7 +19,7 @@ export class Facilities implements OnDestroy
     private _facilities   : [Facility, LenderParticipation][]
 
     @ViewChild('facility', { static: true })
-    private _facility: import('../Deal/Facility').Facility;
+    private _facility: import('../../Deal/Facility').Facility;
 
     constructor(
         dealProvider: DealProvider,

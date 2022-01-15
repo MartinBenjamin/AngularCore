@@ -14,12 +14,12 @@ import { ObserveErrors } from '../../Ontologies/ObserveErrors';
 import { IErrors, Validate } from '../../Ontologies/Validate';
 import { Store } from '../../Ontology/IEavStore';
 import { Alternative, Empty, Property, Query2, Sequence, ZeroOrMore } from '../../RegularPathExpression';
-import { KeyCounterparties } from '../KeyCounterparties';
-import { KeyDealData } from '../KeyDealData';
-import { MoreTabs } from '../MoreTabs';
 import { Origination } from '../Origination';
-import { OriginationTab } from '../OriginationTab';
-import { TransactionDetails } from '../TransactionDetails';
+import { KeyCounterparties } from './KeyCounterparties';
+import { KeyDealData } from './KeyDealData';
+import { MoreTabs } from './MoreTabs';
+import { OriginationTab } from './OriginationTab';
+import { TransactionDetails } from './TransactionDetails';
 
 @Component(
     {

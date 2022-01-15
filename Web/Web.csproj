@@ -289,20 +289,21 @@
     <None Remove="ClientApp\src\app\Ontology\TransitiveClosure.ts" />
     <None Remove="ClientApp\src\app\Ontology\Xsd.ts" />
     <None Remove="ClientApp\src\app\Organisations.ts" />
-    <None Remove="ClientApp\src\app\Origination\Common.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal.Module.ts" />
-    <None Remove="ClientApp\src\app\Origination\DealGeographicRegion.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\Common.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\DealGeographicRegion.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal\EavStoreProvider.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal\Errors.ts" />
-    <None Remove="ClientApp\src\app\Origination\Exclusivity.ts" />
-    <None Remove="ClientApp\src\app\Origination\Facilities.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\Exclusivity.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\Facilities.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\KeyCounterparties.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\TransactionDetails.ts" />
     <None Remove="ClientApp\src\app\Origination\MyDeals.ts" />
     <None Remove="ClientApp\src\app\Origination\MyDeals\MyDeals.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\Origination.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\Origination.ts" />
     <None Remove="ClientApp\src\app\Origination\ProjectFinance.ts" />
     <None Remove="ClientApp\src\app\Origination\Sponsors.ts" />
-    <None Remove="ClientApp\src\app\Origination\TransactionDetails.ts" />
     <None Remove="ClientApp\src\app\Parties.ts" />
     <None Remove="ClientApp\src\app\People.ts" />
     <None Remove="ClientApp\src\app\Performance.ts" />
@@ -593,20 +594,32 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\TransitiveClosure.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Xsd.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Organisations.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Common.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal.Module.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\DealGeographicRegion.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\Common.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\DealGeographicRegion.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\EavStoreProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\Errors.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Exclusivity.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Facilities.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\KeyCounterparties.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\Exclusivity.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\Facilities.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\KeyCounterparties.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\TransactionDetails.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Origination\MyDeals\MyDeals.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\MyDeals\MyDeals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Origination.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Origination.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Deal\Sponsors.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\TransactionDetails.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Parties.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Performance.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\RegularPathExpression.Spec.ts" />

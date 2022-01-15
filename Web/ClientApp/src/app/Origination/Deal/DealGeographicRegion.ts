@@ -1,12 +1,12 @@
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { GeographicRegionSelector } from '../Deal/GeographicRegionSelector';
-import { DealProvider } from '../DealProvider';
-import { Deal } from '../Deals';
-import { GeographicRegionHierarchy, GeographicRegionHierarchyMember } from '../GeographicRegionHierarchy';
-import { GeographicRegionHierarchyToken } from '../GeographicRegionHierarchyProvider';
-import { GeographicRegion, GeographicRegionType } from '../Locations';
-import { Subdivision } from '../Iso3166';
+import { GeographicRegionSelector } from '../../Deal/GeographicRegionSelector';
+import { DealProvider } from '../../DealProvider';
+import { Deal } from '../../Deals';
+import { GeographicRegionHierarchy, GeographicRegionHierarchyMember } from '../../GeographicRegionHierarchy';
+import { GeographicRegionHierarchyToken } from '../../GeographicRegionHierarchyProvider';
+import { GeographicRegion, GeographicRegionType } from '../../Locations';
+import { Subdivision } from '../../Iso3166';
 
 @Component(
     {

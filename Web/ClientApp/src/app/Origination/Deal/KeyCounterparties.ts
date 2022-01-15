@@ -1,8 +1,8 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { DealProvider } from '../DealProvider';
-import { annotations } from '../Ontologies/Annotations';
-import { IDealOntology } from '../Ontologies/IDealOntology';
+import { DealProvider } from '../../DealProvider';
+import { annotations } from '../../Ontologies/Annotations';
+import { IDealOntology } from '../../Ontologies/IDealOntology';
 
 @Component(
     {
