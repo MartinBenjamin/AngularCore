@@ -16,7 +16,6 @@ import { KeyCounterparties } from './KeyCounterparties';
 import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
 import { OriginationTab } from './OriginationTab';
-import { Restricted } from './Restricted';
 import { TransactionDetails } from './TransactionDetails';
 
 @NgModule(
@@ -31,7 +30,6 @@ import { TransactionDetails } from './TransactionDetails';
                 KeyDealData,
                 MoreTabs,
                 OriginationTab,
-                Restricted,
                 TransactionDetails
             ],
         imports:

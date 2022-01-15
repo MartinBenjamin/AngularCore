@@ -8,6 +8,7 @@ import { NumberModule } from '../Components/NumberModule';
 import { TabbedViewModule } from '../Components/TabbedView';
 import { YesNoPipeModule } from '../Components/YesNoPipe';
 import { LegalEntityFinder, LegalEntityFinderButtons } from '../LegalEntityFinder';
+import { Restricted } from './Restricted';
 import { Borrowers } from './Borrowers';
 import { ExternalFunding } from './ExternalFunding';
 import { Facility } from './Facility';
@@ -38,6 +39,7 @@ import { Sponsors } from './Sponsors';
                 GeographicRegionSelector,
                 LegalEntityFinder,
                 LegalEntityFinderButtons,
+                Restricted,
                 Sponsors
             ],
         imports:
@@ -58,6 +60,7 @@ import { Sponsors } from './Sponsors';
                 GeographicRegionSelector,
                 LegalEntityFinder,
                 LegalEntityFinderButtons,
+                Restricted,
                 Sponsors
             ]
     })
