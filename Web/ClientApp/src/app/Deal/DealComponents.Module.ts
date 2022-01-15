@@ -1,8 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AccrualDateEditor } from '../AccrualDateEditor';
-import { AccrualDatePipe } from '../AccrualDatePipe';
 import { DateModule } from '../Components/DateModule';
 import { DialogModule } from '../Components/Dialog';
 import { ErrorModule } from '../Components/ErrorModule';
@@ -27,8 +25,6 @@ import { Sponsors } from './Sponsors';
     {
         declarations:
             [
-                AccrualDateEditor,
-                AccrualDatePipe,
                 Borrowers,
                 ExternalFunding,
                 Facility,
@@ -57,8 +53,6 @@ import { Sponsors } from './Sponsors';
             ],
         exports:
             [
-                AccrualDateEditor,
-                AccrualDatePipe,
                 Borrowers,
                 Facility,
                 GeographicRegionSelector,

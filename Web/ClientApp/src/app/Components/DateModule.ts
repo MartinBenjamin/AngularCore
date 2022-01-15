@@ -1,5 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AccrualDateEditor } from './AccrualDateEditor';
+import { AccrualDatePipe } from './AccrualDatePipe';
 import { Calendar } from './Calendar';
 import { DateConversionService } from './DateConversionService';
 import { DateModel } from './DateModel';
@@ -10,16 +13,21 @@ import { UtcDatePipe } from './UtcDatePipe';
     {
         imports:
         [
-            CommonModule
+            CommonModule,
+            FormsModule
         ],
         declarations:
         [
+            AccrualDateEditor,
+            AccrualDatePipe,
             DateModel,
             Calendar,
             UtcDatePipe
         ],
         exports:
         [
+            AccrualDateEditor,
+            AccrualDatePipe,
             DateModel,
             Calendar,
             UtcDatePipe
