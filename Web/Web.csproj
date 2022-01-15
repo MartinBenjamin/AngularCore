@@ -52,6 +52,7 @@
     <None Remove="ClientApp\src\app\DealTrackerLayout.Module.ts" />
     <None Remove="ClientApp\src\app\DealTrackerLayout.ts" />
     <None Remove="ClientApp\src\app\Components\TestTab.ts" />
+    <None Remove="ClientApp\src\app\Deal\DealComponents.Module.ts" />
     <None Remove="ClientApp\src\app\Deal\ExternalFunding.ts" />
     <None Remove="ClientApp\src\app\Deal\FacilityErrors.ts" />
     <None Remove="ClientApp\src\app\Deal\FacilityFeeEditor.ts" />
@@ -345,6 +346,9 @@
     <TypeScriptCompile Include="ClientApp\src\app\DealTrackerLayout.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\DealTrackerLayout.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Components\TestTab.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Deal\DealComponents.Module.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Deal\ExternalFunding.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Deal\FacilityErrors.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Deal\FacilityFeeEditor.ts" />

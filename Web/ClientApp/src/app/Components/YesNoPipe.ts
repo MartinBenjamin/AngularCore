@@ -1,4 +1,5 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { NgModule, Pipe, PipeTransform } from '@angular/core';
 
 @Pipe(
     {
@@ -13,3 +14,22 @@ export class YesNoPipe implements PipeTransform
         return typeof yesNo === 'boolean' ? yesNo ? 'Yes' : 'No' : '';
     }
 }
+
+@NgModule(
+    {
+        imports:
+            [
+                CommonModule
+            ],
+        declarations:
+            [
+                YesNoPipe
+            ],
+        exports:
+            [
+                YesNoPipe
+            ]
+    })
+export class YesNoPipeModule
+{ }
+
