@@ -9,7 +9,6 @@ import { NumberModule } from '../../Components/NumberModule';
 import { TabbedViewModule } from '../../Components/TabbedView';
 import { YesNoPipeModule } from '../../Components/YesNoPipe';
 import { DealComponentsModule } from '../../Deal/DealComponents.Module';
-import { Sponsors_s } from '../../Deal/Sponsors_s';
 import { DealOntologyServiceProvider } from '../../Ontologies/DealOntologyServiceProvider';
 import { DealBuilderProvider } from '../../Ontologies/IDealBuilder';
 import { Common } from './Common';
@@ -23,6 +22,7 @@ import { KeyCounterparties } from './KeyCounterparties';
 import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
 import { OriginationTab } from './OriginationTab';
+import { Sponsors_s } from './Sponsors_s';
 import { TransactionDetails } from './TransactionDetails';
 
 const routes: Routes =
