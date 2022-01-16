@@ -24,7 +24,7 @@ const routes: Routes =
                     {
                         path: 'Deal',
                         loadChildren: () => import('./Deal/Deal.Module').then(
-                            module => module.DealComponentModule)
+                            module => module.DealModule)
                     }
                 ]
         }

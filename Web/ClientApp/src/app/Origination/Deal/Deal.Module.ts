@@ -69,5 +69,5 @@ const routes: Routes =
                 EavStoreProvider
             ]
     })
-export class DealComponentModule
+export class DealModule
 { }
