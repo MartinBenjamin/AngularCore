@@ -9,6 +9,7 @@ import { NumberModule } from '../../Components/NumberModule';
 import { TabbedViewModule } from '../../Components/TabbedView';
 import { YesNoPipeModule } from '../../Components/YesNoPipe';
 import { DealComponentsModule } from '../../Deal/DealComponents.Module';
+import { Sponsors_s } from '../../Deal/Sponsors_s';
 import { DealOntologyServiceProvider } from '../../Ontologies/DealOntologyServiceProvider';
 import { DealBuilderProvider } from '../../Ontologies/IDealBuilder';
 import { Common } from './Common';
@@ -47,6 +48,7 @@ const routes: Routes =
                 KeyDealData,
                 MoreTabs,
                 OriginationTab,
+                Sponsors_s,
                 TransactionDetails
             ],
         imports:

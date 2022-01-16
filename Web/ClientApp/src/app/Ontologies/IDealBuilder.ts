@@ -18,6 +18,7 @@ export const DealBuilderToken = new InjectionToken<IDealBuilder>('DealBuilder');
 export interface IDealBuilder
 {
     Build(dealOntology: IDealOntology): Deal;
+    Build2(dealOntology: IDealOntology): Deal;
 }
 
 @Injectable()
@@ -139,22 +140,8 @@ export class DealBuilder implements IDealBuilder
                 });
         return deal;
     }
-}
 
-
-@Injectable()
-export class DealBuilder2 implements IDealBuilder
-{
-    constructor(
-        @Inject(ClassificationSchemeServiceToken)
-        private _classificationSchemeService: IDomainObjectService<Guid, ClassificationScheme>,
-        @Inject(DealLifeCycleServiceToken)
-        private _dealLifeCycleService: IDealLifeCycleService
-        )
-    {
-    }
-
-    Build(
+    Build2(
         ontology: IDealOntology
         ): Deal
     {
@@ -184,7 +171,7 @@ export class DealBuilder2 implements IDealBuilder
 
         store.ObserveAttribute('Equity')
             .pipe(map((sponsorEquity: [any, any][]) =>
-                sponsorEquity.reduce(
+                sponsorEquity.length ? sponsorEquity.reduce(
                     (totalSponsorEquity, [, equity]) =>
                     {
                         if(typeof totalSponsorEquity === 'number' &&
@@ -194,7 +181,7 @@ export class DealBuilder2 implements IDealBuilder
 
                         return null;
                     },
-                    0)
+                    0) : null
             )).subscribe(totalSponsorEquity => deal.TotalSponsorEquity = totalSponsorEquity);
 
         let dealType = null;

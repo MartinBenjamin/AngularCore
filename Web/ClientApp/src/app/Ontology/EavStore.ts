@@ -376,7 +376,7 @@ export class EavStore implements IEavStore
 
             this._eav.delete(entity);
             this.PublishEntities();
-            this._attributesToPublish.forEach(attribute => this.PublishAttribute(attribute));               
+            attributesToPublish.forEach(attribute => this.PublishAttribute(attribute));               
         }
     }
 
