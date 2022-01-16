@@ -1,0 +1,58 @@
+<style type="text/css">
+  table.Facilities a
+  {
+    margin-right: 2px;
+  }
+</style>
+<facility #facility></facility>
+<table class="DataGrid Facilities">
+  <caption>Credit Risk Tranches</caption>
+  <tr>
+    <th>ID</th>
+    <th>Agreement</th>
+    <th>Type</th>
+    <th>Name</th>
+    <th>Ccy</th>
+    <th>Total&nbsp;Debt<br />Size</th>
+    <th>Bank<br />Underwrite<br />Amount</th>
+    <th>Credit Sought<br />Limit</th>
+    <th>Anticipated<br />Hold<br />Amount</th>
+    <th>Actual<br />Allocation</th>
+    <th>Maturity<br />Date</th>
+    <th>Same<br />Day<br />Facility</th>
+    <th>Multi-<br />Currency</th>
+    <th>Expected<br />1<sup>st</sup>&nbsp;Drawdown<br />Date</th>
+    <th>Availability<br />End<br />Date</th>
+    <th></th>
+  </tr>
+  <tr *ngFor="let facility of Facilities">
+    <td></td>
+    <td></td>
+    <td></td>
+    <td>{{facility[0].Name}}</td>
+    <td>{{facility[0].Currency?.Id}}</td>
+    <td class="Amount">{{facility[0].TotalCommitments|amount}}</td>
+    <td class="Amount">{{facility[1].UnderwriteAmount|amount}}</td>
+    <td class="Amount">{{facility[1].CreditSoughtLimit|amount}}</td>
+    <td class="Amount">{{facility[1].AnticipatedHoldAmount|amount}}</td>
+    <td class="Amount">{{facility[1].ActualAllocation|amount}}</td>
+    <td>{{facility[0].MaturityDate|utcDate}}</td>
+    <td>{{facility[0].SameDayFacility|yesNo}}</td>
+    <td>{{facility[0].MultiCurrency|yesNo}}</td>
+    <td>{{facility[0].Expected1StDrawdownDate|utcDate}}</td>
+    <td>{{facility[0].AvailabilityPeriodEndDate|utcDate}}</td>
+    <td>
+      <a (click)="Update(facility[0])"
+         [dtValidatedObject]="facility[0]"
+         dtValidatedProperty="$HasErrors">edit</a><a (click)="Delete(facility[0])">delete</a>
+    </td>
+  </tr>
+  <tr><td *ngIf="!Facilities.length" colspan="16" style="text-align: center;">No Credit Risk Tranches</td></tr>
+</table>
+<div style="margin-top: 5px;">
+  <select>
+    <option></option>
+    <option>Term Loan</option>
+    <option>Revolving Credit Facility</option>
+  </select><input type="button" value="Add" (click)="Add()" style="height: 20px; margin-left: 1px;" />
+</div>

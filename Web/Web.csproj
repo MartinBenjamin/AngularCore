@@ -289,6 +289,14 @@
     <None Remove="ClientApp\src\app\Ontology\TransitiveClosure.ts" />
     <None Remove="ClientApp\src\app\Ontology\Xsd.ts" />
     <None Remove="ClientApp\src\app\Organisations.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\Common.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\DealGeographicRegion.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\EavStoreProvider.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\Errors.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\Exclusivity.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\Facilities.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\KeyCounterparties.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\TransactionDetails.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal\Common.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal\DealGeographicRegion.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal\EavStoreProvider.ts" />
@@ -593,6 +601,30 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\TransitiveClosure.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Xsd.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Organisations.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Common.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\DealGeographicRegion.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\EavStoreProvider.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Errors.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Exclusivity.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Facilities.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\KeyCounterparties.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\TransactionDetails.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\Common.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>

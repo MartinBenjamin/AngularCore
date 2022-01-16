@@ -1,0 +1,116 @@
+<style type="text/css">
+  input[type="text"], select, span.Field, span.Loading
+  {
+    width: 200px;
+  }
+
+  textarea
+  {
+    width: 300px;
+  }
+</style>
+<div class="OriginationTab">
+  <table class="GridLayout">
+    <tr>
+      <td style="vertical-align: top;">
+        <table class="GridLayout">
+          <tr>
+            <td class="RowHeading">Deal Name:</td>
+            <td><input
+              type="text"
+              [ngModel]="Deal?.Name"
+              (ngModelChange)="Deal.Name = $event"
+              [dtValidatedObject]="Deal"
+              dtValidatedProperty="Name"/></td>
+          </tr>
+          <tr>
+            <td class="RowHeading">MUFG Roles:</td>
+            <td></td>
+          </tr>
+          <tbody deal-geographic-region></tbody>
+          <tr>
+            <td class="RowHeading">Law/Jurisdiction:<br /><span style="font-size: smaller;">(Finance Docs)</span></td>
+            <td><select></select></td>
+          </tr>
+          <tr>
+            <td class="RowHeading">Sector:</td>
+            <td><span class="Field"></span></td>
+          </tr>
+          <tr>
+            <td class="RowHeading">Industry:</td>
+            <td><span class="Field"></span></td>
+          </tr>
+          <tr>
+            <td class="RowHeading">Sub-Industry:</td>
+            <td><span class="Field"></span></td>
+          </tr>
+          <tr>
+            <td class="RowHeading">Introducer:</td>
+            <td><input
+              type="text"
+              [ngModel]="Deal?.Introducer"
+              (ngModelChange)="Deal.Introducer = $event"
+              [dtValidatedObject]="Deal"
+              dtValidatedProperty="Introducer"/></td>
+          </tr>
+          <tr>
+            <td class="RowHeading">Base Currency:</td>
+            <td *ngIf="Currencies|async as currencies; else Loading">
+              <select
+                [compareWith]="CompareById"
+                [ngModel]="Deal?.Currency"
+                (ngModelChange)="Deal.Currency = $event"
+                [dtValidatedObject]="Deal"
+                dtValidatedProperty="Currency">
+                <option [ngValue]="null"></option>
+                <option *ngFor="let currency of currencies" [ngValue]="currency">{{currency.Name}}</option>
+              </select>
+            </td>
+            <ng-template #Loading>
+              <td><span class="Loading">Loading...</span></td>
+            </ng-template>
+          </tr>
+          <tbody exclusivity></tbody>
+          <tr>
+            <td class="RowHeading">Credit Division:</td>
+            <td><select></select></td>
+          </tr>
+        </table>
+      </td>
+      <td style="vertical-align: top;">
+        <fieldset>
+          <legend><span>Deal Description &amp; Status</span></legend>
+          <table class="GridLayout">
+            <tr>
+              <td class="RowHeading">Description:</td>
+              <td><textarea
+                [ngModel]="Deal?.TransactionDetails"
+                (ngModelChange)="Deal.TransactionDetails = $event"
+                [dtValidatedObject]="Deal"
+                dtValidatedProperty="TransactionDetails"
+                maxlength="100"
+                rows="5"></textarea></td>
+            </tr>
+            <tr>
+              <td class="RowHeading">Status:</td>
+              <td><textarea
+                [ngModel]="Deal?.CurrentStatus"
+                (ngModelChange)="Deal.CurrentStatus = $event"
+                [dtValidatedObject]="Deal"
+                dtValidatedProperty="CurrentStatus"
+                maxlength="100"
+                rows="5"></textarea></td>
+            </tr>
+            <tr>
+              <td class="RowHeading">Last Updated:</td>
+              <td><span class="Field" style="width: 100px;"></span></td>
+            </tr>
+          </table>
+        </fieldset>
+      </td>
+      <td style="vertical-align: top;">
+        <borrowers></borrowers>
+      </td>
+    </tr>
+  </table>
+</div>
