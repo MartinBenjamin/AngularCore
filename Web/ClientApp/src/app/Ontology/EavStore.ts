@@ -361,9 +361,8 @@ export class EavStore implements IEavStore
         if(av)
         {
             const attributesToPublish: string[] = [];
-            for(const attributeValue of av)
+            for(const [attribute, value] of av)
             {
-                const [attribute, value] = attributeValue;
                 const ve = this._ave.get(attribute);
                 if(ve)
                     ve.delete(value);
