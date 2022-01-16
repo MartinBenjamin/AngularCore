@@ -1,3 +1,4 @@
+import { BehaviorSubject, combineLatest, Observable } from "rxjs";
 import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -52,9 +53,9 @@ export class Sponsors_s implements OnDestroy
                             deals,
                             store);
 
-                        deals.SponsorParty.Select(generator)
+                        this._subscriptions.push(deals.SponsorParty.Select(generator)
                             .pipe(map(sponsors => [...sponsors].sort(Sort)))
-                            .subscribe(sponsors => this._sponsors = sponsors);
+                            .subscribe(sponsors => this._sponsors = sponsors));
                     }
                 }));
     }
