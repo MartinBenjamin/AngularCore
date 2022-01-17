@@ -45,7 +45,7 @@ export class Deals extends Ontology
     readonly KeyCounterpartyRole    : IClass;
     readonly KeyCounterparty        : IClass;
     readonly DebtLifeCycle          : INamedIndividual;
-    readonly NotRestrictried        : INamedIndividual;
+    readonly NotRestricted          : INamedIndividual;
 
     constructor()
     {
@@ -177,8 +177,9 @@ export class Deals extends Ontology
         this.DebtLifeCycle.DataPropertyValue(commonDomainObjects.Id, DealLifeCycleIdentifier.Debt);
         this.Debt.SubClassOf(this.LifeCycle.HasValue(this.DebtLifeCycle));
 
-        this.NotRestrictried = this.DeclareNamedIndividual("NotRestricted");
-        this.NotRestrictried.DataPropertyValue(commonDomainObjects.Id, RestrictedClassifierIdentifier.No);
+        this.NotRestricted = this.DeclareNamedIndividual("NotRestricted");
+        this.NotRestricted.DataPropertyValue(commonDomainObjects.Id, RestrictedClassifierIdentifier.No);
+        this.NotRestricted.DataPropertyValue(commonDomainObjects.$type, 'Web.Model.RestrictedClassifier, Web');
 
         new DisjointClasses(this, [this.Deal, parties.PartyInRole, commonDomainObjects.Classifier]);
     }

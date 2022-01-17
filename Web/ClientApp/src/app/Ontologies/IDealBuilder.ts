@@ -132,7 +132,7 @@ export class DealBuilder implements IDealBuilder
         let notRestrictedId: string = null;
         for(const dataPropertyAssertion of ontology.Get(ontology.IsAxiom.IDataPropertyAssertion))
             if(dataPropertyAssertion.DataPropertyExpression === commonDomainObjects.Id &&
-                dataPropertyAssertion.SourceIndividual === deals.NotRestrictried)
+                dataPropertyAssertion.SourceIndividual === deals.NotRestricted)
             {
                 notRestrictedId = dataPropertyAssertion.TargetValue;
                 break;
@@ -249,7 +249,7 @@ export class DealBuilder implements IDealBuilder
         deal.Classifiers.push(
             <Classifier>AddIndividual(
                 ontology,
-                deals.NotRestrictried,
+                deals.NotRestricted,
                 store));
 
         this._dealLifeCycleService

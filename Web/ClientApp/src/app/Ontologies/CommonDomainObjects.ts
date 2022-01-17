@@ -15,7 +15,7 @@ export class CommonDomainObjects extends Ontology
     {
         super("CommonDomainObjects");
 
-        this.$type = this.DeclareDataProperty("$type")
+        this.$type = this.DeclareFunctionalDataProperty("$type")
 
         this.DomainObject = this.DeclareClass("DomainObject");
         this.Id = this.DeclareFunctionalDataProperty("Id");

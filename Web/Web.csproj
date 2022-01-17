@@ -295,6 +295,7 @@
     <None Remove="ClientApp\src\app\Origination\Deal2\Exclusivity.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\Facilities.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\KeyCounterparties.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\Restricted_s.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\Sponsors_s.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\TransactionDetails.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal\Common.ts" />
@@ -619,6 +620,9 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\KeyCounterparties.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Restricted_s.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Sponsors_s.ts">

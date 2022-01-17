@@ -465,7 +465,12 @@ export class EavStore implements IEavStore
             });
 
         if(!entity)
+        {
             entity = this.NewEntity();
+            added.set(
+                object,
+                entity);
+        }
 
         for(const key in object)
         {
@@ -489,10 +494,6 @@ export class EavStore implements IEavStore
                     value,
                     added);
         }
-
-        added.set(
-            object,
-            entity);
 
         return entity;
     }
