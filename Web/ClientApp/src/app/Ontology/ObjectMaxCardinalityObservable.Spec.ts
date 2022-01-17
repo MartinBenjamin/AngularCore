@@ -62,7 +62,7 @@ describe(
                     {
                         const x = store.NewEntity();
                         const y = 2;
-                        store.Add(x, op1.LocalName, y);
+                        store.Assert(x, op1.LocalName, y);
                         for(const ce of ces)
                             it(
                                 ce.Cardinality === 1 ?
@@ -77,8 +77,8 @@ describe(
                         const x = store.NewEntity();
                         const y = 2;
                         const z = 3;
-                        store.Add(x, op1.LocalName, y);
-                        store.Add(x, op1.LocalName, z);
+                        store.Assert(x, op1.LocalName, y);
+                        store.Assert(x, op1.LocalName, z);
                         for(const ce of ces)
                             it(
                                 ce.Cardinality === 2 ?
@@ -133,7 +133,7 @@ describe(
                     {
                         const x = store.NewEntity();
                         const y = 2;
-                        store.Add(x, op1.LocalName, y);
+                        store.Assert(x, op1.LocalName, y);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
                             () => expect(elements(ce).has(x)).toBe(true));
@@ -144,7 +144,7 @@ describe(
                     () =>
                     {
                         const x = store.NewEntity();
-                        store.Add(x, op1.LocalName, i1Interpretation);
+                        store.Assert(x, op1.LocalName, i1Interpretation);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
                             () => expect(elements(ce).has(x)).toBe(true));
@@ -156,8 +156,8 @@ describe(
                     {
                         const x = store.NewEntity();
                         const y = 2;
-                        store.Add(x, op1.LocalName, i1Interpretation);
-                        store.Add(x, op1.LocalName, y               );
+                        store.Assert(x, op1.LocalName, i1Interpretation);
+                        store.Assert(x, op1.LocalName, y               );
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
                             () => expect(elements(ce).has(x)).toBe(true));
@@ -168,7 +168,7 @@ describe(
                     () =>
                     {
                         const x = store.NewEntity();
-                        store.Add(x, op1.LocalName, i2Interpretation);
+                        store.Assert(x, op1.LocalName, i2Interpretation);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
                             () => expect(elements(ce).has(x)).toBe(true));
@@ -180,8 +180,8 @@ describe(
                     {
                         const x = store.NewEntity();
                         const y = 2;
-                        store.Add(x, op1.LocalName, i2Interpretation);
-                        store.Add(x, op1.LocalName, y               );
+                        store.Assert(x, op1.LocalName, i2Interpretation);
+                        store.Assert(x, op1.LocalName, y               );
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
                             () => expect(elements(ce).has(x)).toBe(true));
@@ -192,8 +192,8 @@ describe(
                     () =>
                     {
                         const x = store.NewEntity();
-                        store.Add(x, op1.LocalName, i1Interpretation);
-                        store.Add(x, op1.LocalName, i2Interpretation);
+                        store.Assert(x, op1.LocalName, i1Interpretation);
+                        store.Assert(x, op1.LocalName, i2Interpretation);
                         it(
                             `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
                             () => expect(elements(ce).has(x)).toBe(false));

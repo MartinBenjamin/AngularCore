@@ -65,7 +65,7 @@ describe(
                     () =>
                     {
                         const x = store.NewEntity();
-                        store.Add(x, op1.LocalName, i1Interpretation)
+                        store.Assert(x, op1.LocalName, i1Interpretation)
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
                             () => expect(elements(ce).has(x)).toBe(true));
@@ -76,7 +76,7 @@ describe(
                     () =>
                     {
                         const x = store.NewEntity();
-                        store.Add(x, op1.LocalName, i2Interpretation);
+                        store.Assert(x, op1.LocalName, i2Interpretation);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
                             () => expect(elements(ce).has(x)).toBe(true));
@@ -87,8 +87,8 @@ describe(
                     () =>
                     {
                         const x = store.NewEntity();
-                        store.Add(x, op1.LocalName, i1Interpretation);
-                        store.Add(x, op1.LocalName, i2Interpretation);
+                        store.Assert(x, op1.LocalName, i1Interpretation);
+                        store.Assert(x, op1.LocalName, i2Interpretation);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
                             () => expect(elements(ce).has(x)).toBe(true));
@@ -99,9 +99,9 @@ describe(
                     () =>
                     {
                         const x = store.NewEntity();
-                        store.Add(x, op1.LocalName, i1Interpretation);
-                        store.Add(x, op1.LocalName, i2Interpretation);
-                        store.Add(x, op1.LocalName, i3Interpretation);
+                        store.Assert(x, op1.LocalName, i1Interpretation);
+                        store.Assert(x, op1.LocalName, i2Interpretation);
+                        store.Assert(x, op1.LocalName, i3Interpretation);
                         it(
                             `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
                             () => expect(elements(ce).has(x)).toBe(false));

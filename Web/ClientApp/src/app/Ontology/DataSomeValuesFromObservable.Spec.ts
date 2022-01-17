@@ -58,7 +58,7 @@ describe(
                     () =>
                     {
                         const x = store.NewEntity();
-                        store.Add(x, dp1.LocalName, 1);
+                        store.Assert(x, dp1.LocalName, 1);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
                             () => expect(elements(ce).has(x)).toBe(true));
@@ -69,7 +69,7 @@ describe(
                     () =>
                     {
                         const x = store.NewEntity();
-                        store.Add(x, dp1.LocalName, 2);
+                        store.Assert(x, dp1.LocalName, 2);
                         it(
                             `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
                             () => expect(elements(ce).has(x)).toBe(false));
@@ -80,8 +80,8 @@ describe(
                     () =>
                     {
                         const x = store.NewEntity();
-                        store.Add(x, dp1.LocalName, 1);
-                        store.Add(x, dp1.LocalName, 2);
+                        store.Assert(x, dp1.LocalName, 1);
+                        store.Assert(x, dp1.LocalName, 2);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
                             () => expect(elements(ce).has(x)).toBe(true));

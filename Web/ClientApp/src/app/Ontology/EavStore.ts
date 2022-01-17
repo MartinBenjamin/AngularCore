@@ -379,38 +379,12 @@ export class EavStore implements IEavStore
         }
     }
 
-    Add(
+    Assert(
         entity   : any,
         attribute: string,
-        value    : any): void;
-    Add(object: object): any;
-    Add(objects: object[]): any[];
-    Add(
-        entity    : any,
-        attribute?: string,
-        value    ?: any
-        ): any
+        value    : any
+        ): void
     {
-        if(typeof attribute === 'undefined')
-            try
-            {
-                this.SuspendPublish();
-                const added = new Map<object, any>();
-                if(entity instanceof Array)
-                    return entity.map(object =>
-                        this.AddObject(
-                            object,
-                            added));
-  
-                return this.AddObject(
-                    entity,
-                    added);
-            }
-            finally
-            {
-                this.UnsuspendPublish();               
-            }
-
         let currentValue = entity[attribute];
 
         if(typeof currentValue === 'undefined' && this.Cardinality(attribute) === Cardinality.Many)
@@ -424,6 +398,32 @@ export class EavStore implements IEavStore
 
         else
             entity[attribute] = value;
+
+    }
+
+    Add(
+        object: object,
+        added?: Map<object, any>
+        ): any
+    {
+        try
+        {
+            this.SuspendPublish();
+            const added = new Map<object, any>();
+            if(object instanceof Array)
+                return object.map(object =>
+                    this.AddObject(
+                        object,
+                        added));
+  
+            return this.AddObject(
+                object,
+                added);
+        }
+        finally
+        {
+            this.UnsuspendPublish();               
+        }
     }
 
     Clear(): void

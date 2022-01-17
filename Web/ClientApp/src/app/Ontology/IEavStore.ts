@@ -27,12 +27,11 @@ export interface IEavStore
         ...body: Fact[]): { [K in keyof T]: any; }[];
     NewEntity(): any;
     DeleteEntity(entity: any): void
-    Add(
+    Assert(
         entity   : any,
         attribute: string,
         value    : any): void;
-    Add(object: object): any;
-    Add(objects: object[]): any[];
+    Add(object: object, added?: Map<object, any>): any;
     Clear(): void;
 }
 

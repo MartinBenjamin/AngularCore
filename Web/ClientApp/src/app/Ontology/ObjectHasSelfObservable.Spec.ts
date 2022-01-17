@@ -57,7 +57,7 @@ describe(
                     () =>
                     {
                         const x = store.NewEntity();
-                        store.Add(x, op1.LocalName, x)
+                        store.Assert(x, op1.LocalName, x)
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
                             () => expect(elements(ce).has(x)).toBe(true));
