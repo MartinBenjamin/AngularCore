@@ -157,6 +157,9 @@ export class Deal
                             });
 
                     this._errorsService.next(errors.size ? errors : null);
+
+                    // Detect changes in all Deal Tabs (and nested Tabs).
+                    this._changeDetector.DetectChanges();
                 });
 
             return;
