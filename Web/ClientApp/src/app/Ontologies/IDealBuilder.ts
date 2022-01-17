@@ -9,6 +9,7 @@ import { IDomainObjectService } from "../IDomainObjectService";
 import { AddIndividual } from '../Ontology/AddIndividuals';
 import { EavStore } from '../Ontology/EavStore';
 import { IEavStore } from '../Ontology/IEavStore';
+import { IIndividual } from '../Ontology/IIndividual';
 import { commonDomainObjects } from './CommonDomainObjects';
 import { deals } from './Deals';
 import { IDealOntology } from "./IDealOntology";
@@ -205,7 +206,7 @@ export class DealBuilder implements IDealBuilder
                     0) : null
             )).subscribe(totalSponsorEquity => deal.TotalSponsorEquity = totalSponsorEquity);
 
-        let dealType = null;
+        let dealType: IIndividual = null;
         let classes = ontology.SuperClasses(ontology.Deal);
         for(let class$ of classes)
             for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
@@ -226,21 +227,12 @@ export class DealBuilder implements IDealBuilder
             dealType,
             store);
 
-        let dealTypeId: string = null;
-        for(let dataPropertyAssertion of ontology.Get(ontology.IsAxiom.IDataPropertyAssertion))
-            if(dataPropertyAssertion.DataPropertyExpression === commonDomainObjects.Id &&
-               dataPropertyAssertion.SourceIndividual === dealType)
-            {
-                dealTypeId = dataPropertyAssertion.TargetValue;
-                break;
-            }
-
         this._classificationSchemeService
             .Get(ClassificationSchemeIdentifier.DealType)
             .subscribe(
                 classificationScheme => store.Add(classificationScheme.Classifiers
                     .map(classificationSchemeClassifier => classificationSchemeClassifier.Classifier)
-                    .find(classifier => classifier.Id === dealTypeId)));
+                    .find(classifier => classifier.Id === deal.Type.Id)));
 
         let lifeCycle = null;
         for(let class$ of classes)
