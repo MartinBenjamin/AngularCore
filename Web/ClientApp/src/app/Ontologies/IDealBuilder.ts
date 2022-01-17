@@ -85,7 +85,7 @@ export class DealBuilder implements IDealBuilder
                             0)
             });
 
-        let dealType = null;
+        let dealType: IIndividual = null;
         const classes = ontology.SuperClasses(ontology.Deal);
         for(const class$ of classes)
             if(ontology.IsClassExpression.IObjectHasValue(class$) &&
@@ -111,7 +111,7 @@ export class DealBuilder implements IDealBuilder
                     .map(classificationSchemeClassifier => classificationSchemeClassifier.Classifier)
                     .find(classifier => classifier.Id === dealTypeId));
 
-        let lifeCycle = null;
+        let lifeCycle: IIndividual = null;
         for(const class$ of classes)
             if(ontology.IsClassExpression.IObjectHasValue(class$) &&
                 class$.ObjectPropertyExpression === deals.LifeCycle)
