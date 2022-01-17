@@ -1,9 +1,10 @@
-import { BehaviorSubject, combineLatest, Observable } from "rxjs";
-import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Guid } from "../../CommonDomainObjects";
 import { DealProvider } from '../../DealProvider';
 import { Deal, Sponsor } from '../../Deals';
+import { IDomainObjectService } from "../../IDomainObjectService";
 import { LegalEntityFinder } from '../../LegalEntityFinder';
 import { annotations } from '../../Ontologies/Annotations';
 import { deals } from '../../Ontologies/Deals';
@@ -14,6 +15,7 @@ import { Store } from '../../Ontology/IEavStore';
 import { ObservableGenerator } from '../../Ontology/ObservableGenerator';
 import { Sort } from '../../Parties';
 import { Role } from '../../Roles';
+import { RoleServiceToken } from "../../RoleServiceProvider";
 
 @Component(
     {
@@ -32,6 +34,8 @@ export class Sponsors_s implements OnDestroy
     private _legalEntityFinder: LegalEntityFinder;
 
     constructor(
+        @Inject(RoleServiceToken)
+        roleService: IDomainObjectService<Guid, Role>,
         dealProvider: DealProvider
         )
     {
@@ -47,6 +51,7 @@ export class Sponsors_s implements OnDestroy
                             deal.Ontology,
                             roleIndividuals.Sponsor,
                             store);
+                        roleService.Get(this._sponsorRole.Id).subscribe(sponsorRole => store.Add(sponsorRole));
                         this.Build(deal.Ontology);
 
                         const generator = new ObservableGenerator(
