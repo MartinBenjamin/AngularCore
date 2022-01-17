@@ -208,19 +208,13 @@ export class DealBuilder implements IDealBuilder
 
         let dealType: IIndividual = null;
         let classes = ontology.SuperClasses(ontology.Deal);
-        for(let class$ of classes)
-            for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
-                if(subClassOf.SubClassExpression === class$)
-                {
-                    let superClassExpression = subClassOf.SuperClassExpression;
-                    if(ontology.IsClassExpression.IObjectHasValue(superClassExpression) &&
-                       superClassExpression.ObjectPropertyExpression === deals.Type)
-                    {
-                        dealType = superClassExpression.Individual;
-                        break;
-                    }
-
-                }
+        for(const class$ of classes)
+            if(ontology.IsClassExpression.IObjectHasValue(class$) &&
+                class$.ObjectPropertyExpression === deals.Type)
+            {
+                dealType = class$.Individual;
+                break;
+            }
 
         deal.Type = AddIndividual(
             ontology,
@@ -235,19 +229,13 @@ export class DealBuilder implements IDealBuilder
                     .find(classifier => classifier.Id === deal.Type.Id)));
 
         let lifeCycle = null;
-        for(let class$ of classes)
-            for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
-                if(subClassOf.SubClassExpression === class$)
-                {
-                    let superClassExpression = subClassOf.SuperClassExpression;
-                    if(ontology.IsClassExpression.IObjectHasValue(superClassExpression) &&
-                        superClassExpression.ObjectPropertyExpression === deals.LifeCycle)
-                    {
-                        lifeCycle = superClassExpression.Individual;
-                        break;
-                    }
-
-                }
+        for(const class$ of classes)
+            if(ontology.IsClassExpression.IObjectHasValue(class$) &&
+                class$.ObjectPropertyExpression === deals.LifeCycle)
+            {
+                lifeCycle = class$.Individual;
+                break;
+            }
 
         let lifeCycleId: string = null;
         for(let dataPropertyAssertion of ontology.Get(ontology.IsAxiom.IDataPropertyAssertion))
