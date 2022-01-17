@@ -593,6 +593,11 @@ export class EavStore implements IEavStore
     }
 }
 
+function toPrimitive(hint)
+{
+    return 'Proxy';
+}
+
 function EntityProxyFactory(
     store: EavStore,
     av   : Map<PropertyKey, any>,
@@ -606,6 +611,8 @@ function EntityProxyFactory(
             p
             ): any
         {
+            if(p == Symbol.toPrimitive)
+                return toPrimitive;
             return av.get(p);
         },
         getOwnPropertyDescriptor: function(
