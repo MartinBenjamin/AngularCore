@@ -1,6 +1,6 @@
 import { Inject, Injectable, InjectionToken, Provider } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { ClassificationScheme } from "../ClassificationScheme";
+import { ClassificationScheme, Classifier } from "../ClassificationScheme";
 import { ClassificationSchemeServiceToken } from "../ClassificationSchemeServiceProvider";
 import { EmptyGuid, Guid } from "../CommonDomainObjects";
 import { ClassificationSchemeIdentifier, Deal, DealRoleIdentifier, Sponsor } from "../Deals";
@@ -245,6 +245,12 @@ export class DealBuilder implements IDealBuilder
                 lifeCycleId = dataPropertyAssertion.TargetValue;
                 break;
             }
+
+        deal.Classifiers.push(
+            <Classifier>AddIndividual(
+                ontology,
+                deals.NotRestrictried,
+                store));
 
         this._dealLifeCycleService
             .Get(lifeCycleId)
