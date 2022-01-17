@@ -87,7 +87,10 @@ export class Deal
                                    annotation.Value in this)
                                     this[annotation.Value]();
 
-                    this._deal.next(dealBuilder.Build(this._ontology));
+                    dealBuilder.Build(
+                        this._ontology,
+                        deal => this._deal.next(deal));
+                    //this._deal.next(dealBuilder.Build(this._ontology));
                     this._errorsService.next(null);
                 }));
     }

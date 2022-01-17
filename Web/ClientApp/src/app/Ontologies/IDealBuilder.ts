@@ -17,7 +17,7 @@ export const DealBuilderToken = new InjectionToken<IDealBuilder>('DealBuilder');
 
 export interface IDealBuilder
 {
-    Build(dealOntology: IDealOntology): Deal;
+    Build(dealOntology: IDealOntology, callback: (deal: Deal) => void): void
     Build2(dealOntology: IDealOntology): Deal;
 }
 
@@ -34,8 +34,9 @@ export class DealBuilder implements IDealBuilder
     }
 
     Build(
-        ontology: IDealOntology
-        ): Deal
+        ontology: IDealOntology,
+        callback: (deal: Deal) => void
+        ): void
     {
         let deal: Deal = {
             Id                : EmptyGuid,
@@ -139,9 +140,14 @@ export class DealBuilder implements IDealBuilder
         this._classificationSchemeService
             .Get(ClassificationSchemeIdentifier.Restricted)
             .subscribe(
-                classificationScheme => deal.Classifiers.push(classificationScheme.Classifiers
-                    .map(classificationSchemeClassifier => classificationSchemeClassifier.Classifier)
-                    .find(classifier => classifier.Id === notRestrictedId)));
+                classificationScheme =>
+                {
+                    deal.Classifiers.push(classificationScheme.Classifiers
+                        .map(classificationSchemeClassifier => classificationSchemeClassifier.Classifier)
+                        .find(classifier => classifier.Id === notRestrictedId));
+
+                    callback(deal);
+                });
 
         this._dealLifeCycleService
             .Get(lifeCycleId)
@@ -154,7 +160,6 @@ export class DealBuilder implements IDealBuilder
                         'LifeCycle',
                         { get: () => dealLifeCycle });
                 });
-        return deal;
     }
 
     Build2(

@@ -1,7 +1,8 @@
 <tr>
   <td class="RowHeading">Restricted:</td>
   <td *ngIf="ClassificationSchemeClassifiers; else Loading">
-    <select [(ngModel)]="Classifier"
+    <select [compareWith]="CompareById"
+            [(ngModel)]="Classifier"
             [dtValidatedObject]="Deal"
             dtValidatedProperty="Restricted">
       <option [ngValue]="null"></option>

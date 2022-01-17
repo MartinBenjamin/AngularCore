@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ClassificationScheme, ClassificationSchemeClassifier, Classifier } from '../ClassificationScheme';
 import { ClassificationSchemeServiceToken } from '../ClassificationSchemeServiceProvider';
-import { Guid } from '../CommonDomainObjects';
+import { DomainObject, Guid } from '../CommonDomainObjects';
 import { DealProvider } from '../DealProvider';
 import { ClassificationSchemeIdentifier, Deal } from '../Deals';
 import { IDomainObjectService } from '../IDomainObjectService';
@@ -77,5 +77,13 @@ export class Restricted implements OnDestroy
         this._classifier = classifier;
         if(this._classifier)
             this._deal.Classifiers.push(this._classifier);
+    }
+
+    CompareById(
+        lhs: DomainObject<Guid>,
+        rhs: DomainObject<Guid>
+        )
+    {
+        return lhs === rhs || (lhs && rhs && lhs.Id === rhs.Id);
     }
 }
