@@ -57,6 +57,12 @@ export class DealLifeCyclePhaseIdentifier
     static readonly Portfolio   = '312c009f-f13b-420b-8d16-17154ad1e859';
 }
 
+export class RestrictedClassifierIdentifier
+{
+    static readonly No  = '13c8dc1d-e611-4694-9107-c625a868359c';
+    static readonly Yes = '5cd2b680-cb36-49e1-8d3d-62ada643a389';
+}
+
 export class DealStageIdentifier
 {
     static readonly OriginationPhase        = '7a08488a-40b9-41c8-ba72-96daadccca25';

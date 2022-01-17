@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, forwardRef, Inject, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
@@ -10,9 +10,7 @@ import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServicePr
 import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
 import { IDealOntologyService } from '../../Ontologies/IDealOntologyService';
-import { ObserveErrors } from '../../Ontologies/ObserveErrors';
 import { IErrors, Validate } from '../../Ontologies/Validate';
-import { Store } from '../../Ontology/IEavStore';
 import { Alternative, Empty, Property, Query2, Sequence, ZeroOrMore } from '../../RegularPathExpression';
 import { Origination } from '../Origination';
 import { KeyCounterparties } from './KeyCounterparties';
@@ -117,49 +115,6 @@ export class Deal
             applicableStages.add(lifeCycleStage.Id);
             if(lifeCycleStage.Id === this.Deal.Stage.Id)
                 break;
-        }
-
-        const store = Store(this.Deal);
-        if(store)
-        {
-            const errorsObservable: Observable<Map<object, Map<string, Set<keyof IErrors>>>> = ObserveErrors(
-                this.Deal.Ontology,
-                store,
-                applicableStages);
-
-            const subscription = errorsObservable.subscribe(
-                errors =>
-                {
-                    this.Deal.Confers.filter(
-                        commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
-                        .forEach(
-                            commitment =>
-                            {
-                                for(let object of Deal.FacilitySubgraphQuery(commitment))
-                                    if(errors.has(object))
-                                    {
-                                        let facilityErrors = errors.get(commitment);
-                                        if(!facilityErrors)
-                                        {
-                                            facilityErrors = new Map<string, Set<keyof IErrors>>();
-                                            errors.set(
-                                                commitment,
-                                                facilityErrors);
-                                        }
-
-                                        let hasErrors = facilityErrors.get('$HasErrors');
-                                        if(!hasErrors)
-                                            facilityErrors.set(
-                                                '$HasErrors',
-                                                new Set<keyof IErrors>());
-                                        break;
-                                    }
-                            });
-
-                    this._errorsService.next(errors.size ? errors : null);
-                });
-
-            return;
         }
 
         let classifications = this.Deal.Ontology.Classify(this.Deal);

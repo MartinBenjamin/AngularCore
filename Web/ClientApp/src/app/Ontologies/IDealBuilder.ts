@@ -127,6 +127,22 @@ export class DealBuilder implements IDealBuilder
                 break;
             }
 
+        let notRestrictedId: string = null;
+        for(const dataPropertyAssertion of ontology.Get(ontology.IsAxiom.IDataPropertyAssertion))
+            if(dataPropertyAssertion.DataPropertyExpression === commonDomainObjects.Id &&
+                dataPropertyAssertion.SourceIndividual === deals.NotRestrictried)
+            {
+                notRestrictedId = dataPropertyAssertion.TargetValue;
+                break;
+            }
+
+        this._classificationSchemeService
+            .Get(ClassificationSchemeIdentifier.Restricted)
+            .subscribe(
+                classificationScheme => deal.Classifiers.push(classificationScheme.Classifiers
+                    .map(classificationSchemeClassifier => classificationSchemeClassifier.Classifier)
+                    .find(classifier => classifier.Id === notRestrictedId)));
+
         this._dealLifeCycleService
             .Get(lifeCycleId)
             .subscribe(

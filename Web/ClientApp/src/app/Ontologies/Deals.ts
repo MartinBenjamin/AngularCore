@@ -1,4 +1,4 @@
-import { DealLifeCycleIdentifier, DealStageIdentifier } from "../Deals";
+import { DealLifeCycleIdentifier, DealStageIdentifier, RestrictedClassifierIdentifier } from "../Deals";
 import { LegalEntityIdentifier } from "../LegalEntities";
 import { DataAllValuesFrom } from "../Ontology/DataAllValuesFrom";
 import { DataComplementOf } from "../Ontology/DataComplementOf";
@@ -45,6 +45,7 @@ export class Deals extends Ontology
     readonly KeyCounterpartyRole    : IClass;
     readonly KeyCounterparty        : IClass;
     readonly DebtLifeCycle          : INamedIndividual;
+    readonly NotRestrictried        : INamedIndividual;
 
     constructor()
     {
@@ -175,6 +176,9 @@ export class Deals extends Ontology
         this.DebtLifeCycle = lifeCycles.LifeCycle.DeclareNamedIndividual("DebtLifeCycle");
         this.DebtLifeCycle.DataPropertyValue(commonDomainObjects.Id, DealLifeCycleIdentifier.Debt);
         this.Debt.SubClassOf(this.LifeCycle.HasValue(this.DebtLifeCycle));
+
+        this.NotRestrictried = this.DeclareNamedIndividual("NotRestricted");
+        this.NotRestrictried.DataPropertyValue(commonDomainObjects.Id, RestrictedClassifierIdentifier.No);
 
         new DisjointClasses(this, [this.Deal, parties.PartyInRole, commonDomainObjects.Classifier]);
     }
