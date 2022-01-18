@@ -11,6 +11,7 @@ import { YesNoPipeModule } from '../../Components/YesNoPipe';
 import { DealComponentsModule } from '../../Deal/DealComponents.Module';
 import { DealOntologyServiceProvider } from '../../Ontologies/DealOntologyServiceProvider';
 import { DealBuilderProvider } from '../../Ontologies/IDealBuilder';
+import { Borrowers_s } from './Borrowers_s';
 import { Common } from './Common';
 import { Deal } from './Deal';
 import { DealGeographicRegion } from './DealGeographicRegion';
@@ -40,6 +41,7 @@ const routes: Routes =
         declarations:
             [
                 Deal,
+                Borrowers_s,
                 Common,
                 DealGeographicRegion,
                 Errors,

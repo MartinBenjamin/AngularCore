@@ -15,11 +15,10 @@ import { RolesToken } from '../RoleServiceProvider';
     })
 export class Borrowers implements OnDestroy
 {
-    private _subscriptions : Subscription[] = [];
-    private _borrowerRole  : Role;
-    private _deal          : Deal;
-    private _borrowers     : PartyInRole[];
-    private _errors        : object;
+    private _subscriptions: Subscription[] = [];
+    private _borrowerRole : Role;
+    private _deal         : Deal;
+    private _borrowers    : PartyInRole[];
 
     @ViewChild('legalEntityFinder', { static: true })
     private _legalEntityFinder: LegalEntityFinder;
