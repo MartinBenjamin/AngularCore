@@ -108,24 +108,34 @@ export class Sponsors_s implements OnDestroy
                     return;
                 }
 
-                let today = new Date();
-                today.setUTCHours(0, 0, 0, 0);
-                let sponsor = <Sponsor>{
-                    AutonomousAgent: legalEntity,
-                    Organisation   : legalEntity,
-                    Person         : null,
-                    Role           : this._sponsorRole,
-                    Period:
-                    {
-                        Start: today,
-                        End  : null
-                    },
-                    Equity         : null
-                };
+                const store = Store(this._deal);
+                try
+                {
+                    store.SuspendPublish();
 
-                sponsor = <Sponsor>Store(this._deal).Add(sponsor);
-                this._deal.Parties.push(sponsor);
-                this._deal.SponsorsNA = false;
+                    let today = new Date();
+                    today.setUTCHours(0, 0, 0, 0);
+                    let sponsor = <Sponsor>{
+                        AutonomousAgent: legalEntity,
+                        Organisation   : legalEntity,
+                        Person         : null,
+                        Role           : null,
+                        Period:
+                        {
+                            Start: today,
+                            End  : null
+                        },
+                        Equity         : null
+                    };
+
+                    sponsor.Role = this._sponsorRole;
+                    this._deal.Parties.push(<Sponsor>Store(this._deal).Add(sponsor));
+                    this._deal.SponsorsNA = false;
+                }
+                finally
+                {
+                    store.UnsuspendPublish();
+                }
             });
     }
 
@@ -136,11 +146,21 @@ export class Sponsors_s implements OnDestroy
         if(!confirm(`Delete ${this._sponsorRole.Name} ${sponsor.Organisation.Name}?`))
             return;
 
-        this._deal.Parties.splice(
-            this._deal.Parties.indexOf(sponsor),
-            1);
+        const store = Store(this._deal);
+        try
+        {
+            store.SuspendPublish();
 
-        Store(this._deal).DeleteEntity(sponsor);
+            this._deal.Parties.splice(
+                this._deal.Parties.indexOf(sponsor),
+                1);
+
+            store.DeleteEntity(sponsor);
+        }
+        finally
+        {
+            store.UnsuspendPublish();
+        }
     }
 
     Build(
