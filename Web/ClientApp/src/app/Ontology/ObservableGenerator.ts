@@ -375,13 +375,19 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         dataAllValuesFrom: IDataAllValuesFrom
         ): Observable<Set<any>>
     {
-        return this.ObservePropertyExpression(dataAllValuesFrom.DataPropertyExpression).pipe(
-            map(this.GroupByDomain),
-            map(groupedByDomain =>
-                new Set<any>(
-                    [...groupedByDomain.entries()]
-                        .filter(entry => entry[1].every(value => dataAllValuesFrom.DataRange.HasMember(value)))
-                        .map(entry => entry[0]))));
+        return combineLatest(
+            this._objectDomain,
+            this.ObservePropertyExpression(dataAllValuesFrom.DataPropertyExpression),
+            (objectDomain, objectPropertyExpression) =>
+                GroupJoin(
+                    objectDomain,
+                    objectPropertyExpression,
+                    individual => individual,
+                    element => element[0])).pipe(
+                        map(groupedByDomain => new Set<any>(
+                                [...groupedByDomain.entries()]
+                                    .filter(entry => entry[1].every(element => dataAllValuesFrom.DataRange.HasMember(element[1])))
+                                    .map(entry => entry[0]))));
     }
 
     DataHasValue(

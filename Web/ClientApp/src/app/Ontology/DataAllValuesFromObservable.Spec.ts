@@ -50,7 +50,7 @@ describe(
                         const x = store.NewEntity();
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(elements(ce).has(x)).toBe(false));
+                            () => expect(elements(ce).has(x)).toBe(true));
                     });
 
                 describe(
