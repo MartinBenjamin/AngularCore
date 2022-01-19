@@ -385,9 +385,9 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
                     individual => individual,
                     element => element[0])).pipe(
                         map(groupedByDomain => new Set<any>(
-                                [...groupedByDomain.entries()]
-                                    .filter(entry => entry[1].every(element => dataAllValuesFrom.DataRange.HasMember(element[1])))
-                                    .map(entry => entry[0]))));
+                            [...groupedByDomain.entries()]
+                                .filter(entry => entry[1].every(element => dataAllValuesFrom.DataRange.HasMember(element[1])))
+                                .map(entry => entry[0]))));
     }
 
     DataHasValue(
