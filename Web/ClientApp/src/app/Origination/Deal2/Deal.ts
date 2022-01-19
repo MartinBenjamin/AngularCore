@@ -1,17 +1,19 @@
 import { AfterViewInit, Component, forwardRef, Inject, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
 import { DealProvider } from '../../DealProvider';
+import { LifeCycleStage } from '../../LifeCycles';
 import { annotations } from '../../Ontologies/Annotations';
 import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServiceProvider';
 import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
 import { IDealOntologyService } from '../../Ontologies/IDealOntologyService';
 import { ObserveErrors } from '../../Ontologies/ObserveErrors';
-import { IErrors, Validate } from '../../Ontologies/Validate';
+import { IErrors } from '../../Ontologies/Validate';
 import { Store } from '../../Ontology/IEavStore';
 import { Alternative, Empty, Property, Query2, Sequence, ZeroOrMore } from '../../RegularPathExpression';
 import { Origination } from '../Origination';
@@ -111,96 +113,64 @@ export class Deal
 
     Save(): void
     {
-        let applicableStages = new Set<Guid>();
-        for(let lifeCycleStage of this.Deal.LifeCycle.Stages)
-        {
-            applicableStages.add(lifeCycleStage.Id);
-            if(lifeCycleStage.Id === this.Deal.Stage.Id)
-                break;
-        }
-
         const store = Store(this.Deal);
-        if(store)
-        {
-            const errorsObservable: Observable<Map<object, Map<string, Set<keyof IErrors>>>> = ObserveErrors(
-                this.Deal.Ontology,
-                store,
-                applicableStages);
-
-            const subscription = errorsObservable.subscribe(
-                errors =>
+        const subscription = store.ObserveAttribute('Stage').pipe(map(
+            (stages: [import('../../Deals').Deal, LifeCycleStage][]) =>
+            {
+                const [deal, stage] = stages[0];
+                const applicableStages = new Set<Guid>();
+                for(let lifeCycleStage of deal.LifeCycle.Stages)
                 {
-                    this.Deal.Confers.filter(
-                        commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
-                        .forEach(
-                            commitment =>
-                            {
-                                for(let object of Deal.FacilitySubgraphQuery(commitment))
-                                    if(errors.has(object))
-                                    {
-                                        let facilityErrors = errors.get(commitment);
-                                        if(!facilityErrors)
-                                        {
-                                            facilityErrors = new Map<string, Set<keyof IErrors>>();
-                                            errors.set(
-                                                commitment,
-                                                facilityErrors);
-                                        }
+                    applicableStages.add(lifeCycleStage.Id);
+                    if(lifeCycleStage.Id === stage.Id)
+                        break;
+                }
 
-                                        let hasErrors = facilityErrors.get('$HasErrors');
-                                        if(!hasErrors)
-                                            facilityErrors.set(
-                                                '$HasErrors',
-                                                new Set<keyof IErrors>());
-                                        break;
-                                    }
-                            });
-
-                    this._errorsService.next(errors.size ? errors : null);
-
-                    // Detect changes in all Deal Tabs (and nested Tabs).
-                    this._changeDetector.DetectChanges();
-                });
-
-            return;
-        }
-
-        let classifications = this.Deal.Ontology.Classify(this.Deal);
-        let errors = Validate(
-            this.Deal.Ontology,
-            classifications,
-            applicableStages);
-
-        this.Deal.Confers.filter(
-            commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
-            .forEach(
-                commitment =>
+                return applicableStages;
+            })).subscribe(
+                applicableStages =>
                 {
-                    for(let object of Deal.FacilitySubgraphQuery(commitment))
-                        if(errors.has(object))
+                    console.log(applicableStages.size);
+                    const errorsObservable: Observable<Map<object, Map<string, Set<keyof IErrors>>>> = ObserveErrors(
+                        this.Deal.Ontology,
+                        store,
+                        applicableStages);
+
+                    const subscription = errorsObservable.subscribe(
+                        errors =>
                         {
-                            let facilityErrors = errors.get(commitment);
-                            if(!facilityErrors)
-                            {
-                                facilityErrors = new Map<string, Set<keyof IErrors>>();
-                                errors.set(
-                                    commitment,
-                                    facilityErrors);
-                            }
+                            this.Deal.Confers.filter(
+                                commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
+                                .forEach(
+                                    commitment =>
+                                    {
+                                        for(let object of Deal.FacilitySubgraphQuery(commitment))
+                                            if(errors.has(object))
+                                            {
+                                                let facilityErrors = errors.get(commitment);
+                                                if(!facilityErrors)
+                                                {
+                                                    facilityErrors = new Map<string, Set<keyof IErrors>>();
+                                                    errors.set(
+                                                        commitment,
+                                                        facilityErrors);
+                                                }
 
-                            let hasErrors = facilityErrors.get('$HasErrors');
-                            if(!hasErrors)
-                                facilityErrors.set(
-                                    '$HasErrors',
-                                    new Set<keyof IErrors>());
-                            break;
-                        }
+                                                let hasErrors = facilityErrors.get('$HasErrors');
+                                                if(!hasErrors)
+                                                    facilityErrors.set(
+                                                        '$HasErrors',
+                                                        new Set<keyof IErrors>());
+                                                break;
+                                            }
+                                    });
+
+                            this._errorsService.next(errors.size ? errors : null);
+
+                            // Detect changes in all Deal Tabs (and nested Tabs).
+                            this._changeDetector.DetectChanges();
+                        });
                 });
-
-        this._errorsService.next(errors.size ? errors : null);
-
-        // Detect changes in all Deal Tabs (and nested Tabs).
-        this._changeDetector.DetectChanges();
     }
 
     Cancel(): void

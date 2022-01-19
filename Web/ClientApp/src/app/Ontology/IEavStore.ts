@@ -32,6 +32,8 @@ export interface IEavStore
         attribute: string,
         value    : any): void;
     Add(object: object, added?: Map<object, any>): any;
+    SuspendPublish(): void;
+    UnsuspendPublish(): void;
     Clear(): void;
 }
 

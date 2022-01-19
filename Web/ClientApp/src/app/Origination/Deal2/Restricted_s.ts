@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ClassificationScheme, ClassificationSchemeClassifier, Classifier } from '../../ClassificationScheme';
 import { ClassificationSchemeServiceToken } from '../../ClassificationSchemeServiceProvider';
-import { DomainObject, Guid } from '../../CommonDomainObjects';
+import { Guid } from '../../CommonDomainObjects';
 import { DealProvider } from '../../DealProvider';
 import { ClassificationSchemeIdentifier, Deal } from '../../Deals';
 import { IDomainObjectService } from '../../IDomainObjectService';

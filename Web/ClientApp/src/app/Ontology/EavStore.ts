@@ -55,7 +55,7 @@ export class EavStore implements IEavStore
     private _attributeSubscribers = new Map<string, Subscriber<[any, any][]>[]>();
     private _atomSubscribers      = new ArrayKeyedMap<Fact, Set<AtomSubscriber>>();
     private _schema               : Map<string, AttributeSchema>;
-    private _publishSuspended     : number;
+    private _publishSuspended     = 0;
     private _publishEntities      : boolean;
     private _attributesToPublish  = new Set<string>();
 
