@@ -11,39 +11,40 @@ export interface Rule
     Body: Fact[]
 }
 
-export interface AtomSubscriber
-{
-    Atom      : Fact,
-    Subscriber: Subscriber<Fact[]>
-}
-
 function Match<TTrieNode extends TrieNode<TTrieNode, V>, V>(
     trieNode: TTrieNode,
-    path    : any[],
-    callback: (value: V) => void): void
+    key     : Fact,
+    callback: (key: Fact, value: V) => void,
+    keyIndex = 0
+    )
 {
-    if(path.length === 0)
+    if(keyIndex === key.length)
     {
-        if(trieNode.value !== undefined)
-            callback(trieNode.value);
+        callback(
+            key,
+            trieNode.value);
 
         return;
     }
 
-    const [first, ...rest] = path;
-    let child = trieNode.children.get(first);
+    let child = trieNode.children.get(key[keyIndex]);
     if(child)
         Match(
             child,
-            rest,
-            callback);
+            key,
+            callback,
+            keyIndex + 1);
 
-    child = trieNode.children.get(undefined);
-    if(child)
-        Match(
-            child,
-            rest,
-            callback);
+    if(key[keyIndex] !== undefined)
+    {
+        child = trieNode.children.get(undefined);
+        if(child)
+            Match(
+                child,
+                key,
+                callback,
+                keyIndex + 1);
+    }
 }
 
 export class EavStore implements IEavStore
@@ -53,7 +54,7 @@ export class EavStore implements IEavStore
     private _ave                  : Map<PropertyKey, Map<any, any>>;
     private _entitiesSubscribers  : Subscriber<Set<any>>[] = [];
     private _attributeSubscribers = new Map<string, Subscriber<[any, any][]>[]>();
-    private _atomSubscribers      = new ArrayKeyedMap<Fact, Set<AtomSubscriber>>();
+    private _atomSubscribers      = new ArrayKeyedMap<Fact, Set<Subscriber<Fact[]>>>();
     private _schema               : Map<string, AttributeSchema>;
     private _publishSuspended     = 0;
     private _publishEntities      : boolean;
@@ -260,33 +261,27 @@ export class EavStore implements IEavStore
         return new Observable<Fact[]>(
             subscriber =>
             {
-                const atomSubscriber: AtomSubscriber =
-                {
-                    Atom      : atom,
-                    Subscriber: subscriber
-                };
-
-                let key = <Fact>atom.map(element => IsVariable(element) ? undefined : element);
+                const key = <Fact>atom.map(element => IsVariable(element) ? undefined : element);
                 let subscribers = this._atomSubscribers.get(key);
                 if(!subscribers)
                 {
-                    subscribers = new Set<AtomSubscriber>();
+                    subscribers = new Set<Subscriber<Fact[]>>();
                     this._atomSubscribers.set(
                         key,
                         subscribers);
                 }
 
-                subscribers.add(atomSubscriber);
+                subscribers.add(subscriber);
 
                 subscriber.add(
                     () =>
                     {
-                        subscribers.delete(atomSubscriber);
+                        subscribers.delete(subscriber);
                         if(!subscribers.size)
-                            this._atomSubscribers.delete(atom);
+                            this._atomSubscribers.delete(key);
                     });
 
-                subscriber.next(this.Facts(atom));
+                subscriber.next(this.Facts(key));
             });
     }
 
@@ -561,24 +556,17 @@ export class EavStore implements IEavStore
         previousValue: any
         )
     {
-        let atomsToPublish = new Set<AtomSubscriber>();
+        const key: Fact = [entity, attribute, value];
         if(typeof value !== "undefined")
             Match(
                 this._atomSubscribers,
-                [entity, attribute, value],
-                (atomSubscribers: Set<AtomSubscriber>) => atomSubscribers.forEach(atomSubscriber => this.PublishAtom(atomSubscriber)));
+                key,
+                (key, subscribers: Set<Subscriber<Fact[]>>) => subscribers.forEach(subscriber => subscriber.next(this.Facts(key))));
         if(typeof previousValue !== "undefined")
             Match(
                 this._atomSubscribers,
-                [entity, attribute, previousValue],
-                (atomSubscribers: Set<AtomSubscriber>) => atomSubscribers.forEach(atomSubscriber => this.PublishAtom(atomSubscriber)));
-    }
-
-    PublishAtom(
-        atomSubscriber: AtomSubscriber
-        ): void
-    {
-        atomSubscriber.Subscriber.next(this.Facts(atomSubscriber.Atom));
+                key,
+                (key, subscribers: Set<Subscriber<Fact[]>>) => subscribers.forEach(subscriber => subscriber.next(this.Facts(key))));
     }
 
     private Cardinality(
