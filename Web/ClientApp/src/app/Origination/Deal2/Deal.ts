@@ -114,7 +114,7 @@ export class Deal
     Save(): void
     {
         const store = Store(this.Deal);
-        const subscription = store.ObserveAttribute('Stage').pipe(map(
+        const applicableStages = store.ObserveAttribute('Stage').pipe(map(
             (stages: [import('../../Deals').Deal, LifeCycleStage][]) =>
             {
                 const [deal, stage] = stages[0];
@@ -127,49 +127,44 @@ export class Deal
                 }
 
                 return applicableStages;
-            })).subscribe(
-                applicableStages =>
+            }));
+
+        const subscription = ObserveErrors(
+            this.Deal.Ontology,
+            store,
+            applicableStages).subscribe(
+                errors =>
                 {
-                    console.log(applicableStages.size);
-                    const errorsObservable: Observable<Map<object, Map<string, Set<keyof IErrors>>>> = ObserveErrors(
-                        this.Deal.Ontology,
-                        store,
-                        applicableStages);
-
-                    const subscription = errorsObservable.subscribe(
-                        errors =>
-                        {
-                            this.Deal.Confers.filter(
-                                commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
-                                .forEach(
-                                    commitment =>
+                    this.Deal.Confers.filter(
+                        commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
+                        .forEach(
+                            commitment =>
+                            {
+                                for(let object of Deal.FacilitySubgraphQuery(commitment))
+                                    if(errors.has(object))
                                     {
-                                        for(let object of Deal.FacilitySubgraphQuery(commitment))
-                                            if(errors.has(object))
-                                            {
-                                                let facilityErrors = errors.get(commitment);
-                                                if(!facilityErrors)
-                                                {
-                                                    facilityErrors = new Map<string, Set<keyof IErrors>>();
-                                                    errors.set(
-                                                        commitment,
-                                                        facilityErrors);
-                                                }
+                                        let facilityErrors = errors.get(commitment);
+                                        if(!facilityErrors)
+                                        {
+                                            facilityErrors = new Map<string, Set<keyof IErrors>>();
+                                            errors.set(
+                                                commitment,
+                                                facilityErrors);
+                                        }
 
-                                                let hasErrors = facilityErrors.get('$HasErrors');
-                                                if(!hasErrors)
-                                                    facilityErrors.set(
-                                                        '$HasErrors',
-                                                        new Set<keyof IErrors>());
-                                                break;
-                                            }
-                                    });
+                                        let hasErrors = facilityErrors.get('$HasErrors');
+                                        if(!hasErrors)
+                                            facilityErrors.set(
+                                                '$HasErrors',
+                                                new Set<keyof IErrors>());
+                                        break;
+                                    }
+                            });
 
-                            this._errorsService.next(errors.size ? errors : null);
+                    this._errorsService.next(errors.size ? errors : null);
 
-                            // Detect changes in all Deal Tabs (and nested Tabs).
-                            this._changeDetector.DetectChanges();
-                        });
+                    // Detect changes in all Deal Tabs (and nested Tabs).
+                    this._changeDetector.DetectChanges();
                 });
     }
 

@@ -8,28 +8,37 @@ import { ObservableGenerator } from "../Ontology/ObservableGenerator";
 import { annotations } from './Annotations';
 import { IErrors } from './Validate';
 
+const noErrors = new Set<any>();
+
 export function ObserveRestrictedFromStage(
-    generator   : ObservableGenerator,
-    subClassOf  : ISubClassOf,
-    propertyName: string,
-    error       : keyof IErrors
+    generator          : ObservableGenerator,
+    subClassOf         : ISubClassOf,
+    applicableStages   : Observable<Set<Guid>>,
+    restrictedFromStage: Guid,
+    propertyName       : string,
+    error              : keyof IErrors
     ): Observable<[string, keyof IErrors, Set<any>]>
 {
     return combineLatest(
         subClassOf.SuperClassExpression.Select(generator),
         subClassOf.SubClassExpression.Select(generator),
-        (superClassExpression, subClassExpression) =>
+        applicableStages.pipe(map(applicableStages => applicableStages.has(restrictedFromStage))),
+        (
+            superClassExpression,
+            subClassExpression,
+            active
+            ) =>
             [
                 propertyName,
                 error,
-                new Set<any>([...subClassExpression].filter(element => !superClassExpression.has(element)))
+                active ? new Set<any>([...subClassExpression].filter(element => !superClassExpression.has(element))) : noErrors
             ]);
 }
 
 export function ObserveErrors(
     ontology        : IOntology,
     store           : IEavStore,
-    applicableStages: Set<Guid>
+    applicableStages: Observable<Set<Guid>>
     ): Observable<Map<object, Map<string, Set<keyof IErrors>>>>
 {
     const generator = new ObservableGenerator(
@@ -47,8 +56,7 @@ export function ObserveErrors(
 
     for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
         for(let annotation of subClassOf.Annotations)
-            if(annotation.Property === annotations.RestrictedfromStage &&
-               applicableStages.has(annotation.Value))
+            if(annotation.Property === annotations.RestrictedfromStage)
             {
                 let propertyName;
                 for(let annotationAnnotation of annotation.Annotations)
@@ -67,6 +75,8 @@ export function ObserveErrors(
                 observables.push(ObserveRestrictedFromStage(
                     generator,
                     subClassOf,
+                    applicableStages,
+                    annotation.Value,
                     propertyName,
                     error));
             }
