@@ -4,7 +4,6 @@
     <select [(ngModel)]="Classifier"
             [dtValidatedObject]="Deal"
             dtValidatedProperty="Restricted">
-      <option [ngValue]="null"></option>
       <ng-container *ngFor="let classificationSchemeClassifier of ClassificationSchemeClassifiers">
         <optgroup *ngIf="classificationSchemeClassifier.Sub.length;else Option"
                   [label]="classificationSchemeClassifier.Classifier.Name">

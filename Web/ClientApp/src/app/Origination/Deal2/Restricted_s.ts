@@ -74,13 +74,23 @@ export class Restricted_s implements OnDestroy
         classifier: Classifier
         )
     {
-        if(this._classifier)
-            this._deal.Classifiers.splice(
-                this._deal.Classifiers.indexOf(this._classifier),
-                1);
+        const store = Store(this._deal);
+        try
+        {
+            store.SuspendPublish();
 
-        this._classifier = classifier;
-        if(this._classifier)
-            this._deal.Classifiers.push(this._classifier);
+            if(this._classifier)
+                this._deal.Classifiers.splice(
+                    this._deal.Classifiers.indexOf(this._classifier),
+                    1);
+
+            this._classifier = classifier;
+            if(this._classifier)
+                this._deal.Classifiers.push(this._classifier);
+        }
+        finally
+        {
+            store.UnsuspendPublish();
+        }
     }
 }
