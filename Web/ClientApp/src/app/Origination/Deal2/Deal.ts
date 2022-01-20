@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, forwardRef, Inject, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
