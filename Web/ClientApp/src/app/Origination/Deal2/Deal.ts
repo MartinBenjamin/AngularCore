@@ -42,8 +42,9 @@ export class Deal
     extends DealProvider
     implements AfterViewInit, OnDestroy
 {
-    private _subscriptions: Subscription[] = [];
-    private _ontology     : IDealOntology;
+    private _subscriptions     : Subscription[] = [];
+    private _errorsSubscription: Subscription;
+    private _ontology          : IDealOntology;
 
     @ViewChild('title', { static: true })
     private _title: TemplateRef<any>;
@@ -104,6 +105,11 @@ export class Deal
     ngOnDestroy(): void
     {
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
+        if(this._errorsSubscription)
+        {
+            this._errorsSubscription.unsubscribe();
+            this._errorsSubscription = null;
+        }
     }
 
     get Deal(): import('../../Deals').Deal
@@ -129,43 +135,44 @@ export class Deal
                 return applicableStages;
             }));
 
-        const subscription = ObserveErrors(
-            this.Deal.Ontology,
-            store,
-            applicableStages).subscribe(
-                errors =>
-                {
-                    this.Deal.Confers.filter(
-                        commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
-                        .forEach(
-                            commitment =>
-                            {
-                                for(let object of Deal.FacilitySubgraphQuery(commitment))
-                                    if(errors.has(object))
-                                    {
-                                        let facilityErrors = errors.get(commitment);
-                                        if(!facilityErrors)
+        if(!this._errorsSubscription)
+            this._errorsSubscription = ObserveErrors(
+                this.Deal.Ontology,
+                store,
+                applicableStages).subscribe(
+                    errors =>
+                    {
+                        this.Deal.Confers.filter(
+                            commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
+                            .forEach(
+                                commitment =>
+                                {
+                                    for(let object of Deal.FacilitySubgraphQuery(commitment))
+                                        if(errors.has(object))
                                         {
-                                            facilityErrors = new Map<string, Set<keyof IErrors>>();
-                                            errors.set(
-                                                commitment,
-                                                facilityErrors);
+                                            let facilityErrors = errors.get(commitment);
+                                            if(!facilityErrors)
+                                            {
+                                                facilityErrors = new Map<string, Set<keyof IErrors>>();
+                                                errors.set(
+                                                    commitment,
+                                                    facilityErrors);
+                                            }
+
+                                            let hasErrors = facilityErrors.get('$HasErrors');
+                                            if(!hasErrors)
+                                                facilityErrors.set(
+                                                    '$HasErrors',
+                                                    new Set<keyof IErrors>());
+                                            break;
                                         }
+                                });
 
-                                        let hasErrors = facilityErrors.get('$HasErrors');
-                                        if(!hasErrors)
-                                            facilityErrors.set(
-                                                '$HasErrors',
-                                                new Set<keyof IErrors>());
-                                        break;
-                                    }
-                            });
+                        this._errorsService.next(errors.size ? errors : null);
 
-                    this._errorsService.next(errors.size ? errors : null);
-
-                    // Detect changes in all Deal Tabs (and nested Tabs).
-                    this._changeDetector.DetectChanges();
-                });
+                        // Detect changes in all Deal Tabs (and nested Tabs).
+                        this._changeDetector.DetectChanges();
+                    });
     }
 
     Cancel(): void
