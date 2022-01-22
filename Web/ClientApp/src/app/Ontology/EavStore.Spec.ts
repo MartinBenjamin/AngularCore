@@ -1,5 +1,6 @@
 import { } from 'jasmine';
 import { Subscription } from 'rxjs';
+import { ArraySet } from './ArraySet';
 import { assertBuilder } from './assertBuilder';
 import { ArrayProxyFactory, EavStore } from './EavStore';
 import { IEavStore, Store } from './IEavStore';
@@ -122,26 +123,29 @@ describe(
                     });
 
                 describe(
-                    "Given a1: [any, any][] and store.ObserveAttribute('a1').subscribe(value => a1 = value):",
+                    "Given a1: Set<[any, any]>and store.ObserveAttribute('a1').subscribe(value => a1 = new ArraySet(value)):",
                     () =>
                     {
-                        let a1: [any, any][];
-                        const subscription: Subscription = store.ObserveAttribute('a1').subscribe(value => a1 = value);
+                        let a1: Set<[any, any]>;
+                        const subscription: Subscription = store.ObserveAttribute('a1').subscribe(value => a1 = new ArraySet(value));
                         let assert = assertBuilder('store', 'e', 'a1')
                             (store, e, a1);
 
-                        assert('a1.length === 2');
-                        assert('a1.find(element => element[0] === e && element[1] === e.a1) !== null');
-                        assert('a1.find(element => element[0] === e.a2[0] && element[1] === e.a2[0].a1) !== null');
+                        assert('a1.size === 2');
+                        assert('a1.has([e, e.a1])');
+                        assert('a1.has([e.a2[0], e.a2[0].a1])');
 
                         describe(
                             'Given e1 = store.Add({ a1: 3 }):',
                             () =>
                             {
                                 const e1 = store.Add({ a1: 3 });
-                                let assert = assertBuilder('store', 'e1', 'a1')
-                                    (store, e1, a1);
-                                assert('a1.find(element => element[0] === e1 && element[1] === e1.a1) !== null');
+                                let assert = assertBuilder('store', 'e', 'e1', 'a1')
+                                    (store, e, e1, a1);
+                                assert('a1.size === 3');
+                                assert('a1.has([e, e.a1])');
+                                assert('a1.has([e.a2[0], e.a2[0].a1])');
+                                assert('a1.has([e1, e1.a1])');
                             });
                         subscription.unsubscribe();
                     });
