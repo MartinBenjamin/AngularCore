@@ -151,16 +151,16 @@ describe(
                     });
 
                 describe(
-                    "Given a2: [any, any][] and store.ObserveAttribute('a2').subscribe(value => a2 = value):",
+                    "Given a2: Set<[any, any]> and store.ObserveAttribute('a2').subscribe(value => a2 = new ArraySet(value)):",
                     () =>
                     {
-                        let a2: [any, any][];
-                        const subscription: Subscription = store.ObserveAttribute('a2').subscribe(value => a2 = value);
+                        let a2: Set<[any, any]>;
+                        const subscription: Subscription = store.ObserveAttribute('a2').subscribe(value => a2 = new ArraySet(value));
                         let assert = assertBuilder('store', 'e', 'a2')
                             (store, e, a2);
 
-                        assert('a2.length === 1');
-                        assert('a2.find(element => element[0] === e.a2[0] && element[1] === e.a2[0].a1) !== null');
+                        assert('a2.size === 1');
+                        assert('a2.has([e, e.a2[0]])');
                         subscription.unsubscribe();
                     });
             });
