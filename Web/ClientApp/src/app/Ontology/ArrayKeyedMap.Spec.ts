@@ -61,4 +61,31 @@ describe(
                 assert('map.has([0, 1])');
                 assert('map.get([0, 1]) === \'A\'');
             });
+
+        describe(
+            "Given map = new ArrayKeyedMap([[[0, 1], 'A']]) and map.set([0, 1], 'B'):",
+            () =>
+            {
+                const map = new ArrayKeyedMap([[[0, 1], 'A']]);
+                map.set(
+                    [0, 1],
+                    'B');
+                let assert = assertBuilder('map')(map);
+                assert('map.size === 1');
+                assert('map.has([0, 1])');
+                assert('map.get([0, 1]) === \'B\'');
+            });
+
+        describe(
+            "Given map = new ArrayKeyedMap([[[0, 1], 'A']]) and map.delete([0, 1]):",
+            () =>
+            {
+                const map = new ArrayKeyedMap([[[0, 1], 'A']]);
+                map.delete([0, 1]);
+                let assert = assertBuilder('map')(map);
+                assert('map.size === 0');
+                assert('!map.has([0, 1])');
+                assert('typeof map.get([0, 1]) === \'undefined\'');
+                assert('map.get([0, 1]) === undefined');
+            });
     });

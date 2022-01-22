@@ -50,7 +50,7 @@ describe(
             });
 
         describe(
-            'Given store = new EavStore() and e = store.Import({ a1:1, a2: [{ a1: 2, a3: 3}], a4: null }):',
+            'Given store = new EavStore() and e = store.Add({ a1:1, a2: [{ a1: 2, a3: 3}], a4: null }):',
             () =>
             {
                 const store: IEavStore = new EavStore();
@@ -135,7 +135,7 @@ describe(
                         assert('a1.find(element => element[0] === e.a2[0] && element[1] === e.a2[0].a1) !== null');
 
                         describe(
-                            'Given e1 = store.Import({ a1: 3 }):',
+                            'Given e1 = store.Add({ a1: 3 }):',
                             () =>
                             {
                                 const e1 = store.Add({ a1: 3 });

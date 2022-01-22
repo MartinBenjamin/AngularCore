@@ -24,6 +24,14 @@
               dtValidatedProperty="Name"/></td>
           </tr>
           <tr>
+            <td class="RowHeading">Project Name:</td>
+            <td><input type="text"
+              [ngModel]="Deal?.ProjectName"
+              (ngModelChange)="Deal.ProjectName = $event"
+              [dtValidatedObject]="Deal"
+              dtValidatedProperty="ProjectName" /></td>
+          </tr>
+          <tr>
             <td class="RowHeading">MUFG Roles:</td>
             <td></td>
           </tr>
