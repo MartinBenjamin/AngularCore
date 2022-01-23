@@ -50,12 +50,13 @@ describe(
                 assert('arrayProxy.length === 0');
             });
 
+        const o = { a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null };
         describe(
-            'Given store = new EavStore() and e = store.Add({ a1:1, a2: [{ a1: 2, a3: 3}], a4: null }):',
+            `Given store = new EavStore() and e = store.Add(${JSON.stringify(o)}):`,
             () =>
             {
                 const store: IEavStore = new EavStore();
-                const o = { a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null };
+                //const o = { a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null };
                 const e = store.Add(o);
                 let assert = assertBuilder('Store', 'store', 'e')
                     (Store, store, e);
