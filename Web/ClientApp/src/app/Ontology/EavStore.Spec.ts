@@ -229,5 +229,45 @@ describe(
                         });
                 }
 
+                for(const value of values)
+                {
+                    let o: any = {};
+                    if(value != undefined)
+                        o.a1 = [value];
+
+                    describe(
+                        `Given store = new EavStore(), e1 = store.Add(${JSON.stringify(o)}) and e2 = store.Add({}):`,
+                        () =>
+                        {
+                            const store = new EavStore();
+                            const entities = {
+                                e1: store.Add(o),
+                                e2: store.Add({})
+                            };
+
+                            for(const entityId of entityIds)
+                                for(const atomAttribute of attributes)
+                                    for(const atomValue of values)
+                                        describe(
+                                            `Given facts = new ArraySet(store.Facts(<Fact>[${entityId}, ${atomAttribute}, ${atomValue}]))`,
+                                            () =>
+                                            {
+                                                const atom: Fact = [entityId ? entities[entityId] : undefined, atomAttribute, atomValue];
+                                                const facts = new ArraySet(store.Facts(atom));
+
+                                                if(value != undefined && // There is an attribute.
+                                                    (atom[0] === undefined || atom[0] === entities.e1) &&
+                                                    (atom[1] === undefined || atom[1] === 'a1') &&
+                                                    (atom[2] === undefined || atom[2] === value))
+                                                    it(
+                                                        `facts.has([e1, 'a1', ${value}])`,
+                                                        () => facts.has([entities.e1, 'a1', value]));
+                                                else
+                                                    it(
+                                                        `!facts.has([e1, 'a1', ${value}])`,
+                                                        () => !facts.has([entities.e1, 'a1', value]));
+                                            });
+                        });
+                }
             });
     });
