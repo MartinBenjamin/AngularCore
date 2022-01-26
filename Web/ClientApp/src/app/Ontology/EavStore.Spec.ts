@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { ArraySet } from './ArraySet';
 import { assertBuilder } from './assertBuilder';
 import { ArrayProxyFactory, EavStore } from './EavStore';
-import { IEavStore, Store } from './IEavStore';
+import { IEavStore, Store, Fact } from './IEavStore';
 
 describe(
     'Entity Attribute Value Store',
@@ -178,5 +178,56 @@ describe(
                 assert('e === store.Add({ Id: 1 })');
                 assert('e !== store.Add({ Id: 2 })');
                 assert("typeof e.a1 === 'undefined' && e === store.Add({ Id: 1, a1: 2 }) && e.a1 === 2");
+            });
+
+        describe(
+            "EavStore.Facts",
+            () =>
+            {
+
+                const entityIds = [undefined, 'e1', 'e2'];
+                const attributes = [undefined, 'a1', 'a2'];
+                const values = [undefined, 0, 1];
+                for(const value of values)
+                {
+                    let o: any = {};
+                    if(value != undefined)
+                        o.a1 = value;
+
+                    describe(
+                        `Given store = new EavStore(), e1 = store.Add(${JSON.stringify(o)}) and e2 = store.Add({}):`,
+                        () =>
+                        {
+                            const store = new EavStore();
+                            const entities = {
+                                e1: store.Add(o),
+                                e2: store.Add({})
+                            };
+
+                            for(const entityId of entityIds)
+                                for(const atomAttribute of attributes)
+                                    for(const atomValue of values)
+                                        describe(
+                                            `Given facts = new ArraySet(store.Facts(<Fact>[${entityId}, ${atomAttribute}, ${atomValue}]))`,
+                                            () =>
+                                            {
+                                                const atom: Fact = [entityId ? entities[entityId] : undefined, atomAttribute, atomValue];
+                                                const facts = new ArraySet(store.Facts(atom));
+
+                                                if(value != undefined && // There is an attribute.
+                                                    (atom[0] === undefined || atom[0] === entities.e1) &&
+                                                    (atom[1] === undefined || atom[1] === 'a1'       ) &&
+                                                    (atom[2] === undefined || atom[2] === value      ))
+                                                    it(
+                                                        `facts.has([e1, 'a1', ${value}])`,
+                                                        () => facts.has([entities.e1, 'a1', value]));
+                                                else
+                                                    it(
+                                                        `!facts.has([e1, 'a1', ${value}])`,
+                                                        () => !facts.has([entities.e1, 'a1', value]));
+                                            });
+                        });
+                }
+
             });
     });
