@@ -208,7 +208,7 @@ describe(
                                 for(const atomAttribute of attributes)
                                     for(const atomValue of values)
                                         describe(
-                                            `Given facts = new ArraySet(store.Facts(<Fact>[${entityId}, ${atomAttribute}, ${atomValue}]))`,
+                                            `Given facts = new ArraySet(store.Facts([${entityId}, ${atomAttribute}, ${atomValue}]))`,
                                             () =>
                                             {
                                                 const atom: Fact = [entityId ? entities[entityId] : undefined, atomAttribute, atomValue];
@@ -249,7 +249,7 @@ describe(
                                 for(const atomAttribute of attributes)
                                     for(const atomValue of values)
                                         describe(
-                                            `Given facts = new ArraySet(store.Facts(<Fact>[${entityId}, ${atomAttribute}, ${atomValue}]))`,
+                                            `Given facts = new ArraySet(store.Facts([${entityId}, ${atomAttribute}, ${atomValue}]))`,
                                             () =>
                                             {
                                                 const atom: Fact = [entityId ? entities[entityId] : undefined, atomAttribute, atomValue];
@@ -269,5 +269,23 @@ describe(
                                             });
                         });
                 }
+            });
+
+
+        describe(
+            "EavStore.ObserveAtom",
+            () =>
+            {
+                const entityIds = [undefined, 'e1', 'e2'];
+                const attributes = [undefined, 'a1', 'a2'];
+                const values = [undefined, 0, 1];
+                for(const before of values)
+                    for(const after of values)
+                        for(const entityId of entityIds)
+                            for(const atomAttribute of attributes)
+                                for(const atomValue of values)
+                                {
+
+                                }
             });
     });
