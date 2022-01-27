@@ -1,5 +1,7 @@
 import { combineLatest, Observable, Subscriber } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
+import { ArraySet } from './ArraySet';
 import { AttributeSchema, Cardinality, Fact, IEavStore, StoreSymbol } from './IEavStore';
 
 export const IsVariable = element => typeof element === 'string' && element[0] === '?';
@@ -13,52 +15,48 @@ export interface Rule
 
 function Match<TTrieNode extends TrieNode<TTrieNode, V>, V>(
     trieNode: TTrieNode,
-    key     : Fact,
-    callback: (key: Fact, value: V) => void,
-    keyIndex = 0
+    fact    : Fact,
+    callback: (atom: Fact) => void,
+    atom    = []
     )
 {
-    if(keyIndex === key.length)
+    if(atom.length === fact.length)
     {
-        callback(
-            key,
-            trieNode.value);
-
+        callback(<Fact>atom);
         return;
     }
 
-    let child = trieNode.children.get(key[keyIndex]);
+    let child = trieNode.children.get(fact[atom.length]);
     if(child)
         Match(
             child,
-            key,
+            fact,
             callback,
-            keyIndex + 1);
+            [...atom, fact[atom.length]]);
 
-    if(key[keyIndex] !== undefined)
+    if(fact[atom.length] !== undefined)
     {
         child = trieNode.children.get(undefined);
         if(child)
             Match(
                 child,
-                key,
+                fact,
                 callback,
-                keyIndex + 1);
+                [...atom, undefined]);
     }
 }
 
 export class EavStore implements IEavStore
 {
-    private _eav                  = new Map<any, Map<PropertyKey, any>>();
-    private _aev                  = new Map<PropertyKey, Map<any, any>>();
-    private _ave                  : Map<PropertyKey, Map<any, any>>;
-    private _entitiesSubscribers  : Subscriber<Set<any>>[] = [];
-    private _attributeSubscribers = new Map<string, Subscriber<[any, any][]>[]>();
-    private _atomSubscribers      = new ArrayKeyedMap<Fact, Set<Subscriber<Fact[]>>>();
-    private _schema               : Map<string, AttributeSchema>;
-    private _publishSuspended     = 0;
-    private _publishEntities      : boolean;
-    private _attributesToPublish  = new Set<string>();
+    private _eav                = new Map<any, Map<PropertyKey, any>>();
+    private _aev                = new Map<PropertyKey, Map<any, any>>();
+    private _ave                : Map<PropertyKey, Map<any, any>>;
+    private _entitiesSubscribers: Subscriber<Set<any>>[] = [];
+    private _atomSubscribers    = new ArrayKeyedMap<Fact, Set<Subscriber<Fact[]>>>();
+    private _schema             : Map<string, AttributeSchema>;
+    private _publishSuspended   = 0;
+    private _publishEntities    : boolean;
+    private _atomsToPublish     : Set<Fact> = new ArraySet<Fact>();
 
     private static _empty: [any, any][] = [];
 
@@ -123,35 +121,7 @@ export class EavStore implements IEavStore
         attribute: string
         ): Observable<[any, any][]>
     {
-        return new Observable<[any, any][]>(
-            subscriber =>
-            {
-                let subscribers = this._attributeSubscribers.get(attribute);
-                if(!subscribers)
-                {
-                    subscribers = [];
-                    this._attributeSubscribers.set(
-                        attribute,
-                        subscribers);
-                }
-
-                subscribers.push(subscriber);
-                subscriber.next(this.Attribute(attribute));
-
-                subscriber.add(
-                    () =>
-                    {
-                        const index = subscribers.indexOf(subscriber);
-
-                        if(index != -1)
-                            subscribers.splice(
-                                index,
-                                1);
-
-                        if(!subscribers.length)
-                            this._attributeSubscribers.delete(attribute);
-                    });
-            });
+        return this.ObserveAtom([undefined, attribute, undefined]).pipe(map(facts => facts.map(([entity,,value]) =>[entity, value])));
     }
 
     Facts(
@@ -355,7 +325,7 @@ export class EavStore implements IEavStore
         const av = this._eav.get(entity);
         if(av)
         {
-            const attributesToPublish: string[] = [];
+            this.SuspendPublish();
             for(const [attribute, value] of av)
             {
                 const ve = this._ave.get(attribute);
@@ -364,13 +334,12 @@ export class EavStore implements IEavStore
 
                 this._aev.get(attribute).delete(entity);
 
-                if(typeof attribute === 'string')
-                    attributesToPublish.push(attribute);
+                this.PublishAtom([entity, attribute, value])
             }
 
             this._eav.delete(entity);
             this.PublishEntities();
-            attributesToPublish.forEach(attribute => this.PublishAttribute(attribute));               
+            this.UnsuspendPublish();
         }
     }
 
@@ -385,6 +354,7 @@ export class EavStore implements IEavStore
         if(typeof currentValue === 'undefined' && this.Cardinality(attribute) === Cardinality.Many)
             currentValue = entity[attribute] = ArrayProxyFactory(
                 this,
+                entity,
                 attribute,
                 []);
 
@@ -428,10 +398,6 @@ export class EavStore implements IEavStore
 
         for(const ve of this._ave.values())
             ve.clear();
-
-        this.PublishEntities();
-        for(const attribute of this._attributeSubscribers.keys())
-            this.PublishAttribute(attribute);
     }
 
     private AddObject(
@@ -475,6 +441,7 @@ export class EavStore implements IEavStore
                 if(!entity[key])
                     entity[key] = ArrayProxyFactory(
                         this,
+                        entity,
                         key,
                         []);
 
@@ -498,7 +465,7 @@ export class EavStore implements IEavStore
         if(!this._publishSuspended)
         {
             this._publishEntities = false;
-            this._attributesToPublish.clear();
+            this._atomsToPublish.clear();
         }
         ++this._publishSuspended;
     }
@@ -511,7 +478,7 @@ export class EavStore implements IEavStore
             if(this._publishEntities)
                 this.PublishEntities();
 
-            this._attributesToPublish.forEach(attribute => this.PublishAttribute(attribute));
+            this._atomsToPublish.forEach(atom => this.PublishAtom(atom));
         }
     }
 
@@ -530,23 +497,19 @@ export class EavStore implements IEavStore
         }
     }
 
-    PublishAttribute(
-        attribute: string
+    PublishAtom(
+        atom: Fact
         )
     {
         if(this._publishSuspended)
         {
-            this._attributesToPublish.add(attribute);
+            this._atomsToPublish.add(atom);
             return;
         };
 
-        const subscribers = this._attributeSubscribers.get(attribute);
+        const subscribers = this._atomSubscribers.get(atom);
         if(subscribers)
-        {
-            const attributeValues = this.Attribute(attribute);
-            //const attributeValues = this.Query(['?entity', '?value'], ['?entity', attribute, '?value']);
-            subscribers.forEach(subscriber => subscriber.next(attributeValues));
-        }
+            subscribers.forEach(subscriber => subscriber.next(this.Facts(atom)));
     }
 
     Publish(
@@ -560,12 +523,12 @@ export class EavStore implements IEavStore
             Match(
                 this._atomSubscribers,
                 [entity, attribute, value],
-                (key, subscribers: Set<Subscriber<Fact[]>>) => subscribers.forEach(subscriber => subscriber.next(this.Facts(key))));
+                atom => this.PublishAtom(atom));
         if(typeof previousValue !== "undefined")
             Match(
                 this._atomSubscribers,
                 [entity, attribute, previousValue],
-                (key, subscribers: Set<Subscriber<Fact[]>>) => subscribers.forEach(subscriber => subscriber.next(this.Facts(key))));
+                atom => this.PublishAtom(atom));
     }
 
     private Cardinality(
@@ -631,17 +594,17 @@ function EntityProxyFactory(
             receiver
             ): boolean
         {
+            const previousValue = av.get(p);
             const ve = ave.get(p);
             if(ve)
             {
-                const currentValue = av.get(p);
-                if(currentValue !== value)
+                if(previousValue !== value)
                 {
                     const identified = ve.get(value);
                     if(typeof identified !== 'undefined')
                         throw 'Unique Identity Conflict';
 
-                    ve.delete(currentValue);
+                    ve.delete(previousValue);
                     ve.set(
                         value,
                         receiver);
@@ -664,8 +627,12 @@ function EntityProxyFactory(
                 receiver,
                 value);
 
-            if(typeof p === 'string' && !(value instanceof Array))
-                store.PublishAttribute(p);
+            if(!(value instanceof Array))
+                store.Publish(
+                    receiver,
+                    p,
+                    value,
+                    previousValue);
 
             return true;
         }
@@ -694,7 +661,7 @@ function ArrayMethodHandlerFactory(
                     targetArray,
                     ...argArray);
                 if(store)
-                    store.PublishAttribute(attribute);
+                    store.PublishAtom([undefined, attribute, undefined]);
                 return result;
             }
         };
@@ -803,7 +770,7 @@ function SpliceMethodHandlerFactory(
         };
 }
 
-function methodHandlersFactory(
+function methodHandlersFactory2(
     store      : EavStore,
     entity     : any,
     attribute  : string,
@@ -827,7 +794,7 @@ function methodHandlersFactory(
             methodHandler)]));
 }
 
-function methodHandlersFactory2(
+function methodHandlersFactory(
     store      : EavStore,
     entity     : any,
     attribute  : string,
@@ -849,13 +816,14 @@ function methodHandlersFactory2(
 
 export function ArrayProxyFactory(
     store      : EavStore,
+    entity     : any,
     attribute  : string,
     targetArray: any[]
     )
 {
     const methodHandlers = methodHandlersFactory(
         store,
-        null,
+        entity,
         attribute,
         targetArray);
 
@@ -879,7 +847,7 @@ export function ArrayProxyFactory(
         {
             target[p] = value;
             if(store)
-                store.PublishAttribute(attribute);
+                store.PublishAtom([undefined, attribute, undefined]);
             return true;
         }
     };
