@@ -418,11 +418,11 @@ describe(
                                                             () =>
                                                             {
                                                                 const atom: Fact = [atomEntityId ? entities[atomEntityId] : undefined, atomAttribute, atomValue];
-                                                                let fact: Fact = [entities.e1, 'a1', before];
+                                                                const beforeFact: Fact = [entities.e1, 'a1', before];
                                                                 let facts: Set<Fact>;
                                                                 store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result));
 
-                                                                const beforeHas = facts.has(fact);
+                                                                const beforeHas = facts.has(beforeFact);
                                                                 if((atom[0] === undefined || atom[0] === entities.e1) &&
                                                                    (atom[1] === undefined || atom[1] === 'a1'       ) &&
                                                                    (atom[2] === undefined || atom[2] === before      ))
@@ -439,17 +439,22 @@ describe(
                                                                     () =>
                                                                     {
                                                                         entities.e1.a1 = after;
-                                                                        fact = [entities.e1, 'a1', after];
+                                                                        const afterFact: Fact = [entities.e1, 'a1', after];
+
+                                                                        it(
+                                                                            `facts.has([e1, 'a1', ${before}])`,
+                                                                            () => expect(facts.has(beforeFact)).toBe(false));
+
                                                                         if((atom[0] === undefined || atom[0] === entities.e1) &&
                                                                            (atom[1] === undefined || atom[1] === 'a1'       ) &&
                                                                            (atom[2] === undefined || atom[2] === after      ))
                                                                             it(
                                                                                 `facts.has([e1, 'a1', ${after}])`,
-                                                                                () => expect(facts.has(fact)).toBe(true));
+                                                                                () => expect(facts.has(afterFact)).toBe(true));
                                                                         else
                                                                             it(
                                                                                 `!facts.has([e1, 'a1', ${after}])`,
-                                                                                () => expect(facts.has(fact)).toBe(false));
+                                                                                () => expect(facts.has(afterFact)).toBe(false));
                                                                     });
                                                             });
                                                     });
@@ -457,75 +462,193 @@ describe(
                                 });
                         }
 
-                const entityIds = [undefined, 'e1', 'e2'];
-                const attributes = [undefined, 'a1', 'a2'];
-                const values = [undefined, 0, 1];
-
-                for(const before of values)
-                    for(const after of values)
-                        for(const entityId of entityIds)
-                            for(const atomAttribute of attributes)
-                                for(const atomValue of values)
-                                {
-                                    let o: any = { a1: [] };
-                                    if(before != undefined)
-                                        o.a1.push(before);
-
-                                    describe(
-                                        `Given store = new EavStore(), e1 = store.Add(${JSON.stringify(o)}) and e2 = store.Add({}):`,
-                                        () =>
+                for(const method of ['push', 'unshift'])
+                    for(const atomEntityId of [undefined, 'e1', 'e2'])
+                        for(const atomAttribute of [undefined, 'a1', 'a2'])
+                            for(const atomValue of [undefined, 0, 1])
+                            {
+                                describe(
+                                    `Given atom = [${atomEntityId}, ${atomAttribute}, ${atomValue}]`,
+                                    () =>
+                                    {
+                                        for(const value of [0, 1])
                                         {
-                                            const store = new EavStore();
-                                            const entities = {
-                                                e1: store.Add(o),
-                                                e2: store.Add({})
-                                            };
-                                            const atom: Fact = [entityId ? entities[entityId] : undefined, atomAttribute, atomValue];
-
+                                            let o: any = { a1: [] };
                                             describe(
-                                                `Given facts: Set<Fact> and store.ObserveAtom(<Fact>[${entityId}, ${atomAttribute}, ${atomValue}]).subscribe(result => facts = new ArraySet(result)):`,
+                                                `Given store = new EavStore(), e1 = store.Add(${JSON.stringify(o)}) and e2 = store.Add({}):`,
                                                 () =>
                                                 {
-                                                    let facts: Set<Fact>;
-                                                    store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result));
-                                                    const beforeHas = facts.has([entities.e1, 'a1', before]);
+                                                    const store = new EavStore();
+                                                    const entities = {
+                                                        e1: store.Add(o),
+                                                        e2: store.Add({})
+                                                    };
 
                                                     describe(
-                                                        "Given e1.a1.pop()" + (after !== undefined ? ` and e1.a1.push(${after})):` : ":"),
+                                                        `Given facts: Set<Fact> and store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result)):`,
                                                         () =>
                                                         {
-                                                            entities.e1.a1.pop();
-                                                            if(after !== undefined)
-                                                                entities.e1.a1.push(after);
+                                                            const atom: Fact = [atomEntityId ? entities[atomEntityId] : undefined, atomAttribute, atomValue];
+                                                            const fact: Fact = [entities.e1, 'a1', value];
+                                                            let facts: Set<Fact>;
+                                                            store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result));
 
-                                                            if(before != undefined && // There is an attribute.
-                                                                (atom[0] === undefined || atom[0] === entities.e1) &&
-                                                                (atom[1] === undefined || atom[1] === 'a1'       ) &&
-                                                                (atom[2] === undefined || atom[2] === before     ))
-                                                                it(
-                                                                    `facts.has([e1, 'a1', ${before}])`,
-                                                                    () => expect(beforeHas).toBe(true));
-                                                            else
-                                                                it(
-                                                                    `!facts.has([e1, 'a1', ${before}])`,
-                                                                    () => expect(beforeHas).toBe(false));
+                                                            const before = facts.has(fact);
+                                                            it(
+                                                                `!facts.has([entities.e1, 'a1', ${value}])`,
+                                                                () => expect(before).toBe(false));
 
-                                                            if(after != undefined && // There is an attribute.
-                                                                (atom[0] === undefined || atom[0] === entities.e1) &&
-                                                                (atom[1] === undefined || atom[1] === 'a1'       ) &&
-                                                                (atom[2] === undefined || atom[2] === after      ))
-                                                                it(
-                                                                    `facts.has([e1, 'a1', ${after}])`,
-                                                                    () => expect(facts.has([entities.e1, 'a1', after])).toBe(true));
-                                                            else
-                                                                it(
-                                                                    `!facts.has([e1, 'a1', ${after}])`,
-                                                                    () => expect(facts.has([entities.e1, 'a1', after])).toBe(false));
+                                                            describe(
+                                                                `Given e1.a1.${method}(${value}):`,
+                                                                () =>
+                                                                {
+                                                                    entities.e1.a1[method](value);
 
+                                                                    if((atom[0] === undefined || atom[0] === entities.e1) &&
+                                                                       (atom[1] === undefined || atom[1] === 'a1'       ) &&
+                                                                       (atom[2] === undefined || atom[2] === value      ))
+                                                                        it(
+                                                                            `facts.has([e1, 'a1', ${value}])`,
+                                                                            () => expect(facts.has(fact)).toBe(true));
+                                                                    else
+                                                                        it(
+                                                                            `!facts.has([e1, 'a1', ${value}])`,
+                                                                            () => expect(facts.has(fact)).toBe(false));
+                                                                });
                                                         });
                                                 });
-                                        });
-                                }
+                                        }
+                                    });
+                            }
 
+                for(const method of ['pop', 'shift'])
+                    for(const atomEntityId of [undefined, 'e1', 'e2'])
+                        for(const atomAttribute of [undefined, 'a1', 'a2'])
+                            for(const atomValue of [undefined, 0, 1])
+                            {
+                                describe(
+                                    `Given atom = [${atomEntityId}, ${atomAttribute}, ${atomValue}]`,
+                                    () =>
+                                    {
+                                        for(const value of [0, 1])
+                                        {
+                                            let o: any = { a1: [value] };
+                                            describe(
+                                                `Given store = new EavStore(), e1 = store.Add(${JSON.stringify(o)}) and e2 = store.Add({}):`,
+                                                () =>
+                                                {
+                                                    const store = new EavStore();
+                                                    const entities = {
+                                                        e1: store.Add(o),
+                                                        e2: store.Add({})
+                                                    };
+
+                                                    describe(
+                                                        `Given facts: Set<Fact> and store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result)):`,
+                                                        () =>
+                                                        {
+                                                            const atom: Fact = [atomEntityId ? entities[atomEntityId] : undefined, atomAttribute, atomValue];
+                                                            const fact: Fact = [entities.e1, 'a1', value];
+                                                            let facts: Set<Fact>;
+                                                            store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result));
+
+                                                            const before = facts.has(fact);
+                                                            if((atom[0] === undefined || atom[0] === entities.e1) &&
+                                                               (atom[1] === undefined || atom[1] === 'a1'       ) &&
+                                                               (atom[2] === undefined || atom[2] === value      ))
+                                                                it(
+                                                                    `facts.has([e1, 'a1', ${value}])`,
+                                                                    () => expect(before).toBe(true));
+                                                            else
+                                                                it(
+                                                                    `!facts.has([e1, 'a1', ${value}])`,
+                                                                    () => expect(before).toBe(false));
+
+                                                            describe(
+                                                                `Given e1.a1.${method}():`,
+                                                                () =>
+                                                                {
+                                                                    entities.e1.a1[method]();
+                                                                    it(
+                                                                        `!facts.has([e1, 'a1', ${value}])`,
+                                                                        () => expect(facts.has(fact)).toBe(false));
+                                                                });
+                                                        });
+                                                });
+                                        }
+                                    });
+                            }
+
+                for(const atomEntityId of [undefined, 'e1', 'e2'])
+                    for(const atomAttribute of [undefined, 'a1', 'a2'])
+                        for(const atomValue of [undefined, 0, 1])
+                        {
+                            describe(
+                                `Given atom = [${atomEntityId}, ${atomAttribute}, ${atomValue}]`,
+                                () =>
+                                {
+                                    for(const before of [0, 1])
+                                        for(const after of [0, 1])
+                                            if(before != after)
+                                            {
+                                                let o: any = { a1: [before] };
+                                                describe(
+                                                    `Given store = new EavStore(), e1 = store.Add(${JSON.stringify(o)}) and e2 = store.Add({}):`,
+                                                    () =>
+                                                    {
+                                                        const store = new EavStore();
+                                                        const entities = {
+                                                            e1: store.Add(o),
+                                                            e2: store.Add({})
+                                                        };
+
+                                                        describe(
+                                                            `Given facts: Set<Fact> and store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result)):`,
+                                                            () =>
+                                                            {
+                                                                const atom: Fact = [atomEntityId ? entities[atomEntityId] : undefined, atomAttribute, atomValue];
+                                                                const beforeFact: Fact = [entities.e1, 'a1', before];
+                                                                let facts: Set<Fact>;
+                                                                store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result));
+
+                                                                const beforeHas = facts.has(beforeFact);
+                                                                if((atom[0] === undefined || atom[0] === entities.e1) &&
+                                                                    (atom[1] === undefined || atom[1] === 'a1') &&
+                                                                    (atom[2] === undefined || atom[2] === before))
+                                                                    it(
+                                                                        `facts.has([e1, 'a1', ${before}])`,
+                                                                        () => expect(beforeHas).toBe(true));
+                                                                else
+                                                                    it(
+                                                                        `!facts.has([e1, 'a1', ${before}])`,
+                                                                        () => expect(beforeHas).toBe(false));
+
+                                                                describe(
+                                                                    `Given e1.a1.splice(o, 1, ${after}):`,
+                                                                    () =>
+                                                                    {
+                                                                        entities.e1.a1.splice(o, 1, after);
+                                                                        const afterFact: Fact = [entities.e1, 'a1', after];
+
+                                                                        it(
+                                                                            `!facts.has([e1, 'a1', ${before}])`,
+                                                                            () => expect(facts.has(beforeFact)).toBe(false));
+
+                                                                        if((atom[0] === undefined || atom[0] === entities.e1) &&
+                                                                           (atom[1] === undefined || atom[1] === 'a1'       ) &&
+                                                                           (atom[2] === undefined || atom[2] === after      ))
+                                                                            it(
+                                                                                `facts.has([e1, 'a1', ${after}])`,
+                                                                                () => expect(facts.has(afterFact)).toBe(true));
+                                                                        else
+                                                                            it(
+                                                                                `!facts.has([e1, 'a1', ${after}])`,
+                                                                                () => expect(facts.has(afterFact)).toBe(false));
+                                                                    });
+                                                            });
+                                                    });
+                                            }
+                                });
+                        }
             });
     });
