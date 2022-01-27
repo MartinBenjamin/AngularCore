@@ -390,71 +390,76 @@ describe(
                                 });
                         }
 
+                for(const atomEntityId of [undefined, 'e1', 'e2'])
+                    for(const atomAttribute of [undefined, 'a1', 'a2'])
+                        for(const atomValue of [undefined, 0, 1])
+                        {
+                            describe(
+                                `Given atom = [${atomEntityId}, ${atomAttribute}, ${atomValue}]`,
+                                () =>
+                                {
+                                    for(const before of [0, 1])
+                                        for(const after of [0, 1])
+                                            if(before != after)
+                                            {
+                                                let o: any = { a1: before };
+                                                describe(
+                                                    `Given store = new EavStore(), e1 = store.Add(${JSON.stringify(o)}) and e2 = store.Add({}):`,
+                                                    () =>
+                                                    {
+                                                        const store = new EavStore();
+                                                        const entities = {
+                                                            e1: store.Add(o),
+                                                            e2: store.Add({})
+                                                        };
+
+                                                        describe(
+                                                            `Given facts: Set<Fact> and store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result)):`,
+                                                            () =>
+                                                            {
+                                                                const atom: Fact = [atomEntityId ? entities[atomEntityId] : undefined, atomAttribute, atomValue];
+                                                                let fact: Fact = [entities.e1, 'a1', before];
+                                                                let facts: Set<Fact>;
+                                                                store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result));
+
+                                                                const beforeHas = facts.has(fact);
+                                                                if((atom[0] === undefined || atom[0] === entities.e1) &&
+                                                                   (atom[1] === undefined || atom[1] === 'a1'       ) &&
+                                                                   (atom[2] === undefined || atom[2] === before      ))
+                                                                    it(
+                                                                        `facts.has([e1, 'a1', ${before}])`,
+                                                                        () => expect(beforeHas).toBe(true));
+                                                                else
+                                                                    it(
+                                                                        `!facts.has([e1, 'a1', ${before}])`,
+                                                                        () => expect(beforeHas).toBe(false));
+
+                                                                describe(
+                                                                    `Given e1.a1 = ${after}:`,
+                                                                    () =>
+                                                                    {
+                                                                        entities.e1.a1 = after;
+                                                                        fact = [entities.e1, 'a1', after];
+                                                                        if((atom[0] === undefined || atom[0] === entities.e1) &&
+                                                                           (atom[1] === undefined || atom[1] === 'a1'       ) &&
+                                                                           (atom[2] === undefined || atom[2] === after      ))
+                                                                            it(
+                                                                                `facts.has([e1, 'a1', ${after}])`,
+                                                                                () => expect(facts.has(fact)).toBe(true));
+                                                                        else
+                                                                            it(
+                                                                                `!facts.has([e1, 'a1', ${after}])`,
+                                                                                () => expect(facts.has(fact)).toBe(false));
+                                                                    });
+                                                            });
+                                                    });
+                                            }
+                                });
+                        }
+
                 const entityIds = [undefined, 'e1', 'e2'];
                 const attributes = [undefined, 'a1', 'a2'];
                 const values = [undefined, 0, 1];
-                for(const before of values)
-                    for(const after of values)
-                        for(const entityId of entityIds)
-                            for(const atomAttribute of attributes)
-                                for(const atomValue of values)
-                                {
-                                    let o: any = {};
-                                    if(before != undefined)
-                                        o.a1 = before;
-
-                                    describe(
-                                        `Given store = new EavStore(), e1 = store.Add(${JSON.stringify(o)}) and e2 = store.Add({}):`,
-                                        () =>
-                                        {
-                                            const store = new EavStore();
-                                            const entities = {
-                                                e1: store.Add(o),
-                                                e2: store.Add({})
-                                            };
-                                            const atom: Fact = [entityId ? entities[entityId] : undefined, atomAttribute, atomValue];
-
-                                            describe(
-                                                `Given facts: Set<Fact> and store.ObserveAtom(<Fact>[${entityId}, ${atomAttribute}, ${atomValue}]).subscribe(result => facts = new ArraySet(result)):`,
-                                                () =>
-                                                {
-                                                    let facts: Set<Fact>;
-                                                    store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result));
-                                                    const beforeHas = facts.has([entities.e1, 'a1', before]);
-
-                                                    if(before != undefined && // There is an attribute.
-                                                        (atom[0] === undefined || atom[0] === entities.e1) &&
-                                                        (atom[1] === undefined || atom[1] === 'a1'       ) &&
-                                                        (atom[2] === undefined || atom[2] === before     ))
-                                                        it(
-                                                            `facts.has([e1, 'a1', ${before}])`,
-                                                            () => expect(beforeHas).toBe(true));
-                                                    else
-                                                        it(
-                                                            `!facts.has([e1, 'a1', ${before}])`,
-                                                            () => expect(beforeHas).toBe(false));
-
-                                                    describe(
-                                                        `Given e1.a1=${after}:`,
-                                                        () =>
-                                                        {
-                                                            entities.e1.a1 = after;
-
-                                                            if(after != undefined && // There is an attribute.
-                                                                (atom[0] === undefined || atom[0] === entities.e1) &&
-                                                                (atom[1] === undefined || atom[1] === 'a1'       ) &&
-                                                                (atom[2] === undefined || atom[2] === after      ))
-                                                                it(
-                                                                    `facts.has([e1, 'a1', ${after}])`,
-                                                                    () => expect(facts.has([entities.e1, 'a1', after])).toBe(true));
-                                                            else
-                                                                it(
-                                                                    `!facts.has([e1, 'a1', ${after}])`,
-                                                                    () => expect(facts.has([entities.e1, 'a1', after])).toBe(false));
-                                                        });
-                                                });
-                                        });
-                                }
 
                 for(const before of values)
                     for(const after of values)
