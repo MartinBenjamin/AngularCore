@@ -845,9 +845,14 @@ export function ArrayProxyFactory(
             value
             ): boolean
         {
+            const previousValue = target[p];
             target[p] = value;
             if(store)
-                store.PublishAtom([undefined, attribute, undefined]);
+                store.Publish(
+                    entity,
+                    attribute,
+                    value,
+                    previousValue);
             return true;
         }
     };
