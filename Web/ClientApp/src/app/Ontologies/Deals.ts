@@ -7,24 +7,26 @@ import { DisjointClasses } from "../Ontology/DisjointClasses";
 import { IClass } from "../Ontology/IClass";
 import { INamedIndividual } from "../Ontology/INamedIndividual";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "../Ontology/IPropertyExpression";
+import { ObjectOneOf } from "../Ontology/ObjectOneOf";
 import { ObjectSomeValuesFrom } from "../Ontology/ObjectSomeValuesFrom";
 import { Ontology } from "../Ontology/Ontology";
 import { DateTime, Decimal } from "../Ontology/Xsd";
 import { agreements } from './Agreements';
 import { annotations } from './Annotations';
 import { commonDomainObjects } from "./CommonDomainObjects";
+import { facilityAgreements } from './FacilityAgreements';
 import { legalEntities } from "./LegalEntities";
 import { lifeCycles } from "./LifeCycles";
 import { parties } from "./Parties";
 import { roleIndividuals } from "./RoleIndividuals";
 import { roles } from "./Roles";
-import { facilityAgreements } from './FacilityAgreements';
 
 export class Deals extends Ontology
 {
     readonly DealType               : IClass;
     readonly Deal                   : IClass;
     readonly Debt                   : IClass;
+    readonly Restricted             : IClass;
     readonly Class                  : IDataPropertyExpression;
     readonly Type                   : IObjectPropertyExpression;
     readonly LifeCycle              : IObjectPropertyExpression;
@@ -67,11 +69,11 @@ export class Deals extends Ontology
         this.Deal = this.DeclareClass("Deal");
         this.Deal.SubClassOf(agreements.Agreement);
 
-        this.Class       = this.DeclareDataProperty("ClassIri");
-        this.LifeCycle   = this.DeclareObjectProperty("LifeCycle"  );
-        this.Type        = this.DeclareObjectProperty("Type"       );
+        this.Class = this.DeclareDataProperty("ClassIri");
+        this.LifeCycle = this.DeclareObjectProperty("LifeCycle");
+        this.Type = this.DeclareObjectProperty("Type");
         this.Classifiers = this.DeclareObjectProperty("Classifiers");
-        this.SponsorsNA  = this.DeclareDataProperty("SponsorsNA");
+        this.SponsorsNA = this.DeclareDataProperty("SponsorsNA");
 
         this.Deal.SubClassOf(this.Type.ExactCardinality(1));
 
@@ -90,6 +92,17 @@ export class Deals extends Ontology
         this.Deal.SubClassOf(this.DeclareFunctionalDataProperty("CurrentStatus").MinCardinality(1, nonEmptyString))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
 
+        let restrictedClassifier = this.DeclareClass("RestrictedClassifier");
+        restrictedClassifier.SubClassOf(commonDomainObjects.Classifier);
+        restrictedClassifier.Define(commonDomainObjects.$type.HasValue('Web.Model.RestrictedClassifier, Web'));
+        let notRestricted = restrictedClassifier.DeclareNamedIndividual("Not Restricted");
+        notRestricted.DataPropertyValue(
+            commonDomainObjects.Id,
+            RestrictedClassifierIdentifier.No);
+        this.Restricted = this.DeclareClass("RestrictedDeal");
+        this.Restricted.Define(new ObjectSomeValuesFrom(
+            this.Classifiers,
+            restrictedClassifier.Intersect(new ObjectOneOf([notRestricted]).Complement())));
 
         let exclusivityClassifier = this.DeclareClass("ExclusivityClassifier");
         exclusivityClassifier.SubClassOf(commonDomainObjects.Classifier);

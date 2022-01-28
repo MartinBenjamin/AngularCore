@@ -4,9 +4,11 @@ import { map } from 'rxjs/operators';
 import { DomainObject, Guid } from '../../CommonDomainObjects';
 import { CurrenciesToken } from '../../CurrencyServiceProvider';
 import { DealProvider } from '../../DealProvider';
-import { ClassificationSchemeIdentifier, Deal } from '../../Deals';
+import { Deal } from '../../Deals';
 import { Currency } from '../../Iso4217';
+import { deals } from '../../Ontologies/Deals';
 import { Store } from '../../Ontology/IEavStore';
+import { ObservableGenerator } from '../../Ontology/ObservableGenerator';
 
 @Component(
     {
@@ -32,18 +34,12 @@ export class KeyDealData implements OnDestroy
                 if(this._deal)
                 {
                     const store = Store(this._deal);
-                    //this._restricted = store.Observe(
-                    //    ['?classifier'],
-                    //    [this._deal, "Classifiers", '?classifier'],
-                    //    ['?classifier', '$type', 'Web.Model.RestrictedClassifier, Web'],
-                    //    ['?classificationScheme', 'Id', ClassificationSchemeIdentifier.Restricted],
-                    //    ['?classificationScheme', 'Classifiers', '?classificationSchemeClassifier'],
-                    //    ['?classificationSchemeClassifier', 'Classifier', '?classifier'],
-                    //    ['?classificationScheme', 'Classifiers', '?restrictedClassificationSchemeClassifier'],
-                    //    ['?restrictedClassificationSchemeClassifier', 'Classifier', '?restrictedClassifier'],
-                    //    ['?restrictedClassifier', 'Id', '5cd2b680-cb36-49e1-8d3d-62ada643a389'],
-                    //    ['?classificationSchemeClassifier', 'Super', '?restrictedClassificationSchemeClassifier']).pipe(
-                    //        map(classifiers => classifiers.length === 1));
+
+                    const generator = new ObservableGenerator(
+                        deals,
+                        store);
+
+                    this._restricted = deals.Restricted.Select(generator).pipe(map(restricted => restricted.has(this._deal)));
                 }
             }));
     }
@@ -61,6 +57,11 @@ export class KeyDealData implements OnDestroy
     get Deal(): Deal
     {
         return this._deal;
+    }
+
+    get Restricted(): Observable<boolean>
+    {
+        return this._restricted;
     }
 
     CompareById(

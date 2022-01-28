@@ -23,7 +23,7 @@
               [dtValidatedObject]="Deal"
               dtValidatedProperty="Name"/></td>
           </tr>
-          <tr>
+          <tr *ngIf="Restricted|async">
             <td class="RowHeading">Project Name:</td>
             <td><input type="text"
               [ngModel]="Deal?.ProjectName"
