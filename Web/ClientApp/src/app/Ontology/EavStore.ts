@@ -16,13 +16,15 @@ export interface Rule
 function Match<TTrieNode extends TrieNode<TTrieNode, V>, V>(
     trieNode: TTrieNode,
     fact    : Fact,
-    callback: (atom: Fact) => void,
+    callback: (atom: Fact, value: V) => void,
     atom    = []
     )
 {
     if(atom.length === fact.length)
     {
-        callback(<Fact>atom);
+        callback(
+            <Fact>atom,
+            trieNode.value);
         return;
     }
 
@@ -334,7 +336,11 @@ export class EavStore implements IEavStore
 
                 this._aev.get(attribute).delete(entity);
 
-                this.PublishAtom([entity, attribute, value])
+                this.Publish(
+                    entity,
+                    attribute,
+                    undefined,
+                    value);
             }
 
             this._eav.delete(entity);
@@ -498,7 +504,8 @@ export class EavStore implements IEavStore
     }
 
     PublishAtom(
-        atom: Fact
+        atom        : Fact,
+        subscribers?: Set<Subscriber<Fact[]>>
         )
     {
         if(this._publishSuspended)
@@ -507,7 +514,8 @@ export class EavStore implements IEavStore
             return;
         };
 
-        const subscribers = this._atomSubscribers.get(atom);
+        subscribers = subscribers || this._atomSubscribers.get(atom);
+
         if(subscribers)
             subscribers.forEach(subscriber => subscriber.next(this.Facts(atom)));
     }
@@ -523,12 +531,12 @@ export class EavStore implements IEavStore
             Match(
                 this._atomSubscribers,
                 [entity, attribute, value],
-                atom => this.PublishAtom(atom));
+                (atom, subscribers: Set<Subscriber<Fact[]>>) => this.PublishAtom(atom, subscribers));
         if(typeof previousValue !== "undefined")
             Match(
                 this._atomSubscribers,
                 [entity, attribute, previousValue],
-                atom => this.PublishAtom(atom));
+                (atom, subscribers: Set<Subscriber<Fact[]>>) => this.PublishAtom(atom, subscribers));
     }
 
     private Cardinality(
@@ -660,8 +668,8 @@ function ArrayMethodHandlerFactory(
                 const result = targetMethod.call(
                     targetArray,
                     ...argArray);
-                if(store)
-                    store.PublishAtom([undefined, attribute, undefined]);
+                //if(store)
+                //    store.PublishAttribute(attribute);
                 return result;
             }
         };
