@@ -257,9 +257,9 @@ export class EavStore implements IEavStore
             });
     }
 
-    Observe(
-        head: any[],
-        ...body: Fact[]): Observable<any[]>
+    Observe<T extends [any, ...any[]]>(
+        head: T,
+        ...body: Fact[]): Observable<{ [K in keyof T]: any; }[]>
     {
         return combineLatest(
             body.map(atom => this.ObserveAtom(atom)),
@@ -299,7 +299,7 @@ export class EavStore implements IEavStore
 
                     return substitutions;
                 },
-                [{}]).map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term)));
+                [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term)));
     }
 
     NewEntity(): any

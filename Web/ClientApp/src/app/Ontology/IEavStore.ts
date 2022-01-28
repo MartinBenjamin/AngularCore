@@ -19,9 +19,9 @@ export interface IEavStore
 {
     ObserveEntities(): Observable<Set<any>>;
     ObserveAttribute<TDomain = any, TRange = any>(attribute: string): Observable<[TDomain, TRange][]>;
-    Observe(
-        head: any[],
-        ...body: Fact[]): Observable<any[]>
+    Observe<T extends [any, ...any[]]>(
+        head: T,
+        ...body: Fact[]): Observable<{ [K in keyof T]: any; }[]>;
     Query<T extends [any, ...any[]]>(
         head: T,
         ...body: Fact[]): { [K in keyof T]: any; }[];
