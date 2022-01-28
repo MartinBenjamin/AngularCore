@@ -103,6 +103,8 @@ export class Deals extends Ontology
         this.Restricted.Define(new ObjectSomeValuesFrom(
             this.Classifiers,
             restrictedClassifier.Intersect(new ObjectOneOf([notRestricted]).Complement())));
+        this.Restricted.SubClassOf(this.DeclareFunctionalDataProperty("ProjectName").MinCardinality(1, nonEmptyString))
+            .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
 
         let exclusivityClassifier = this.DeclareClass("ExclusivityClassifier");
         exclusivityClassifier.SubClassOf(commonDomainObjects.Classifier);
