@@ -194,7 +194,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
             objectAllValuesFrom.ClassExpression.Select(this),
             (groupedByDomain, classExpression) =>
                 new Set<any>(
-                    [...groupedByDomain.entries()]
+                    [...groupedByDomain]
                         .filter(([, relations]) => relations.every(([, range]) => classExpression.has(range)))
                         .map(([domain,]) => domain)));
     }
@@ -272,7 +272,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
                     individual => individual,
                     ([domain,]) => domain)).pipe(
                         map(groupedByDomain =>
-                            new Set<any>([...groupedByDomain.entries()]
+                            new Set<any>([...groupedByDomain]
                                 .filter(([, relations]) => relations.length <= objectMaxCardinality.Cardinality)
                                 .map(([domain,]) => domain))));
     }
@@ -300,7 +300,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
                         individual => individual,
                         ([domain,]) => domain)).pipe(
                             map(groupedByDomain =>
-                                new Set<any>([...groupedByDomain.entries()]
+                                new Set<any>([...groupedByDomain]
                                     .filter(([, relations]) => relations.length === objectExactCardinality.Cardinality)
                                     .map(([domain,]) => domain))));
 
@@ -337,7 +337,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
                     individual => individual,
                     ([domain,]) => domain)).pipe(
                         map(groupedByDomain => new Set<any>(
-                            [...groupedByDomain.entries()]
+                            [...groupedByDomain]
                                 .filter(([, relations]) => relations.every(([,range]) => dataAllValuesFrom.DataRange.HasMember(range)))
                                 .map(([domain,]) => domain))));
     }
@@ -397,7 +397,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
                     individual => individual,
                     ([domain,]) => domain)).pipe(
                         map(groupedByDomain =>
-                            new Set<any>([...groupedByDomain.entries()]
+                            new Set<any>([...groupedByDomain]
                                 .filter(([, relations]) => relations.length <= dataMaxCardinality.Cardinality)
                                 .map(([domain,]) => domain))));
     }
@@ -422,7 +422,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
                         individual => individual,
                         ([domain,]) => domain)).pipe(
                             map(groupedByDomain =>
-                                new Set<any>([...groupedByDomain.entries()]
+                                new Set<any>([...groupedByDomain]
                                     .filter(([, relations]) => relations.length === dataExactCardinality.Cardinality)
                                     .map(([domain,]) => domain))));
 
