@@ -245,7 +245,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         return observableObjectPropertyExpression.pipe(
             map(this.GroupByDomain),
             map(groupedByDomain =>
-                new Set<any>([...groupedByDomain.entries()]
+                new Set<any>([...groupedByDomain]
                     .filter(([, relations]) => relations.length >= objectMinCardinality.Cardinality)
                     .map(([domain,]) => domain))));
     }
@@ -307,7 +307,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         return observableObjectPropertyExpression.pipe(
             map(this.GroupByDomain),
             map(groupedByDomain =>
-                new Set<any>([...groupedByDomain.entries()]
+                new Set<any>([...groupedByDomain]
                     .filter(([, relations]) => relations.length === objectExactCardinality.Cardinality)
                     .map(([domain,]) => domain))));
     }
@@ -373,7 +373,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         return observableDataPropertyExpression.pipe(
             map(this.GroupByDomain),
             map(groupedByDomain =>
-                new Set<any>([...groupedByDomain.entries()]
+                new Set<any>([...groupedByDomain]
                     .filter(([, relations]) => relations.length >= dataMinCardinality.Cardinality)
                     .map(([domain,]) => domain))));
     }
@@ -434,7 +434,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         return observableDataPropertyExpression.pipe(
             map(this.GroupByDomain),
             map(groupedByDomain =>
-                new Set<any>([...groupedByDomain.entries()]
+                new Set<any>([...groupedByDomain]
                     .filter(([, relations]) => relations.length === dataExactCardinality.Cardinality)
                     .map(([domain,]) => domain))));
     }
