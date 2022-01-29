@@ -2,7 +2,7 @@ import { BehaviorSubject, combineLatest, Observable } from "rxjs";
 import { map } from 'rxjs/operators';
 import { AddIndividuals } from "./AddIndividuals";
 import { EavStore } from './EavStore';
-import { Group } from './Group';
+import { Group, GroupJoin } from './Group';
 import { IClass } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
 import { IClassExpressionSelector } from './IClassExpressionSelector';
@@ -24,54 +24,6 @@ import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from './IOntology';
 import { IDataPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
 import { TransitiveClosure3 } from "./TransitiveClosure";
-
-export function GroupBy<T, TKey, TValue, TResult>(
-    iterable      : Iterable<T>,
-    keySelector   : (t: T) => TKey,
-    valueSelector : (t: T) => TValue,
-    resultSelector: (key: TKey, valueIterable: Iterable<TValue>) => TResult
-    ): Iterable<TResult>
-{
-    return {
-        *[Symbol.iterator]()
-        {
-            const map = Group(
-                iterable,
-                keySelector,
-                valueSelector);
-
-            for(const pair of map)
-                yield resultSelector(
-                    pair[0],
-                    pair[1]);
-        }
-    };
-}
-
-export function GroupJoin<TLeft, TRight, TKey>(
-    leftIterable    : Iterable<TLeft>,
-    rightIterable   : Iterable<TRight>,
-    leftKeySelector : (left: TLeft) => TKey,
-    rightKeySelector: (right: TRight) => TKey
-    ): Map<TLeft, TRight[]>
-{
-    const map = Group(
-        rightIterable,
-        rightKeySelector,
-        (t: TRight) => t);
-
-    const join = new Map<TLeft, TRight[]>();
-    const empty: TRight[] = [];
-    for(const left of leftIterable)
-    {
-        const rights = map.get(leftKeySelector(left));
-        join.set(
-            left,
-            rights ? rights : empty);
-    }
-
-    return join;
-}
 
 export { IEavStore, EavStore };
 

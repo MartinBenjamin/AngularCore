@@ -20,3 +20,28 @@ export function Group<T, TKey, TValue>(
     }
     return map;
 }
+
+export function GroupJoin<TLeft, TRight, TKey>(
+    leftIterable    : Iterable<TLeft>,
+    rightIterable   : Iterable<TRight>,
+    leftKeySelector : (left: TLeft) => TKey,
+    rightKeySelector: (right: TRight) => TKey
+    ): Map<TLeft, TRight[]>
+{
+    const map = Group(
+        rightIterable,
+        rightKeySelector,
+        (t: TRight) => t);
+
+    const join = new Map<TLeft, TRight[]>();
+    const empty: TRight[] = [];
+    for(const left of leftIterable)
+    {
+        const rights = map.get(leftKeySelector(left));
+        join.set(
+            left,
+            rights ? rights : empty);
+    }
+
+    return join;
+}
