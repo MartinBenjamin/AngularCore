@@ -318,7 +318,7 @@ export class EavStore implements IEavStore, IPublisher
 
         entity[StoreSymbol] = this;
 
-        this.PublishNewEntity(entity);
+        this.PublishEntities();
         return entity;
     }
     
@@ -396,7 +396,7 @@ export class EavStore implements IEavStore, IPublisher
             }
 
             this._eav.delete(entity);
-            this.PublishDeleteEntity(entity);
+            this.PublishEntities();
             this.UnsuspendPublish();
         }
     }
@@ -570,20 +570,6 @@ export class EavStore implements IEavStore, IPublisher
 
             this._atomsToPublish.forEach(atom => this.PublishAtom(atom));
         }
-    }
-
-    PublishNewEntity(
-        entity: any
-        )
-    {
-        this.PublishEntities();
-    }
-
-    PublishDeleteEntity(
-        entity: any
-        )
-    {
-        this.PublishEntities();
     }
 
     PublishAssert(
