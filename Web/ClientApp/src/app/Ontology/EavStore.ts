@@ -716,11 +716,11 @@ function EntityProxyFactory(
                 p,
                 value);
 
-            let retract = true;
             let ev = aev.get(p);
+            const retract = ev !== null;
             if(!ev)
             {
-                retract = false;
+                console.assert(previousValue === undefined, "Previous value not undefined!");
                 ev = new Map<any, any>();
                 aev.set(
                     p,
