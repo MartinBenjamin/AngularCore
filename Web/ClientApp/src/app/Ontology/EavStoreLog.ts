@@ -9,10 +9,6 @@ export abstract class LogEntry implements ILogEntry
     {
     }
 
-    Commit(): void
-    {
-    }
-
     Rollback(): void
     {
     }
@@ -115,8 +111,8 @@ class DeleteEntity extends LogEntry
         super(entity);
     }
 
-    Commit(): void
+    Rollback(): void
     {
-        Store(this.Entity).DeleteEntity(this.Entity);
+        // Restore delete entity.
     }
 }

@@ -697,19 +697,16 @@ function EntityProxyFactory(
         {
             const previousValue = av.get(p);
             const ve = ave.get(p);
-            if(ve)
+            if(ve && previousValue !== value)
             {
-                if(previousValue !== value)
-                {
-                    const identified = ve.get(value);
-                    if(typeof identified !== 'undefined')
-                        throw 'Unique Identity Conflict';
+                if(typeof ve.get(value) !== 'undefined')
+                    // Value already in use for attribute.
+                    throw 'Unique Identity Conflict';
 
-                    ve.delete(previousValue);
-                    ve.set(
-                        value,
-                        receiver);
-                }
+                ve.delete(previousValue);
+                ve.set(
+                    value,
+                    receiver);
             }
 
             av.set(
@@ -720,7 +717,7 @@ function EntityProxyFactory(
             const retract = ev !== null;
             if(!ev)
             {
-                console.assert(previousValue === undefined, "Previous value not undefined!");
+                console.assert(previousValue === undefined, "AEV and EAV inconsistent.");
                 ev = new Map<any, any>();
                 aev.set(
                     p,

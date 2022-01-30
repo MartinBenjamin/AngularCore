@@ -6,7 +6,6 @@ export interface ITransaction
 
 export interface ILogEntry
 {
-    Commit(): void;
     Rollback(): void;
 }
 
@@ -53,13 +52,7 @@ export class TransactionManager
         ): void
     {
         if(transaction.StartLogLength === 0)
-        {
-            this._active = false;
-            for(const logEntry of this._log)
-                logEntry.Commit();
-
             this._log = null;
-        }
     }
 
     Rollback(
