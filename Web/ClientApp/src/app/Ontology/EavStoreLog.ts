@@ -1,18 +1,6 @@
 import { ILogEntry} from './ITransactionManager';
 import { Store } from './IEavStore';
 
-export interface IPublisher
-{
-    SuspendPublish(): void;
-    UnsuspendPublish(): void;
-    PublishAssert(entity: any, attribute: string, value: any): void;
-    PublishRetract(entity: any, attribute: string, value: any): void;
-    PublishAssertRetract(entity: any, attribute: string, assertedValue: any, retractedValue): void;
-    PublishNewEntity(entity: any): void;
-    PublishDeleteEntity(entity: any): void;
-}
-
-
 export abstract class LogEntry implements ILogEntry
 {
     protected constructor(

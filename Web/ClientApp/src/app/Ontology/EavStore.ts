@@ -3,6 +3,7 @@ import { map } from 'rxjs/operators';
 import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
 import { ArraySet } from './ArraySet';
 import { AttributeSchema, Cardinality, Fact, IEavStore, StoreSymbol } from './IEavStore';
+import { IPublisher } from './IPublisher';
 import { ITransaction } from './ITransactionManager';
 
 export const IsVariable = element => typeof element === 'string' && element[0] === '?';
@@ -49,7 +50,7 @@ function Match<TTrieNode extends TrieNode<TTrieNode, V>, V>(
     }
 }
 
-export class EavStore implements IEavStore
+export class EavStore implements IEavStore, IPublisher
 {
     private _eav                = new Map<any, Map<PropertyKey, any>>();
     private _aev                = new Map<PropertyKey, Map<any, any>>();
@@ -317,7 +318,7 @@ export class EavStore implements IEavStore
 
         entity[StoreSymbol] = this;
 
-        this.PublishEntities();
+        this.PublishNewEntity(entity);
         return entity;
     }
 
@@ -344,25 +345,60 @@ export class EavStore implements IEavStore
 
                 if(value instanceof Array)
                     value.forEach(
-                        value => this.Publish(
+                        value => this.PublishRetract(
                             entity,
                             attribute,
-                            value,
-                            undefined));
+                            value));
 
                 else
-                    value.forEach(
-                        value => this.Publish(
-                            entity,
-                            attribute,
-                            value,
-                            undefined));
+                    this.PublishRetract(
+                        entity,
+                        attribute,
+                        value);
             }
 
             this._eav.delete(entity);
-            this.PublishEntities();
+            this.PublishDeleteEntity(entity);
             this.UnsuspendPublish();
         }
+    }
+    
+    DeleteAttribute(
+        entity   : any,
+        attribute: PropertyKey
+        ): boolean
+    {
+        const av = this._eav.get(entity);
+        if(!(av && av.has(attribute)))
+            return false;
+
+        this.SuspendPublish();
+        const value = av.get(attribute);
+        av.delete(attribute);
+
+        const ev = this._aev.get(attribute);
+        ev.delete(entity);
+        if(!ev.size)
+            this._aev.delete(attribute);
+
+        const ve = this._ave.get(attribute);
+        if(ve)
+            ve.delete(value);
+
+        if(value instanceof Array)
+            value.forEach(
+                value => this.PublishRetract(
+                    entity,
+                    attribute,
+                    value));
+
+        else
+            this.PublishRetract(
+                entity,
+                attribute,
+                value);
+
+        this.UnsuspendPublish();
     }
 
     Assert(
@@ -482,28 +518,6 @@ export class EavStore implements IEavStore
         return entity;
     }
 
-    SuspendPublish(): void
-    {
-        if(!this._publishSuspended)
-        {
-            this._publishEntities = false;
-            this._atomsToPublish.clear();
-        }
-        ++this._publishSuspended;
-    }
-
-    UnsuspendPublish(): void
-    {
-        --this._publishSuspended;
-        if(!this._publishSuspended)
-        {
-            if(this._publishEntities)
-                this.PublishEntities();
-
-            this._atomsToPublish.forEach(atom => this.PublishAtom(atom));
-        }
-    }
-
     PublishEntities()
     {
         if(this._publishSuspended)
@@ -536,23 +550,81 @@ export class EavStore implements IEavStore
             subscribers.forEach(subscriber => subscriber.next(this.Facts(atom)));
     }
 
-    Publish(
-        entity       : any,
-        attribute    : PropertyKey,
-        value        : any,
-        previousValue: any
+    SuspendPublish(): void
+    {
+        if(!this._publishSuspended)
+        {
+            this._publishEntities = false;
+            this._atomsToPublish.clear();
+        }
+        ++this._publishSuspended;
+    }
+
+    UnsuspendPublish(): void
+    {
+        --this._publishSuspended;
+        if(!this._publishSuspended)
+        {
+            if(this._publishEntities)
+                this.PublishEntities();
+
+            this._atomsToPublish.forEach(atom => this.PublishAtom(atom));
+        }
+    }
+
+    PublishNewEntity(
+        entity: any
         )
     {
-        if(typeof value !== "undefined")
-            Match(
-                this._atomSubscribers,
-                [entity, attribute, value],
-                (atom, subscribers: Set<Subscriber<Fact[]>>) => this.PublishAtom(atom, subscribers));
-        if(typeof previousValue !== "undefined")
-            Match(
-                this._atomSubscribers,
-                [entity, attribute, previousValue],
-                (atom, subscribers: Set<Subscriber<Fact[]>>) => this.PublishAtom(atom, subscribers));
+        this.PublishEntities();
+    }
+
+    PublishDeleteEntity(
+        entity: any
+        )
+    {
+        this.PublishEntities();
+    }
+
+    PublishAssert(
+        entity   : any,
+        attribute: PropertyKey,
+        value    : any
+        ): void
+    {
+        Match(
+            this._atomSubscribers,
+            [entity, attribute, value],
+            (atom, subscribers: Set<Subscriber<Fact[]>>) => this.PublishAtom(atom, subscribers));
+    }
+
+    PublishRetract(
+        entity   : any,
+        attribute: PropertyKey,
+        value    : any
+        ): void
+    {
+        Match(
+            this._atomSubscribers,
+            [entity, attribute, value],
+            (atom, subscribers: Set<Subscriber<Fact[]>>) => this.PublishAtom(atom, subscribers));
+    }
+
+    PublishAssertRetract(
+        entity        : any,
+        attribute     : PropertyKey,
+        assertedValue : any,
+        retractedValue: any
+        ): void
+    {
+        Match(
+            this._atomSubscribers,
+            [entity, attribute, assertedValue],
+            (atom, subscribers: Set<Subscriber<Fact[]>>) => this.PublishAtom(atom, subscribers));
+        Match(
+            this._atomSubscribers,
+            [entity, attribute, retractedValue],
+            (atom, subscribers: Set<Subscriber<Fact[]>>) => this.PublishAtom(atom, subscribers));
     }
 
     BeginTransaction(): ITransaction
@@ -644,24 +716,34 @@ function EntityProxyFactory(
                 p,
                 value);
 
+            let retract = true;
             let ev = aev.get(p);
             if(!ev)
             {
+                retract = false;
                 ev = new Map<any, any>();
                 aev.set(
                     p,
                     ev);
             }
+
             ev.set(
                 receiver,
                 value);
 
             if(!(value instanceof Array))
-                store.Publish(
-                    receiver,
-                    p,
-                    value,
-                    previousValue);
+                if(!retract)
+                    store.PublishAssert(
+                        receiver,
+                        p,
+                        value);
+
+                else
+                    store.PublishAssertRetract(
+                        receiver,
+                        p,
+                        value,
+                        previousValue);
 
             return true;
         }
@@ -718,11 +800,10 @@ function PushUnshiftMethodHandlerFactory(
                 {
                     store.SuspendPublish();
                     [...argArray].forEach(
-                        value => store.Publish(
+                        value => store.PublishAssert(
                             entity,
                             attribute,
-                            value,
-                            undefined));
+                            value));
                     store.UnsuspendPublish();
                 }
                 return result;
@@ -749,10 +830,9 @@ function PopShiftMethodHandlerFactory(
                     targetArray,
                     ...argArray);
                 if(store && typeof result !== 'undefined')
-                    store.Publish(
+                    store.PublishRetract(
                         entity,
                         attribute,
-                        undefined,
                         result);
                 return result;
             }
@@ -781,17 +861,15 @@ function SpliceMethodHandlerFactory(
                 {
                     store.SuspendPublish();
                     result.forEach(
-                        deleted => store.Publish(
+                        retracted => store.PublishRetract(
                             entity,
                             attribute,
-                            undefined,
-                            deleted));
+                            retracted));
                     [...argArray].slice(2).forEach(
-                        added => store.Publish(
+                        asserted => store.PublishAssert(
                             entity,
                             attribute,
-                            added,
-                            undefined));
+                            asserted));
                     store.UnsuspendPublish();
                 }
                 return result;
@@ -877,7 +955,7 @@ export function ArrayProxyFactory(
             const previousValue = target[p];
             target[p] = value;
             if(store)
-                store.Publish(
+                store.PublishAssertRetract(
                     entity,
                     attribute,
                     value,
