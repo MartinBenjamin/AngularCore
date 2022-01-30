@@ -796,16 +796,15 @@ function PushUnshiftMethodHandlerFactory(
                 const result = targetMethod.call(
                     targetArray,
                     ...argArray);
-                if(publisher)
-                {
-                    publisher.SuspendPublish();
-                    [...argArray].forEach(
-                        value => publisher.PublishAssert(
-                            entity,
-                            attribute,
-                            value));
-                    publisher.UnsuspendPublish();
-                }
+
+                publisher.SuspendPublish();
+                [...argArray].forEach(
+                    value => publisher.PublishAssert(
+                        entity,
+                        attribute,
+                        value));
+                publisher.UnsuspendPublish();
+
                 return result;
             }
         };
@@ -829,7 +828,7 @@ function PopShiftMethodHandlerFactory(
                 const result = targetMethod.call(
                     targetArray,
                     ...argArray);
-                if(publisher && typeof result !== 'undefined')
+                if(typeof result !== 'undefined')
                     publisher.PublishRetract(
                         entity,
                         attribute,
@@ -857,21 +856,20 @@ function SpliceMethodHandlerFactory(
                 const result: any[] = targetMethod.call(
                     targetArray,
                     ...argArray);
-                if(publisher)
-                {
-                    publisher.SuspendPublish();
-                    result.forEach(
-                        retracted => publisher.PublishRetract(
-                            entity,
-                            attribute,
-                            retracted));
-                    [...argArray].slice(2).forEach(
-                        asserted => publisher.PublishAssert(
-                            entity,
-                            attribute,
-                            asserted));
-                    publisher.UnsuspendPublish();
-                }
+
+                publisher.SuspendPublish();
+                result.forEach(
+                    retracted => publisher.PublishRetract(
+                        entity,
+                        attribute,
+                        retracted));
+                [...argArray].slice(2).forEach(
+                    asserted => publisher.PublishAssert(
+                        entity,
+                        attribute,
+                        asserted));
+                publisher.UnsuspendPublish();
+
                 return result;
             }
         };
@@ -954,12 +952,11 @@ export function ArrayProxyFactory(
         {
             const previousValue = target[p];
             target[p] = value;
-            if(publisher)
-                publisher.PublishAssertRetract(
-                    entity,
-                    attribute,
-                    value,
-                    previousValue);
+            publisher.PublishAssertRetract(
+                entity,
+                attribute,
+                value,
+                previousValue);
             return true;
         }
     };

@@ -4,6 +4,30 @@ import { ArraySet } from './ArraySet';
 import { assertBuilder } from './assertBuilder';
 import { ArrayProxyFactory, EavStore } from './EavStore';
 import { IEavStore, Store, Fact } from './IEavStore';
+import { IPublisher } from './IPublisher';
+
+class DummyPublisher implements IPublisher
+{
+    SuspendPublish(): void
+    {
+    }
+
+    UnsuspendPublish(): void
+    {
+    }
+
+    PublishAssert(entity: any, attribute: string | number | symbol, value: any): void
+    {
+    }
+
+    PublishRetract(entity: any, attribute: string | number | symbol, value: any): void
+    {
+    }
+
+    PublishAssertRetract(entity: any, attribute: string | number | symbol, assertedValue: any, retractedValue: any): void
+    {
+    }
+}
 
 describe(
     'Entity Attribute Value Store',
@@ -14,7 +38,7 @@ describe(
             () =>
             {
                 const array = [];
-                const arrayProxy = ArrayProxyFactory(null, null, null, array)
+                const arrayProxy = ArrayProxyFactory(new DummyPublisher(), null, null, array)
                 const x = {};
                 let assert = assertBuilder('array', 'arrayProxy', 'x')
                     (array, arrayProxy, x);
