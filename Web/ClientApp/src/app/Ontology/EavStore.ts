@@ -650,10 +650,10 @@ function toPrimitive(hint)
 }
 
 function EntityProxyFactory(
-    store: EavStore,
-    av   : Map<PropertyKey, any>,
-    aev  : Map<PropertyKey, Map<any, any>>,
-    ave  : Map<PropertyKey, Map<any, any>>
+    publisher: IPublisher,
+    av       : Map<PropertyKey, any>,
+    aev      : Map<PropertyKey, Map<any, any>>,
+    ave      : Map<PropertyKey, Map<any, any>>
     ): object
 {
     let handler: ProxyHandler<object> = {
@@ -733,13 +733,13 @@ function EntityProxyFactory(
 
             if(!(value instanceof Array))
                 if(!retract)
-                    store.PublishAssert(
+                    publisher.PublishAssert(
                         receiver,
                         p,
                         value);
 
                 else
-                    store.PublishAssertRetract(
+                    publisher.PublishAssertRetract(
                         receiver,
                         p,
                         value,
@@ -755,7 +755,7 @@ function EntityProxyFactory(
 }
 
 function ArrayMethodHandlerFactory(
-    store      : EavStore,
+    publisher  : IPublisher,
     attribute  : string,
     targetArray: any[]
     ): ProxyHandler<{ (...args): any }>
@@ -771,15 +771,15 @@ function ArrayMethodHandlerFactory(
                 const result = targetMethod.call(
                     targetArray,
                     ...argArray);
-                //if(store)
-                //    store.PublishAttribute(attribute);
+                //if(publisher)
+                //    publisher.PublishAttribute(attribute);
                 return result;
             }
         };
 }
 
 function PushUnshiftMethodHandlerFactory(
-    store      : EavStore,
+    publisher  : IPublisher,
     entity     : any,
     attribute  : string,
     targetArray: any[]
@@ -796,15 +796,15 @@ function PushUnshiftMethodHandlerFactory(
                 const result = targetMethod.call(
                     targetArray,
                     ...argArray);
-                if(store)
+                if(publisher)
                 {
-                    store.SuspendPublish();
+                    publisher.SuspendPublish();
                     [...argArray].forEach(
-                        value => store.PublishAssert(
+                        value => publisher.PublishAssert(
                             entity,
                             attribute,
                             value));
-                    store.UnsuspendPublish();
+                    publisher.UnsuspendPublish();
                 }
                 return result;
             }
@@ -812,7 +812,7 @@ function PushUnshiftMethodHandlerFactory(
 }
 
 function PopShiftMethodHandlerFactory(
-    store      : EavStore,
+    publisher  : IPublisher,
     entity     : any,
     attribute  : string,
     targetArray: any[]
@@ -829,8 +829,8 @@ function PopShiftMethodHandlerFactory(
                 const result = targetMethod.call(
                     targetArray,
                     ...argArray);
-                if(store && typeof result !== 'undefined')
-                    store.PublishRetract(
+                if(publisher && typeof result !== 'undefined')
+                    publisher.PublishRetract(
                         entity,
                         attribute,
                         result);
@@ -840,7 +840,7 @@ function PopShiftMethodHandlerFactory(
 }
 
 function SpliceMethodHandlerFactory(
-    store      : EavStore,
+    publisher  : IPublisher,
     entity     : any,
     attribute  : string,
     targetArray: any[]
@@ -857,20 +857,20 @@ function SpliceMethodHandlerFactory(
                 const result: any[] = targetMethod.call(
                     targetArray,
                     ...argArray);
-                if(store)
+                if(publisher)
                 {
-                    store.SuspendPublish();
+                    publisher.SuspendPublish();
                     result.forEach(
-                        retracted => store.PublishRetract(
+                        retracted => publisher.PublishRetract(
                             entity,
                             attribute,
                             retracted));
                     [...argArray].slice(2).forEach(
-                        asserted => store.PublishAssert(
+                        asserted => publisher.PublishAssert(
                             entity,
                             attribute,
                             asserted));
-                    store.UnsuspendPublish();
+                    publisher.UnsuspendPublish();
                 }
                 return result;
             }
@@ -878,14 +878,14 @@ function SpliceMethodHandlerFactory(
 }
 
 function methodHandlersFactory2(
-    store      : EavStore,
+    publisher  : IPublisher,
     entity     : any,
     attribute  : string,
     targetArray: any[]
     ): Map<PropertyKey, any>
 {
     const methodHandler = ArrayMethodHandlerFactory(
-        store,
+        publisher,
         attribute,
         targetArray);
 
@@ -902,15 +902,15 @@ function methodHandlersFactory2(
 }
 
 function methodHandlersFactory(
-    store      : EavStore,
+    publisher  : IPublisher,
     entity     : any,
     attribute  : string,
     targetArray: any[]
     ): Map<PropertyKey, ProxyHandler<{ (...args): any }>>
 {
-    const pushUnshiftMethodHandler = PushUnshiftMethodHandlerFactory(store, entity, attribute, targetArray);
-    const popShiftMethodHandler    = PopShiftMethodHandlerFactory   (store, entity, attribute, targetArray);
-    const spliceMethodHandler      = SpliceMethodHandlerFactory     (store, entity, attribute, targetArray);
+    const pushUnshiftMethodHandler = PushUnshiftMethodHandlerFactory(publisher, entity, attribute, targetArray);
+    const popShiftMethodHandler    = PopShiftMethodHandlerFactory   (publisher, entity, attribute, targetArray);
+    const spliceMethodHandler      = SpliceMethodHandlerFactory     (publisher, entity, attribute, targetArray);
     return new Map<PropertyKey, any>(
         [
             ['push'   , new Proxy(Array.prototype['push'   ], pushUnshiftMethodHandler)],
@@ -922,14 +922,14 @@ function methodHandlersFactory(
 }
 
 export function ArrayProxyFactory(
-    store      : EavStore,
+    publisher  : IPublisher,
     entity     : any,
     attribute  : string,
     targetArray: any[]
     )
 {
     const methodHandlers = methodHandlersFactory(
-        store,
+        publisher,
         entity,
         attribute,
         targetArray);
@@ -954,8 +954,8 @@ export function ArrayProxyFactory(
         {
             const previousValue = target[p];
             target[p] = value;
-            if(store)
-                store.PublishAssertRetract(
+            if(publisher)
+                publisher.PublishAssertRetract(
                     entity,
                     attribute,
                     value,
