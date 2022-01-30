@@ -3,6 +3,7 @@ import { map } from 'rxjs/operators';
 import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
 import { ArraySet } from './ArraySet';
 import { AttributeSchema, Cardinality, Fact, IEavStore, StoreSymbol } from './IEavStore';
+import { ITransaction } from './ITransactionManager';
 
 export const IsVariable = element => typeof element === 'string' && element[0] === '?';
 export const IsConstant = element => !(typeof element === 'undefined' || IsVariable(element));
@@ -330,17 +331,32 @@ export class EavStore implements IEavStore
             this.SuspendPublish();
             for(const [attribute, value] of av)
             {
+                av.delete(attribute);
+
+                const ev = this._aev.get(attribute);
+                ev.delete(entity);
+                if(!ev.size)
+                    this._aev.delete(attribute);
+
                 const ve = this._ave.get(attribute);
                 if(ve)
                     ve.delete(value);
 
-                this._aev.get(attribute).delete(entity);
+                if(value instanceof Array)
+                    value.forEach(
+                        value => this.Publish(
+                            entity,
+                            attribute,
+                            value,
+                            undefined));
 
-                this.Publish(
-                    entity,
-                    attribute,
-                    undefined,
-                    value);
+                else
+                    value.forEach(
+                        value => this.Publish(
+                            entity,
+                            attribute,
+                            value,
+                            undefined));
             }
 
             this._eav.delete(entity);
@@ -537,6 +553,11 @@ export class EavStore implements IEavStore
                 this._atomSubscribers,
                 [entity, attribute, previousValue],
                 (atom, subscribers: Set<Subscriber<Fact[]>>) => this.PublishAtom(atom, subscribers));
+    }
+
+    BeginTransaction(): ITransaction
+    {
+        return null;
     }
 
     private Cardinality(

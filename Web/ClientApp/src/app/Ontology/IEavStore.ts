@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { ITransaction } from './ITransactionManager';
 
 export enum Cardinality
 {
@@ -32,8 +33,12 @@ export interface IEavStore
         attribute: string,
         value    : any): void;
     Add(object: object, added?: Map<object, any>): any;
+
     SuspendPublish(): void;
     UnsuspendPublish(): void;
+
+    BeginTransaction(): ITransaction;
+
     Clear(): void;
 }
 
