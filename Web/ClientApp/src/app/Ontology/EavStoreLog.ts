@@ -38,7 +38,9 @@ class Assert extends LogEntry
                 1);
 
         else
-            this.Entity[this.Attribute] = undefined;
+            Store(this.Entity).DeleteAttribute(
+                this.Entity,
+                this.Attribute);
     }
 }
 
@@ -100,8 +102,7 @@ class NewEntity extends LogEntry
 
     Rollback(): void
     {
-        const store = Store(this.Entity);
-        store.DeleteEntity(this.Entity);
+        Store(this.Entity).DeleteEntity(this.Entity);
     }
 }
 
@@ -116,7 +117,6 @@ class DeleteEntity extends LogEntry
 
     Commit(): void
     {
-        const store = Store(this.Entity);
-        store.DeleteEntity(this.Entity);
+        Store(this.Entity).DeleteEntity(this.Entity);
     }
 }

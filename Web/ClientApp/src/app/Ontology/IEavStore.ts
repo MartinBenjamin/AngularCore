@@ -26,8 +26,11 @@ export interface IEavStore
     Query<T extends [any, ...any[]]>(
         head: T,
         ...body: Fact[]): { [K in keyof T]: any; }[];
+
     NewEntity(): any;
+    DeleteAttribute(entity: any, attribute: PropertyKey): boolean
     DeleteEntity(entity: any): void
+
     Assert(
         entity   : any,
         attribute: string,
