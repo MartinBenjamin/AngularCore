@@ -42,6 +42,7 @@ describe(
                 const x = {};
                 let assert = assertBuilder('array', 'arrayProxy', 'x')
                     (array, arrayProxy, x);
+                assert('arrayProxy.target === array');
                 assert('arrayProxy.push(x) === 1');
                 assert('array.includes(x)');
                 assert('arrayProxy.includes(x)');
