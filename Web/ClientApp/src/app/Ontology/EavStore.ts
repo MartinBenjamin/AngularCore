@@ -725,8 +725,13 @@ function EntityProxyFactory(
             ): boolean
         {
             const previousValue = av.get(p);
+            if(previousValue === value)
+                return true;
+
+            let implicitRetract = previousValue !== undefined || av.has(p);
+
             const ve = ave.get(p);
-            if(ve && previousValue !== value)
+            if(ve)
             {
                 if(typeof ve.get(value) !== 'undefined')
                     // Value already in use for attribute.
@@ -743,10 +748,8 @@ function EntityProxyFactory(
                 value);
 
             let ev = aev.get(p);
-            const retract = ev !== null;
             if(!ev)
             {
-                console.assert(previousValue === undefined, "AEV and EAV inconsistent.");
                 ev = new Map<any, any>();
                 aev.set(
                     p,
@@ -758,7 +761,7 @@ function EntityProxyFactory(
                 value);
 
             if(!(value instanceof Array))
-                if(!retract)
+                if(!implicitRetract)
                     publisher.PublishAssert(
                         receiver,
                         p,
