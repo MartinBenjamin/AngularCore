@@ -2,7 +2,7 @@ import { } from 'jasmine';
 import { Subscription } from 'rxjs';
 import { ArraySet } from './ArraySet';
 import { assertBuilder } from './assertBuilder';
-import { ArrayProxyFactory, EavStore } from './EavStore';
+import { ArrayProxyFactory, EavStore, TargetSymbol } from './EavStore';
 import { IEavStore, Store, Fact } from './IEavStore';
 import { IPublisher } from './IPublisher';
 
@@ -40,9 +40,9 @@ describe(
                 const array = [];
                 const arrayProxy = ArrayProxyFactory(new DummyPublisher(), null, null, array)
                 const x = {};
-                let assert = assertBuilder('array', 'arrayProxy', 'x')
-                    (array, arrayProxy, x);
-                assert('arrayProxy.target === array');
+                let assert = assertBuilder('array', 'arrayProxy', 'x', 'TargetSymbol')
+                    (array, arrayProxy, x, TargetSymbol);
+                assert('arrayProxy[TargetSymbol] === array');
                 assert('arrayProxy.push(x) === 1');
                 assert('array.includes(x)');
                 assert('arrayProxy.includes(x)');

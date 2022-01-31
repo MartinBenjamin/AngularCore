@@ -444,7 +444,7 @@ export class EavStore implements IEavStore, IPublisher
 
         if(previousValue instanceof Array)
         {
-            (<any>previousValue).target.push(value);
+            previousValue[TargetSymbol].push(value);
             this.PublishAssert(
                 entity,
                 attribute,
@@ -513,7 +513,7 @@ export class EavStore implements IEavStore, IPublisher
             if(index === -1)
                 throw 'Unknown fact.';
 
-            (<any>previousValue).target.slice(
+            previousValue[TargetSymbol].slice(
                 index,
                 1);
         }
@@ -1023,6 +1023,8 @@ function methodHandlersFactory2(
             methodHandler)]));
 }
 
+export const TargetSymbol = Symbol('Target');
+
 function methodHandlersFactory(
     publisher  : IPublisher,
     entity     : any,
@@ -1035,12 +1037,12 @@ function methodHandlersFactory(
     const spliceMethodHandler      = SpliceMethodHandlerFactory     (publisher, entity, attribute, targetArray);
     return new Map<PropertyKey, any>(
         [
-            ['push'   , new Proxy(Array.prototype['push'   ], pushUnshiftMethodHandler)],
-            ['pop'    , new Proxy(Array.prototype['pop'    ], popShiftMethodHandler   )],
-            ['shift'  , new Proxy(Array.prototype['shift'  ], popShiftMethodHandler   )],
-            ['unshift', new Proxy(Array.prototype['unshift'], pushUnshiftMethodHandler)],
-            ['splice' , new Proxy(Array.prototype['splice' ], spliceMethodHandler     )],
-            ['target' , targetArray                                                    ]
+            ['push'      , new Proxy(Array.prototype['push'   ], pushUnshiftMethodHandler)],
+            ['pop'       , new Proxy(Array.prototype['pop'    ], popShiftMethodHandler   )],
+            ['shift'     , new Proxy(Array.prototype['shift'  ], popShiftMethodHandler   )],
+            ['unshift'   , new Proxy(Array.prototype['unshift'], pushUnshiftMethodHandler)],
+            ['splice'    , new Proxy(Array.prototype['splice' ], spliceMethodHandler     )],
+            [TargetSymbol, targetArray                                                    ]
         ]);
 }
 
