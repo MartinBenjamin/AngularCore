@@ -445,6 +445,96 @@ export class EavStore implements IEavStore, IPublisher
 
     }
 
+    AssertAvoidingProxies(
+        entity   : any,
+        attribute: string,
+        value    : any
+        ): void
+    {
+        const av = this._eav.get(entity);
+        let ev = this._aev.get(attribute);
+        let previousValue = av.get(attribute);
+
+        if(previousValue === undefined && this.Cardinality(attribute) === Cardinality.Many)
+        {
+            previousValue = ArrayProxyFactory(
+                this,
+                entity,
+                attribute,
+                []);
+
+            av.set(
+                attribute,
+                previousValue);
+
+            if(!ev)
+            {
+                ev = new Map<any, any>();
+                this._aev.set(
+                    attribute,
+                    ev);
+            }
+
+            ev.set(
+                entity,
+                previousValue);
+        }
+
+        if(previousValue instanceof Array)
+        {
+            (<any>previousValue).target.push(value);
+            this.PublishAssert(
+                entity,
+                attribute,
+                value);
+        }
+        else
+        {
+            const implicitRetract = previousValue !== undefined || av.has(attribute);
+            const ve = this._ave.get(attribute);
+            if(ve)
+            {
+                if(typeof ve.get(value) !== 'undefined')
+                    // Value already in use for attribute.
+                    throw 'Unique Identity Conflict';
+
+                ve.delete(previousValue);
+                ve.set(
+                    value,
+                    entity);
+            }
+
+            av.set(
+                attribute,
+                value);
+
+            if(!ev)
+            {
+                ev = new Map<any, any>();
+                this._aev.set(
+                    attribute,
+                    ev);
+            }
+
+            ev.set(
+                entity,
+                value);
+
+            if(!implicitRetract)
+                this.PublishAssert(
+                    entity,
+                    attribute,
+                    value);
+
+            else
+                this.PublishAssertRetract(
+                    entity,
+                    attribute,
+                    value,
+                    previousValue);
+        }
+    }
+
     Add(
         object: object,
         added?: Map<object, any>
@@ -728,7 +818,7 @@ function EntityProxyFactory(
             if(previousValue === value)
                 return true;
 
-            let implicitRetract = previousValue !== undefined || av.has(p);
+            const implicitRetract = previousValue !== undefined || av.has(p);
 
             const ve = ave.get(p);
             if(ve)
