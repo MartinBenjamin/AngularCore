@@ -27,16 +27,10 @@ export class Assert extends LogEntry
 
     Rollback(): void
     {
-        const value = this.Entity[this.Attribute];
-        if(value instanceof Array)
-            value.splice(
-                value.indexOf(this.Value),
-                1);
-
-        else
-            Store(this.Entity).DeleteAttribute(
+            Store(this.Entity).Retract(
                 this.Entity,
-                this.Attribute);
+                this.Attribute,
+                this.Value);
     }
 }
 

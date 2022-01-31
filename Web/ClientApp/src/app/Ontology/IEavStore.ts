@@ -9,7 +9,7 @@ export enum Cardinality
 
 export interface AttributeSchema
 {
-    Name           : string,
+    Name           : PropertyKey,
     UniqueIdentity?: boolean,
     Cardinality   ?: Cardinality
 }
@@ -33,7 +33,11 @@ export interface IEavStore
 
     Assert(
         entity   : any,
-        attribute: string,
+        attribute: PropertyKey,
+        value    : any): void;
+    Retract(
+        entity   : any,
+        attribute: PropertyKey,
         value    : any): void;
     Add(object: object, added?: Map<object, any>): any;
 

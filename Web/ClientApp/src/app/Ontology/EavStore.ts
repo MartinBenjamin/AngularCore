@@ -2,10 +2,10 @@ import { combineLatest, Observable, Subscriber } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
 import { ArraySet } from './ArraySet';
+import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
 import { AttributeSchema, Cardinality, Fact, IEavStore, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
-import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
 
 export const IsVariable = element => typeof element === 'string' && element[0] === '?';
 export const IsConstant = element => !(typeof element === 'undefined' || IsVariable(element));
@@ -58,7 +58,7 @@ export class EavStore implements IEavStore, IPublisher
     private _ave                : Map<PropertyKey, Map<any, any>>;
     private _entitiesSubscribers: Subscriber<Set<any>>[] = [];
     private _atomSubscribers    = new ArrayKeyedMap<Fact, Set<Subscriber<Fact[]>>>();
-    private _schema             : Map<string, AttributeSchema>;
+    private _schema             : Map<PropertyKey, AttributeSchema>;
     private _publishSuspended   = 0;
     private _publishEntities    : boolean;
     private _atomsToPublish     : Set<Fact> = new ArraySet<Fact>();
@@ -70,8 +70,8 @@ export class EavStore implements IEavStore, IPublisher
         ...attributeSchema: AttributeSchema[]
         )
     {
-        this._schema = new Map<string, AttributeSchema>(attributeSchema.map(attributeSchema => [attributeSchema.Name, attributeSchema]));
-        this._ave = new Map<string, Map<any, any>>(
+        this._schema = new Map<PropertyKey, AttributeSchema>(attributeSchema.map(attributeSchema => [attributeSchema.Name, attributeSchema]));
+        this._ave = new Map<PropertyKey, Map<any, any>>(
             attributeSchema
                 .filter(attributeSchema => attributeSchema.UniqueIdentity)
                 .map(attributeSchema => [attributeSchema.Name, new Map<any, any>()]));
@@ -422,32 +422,32 @@ export class EavStore implements IEavStore, IPublisher
         }
     }
 
+    //Assert(
+    //    entity   : any,
+    //    attribute: PropertyKey,
+    //    value    : any
+    //    ): void
+    //{
+    //    let currentValue = entity[attribute];
+
+    //    if(typeof currentValue === 'undefined' && this.Cardinality(attribute) === Cardinality.Many)
+    //        currentValue = entity[attribute] = ArrayProxyFactory(
+    //            this,
+    //            entity,
+    //            attribute,
+    //            []);
+
+    //    if(currentValue instanceof Array)
+    //        currentValue.push(value);
+
+    //    else
+    //        entity[attribute] = value;
+
+    //}
+
     Assert(
         entity   : any,
-        attribute: string,
-        value    : any
-        ): void
-    {
-        let currentValue = entity[attribute];
-
-        if(typeof currentValue === 'undefined' && this.Cardinality(attribute) === Cardinality.Many)
-            currentValue = entity[attribute] = ArrayProxyFactory(
-                this,
-                entity,
-                attribute,
-                []);
-
-        if(currentValue instanceof Array)
-            currentValue.push(value);
-
-        else
-            entity[attribute] = value;
-
-    }
-
-    AssertAvoidingProxies(
-        entity   : any,
-        attribute: string,
+        attribute: PropertyKey,
         value    : any
         ): void
     {
@@ -533,6 +533,49 @@ export class EavStore implements IEavStore, IPublisher
                     value,
                     previousValue);
         }
+    }
+
+    Retract(
+        entity   : any,
+        attribute: PropertyKey,
+        value    : any
+        ): void
+    {
+        const av = this._eav.get(entity);
+        let previousValue = av.get(attribute);
+
+        if(previousValue instanceof Array)
+        {
+            const index = previousValue.indexOf(value);
+
+            if(index === -1)
+                throw 'Unknown fact.';
+
+            (<any>previousValue).target.slice(
+                index,
+                1);
+        }
+        else if(previousValue !== value)
+            throw 'Unknown fact.';
+
+        else
+        {
+            av.delete(attribute);
+
+            const ev = this._aev.get(attribute);
+            ev.delete(entity);
+            if(!ev.size)
+                this._aev.delete(attribute);
+
+            const ve = this._ave.get(attribute);
+            if(ve)
+                ve.delete(value);
+        }
+
+        this.PublishRetract(
+            entity,
+            attribute,
+            value);
     }
 
     Add(
@@ -752,7 +795,7 @@ export class EavStore implements IEavStore, IPublisher
     }
 
     private Cardinality(
-        attribute: string
+        attribute: PropertyKey
         ): Cardinality
     {
         const attributeSchema = this._schema.get(attribute);
@@ -875,7 +918,7 @@ function EntityProxyFactory(
 
 function ArrayMethodHandlerFactory(
     publisher  : IPublisher,
-    attribute  : string,
+    attribute  : PropertyKey,
     targetArray: any[]
     ): ProxyHandler<{ (...args): any }>
 {
@@ -900,7 +943,7 @@ function ArrayMethodHandlerFactory(
 function PushUnshiftMethodHandlerFactory(
     publisher  : IPublisher,
     entity     : any,
-    attribute  : string,
+    attribute  : PropertyKey,
     targetArray: any[]
     ): ProxyHandler<{ (...args): any }>
 {
@@ -932,7 +975,7 @@ function PushUnshiftMethodHandlerFactory(
 function PopShiftMethodHandlerFactory(
     publisher  : IPublisher,
     entity     : any,
-    attribute  : string,
+    attribute  : PropertyKey,
     targetArray: any[]
     ): ProxyHandler<{ (...args): any }>
 {
@@ -960,7 +1003,7 @@ function PopShiftMethodHandlerFactory(
 function SpliceMethodHandlerFactory(
     publisher  : IPublisher,
     entity     : any,
-    attribute  : string,
+    attribute  : PropertyKey,
     targetArray: any[]
     ): ProxyHandler<{ (...args): any }>
 {
@@ -997,7 +1040,7 @@ function SpliceMethodHandlerFactory(
 function methodHandlersFactory2(
     publisher  : IPublisher,
     entity     : any,
-    attribute  : string,
+    attribute  : PropertyKey,
     targetArray: any[]
     ): Map<PropertyKey, any>
 {
@@ -1021,7 +1064,7 @@ function methodHandlersFactory2(
 function methodHandlersFactory(
     publisher  : IPublisher,
     entity     : any,
-    attribute  : string,
+    attribute  : PropertyKey,
     targetArray: any[]
     ): Map<PropertyKey, ProxyHandler<{ (...args): any }>>
 {
@@ -1034,14 +1077,15 @@ function methodHandlersFactory(
             ['pop'    , new Proxy(Array.prototype['pop'    ], popShiftMethodHandler   )],
             ['shift'  , new Proxy(Array.prototype['shift'  ], popShiftMethodHandler   )],
             ['unshift', new Proxy(Array.prototype['unshift'], pushUnshiftMethodHandler)],
-            ['splice' , new Proxy(Array.prototype['splice' ], spliceMethodHandler     )]
+            ['splice' , new Proxy(Array.prototype['splice' ], spliceMethodHandler     )],
+            ['target' , targetArray                                                    ]
         ]);
 }
 
 export function ArrayProxyFactory(
     publisher  : IPublisher,
     entity     : any,
-    attribute  : string,
+    attribute  : PropertyKey,
     targetArray: any[]
     )
 {
