@@ -27,10 +27,10 @@ export class Assert extends LogEntry
 
     Rollback(): void
     {
-            Store(this.Entity).Retract(
-                this.Entity,
-                this.Attribute,
-                this.Value);
+        Store(this.Entity).Retract(
+            this.Entity,
+            this.Attribute,
+            this.Value);
     }
 }
 
@@ -47,12 +47,10 @@ export class Retract extends LogEntry
 
     Rollback(): void
     {
-        const value = this.Entity[this.Attribute];
-        if(value instanceof Array)
-            value.push(this.Value);
-
-        else
-            this.Entity[this.Attribute] = this.Value;
+        Store(this.Entity).Assert(
+            this.Entity,
+            this.Attribute,
+            this.Value);
     }
 }
 
@@ -70,14 +68,17 @@ export class AssertRetract extends LogEntry
 
     Rollback(): void
     {
-        const value = this.Entity[this.Attribute];
-        if(value instanceof Array)
-            value.splice(
-                value.indexOf(this.AssertedValue),
-                this.RetractedValue);
-
-        else
-            this.Entity[this.Attribute] = this.RetractedValue;
+        const store = Store(this.Entity);
+        if(this.Entity[this.Attribute] instanceof Array)
+            store.Retract(
+                this.Entity,
+                this.Attribute,
+                this.AssertedValue);
+            
+        Store(this.Entity).Assert(
+            this.Entity,
+            this.Attribute,
+            this.RetractedValue);
     }
 }
 

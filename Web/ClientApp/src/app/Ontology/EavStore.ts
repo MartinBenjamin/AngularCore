@@ -329,44 +329,6 @@ export class EavStore implements IEavStore, IPublisher
         this.PublishEntities();
         return entity;
     }
-    
-    DeleteAttribute(
-        entity   : any,
-        attribute: PropertyKey
-        ): boolean
-    {
-        const av = this._eav.get(entity);
-        if(!(av && av.has(attribute)))
-            return false;
-
-        this.SuspendPublish();
-        const value = av.get(attribute);
-        av.delete(attribute);
-
-        const ev = this._aev.get(attribute);
-        ev.delete(entity);
-        if(!ev.size)
-            this._aev.delete(attribute);
-
-        const ve = this._ave.get(attribute);
-        if(ve)
-            ve.delete(value);
-
-        if(value instanceof Array)
-            value.forEach(
-                value => this.PublishRetract(
-                    entity,
-                    attribute,
-                    value));
-
-        else
-            this.PublishRetract(
-                entity,
-                attribute,
-                value);
-
-        this.UnsuspendPublish();
-    }
 
     DeleteEntity(
         entity: any
