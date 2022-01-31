@@ -14,7 +14,7 @@ export abstract class LogEntry implements ILogEntry
     }
 }
 
-class Assert extends LogEntry
+export class Assert extends LogEntry
 {
     constructor(
         entity          : any,
@@ -40,7 +40,7 @@ class Assert extends LogEntry
     }
 }
 
-class Retract extends LogEntry
+export class Retract extends LogEntry
 {
     constructor(
         entity          : any,
@@ -62,7 +62,7 @@ class Retract extends LogEntry
     }
 }
 
-class AssertRetract extends LogEntry
+export class AssertRetract extends LogEntry
 {
     constructor(
         entity               : any,
@@ -87,32 +87,24 @@ class AssertRetract extends LogEntry
     }
 }
 
-class NewEntity extends LogEntry
+export class NewEntity extends LogEntry
 {
     constructor(
-        entity: any
+        entity: any,
+        public RollBack: () => void
         )
     {
         super(entity);
-    }
-
-    Rollback(): void
-    {
-        Store(this.Entity).DeleteEntity(this.Entity);
     }
 }
 
-class DeleteEntity extends LogEntry
+export class DeleteEntity extends LogEntry
 {
     constructor(
-        entity: any
+        entity: any,
+        public RollBack: () => void
         )
     {
         super(entity);
-    }
-
-    Rollback(): void
-    {
-        // Restore delete entity.
     }
 }

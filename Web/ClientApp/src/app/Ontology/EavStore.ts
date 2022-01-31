@@ -4,7 +4,8 @@ import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
 import { ArraySet } from './ArraySet';
 import { AttributeSchema, Cardinality, Fact, IEavStore, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
-import { ITransaction } from './ITransactionManager';
+import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
+import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
 
 export const IsVariable = element => typeof element === 'string' && element[0] === '?';
 export const IsConstant = element => !(typeof element === 'undefined' || IsVariable(element));
@@ -61,6 +62,7 @@ export class EavStore implements IEavStore, IPublisher
     private _publishSuspended   = 0;
     private _publishEntities    : boolean;
     private _atomsToPublish     : Set<Fact> = new ArraySet<Fact>();
+    private _transactionManager : ITransactionManager = new TransactionManager();
 
     private static _empty: [any, any][] = [];
 
@@ -318,6 +320,12 @@ export class EavStore implements IEavStore, IPublisher
 
         entity[StoreSymbol] = this;
 
+        if(this._transactionManager.Active)
+            this._transactionManager.Log(
+                new NewEntity(
+                    entity,
+                    () => this.DeleteEntity(entity)));
+
         this.PublishEntities();
         return entity;
     }
@@ -396,6 +404,19 @@ export class EavStore implements IEavStore, IPublisher
             }
 
             this._eav.delete(entity);
+
+            if(this._transactionManager.Active)
+                this._transactionManager.Log(
+                    new DeleteEntity(
+                        entity,
+                        () =>
+                        {
+                            this._eav.set(
+                                entity,
+                                av);
+                            this.PublishEntities();
+                        }));
+
             this.PublishEntities();
             this.UnsuspendPublish();
         }
@@ -578,6 +599,13 @@ export class EavStore implements IEavStore, IPublisher
         value    : any
         ): void
     {
+        if(this._transactionManager.Active)
+            this._transactionManager.Log(
+                new Assert(
+                    entity,
+                    attribute,
+                    value));
+
         Match(
             this._atomSubscribers,
             [entity, attribute, value],
@@ -590,6 +618,13 @@ export class EavStore implements IEavStore, IPublisher
         value    : any
         ): void
     {
+        if(this._transactionManager.Active)
+            this._transactionManager.Log(
+                new Retract(
+                    entity,
+                    attribute,
+                    value));
+
         Match(
             this._atomSubscribers,
             [entity, attribute, value],
@@ -603,6 +638,14 @@ export class EavStore implements IEavStore, IPublisher
         retractedValue: any
         ): void
     {
+        if(this._transactionManager.Active)
+            this._transactionManager.Log(
+                new AssertRetract(
+                    entity,
+                    attribute,
+                    assertedValue,
+                    retractedValue));
+
         Match(
             this._atomSubscribers,
             [entity, attribute, assertedValue],
@@ -615,7 +658,7 @@ export class EavStore implements IEavStore, IPublisher
 
     BeginTransaction(): ITransaction
     {
-        return null;
+        return this._transactionManager.BeginTransaction();
     }
 
     private Cardinality(
