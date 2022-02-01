@@ -19,7 +19,7 @@ export type Fact = [any, PropertyKey, any];
 export interface IEavStore
 {
     ObserveEntities(): Observable<Set<any>>;
-    ObserveAttribute<TDomain = any, TRange = any>(attribute: string): Observable<[TDomain, TRange][]>;
+    ObserveAttribute<TDomain = any, TRange = any>(attribute: PropertyKey): Observable<[TDomain, TRange][]>;
     Observe<T extends [any, ...any[]]>(
         head: T,
         ...body: Fact[]): Observable<{ [K in keyof T]: any; }[]>;

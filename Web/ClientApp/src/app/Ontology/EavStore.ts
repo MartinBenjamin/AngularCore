@@ -123,13 +123,6 @@ export class EavStore implements IEavStore, IPublisher
             });
     }
 
-    ObserveAttribute(
-        attribute: string
-        ): Observable<[any, any][]>
-    {
-        return this.ObserveAtom([undefined, attribute, undefined]).pipe(map(facts => facts.map(([entity,,value]) =>[entity, value])));
-    }
-
     Facts(
         [entity, attribute, value]: Fact
         ): Fact[]
@@ -259,6 +252,13 @@ export class EavStore implements IEavStore, IPublisher
 
                 subscriber.next(this.Facts(key));
             });
+    }
+
+    ObserveAttribute(
+        attribute: PropertyKey
+        ): Observable<[any, any][]>
+    {
+        return this.ObserveAtom([undefined, attribute, undefined]).pipe(map(facts => facts.map(([entity, , value]) => [entity, value])));
     }
 
     Observe<T extends [any, ...any[]]>(
