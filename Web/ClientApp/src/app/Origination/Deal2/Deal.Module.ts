@@ -26,6 +26,7 @@ import { OriginationTab } from './OriginationTab';
 import { Restricted_s } from './Restricted_s';
 import { Sponsors_s } from './Sponsors_s';
 import { TransactionDetails } from './TransactionDetails';
+import { Facility_s } from './Facility_s'
 
 const routes: Routes =
     [
@@ -47,6 +48,7 @@ const routes: Routes =
                 Errors,
                 Exclusivity,
                 Facilities,
+                Facility_s,
                 KeyCounterparties,
                 KeyDealData,
                 MoreTabs,

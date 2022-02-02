@@ -1,6 +1,5 @@
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { EmptyGuid } from '../../CommonDomainObjects';
 import { HighlightedPropertyObservableToken, Property } from '../../Components/ValidatedProperty';
 import { ContractualCommitment } from '../../Contracts';
 import { DealProvider } from '../../DealProvider';
@@ -19,7 +18,7 @@ export class Facilities implements OnDestroy
     private _facilities   : [Facility, LenderParticipation][]
 
     @ViewChild('facility', { static: true })
-    private _facility: import('../../Deal/Facility').Facility;
+    private _facility: import('./Facility_s').Facility_s;
 
     constructor(
         dealProvider: DealProvider,
@@ -58,45 +57,7 @@ export class Facilities implements OnDestroy
 
     Add(): void
     {
-        let facility = <Facility>
-        {
-            Id                       : EmptyGuid,
-            Name                     : '',
-            Obligors                 : [],
-            Contract                 : null,
-            PartOf                   : null,
-            Parts                    : [],
-            Currency                 : null,
-            TotalCommitments         : null,
-            AvailabilityPeriodEndDate: null,
-            MaturityDate             : null,
-            Expected1StDrawdownDate  : null,
-            MultiCurrency            : null,
-            Committed                : null
-        };
-
-        (<any>facility).$type = 'Web.Model.Facility, Web';
-
-        let lenderParticipation = <LenderParticipation>
-        {
-            Id                   : EmptyGuid,
-            Obligors             : [],
-            Contract             : null,
-            PartOf               : facility,
-            Parts                : [],
-            Lender               : null,
-            Amount               : null,
-            UnderwriteAmount     : null,
-            CreditSoughtLimit    : null,
-            AnticipatedHoldAmount: null,
-            ActualAllocation     : null
-        };
-        (<any>lenderParticipation).$type = 'Web.Model.LenderParticipation, Web';
-        lenderParticipation.PartOf.Parts.push(lenderParticipation);
-
-        this._facility.Create(
-            facility,
-            () => this.ComputeFacilities());
+        this._facility.Create(() => this.ComputeFacilities());
     }
 
     Update(

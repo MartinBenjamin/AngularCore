@@ -1,0 +1,88 @@
+<style typeof="text/css">
+  .FacilityDialog input[type=text],
+  .FacilityDialog span.Field,
+  .FacilityDialog select
+  {
+      width: 200px;
+  }
+</style>
+<dt-dialog
+  Title="Facility"
+  [Open]="Facility|async">
+  <dt-dialog-body>
+    <facility-errors></facility-errors>
+    <table
+        *ngIf="Facility|async as facility"
+        class="GridLayout FacilityDialog">
+      <tr>
+        <td>
+          <table class="GridLayout">
+            <tr>
+              <td style="vertical-align: top;">
+                <table>
+                  <tr>
+                    <td class="RowHeading">Facility Type:</td>
+                    <td><span class="Field FacilityType"></span></td>
+                  </tr>
+                  <tr>
+                    <td class="RowHeading">Facility Name:</td>
+                    <td>
+                      <input type="text"
+                             [(ngModel)]="facility.Name"
+                             [dtValidatedObject]="facility"
+                             dtValidatedProperty="Name"
+                             class="FacilityType" />
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td>
+                <table>
+                  <tr>
+                    <td class="RowHeading">Booking Office:</td>
+                    <td *ngIf="Branches|async as branches; else Loading">
+                      <select [compareWith]="CompareById"
+                              [(ngModel)]="BookingOffice"
+                              [dtValidatedObject]="facility"
+                              dtValidatedProperty="BookingOffice">
+                        <option [ngValue]="null"></option>
+                        <option *ngFor="let branch of branches" [ngValue]="branch">{{branch.Name}}</option>
+                      </select>
+                    </td>
+                    <ng-template #Loading>
+                      <td><span class="Loading">Loading...</span></td>
+                    </ng-template>
+                  </tr>
+                  <tr>
+                    <td class="RowHeading">Currency:</td>
+                    <td *ngIf="Currencies|async as currencies; else Loading">
+                      <select [compareWith]="CompareById"
+                              [(ngModel)]="facility.Currency"
+                              [dtValidatedObject]="facility"
+                              dtValidatedProperty="Currency">
+                        <option [ngValue]="null"></option>
+                        <option *ngFor="let currency of currencies" [ngValue]="currency">{{currency.Id}}</option>
+                      </select>
+                    </td>
+                    <ng-template #Loading>
+                      <td><span class="Loading">Loading...</span></td>
+                    </ng-template>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <dt-tabbed-view [Tabs]="Tabs"></dt-tabbed-view>
+        </td>
+      </tr>
+    </table>
+  </dt-dialog-body>
+  <dt-dialog-buttons
+    ><input type="button" value="Apply" (click)="Apply()" class="Button"
+    /><input type="button" value="Cancel" (click)="Cancel()" class="Button" />
+    </dt-dialog-buttons>
+</dt-dialog>

@@ -52,7 +52,10 @@ export class TransactionManager
         ): void
     {
         if(transaction.StartLogLength === 0)
+        {
+            this._active = false;
             this._log = null;
+        }
     }
 
     Rollback(

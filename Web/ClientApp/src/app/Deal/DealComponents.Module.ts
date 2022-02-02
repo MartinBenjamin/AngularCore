@@ -57,6 +57,7 @@ import { Sponsors } from './Sponsors';
             [
                 Borrowers,
                 Facility,
+                FacilityErrors,
                 GeographicRegionSelector,
                 LegalEntityFinder,
                 LegalEntityFinderButtons,
