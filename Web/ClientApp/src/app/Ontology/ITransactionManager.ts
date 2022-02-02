@@ -51,7 +51,7 @@ export class TransactionManager
         transaction: Transaction
         ): void
     {
-        if(this._active)
+        if(!this._active)
             return;
 
         if(transaction.StartLogLength === 0)
