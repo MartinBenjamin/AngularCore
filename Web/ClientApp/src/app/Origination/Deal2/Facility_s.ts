@@ -50,15 +50,14 @@ export class Facility_s
     extends FacilityProvider
     implements OnDestroy
 {
-    private _subscriptions     : Subscription[] = [];
-    private _errorsSubscription: Subscription;
-    private _bookingOfficeRole : Role;
-    private _deal              : Deal;
-    private _errors            : Observable<Map<object, Map<string, Set<keyof IErrors>>>>;
-    private _bookingOffice     : PartyInRole;
-    private _applyCallback     : ApplyCallback;
-    private _transaction       : ITransaction;
-    private _close             = new Subject<void>();
+    private _subscriptions    : Subscription[] = [];
+    private _bookingOfficeRole: Role;
+    private _deal             : Deal;
+    private _errors           : Observable<Map<object, Map<string, Set<keyof IErrors>>>>;
+    private _bookingOffice    : PartyInRole;
+    private _applyCallback    : ApplyCallback;
+    private _transaction      : ITransaction;
+    private _close            = new Subject<void>();
 
     private static _subgraph: IExpression = new Sequence(
         [
@@ -141,11 +140,6 @@ export class Facility_s
     ngOnDestroy(): void
     {
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
-        if(this._errorsSubscription)
-        {
-            this._errorsSubscription.unsubscribe();
-            this._errorsSubscription = null;
-        }
     }
 
     get Currencies(): Observable<Currency[]>
