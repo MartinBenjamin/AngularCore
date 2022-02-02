@@ -1,6 +1,6 @@
 import { Component, forwardRef, Inject, OnDestroy } from '@angular/core';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { map, take, takeUntil } from 'rxjs/operators';
+import { map, take, takeUntil, takeWhile } from 'rxjs/operators';
 import { BranchesToken } from '../../BranchServiceProvider';
 import { DomainObject, EmptyGuid, Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
@@ -57,7 +57,7 @@ export class Facility_s
     private _bookingOffice    : PartyInRole;
     private _applyCallback    : ApplyCallback;
     private _transaction      : ITransaction;
-    private _close            = new Subject<void>();
+    private _errorsDetected   : boolean;
 
     private static _subgraph: IExpression = new Sequence(
         [
@@ -207,6 +207,7 @@ export class Facility_s
         applyCallback: ApplyCallback,
         )
     {
+        this._errorsDetected = false;
         this._applyCallback = applyCallback;
 
         let facility = <facilityAgreements.Facility>
@@ -259,41 +260,70 @@ export class Facility_s
         applyCallback: ApplyCallback,
         )
     {
+        this._errorsDetected = false;
         this._applyCallback = applyCallback;
         const store = Store(this._deal);
         this._transaction = store.BeginTransaction();
         this._facility.next(facility);
         this.ComputeBookingOffice();
 
-
-        this._errors.pipe(take(1)).subscribe(
-            errors =>
+        this._errors.pipe(takeWhile(errors => errors.size > 0)).subscribe(
             {
-                this._errorsService.next(errors.size ? errors : null);
+                next: errors =>
+                {
+                    this._errorsService.next(errors.size ? errors : null);
 
-                // Detect changes in all Deal Tabs (and nested Tabs).
-                this._changeDetector.DetectChanges();
+                    // Detect changes in all Deal Tabs (and nested Tabs).
+                    this._changeDetector.DetectChanges();
+
+                    this._errorsDetected = true;
+                },
+                complete: () =>
+                {
+                    this._errorsService.next(null);
+
+                    // Detect changes in all Deal Tabs (and nested Tabs).
+                    this._changeDetector.DetectChanges();
+
+                    this._errorsDetected = false;
+                }
             });
     }
 
     Apply(): void
     {
-        this._errors.pipe(takeUntil(this._close)).subscribe(
-            errors =>
+        if(this._errorsDetected)
+            return;
+
+        this._errors.pipe(takeWhile(errors => errors.size > 0)).subscribe(
             {
-                this._errorsService.next(errors.size ? errors : null);
-
-                // Detect changes in all Deal Tabs (and nested Tabs).
-                this._changeDetector.DetectChanges();
-
-                if(!errors.size)
+                next: errors =>
                 {
-                    this._transaction.Commit();
+                    this._errorsService.next(errors.size ? errors : null);
 
-                    if(this._applyCallback)
-                        this._applyCallback();
+                    // Detect changes in all Deal Tabs (and nested Tabs).
+                    this._changeDetector.DetectChanges();
 
-                    this.Close();
+                    this._errorsDetected = true;
+                },
+                complete: () =>
+                {
+                    this._errorsService.next(null);
+
+                    // Detect changes in all Deal Tabs (and nested Tabs).
+                    this._changeDetector.DetectChanges();
+
+                    if(!this._errorsDetected)
+                    {
+                        this._transaction.Commit();
+
+                        if(this._applyCallback)
+                            this._applyCallback();
+
+                        this.Close();
+                    }
+                    else
+                        this._errorsDetected = false;
                 }
             });
     }
@@ -307,7 +337,6 @@ export class Facility_s
     Close(): void
     {
         this._facility.next(null);
-        this._close.next();
         this._bookingOffice = null;
     }
 
