@@ -1,6 +1,6 @@
 import { Component, forwardRef, Inject, OnDestroy } from '@angular/core';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map, take, takeUntil } from 'rxjs/operators';
 import { BranchesToken } from '../../BranchServiceProvider';
 import { DomainObject, EmptyGuid, Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
@@ -58,6 +58,7 @@ export class Facility_s
     private _bookingOffice     : PartyInRole;
     private _applyCallback     : ApplyCallback;
     private _transaction       : ITransaction;
+    private _close             = new Subject<void>();
 
     private static _subgraph: IExpression = new Sequence(
         [
@@ -283,10 +284,7 @@ export class Facility_s
 
     Apply(): void
     {
-        if(this._errorsSubscription)
-            return;
-
-        this._errorsSubscription = this._errors.subscribe(
+        this._errors.pipe(takeUntil(this._close)).subscribe(
             errors =>
             {
                 this._errorsService.next(errors.size ? errors : null);
@@ -302,9 +300,6 @@ export class Facility_s
                         this._applyCallback();
 
                     this.Close();
-
-                    this._errorsSubscription.unsubscribe();
-                    this._errorsSubscription = null;
                 }
             });
     }
@@ -318,6 +313,7 @@ export class Facility_s
     Close(): void
     {
         this._facility.next(null);
+        this._close.next();
         this._bookingOffice = null;
     }
 
