@@ -1,6 +1,6 @@
-import { Component, Inject, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Component, Inject, ViewEncapsulation } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { DomainObject, Guid } from '../../CommonDomainObjects';
 import { CurrenciesToken } from '../../CurrencyServiceProvider';
 import { DealProvider } from '../../DealProvider';
@@ -15,38 +15,30 @@ import { ObservableGenerator } from '../../Ontology/ObservableGenerator';
         templateUrl: './KeyDealData.html',
         encapsulation: ViewEncapsulation.None
     })
-export class KeyDealData implements OnDestroy
+export class KeyDealData
 {
-    private _subscriptions: Subscription[] = [];
-    private _deal         : Deal;
-    private _restricted   : Observable<boolean>;
+    private _restricted: Observable<boolean>;
 
     constructor(
         @Inject(CurrenciesToken)
         private _currencies: Observable<Currency[]>,
-        dealProvider       : DealProvider
+        private _deal      : DealProvider
         )
     {
-        this._subscriptions.push(dealProvider.subscribe(
+        this._restricted = (<Observable<Deal>>this._deal).pipe(switchMap(
             deal =>
             {
-                this._deal = deal;
-                if(this._deal)
-                {
-                    const store = Store(this._deal);
+                if(!deal)
+                    return new BehaviorSubject<boolean>(false);
 
-                    const generator = new ObservableGenerator(
-                        deals,
-                        store);
+                const store = Store(deal);
 
-                    this._restricted = deals.Restricted.Select(generator).pipe(map(restricted => restricted.has(this._deal)));
-                }
+                const generator = new ObservableGenerator(
+                    deals,
+                    store);
+
+                return deals.Restricted.Select(generator).pipe(map(restricted => restricted.has(deal)));
             }));
-    }
-
-    ngOnDestroy(): void
-    {
-        this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
     get Currencies(): Observable<Currency[]>
@@ -54,7 +46,7 @@ export class KeyDealData implements OnDestroy
         return this._currencies;
     }
 
-    get Deal(): Deal
+    get Deal(): Observable<Deal>
     {
         return this._deal;
     }

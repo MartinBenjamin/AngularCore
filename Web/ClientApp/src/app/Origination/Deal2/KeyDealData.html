@@ -10,7 +10,9 @@
   }
 </style>
 <div class="OriginationTab">
-  <table class="GridLayout">
+  <table
+      *ngIf="Deal|async as deal"
+      class="GridLayout">
     <tr>
       <td style="vertical-align: top;">
         <table class="GridLayout">
@@ -18,17 +20,15 @@
             <td class="RowHeading">Deal Name:</td>
             <td><input
               type="text"
-              [ngModel]="Deal?.Name"
-              (ngModelChange)="Deal.Name = $event"
-              [dtValidatedObject]="Deal"
+              [(ngModel)]="deal.Name"
+              [dtValidatedObject]="deal"
               dtValidatedProperty="Name"/></td>
           </tr>
           <tr *ngIf="Restricted|async">
             <td class="RowHeading">Project Name:</td>
             <td><input type="text"
-              [ngModel]="Deal?.ProjectName"
-              (ngModelChange)="Deal.ProjectName = $event"
-              [dtValidatedObject]="Deal"
+              [(ngModel)]="deal.ProjectName"
+              [dtValidatedObject]="deal"
               dtValidatedProperty="ProjectName" /></td>
           </tr>
           <tr>
@@ -56,9 +56,8 @@
             <td class="RowHeading">Introducer:</td>
             <td><input
               type="text"
-              [ngModel]="Deal?.Introducer"
-              (ngModelChange)="Deal.Introducer = $event"
-              [dtValidatedObject]="Deal"
+              [(ngModel)]="deal.Introducer"
+              [dtValidatedObject]="deal"
               dtValidatedProperty="Introducer"/></td>
           </tr>
           <tr>
@@ -66,9 +65,8 @@
             <td *ngIf="Currencies|async as currencies; else Loading">
               <select
                 [compareWith]="CompareById"
-                [ngModel]="Deal?.Currency"
-                (ngModelChange)="Deal.Currency = $event"
-                [dtValidatedObject]="Deal"
+                [(ngModel)]="deal.Currency"
+                [dtValidatedObject]="deal"
                 dtValidatedProperty="Currency">
                 <option [ngValue]="null"></option>
                 <option *ngFor="let currency of currencies" [ngValue]="currency">{{currency.Name}}</option>
@@ -92,9 +90,8 @@
             <tr>
               <td class="RowHeading">Description:</td>
               <td><textarea
-                [ngModel]="Deal?.TransactionDetails"
-                (ngModelChange)="Deal.TransactionDetails = $event"
-                [dtValidatedObject]="Deal"
+                [(ngModel)]="deal.TransactionDetails"
+                [dtValidatedObject]="deal"
                 dtValidatedProperty="TransactionDetails"
                 maxlength="100"
                 rows="5"></textarea></td>
@@ -102,9 +99,8 @@
             <tr>
               <td class="RowHeading">Status:</td>
               <td><textarea
-                [ngModel]="Deal?.CurrentStatus"
-                (ngModelChange)="Deal.CurrentStatus = $event"
-                [dtValidatedObject]="Deal"
+                [(ngModel)]="deal.CurrentStatus"
+                [dtValidatedObject]="deal"
                 dtValidatedProperty="CurrentStatus"
                 maxlength="100"
                 rows="5"></textarea></td>
