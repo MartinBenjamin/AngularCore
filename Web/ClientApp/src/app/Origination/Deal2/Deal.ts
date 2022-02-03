@@ -12,7 +12,7 @@ import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServicePr
 import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
 import { IDealOntologyService } from '../../Ontologies/IDealOntologyService';
-import { ObserveErrors } from '../../Ontologies/ObserveErrors';
+import { ObserveErrors, ObserveErrorsSwitchMap } from '../../Ontologies/ObserveErrors';
 import { IErrors } from '../../Ontologies/Validate';
 import { Store } from '../../Ontology/IEavStore';
 import { Alternative, Empty, Property, Query2, Sequence, ZeroOrMore } from '../../RegularPathExpression';
@@ -138,7 +138,7 @@ export class Deal
                 return applicableStages;
             }));
 
-          this._errorsSubscription = ObserveErrors(
+        this._errorsSubscription = ObserveErrorsSwitchMap(
               this.Deal.Ontology,
               store,
               applicableStages).subscribe(
