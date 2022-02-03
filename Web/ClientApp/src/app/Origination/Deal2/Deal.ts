@@ -15,8 +15,8 @@ import { IDealOntologyService } from '../../Ontologies/IDealOntologyService';
 import { ObserveErrorsSwitchMap } from '../../Ontologies/ObserveErrors';
 import { IErrors } from '../../Ontologies/Validate';
 import { Store } from '../../Ontology/IEavStore';
-import { Alternative, Empty, Property, Query2, Sequence, ZeroOrMore } from '../../RegularPathExpression';
 import { Origination } from '../Origination';
+import { Facility_s } from './Facility_s';
 import { KeyCounterparties } from './KeyCounterparties';
 import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
@@ -50,17 +50,6 @@ export class Deal
     private _title: TemplateRef<any>;
 
     public Tabs: Tab[];
-
-    public static FacilitySubgraphQuery = Query2(new Sequence(
-        [
-            new ZeroOrMore(new Property('Parts')),
-            new Alternative(
-                [
-                    Empty,
-                    new Property('Amount'),
-                    new Property('AccrualDate')
-                ])
-        ]));
 
     constructor(
         @Inject(DealOntologyServiceToken)
@@ -133,7 +122,7 @@ export class Deal
                         .forEach(
                             commitment =>
                             {
-                                for(let object of Deal.FacilitySubgraphQuery(commitment))
+                                for(let object of Facility_s.SubgraphQuery(commitment))
                                     if(errors.has(object))
                                     {
                                         let facilityErrors = errors.get(commitment);

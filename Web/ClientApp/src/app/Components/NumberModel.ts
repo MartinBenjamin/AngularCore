@@ -18,7 +18,7 @@ export abstract class NumberModel
         let valid = true;
         let input: HTMLInputElement = this._el.nativeElement;
 
-        if(model === null)
+        if(typeof model === 'undefined' || model === null)
             input.value = '';
 
         else if(typeof model === 'number')
