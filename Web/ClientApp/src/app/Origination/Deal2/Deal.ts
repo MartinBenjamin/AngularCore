@@ -101,7 +101,7 @@ export class Deal
             if(!deal)
                 return new BehaviorSubject<Map<object, Map<string, Set<keyof IErrors>>>>(null);
 
-            const store = Store(this.Deal);
+            const store = Store(deal);
             const applicableStages = store.Observe(
                 ['?Stage', '?LifeCycle'],
                 [deal, 'Stage', '?Stage'], [deal, 'LifeCycle', '?LifeCycle']).pipe(map(
@@ -124,7 +124,7 @@ export class Deal
                     }));
 
             return ObserveErrorsSwitchMap(
-                this.Deal.Ontology,
+                deal.Ontology,
                 store,
                 applicableStages).pipe(map(errors =>
                 {
@@ -167,11 +167,6 @@ export class Deal
     ngOnDestroy(): void
     {
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
-    }
-
-    get Deal(): import('../../Deals').Deal
-    {
-        return this._deal.getValue();
     }
 
     Save(): void
