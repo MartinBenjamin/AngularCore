@@ -245,10 +245,12 @@ export class Facility_s
 
         const store = Store(this._deal);
         this._transaction = store.BeginTransaction();
-        facility = <facilityAgreements.Facility>Store(this._deal).Add(facility);
+        store.SuspendPublish();
+        facility = <facilityAgreements.Facility>store.Add(facility);
         this._deal.Confers.push(
             facility,
             lenderParticipation);
+        store.UnsuspendPublish();
 
         this._facility.next(facility);
         this.ComputeBookingOffice();

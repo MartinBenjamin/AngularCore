@@ -87,21 +87,30 @@ export class Borrowers_s implements OnDestroy
                     return;
                 }
 
-                let today = new Date();
-                today.setUTCHours(0, 0, 0, 0);
-                let borrower = <PartyInRole>{
+                const store = Store(this._deal);
+                try
+                {
+                    store.SuspendPublish();
+                    let today = new Date();
+                    today.setUTCHours(0, 0, 0, 0);
+                    let borrower = <PartyInRole>{
                         AutonomousAgent: legalEntity,
-                        Organisation   : legalEntity,
-                        Person         : null,
-                        Role           : this._borrowerRole,
+                        Organisation: legalEntity,
+                        Person: null,
+                        Role: this._borrowerRole,
                         Period:
                         {
                             Start: today,
-                            End  : null
+                            End: null
                         }
                     };
-                borrower = <PartyInRole>Store(this._deal).Add(borrower);
-                this._deal.Parties.push(borrower);
+                    borrower = <PartyInRole>Store(this._deal).Add(borrower);
+                    this._deal.Parties.push(borrower);
+                }
+                finally
+                {
+                    store.UnsuspendPublish();
+                }
             });
     }  
 
