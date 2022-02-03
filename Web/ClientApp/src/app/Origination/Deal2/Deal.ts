@@ -1,12 +1,12 @@
 import { AfterViewInit, Component, forwardRef, Inject, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { map, takeWhile } from 'rxjs/operators';
+import { map, takeWhile, combineLatest } from 'rxjs/operators';
 import { Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
 import { DealProvider } from '../../DealProvider';
-import { LifeCycleStage } from '../../LifeCycles';
+import { LifeCycleStage, LifeCycle } from '../../LifeCycles';
 import { annotations } from '../../Ontologies/Annotations';
 import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServiceProvider';
 import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
@@ -118,17 +118,23 @@ export class Deal
     Save(): void
     {
         const store = Store(this.Deal);
-        const applicableStages = store.ObserveAttribute('Stage').pipe(map(
-            (stages: [import('../../Deals').Deal, LifeCycleStage][]) =>
-            {
-                const [deal, stage] = stages[0];
-                const applicableStages = new Set<Guid>();
-                for(let lifeCycleStage of deal.LifeCycle.Stages)
+        const applicableStages = store.Observe(
+            ['?Stage', '?LifeCycle'],
+            [this.Deal, 'Stage', '?Stage'],[this.Deal, 'LifeCycle', '?LifeCycle']).pipe(map(
+                (result: [LifeCycleStage, LifeCycle][]) =>
                 {
-                    applicableStages.add(lifeCycleStage.Id);
-                    if(lifeCycleStage.Id === stage.Id)
-                        break;
-                }
+                    const applicableStages = new Set<Guid>();
+
+                    if(result.length)
+                    {
+                        const [stage, lifeCycle] = result[0]
+                        for(let lifeCycleStage of lifeCycle.Stages)
+                        {
+                            applicableStages.add(lifeCycleStage.Id);
+                            if(lifeCycleStage.Id === stage.Id)
+                                break;
+                        }
+                    }
 
                 return applicableStages;
             }));

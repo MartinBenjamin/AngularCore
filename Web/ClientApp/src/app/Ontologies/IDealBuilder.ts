@@ -257,8 +257,10 @@ export class DealBuilder implements IDealBuilder
             .subscribe(
                 dealLifeCycle =>
                 {
+                    store.SuspendPublish();
                     deal.Stage     = dealLifeCycle.Stages[0];
                     deal.LifeCycle = dealLifeCycle;
+                    store.UnsuspendPublish();
                 });
         return deal;
     }
