@@ -1,5 +1,5 @@
-import { Component, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component } from '@angular/core';
+import { Observable } from 'rxjs';
 import { DomainObject, Guid } from '../../CommonDomainObjects';
 import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
@@ -9,24 +9,15 @@ import { Deal } from '../../Deals';
         selector: 'common',
         templateUrl: './Common.html'
     })
-export class Common implements OnDestroy
+export class Common
 {
-    private _subscriptions: Subscription[] = [];
-    private _deal         : Deal;
-
     constructor(
-        dealProvider: DealProvider
+        private _deal: DealProvider
         )
     {
-        this._subscriptions.push(dealProvider.subscribe(deal => this._deal = deal));
     }
 
-    ngOnDestroy(): void
-    {
-        this._subscriptions.forEach(subscription => subscription.unsubscribe());
-    }
-
-    get Deal(): Deal
+    get Deal(): Observable<Deal>
     {
         return this._deal;
     }
