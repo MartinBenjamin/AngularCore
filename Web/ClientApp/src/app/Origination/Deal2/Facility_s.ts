@@ -1,11 +1,10 @@
 import { Component, forwardRef, Inject, OnDestroy } from '@angular/core';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { map, take, takeUntil, takeWhile } from 'rxjs/operators';
+import { map, takeWhile } from 'rxjs/operators';
 import { BranchesToken } from '../../BranchServiceProvider';
 import { DomainObject, EmptyGuid, Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
-import { ContractualCommitment } from '../../Contracts';
 import { CurrenciesOrderedByCodeToken } from '../../CurrencyServiceProvider';
 import { FacilityFees } from '../../Deal/FacilityFees';
 import { FacilityTab } from '../../Deal/FacilityTab';
@@ -19,7 +18,7 @@ import { FacilityProvider } from '../../FacilityProvider';
 import { Currency } from '../../Iso4217';
 import { LifeCycleStage } from '../../LifeCycles';
 import { ObserveErrors } from '../../Ontologies/ObserveErrors';
-import { IErrors, Validate } from '../../Ontologies/Validate';
+import { IErrors } from '../../Ontologies/Validate';
 import { Store } from '../../Ontology/IEavStore';
 import { ITransaction } from '../../Ontology/ITransactionManager';
 import { Branch } from '../../Organisations';
@@ -346,28 +345,5 @@ export class Facility_s
         )
     {
         return lhs === rhs || (lhs && rhs && lhs.Id === rhs.Id);
-    }
-
-    private Validate(): Map<object, Map<string, Set<keyof IErrors>>>
-    {
-        let classifications = this._deal.Ontology.Classify(this.Facility);
-        let applicableStages = new Set<Guid>();
-        for(let lifeCycleStage of this._deal.LifeCycle.Stages)
-        {
-            applicableStages.add(lifeCycleStage.Id);
-            if(lifeCycleStage.Id === this._deal.Stage.Id)
-                break;
-        }
-
-        let errors = Validate(
-            this._deal.Ontology,
-            classifications,
-            applicableStages);
-
-        this._errorsService.next(errors.size ? errors : null);
-
-        // Detect changes in all Facility Tabs (and nested Tabs).
-        this._changeDetector.DetectChanges();
-        return errors;
     }
 }
