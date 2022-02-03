@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, forwardRef, Inject, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
+import { NEVER, Observable, Subject, Subscription } from 'rxjs';
 import { map, switchMap, takeWhile } from 'rxjs/operators';
 import { Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
@@ -88,7 +88,7 @@ export class Deal
         this._errors = this.pipe(switchMap(deal =>
         {
             if(!deal)
-                return new BehaviorSubject<Map<object, Map<string, Set<keyof IErrors>>>>(null);
+                return NEVER;
 
             const store = Store(deal);
             const applicableStages = store.Observe(
