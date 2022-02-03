@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, forwardRef, Inject, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { map, takeWhile, combineLatest } from 'rxjs/operators';
+import { Observable, Subject, Subscription, BehaviorSubject } from 'rxjs';
+import { map, takeWhile, combineLatest, switchMap } from 'rxjs/operators';
 import { Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
@@ -44,7 +44,7 @@ export class Deal
 {
     private _subscriptions: Subscription[] = [];
     private _ontology     : IDealOntology;
-    private _errors       : Observable<Map<object, Map < string, Set < keyof IErrors >>>>
+    private _errors       : Observable<Map<object, Map<string, Set<keyof IErrors>>>>
 
     @ViewChild('title', { static: true })
     private _title: TemplateRef<any>;
@@ -94,10 +94,69 @@ export class Deal
 
                     this._deal.next(dealBuilder.Build2(this._ontology));
                     this._errorsService.next(null);
-                }),
-            this.subscribe(deal =>
-            {
-            }));
+                }));
+
+        this._errors = this.pipe(switchMap(deal =>
+        {
+            if(!deal)
+                return new BehaviorSubject<Map<object, Map<string, Set<keyof IErrors>>>>(null);
+
+            const store = Store(this.Deal);
+            const applicableStages = store.Observe(
+                ['?Stage', '?LifeCycle'],
+                [deal, 'Stage', '?Stage'], [deal, 'LifeCycle', '?LifeCycle']).pipe(map(
+                    (result: [LifeCycleStage, LifeCycle][]) =>
+                    {
+                        const applicableStages = new Set<Guid>();
+
+                        if(result.length)
+                        {
+                            const [stage, lifeCycle] = result[0]
+                            for(let lifeCycleStage of lifeCycle.Stages)
+                            {
+                                applicableStages.add(lifeCycleStage.Id);
+                                if(lifeCycleStage.Id === stage.Id)
+                                    break;
+                            }
+                        }
+
+                        return applicableStages;
+                    }));
+
+            return ObserveErrorsSwitchMap(
+                this.Deal.Ontology,
+                store,
+                applicableStages).pipe(map(errors =>
+                {
+                    deal.Confers.filter(
+                        commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
+                        .forEach(
+                            commitment =>
+                            {
+                                for(let object of Deal.FacilitySubgraphQuery(commitment))
+                                    if(errors.has(object))
+                                    {
+                                        let facilityErrors = errors.get(commitment);
+                                        if(!facilityErrors)
+                                        {
+                                            facilityErrors = new Map<string, Set<keyof IErrors>>();
+                                            errors.set(
+                                                commitment,
+                                                facilityErrors);
+                                        }
+
+                                        let hasErrors = facilityErrors.get('$HasErrors');
+                                        if(!hasErrors)
+                                            facilityErrors.set(
+                                                '$HasErrors',
+                                                new Set<keyof IErrors>());
+                                        break;
+                                    }
+                            });
+                    return errors;
+
+                }));
+        }));
     }
 
     ngAfterViewInit()
@@ -117,71 +176,20 @@ export class Deal
 
     Save(): void
     {
-        const store = Store(this.Deal);
-        const applicableStages = store.Observe(
-            ['?Stage', '?LifeCycle'],
-            [this.Deal, 'Stage', '?Stage'],[this.Deal, 'LifeCycle', '?LifeCycle']).pipe(map(
-                (result: [LifeCycleStage, LifeCycle][]) =>
+        this._errors.pipe(takeWhile(errors => errors && errors.size > 0)).subscribe(
+            {
+                next: errors =>
                 {
-                    const applicableStages = new Set<Guid>();
+                    this._errorsService.next(errors);
 
-                    if(result.length)
-                    {
-                        const [stage, lifeCycle] = result[0]
-                        for(let lifeCycleStage of lifeCycle.Stages)
-                        {
-                            applicableStages.add(lifeCycleStage.Id);
-                            if(lifeCycleStage.Id === stage.Id)
-                                break;
-                        }
-                    }
-
-                return applicableStages;
-            }));
-
-        ObserveErrorsSwitchMap(
-            this.Deal.Ontology,
-            store,
-            applicableStages).pipe(takeWhile(errors => errors.size > 0)).subscribe(
+                    // Detect changes in all Deal Tabs (and nested Tabs).
+                    this._changeDetector.DetectChanges();
+                },
+                complete: () =>
                 {
-                    next: errors =>
-                    {
-                        this.Deal.Confers.filter(
-                            commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
-                            .forEach(
-                                commitment =>
-                                {
-                                    for(let object of Deal.FacilitySubgraphQuery(commitment))
-                                        if(errors.has(object))
-                                        {
-                                            let facilityErrors = errors.get(commitment);
-                                            if(!facilityErrors)
-                                            {
-                                                facilityErrors = new Map<string, Set<keyof IErrors>>();
-                                                errors.set(
-                                                    commitment,
-                                                    facilityErrors);
-                                            }
-
-                                            let hasErrors = facilityErrors.get('$HasErrors');
-                                            if(!hasErrors)
-                                                facilityErrors.set(
-                                                    '$HasErrors',
-                                                    new Set<keyof IErrors>());
-                                            break;
-                                        }
-                                });
-
-                        this._errorsService.next(errors);
-
-                        // Detect changes in all Deal Tabs (and nested Tabs).
-                        this._changeDetector.DetectChanges();
-                    },
-                    complete: () =>
-                    {
-                        this._errorsService.next(null);
-                    }
-                });
+                    this._errorsService.next(null);
+                }
+            });
     }
 
     Cancel(): void
