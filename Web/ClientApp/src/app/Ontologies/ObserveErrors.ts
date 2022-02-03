@@ -146,9 +146,7 @@ export function ObserveErrorsSwitchMap(
         ontology,
         store);
 
-    return applicableStages.pipe(switchMap(applicableStages =>
-    {
-        let observables: Observable<[string, keyof IErrors, Set<any>]>[] = [...ontology.Get(ontology.IsAxiom.IDataPropertyRange)].map(
+    let dataRangeObservables: Observable<[string, keyof IErrors, Set<any>]>[] = [...ontology.Get(ontology.IsAxiom.IDataPropertyRange)].map(
         dataPropertyRange => store.ObserveAttribute(dataPropertyRange.DataPropertyExpression.LocalName).pipe(
             map(elements =>
                 [
@@ -156,6 +154,10 @@ export function ObserveErrorsSwitchMap(
                     "Invalid",
                     new Set<any>(elements.filter(element => !dataPropertyRange.Range.HasMember(element[1])).map(element => element[0]))
                 ])));
+
+    return applicableStages.pipe(switchMap(applicableStages =>
+    {
+        let observables: Observable<[string, keyof IErrors, Set<any>]>[] = [...dataRangeObservables];
 
         for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
             for(let annotation of subClassOf.Annotations)
