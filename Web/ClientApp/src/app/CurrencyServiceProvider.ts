@@ -1,11 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { InjectionToken, Provider } from "@angular/core";
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { Guid } from './CommonDomainObjects';
+import { map, shareReplay } from 'rxjs/operators';
 import { INamedService, NamedFilters, NamedService } from './INamedService';
 import { Currency } from './Iso4217';
-import { ObservableNamedStore } from './ObservableNamedStore';
 
 export const CurrencyServiceToken = new InjectionToken<INamedService<string, Currency, NamedFilters>>('CurrencyService');
 export const CurrencyServiceUrlToken = new InjectionToken<string>('CurrencyServiceUrl');
@@ -29,7 +27,7 @@ export const CurrenciesProvider: Provider =
     provide: CurrenciesToken,
     useFactory: (
         currencyService: INamedService<string, Currency, NamedFilters>
-        ) => new ObservableNamedStore<Guid, Currency>(currencyService),
+        ) => currencyService.Find(new NamedFilters()).pipe(shareReplay(1)),
     deps: [CurrencyServiceToken]
 };
 

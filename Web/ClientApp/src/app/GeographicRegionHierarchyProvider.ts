@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { InjectionToken, Provider } from "@angular/core";
+import { Observable } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
 import { Guid } from './CommonDomainObjects';
 import { GeographicRegionHierarchy } from './GeographicRegionHierarchy';
 import { DomainObjectService, IDomainObjectService } from './IDomainObjectService';
-import { Observable } from 'rxjs';
-import { ObservableDomainObjectStore } from './ObservableDomainObjectStore';
 
 export const GeographicRegionHierarchyServiceToken = new InjectionToken<IDomainObjectService<Guid, GeographicRegionHierarchy>>('GeographicRegionHierarchyService');
 export const GeographicRegionHierarchyServiceUrlToken = new InjectionToken<string>('GeographicRegionHierarchyServiceUrl');
@@ -27,8 +27,6 @@ export const GeographicRegionHierarchyProvider: Provider =
     provide: GeographicRegionHierarchyToken,
     useFactory: (
         geographicRegionHierarchyService: IDomainObjectService<Guid, GeographicRegionHierarchy>
-        ) => new ObservableDomainObjectStore<Guid, GeographicRegionHierarchy>(
-        geographicRegionHierarchyService,
-        '80bd57c5-7f3a-48d6-ba89-ad9ddaf12ebb'),
+        ) => geographicRegionHierarchyService.Get('80bd57c5-7f3a-48d6-ba89-ad9ddaf12ebb').pipe(shareReplay(1)),
     deps: [GeographicRegionHierarchyServiceToken]
 }
