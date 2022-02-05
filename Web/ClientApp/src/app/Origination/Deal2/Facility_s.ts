@@ -54,7 +54,7 @@ export class Facility_s
     private _bookingOffice    : PartyInRole;
     private _applyCallback    : ApplyCallback;
     private _transaction      : ITransaction;
-    private _observingErrors  = new BehaviorSubject<boolean>(false);
+    private _observeErrors    = new BehaviorSubject<boolean>(false);
     private _apply            = new Subject<void>();
 
     private static _subgraph: IExpression = new Sequence(
@@ -123,7 +123,7 @@ export class Facility_s
                             return applicableStages;
                         }));
 
-                return this._observingErrors.pipe(switchMap(
+                return this._observeErrors.pipe(switchMap(
                     observingErrors =>
                     {
                         if(!observingErrors)
@@ -284,7 +284,7 @@ export class Facility_s
             lenderParticipation);
         store.UnsuspendPublish();
         this._facility.next(facility);
-        this._observingErrors.next(this._dealProvider.ObservingErrors);
+        this._observeErrors.next(this._dealProvider.ObservingErrors);
         this.ComputeBookingOffice();
     }
 
@@ -297,13 +297,13 @@ export class Facility_s
         const store = Store(this._deal);
         this._transaction = store.BeginTransaction();
         this._facility.next(facility);
-        this._observingErrors.next(this._dealProvider.ObservingErrors);
+        this._observeErrors.next(this._dealProvider.ObservingErrors);
         this.ComputeBookingOffice();
     }
 
     Apply(): void
     {
-        this._observingErrors.next(true);
+        this._observeErrors.next(true);
         this._apply.next();
     }
 
@@ -315,7 +315,7 @@ export class Facility_s
 
     Close(): void
     {
-        this._observingErrors.next(false);
+        this._observeErrors.next(false);
         this._facility.next(null);
         this._bookingOffice = null;
     }
