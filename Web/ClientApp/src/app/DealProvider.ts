@@ -3,8 +3,8 @@ import { Deal } from "./Deals";
 
 export abstract class DealProvider extends Observable<Deal>
 {
-    protected _deal            = new BehaviorSubject<Deal>(null);
-    protected _observingErrors = false;
+    protected _deal          = new BehaviorSubject<Deal>(null);
+    protected _observeErrors = new BehaviorSubject<boolean>(false);
 
     protected constructor()
     {
@@ -16,8 +16,8 @@ export abstract class DealProvider extends Observable<Deal>
             });
     }
 
-    get ObservingErrors(): boolean
+    get ObserveErrors(): Observable<boolean>
     {
-        return this._observingErrors;
+        return this._observeErrors;
     }
 }

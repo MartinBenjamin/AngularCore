@@ -79,7 +79,7 @@ export class Facility_s
         private _currencies    : Observable<Currency[]>,
         @Inject(BranchesToken)
         private _branches      : Observable<Branch[]>,
-        private _dealProvider  : DealProvider,
+        dealProvider           : DealProvider,
         @Inject(ErrorsSubjectToken)
         private _errorsService : Subject<Errors>,
         private _changeDetector: ChangeDetector
@@ -95,7 +95,7 @@ export class Facility_s
                 new Tab('Tab 4'                           , FacilityTab )
             ];
 
-        const errors = this._dealProvider.pipe(switchMap(
+        const errors = dealProvider.pipe(switchMap(
             deal =>
             {
                 if(!deal)
@@ -123,10 +123,13 @@ export class Facility_s
                             return applicableStages;
                         }));
 
-                return this._observeErrors.pipe(switchMap(
-                    observingErrors =>
+                return combineLatest(
+                    dealProvider.ObserveErrors,
+                    this._observeErrors,
+                    (dealObserveErrors, facilityObserveErrors) => dealObserveErrors || facilityObserveErrors).pipe(switchMap(
+                    observeErrors =>
                     {
-                        if(!observingErrors)
+                        if(!observeErrors)
                             return NEVER;
 
                         return combineLatest(
@@ -146,7 +149,7 @@ export class Facility_s
 
         this._subscriptions.push(
             roles.subscribe(roles => this._bookingOfficeRole = roles.find(role => role.Id == DealRoleIdentifier.BookingOffice)),
-            this._dealProvider.subscribe(deal => this._deal = deal),
+            dealProvider.subscribe(deal => this._deal = deal),
             errors.subscribe(
                 errors =>
                 {
@@ -284,7 +287,6 @@ export class Facility_s
             lenderParticipation);
         store.UnsuspendPublish();
         this._facility.next(facility);
-        this._observeErrors.next(this._dealProvider.ObservingErrors);
         this.ComputeBookingOffice();
     }
 
@@ -297,7 +299,6 @@ export class Facility_s
         const store = Store(this._deal);
         this._transaction = store.BeginTransaction();
         this._facility.next(facility);
-        this._observeErrors.next(this._dealProvider.ObservingErrors);
         this.ComputeBookingOffice();
     }
 

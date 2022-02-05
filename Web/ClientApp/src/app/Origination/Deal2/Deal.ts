@@ -44,7 +44,6 @@ export class Deal
 {
     private _subscriptions: Subscription[] = [];
     private _ontology     : IDealOntology;
-    private _errors       : Observable<Map<object, Map<string, Set<keyof IErrors>>>>
 
     @ViewChild('title', { static: true })
     private _title: TemplateRef<any>;
@@ -65,6 +64,75 @@ export class Deal
     {
         super();
 
+        const errors: Observable<Errors> = this.pipe(switchMap(
+            deal =>
+            {
+                if(!deal)
+                    return NEVER;
+
+                const store = Store(deal);
+                const applicableStages = store.Observe(
+                    ['?Stage', '?LifeCycle'],
+                    [deal, 'Stage', '?Stage'], [deal, 'LifeCycle', '?LifeCycle']).pipe(map(
+                        (result: [LifeCycleStage, LifeCycle][]) =>
+                        {
+                            const applicableStages = new Set<Guid>();
+
+                            if(result.length)
+                            {
+                                const [stage, lifeCycle] = result[0]
+                                for(let lifeCycleStage of lifeCycle.Stages)
+                                {
+                                    applicableStages.add(lifeCycleStage.Id);
+                                    if(lifeCycleStage.Id === stage.Id)
+                                        break;
+                                }
+                            }
+
+                            return applicableStages;
+                        }));
+
+                return this._observeErrors.pipe(switchMap(
+                    observeErrors =>
+                    {
+                        if(!observeErrors)
+                            return NEVER;
+
+                        return ObserveErrorsSwitchMap(
+                            deal.Ontology,
+                            store,
+                            applicableStages).pipe(map(errors =>
+                            {
+                                deal.Confers.filter(
+                                    commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
+                                    .forEach(
+                                        commitment =>
+                                        {
+                                            for(let object of Facility_s.SubgraphQuery(commitment))
+                                                if(errors.has(object))
+                                                {
+                                                    let facilityErrors = errors.get(commitment);
+                                                    if(!facilityErrors)
+                                                    {
+                                                        facilityErrors = new Map<string, Set<keyof IErrors>>();
+                                                        errors.set(
+                                                            commitment,
+                                                            facilityErrors);
+                                                    }
+
+                                                    let hasErrors = facilityErrors.get('$HasErrors');
+                                                    if(!hasErrors)
+                                                        facilityErrors.set(
+                                                            '$HasErrors',
+                                                            new Set<keyof IErrors>());
+                                                    break;
+                                                }
+                                        });
+                                return errors;
+                            }));
+                    }));
+            }));
+
         this._subscriptions.push(
             this._activatedRoute.queryParamMap.subscribe(
                 params =>
@@ -78,75 +146,21 @@ export class Deal
                         if(this._ontology.IsAxiom.IClass(superClass))
                             for(let annotation of superClass.Annotations)
                                 if(annotation.Property == annotations.ComponentBuildAction &&
-                                   annotation.Value in this)
+                                    annotation.Value in this)
                                     this[annotation.Value]();
 
-                    this._observingErrors = false;
+                    this._observeErrors.next(false);
                     this._deal.next(dealBuilder.Build2(this._ontology));
                     this._errorsService.next(null);
-                }));
-
-        this._errors = this.pipe(switchMap(deal =>
-        {
-            if(!deal)
-                return NEVER;
-
-            const store = Store(deal);
-            const applicableStages = store.Observe(
-                ['?Stage', '?LifeCycle'],
-                [deal, 'Stage', '?Stage'], [deal, 'LifeCycle', '?LifeCycle']).pipe(map(
-                    (result: [LifeCycleStage, LifeCycle][]) =>
-                    {
-                        const applicableStages = new Set<Guid>();
-
-                        if(result.length)
-                        {
-                            const [stage, lifeCycle] = result[0]
-                            for(let lifeCycleStage of lifeCycle.Stages)
-                            {
-                                applicableStages.add(lifeCycleStage.Id);
-                                if(lifeCycleStage.Id === stage.Id)
-                                    break;
-                            }
-                        }
-
-                        return applicableStages;
-                    }));
-
-            return ObserveErrorsSwitchMap(
-                deal.Ontology,
-                store,
-                applicableStages).pipe(map(errors =>
+                }),
+            errors.subscribe(
+                errors =>
                 {
-                    deal.Confers.filter(
-                        commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
-                        .forEach(
-                            commitment =>
-                            {
-                                for(let object of Facility_s.SubgraphQuery(commitment))
-                                    if(errors.has(object))
-                                    {
-                                        let facilityErrors = errors.get(commitment);
-                                        if(!facilityErrors)
-                                        {
-                                            facilityErrors = new Map<string, Set<keyof IErrors>>();
-                                            errors.set(
-                                                commitment,
-                                                facilityErrors);
-                                        }
+                    this._errorsService.next(errors);
 
-                                        let hasErrors = facilityErrors.get('$HasErrors');
-                                        if(!hasErrors)
-                                            facilityErrors.set(
-                                                '$HasErrors',
-                                                new Set<keyof IErrors>());
-                                        break;
-                                    }
-                            });
-                    return errors;
-
+                    // Detect changes in all Deal Tabs (and nested Tabs).
+                    this._changeDetector.DetectChanges();
                 }));
-        }));
     }
 
     ngAfterViewInit()
@@ -161,29 +175,7 @@ export class Deal
 
     Save(): void
     {
-        this._observingErrors = false;
-        this._errors.pipe(takeWhile(errors => errors && errors.size > 0)).subscribe(
-            {
-                next: errors =>
-                {
-                    this._observingErrors = true;
-                    this._errorsService.next(errors);
-
-                    // Detect changes in all Deal Tabs (and nested Tabs).
-                    this._changeDetector.DetectChanges();
-                },
-                complete: () =>
-                {
-                    this._errorsService.next(null);
-
-                    if(!this._observingErrors)
-                    {
-                        // Save the Deal.
-                    }
-                    else
-                        this._observingErrors = false;
-                }
-            });
+        this._observeErrors.next(true);
     }
 
     Cancel(): void
