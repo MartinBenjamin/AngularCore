@@ -95,78 +95,76 @@ export class Facility_s
                 new Tab('Tab 4'                           , FacilityTab )
             ];
 
+        const errors = this._dealProvider.pipe(switchMap(
+            deal =>
+            {
+                if(!deal)
+                    return NEVER;
+
+                const store = Store(deal);
+                const applicableStages = store.Observe(
+                    ['?Stage', '?LifeCycle'],
+                    [deal, 'Stage', '?Stage'], [deal, 'LifeCycle', '?LifeCycle']).pipe(map(
+                        (result: [LifeCycleStage, LifeCycle][]) =>
+                        {
+                            const applicableStages = new Set<Guid>();
+
+                            if(result.length)
+                            {
+                                const [stage, lifeCycle] = result[0]
+                                for(let lifeCycleStage of lifeCycle.Stages)
+                                {
+                                    applicableStages.add(lifeCycleStage.Id);
+                                    if(lifeCycleStage.Id === stage.Id)
+                                        break;
+                                }
+                            }
+
+                            return applicableStages;
+                        }));
+
+                return this._observingErrors.pipe(switchMap(
+                    observingErrors =>
+                    {
+                        if(!observingErrors)
+                            return NEVER;
+
+                        return ObserveErrorsSwitchMap(
+                            deal.Ontology,
+                            store,
+                            applicableStages).pipe(map(errors =>
+                            {
+                                // Should use combineLatest.
+                                const facility = this._facility.getValue();
+                                const subgraph = new Set<any>(Facility_s.SubgraphQuery(facility));
+                                return new Map([...errors.entries()].filter(([entity,]) => subgraph.has(entity)));
+                            }));
+                    }));
+            }));
+
         this._subscriptions.push(
             roles.subscribe(roles => this._bookingOfficeRole = roles.find(role => role.Id == DealRoleIdentifier.BookingOffice)),
-            this._dealProvider.subscribe(
-                deal =>
+            this._dealProvider.subscribe(deal => this._deal = deal),
+            errors.subscribe(
+                errors =>
                 {
-                    this._deal = deal;
-                    if(deal)
+                    this._errorsService.next(errors.size ? errors : null);
+
+                    // Detect changes in all Deal Tabs (and nested Tabs).
+                    this._changeDetector.DetectChanges();
+                }),
+            errors.pipe(
+                sample(this._apply),
+                filter(errors => errors.size === 0)).subscribe(
+                    errors =>
                     {
-                        this._observingErrors.next(false);
-                        const store = Store(this._deal);
-                        const applicableStages = store.Observe(
-                            ['?Stage', '?LifeCycle'],
-                            [deal, 'Stage', '?Stage'], [deal, 'LifeCycle', '?LifeCycle']).pipe(map(
-                                (result: [LifeCycleStage, LifeCycle][]) =>
-                                {
-                                    const applicableStages = new Set<Guid>();
+                        this._transaction.Commit();
 
-                                    if(result.length)
-                                    {
-                                        const [stage, lifeCycle] = result[0]
-                                        for(let lifeCycleStage of lifeCycle.Stages)
-                                        {
-                                            applicableStages.add(lifeCycleStage.Id);
-                                            if(lifeCycleStage.Id === stage.Id)
-                                                break;
-                                        }
-                                    }
+                        if(this._applyCallback)
+                            this._applyCallback();
 
-                                    return applicableStages;
-                                }));
-
-                        const errors = this._observingErrors.pipe(switchMap(
-                            observingErrors =>
-                            {
-                                if(!observingErrors)
-                                    return NEVER;
-
-                                return ObserveErrorsSwitchMap(
-                                    deal.Ontology,
-                                    store,
-                                    applicableStages).pipe(map(errors =>
-                                    {
-                                        const facility = this._facility.getValue();
-                                        const subgraph = new Set<any>(Facility_s.SubgraphQuery(facility));
-                                        return new Map([...errors.entries()].filter(([entity,]) => subgraph.has(entity)));
-                                    }));
-                            }));
-
-                        errors.subscribe(
-                            errors =>
-                            {
-                                this._errorsService.next(errors.size ? errors : null);
-
-                                // Detect changes in all Deal Tabs (and nested Tabs).
-                                this._changeDetector.DetectChanges();
-                            });
-
-                        errors.pipe(
-                            sample(this._apply),
-                            filter(errors => errors.size === 0)).subscribe(
-                            errors =>
-                            {
-                                this._transaction.Commit();
-
-                                if(this._applyCallback)
-                                    this._applyCallback();
-
-                                this.Close();
-                            });
-
-                    }
-                }));
+                        this.Close();
+                    }));
     }
 
     ngOnDestroy(): void
