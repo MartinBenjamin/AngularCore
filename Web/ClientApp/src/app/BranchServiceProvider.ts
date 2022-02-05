@@ -1,10 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { InjectionToken, Provider } from "@angular/core";
 import { Observable } from 'rxjs';
-import { Guid } from './CommonDomainObjects';
+import { shareReplay } from 'rxjs/operators';
 import { INamedService, NamedFilters, NamedService } from "./INamedService";
 import { Branch } from "./Organisations";
-import { ObservableNamedStore } from './ObservableNamedStore';
 
 export const BranchServiceToken = new InjectionToken<INamedService<string, Branch, NamedFilters>>('BranchService');
 export const BranchServiceUrlToken = new InjectionToken<string>('BranchServiceUrl');
@@ -27,6 +26,6 @@ export const BranchesProvider: Provider =
     provide: BranchesToken,
     useFactory: (
         branchService: INamedService<string, Branch, NamedFilters>
-    ) => new ObservableNamedStore<Guid, Branch>(branchService),
+        ) => branchService.Find(new NamedFilters()).pipe(shareReplay(1)),
     deps: [BranchServiceToken]
 };

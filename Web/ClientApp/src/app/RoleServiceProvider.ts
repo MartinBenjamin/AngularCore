@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { InjectionToken, Provider } from "@angular/core";
 import { Observable } from 'rxjs';
-import { Guid } from './CommonDomainObjects';
+import { shareReplay } from 'rxjs/operators';
 import { INamedService, NamedFilters, NamedService } from "./INamedService";
-import { ObservableNamedStore } from './ObservableNamedStore';
 import { Role } from './Roles';
+
 
 export const RoleServiceToken = new InjectionToken<INamedService<string, Role, NamedFilters>>('RoleService');
 export const RoleServiceUrlToken = new InjectionToken<string>('RoleServiceUrl');
@@ -27,6 +27,6 @@ export const RolesProvider: Provider =
     provide: RolesToken,
     useFactory: (
         roleService: INamedService<string, Role, NamedFilters>
-        ) => new ObservableNamedStore<Guid, Role>(roleService),
+        ) => roleService.Find(new NamedFilters()).pipe(shareReplay(1)),
     deps: [RoleServiceToken]
 };

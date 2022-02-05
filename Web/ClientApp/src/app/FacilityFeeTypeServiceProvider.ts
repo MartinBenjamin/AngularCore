@@ -1,10 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { InjectionToken, Provider } from "@angular/core";
 import { Observable } from 'rxjs';
-import { Guid } from './CommonDomainObjects';
+import { shareReplay } from 'rxjs/operators';
 import { FeeType } from './FacilityAgreements';
 import { INamedService, NamedFilters, NamedService } from "./INamedService";
-import { ObservableNamedStore } from './ObservableNamedStore';
 
 export const FacilityFeeTypeServiceToken = new InjectionToken<INamedService<string, FeeType, NamedFilters>>('FacilityFeeTypeService');
 export const FacilityFeeTypeServiceUrlToken = new InjectionToken<string>('FacilityFeeTypeServiceUrl');
@@ -26,7 +25,7 @@ export const FacilityFeeTypesProvider: Provider =
 {
     provide: FacilityFeeTypesToken,
     useFactory: (
-        FacilityFeeTypeService: INamedService<string, FeeType, NamedFilters>
-        ) => new ObservableNamedStore<Guid, FeeType>(FacilityFeeTypeService),
+        facilityFeeTypeService: INamedService<string, FeeType, NamedFilters>
+    ) => facilityFeeTypeService.Find(new NamedFilters()).pipe(shareReplay(1)),
     deps: [FacilityFeeTypeServiceToken]
 };
