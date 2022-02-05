@@ -1,5 +1,5 @@
 import { Component, forwardRef, Inject, OnDestroy } from '@angular/core';
-import { BehaviorSubject, NEVER, Observable, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, NEVER, Observable, Subject, Subscription } from 'rxjs';
 import { filter, map, sample, switchMap } from 'rxjs/operators';
 import { BranchesToken } from '../../BranchServiceProvider';
 import { DomainObject, EmptyGuid, Guid } from '../../CommonDomainObjects';
@@ -129,13 +129,15 @@ export class Facility_s
                         if(!observingErrors)
                             return NEVER;
 
-                        return ObserveErrorsSwitchMap(
-                            deal.Ontology,
-                            store,
-                            applicableStages).pipe(map(errors =>
+                        return combineLatest(
+                            ObserveErrorsSwitchMap(
+                                deal.Ontology,
+                                store,
+                                applicableStages),
+                            this._facility).pipe(map(([errors, facility]) =>
                             {
-                                // Should use combineLatest.
-                                const facility = this._facility.getValue();
+                                if(!facility)
+                                    return errors;
                                 const subgraph = new Set<any>(Facility_s.SubgraphQuery(facility));
                                 return new Map([...errors.entries()].filter(([entity,]) => subgraph.has(entity)));
                             }));
