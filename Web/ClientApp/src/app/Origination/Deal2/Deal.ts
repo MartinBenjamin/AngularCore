@@ -81,6 +81,7 @@ export class Deal
                                    annotation.Value in this)
                                     this[annotation.Value]();
 
+                    this._observingErrors = false;
                     this._deal.next(dealBuilder.Build2(this._ontology));
                     this._errorsService.next(null);
                 }));
@@ -160,10 +161,12 @@ export class Deal
 
     Save(): void
     {
+        this._observingErrors = false;
         this._errors.pipe(takeWhile(errors => errors && errors.size > 0)).subscribe(
             {
                 next: errors =>
                 {
+                    this._observingErrors = true;
                     this._errorsService.next(errors);
 
                     // Detect changes in all Deal Tabs (and nested Tabs).
@@ -172,6 +175,13 @@ export class Deal
                 complete: () =>
                 {
                     this._errorsService.next(null);
+
+                    if(!this._observingErrors)
+                    {
+                        // Save the Deal.
+                    }
+                    else
+                        this._observingErrors = false;
                 }
             });
     }

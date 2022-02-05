@@ -72,20 +72,14 @@ export class Ontology implements IOntology
         return new Set(ontologies);
     }
 
-    Get<TAxiom extends IAxiom>(
+    *Get<TAxiom extends IAxiom>(
         typeGuard: (axiom: object) => axiom is TAxiom
-        ): Iterable<TAxiom>
+        ): IterableIterator<TAxiom>
     {
-        let current = this;
-        return {
-            *[Symbol.iterator]()
-            {
-                for(let ontology of current.GetOntologies())
-                    for(let axiom of ontology.Axioms)
-                        if(typeGuard(axiom))
-                            yield axiom;
-            }
-        };
+        for(let ontology of this.GetOntologies())
+            for(let axiom of ontology.Axioms)
+                if(typeGuard(axiom))
+                    yield axiom;
     }
 
     Classify(individuals: Set<object>): Map<object, Set<IClass>>;

@@ -1,6 +1,6 @@
 import { Component, forwardRef, Inject, OnDestroy } from '@angular/core';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { map, takeWhile } from 'rxjs/operators';
+import { BehaviorSubject, NEVER, Observable, Subject, Subscription } from 'rxjs';
+import { filter, map, sample, switchMap } from 'rxjs/operators';
 import { BranchesToken } from '../../BranchServiceProvider';
 import { DomainObject, EmptyGuid, Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
@@ -16,9 +16,8 @@ import * as facilityAgreements from '../../FacilityAgreements';
 import { LenderParticipation } from '../../FacilityAgreements';
 import { FacilityProvider } from '../../FacilityProvider';
 import { Currency } from '../../Iso4217';
-import { LifeCycleStage } from '../../LifeCycles';
-import { ObserveErrors } from '../../Ontologies/ObserveErrors';
-import { IErrors } from '../../Ontologies/Validate';
+import { LifeCycle, LifeCycleStage } from '../../LifeCycles';
+import { ObserveErrorsSwitchMap } from '../../Ontologies/ObserveErrors';
 import { Store } from '../../Ontology/IEavStore';
 import { ITransaction } from '../../Ontology/ITransactionManager';
 import { Branch } from '../../Organisations';
@@ -52,11 +51,11 @@ export class Facility_s
     private _subscriptions    : Subscription[] = [];
     private _bookingOfficeRole: Role;
     private _deal             : Deal;
-    private _errors           : Observable<Map<object, Map<string, Set<keyof IErrors>>>>;
     private _bookingOffice    : PartyInRole;
     private _applyCallback    : ApplyCallback;
     private _transaction      : ITransaction;
-    private _errorsDetected   : boolean;
+    private _observingErrors  = new BehaviorSubject<boolean>(false);
+    private _apply            = new Subject<void>();
 
     private static _subgraph: IExpression = new Sequence(
         [
@@ -80,7 +79,7 @@ export class Facility_s
         private _currencies    : Observable<Currency[]>,
         @Inject(BranchesToken)
         private _branches      : Observable<Branch[]>,
-        dealProvider           : DealProvider,
+        private _dealProvider  : DealProvider,
         @Inject(ErrorsSubjectToken)
         private _errorsService : Subject<Errors>,
         private _changeDetector: ChangeDetector
@@ -98,40 +97,74 @@ export class Facility_s
 
         this._subscriptions.push(
             roles.subscribe(roles => this._bookingOfficeRole = roles.find(role => role.Id == DealRoleIdentifier.BookingOffice)),
-            dealProvider.subscribe(
+            this._dealProvider.subscribe(
                 deal =>
                 {
                     this._deal = deal;
-                    if(!this._deal)
-                        this._errors = null;
-
-                    else
+                    if(deal)
                     {
+                        this._observingErrors.next(false);
                         const store = Store(this._deal);
-                        const applicableStages = store.ObserveAttribute('Stage').pipe(map(
-                            (stages: [import('../../Deals').Deal, LifeCycleStage][]) =>
-                            {
-                                const [deal, stage] = stages[0];
-                                const applicableStages = new Set<Guid>();
-                                for(let lifeCycleStage of deal.LifeCycle.Stages)
+                        const applicableStages = store.Observe(
+                            ['?Stage', '?LifeCycle'],
+                            [deal, 'Stage', '?Stage'], [deal, 'LifeCycle', '?LifeCycle']).pipe(map(
+                                (result: [LifeCycleStage, LifeCycle][]) =>
                                 {
-                                    applicableStages.add(lifeCycleStage.Id);
-                                    if(lifeCycleStage.Id === stage.Id)
-                                        break;
-                                }
+                                    const applicableStages = new Set<Guid>();
 
-                                return applicableStages;
+                                    if(result.length)
+                                    {
+                                        const [stage, lifeCycle] = result[0]
+                                        for(let lifeCycleStage of lifeCycle.Stages)
+                                        {
+                                            applicableStages.add(lifeCycleStage.Id);
+                                            if(lifeCycleStage.Id === stage.Id)
+                                                break;
+                                        }
+                                    }
+
+                                    return applicableStages;
+                                }));
+
+                        const errors = this._observingErrors.pipe(switchMap(
+                            observingErrors =>
+                            {
+                                if(!observingErrors)
+                                    return NEVER;
+
+                                return ObserveErrorsSwitchMap(
+                                    deal.Ontology,
+                                    store,
+                                    applicableStages).pipe(map(errors =>
+                                    {
+                                        const facility = this._facility.getValue();
+                                        const subgraph = new Set<any>(Facility_s.SubgraphQuery(facility));
+                                        return new Map([...errors.entries()].filter(([entity,]) => subgraph.has(entity)));
+                                    }));
                             }));
 
-                        this._errors = ObserveErrors(
-                            this._deal.Ontology,
-                            store,
-                            applicableStages).pipe(map(errors =>
+                        errors.subscribe(
+                            errors =>
                             {
-                                const facility = this._facility.getValue();
-                                const subgraph = new Set<any>(Facility_s.SubgraphQuery(facility));
-                                return new Map([...errors.entries()].filter(([entity,]) => subgraph.has(entity)));
-                            }))
+                                this._errorsService.next(errors.size ? errors : null);
+
+                                // Detect changes in all Deal Tabs (and nested Tabs).
+                                this._changeDetector.DetectChanges();
+                            });
+
+                        errors.pipe(
+                            sample(this._apply),
+                            filter(errors => errors.size === 0)).subscribe(
+                            errors =>
+                            {
+                                this._transaction.Commit();
+
+                                if(this._applyCallback)
+                                    this._applyCallback();
+
+                                this.Close();
+                            });
+
                     }
                 }));
     }
@@ -206,7 +239,6 @@ export class Facility_s
         applyCallback: ApplyCallback,
         )
     {
-        this._errorsDetected = false;
         this._applyCallback = applyCallback;
 
         let facility = <facilityAgreements.Facility>
@@ -251,8 +283,8 @@ export class Facility_s
             facility,
             lenderParticipation);
         store.UnsuspendPublish();
-
         this._facility.next(facility);
+        this._observingErrors.next(this._dealProvider.ObservingErrors);
         this.ComputeBookingOffice();
     }
 
@@ -261,72 +293,18 @@ export class Facility_s
         applyCallback: ApplyCallback,
         )
     {
-        this._errorsDetected = false;
         this._applyCallback = applyCallback;
         const store = Store(this._deal);
         this._transaction = store.BeginTransaction();
         this._facility.next(facility);
+        this._observingErrors.next(this._dealProvider.ObservingErrors);
         this.ComputeBookingOffice();
-
-        this._errors.pipe(takeWhile(errors => errors.size > 0)).subscribe(
-            {
-                next: errors =>
-                {
-                    this._errorsService.next(errors.size ? errors : null);
-
-                    // Detect changes in all Deal Tabs (and nested Tabs).
-                    this._changeDetector.DetectChanges();
-
-                    this._errorsDetected = true;
-                },
-                complete: () =>
-                {
-                    this._errorsService.next(null);
-
-                    // Detect changes in all Deal Tabs (and nested Tabs).
-                    this._changeDetector.DetectChanges();
-
-                    this._errorsDetected = false;
-                }
-            });
     }
 
     Apply(): void
     {
-        if(this._errorsDetected)
-            return;
-
-        this._errors.pipe(takeWhile(errors => errors.size > 0)).subscribe(
-            {
-                next: errors =>
-                {
-                    this._errorsService.next(errors.size ? errors : null);
-
-                    // Detect changes in all Deal Tabs (and nested Tabs).
-                    this._changeDetector.DetectChanges();
-
-                    this._errorsDetected = true;
-                },
-                complete: () =>
-                {
-                    this._errorsService.next(null);
-
-                    // Detect changes in all Deal Tabs (and nested Tabs).
-                    this._changeDetector.DetectChanges();
-
-                    if(!this._errorsDetected)
-                    {
-                        this._transaction.Commit();
-
-                        if(this._applyCallback)
-                            this._applyCallback();
-
-                        this.Close();
-                    }
-                    else
-                        this._errorsDetected = false;
-                }
-            });
+        this._observingErrors.next(true);
+        this._apply.next();
     }
 
     Cancel(): void
@@ -337,6 +315,7 @@ export class Facility_s
 
     Close(): void
     {
+        this._observingErrors.next(false);
         this._facility.next(null);
         this._bookingOffice = null;
     }

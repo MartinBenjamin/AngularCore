@@ -16,7 +16,7 @@ export interface IOntology
     readonly IsClassExpression: IIsClassExpression;
 
     GetOntologies(): Iterable<IOntology>;
-    Get<TAxiom extends IAxiom>(typeGuard: (axiom: object) => axiom is TAxiom): Iterable<TAxiom>;
+    Get<TAxiom extends IAxiom>(typeGuard: (axiom: object) => axiom is TAxiom): IterableIterator<TAxiom>;
     Classify(individuals: Set<object>): Map<object, Set<IClass>>;
     Classify(individual: object): Map<object, Set<IClass>>;
     SuperClasses(class$: IClassExpression): Set<IClassExpression>;
