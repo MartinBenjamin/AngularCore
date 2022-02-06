@@ -47,11 +47,11 @@ export function ObserveErrors(
 
     let observables: Observable<[string, keyof IErrors, Set<any>]>[] = [...ontology.Get(ontology.IsAxiom.IDataPropertyRange)].map(
         dataPropertyRange => store.ObserveAttribute(dataPropertyRange.DataPropertyExpression.LocalName).pipe(
-            map(elements =>
+            map(relations =>
                 [
                     dataPropertyRange.DataPropertyExpression.LocalName,
                     "Invalid",
-                    new Set<any>(elements.filter(element => !dataPropertyRange.Range.HasMember(element[1])).map(element => element[0]))
+                    new Set<any>(relations.filter(([, range]) => !dataPropertyRange.Range.HasMember(range)).map(([domain,]) => domain))
                 ])));
 
     for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
@@ -83,37 +83,37 @@ export function ObserveErrors(
 
     return combineLatest(
         observables,
-        (...observables) =>
+        (...errors) =>
         {
-            let errors = new Map<object, Map<string, Set<keyof IErrors>>>();
-            observables.forEach(
-                observable =>
+            let errorMap = new Map<object, Map<string, Set<keyof IErrors>>>();
+            errors.forEach(
+                ([property, error, individuals]) =>
                 {
-                    observable[2].forEach(
+                    individuals.forEach(
                         individual =>
                         {
-                            let individualErrors = errors.get(individual);
+                            let individualErrors = errorMap.get(individual);
                             if(!individualErrors)
                             {
                                 individualErrors = new Map<string, Set<keyof IErrors>>();
-                                errors.set(
+                                errorMap.set(
                                     individual,
                                     individualErrors);
                             }
 
-                            let propertyErrors = individualErrors.get(observable[0]);
+                            let propertyErrors = individualErrors.get(property);
                             if(!propertyErrors)
                             {
                                 propertyErrors = new Set<keyof IErrors>();
                                 individualErrors.set(
-                                    observable[0],
+                                    property,
                                     propertyErrors);
                             }
 
-                            propertyErrors.add(observable[1]);
+                            propertyErrors.add(error);
                         });
                 });
-            return errors;
+            return errorMap;
         });
 }
 
@@ -148,11 +148,11 @@ export function ObserveErrorsSwitchMap(
 
     let dataRangeObservables: Observable<[string, keyof IErrors, Set<any>]>[] = [...ontology.Get(ontology.IsAxiom.IDataPropertyRange)].map(
         dataPropertyRange => store.ObserveAttribute(dataPropertyRange.DataPropertyExpression.LocalName).pipe(
-            map(elements =>
+            map(relations =>
                 [
                     dataPropertyRange.DataPropertyExpression.LocalName,
                     "Invalid",
-                    new Set<any>(elements.filter(element => !dataPropertyRange.Range.HasMember(element[1])).map(element => element[0]))
+                    new Set<any>(relations.filter(([, range]) => !dataPropertyRange.Range.HasMember(range)).map(([domain,]) => domain))
                 ])));
 
     return applicableStages.pipe(switchMap(applicableStages =>
@@ -187,37 +187,37 @@ export function ObserveErrorsSwitchMap(
 
         return combineLatest(
             observables,
-            (...observables) =>
+            (...errors) =>
             {
-                let errors = new Map<object, Map<string, Set<keyof IErrors>>>();
-                observables.forEach(
-                    observable =>
+                let errorMap = new Map<object, Map<string, Set<keyof IErrors>>>();
+                errors.forEach(
+                    ([property, error, individuals]) =>
                     {
-                        observable[2].forEach(
+                        individuals.forEach(
                             individual =>
                             {
-                                let individualErrors = errors.get(individual);
+                                let individualErrors = errorMap.get(individual);
                                 if(!individualErrors)
                                 {
                                     individualErrors = new Map<string, Set<keyof IErrors>>();
-                                    errors.set(
+                                    errorMap.set(
                                         individual,
                                         individualErrors);
                                 }
 
-                                let propertyErrors = individualErrors.get(observable[0]);
+                                let propertyErrors = individualErrors.get(property);
                                 if(!propertyErrors)
                                 {
                                     propertyErrors = new Set<keyof IErrors>();
                                     individualErrors.set(
-                                        observable[0],
+                                        property,
                                         propertyErrors);
                                 }
 
-                                propertyErrors.add(observable[1]);
+                                propertyErrors.add(error);
                             });
                     });
-                return errors;
+                return errorMap;
             });
     }));
 }
