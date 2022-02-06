@@ -118,20 +118,20 @@ export function ObserveErrors(
 }
 
 export function ObserveRestrictedFromStageSwitchMap(
-    generator   : ObservableGenerator,
-    subClassOf  : ISubClassOf,
+    superClass  : Observable<Set<any>>,
+    subClass    : Observable<Set<any>>,
     propertyName: string,
     error       : keyof IErrors
     ): Observable<[string, keyof IErrors, Set<any>]>
 {
     return combineLatest(
-        subClassOf.SuperClassExpression.Select(generator),
-        subClassOf.SubClassExpression.Select(generator),
-        (superClassExpression, subClassExpression) =>
+        superClass,
+        subClass,
+        (superClass, subClass) =>
             [
                 propertyName,
                 error,
-                new Set<any>([...subClassExpression].filter(element => !superClassExpression.has(element)))
+                new Set<any>([...subClass].filter(element => !superClass.has(element)))
             ]);
 }
 
@@ -179,8 +179,8 @@ export function ObserveErrorsSwitchMap(
                     let error = errorAnnotation ? errorAnnotation.Value : "Mandatory";
 
                     observables.push(ObserveRestrictedFromStageSwitchMap(
-                        generator,
-                        subClassOf,
+                        subClassOf.SuperClassExpression.Select(generator),
+                        subClassOf.SubClassExpression.Select(generator),
                         propertyName,
                         error));
                 }
