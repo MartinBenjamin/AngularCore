@@ -1,6 +1,6 @@
 import { Component, forwardRef, Inject, OnDestroy } from '@angular/core';
 import { BehaviorSubject, combineLatest, NEVER, Observable, Subject, Subscription } from 'rxjs';
-import { filter, map, sample, switchMap } from 'rxjs/operators';
+import { filter, sample, switchMap } from 'rxjs/operators';
 import { BranchesToken } from '../../BranchServiceProvider';
 import { DomainObject, EmptyGuid, Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
@@ -16,8 +16,6 @@ import * as facilityAgreements from '../../FacilityAgreements';
 import { LenderParticipation } from '../../FacilityAgreements';
 import { FacilityProvider } from '../../FacilityProvider';
 import { Currency } from '../../Iso4217';
-import { LifeCycle, LifeCycleStage } from '../../LifeCycles';
-import { ObserveErrorsSwitchMap } from '../../Ontologies/ObserveErrors';
 import { Store } from '../../Ontology/IEavStore';
 import { ITransaction } from '../../Ontology/ITransactionManager';
 import { Branch } from '../../Organisations';
@@ -95,57 +93,26 @@ export class Facility_s
                 new Tab('Tab 4'                           , FacilityTab )
             ];
 
-        const errors = dealProvider.pipe(switchMap(
-            deal =>
-            {
-                if(!deal)
-                    return NEVER;
+        const errors = combineLatest(
+            dealProvider.ObserveErrors,
+            this._observeErrors,
+            (dealObserveErrors, observeErrors) => dealObserveErrors || observeErrors).pipe(switchMap(
+                observeErrors =>
+                {
+                    if(!observeErrors)
+                        return NEVER;
 
-                const store = Store(deal);
-                const applicableStages = store.Observe(
-                    ['?Stage', '?LifeCycle'],
-                    [deal, 'Stage', '?Stage'], [deal, 'LifeCycle', '?LifeCycle']).pipe(map(
-                        (result: [LifeCycleStage, LifeCycle][]) =>
+                    return combineLatest(
+                        dealProvider.Errors,
+                        this._facility,
+                        (errors, facility) =>
                         {
-                            const applicableStages = new Set<Guid>();
-
-                            if(result.length)
-                            {
-                                const [stage, lifeCycle] = result[0]
-                                for(let lifeCycleStage of lifeCycle.Stages)
-                                {
-                                    applicableStages.add(lifeCycleStage.Id);
-                                    if(lifeCycleStage.Id === stage.Id)
-                                        break;
-                                }
-                            }
-
-                            return applicableStages;
-                        }));
-
-                return combineLatest(
-                    dealProvider.ObserveErrors,
-                    this._observeErrors,
-                    (dealObserveErrors, facilityObserveErrors) => dealObserveErrors || facilityObserveErrors).pipe(switchMap(
-                    observeErrors =>
-                    {
-                        if(!observeErrors)
-                            return NEVER;
-
-                        return combineLatest(
-                            ObserveErrorsSwitchMap(
-                                deal.Ontology,
-                                store,
-                                applicableStages),
-                            this._facility).pipe(map(([errors, facility]) =>
-                            {
-                                if(!facility)
-                                    return errors;
-                                const subgraph = new Set<any>(Facility_s.SubgraphQuery(facility));
-                                return new Map([...errors.entries()].filter(([entity,]) => subgraph.has(entity)));
-                            }));
-                    }));
-            }));
+                            if(!facility)
+                                return errors;
+                            const subgraph = new Set<any>(Facility_s.SubgraphQuery(facility));
+                            return new Map([...errors.entries()].filter(([entity,]) => subgraph.has(entity)));
+                        });
+                }));
 
         this._subscriptions.push(
             roles.subscribe(roles => this._bookingOfficeRole = roles.find(role => role.Id == DealRoleIdentifier.BookingOffice)),

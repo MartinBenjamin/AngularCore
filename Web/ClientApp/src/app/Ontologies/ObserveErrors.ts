@@ -39,7 +39,7 @@ export function ObserveErrors(
     ontology        : IOntology,
     store           : IEavStore,
     applicableStages: Observable<Set<Guid>>
-    ): Observable<Map<object, Map<string, Set<keyof IErrors>>>>
+    ): Observable<Map<any, Map<string, Set<keyof IErrors>>>>
 {
     const generator = new ObservableGenerator(
         ontology,
@@ -85,7 +85,7 @@ export function ObserveErrors(
         observables,
         (...errors) =>
         {
-            let errorMap = new Map<object, Map<string, Set<keyof IErrors>>>();
+            let errorMap = new Map<any, Map<string, Set<keyof IErrors>>>();
             errors.forEach(
                 ([property, error, individuals]) =>
                 {
@@ -140,7 +140,7 @@ export function ObserveErrorsSwitchMap(
     ontology        : IOntology,
     store           : IEavStore,
     applicableStages: Observable<Set<Guid>>
-    ): Observable<Map<object, Map<string, Set<keyof IErrors>>>>
+    ): Observable<Map<any, Map<string, Set<keyof IErrors>>>>
 {
     const generator = new ObservableGenerator(
         ontology,
@@ -189,7 +189,7 @@ export function ObserveErrorsSwitchMap(
             observables,
             (...errors) =>
             {
-                let errorMap = new Map<object, Map<string, Set<keyof IErrors>>>();
+                let errorMap = new Map<any, Map<string, Set<keyof IErrors>>>();
                 errors.forEach(
                     ([property, error, individuals]) =>
                     {

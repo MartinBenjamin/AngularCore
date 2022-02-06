@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, forwardRef, Inject, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NEVER, Observable, Subject, Subscription } from 'rxjs';
-import { map, switchMap, takeWhile } from 'rxjs/operators';
+import { combineLatest, NEVER, Subject, Subscription } from 'rxjs';
+import { map, switchMap, share } from 'rxjs/operators';
 import { Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
@@ -64,7 +64,7 @@ export class Deal
     {
         super();
 
-        const errors: Observable<Errors> = this.pipe(switchMap(
+        this._errors = this._deal.pipe(switchMap(
             deal =>
             {
                 if(!deal)
@@ -92,45 +92,50 @@ export class Deal
                             return applicableStages;
                         }));
 
-                return this._observeErrors.pipe(switchMap(
-                    observeErrors =>
+                return ObserveErrorsSwitchMap(
+                    deal.Ontology,
+                    store,
+                    applicableStages);
+            }), share());
+
+        const errors = this._observeErrors.pipe(switchMap(
+            observeErrors =>
+            {
+                if(!observeErrors)
+                    return NEVER;
+
+                return combineLatest(
+                    this._errors,
+                    this._deal,
+                    (errors, deal) =>
                     {
-                        if(!observeErrors)
-                            return NEVER;
-
-                        return ObserveErrorsSwitchMap(
-                            deal.Ontology,
-                            store,
-                            applicableStages).pipe(map(errors =>
-                            {
-                                deal.Confers.filter(
-                                    commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
-                                    .forEach(
-                                        commitment =>
+                        deal.Confers.filter(
+                            commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
+                            .forEach(
+                                commitment =>
+                                {
+                                    for(let object of Facility_s.SubgraphQuery(commitment))
+                                        if(errors.has(object))
                                         {
-                                            for(let object of Facility_s.SubgraphQuery(commitment))
-                                                if(errors.has(object))
-                                                {
-                                                    let facilityErrors = errors.get(commitment);
-                                                    if(!facilityErrors)
-                                                    {
-                                                        facilityErrors = new Map<string, Set<keyof IErrors>>();
-                                                        errors.set(
-                                                            commitment,
-                                                            facilityErrors);
-                                                    }
+                                            let facilityErrors = errors.get(commitment);
+                                            if(!facilityErrors)
+                                            {
+                                                facilityErrors = new Map<string, Set<keyof IErrors>>();
+                                                errors.set(
+                                                    commitment,
+                                                    facilityErrors);
+                                            }
 
-                                                    let hasErrors = facilityErrors.get('$HasErrors');
-                                                    if(!hasErrors)
-                                                        facilityErrors.set(
-                                                            '$HasErrors',
-                                                            new Set<keyof IErrors>());
-                                                    break;
-                                                }
-                                        });
-                                return errors;
-                            }));
-                    }));
+                                            let hasErrors = facilityErrors.get('$HasErrors');
+                                            if(!hasErrors)
+                                                facilityErrors.set(
+                                                    '$HasErrors',
+                                                    new Set<keyof IErrors>());
+                                            break;
+                                        }
+                                });
+                        return errors;
+                    });
             }));
 
         this._subscriptions.push(
@@ -156,7 +161,7 @@ export class Deal
             errors.subscribe(
                 errors =>
                 {
-                    this._errorsService.next(errors);
+                    this._errorsService.next(errors.size ? errors : null);
 
                     // Detect changes in all Deal Tabs (and nested Tabs).
                     this._changeDetector.DetectChanges();
