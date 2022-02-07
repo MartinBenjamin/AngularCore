@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, forwardRef, Inject, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, NEVER, Subject, Subscription } from 'rxjs';
-import { map, switchMap, share } from 'rxjs/operators';
+import { map, shareReplay, switchMap } from 'rxjs/operators';
 import { Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
@@ -96,7 +96,7 @@ export class Deal
                     deal.Ontology,
                     store,
                     applicableStages);
-            }), share());
+            }), shareReplay(1));
 
         const errors = this._observeErrors.pipe(switchMap(
             observeErrors =>

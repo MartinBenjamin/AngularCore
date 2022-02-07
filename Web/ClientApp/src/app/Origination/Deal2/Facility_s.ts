@@ -1,6 +1,6 @@
 import { Component, forwardRef, Inject, OnDestroy } from '@angular/core';
 import { BehaviorSubject, combineLatest, NEVER, Observable, Subject, Subscription } from 'rxjs';
-import { filter, sample, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, sample, switchMap } from 'rxjs/operators';
 import { BranchesToken } from '../../BranchServiceProvider';
 import { DomainObject, EmptyGuid, Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
@@ -96,23 +96,25 @@ export class Facility_s
         const errors = combineLatest(
             dealProvider.ObserveErrors,
             this._observeErrors,
-            (dealObserveErrors, observeErrors) => dealObserveErrors || observeErrors).pipe(switchMap(
-                observeErrors =>
-                {
-                    if(!observeErrors)
-                        return NEVER;
+            (dealObserveErrors, observeErrors) => dealObserveErrors || observeErrors).pipe(
+                distinctUntilChanged(),
+                switchMap(
+                    observeErrors =>
+                    {
+                        if(!observeErrors)
+                            return NEVER;
 
-                    return combineLatest(
-                        dealProvider.Errors,
-                        this._facility,
-                        (errors, facility) =>
-                        {
-                            if(!facility)
-                                return errors;
-                            const subgraph = new Set<any>(Facility_s.SubgraphQuery(facility));
-                            return new Map([...errors.entries()].filter(([entity,]) => subgraph.has(entity)));
-                        });
-                }));
+                        return combineLatest(
+                            dealProvider.Errors,
+                            this._facility,
+                            (errors, facility) =>
+                            {
+                                if(!facility)
+                                    return errors;
+                                const subgraph = new Set<any>(Facility_s.SubgraphQuery(facility));
+                                return new Map([...errors.entries()].filter(([entity,]) => subgraph.has(entity)));
+                            });
+                    }));
 
         this._subscriptions.push(
             roles.subscribe(roles => this._bookingOfficeRole = roles.find(role => role.Id == DealRoleIdentifier.BookingOffice)),
@@ -277,11 +279,11 @@ export class Facility_s
 
     Cancel(): void
     {
+        this.Close();
         const store = Store(this._deal);
         store.SuspendPublish();
         this._transaction.Rollback();
         store.UnsuspendPublish();
-        this.Close();
     }
 
     Close(): void
