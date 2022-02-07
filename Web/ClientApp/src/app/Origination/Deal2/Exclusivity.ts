@@ -129,7 +129,8 @@ export class Exclusivity implements OnDestroy
             store.SuspendPublish();
             if(!this._classifier)
             {
-                if(this._exclusivity !== null)
+                if(typeof this._exclusivity != 'undefined' &&
+                   this._exclusivity !== null)
                 {
                     this._deal.Confers.splice(
                         this._deal.Confers.indexOf(this._exclusivity),

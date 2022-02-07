@@ -277,7 +277,10 @@ export class Facility_s
 
     Cancel(): void
     {
+        const store = Store(this._deal);
+        store.SuspendPublish();
         this._transaction.Rollback();
+        store.UnsuspendPublish();
         this.Close();
     }
 
