@@ -318,13 +318,13 @@ export class EavStore implements IEavStore, IPublisher
             entity,
             av);
 
-        entity[StoreSymbol] = this;
-
         if(this._transactionManager.Active)
             this._transactionManager.Log(
                 new NewEntity(
                     entity,
                     () => this.DeleteEntity(entity)));
+
+        entity[StoreSymbol] = this;
 
         this.PublishEntities();
         return entity;

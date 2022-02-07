@@ -86,7 +86,7 @@ export class NewEntity extends LogEntry
 {
     constructor(
         entity: any,
-        public RollBack: () => void
+        public Rollback: () => void
         )
     {
         super(entity);
@@ -97,7 +97,7 @@ export class DeleteEntity extends LogEntry
 {
     constructor(
         entity: any,
-        public RollBack: () => void
+        public Rollback: () => void
         )
     {
         super(entity);
