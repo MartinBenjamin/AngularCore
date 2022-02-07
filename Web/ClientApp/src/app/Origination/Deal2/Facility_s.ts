@@ -1,6 +1,6 @@
 import { Component, forwardRef, Inject, OnDestroy } from '@angular/core';
 import { BehaviorSubject, combineLatest, NEVER, Observable, Subject, Subscription } from 'rxjs';
-import { distinctUntilChanged, filter, sample, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, sample, share, switchMap } from 'rxjs/operators';
 import { BranchesToken } from '../../BranchServiceProvider';
 import { DomainObject, EmptyGuid, Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
@@ -113,7 +113,7 @@ export class Facility_s
                                     return errors;
                                 const subgraph = new Set<any>(Facility_s.SubgraphQuery(facility));
                                 return new Map([...errors.entries()].filter(([entity,]) => subgraph.has(entity)));
-                            });
+                            }).pipe(share());
                     }));
 
         this._subscriptions.push(
