@@ -1,6 +1,7 @@
 import { } from 'jasmine';
 import { Subscription } from 'rxjs';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
+import { FunctionalObjectProperty } from './FunctionalObjectProperty';
 import { IClassExpression } from './IClassExpression';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectExactCardinality } from './ObjectExactCardinality';
@@ -84,6 +85,73 @@ describe(
                                 ce.Cardinality === 2 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
                                 () => expect(elements(ce).has(x)).toBe(ce.Cardinality === 2));
+                    });
+            });
+
+        describe(
+            'Given an Ontology o1 with axioms ObjectProperty(op1) and FunctionalObjectProperty(op1):',
+            () =>
+            {
+                const o1 = new Ontology('o1');
+                const op1 = new ObjectProperty(o1, 'op1');
+                new FunctionalObjectProperty(o1, op1);
+                const ce = new ObjectExactCardinality(op1, 1);
+                const store: IEavStore = new EavStore();
+                const generator = new ObservableGenerator(
+                    o1,
+                    store);
+
+                function elements(
+                    ce: IClassExpression
+                    ): Set<any>
+                {
+                    let subscription: Subscription;
+                    try
+                    {
+                        let elements: Set<any> = null;
+                        subscription = generator.ClassExpression(ce).subscribe(m => elements = m);
+                        return elements;
+                    }
+                    finally
+                    {
+                        subscription.unsubscribe();
+                    }
+                }
+
+                describe(
+                    'Given x ∈ ΔI:',
+                    () =>
+                    {
+                        const x = store.NewEntity();
+                        it(
+                            `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
+                            () => expect(elements(ce).has(x)).toBe(false));
+                    });
+
+                describe(
+                    'Given (op1)OP = {(x, y)}:',
+                    () =>
+                    {
+                        const x = store.NewEntity();
+                        const y = 2;
+                        store.Assert(x, op1.LocalName, y);
+                        it(
+                            `x ∈ (${classExpressionWriter.Write(ce)})C`,
+                            () => expect(elements(ce).has(x)).toBe(true));
+                    });
+
+                describe(
+                    'Given (dp1)DP = {(x, y), (x, z)}:',
+                    () =>
+                    {
+                        const x = store.NewEntity();
+                        const y = 2;
+                        const z = 3;
+                        store.Assert(x, op1.LocalName, y);
+                        store.Assert(x, op1.LocalName, z);
+                        it(
+                            `x ∈ (${classExpressionWriter.Write(ce)})C`,
+                            () => expect(elements(ce).has(x)).toBe(true));
                     });
             });
     });

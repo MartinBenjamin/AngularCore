@@ -84,7 +84,6 @@ describe(
                     });
             });
 
-            
         describe(
             'Given an Ontology o1 with axioms DataProperty(dp1) and FunctionalDataProperty(dp1):',
             () =>
