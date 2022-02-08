@@ -173,6 +173,7 @@
     <None Remove="ClientApp\src\app\Ontology\EquivalentClasses.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\EquivalentClasses.ts" />
     <None Remove="ClientApp\src\app\Ontology\FunctionalDataProperty.ts" />
+    <None Remove="ClientApp\src\app\Ontology\FunctionalObjectProperty.ts" />
     <None Remove="ClientApp\src\app\Ontology\Group.ts" />
     <None Remove="ClientApp\src\app\Ontology\HasKey.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\HasKey.ts" />
@@ -210,6 +211,7 @@
     <None Remove="ClientApp\src\app\Ontology\IEntity.ts" />
     <None Remove="ClientApp\src\app\Ontology\IEquivalentClasses.ts" />
     <None Remove="ClientApp\src\app\Ontology\IFunctionalDataProperty.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IFunctionalObjectProperty.ts" />
     <None Remove="ClientApp\src\app\Ontology\IHasKey.ts" />
     <None Remove="ClientApp\src\app\Ontology\IIndividual.ts" />
     <None Remove="ClientApp\src\app\Ontology\IIsAxiom.ts" />
@@ -489,6 +491,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\EquivalentClasses.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\EquivalentClasses.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\FunctionalDataProperty.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\FunctionalObjectProperty.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Group.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\HasKey.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\HasKey.ts" />
@@ -526,6 +529,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IEntity.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IEquivalentClasses.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IFunctionalDataProperty.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IFunctionalObjectProperty.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IHasKey.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IIsAxiom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IIsClassExpression.ts" />

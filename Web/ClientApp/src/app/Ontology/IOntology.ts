@@ -24,6 +24,7 @@ export interface IOntology
     // Provided to assist construction of ontologies.
     DeclareClass(localName: string): IClass;
     DeclareObjectProperty(localName: string): IObjectPropertyExpression;
+    DeclareFunctionalObjectProperty(localName: string): IObjectPropertyExpression;
     DeclareDataProperty(localName: string): IDataPropertyExpression;
     DeclareFunctionalDataProperty(localName: string): IDataPropertyExpression;
     DeclareAnnotationProperty(localName: string): IAnnotationProperty;

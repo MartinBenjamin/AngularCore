@@ -63,6 +63,7 @@ export class EavStore implements IEavStore, IPublisher
     private _publishEntities    : boolean;
     private _atomsToPublish     : Set<Fact> = new ArraySet<Fact>();
     private _transactionManager : ITransactionManager = new TransactionManager();
+    private _defaultCardinality : Cardinality;
 
     private static _empty: [any, any][] = [];
 
@@ -75,6 +76,8 @@ export class EavStore implements IEavStore, IPublisher
             attributeSchema
                 .filter(attributeSchema => attributeSchema.UniqueIdentity)
                 .map(attributeSchema => [attributeSchema.Name, new Map<any, any>()]));
+
+        this._defaultCardinality = this._schema.size ? Cardinality.One : Cardinality.Many;
     }
 
     public Entities(): Set<any>
@@ -376,6 +379,7 @@ export class EavStore implements IEavStore, IPublisher
                             this._eav.set(
                                 entity,
                                 av);
+                            entity[StoreSymbol] = this;
                             this.PublishEntities();
                         }));
 
@@ -764,7 +768,7 @@ export class EavStore implements IEavStore, IPublisher
         if(attributeSchema && typeof attributeSchema.Cardinality !== 'undefined')
             return attributeSchema.Cardinality;
 
-        return Cardinality.Many;
+        return this._defaultCardinality;
     }
 }
 

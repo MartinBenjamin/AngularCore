@@ -9,6 +9,7 @@ import { IDisjointClasses } from "./IDisjointClasses";
 import { IEntity } from "./IEntity";
 import { IEquivalentClasses } from "./IEquivalentClasses";
 import { IFunctionalDataProperty } from "./IFunctionalDataProperty";
+import { IFunctionalObjectProperty } from "./IFunctionalObjectProperty";
 import { IHasKey } from "./IHasKey";
 import { INamedIndividual } from "./INamedIndividual";
 import { IObjectPropertyDomain } from "./IObjectPropertyDomain";
@@ -38,6 +39,7 @@ export interface IIsAxiom
     IObjectPropertyRange     : TypeGuard<IObjectPropertyRange     >;
     IDataPropertyDomain      : TypeGuard<IDataPropertyDomain      >;
     IDataPropertyRange       : TypeGuard<IDataPropertyRange       >;
+    IFunctionalObjectProperty: TypeGuard<IFunctionalObjectProperty>;
     IFunctionalDataProperty  : TypeGuard<IFunctionalDataProperty  >;
     IAnnotationAssertion     : TypeGuard<IAnnotationAssertion     >;
 }

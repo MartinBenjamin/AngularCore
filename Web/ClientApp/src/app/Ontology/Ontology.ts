@@ -2,6 +2,7 @@ import { AnnotationProperty } from "./AnnotationProperty";
 import { Class } from "./Class";
 import { ClassMembershipEvaluator } from "./ClassMembershipEvaluator";
 import { FunctionalDataProperty } from "./FunctionalDataProperty";
+import { FunctionalObjectProperty } from "./FunctionalObjectProperty";
 import { IAnnotationProperty } from "./IAnnotationProperty";
 import { IAxiom } from "./IAxiom";
 import { IClass } from "./IClass";
@@ -137,6 +138,17 @@ export class Ontology implements IOntology
         return new ObjectProperty(
             this,
             localName);
+    }
+
+    DeclareFunctionalObjectProperty(
+        localName: string
+        ): IObjectPropertyExpression
+    {
+        let objectProperty = this.DeclareObjectProperty(localName);
+        new FunctionalObjectProperty(
+            this,
+            objectProperty);
+        return objectProperty;
     }
 
     DeclareDataProperty(
