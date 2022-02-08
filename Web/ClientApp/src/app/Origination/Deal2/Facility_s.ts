@@ -170,20 +170,28 @@ export class Facility_s
         branch: Branch
         )
     {
+        const store = Store(this._deal);
+        store.SuspendPublish();
         const facility = this._facility.getValue();
         let lenderParticipation = <facilityAgreements.LenderParticipation>facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
         if(this._bookingOffice)
+        {
             lenderParticipation.Obligors.splice(
                 lenderParticipation.Obligors.indexOf(this._bookingOffice),
                 1);
 
+            if(this._deal.Confers.every(commitment => !commitment.Obligors.includes(this._bookingOffice)))
+                // Booking Office party no longer referenced.
+                store.DeleteEntity(this._bookingOffice);
+        }
+
         if(branch)
         {
-
             let bookingOffice = this._deal.Parties.find(
                 party => party.Organisation.Id === branch.Id && party.Role.Id === this._bookingOfficeRole.Id);
 
             if(!bookingOffice)
+            {
                 bookingOffice = <PartyInRole>
                     {
                         Id             : EmptyGuid,
@@ -194,9 +202,12 @@ export class Facility_s
                         Period         : null
                     };
 
+                bookingOffice = <PartyInRole>store.Add(bookingOffice);
+            }
+
             lenderParticipation.Obligors.push(bookingOffice);
         }
-
+        store.UnsuspendPublish();
         this.ComputeBookingOffice();
     }
 

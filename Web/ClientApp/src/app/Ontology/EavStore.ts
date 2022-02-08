@@ -513,7 +513,7 @@ export class EavStore implements IEavStore, IPublisher
             if(index === -1)
                 throw 'Unknown fact.';
 
-            previousValue[TargetSymbol].slice(
+            previousValue[TargetSymbol].splice(
                 index,
                 1);
         }
