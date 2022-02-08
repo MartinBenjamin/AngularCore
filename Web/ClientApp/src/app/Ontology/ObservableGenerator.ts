@@ -22,18 +22,19 @@ import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from './IOntology';
-import { IDataPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
+import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
 import { TransitiveClosure3 } from "./TransitiveClosure";
 
 export { IEavStore, EavStore };
 
 export class ObservableGenerator implements IClassExpressionSelector<Observable<Set<any>>>
 {
-    private _classDefinitions         : Map<IClass, IClassExpression[]>;
-    private _functionalDataProperties = new Set<IDataPropertyExpression>();
-    private _classObservables         = new Map<IClass, Observable<Set<any>>>();
-    private _individualInterpretation : Map<IIndividual, any>;
-    private _objectDomain             : Observable<Set<any>>;
+    private _classDefinitions           : Map<IClass, IClassExpression[]>;
+    private _functionalObjectProperties = new Set<IObjectPropertyExpression>();
+    private _functionalDataProperties   = new Set<IDataPropertyExpression>();
+    private _classObservables           = new Map<IClass, Observable<Set<any>>>();
+    private _individualInterpretation   : Map<IIndividual, any>;
+    private _objectDomain               : Observable<Set<any>>;
 
     private static _nothing = new BehaviorSubject<Set<any>>(new Set<any>()).asObservable();
 
@@ -43,6 +44,9 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         )
     {
         this._objectDomain = this._store.ObserveEntities();
+
+        for(const functionalObjectProperty of this._ontology.Get(this._ontology.IsAxiom.IFunctionalObjectProperty))
+            this._functionalObjectProperties.add(functionalObjectProperty.ObjectPropertyExpression);
 
         for(const functionalDataProperty of this._ontology.Get(this._ontology.IsAxiom.IFunctionalDataProperty))
             this._functionalDataProperties.add(functionalDataProperty.DataPropertyExpression);
@@ -303,6 +307,11 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
                                 new Set<any>([...groupedByDomain]
                                     .filter(([, relations]) => relations.length === objectExactCardinality.Cardinality)
                                     .map(([domain,]) => domain))));
+
+        if(objectExactCardinality.Cardinality === 1 && this._functionalObjectProperties.has(objectExactCardinality.ObjectPropertyExpression))
+            // Optimise for Functional Data Properties.
+            return observableObjectPropertyExpression.pipe(
+                map(objectPropertyExpression => new Set<any>(objectPropertyExpression.map(([domain,]) => domain))));
 
         return observableObjectPropertyExpression.pipe(
             map(this.GroupByDomain),
