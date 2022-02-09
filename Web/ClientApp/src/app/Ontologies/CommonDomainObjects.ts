@@ -1,12 +1,14 @@
 import { IClass } from "../Ontology/IClass";
 import { IDataPropertyExpression } from "../Ontology/IPropertyExpression";
 import { Ontology } from "../Ontology/Ontology";
+import { Thing } from '../Ontology/Thing';
+import { HasKey } from '../Ontology/HasKey';
 
 export class CommonDomainObjects extends Ontology
 {
     readonly $type       : IDataPropertyExpression;
-    readonly DomainObject: IClass;
     readonly Id          : IDataPropertyExpression;
+    readonly DomainObject: IClass;
     readonly Named       : IClass                 
     readonly Name        : IDataPropertyExpression;
     readonly Classifier  : IClass                 
@@ -17,9 +19,12 @@ export class CommonDomainObjects extends Ontology
 
         this.$type = this.DeclareFunctionalDataProperty("$type")
 
-        this.DomainObject = this.DeclareClass("DomainObject");
         this.Id = this.DeclareFunctionalDataProperty("Id");
-        this.DomainObject.HasKey([this.Id]);
+        new HasKey(
+            this,
+            Thing,
+            [this.Id]);
+        this.DomainObject = this.DeclareClass("DomainObject");
         this.DomainObject.Define(this.Id.ExactCardinality(1));
 
         this.Named = this.DeclareClass("Named");
