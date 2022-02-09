@@ -244,7 +244,7 @@ export class DealBuilder implements IDealBuilder
                         Cardinality: Cardinality.Many
                     });
 
-        const store: IEavStore = new EavStore([{ Name: 'Id', UniqueIdentity: true }]);
+        const store: IEavStore = new EavStore(attributeSchema);
         deal = <Deal>store.Add(deal);
         deal.Ontology = ontology;
 
