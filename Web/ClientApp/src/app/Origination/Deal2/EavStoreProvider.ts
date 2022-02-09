@@ -6,9 +6,5 @@ export const EavStoreToken = new InjectionToken<IEavStore>('EavStoreToken');
 export const EavStoreProvider: Provider =
 {
     provide: EavStoreToken,
-    useValue: new EavStore(
-        {
-            Name          : 'Id',
-            UniqueIdentity: true
-        })
+    useValue: new EavStore()
 };

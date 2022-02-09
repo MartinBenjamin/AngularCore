@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { ArraySet } from './ArraySet';
 import { assertBuilder } from './assertBuilder';
 import { ArrayProxyFactory, EavStore, TargetSymbol } from './EavStore';
-import { IEavStore, Store, Fact } from './IEavStore';
+import { Cardinality, Fact, IEavStore, Store } from './IEavStore';
 import { IPublisher } from './IPublisher';
 
 class DummyPublisher implements IPublisher
@@ -195,7 +195,7 @@ describe(
             "Given store = new EavStore({ Name: 'Id', UniqueIdentity: true}) and e = store.Add({ Id: 1 })",
             () =>
             {
-                const store: IEavStore = new EavStore({ Name: 'Id', UniqueIdentity: true });
+                const store: IEavStore = new EavStore([{ Name: 'Id', UniqueIdentity: true, Cardinality: Cardinality.One }]);
                 const e = store.Add({ Id: 1 });
                 let assert = assertBuilder('store', 'e')
                     (store, e);

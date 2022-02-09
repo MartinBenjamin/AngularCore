@@ -14,7 +14,6 @@ import { DealBuilderProvider } from '../../Ontologies/IDealBuilder';
 import { Common } from './Common';
 import { Deal } from './Deal';
 import { DealGeographicRegion } from './DealGeographicRegion';
-import { EavStoreProvider } from './EavStoreProvider';
 import { Errors } from './Errors';
 import { Exclusivity } from './Exclusivity';
 import { Facilities } from './Facilities';
@@ -65,8 +64,7 @@ const routes: Routes =
         providers:
             [
                 DealOntologyServiceProvider,
-                DealBuilderProvider,
-                EavStoreProvider
+                DealBuilderProvider
             ]
     })
 export class DealModule

@@ -63,12 +63,12 @@ export class EavStore implements IEavStore, IPublisher
     private _publishEntities    : boolean;
     private _atomsToPublish     : Set<Fact> = new ArraySet<Fact>();
     private _transactionManager : ITransactionManager = new TransactionManager();
-    private _defaultCardinality : Cardinality;
 
     private static _empty: [any, any][] = [];
 
     constructor(
-        ...attributeSchema: AttributeSchema[]
+        attributeSchema: AttributeSchema[] = [],
+        private _defaultCardinality = Cardinality.Many
         )
     {
         this._schema = new Map<PropertyKey, AttributeSchema>(attributeSchema.map(attributeSchema => [attributeSchema.Name, attributeSchema]));
@@ -76,8 +76,6 @@ export class EavStore implements IEavStore, IPublisher
             attributeSchema
                 .filter(attributeSchema => attributeSchema.UniqueIdentity)
                 .map(attributeSchema => [attributeSchema.Name, new Map<any, any>()]));
-
-        this._defaultCardinality = this._schema.size ? Cardinality.One : Cardinality.Many;
     }
 
     public Entities(): Set<any>
