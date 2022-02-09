@@ -3,7 +3,7 @@ import { map } from 'rxjs/operators';
 import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
 import { ArraySet } from './ArraySet';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
-import { AttributeSchema, Cardinality, Fact, IEavStore, StoreSymbol } from './IEavStore';
+import { AttributeSchema, Cardinality, Fact, IEavStore, Store, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
 
@@ -603,6 +603,9 @@ export class EavStore implements IEavStore, IPublisher
         if(typeof object !== 'object' ||
             object === null ||
             object instanceof Date)
+            return object;
+
+        if(Store(object) === this)
             return object;
 
         let entity = added.get(object);
