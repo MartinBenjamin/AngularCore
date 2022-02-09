@@ -77,12 +77,12 @@ describe(
 
         const o = { a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null };
         describe(
-            `Given store = new EavStore() and e = store.Add(${JSON.stringify(o)}):`,
+            `Given store = new EavStore() and e = store.Assert(${JSON.stringify(o)}):`,
             () =>
             {
                 const store: IEavStore = new EavStore();
                 //const o = { a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null };
-                const e = store.Add(o);
+                const e = store.Assert(o);
                 let assert = assertBuilder('Store', 'store', 'e')
                     (Store, store, e);
 
@@ -162,10 +162,10 @@ describe(
                         assert('a1.has([e.a2[0], e.a2[0].a1])');
 
                         describe(
-                            'Given e1 = store.Add({ a1: 3 }):',
+                            'Given e1 = store.Assert({ a1: 3 }):',
                             () =>
                             {
-                                const e1 = store.Add({ a1: 3 });
+                                const e1 = store.Assert({ a1: 3 });
                                 let assert = assertBuilder('store', 'e', 'e1', 'a1')
                                     (store, e, e1, a1);
                                 assert('a1.size === 3');
@@ -192,17 +192,17 @@ describe(
             });
 
         describe(
-            "Given store = new EavStore({ Name: 'Id', UniqueIdentity: true}) and e = store.Add({ Id: 1 })",
+            "Given store = new EavStore({ Name: 'Id', UniqueIdentity: true}) and e = store.Assert({ Id: 1 })",
             () =>
             {
                 const store: IEavStore = new EavStore([{ Name: 'Id', UniqueIdentity: true, Cardinality: Cardinality.One }]);
-                const e = store.Add({ Id: 1 });
+                const e = store.Assert({ Id: 1 });
                 let assert = assertBuilder('store', 'e')
                     (store, e);
                 assert('e.Id === 1');
-                assert('e === store.Add({ Id: 1 })');
-                assert('e !== store.Add({ Id: 2 })');
-                assert("typeof e.a1 === 'undefined' && e === store.Add({ Id: 1, a1: 2 }) && e.a1 === 2");
+                assert('e === store.Assert({ Id: 1 })');
+                assert('e !== store.Assert({ Id: 2 })');
+                assert("typeof e.a1 === 'undefined' && e === store.Assert({ Id: 1, a1: 2 }) && e.a1 === 2");
             });
 
         describe(
@@ -220,13 +220,13 @@ describe(
                         o.a1 = value;
 
                     describe(
-                        `Given store = new EavStore(), e1 = store.Add(${JSON.stringify(o)}) and e2 = store.Add({}):`,
+                        `Given store = new EavStore(), e1 = store.Assert(${JSON.stringify(o)}) and e2 = store.Assert({}):`,
                         () =>
                         {
                             const store = new EavStore();
                             const entities = {
-                                e1: store.Add(o),
-                                e2: store.Add({})
+                                e1: store.Assert(o),
+                                e2: store.Assert({})
                             };
 
                             for(const entityId of entityIds)
@@ -261,13 +261,13 @@ describe(
                         o.a1 = [value];
 
                     describe(
-                        `Given store = new EavStore(), e1 = store.Add(${JSON.stringify(o)}) and e2 = store.Add({}):`,
+                        `Given store = new EavStore(), e1 = store.Assert(${JSON.stringify(o)}) and e2 = store.Assert({}):`,
                         () =>
                         {
                             const store = new EavStore();
                             const entities = {
-                                e1: store.Add(o),
-                                e2: store.Add({})
+                                e1: store.Assert(o),
+                                e2: store.Assert({})
                             };
 
                             for(const entityId of entityIds)
@@ -312,13 +312,13 @@ describe(
                                     {
                                         let o: any = {};
                                         describe(
-                                            `Given store = new EavStore(), e1 = store.Add(${JSON.stringify(o)}) and e2 = store.Add({}):`,
+                                            `Given store = new EavStore(), e1 = store.Assert(${JSON.stringify(o)}) and e2 = store.Assert({}):`,
                                             () =>
                                             {
                                                 const store = new EavStore();
                                                 const entities = {
-                                                    e1: store.Add(o),
-                                                    e2: store.Add({})
+                                                    e1: store.Assert(o),
+                                                    e2: store.Assert({})
                                                 };
 
                                                 describe(
@@ -370,13 +370,13 @@ describe(
                                     {
                                         let o: any = { a1: value };
                                         describe(
-                                            `Given store = new EavStore(), e1 = store.Add(${JSON.stringify(o)}) and e2 = store.Add({}):`,
+                                            `Given store = new EavStore(), e1 = store.Assert(${JSON.stringify(o)}) and e2 = store.Assert({}):`,
                                             () =>
                                             {
                                                 const store = new EavStore();
                                                 const entities = {
-                                                    e1: store.Add(o),
-                                                    e2: store.Add({})
+                                                    e1: store.Assert(o),
+                                                    e2: store.Assert({})
                                                 };
 
                                                 describe(
@@ -430,13 +430,13 @@ describe(
                                             {
                                                 let o: any = { a1: before };
                                                 describe(
-                                                    `Given store = new EavStore(), e1 = store.Add(${JSON.stringify(o)}) and e2 = store.Add({}):`,
+                                                    `Given store = new EavStore(), e1 = store.Assert(${JSON.stringify(o)}) and e2 = store.Assert({}):`,
                                                     () =>
                                                     {
                                                         const store = new EavStore();
                                                         const entities = {
-                                                            e1: store.Add(o),
-                                                            e2: store.Add({})
+                                                            e1: store.Assert(o),
+                                                            e2: store.Assert({})
                                                         };
 
                                                         describe(
@@ -501,13 +501,13 @@ describe(
                                         {
                                             let o: any = { a1: [] };
                                             describe(
-                                                `Given store = new EavStore(), e1 = store.Add(${JSON.stringify(o)}) and e2 = store.Add({}):`,
+                                                `Given store = new EavStore(), e1 = store.Assert(${JSON.stringify(o)}) and e2 = store.Assert({}):`,
                                                 () =>
                                                 {
                                                     const store = new EavStore();
                                                     const entities = {
-                                                        e1: store.Add(o),
-                                                        e2: store.Add({})
+                                                        e1: store.Assert(o),
+                                                        e2: store.Assert({})
                                                     };
 
                                                     describe(
@@ -560,13 +560,13 @@ describe(
                                         {
                                             let o: any = { a1: [value] };
                                             describe(
-                                                `Given store = new EavStore(), e1 = store.Add(${JSON.stringify(o)}) and e2 = store.Add({}):`,
+                                                `Given store = new EavStore(), e1 = store.Assert(${JSON.stringify(o)}) and e2 = store.Assert({}):`,
                                                 () =>
                                                 {
                                                     const store = new EavStore();
                                                     const entities = {
-                                                        e1: store.Add(o),
-                                                        e2: store.Add({})
+                                                        e1: store.Assert(o),
+                                                        e2: store.Assert({})
                                                     };
 
                                                     describe(
@@ -620,13 +620,13 @@ describe(
                                             {
                                                 let o: any = { a1: [before] };
                                                 describe(
-                                                    `Given store = new EavStore(), e1 = store.Add(${JSON.stringify(o)}) and e2 = store.Add({}):`,
+                                                    `Given store = new EavStore(), e1 = store.Assert(${JSON.stringify(o)}) and e2 = store.Assert({}):`,
                                                     () =>
                                                     {
                                                         const store = new EavStore();
                                                         const entities = {
-                                                            e1: store.Add(o),
-                                                            e2: store.Add({})
+                                                            e1: store.Assert(o),
+                                                            e2: store.Assert({})
                                                         };
 
                                                         describe(
@@ -693,13 +693,13 @@ describe(
                                             {
                                                 let o: any = { a1: [before] };
                                                 describe(
-                                                    `Given store = new EavStore(), e1 = store.Add(${JSON.stringify(o)}) and e2 = store.Add({}):`,
+                                                    `Given store = new EavStore(), e1 = store.Assert(${JSON.stringify(o)}) and e2 = store.Assert({}):`,
                                                     () =>
                                                     {
                                                         const store = new EavStore();
                                                         const entities = {
-                                                            e1: store.Add(o),
-                                                            e2: store.Add({})
+                                                            e1: store.Assert(o),
+                                                            e2: store.Assert({})
                                                         };
 
                                                         describe(

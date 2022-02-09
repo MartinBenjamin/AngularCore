@@ -412,9 +412,28 @@ export class EavStore implements IEavStore, IPublisher
     Assert(
         entity   : any,
         attribute: PropertyKey,
-        value    : any
+        value    : any): void;
+    Assert(object: object): any;
+    Assert(
+        entity    : any,
+        attribute?: PropertyKey,
+        value    ?: any
         ): void
     {
+        if(typeof attribute === 'undefined')
+            try
+            {
+                this.SuspendPublish();
+                const added = new Map<object, any>();
+                return this.AddObject(
+                    entity,
+                    added);
+            }
+            finally
+            {
+                this.UnsuspendPublish();
+            }
+
         const av = this._eav.get(entity);
         let ev = this._aev.get(attribute);
         let previousValue = av.get(attribute);

@@ -245,7 +245,7 @@ export class DealBuilder implements IDealBuilder
                     });
 
         const store: IEavStore = new EavStore(attributeSchema);
-        deal = <Deal>store.Add(deal);
+        deal = <Deal>store.Assert(deal);
         deal.Ontology = ontology;
 
         store.ObserveAttribute('Equity')
@@ -281,7 +281,7 @@ export class DealBuilder implements IDealBuilder
         this._classificationSchemeService
             .Get(ClassificationSchemeIdentifier.DealType)
             .subscribe(
-                classificationScheme => store.Add(classificationScheme.Classifiers
+                classificationScheme => store.Assert(classificationScheme.Classifiers
                     .map(classificationSchemeClassifier => classificationSchemeClassifier.Classifier)
                     .find(classifier => classifier.Id === deal.Type.Id)));
 

@@ -34,11 +34,11 @@ export interface IEavStore
         entity   : any,
         attribute: PropertyKey,
         value    : any): void;
+    Assert(object: object): any;
     Retract(
         entity   : any,
         attribute: PropertyKey,
         value    : any): void;
-    Add(object: object, added?: Map<object, any>): any;
 
     SuspendPublish(): void;
     UnsuspendPublish(): void;

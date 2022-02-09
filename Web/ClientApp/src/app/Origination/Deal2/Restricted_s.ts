@@ -43,7 +43,7 @@ export class Restricted_s implements OnDestroy
                         .subscribe(
                             classificationScheme =>
                             {
-                                classificationScheme = <ClassificationScheme>store.Add(classificationScheme);
+                                classificationScheme = <ClassificationScheme>store.Assert(classificationScheme);
                                 this._classificationSchemeClassifiers = classificationScheme.Classifiers.filter(
                                     classificationSchemeClassifier => classificationSchemeClassifier.Super === null);
                             });

@@ -5,7 +5,7 @@ import { IOntology } from "./IOntology";
 export function AddIndividual(
     ontology  : IOntology,
     individual: IIndividual,
-    store     : { Add(object: object): any }
+    store     : { Assert(object: object): any }
     ): any
 {
         const object = {};
@@ -34,12 +34,12 @@ export function AddIndividual(
                     object[propertyName] = dataPropertyAssertion.TargetValue;
             }
 
-    return store.Add(object);
+    return store.Assert(object);
 }
 
 export function AddIndividuals(
     ontology: IOntology,
-    store   : { Add(object: object): any }
+    store   : { Assert(object: object): any }
     ): Map<IIndividual, any>
 {
     const map = new Map<IIndividual, any>();

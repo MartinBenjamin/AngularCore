@@ -51,7 +51,7 @@ export class Sponsors_s implements OnDestroy
                             deal.Ontology,
                             roleIndividuals.Sponsor,
                             store);
-                        roleService.Get(this._sponsorRole.Id).subscribe(sponsorRole => store.Add(sponsorRole));
+                        roleService.Get(this._sponsorRole.Id).subscribe(sponsorRole => store.Assert(sponsorRole));
                         this.Build(deal.Ontology);
 
                         const generator = new ObservableGenerator(
@@ -129,7 +129,7 @@ export class Sponsors_s implements OnDestroy
                     };
 
                     sponsor.Role = this._sponsorRole;
-                    this._deal.Parties.push(<Sponsor>Store(this._deal).Add(sponsor));
+                    this._deal.Parties.push(<Sponsor>store.Assert(sponsor));
                     this._deal.SponsorsNA = false;
                 }
                 finally

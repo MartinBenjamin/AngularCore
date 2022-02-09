@@ -46,7 +46,7 @@ export class Exclusivity implements OnDestroy
                         .subscribe(
                             classificationScheme =>
                             {
-                                classificationScheme = <ClassificationScheme>Store(this._deal).Add(classificationScheme);
+                                classificationScheme = <ClassificationScheme>Store(this._deal).Assert(classificationScheme);
                                 this._classificationSchemeClassifiers = classificationScheme.Classifiers.filter(
                                     classificationSchemeClassifier => classificationSchemeClassifier.Super === null);
                                 this._map = new Map<Guid, ClassificationSchemeClassifier>(
@@ -148,7 +148,7 @@ export class Exclusivity implements OnDestroy
                     EndDate: null
                 };
                 (<any>exclusivity).$type = 'Web.Model.Exclusivity, Web';
-                this._exclusivity = store.Add(exclusivity);
+                this._exclusivity = store.Assert(exclusivity);
                 this._deal.Confers.push(this._exclusivity);
             }
             else if(!exclusive && this._exclusivity)

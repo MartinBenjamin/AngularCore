@@ -48,7 +48,7 @@ export class Borrowers_s implements OnDestroy
                             deal.Ontology,
                             roleIndividuals.Borrower,
                             store);
-                        roleService.Get(this._borrowerRole.Id).subscribe(borrowerRole => store.Add(borrowerRole));
+                        roleService.Get(this._borrowerRole.Id).subscribe(borrowerRole => store.Assert(borrowerRole));
 
                         const generator = new ObservableGenerator(
                             deals,
@@ -95,16 +95,16 @@ export class Borrowers_s implements OnDestroy
                     today.setUTCHours(0, 0, 0, 0);
                     let borrower = <PartyInRole>{
                         AutonomousAgent: legalEntity,
-                        Organisation: legalEntity,
-                        Person: null,
-                        Role: this._borrowerRole,
+                        Organisation   : legalEntity,
+                        Person         : null,
+                        Role           : this._borrowerRole,
                         Period:
                         {
                             Start: today,
-                            End: null
+                            End : null
                         }
                     };
-                    borrower = <PartyInRole>Store(this._deal).Add(borrower);
+                    borrower = <PartyInRole>store.Assert(borrower);
                     this._deal.Parties.push(borrower);
                 }
                 finally

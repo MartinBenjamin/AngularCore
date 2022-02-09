@@ -202,7 +202,7 @@ export class Facility_s
                         Period         : null
                     };
 
-                bookingOffice = <PartyInRole>store.Add(bookingOffice);
+                bookingOffice = <PartyInRole>store.Assert(bookingOffice);
             }
 
             lenderParticipation.Obligors.push(bookingOffice);
@@ -261,7 +261,7 @@ export class Facility_s
         const store = Store(this._deal);
         this._transaction = store.BeginTransaction();
         store.SuspendPublish();
-        facility = <facilityAgreements.Facility>store.Add(facility);
+        facility = <facilityAgreements.Facility>store.Assert(facility);
         this._deal.Confers.push(
             facility,
             lenderParticipation);
