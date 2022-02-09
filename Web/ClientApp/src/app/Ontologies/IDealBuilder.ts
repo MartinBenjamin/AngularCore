@@ -14,6 +14,7 @@ import { IDataPropertyExpression, IObjectPropertyExpression } from '../Ontology/
 import { commonDomainObjects } from './CommonDomainObjects';
 import { deals } from './Deals';
 import { IDealOntology } from "./IDealOntology";
+import { Thing } from '../Ontology/Thing';
 
 export const DealBuilderToken = new InjectionToken<IDealBuilder>('DealBuilder');
 
@@ -196,7 +197,9 @@ export class DealBuilder implements IDealBuilder
                 .map(functionalDataProperty => functionalDataProperty.DataPropertyExpression));
         const keyProperties = new Set<IDataPropertyExpression>(
             [...ontology.Get(ontology.IsAxiom.IHasKey)]
-                .filter(hasKey => hasKey.DataPropertyExpressions.length === 1)
+                .filter(hasKey =>
+                    hasKey.ClassExpression                === Thing &&
+                    hasKey.DataPropertyExpressions.length === 1)
                 .map(hasKey => hasKey.DataPropertyExpressions[0])
                 .filter(keyProperty => functionalDataProperties.has(keyProperty)));
 

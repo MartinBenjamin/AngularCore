@@ -129,8 +129,7 @@ export class Exclusivity implements OnDestroy
             store.SuspendPublish();
             if(!this._classifier)
             {
-                if(typeof this._exclusivity != 'undefined' &&
-                   this._exclusivity !== null)
+                if(this._exclusivity)
                 {
                     this._deal.Confers.splice(
                         this._deal.Confers.indexOf(this._exclusivity),
@@ -143,7 +142,7 @@ export class Exclusivity implements OnDestroy
 
             let current = this._map.get(this._classifier.Id);
             let exclusive = this._yes.Interval.Start <= current.Interval.Start && current.Interval.End <= this._yes.Interval.End;
-            if(exclusive && this._exclusivity === null)
+            if(exclusive && !this._exclusivity)
             {
                 const exclusivity = <ExclusivityCommitment>{
                     EndDate: null
@@ -152,7 +151,7 @@ export class Exclusivity implements OnDestroy
                 this._exclusivity = store.Add(exclusivity);
                 this._deal.Confers.push(this._exclusivity);
             }
-            else if(!exclusive && this._exclusivity !== null)
+            else if(!exclusive && this._exclusivity)
             {
                 this._deal.Confers.splice(
                     this._deal.Confers.indexOf(this._exclusivity),

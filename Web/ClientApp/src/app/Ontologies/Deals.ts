@@ -69,11 +69,11 @@ export class Deals extends Ontology
         this.Deal = this.DeclareClass("Deal");
         this.Deal.SubClassOf(agreements.Agreement);
 
-        this.Class = this.DeclareDataProperty("ClassIri");
-        this.LifeCycle = this.DeclareObjectProperty("LifeCycle");
-        this.Type = this.DeclareObjectProperty("Type");
+        this.Class = this.DeclareFunctionalDataProperty("ClassIri");
         this.Classifiers = this.DeclareObjectProperty("Classifiers");
-        this.SponsorsNA = this.DeclareDataProperty("SponsorsNA");
+        this.LifeCycle   = this.DeclareFunctionalObjectProperty("LifeCycle");
+        this.Type        = this.DeclareFunctionalObjectProperty("Type");
+        this.SponsorsNA  = this.DeclareFunctionalDataProperty("SponsorsNA");
 
         this.Deal.SubClassOf(this.Type.ExactCardinality(1));
 
@@ -81,9 +81,9 @@ export class Deals extends Ontology
 
         this.Deal.SubClassOf(commonDomainObjects.Name.MinCardinality(1, nonEmptyString))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
-        this.Deal.SubClassOf(this.DeclareObjectProperty("GeographicRegion").MinCardinality(1))
+        this.Deal.SubClassOf(this.DeclareFunctionalObjectProperty("GeographicRegion").MinCardinality(1))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
-        this.Deal.SubClassOf(this.DeclareObjectProperty("Currency").MinCardinality(1))
+        this.Deal.SubClassOf(this.DeclareFunctionalObjectProperty("Currency").MinCardinality(1))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
         this.Deal.SubClassOf(this.DeclareFunctionalDataProperty("Introducer").MinCardinality(1, nonEmptyString))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
@@ -136,7 +136,7 @@ export class Deals extends Ontology
         this.AdvisorParty.Define(parties.Role.HasValue(roleIndividuals.Advisor));
         this.BorrowerParty.Define(parties.Role.HasValue(roleIndividuals.Borrower));
         this.SponsorParty.Define(parties.Role.HasValue(roleIndividuals.Sponsor));
-        this.Equity = this.DeclareDataProperty("Equity");
+        this.Equity = this.DeclareFunctionalDataProperty("Equity");
         this.Equity.Range(Decimal);
         this.SponsorParty.SubClassOf(this.Equity.ExactCardinality(1))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);

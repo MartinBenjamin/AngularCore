@@ -1,8 +1,8 @@
+import { HasKey } from '../Ontology/HasKey';
 import { IClass } from "../Ontology/IClass";
 import { IDataPropertyExpression } from "../Ontology/IPropertyExpression";
 import { Ontology } from "../Ontology/Ontology";
 import { Thing } from '../Ontology/Thing';
-import { HasKey } from '../Ontology/HasKey';
 
 export class CommonDomainObjects extends Ontology
 {
