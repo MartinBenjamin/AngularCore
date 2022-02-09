@@ -8,8 +8,9 @@ import { DealLifeCycleServiceToken, IDealLifeCycleService } from '../IDealLifeCy
 import { IDomainObjectService } from "../IDomainObjectService";
 import { AddIndividual } from '../Ontology/AddIndividuals';
 import { EavStore } from '../Ontology/EavStore';
-import { IEavStore } from '../Ontology/IEavStore';
+import { AttributeSchema, Cardinality, IEavStore } from '../Ontology/IEavStore';
 import { IIndividual } from '../Ontology/IIndividual';
+import { IDataPropertyExpression, IObjectPropertyExpression } from '../Ontology/IPropertyExpression';
 import { commonDomainObjects } from './CommonDomainObjects';
 import { deals } from './Deals';
 import { IDealOntology } from "./IDealOntology";
@@ -186,6 +187,59 @@ export class DealBuilder implements IDealBuilder
             SponsorsNA        : false,
 
         };
+
+        const functionalObjectProperties = new Set<IObjectPropertyExpression>(
+            [...ontology.Get(ontology.IsAxiom.IFunctionalObjectProperty)]
+                .map(functionalObjectProperty => functionalObjectProperty.ObjectPropertyExpression));
+        const functionalDataProperties = new Set<IDataPropertyExpression>(
+            [...ontology.Get(ontology.IsAxiom.IFunctionalDataProperty)]
+                .map(functionalDataProperty => functionalDataProperty.DataPropertyExpression));
+        const keyProperties = new Set<IDataPropertyExpression>(
+            [...ontology.Get(ontology.IsAxiom.IHasKey)]
+                .filter(hasKey => hasKey.DataPropertyExpressions.length === 1)
+                .map(hasKey => hasKey.DataPropertyExpressions[0])
+                .filter(keyProperty => functionalDataProperties.has(keyProperty)));
+
+        const attributeSchema: AttributeSchema[] = [];
+
+        for(const keyProperty of keyProperties)
+            attributeSchema.push(
+                {
+                    Name          : keyProperty.LocalName,
+                    UniqueIdentity: true,
+                    Cardinality   : Cardinality.One
+                });
+
+        for(const functionalObjectProperty of functionalObjectProperties)
+            attributeSchema.push(
+                {
+                    Name       : functionalObjectProperty.LocalName,
+                    Cardinality: Cardinality.One
+                });
+
+        for(const functionalDataProperty of functionalDataProperties)
+            if(!keyProperties.has(functionalDataProperty))
+                attributeSchema.push(
+                    {
+                        Name       : functionalDataProperty.LocalName,
+                        Cardinality: Cardinality.One
+                    });
+
+        for(const objectPropertyExpression of ontology.Get(ontology.IsAxiom.IObjectPropertyExpression))
+            if(!functionalObjectProperties.has(objectPropertyExpression))
+                attributeSchema.push(
+                    {
+                        Name       : objectPropertyExpression.LocalName,
+                        Cardinality: Cardinality.Many
+                    });
+
+        for(const dataPropertyExpression of ontology.Get(ontology.IsAxiom.IDataPropertyExpression))
+            if(!functionalDataProperties.has(dataPropertyExpression))
+                attributeSchema.push(
+                    {
+                        Name       : dataPropertyExpression.LocalName,
+                        Cardinality: Cardinality.Many
+                    });
 
         const store: IEavStore = new EavStore({ Name: 'Id', UniqueIdentity: true });
         deal = <Deal>store.Add(deal);

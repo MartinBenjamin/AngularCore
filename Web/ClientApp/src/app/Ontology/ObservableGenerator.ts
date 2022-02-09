@@ -23,6 +23,8 @@ import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from './IOntology';
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
+import { Nothing } from './Nothing';
+import { Thing } from './Thing';
 import { TransitiveClosure3 } from "./TransitiveClosure";
 
 export { IEavStore, EavStore };
@@ -32,7 +34,7 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
     private _classDefinitions           : Map<IClass, IClassExpression[]>;
     private _functionalObjectProperties = new Set<IObjectPropertyExpression>();
     private _functionalDataProperties   = new Set<IDataPropertyExpression>();
-    private _classObservables           = new Map<IClass, Observable<Set<any>>>();
+    private _classObservables           : Map<IClass, Observable<Set<any>>>;
     private _individualInterpretation   : Map<IIndividual, any>;
     private _objectDomain               : Observable<Set<any>>;
 
@@ -44,6 +46,12 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         )
     {
         this._objectDomain = this._store.ObserveEntities();
+
+        this._classObservables = new Map<IClass, Observable<Set<any>>>(
+            [
+                [Thing  , this._objectDomain          ],
+                [Nothing, ObservableGenerator._nothing]
+            ]);
 
         for(const functionalObjectProperty of this._ontology.Get(this._ontology.IsAxiom.IFunctionalObjectProperty))
             this._functionalObjectProperties.add(functionalObjectProperty.ObjectPropertyExpression);

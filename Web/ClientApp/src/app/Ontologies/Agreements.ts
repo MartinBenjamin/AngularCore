@@ -1,7 +1,7 @@
 import { IClass } from "../Ontology/IClass";
+import { IObjectPropertyExpression } from '../Ontology/IPropertyExpression';
 import { Ontology } from "../Ontology/Ontology";
 import { commonDomainObjects } from "./CommonDomainObjects";
-import { IObjectPropertyExpression } from '../Ontology/IPropertyExpression';
 
 export class Agreements extends Ontology
 {
@@ -10,6 +10,7 @@ export class Agreements extends Ontology
     readonly Commitment: IClass;
     readonly Parties   : IObjectPropertyExpression;
     readonly Confers   : IObjectPropertyExpression;
+    readonly Obligors  : IObjectPropertyExpression;
 
     constructor()
     {
@@ -21,6 +22,7 @@ export class Agreements extends Ontology
         this.Commitment = this.DeclareClass("Commitment");
         this.Parties    = this.DeclareObjectProperty("Parties");
         this.Confers    = this.DeclareObjectProperty("Confers");
+        this.Obligors   = this.DeclareObjectProperty("Obligors");
     }
 }
 
