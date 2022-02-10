@@ -16,67 +16,76 @@ export class FacilityAgreements extends Ontology
             agreements,
             annotations);
 
-        let nonEmptyString = new DataComplementOf(new DataOneOf([""]));
-        let facility = this.DeclareClass("Facility");
+        const nonEmptyString = new DataComplementOf(new DataOneOf([""]));
+        const facility = this.DeclareClass("Facility");
         facility.Define(commonDomainObjects.$type.HasValue("Web.Model.Facility, Web"));
         facility.SubClassOf(agreements.Commitment);
 
         facility.SubClassOf(commonDomainObjects.Name.ExactCardinality(1, nonEmptyString))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
 
-        let currency = this.DeclareFunctionalObjectProperty("Currency");
+        const currency = this.DeclareFunctionalObjectProperty("Currency");
         facility.SubClassOf(currency.ExactCardinality(1))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
 
-        let totalCommitments = this.DeclareFunctionalDataProperty("TotalCommitments");
+        const totalCommitments = this.DeclareFunctionalDataProperty("TotalCommitments");
         totalCommitments.Range(Decimal);
         facility.SubClassOf(totalCommitments.ExactCardinality(1))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect)
 
-        let availabilityPeriodEndDate = this.DeclareFunctionalDataProperty("AvailabilityPeriodEndDate");
+        const availabilityPeriodEndDate = this.DeclareFunctionalDataProperty("AvailabilityPeriodEndDate");
         availabilityPeriodEndDate.Range(DateTime);
 
-        let expected1StDrawdownDate = this.DeclareFunctionalDataProperty("Expected1StDrawdownDate");
+        const expected1StDrawdownDate = this.DeclareFunctionalDataProperty("Expected1StDrawdownDate");
         expected1StDrawdownDate.Range(DateTime);
 
-        let maturityDate = this.DeclareFunctionalDataProperty("MaturityDate");
+        const maturityDate = this.DeclareFunctionalDataProperty("MaturityDate");
         maturityDate.Range(DateTime);
 
-        let lenderParticipation = this.DeclareClass("LenderParticipation");
+        const lenderParticipation = this.DeclareClass("LenderParticipation");
         lenderParticipation.Define(commonDomainObjects.$type.HasValue("Web.Model.LenderParticipation, Web"));
 
-        let underwriteAmount = this.DeclareFunctionalDataProperty("UnderwriteAmount");
+        const underwriteAmount = this.DeclareFunctionalDataProperty("UnderwriteAmount");
         underwriteAmount.Range(Decimal);
 
         lenderParticipation.SubClassOf(underwriteAmount.ExactCardinality(1))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.BusinessScreened);
 
-        let creditSoughtLimit = this.DeclareFunctionalDataProperty("CreditSoughtLimit");
+        const creditSoughtLimit = this.DeclareFunctionalDataProperty("CreditSoughtLimit");
         creditSoughtLimit.Range(Decimal);
 
         lenderParticipation.SubClassOf(creditSoughtLimit.ExactCardinality(1))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.BusinessScreened);
 
-        let anticipatedHoldAmount = this.DeclareFunctionalDataProperty("AnticipatedHoldAmount");
+        const anticipatedHoldAmount = this.DeclareFunctionalDataProperty("AnticipatedHoldAmount");
         anticipatedHoldAmount.Range(Decimal);
 
-        let actualAllocation = this.DeclareFunctionalDataProperty("ActualAllocation");
+        const actualAllocation = this.DeclareFunctionalDataProperty("ActualAllocation");
         actualAllocation.Range(Decimal);
 
-        let facilityFee = this.DeclareClass("FacilityFee");
-        facilityFee.Define(commonDomainObjects.$type.HasValue('Web.Model.facilityFee, Web'));
+        const facilityFee = this.DeclareClass("FacilityFee");
+        facilityFee.Define(commonDomainObjects.$type.HasValue('Web.Model.FacilityFee, Web'));
         facilityFee.SubClassOf(agreements.Commitment);
 
-        let expectedReceivedDate = this.DeclareFunctionalDataProperty("ExpectedReceivedDate");
+        const expectedReceivedDate = this.DeclareFunctionalDataProperty("ExpectedReceivedDate");
         expectedReceivedDate.Range(DateTime);
 
-        let feeAmount = this.DeclareClass("FeeAmount");
-        feeAmount.Define(commonDomainObjects.$type.HasValue('Web.Model.FeeAmount, Web'))
+        const feeAmount = this.DeclareClass("FeeAmount");
+        feeAmount.Define(commonDomainObjects.$type.HasValue("Web.Model.FeeAmount, Web"));
 
-        let value = this.DeclareFunctionalDataProperty("Value");
+        const value = this.DeclareFunctionalDataProperty("Value");
         value.Range(Decimal);
 
         feeAmount.SubClassOf(value.ExactCardinality(1))
+            .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
+
+        const accrualDate = this.DeclareClass("AccrualDate");
+        accrualDate.Define(commonDomainObjects.$type.HasValue("Web.Model.AccrualDate, Web"));
+
+        accrualDate.SubClassOf(this.DeclareFunctionalDataProperty("Year").ExactCardinality(1))
+            .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
+
+        accrualDate.SubClassOf(this.DeclareFunctionalDataProperty("Month").ExactCardinality(1))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
     }
 }

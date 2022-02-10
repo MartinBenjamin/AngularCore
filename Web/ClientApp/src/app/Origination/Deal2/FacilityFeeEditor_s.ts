@@ -135,15 +135,22 @@ export class FacilityFeeEditor_s
         if(!this._fee)
             return;
 
+        const store = Store(this._deal);
+        store.SuspendPublish();
         if(accrued && !this._fee.AccrualDate)
-            this._fee.AccrualDate = <AccrualDate>
+            this._fee.AccrualDate = <AccrualDate>store.Assert(
                 {
-                    Year : null,
-                    Month: null
-                };
+                    Year: null,
+                    Month: null,
+                    $type: 'Web.Model.AccrualDate, Web'
+                });
 
         else if(!accrued && this._fee.AccrualDate)
+        {
+            store.DeleteEntity(this._fee.AccrualDate);
             this._fee.AccrualDate = null;
+        }
+        store.UnsuspendPublish();
     }
 
     Create(
@@ -152,27 +159,24 @@ export class FacilityFeeEditor_s
         )
     {
         this._applyCallback = applyCallback;
-        this._fee           = <FacilityFee>
+        const store         = Store(this._deal);
+        this._transaction   = store.BeginTransaction();
+        store.SuspendPublish();
+        this._fee           = <FacilityFee>store.Assert(
         {
             PartOf              : this._facility,
             Type                : feeType,
-            Amount              : <FeeAmount>
+            Amount              :
             {
                 Type : FeeAmountType.MonetaryAmount,
-                Value: null
+                Value: null,
+                $type: 'Web.Model.FeeAmount, Web'
             },
             ExpectedReceivedDate: null,
             Received            : false,
-            AccrualDate         : null
-        };
-
-        (<any>this._fee).$type = 'Web.Model.FacilityFee, Web';
-        (<any>this._fee.Amount).$type = 'Web.Model.FeeAmount, Web';
-
-        const store = Store(this._deal);
-        this._transaction = store.BeginTransaction();
-        store.SuspendPublish();
-        this._fee = <FacilityFee>store.Assert(this._fee);
+            AccrualDate         : null,
+            $type               : 'Web.Model.FacilityFee, Web'
+        });
         this._fee.PartOf.Parts.push(this._fee);
         store.UnsuspendPublish();
         this._feeObservable.next(this._fee);
