@@ -300,6 +300,8 @@
     <None Remove="ClientApp\src\app\Origination\Deal2\Errors.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\Exclusivity.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\Facilities.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityFeeEditor_s.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityFees_s.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\KeyCounterparties.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\Restricted_s.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\Sponsors_s.ts" />
@@ -628,6 +630,12 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Facilities.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityFeeEditor_s.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityFees_s.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\KeyCounterparties.ts">

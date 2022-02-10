@@ -58,6 +58,8 @@ import { Sponsors } from './Sponsors';
                 Borrowers,
                 Facility,
                 FacilityErrors,
+                FacilityFeeEditor,
+                FacilityFeeErrors,
                 GeographicRegionSelector,
                 LegalEntityFinder,
                 LegalEntityFinderButtons,

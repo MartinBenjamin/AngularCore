@@ -19,6 +19,9 @@ import { EavStoreProvider } from './EavStoreProvider';
 import { Errors } from './Errors';
 import { Exclusivity } from './Exclusivity';
 import { Facilities } from './Facilities';
+import { FacilityFeeEditor_s } from './FacilityFeeEditor_s';
+import { FacilityFees_s } from './FacilityFees_s';
+import { Facility_s } from './Facility_s';
 import { KeyCounterparties } from './KeyCounterparties';
 import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
@@ -26,7 +29,6 @@ import { OriginationTab } from './OriginationTab';
 import { Restricted_s } from './Restricted_s';
 import { Sponsors_s } from './Sponsors_s';
 import { TransactionDetails } from './TransactionDetails';
-import { Facility_s } from './Facility_s'
 
 const routes: Routes =
     [
@@ -49,6 +51,8 @@ const routes: Routes =
                 Exclusivity,
                 Facilities,
                 Facility_s,
+                FacilityFeeEditor_s,
+                FacilityFees_s,
                 KeyCounterparties,
                 KeyDealData,
                 MoreTabs,

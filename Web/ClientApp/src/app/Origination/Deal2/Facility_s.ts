@@ -6,7 +6,6 @@ import { DomainObject, EmptyGuid, Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
 import { CurrenciesOrderedByCodeToken } from '../../CurrencyServiceProvider';
-import { FacilityFees } from '../../Deal/FacilityFees';
 import { FacilityTab } from '../../Deal/FacilityTab';
 import { FacilityTab1 } from '../../Deal/FacilityTab1';
 import { FacilityTab3 } from '../../Deal/FacilityTab3';
@@ -23,6 +22,7 @@ import { PartyInRole } from '../../Parties';
 import { Alternative, Empty, IExpression, Property, Query2, Sequence, ZeroOrMore } from '../../RegularPathExpression';
 import { Role } from '../../Roles';
 import { RolesToken } from '../../RoleServiceProvider';
+import { FacilityFees_s } from './FacilityFees_s';
 
 type ApplyCallback = () => void;
 
@@ -87,10 +87,10 @@ export class Facility_s
 
         this.Tabs =
             [
-                new Tab('Size &<br/>Dates'                , FacilityTab1),
-                new Tab('Upfront &<br/>Participation Fees', FacilityFees),
-                new Tab('Tab 3'                           , FacilityTab3),
-                new Tab('Tab 4'                           , FacilityTab )
+                new Tab('Size &<br/>Dates'                , FacilityTab1  ),
+                new Tab('Upfront &<br/>Participation Fees', FacilityFees_s),
+                new Tab('Tab 3'                           , FacilityTab3  ),
+                new Tab('Tab 4'                           , FacilityTab   )
             ];
 
         const errors = combineLatest(

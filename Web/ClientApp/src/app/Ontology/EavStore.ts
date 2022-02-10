@@ -561,31 +561,6 @@ export class EavStore implements IEavStore, IPublisher
             value);
     }
 
-    Add(
-        object: object,
-        added?: Map<object, any>
-        ): any
-    {
-        try
-        {
-            this.SuspendPublish();
-            const added = new Map<object, any>();
-            if(object instanceof Array)
-                return object.map(object =>
-                    this.AddObject(
-                        object,
-                        added));
-  
-            return this.AddObject(
-                object,
-                added);
-        }
-        finally
-        {
-            this.UnsuspendPublish();               
-        }
-    }
-
     Clear(): void
     {
         this._eav.clear();
