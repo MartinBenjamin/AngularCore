@@ -110,7 +110,7 @@ export class Facility_s
                             (errors, facility) =>
                             {
                                 if(!facility)
-                                    return errors;
+                                    return null;
                                 const subgraph = new Set<any>(Facility_s.SubgraphQuery(facility));
                                 return new Map([...errors.entries()].filter(([entity,]) => subgraph.has(entity)));
                             }).pipe(share());
@@ -122,15 +122,15 @@ export class Facility_s
             errors.subscribe(
                 errors =>
                 {
-                    this._errorsService.next(errors.size ? errors : null);
+                    this._errorsService.next(errors && errors.size ? errors : null);
 
                     // Detect changes in all Deal Tabs (and nested Tabs).
                     this._changeDetector.DetectChanges();
                 }),
             errors.pipe(
                 sample(this._apply),
-                filter(errors => errors.size === 0)).subscribe(
-                    errors =>
+                filter(errors => !(errors && errors.size))).subscribe(
+                    () =>
                     {
                         this._transaction.Commit();
 
