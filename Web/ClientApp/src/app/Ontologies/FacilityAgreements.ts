@@ -67,8 +67,6 @@ export class FacilityAgreements extends Ontology
         facilityFee.Define(commonDomainObjects.$type.HasValue('Web.Model.FacilityFee, Web'));
         facilityFee.SubClassOf(agreements.Commitment);
 
-        const expectedReceivedDate = this.DeclareFunctionalDataProperty("ExpectedReceivedDate");
-        expectedReceivedDate.Range(DateTime);
 
         const feeAmount = this.DeclareClass("FeeAmount");
         feeAmount.Define(commonDomainObjects.$type.HasValue("Web.Model.FeeAmount, Web"));
@@ -77,6 +75,12 @@ export class FacilityAgreements extends Ontology
         value.Range(Decimal);
 
         feeAmount.SubClassOf(value.ExactCardinality(1))
+            .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
+
+        const expectedReceivedDate = this.DeclareFunctionalDataProperty("ExpectedReceivedDate");
+        expectedReceivedDate.Range(DateTime);
+
+        facilityFee.SubClassOf(expectedReceivedDate.ExactCardinality(1))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
 
         const accrualDate = this.DeclareClass("AccrualDate");
