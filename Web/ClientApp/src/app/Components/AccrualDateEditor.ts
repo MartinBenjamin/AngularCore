@@ -27,12 +27,16 @@ import { calendar } from './Cldr';
   class="AccrualDateEditor"
   ><select
     [(ngModel)]="AccrualDate.Month"
+    [dtValidatedObject]="AccrualDate"
+    dtValidatedProperty="Month"
     class="Month">
     <option [ngValue]="null"></option>
     <option *ngFor="let month of Months" [ngValue]="month">{{MonthNames[month]}}</option>
 </select><span class="Separator">-</span><input
     type="text"
     [(dtYearModel)]="AccrualDate.Year"
+    [dtValidatedObject]="AccrualDate"
+    dtValidatedProperty="Year"
     maxlength="4"
     class="Year"/></span>`
     })

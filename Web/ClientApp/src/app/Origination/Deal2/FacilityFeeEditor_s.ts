@@ -214,9 +214,10 @@ export class FacilityFeeEditor_s
     Close(): void
     {
         this._fee = null;
+        this._participation = null;
         this._observeErrors.next(false);
         this._feeObservable.next(this._fee);
-        this._participation = null;
+        this._errorsService.next(null);
     }
 
     private CalculateParticipation(

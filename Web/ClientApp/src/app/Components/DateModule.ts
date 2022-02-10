@@ -7,6 +7,7 @@ import { Calendar } from './Calendar';
 import { DateConversionService } from './DateConversionService';
 import { DateModel } from './DateModel';
 import { DatePatterns, DatePatternsToken } from './DatePatterns';
+import { ErrorModule } from './ErrorModule';
 import { NumberModule } from './NumberModule';
 import { UtcDatePipe } from './UtcDatePipe';
 
@@ -16,6 +17,7 @@ import { UtcDatePipe } from './UtcDatePipe';
         [
             CommonModule,
             FormsModule,
+            ErrorModule,
             NumberModule
         ],
         declarations:
