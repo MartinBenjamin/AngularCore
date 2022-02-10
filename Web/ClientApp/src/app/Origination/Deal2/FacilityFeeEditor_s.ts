@@ -140,8 +140,6 @@ export class FacilityFeeEditor_s
         if(accrued && !this._fee.AccrualDate)
             this._fee.AccrualDate = <AccrualDate>store.Assert(
                 {
-                    Year: null,
-                    Month: null,
                     $type: 'Web.Model.AccrualDate, Web'
                 });
 
@@ -164,18 +162,16 @@ export class FacilityFeeEditor_s
         store.SuspendPublish();
         this._fee           = <FacilityFee>store.Assert(
         {
-            PartOf              : this._facility,
-            Type                : feeType,
-            Amount              :
+            PartOf     : this._facility,
+            Type       : feeType,
+            Amount     :
             {
                 Type : FeeAmountType.MonetaryAmount,
-                Value: null,
                 $type: 'Web.Model.FeeAmount, Web'
             },
-            ExpectedReceivedDate: null,
-            Received            : false,
-            AccrualDate         : null,
-            $type               : 'Web.Model.FacilityFee, Web'
+            Received   : false,
+            AccrualDate: null,
+            $type      : 'Web.Model.FacilityFee, Web'
         });
         this._fee.PartOf.Parts.push(this._fee);
         store.UnsuspendPublish();
