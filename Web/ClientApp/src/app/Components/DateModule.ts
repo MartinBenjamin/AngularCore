@@ -7,6 +7,7 @@ import { Calendar } from './Calendar';
 import { DateConversionService } from './DateConversionService';
 import { DateModel } from './DateModel';
 import { DatePatterns, DatePatternsToken } from './DatePatterns';
+import { NumberModule } from './NumberModule';
 import { UtcDatePipe } from './UtcDatePipe';
 
 @NgModule(
@@ -14,7 +15,8 @@ import { UtcDatePipe } from './UtcDatePipe';
         imports:
         [
             CommonModule,
-            FormsModule
+            FormsModule,
+            NumberModule
         ],
         declarations:
         [

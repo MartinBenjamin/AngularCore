@@ -41,6 +41,8 @@
     <None Remove="ClientApp\src\app\Components\AccrualDatePipe.ts" />
     <None Remove="ClientApp\src\app\Components\Cldr.d.ts" />
     <None Remove="ClientApp\src\app\Components\ValidatedProperty.ts" />
+    <None Remove="ClientApp\src\app\Components\YearInputDefinition.ts" />
+    <None Remove="ClientApp\src\app\Components\YearModel.ts" />
     <None Remove="ClientApp\src\app\Components\YesNoPipe.ts" />
     <None Remove="ClientApp\src\app\Components\YesNoSelect.ts" />
     <None Remove="ClientApp\src\app\Contracts.ts" />
@@ -356,6 +358,8 @@
     </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Components\Cldr.d.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Components\ValidatedProperty.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Components\YearInputDefinition.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Components\YearModel.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Components\YesNoPipe.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Components\YesNoSelect.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Contracts.ts" />

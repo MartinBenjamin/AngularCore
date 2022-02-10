@@ -82,7 +82,9 @@ export class FacilityAgreements extends Ontology
         const accrualDate = this.DeclareClass("AccrualDate");
         accrualDate.Define(commonDomainObjects.$type.HasValue("Web.Model.AccrualDate, Web"));
 
-        accrualDate.SubClassOf(this.DeclareFunctionalDataProperty("Year").ExactCardinality(1))
+        const year = this.DeclareFunctionalDataProperty("Year")
+        year.Range(Decimal);
+        accrualDate.SubClassOf(year.ExactCardinality(1))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
 
         accrualDate.SubClassOf(this.DeclareFunctionalDataProperty("Month").ExactCardinality(1))

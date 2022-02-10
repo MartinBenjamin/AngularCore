@@ -8,6 +8,8 @@ import { Percentage100Model } from './Percentage100Model';
 import { PercentageConversionServiceProvider } from './PercentageInputDefinition';
 import { PercentageModel } from './PercentageModel';
 import { PercentagePipe } from './PercentagePipe';
+import { YearConversionServiceProvider } from './YearInputDefinition';
+import { YearModel } from './YearModel';
 
 @NgModule(
     {
@@ -21,7 +23,8 @@ import { PercentagePipe } from './PercentagePipe';
                 AmountPipe,
                 PercentageModel,
                 PercentagePipe,
-                Percentage100Model
+                Percentage100Model,
+                YearModel
             ],
         exports:
             [
@@ -29,13 +32,15 @@ import { PercentagePipe } from './PercentagePipe';
                 AmountPipe,
                 PercentageModel,
                 PercentagePipe,
-                Percentage100Model
+                Percentage100Model,
+                YearModel
             ],
         providers:
             [
                 AmountConversionServiceProvider,
                 PercentageConversionServiceProvider,
-                Percentage100ConversionServiceProvider
+                Percentage100ConversionServiceProvider,
+                YearConversionServiceProvider
             ]
     })
 export class NumberModule

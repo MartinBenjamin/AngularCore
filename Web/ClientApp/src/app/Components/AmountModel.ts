@@ -49,7 +49,9 @@ export class AmountModel extends NumberModel
     @Output('dtAmountModelChange')
     ModelChange = new EventEmitter<number | string>();
 
-    Emit(model: number | string): void
+    Emit(
+        model: number | string
+        ): void
     {
         this.ModelChange.emit(model);
     }

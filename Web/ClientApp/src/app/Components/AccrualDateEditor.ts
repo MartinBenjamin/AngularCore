@@ -22,17 +22,17 @@ import { calendar } from './Cldr';
     padding: 1px;
   }
 </style>
-<span class="AccrualDateEditor"
+<span
+  *ngIf="AccrualDate"
+  class="AccrualDateEditor"
   ><select
-    [ngModel]="AccrualDate?.Month"
-    (ngModelChange)="AccrualDate.Month = $event"
+    [(ngModel)]="AccrualDate.Month"
     class="Month">
     <option [ngValue]="null"></option>
     <option *ngFor="let month of Months" [ngValue]="month">{{MonthNames[month]}}</option>
 </select><span class="Separator">-</span><input
     type="text"
-    [ngModel]="AccrualDate?.Year"
-    (ngModelChange)="AccrualDate.Year = $event"
+    [(dtYearModel)]="AccrualDate.Year"
     maxlength="4"
     class="Year"/></span>`
     })
