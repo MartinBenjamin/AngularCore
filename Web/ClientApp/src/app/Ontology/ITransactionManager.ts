@@ -18,8 +18,9 @@ export interface ITransactionManager
 
 export class TransactionManager
 {
-    private _log    : ILogEntry[];
+    private _log    : ILogEntry[] = [];
     private _active = false;
+    private _scope  = 0;
 
     get Active(): boolean
     {
@@ -28,14 +29,11 @@ export class TransactionManager
 
     BeginTransaction(): ITransaction
     {
-        if(!this._log)
-        {
-            this._log = [];
-            this._active = true;
-        }
+        this._active = true;
 
         return new Transaction(
             this,
+            ++this._scope,
             this._log.length);
     }
 
@@ -51,28 +49,23 @@ export class TransactionManager
         transaction: Transaction
         ): void
     {
-        if(!this._active)
-            return;
-
-        if(transaction.StartLogLength === 0)
-        {
-            this._active = false;
-            this._log = null;
-        }
+        if(transaction.Scope === this._scope)
+            if(--this._scope === 0)
+                this._active = false;
     }
 
     Rollback(
         transaction: Transaction
         )
     {
+        if(transaction.Scope !== this._scope)
+            return;
+
         this._active = false;
         while(this._log.length > transaction.StartLogLength)
             this._log.pop().Rollback();
 
-        if(!this._log.length)
-            this._log = null;
-
-        else
+        if(--this._scope !== 0)
             this._active = true;
     }
 }
@@ -81,6 +74,7 @@ class Transaction implements ITransaction
 {
     constructor(
         private _manager: TransactionManager,
+        public Scope: number,
         public StartLogLength: number
         )
     {
