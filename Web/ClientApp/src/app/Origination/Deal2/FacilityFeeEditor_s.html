@@ -14,12 +14,13 @@
            [Open]="Fee">
   <dt-dialog-body>
     <facility-fee-errors></facility-fee-errors>
-    <table class="GridLayout FacilityFeeEditorDialog">
+    <table
+        *ngIf="Fee"
+        class="GridLayout FacilityFeeEditorDialog">
       <tr>
         <td class="RowHeading">Amount Type</td>
         <td>
-          <select [ngModel]="Fee?.Amount.Type"
-                  (ngModelChange)="Fee.Amount.Type = $event">
+          <select [(ngModel)]="FeeAmountType">
             <option [ngValue]="0">Monetary Amount</option>
             <option [ngValue]="1">% Of Commitment</option>
           </select>
@@ -30,9 +31,8 @@
           <td class="RowHeading">Amount:</td>
           <td>
             <input type="text"
-                   [dtAmountModel]="Fee?.Amount.Value"
-                   (dtAmountModelChange)="Fee.Amount.Value = $event"
-                   [dtValidatedObject]="Fee?.Amount"
+                   [(dtAmountModel)]="Fee.Amount.Value"
+                   [dtValidatedObject]="Fee.Amount"
                    dtValidatedProperty="Value"
                    class="Amount" />
           </td>
@@ -40,7 +40,7 @@
         <tr>
           <td class="RowHeading">% Of Commitment:</td>
           <td>
-            <span class="Field Percentage">{{PercentageOfCommitment|percentage}}</span>
+            <span class="Field Percentage">{{PercentageOfCommitment|percentage}}</span><span style="margin-left: 2px">%</span>
           </td>
         </tr>
       </tbody>
@@ -55,11 +55,11 @@
           <td class="RowHeading">% Of Commitment:</td>
           <td>
             <input type="text"
-                   [dtPercentage100Model]="Fee?.Amount.Value"
-                   (dtPercentage100ModelChange)="Fee.Amount.Value = $event"
-                   [dtValidatedObject]="Fee?.Amount"
+                   [(dtPercentage100Model)]="Fee.Amount.Value"
+                   [dtValidatedObject]="Fee.Amount"
                    dtValidatedProperty="Value"
-                   class="Percentage" />
+                   maxlength="6"
+                   class="Percentage" /><span style="margin-left: 2px">%</span>
           </td>
         </tr>
       </ng-template>
@@ -67,8 +67,7 @@
         <td class="RowHeading">Expected/Received Date:</td>
         <td>
           <input type="text"
-                 [dtDateModel]="Fee?.ExpectedReceivedDate"
-                 (dtDateModelChange)="Fee.ExpectedReceivedDate = $event"
+                 [(dtDateModel)]="Fee.ExpectedReceivedDate"
                  [dtValidatedObject]="Fee"
                  dtValidatedProperty="ExpectedReceivedDate"
                  class="Date" /><dt-calendar (dateSelected)="Fee.ExpectedReceivedDate = $event"></dt-calendar>
@@ -78,8 +77,7 @@
         <td class="RowHeading">Received:</td>
         <td>
           <input type="checkbox"
-                 [ngModel]="Fee?.Received"
-                 (ngModelChange)="Fee.Received = $event" />
+                 [(ngModel)]="Fee.Received" />
         </td>
       </tr>
       <tr>
@@ -91,7 +89,7 @@
       </tr>
       <tr *ngIf="Accrued">
         <td class="RowHeading">Accrual Date:</td>
-        <td><accrual-date-editor [AccrualDate]="Fee?.AccrualDate"></accrual-date-editor></td>
+        <td><accrual-date-editor [AccrualDate]="Fee.AccrualDate"></accrual-date-editor></td>
       </tr>
     </table>
   </dt-dialog-body>

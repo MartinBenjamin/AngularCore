@@ -105,6 +105,19 @@ export class FacilityFeeEditor_s
         return this._fee;
     }
 
+    get FeeAmountType(): FeeAmountType
+    {
+        return this._fee.Amount.Type;
+    }
+
+    set FeeAmountType(
+        feeAmountType: FeeAmountType
+        )
+    {
+        this._fee.Amount.Type = feeAmountType;
+        this._fee.Amount.Value = null;
+    }
+
     get MonetaryAmount(): number
     {
         if(typeof this._participation === 'number' &&
