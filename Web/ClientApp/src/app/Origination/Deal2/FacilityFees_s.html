@@ -36,15 +36,15 @@
   <tbody *ngFor="let feesGroupedByfeeType of Fees">
     <tr *ngFor="let fee of feesGroupedByfeeType[1]; first as first; count as count">
       <td *ngIf="first" [rowSpan]="count">{{feesGroupedByfeeType[0].Name}}</td>
-      <ng-container *ngIf="fee.Amount.Type === 0; else Percentage">
+      <ng-container *ngIf="!fee.MeasurementUnit; else Percentage">
         <td>Monetary Amount</td>
-        <td class="Amount">{{fee.Amount.Value|amount}}</td>
+        <td class="Amount">{{fee.NumericValue|amount}}</td>
         <td class="Percentage">{{PercentageOfCommitment(fee)|percentage}}</td>
       </ng-container>
       <ng-template #Percentage>
         <td>% Of Commitment</td>
         <td class="Amount">{{MonetaryAmount(fee)|amount}}</td>
-        <td class="Percentage">{{fee.Amount.Value|percentage}}</td>
+        <td class="Percentage">{{fee.NumericValue|percentage}}</td>
       </ng-template>
       <td>{{fee.Received|yesNo}}</td>
       <td>{{fee.ExpectedReceivedDate|utcDate}}</td>

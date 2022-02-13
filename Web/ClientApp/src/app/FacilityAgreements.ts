@@ -3,6 +3,7 @@ import { Contract, ContractualCommitment } from "./Contracts";
 import { percentage } from './Deals';
 import { Currency } from "./Iso4217";
 import { AccrualDate } from "./Components/AccrualDate";
+import { FeeType } from './Fees';
 
 export interface FacilityAgreement extends Contract
 {
@@ -37,9 +38,7 @@ export interface ExternalFunding extends ContractualCommitment
     Percentage: percentage;
 }
 
-export interface FeeType extends Named<Guid>
-{
-}
+export { FeeType }
 
 export enum FeeAmountType
 {

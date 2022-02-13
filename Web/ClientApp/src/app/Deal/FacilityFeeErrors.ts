@@ -21,7 +21,9 @@ export class FacilityFeeErrors implements OnDestroy
 
     private static _propertyDisplayName =
         {
-            ExpectedReceivedDate: 'Expected/Received Date'
+            ExpectedReceivedDate: 'Expected/Received Date',
+            Year                : 'Accrual Date Year',
+            Month               : 'Accrual Date Month'
         };
     private static _errorMap: IErrors =
         {
@@ -56,11 +58,9 @@ export class FacilityFeeErrors implements OnDestroy
                                     let property: Property = [object, propertyName];
                                     let propertyDisplayName: string;
 
-                                    if((<any>object).$type == 'Web.Model.FeeAmount, Web')
-                                    {
-                                        let feeAmount = <FeeAmount>object;
-                                        propertyDisplayName = feeAmount.Type == FeeAmountType.MonetaryAmount ? 'Amount' : '% Of Commitment';
-                                    }
+                                    if(propertyName === 'NumericValue')
+                                        propertyDisplayName = (<any>object).MeasurementUnit ? '% Of Commitment' : 'Amount';
+
                                     else
                                         propertyDisplayName = propertyName in FacilityFeeErrors._propertyDisplayName ? FacilityFeeErrors._propertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
 

@@ -67,6 +67,7 @@
     <None Remove="ClientApp\src\app\FacilityAgreements.ts" />
     <None Remove="ClientApp\src\app\FacilityFeeTypeServiceProvider.ts" />
     <None Remove="ClientApp\src\app\FacilityProvider.ts" />
+    <None Remove="ClientApp\src\app\Fees.ts" />
     <None Remove="ClientApp\src\app\GeographicRegionHierarchy.ts" />
     <None Remove="ClientApp\src\app\GeographicRegionHierarchyProvider.ts" />
     <None Remove="ClientApp\src\app\Hierarchy.ts" />
@@ -89,10 +90,12 @@
     <None Remove="ClientApp\src\app\Ontologies\Agreements.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Annotations.ts" />
     <None Remove="ClientApp\src\app\Ontologies\CommonDomainObjects.ts" />
+    <None Remove="ClientApp\src\app\Ontologies\CurrencyAmount.ts" />
     <None Remove="ClientApp\src\app\Ontologies\DealOntologyService.ts" />
     <None Remove="ClientApp\src\app\Ontologies\DealOntologyServiceProvider.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Deals.ts" />
     <None Remove="ClientApp\src\app\Ontologies\FacilityAgreements.ts" />
+    <None Remove="ClientApp\src\app\Ontologies\Fees.ts" />
     <None Remove="ClientApp\src\app\Ontologies\IDealBuilder.ts" />
     <None Remove="ClientApp\src\app\Ontologies\IDealComponentBuilder.ts" />
     <None Remove="ClientApp\src\app\Ontologies\IDealOntology.ts" />
@@ -105,6 +108,7 @@
     <None Remove="ClientApp\src\app\Ontologies\Organisations.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Parties.ts" />
     <None Remove="ClientApp\src\app\Ontologies\ProjectFinance.ts" />
+    <None Remove="ClientApp\src\app\Ontologies\Quantities.ts" />
     <None Remove="ClientApp\src\app\Ontologies\RoleIndividuals.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Roles.ts" />
     <None Remove="ClientApp\src\app\Ontologies\StructuredTradeFinance.ts" />
@@ -389,6 +393,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\FacilityAgreements.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\FacilityFeeTypeServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\FacilityProvider.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Fees.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\GeographicRegionHierarchy.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\GeographicRegionHierarchyProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Hierarchy.ts" />
@@ -411,10 +416,12 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Agreements.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Annotations.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\CommonDomainObjects.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontologies\CurrencyAmount.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\DealOntologyService.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\DealOntologyServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Deals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\FacilityAgreements.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Fees.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\IDealBuilder.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\IDealComponentBuilder.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\IDealOntology.ts" />
@@ -427,6 +434,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Organisations.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Parties.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\ProjectFinance.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Quantities.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\RoleIndividuals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Roles.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\StructuredTradeFinance.ts" />

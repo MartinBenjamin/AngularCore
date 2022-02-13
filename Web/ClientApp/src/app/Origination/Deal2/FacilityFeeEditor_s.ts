@@ -1,14 +1,17 @@
 import { Component, Inject } from '@angular/core';
-import { BehaviorSubject, combineLatest, NEVER, Observable, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, NEVER, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, filter, sample, share, switchMap } from 'rxjs/operators';
 import { AccrualDate } from '../../Components/AccrualDate';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
 import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
-import { Facility, FacilityFee, FeeAmount, FeeAmountType, FeeType, LenderParticipation } from '../../FacilityAgreements';
+import { Facility, FeeAmountType, FeeType, LenderParticipation } from '../../FacilityAgreements';
 import { FacilityProvider } from '../../FacilityProvider';
+import { Fee, FacilityFeeUnit } from '../../Fees';
+import { quantities } from '../../Ontologies/Quantities';
 import { Store } from '../../Ontology/IEavStore';
 import { ITransaction } from '../../Ontology/ITransactionManager';
+import { ObservableGenerator } from '../../Ontology/ObservableGenerator';
 import { Alternative, Empty, IExpression, Property, Query2 } from '../../RegularPathExpression';
 
 type ApplyCallback = () => void;
@@ -29,9 +32,10 @@ export class FacilityFeeEditor_s
 {
     private _subscriptions : Subscription[] = [];
     private _deal          : Deal;
+    private _percentageUnit: any;
     private _facility      : Facility;
-    private _fee           : FacilityFee;
-    private _feeObservable = new BehaviorSubject<FacilityFee>(null);
+    private _fee           : Fee;
+    private _feeObservable = new BehaviorSubject<Fee>(null);
     private _applyCallback : ApplyCallback;
     private _transaction   : ITransaction;
     private _observeErrors = new BehaviorSubject<boolean>(false);
@@ -78,7 +82,20 @@ export class FacilityFeeEditor_s
                     }));
 
         this._subscriptions.push(
-            dealProvider.subscribe(deal => this._deal = deal),
+            dealProvider.subscribe(
+                deal =>
+                {
+                    this._deal = deal;
+
+                    if(!this._deal)
+                        return;
+
+                    const store = Store(this._deal);
+                    const observableGenerator = new ObservableGenerator(
+                        this._deal.Ontology,
+                        store);
+                    this._percentageUnit = observableGenerator.InterpretIndividual(quantities.PercentageUnit);
+                }),
             facilityProvider.subscribe(facility => this._facility = facility),
             errors.subscribe(errors => this._errorsService.next(errors && errors.size ? errors : null)),
             errors.pipe(
@@ -100,29 +117,31 @@ export class FacilityFeeEditor_s
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
-    get Fee(): FacilityFee
+    get Fee(): Fee
     {
         return this._fee;
     }
 
-    get FeeAmountType(): FeeAmountType
+    get FacilityFeeUnit(): FacilityFeeUnit
     {
-        return this._fee.Amount.Type;
+        return this._fee.MeasurementUnit === this._percentageUnit ? FacilityFeeUnit.Percentage : FacilityFeeUnit.CommitmentCurrency;
     }
 
-    set FeeAmountType(
-        feeAmountType: FeeAmountType
+    set FacilityFeeUnit(
+        facilityFeeUnit: FacilityFeeUnit
         )
     {
-        this._fee.Amount.Type = feeAmountType;
-        this._fee.Amount.Value = null;
+        this._fee.MeasurementUnit = facilityFeeUnit === FacilityFeeUnit.Percentage ? this._percentageUnit : null;
+
+        // Trigger error update.
+        this._feeObservable.next(this._fee);
     }
 
     get MonetaryAmount(): number
     {
         if(typeof this._participation === 'number' &&
-           typeof this._fee.Amount.Value === 'number')
-            return this._fee.Amount.Value * this._participation / 100;
+           typeof this._fee.NumericValue === 'number')
+            return this._fee.NumericValue * this._participation / 100;
 
         return null;
     }
@@ -130,8 +149,8 @@ export class FacilityFeeEditor_s
     get PercentageOfCommitment(): number
     {
         if(typeof this._participation === 'number' &&
-           typeof this._fee.Amount.Value === 'number')
-            return this._fee.Amount.Value * 100 / this._participation;
+           typeof this._fee.NumericValue === 'number')
+            return this._fee.NumericValue * 100 / this._participation;
 
         return null;
     }
@@ -173,19 +192,15 @@ export class FacilityFeeEditor_s
         const store         = Store(this._deal);
         this._transaction   = store.BeginTransaction();
         store.SuspendPublish();
-        this._fee           = <FacilityFee>store.Assert(
-        {
-            PartOf     : this._facility,
-            Type       : feeType,
-            Amount     :
+        this._fee = <Fee>store.Assert(
             {
-                Type : FeeAmountType.MonetaryAmount,
-                $type: 'Web.Model.FeeAmount, Web'
-            },
-            Received   : false,
-            AccrualDate: null,
-            $type      : 'Web.Model.FacilityFee, Web'
-        });
+                MeasurementUnit: null,
+                PartOf         : this._facility,
+                Type           : feeType,
+                Received       : false,
+                AccrualDate    : null,
+                $type          : 'Web.Model.FacilityFee, Web'
+            });
         this._fee.PartOf.Parts.push(this._fee);
         store.UnsuspendPublish();
         this._feeObservable.next(this._fee);
@@ -193,7 +208,7 @@ export class FacilityFeeEditor_s
     }
 
     Update(
-        fee          : FacilityFee,
+        fee          : Fee,
         applyCallback: ApplyCallback,
         )
     {

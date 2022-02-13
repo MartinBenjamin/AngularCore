@@ -18,22 +18,22 @@
         *ngIf="Fee"
         class="GridLayout FacilityFeeEditorDialog">
       <tr>
-        <td class="RowHeading">Amount Type</td>
+        <td class="RowHeading">Fee Unit:</td>
         <td>
-          <select [(ngModel)]="FeeAmountType">
-            <option [ngValue]="0">Monetary Amount</option>
+          <select [(ngModel)]="FacilityFeeUnit">
+            <option [ngValue]="0">Commitment Currency</option>
             <option [ngValue]="1">% Of Commitment</option>
           </select>
         </td>
       </tr>
-      <tbody *ngIf="Fee && Fee.Amount.Type === 0; else Percentage">
+      <tbody *ngIf="FacilityFeeUnit === 0; else Percentage">
         <tr>
           <td class="RowHeading">Amount:</td>
           <td>
             <input type="text"
-                   [(dtAmountModel)]="Fee.Amount.Value"
-                   [dtValidatedObject]="Fee.Amount"
-                   dtValidatedProperty="Value"
+                   [(dtAmountModel)]="Fee.NumericValue"
+                   [dtValidatedObject]="Fee"
+                   dtValidatedProperty="NumericValue"
                    class="Amount" />
           </td>
         </tr>
@@ -55,9 +55,9 @@
           <td class="RowHeading">% Of Commitment:</td>
           <td>
             <input type="text"
-                   [(dtPercentage100Model)]="Fee.Amount.Value"
-                   [dtValidatedObject]="Fee.Amount"
-                   dtValidatedProperty="Value"
+                   [(dtPercentage100Model)]="Fee.NumericValue"
+                   [dtValidatedObject]="Fee"
+                   dtValidatedProperty="NumericValue"
                    maxlength="6"
                    class="Percentage" /><span style="margin-left: 2px">%</span>
           </td>

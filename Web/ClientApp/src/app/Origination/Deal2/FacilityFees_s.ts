@@ -1,8 +1,9 @@
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { Facility, FacilityFee, FeeType, LenderParticipation } from '../../FacilityAgreements';
+import { Facility, FeeType, LenderParticipation } from '../../FacilityAgreements';
 import { FacilityFeeTypesToken } from '../../FacilityFeeTypeServiceProvider';
 import { FacilityProvider } from '../../FacilityProvider';
+import { Fee } from '../../Fees';
 import { Group } from '../../Ontology/Group';
 import { FacilityFeeEditor_s } from './FacilityFeeEditor_s';
 
@@ -13,7 +14,7 @@ import { FacilityFeeEditor_s } from './FacilityFeeEditor_s';
 export class FacilityFees_s implements OnDestroy
 {
     private _subscriptions      : Subscription[] = [];
-    private _fees               : [FeeType, FacilityFee[]][];
+    private _fees               : [FeeType, Fee[]][];
     private _feeTypes           : FeeType[];
     private _facility           : Facility;
     private _lenderParticipation: LenderParticipation;
@@ -42,7 +43,6 @@ export class FacilityFees_s implements OnDestroy
                     else
                         this._lenderParticipation = <LenderParticipation>this._facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
 
-
                     this.ComputeFees();
                 }));
     }
@@ -69,31 +69,31 @@ export class FacilityFees_s implements OnDestroy
         this._feeType = feeType;
     }
 
-    get Fees(): [FeeType, FacilityFee[]][]
+    get Fees(): [FeeType, Fee[]][]
     {
         return this._fees;
     }
 
     MonetaryAmount(
-        fee: FacilityFee
+        fee: Fee
         ): number
     {
         let participation = this._lenderParticipation.ActualAllocation !== null ? this._lenderParticipation.ActualAllocation : this._lenderParticipation.AnticipatedHoldAmount;
         if(typeof participation === 'number' &&
-           typeof fee.Amount.Value === 'number')
-            return fee.Amount.Value * participation / 100;
+           typeof fee.NumericValue === 'number')
+            return fee.NumericValue * participation / 100;
 
         return null;
     }
 
     PercentageOfCommitment(
-        fee: FacilityFee
+        fee: Fee
         ): number
     {
         let participation = this._lenderParticipation.ActualAllocation !== null ? this._lenderParticipation.ActualAllocation : this._lenderParticipation.AnticipatedHoldAmount;
         if(typeof participation === 'number' &&
-           typeof fee.Amount.Value === 'number')
-            return fee.Amount.Value * 100 / participation;
+           typeof fee.NumericValue === 'number')
+            return fee.NumericValue * 100 / participation;
 
         return null;
     }
@@ -106,7 +106,7 @@ export class FacilityFees_s implements OnDestroy
     }
 
     Update(
-        fee: FacilityFee
+        fee: Fee
         ): void
     {
         this._editor.Update(
@@ -115,7 +115,7 @@ export class FacilityFees_s implements OnDestroy
     }
 
     Delete(
-        fee: FacilityFee
+        fee: Fee
         ): void
     {
         this._facility.Parts.splice(
@@ -133,9 +133,9 @@ export class FacilityFees_s implements OnDestroy
         }
 
         this._fees = [...Group(
-            <FacilityFee[]>this._facility.Parts.filter(part => (<any>part).$type == 'Web.Model.FacilityFee, Web'),
-            facilityFee => facilityFee.Type,
-            facilityFee => facilityFee)].sort(
+            <Fee[]>this._facility.Parts.filter(part => (<any>part).$type == 'Web.Model.FacilityFee, Web'),
+            fee => fee.Type,
+            fee => fee)].sort(
                 (a, b) => a[0].Name.localeCompare(b[0].Name));
     }
 }
