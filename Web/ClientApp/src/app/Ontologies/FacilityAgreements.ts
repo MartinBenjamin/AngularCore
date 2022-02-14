@@ -8,6 +8,7 @@ import { annotations } from './Annotations';
 import { commonDomainObjects } from "./CommonDomainObjects";
 import { currencyAmount } from './CurrencyAmount';
 import { fees } from './Fees';
+import { quantities } from './Quantities';
 
 export class FacilityAgreements extends Ontology
 {
@@ -16,6 +17,7 @@ export class FacilityAgreements extends Ontology
         super(
             "FacilityAgreements",
             commonDomainObjects,
+            quantities,
             currencyAmount,
             agreements,
             fees,
@@ -61,8 +63,15 @@ export class FacilityAgreements extends Ontology
         actualAllocation.Range(Decimal);
 
         const facilityFee = this.DeclareClass("FacilityFee");
-        facilityFee.Define(commonDomainObjects.$type.HasValue('Web.Model.FacilityFee, Web'));
+        facilityFee.Define(commonDomainObjects.$type.HasValue("Web.Model.FacilityFee, Web"));
         facilityFee.SubClassOf(fees.Fee);
+
+        const externalFunding = this.DeclareClass("ExternalFunding");
+        externalFunding.Define(commonDomainObjects.$type.HasValue("Web.Model.ExternalFunding, Web"));
+        externalFunding.SubClassOf(agreements.Commitment);
+        externalFunding.SubClassOf(quantities.QuantityValue);
+        externalFunding.SubClassOf(agreements.Obligors.MinCardinality(1))
+            .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
     }
 }
 

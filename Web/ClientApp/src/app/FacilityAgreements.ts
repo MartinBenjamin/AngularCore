@@ -2,7 +2,7 @@ import { Guid, Named } from "./CommonDomainObjects";
 import { AccrualDate } from "./Components/AccrualDate";
 import { Contract, ContractualCommitment } from "./Contracts";
 import { percentage } from './Deals';
-import { FeeType } from './Fees';
+import { FeeType, QuantityValue } from './Fees';
 import { Currency } from "./Iso4217";
 import { MonetaryAmount } from "./CurrencyAmount";
 
@@ -32,9 +32,8 @@ export interface LenderParticipation extends ContractualCommitment
     ActualAllocation     : number;
 }
 
-export interface ExternalFunding extends ContractualCommitment
+export interface ExternalFunding extends ContractualCommitment, QuantityValue
 {
-    Percentage: percentage;
 }
 
 export { FeeType };

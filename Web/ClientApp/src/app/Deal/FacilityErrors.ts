@@ -57,7 +57,8 @@ export class FacilityErrors implements OnDestroy
 
                         [
                             facility,
-                            facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web')
+                            facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web'),
+                            facility.Parts.find(part => (<any>part).$type === 'Web.Model.ExternalFunding, Web')
                         ].forEach(
                             object =>
                             {

@@ -16,7 +16,7 @@
 </style>
 <legal-entity-finder Title="Find External Funding Provider" #legalEntityFinder></legal-entity-finder>
 <fieldset class="ExternalFunding">
-  <legend>Funding</legend>
+  <legend>External Funding</legend>
   <table class="GridLayout">
     <tr>
       <td class="RowHeading">External Funding:</td>
@@ -34,13 +34,18 @@
         <td>Percentage:</td>
         <td><input
           type="text"
-          [(dtPercentage100Model)]="ExternalFunding.Percentage"
+          [(dtPercentage100Model)]="ExternalFunding.NumericValue"          
+          [dtValidatedObject]="ExternalFunding"
+          dtValidatedProperty="NumericValue"
           class="Percentage"/></td>
       </tr>
       <tr>
         <td>Providers:</td>
         <td>
-          <table class="DataGrid ExternalFundingProviders">
+          <table
+            [dtValidatedObject]="ExternalFunding"
+            dtValidatedProperty="Obligors"
+            class="DataGrid ExternalFundingProviders">
             <tr *ngFor="let provider of Providers">
                 <td>{{provider.Name}}</td>
                 <td><a (click)="DeleteProvider(provider)">delete</a></td>

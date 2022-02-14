@@ -75,10 +75,9 @@ export class ExternalFunding implements OnDestroy
         {
             this._externalFunding = <import('../FacilityAgreements').ExternalFunding>
             {
-                Id        : EmptyGuid,
-                Obligors  : [],
-                PartOf    : this._facility,
-                Percentage: null
+                NumericValue: null,
+                Obligors    : [],
+                PartOf      : this._facility
             };
 
             (<any>this._externalFunding).$type = 'Web.Model.ExternalFunding, Web';
