@@ -11,7 +11,6 @@ export class Quantities extends Ontology
     MeasurementUnit: IObjectPropertyExpression;
     NumericValue   : IDataPropertyExpression;
     QuantityValue  : IClass;
-    PercentageUnit : INamedIndividual;
 
     constructor()
     {
@@ -28,8 +27,6 @@ export class Quantities extends Ontology
         this.QuantityValue.SubClassOf(this.MeasurementUnit.MaxCardinality(1));
         this.QuantityValue.SubClassOf(this.NumericValue.ExactCardinality(1))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
-
-        this.PercentageUnit = this.DeclareNamedIndividual("Percentage");
     }
 }
 

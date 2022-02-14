@@ -1,9 +1,9 @@
 import { Guid, Named } from "./CommonDomainObjects";
+import { AccrualDate } from "./Components/AccrualDate";
 import { Contract, ContractualCommitment } from "./Contracts";
 import { percentage } from './Deals';
-import { Currency } from "./Iso4217";
-import { AccrualDate } from "./Components/AccrualDate";
 import { FeeType } from './Fees';
+import { Currency } from "./Iso4217";
 
 export interface FacilityAgreement extends Contract
 {
@@ -38,7 +38,7 @@ export interface ExternalFunding extends ContractualCommitment
     Percentage: percentage;
 }
 
-export { FeeType }
+export { FeeType };
 
 export enum FeeAmountType
 {

@@ -5,13 +5,11 @@ import { AccrualDate } from '../../Components/AccrualDate';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
 import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
-import { Facility, FeeAmountType, FeeType, LenderParticipation } from '../../FacilityAgreements';
+import { Facility, FeeType, LenderParticipation } from '../../FacilityAgreements';
 import { FacilityProvider } from '../../FacilityProvider';
-import { Fee, FacilityFeeUnit } from '../../Fees';
-import { quantities } from '../../Ontologies/Quantities';
+import { FacilityFeeUnit, Fee } from '../../Fees';
 import { Store } from '../../Ontology/IEavStore';
 import { ITransaction } from '../../Ontology/ITransactionManager';
-import { ObservableGenerator } from '../../Ontology/ObservableGenerator';
 import { Alternative, Empty, IExpression, Property, Query2 } from '../../RegularPathExpression';
 
 type ApplyCallback = () => void;
@@ -32,7 +30,6 @@ export class FacilityFeeEditor_s
 {
     private _subscriptions : Subscription[] = [];
     private _deal          : Deal;
-    private _percentageUnit: any;
     private _facility      : Facility;
     private _fee           : Fee;
     private _feeObservable = new BehaviorSubject<Fee>(null);
@@ -82,20 +79,7 @@ export class FacilityFeeEditor_s
                     }));
 
         this._subscriptions.push(
-            dealProvider.subscribe(
-                deal =>
-                {
-                    this._deal = deal;
-
-                    if(!this._deal)
-                        return;
-
-                    const store = Store(this._deal);
-                    const observableGenerator = new ObservableGenerator(
-                        this._deal.Ontology,
-                        store);
-                    this._percentageUnit = observableGenerator.InterpretIndividual(quantities.PercentageUnit);
-                }),
+            dealProvider.subscribe(deal => this._deal = deal),
             facilityProvider.subscribe(facility => this._facility = facility),
             errors.subscribe(errors => this._errorsService.next(errors && errors.size ? errors : null)),
             errors.pipe(
@@ -124,14 +108,17 @@ export class FacilityFeeEditor_s
 
     get FacilityFeeUnit(): FacilityFeeUnit
     {
-        return this._fee.MeasurementUnit === this._percentageUnit ? FacilityFeeUnit.Percentage : FacilityFeeUnit.CommitmentCurrency;
+        return this._fee.MeasurementUnit === 0.01 ? FacilityFeeUnit.Percentage : FacilityFeeUnit.CommitmentCurrency;
     }
 
     set FacilityFeeUnit(
         facilityFeeUnit: FacilityFeeUnit
         )
     {
-        this._fee.MeasurementUnit = facilityFeeUnit === FacilityFeeUnit.Percentage ? this._percentageUnit : null;
+        // Facility Fees expressed as Committed Currency Units per 100 Currency Units of Commitment (% of Commitment)
+        // is a quantity of dimension one (dimensionless quantity) which has a dimensionless Measurement Unit with a scalar value of 0.01.
+        // https://www.iso.org/sites/JCGM/VIM/JCGM_200e_FILES/MAIN_JCGM_200e/01_e.html#L_1_8
+        this._fee.MeasurementUnit = facilityFeeUnit === FacilityFeeUnit.Percentage ? 0.01 : null;
 
         // Trigger error update.
         this._feeObservable.next(this._fee);

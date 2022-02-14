@@ -7,14 +7,9 @@ import { agreements } from './Agreements';
 import { annotations } from './Annotations';
 import { commonDomainObjects } from "./CommonDomainObjects";
 import { fees } from './Fees';
-import { INamedIndividual } from '../Ontology/INamedIndividual';
-import { quantities } from './Quantities';
-import { ObjectOneOf } from '../Ontology/ObjectOneOf';
 
 export class FacilityAgreements extends Ontology
 {
-    CommitmentCurrency: INamedIndividual;
-
     constructor()
     {
         super(
@@ -74,16 +69,6 @@ export class FacilityAgreements extends Ontology
         const facilityFee = this.DeclareClass("FacilityFee");
         facilityFee.Define(commonDomainObjects.$type.HasValue('Web.Model.FacilityFee, Web'));
         facilityFee.SubClassOf(fees.Fee);
-
-        this.CommitmentCurrency = this.DeclareNamedIndividual("CommitmentCurrency");
-        facilityFee.SubClassOf(
-            quantities.MeasurementUnit.ExactCardinality(
-                1,
-                new ObjectOneOf(
-                    [
-                        quantities.PercentageUnit,
-                        this.CommitmentCurrency
-                    ])));
     }
 }
 
