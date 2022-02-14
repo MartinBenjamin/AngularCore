@@ -22,7 +22,7 @@ export class FacilityErrors implements OnDestroy
 
     private static _facilityPropertyDisplayName =
         {
-            TotalCommitments: 'Total Debt Size',
+            Amount: 'Total Debt Size',
             Expected1StDrawdownDate: 'Expected 1<sup>st</sup> Drawdown Date'
         };
     private static _errorMap: IErrors =

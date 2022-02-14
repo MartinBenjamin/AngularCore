@@ -4,16 +4,15 @@ import { Contract, ContractualCommitment } from "./Contracts";
 import { percentage } from './Deals';
 import { FeeType } from './Fees';
 import { Currency } from "./Iso4217";
+import { MonetaryAmount } from "./CurrencyAmount";
 
 export interface FacilityAgreement extends Contract
 {
 
 }
 
-export interface Facility extends Named<Guid>, ContractualCommitment
+export interface Facility extends Named<Guid>, ContractualCommitment, MonetaryAmount
 {
-    Currency                 : Currency;
-    TotalCommitments         : number;
     AvailabilityPeriodEndDate: Date;
     MaturityDate             : Date;
     Expected1StDrawdownDate  : Date;

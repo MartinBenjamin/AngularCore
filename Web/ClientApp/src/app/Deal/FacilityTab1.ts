@@ -48,7 +48,7 @@ export class FacilityTab1 implements OnDestroy
     get LenderShare(): number
     {
         if(this._facility && this._lenderParticipation)
-            return this.LenderParticipationAmount * 100 / this._facility.TotalCommitments;
+            return this.LenderParticipationAmount * 100 / this._facility.Amount;
 
         return null;
     }

@@ -46,6 +46,7 @@
     <None Remove="ClientApp\src\app\Components\YesNoPipe.ts" />
     <None Remove="ClientApp\src\app\Components\YesNoSelect.ts" />
     <None Remove="ClientApp\src\app\Contracts.ts" />
+    <None Remove="ClientApp\src\app\CurrencyAmount.ts" />
     <None Remove="ClientApp\src\app\CurrencyServiceProvider.ts" />
     <None Remove="ClientApp\src\app\DealProvider.ts" />
     <None Remove="ClientApp\src\app\Deals.ts" />
@@ -367,6 +368,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Components\YesNoPipe.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Components\YesNoSelect.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Contracts.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\CurrencyAmount.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\CurrencyServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\DealProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Deals.ts" />

@@ -24,8 +24,9 @@ export class CurrencyAmount extends Ontology
         this.Amount.Range(Decimal);
         this.MonetaryAmount = this.DeclareClass("MonetaryAmount");
 
-        this.MonetaryAmount.Define(commonDomainObjects.$type.HasValue('Web.Model.MonetaryAmount, Web'));
-        this.MonetaryAmount.SubClassOf(this.Currency.ExactCardinality(1));
+        //this.MonetaryAmount.Define(commonDomainObjects.$type.HasValue('Web.Model.MonetaryAmount, Web'));
+        this.MonetaryAmount.SubClassOf(this.Currency.ExactCardinality(1))
+            .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
         this.MonetaryAmount.SubClassOf(this.Amount.ExactCardinality(1))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
     }

@@ -4,7 +4,6 @@ import { IDataPropertyExpression, IObjectPropertyExpression } from '../Ontology/
 import { Ontology } from "../Ontology/Ontology";
 import { Decimal } from "../Ontology/Xsd";
 import { annotations } from './Annotations';
-import { INamedIndividual } from '../Ontology/INamedIndividual';
 
 export class Quantities extends Ontology
 {

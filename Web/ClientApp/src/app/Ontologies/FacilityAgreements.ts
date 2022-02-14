@@ -6,6 +6,7 @@ import { DateTime, Decimal } from "../Ontology/Xsd";
 import { agreements } from './Agreements';
 import { annotations } from './Annotations';
 import { commonDomainObjects } from "./CommonDomainObjects";
+import { currencyAmount } from './CurrencyAmount';
 import { fees } from './Fees';
 
 export class FacilityAgreements extends Ontology
@@ -15,6 +16,7 @@ export class FacilityAgreements extends Ontology
         super(
             "FacilityAgreements",
             commonDomainObjects,
+            currencyAmount,
             agreements,
             fees,
             annotations);
@@ -23,18 +25,10 @@ export class FacilityAgreements extends Ontology
         const facility = this.DeclareClass("Facility");
         facility.Define(commonDomainObjects.$type.HasValue("Web.Model.Facility, Web"));
         facility.SubClassOf(agreements.Commitment);
+        facility.SubClassOf(currencyAmount.MonetaryAmount);
 
         facility.SubClassOf(commonDomainObjects.Name.ExactCardinality(1, nonEmptyString))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
-
-        const currency = this.DeclareFunctionalObjectProperty("Currency");
-        facility.SubClassOf(currency.ExactCardinality(1))
-            .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
-
-        const totalCommitments = this.DeclareFunctionalDataProperty("TotalCommitments");
-        totalCommitments.Range(Decimal);
-        facility.SubClassOf(totalCommitments.ExactCardinality(1))
-            .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect)
 
         const availabilityPeriodEndDate = this.DeclareFunctionalDataProperty("AvailabilityPeriodEndDate");
         availabilityPeriodEndDate.Range(DateTime);

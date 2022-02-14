@@ -12,10 +12,10 @@
           <td class="RowHeading">Total Debt Size:</td>
           <td>
             <input type="text"
-                   [dtAmountModel]="Facility?.TotalCommitments"
-                   (dtAmountModelChange)="Facility.TotalCommitments = $event"
+                   [dtAmountModel]="Facility?.Amount"
+                   (dtAmountModelChange)="Facility.Amount = $event"
                    [dtValidatedObject]="Facility"
-                   dtValidatedProperty="TotalCommitments"
+                   dtValidatedProperty="Amount"
                    class="Amount" />
           </td>
         </tr>
