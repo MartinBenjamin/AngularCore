@@ -107,28 +107,18 @@ export class ObservableGenerator implements IClassExpressionSelector<Observable<
         let classObservable = this._classObservables.get(class$);
         if(!classObservable)
         {
-            const classDefinitions = this._classDefinitions.get(class$);
-            if(classDefinitions)
-            {
-                classObservable = classDefinitions[0].Select(this);
-                this._classObservables.set(
-                    class$,
-                    classObservable);
-            }
+            let classDefinitions = this._classDefinitions.get(class$) || [];
+            classDefinitions = classDefinitions.concat([...this._ontology.Get(this._ontology.IsAxiom.ISubClassOf)]
+                .filter(subClassOf => subClassOf.SuperClassExpression === class$)
+                .map(subClassOf => subClassOf.SubClassExpression));
+
+            if(classDefinitions.length)
+                classObservable = combineLatest(
+                    classDefinitions.map(classExpression => classExpression.Select(this)),
+                    (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])));
+
             else
-            {
-                const subClassExpressions = [...this._ontology.Get(this._ontology.IsAxiom.ISubClassOf)]
-                    .filter(subClassOf => subClassOf.SuperClassExpression === class$)
-                    .map(subClassOf => subClassOf.SubClassExpression);
-
-                if(subClassExpressions.length)
-                    classObservable = combineLatest(
-                        subClassExpressions.map(classExpression => classExpression.Select(this)),
-                        (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])));
-
-                else
-                    classObservable = ObservableGenerator._nothing;
-            }
+                classObservable = ObservableGenerator._nothing;
 
             this._classObservables.set(
                 class$,
