@@ -33,7 +33,7 @@ import { KeyCounterparties } from './KeyCounterparties';
 import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
 import { OriginationTab } from './OriginationTab';
-import { Restricted_s } from './Restricted_s';
+import { Restricted } from './Restricted';
 import { Sponsors_s } from './Sponsors_s';
 import { TransactionDetails } from './TransactionDetails';
 
@@ -70,7 +70,7 @@ const routes: Routes =
                 KeyDealData,
                 MoreTabs,
                 OriginationTab,
-                Restricted_s,
+                Restricted,
                 Sponsors_s,
                 TransactionDetails
             ],

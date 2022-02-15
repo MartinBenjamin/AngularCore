@@ -10,10 +10,10 @@ import { Store } from '../../Ontology/IEavStore';
 
 @Component(
     {
-        selector: '[restricted_s]',
-        templateUrl: './Restricted_s.html'
+        selector: '[restricted]',
+        templateUrl: './Restricted.html'
     })
-export class Restricted_s implements OnDestroy
+export class Restricted implements OnDestroy
 {
     private _subscriptions                  : Subscription[] = [];
     private _classificationSchemeClassifiers: ClassificationSchemeClassifier[];
