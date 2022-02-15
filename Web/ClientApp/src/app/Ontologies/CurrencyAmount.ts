@@ -8,9 +8,9 @@ import { commonDomainObjects } from "./CommonDomainObjects";
 
 export class CurrencyAmount extends Ontology
 {
-    Currency      : IObjectPropertyExpression;
-    Amount        : IDataPropertyExpression;
-    MonetaryAmount: IClass;
+    readonly Currency      : IObjectPropertyExpression;
+    readonly Amount        : IDataPropertyExpression;
+    readonly MonetaryAmount: IClass;
 
     constructor()
     {

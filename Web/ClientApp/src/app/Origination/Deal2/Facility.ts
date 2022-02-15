@@ -180,7 +180,7 @@ export class Facility
                 lenderParticipation.Obligors.indexOf(this._bookingOffice),
                 1);
 
-            if(this._deal.Confers.every(commitment => !commitment.Obligors.includes(this._bookingOffice)))
+            if(this._deal.Commitments.every(commitment => !commitment.Obligors.includes(this._bookingOffice)))
                 // Booking Office party no longer referenced.
                 store.DeleteEntity(this._bookingOffice);
         }
@@ -262,7 +262,7 @@ export class Facility
         this._transaction = store.BeginTransaction();
         store.SuspendPublish();
         facility = <facilityAgreements.Facility>store.Assert(facility);
-        this._deal.Confers.push(
+        this._deal.Commitments.push(
             facility,
             lenderParticipation);
         store.UnsuspendPublish();

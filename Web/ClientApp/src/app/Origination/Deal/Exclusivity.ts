@@ -61,7 +61,7 @@ export class Exclusivity implements OnDestroy
                     }
 
                     this._classifier = this._deal.Classifiers.find(classifer => (<any>classifer).$type === 'Web.Model.ExclusivityClassifier, Web');
-                    this._exclusivity = <ExclusivityCommitment>this._deal.Confers.find(commitment => (<any>commitment).$type === 'Web.Model.Exclusivity, Web');
+                    this._exclusivity = <ExclusivityCommitment>this._deal.Commitments.find(commitment => (<any>commitment).$type === 'Web.Model.Exclusivity, Web');
                     this.ComputeExclusive();
                 }));
     }
@@ -116,8 +116,8 @@ export class Exclusivity implements OnDestroy
         {
             if(this._exclusivity !== null)
             {
-                this._deal.Confers.splice(
-                    this._deal.Confers.indexOf(this._exclusivity),
+                this._deal.Commitments.splice(
+                    this._deal.Commitments.indexOf(this._exclusivity),
                     1);
                 this._exclusivity = null;
             }
@@ -134,12 +134,12 @@ export class Exclusivity implements OnDestroy
                     EndDate: null
                 };
             (<any>this._exclusivity).$type = 'Web.Model.Exclusivity, Web';
-            this._deal.Confers.push(this._exclusivity);
+            this._deal.Commitments.push(this._exclusivity);
         }
         else if(!exclusive && this._exclusivity !== null)
         {
-            this._deal.Confers.splice(
-                this._deal.Confers.indexOf(this._exclusivity),
+            this._deal.Commitments.splice(
+                this._deal.Commitments.indexOf(this._exclusivity),
                 1);
             this._exclusivity = null;
         }

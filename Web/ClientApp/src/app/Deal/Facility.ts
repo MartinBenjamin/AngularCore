@@ -323,8 +323,8 @@ export class Facility
                             commitment.Contract.Confers.indexOf(commitment),
                             1);
 
-                    this._deal.Confers.splice(
-                        this._deal.Confers.indexOf(commitment),
+                    this._deal.Commitments.splice(
+                        this._deal.Commitments.indexOf(commitment),
                         1);
                 });
 
@@ -336,7 +336,7 @@ export class Facility
                     if(commitment.Contract)
                         commitment.Contract.Confers.push(commitment);
 
-                    this._deal.Confers.push(commitment);
+                    this._deal.Commitments.push(commitment);
                 });
 
         if(this._applyCallback)

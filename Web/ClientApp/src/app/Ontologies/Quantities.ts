@@ -7,9 +7,9 @@ import { annotations } from './Annotations';
 
 export class Quantities extends Ontology
 {
-    MeasurementUnit: IObjectPropertyExpression;
-    NumericValue   : IDataPropertyExpression;
-    QuantityValue  : IClass;
+    readonly MeasurementUnit: IObjectPropertyExpression;
+    readonly NumericValue   : IDataPropertyExpression;
+    readonly QuantityValue  : IClass;
 
     constructor()
     {

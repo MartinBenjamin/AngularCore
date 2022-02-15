@@ -118,7 +118,7 @@ export class Errors implements OnDestroy
                         }
 
                         // Include Exclusivity errors.
-                        let exclusivity = deal.Confers.find(commitment => (<any>commitment).$type == 'Web.Model.Exclusivity, Web');
+                        let exclusivity = deal.Commitments.find(commitment => (<any>commitment).$type == 'Web.Model.Exclusivity, Web');
                         if(exclusivity)
                         {
                             let exclusivityErrors = errors.get(exclusivity);
@@ -142,7 +142,7 @@ export class Errors implements OnDestroy
                         }
 
                         // Include Facility errors.
-                        deal.Confers.filter(
+                        deal.Commitments.filter(
                             commitment => (<any>commitment).$type === 'Web.Model.Facility, Web' && errors.has(commitment))
                             .forEach(
                                 commitment =>

@@ -125,7 +125,7 @@ export class Deal
             classifications,
             applicableStages);
 
-        this.Deal.Confers.filter(
+        this.Deal.Commitments.filter(
             commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
             .forEach(
                 commitment =>

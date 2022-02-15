@@ -75,8 +75,8 @@ export class Facilities implements OnDestroy
     {
         if(confirm(`Delete Facility ${facility.Name}?`))
         {
-            this._deal.Confers.splice(
-                this._deal.Confers.indexOf(facility),
+            this._deal.Commitments.splice(
+                this._deal.Commitments.indexOf(facility),
                 1);
 
             this.ComputeFacilities();
@@ -91,7 +91,7 @@ export class Facilities implements OnDestroy
             return;
         }
 
-        this._facilities = this._deal.Confers
+        this._facilities = this._deal.Commitments
             .filter(commitment => (<any>commitment).$type == 'Web.Model.Facility, Web')
             .map(commitment => <[Facility, LenderParticipation]>
                 [

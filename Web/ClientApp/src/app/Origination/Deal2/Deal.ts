@@ -109,7 +109,7 @@ export class Deal
                     this._deal,
                     (errors, deal) =>
                     {
-                        deal.Confers.filter(
+                        deal.Commitments.filter(
                             commitment => (<any>commitment).$type === 'Web.Model.Facility, Web')
                             .forEach(
                                 commitment =>

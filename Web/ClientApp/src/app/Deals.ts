@@ -1,4 +1,4 @@
-import { Agreement } from "./Agreements";
+import { Agreement, Commitment } from "./Agreements";
 import { Classifier } from "./ClassificationScheme";
 import { Guid, Named } from "./CommonDomainObjects";
 import { ContractualCommitment } from "./Contracts";
@@ -92,8 +92,10 @@ export interface DealType extends Named<Guid>
 {
 }
 
-export interface Deal extends Agreement
+export interface Deal extends Named<Guid>
 {
+    Parties            : PartyInRole[];
+    Commitments        : Commitment[];
     ClassIri           : string;
     Type               : DealType;
     Agreements         : Agreement[];

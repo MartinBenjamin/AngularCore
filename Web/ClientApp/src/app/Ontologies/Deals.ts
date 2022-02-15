@@ -67,7 +67,7 @@ export class Deals extends Ontology
         this.DealType.SubClassOf(commonDomainObjects.Classifier);
 
         this.Deal = this.DeclareClass("Deal");
-        this.Deal.SubClassOf(agreements.Agreement);
+        this.Deal.SubClassOf(commonDomainObjects.Named);
 
         this.Class = this.DeclareFunctionalDataProperty("ClassIri");
         this.Classifiers = this.DeclareObjectProperty("Classifiers");
