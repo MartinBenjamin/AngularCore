@@ -25,6 +25,11 @@ export class FacilityErrors implements OnDestroy
             Amount: 'Total Debt Size',
             Expected1StDrawdownDate: 'Expected 1<sup>st</sup> Drawdown Date'
         };
+    private static _externalFundingPropertyDisplayName =
+        {
+            NumericValue: 'External Funding Percentage',
+            Obligors: 'External Funding Providers'
+        };
     private static _errorMap: IErrors =
         {
             Mandatory       : 'Mandatory',
@@ -57,8 +62,7 @@ export class FacilityErrors implements OnDestroy
 
                         [
                             facility,
-                            facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web'),
-                            facility.Parts.find(part => (<any>part).$type === 'Web.Model.ExternalFunding, Web')
+                            facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web')
                         ].forEach(
                             object =>
                             {
@@ -82,6 +86,31 @@ export class FacilityErrors implements OnDestroy
                                         });
                                 }
                             });
+
+                        const externalFunding = facility.Parts.find(part => (<any>part).$type === 'Web.Model.ExternalFunding, Web');
+                        if(externalFunding)
+                        {
+                            let externalFundingErrors = errors.get(externalFunding);
+
+                            if(externalFundingErrors)
+                            {
+                                this._errors = this._errors || [];
+                                externalFundingErrors.forEach(
+                                    (propertyErrors, propertyName) =>
+                                    {
+                                        let property: Property = [externalFunding, propertyName];
+                                        let propertyDisplayName = propertyName in FacilityErrors._externalFundingPropertyDisplayName ? FacilityErrors._externalFundingPropertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
+                                        propertyErrors.forEach(
+                                            propertyError => this._errors.push(
+                                                [
+                                                    property,
+                                                    propertyDisplayName,
+                                                    FacilityErrors._errorMap[propertyError]
+                                                ]));
+                                    });
+                            }
+
+                        }
                     }));
     }
 
