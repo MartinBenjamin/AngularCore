@@ -7,6 +7,7 @@ import { ErrorModule } from '../Components/ErrorModule';
 import { NumberModule } from '../Components/NumberModule';
 import { TabbedViewModule } from '../Components/TabbedView';
 import { YesNoPipeModule } from '../Components/YesNoPipe';
+import { GeographicRegionSelector } from '../GeographicRegionSelector';
 import { GeographicRegionSelectorModule } from '../GeographicRegionSelector.Module';
 import { LegalEntityFinder, LegalEntityFinderButtons } from '../LegalEntityFinder';
 import { LegalEntityFinderModule } from '../LegalEntityFinder.Module';
@@ -20,7 +21,6 @@ import { FacilityFees } from './FacilityFees';
 import { FacilityTab } from './FacilityTab';
 import { FacilityTab1 } from './FacilityTab1';
 import { FacilityTab3 } from './FacilityTab3';
-import { GeographicRegionSelector } from './GeographicRegionSelector';
 import { Restricted } from './Restricted';
 import { Sponsors } from './Sponsors';
 
@@ -38,7 +38,6 @@ import { Sponsors } from './Sponsors';
                 FacilityTab,
                 FacilityTab1,
                 FacilityTab3,
-                GeographicRegionSelector,
                 Restricted,
                 Sponsors
             ],
@@ -49,6 +48,7 @@ import { Sponsors } from './Sponsors';
                 DialogModule,
                 ErrorModule,
                 FormsModule,
+                GeographicRegionSelectorModule,
                 LegalEntityFinderModule,
                 NumberModule,
                 TabbedViewModule,

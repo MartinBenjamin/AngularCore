@@ -63,7 +63,6 @@
     <None Remove="ClientApp\src\app\Deal\FacilityFees.ts" />
     <None Remove="ClientApp\src\app\Deal\FacilityTab1.ts" />
     <None Remove="ClientApp\src\app\Deal\FacilityTab3.ts" />
-    <None Remove="ClientApp\src\app\Deal\GeographicRegionSelector.ts" />
     <None Remove="ClientApp\src\app\Deal\Restricted.ts" />
     <None Remove="ClientApp\src\app\FacilityAgreements.ts" />
     <None Remove="ClientApp\src\app\FacilityFeeTypeServiceProvider.ts" />
@@ -397,7 +396,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\Deal\FacilityFees.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Deal\FacilityTab1.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Deal\FacilityTab3.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Deal\GeographicRegionSelector.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Deal\Restricted.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
