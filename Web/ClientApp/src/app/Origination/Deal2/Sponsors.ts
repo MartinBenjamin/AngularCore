@@ -19,10 +19,10 @@ import { RoleServiceToken } from "../../RoleServiceProvider";
 
 @Component(
     {
-        selector: 'sponsors-s',
-        templateUrl: './Sponsors_s.html'
+        selector: 'sponsors',
+        templateUrl: './Sponsors.html'
     })
-export class Sponsors_s implements OnDestroy
+export class Sponsors implements OnDestroy
 {
     private _naEnabled    = false;
     private _subscriptions: Subscription[] = [];

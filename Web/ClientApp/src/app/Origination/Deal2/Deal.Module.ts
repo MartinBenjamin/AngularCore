@@ -34,7 +34,7 @@ import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
 import { OriginationTab } from './OriginationTab';
 import { Restricted } from './Restricted';
-import { Sponsors_s } from './Sponsors_s';
+import { Sponsors } from './Sponsors';
 import { TransactionDetails } from './TransactionDetails';
 
 const routes: Routes =
@@ -71,7 +71,7 @@ const routes: Routes =
                 MoreTabs,
                 OriginationTab,
                 Restricted,
-                Sponsors_s,
+                Sponsors,
                 TransactionDetails
             ],
         imports:
