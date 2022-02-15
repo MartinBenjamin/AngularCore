@@ -16,7 +16,7 @@ import { ObserveErrorsSwitchMap } from '../../Ontologies/ObserveErrors';
 import { IErrors } from '../../Ontologies/Validate';
 import { Store } from '../../Ontology/IEavStore';
 import { Origination } from '../Origination';
-import { Facility_s } from './Facility_s';
+import { Facility } from './Facility';
 import { KeyCounterparties } from './KeyCounterparties';
 import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
@@ -114,7 +114,7 @@ export class Deal
                             .forEach(
                                 commitment =>
                                 {
-                                    for(let object of Facility_s.SubgraphQuery(commitment))
+                                    for(let object of Facility.SubgraphQuery(commitment))
                                         if(errors.has(object))
                                         {
                                             let facilityErrors = errors.get(commitment);

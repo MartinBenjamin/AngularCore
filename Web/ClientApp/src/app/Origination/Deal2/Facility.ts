@@ -6,9 +6,6 @@ import { DomainObject, EmptyGuid, Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
 import { CurrenciesOrderedByCodeToken } from '../../CurrencyServiceProvider';
-import { FacilityTab } from './FacilityTab';
-import { FacilityTab1 } from './FacilityTab1';
-import { FacilityTab3 } from './FacilityTab3';
 import { DealProvider } from '../../DealProvider';
 import { Deal, DealRoleIdentifier } from '../../Deals';
 import * as facilityAgreements from '../../FacilityAgreements';
@@ -23,18 +20,21 @@ import { Alternative, Empty, IExpression, Property, Query2, Sequence, ZeroOrMore
 import { Role } from '../../Roles';
 import { RolesToken } from '../../RoleServiceProvider';
 import { FacilityFees_s } from './FacilityFees_s';
+import { FacilityTab } from './FacilityTab';
+import { FacilityTab1 } from './FacilityTab1';
+import { FacilityTab3 } from './FacilityTab3';
 
 type ApplyCallback = () => void;
 
 @Component(
     {
-        selector: 'facility-s',
-        templateUrl: './Facility_s.html',
+        selector: 'facility',
+        templateUrl: './Facility.html',
         providers:
             [
                 {
                     provide: FacilityProvider,
-                    useExisting: forwardRef(() => Facility_s)
+                    useExisting: forwardRef(() => Facility)
                 },
                 ErrorsSubjectProvider,
                 ErrorsObservableProvider,
@@ -42,7 +42,7 @@ type ApplyCallback = () => void;
                 HighlightedPropertyObservableProvider
             ]
     })
-export class Facility_s
+export class Facility
     extends FacilityProvider
     implements OnDestroy
 {
@@ -66,7 +66,7 @@ export class Facility_s
             ])
         ]);
 
-    public static SubgraphQuery = Query2(Facility_s._subgraph);
+    public static SubgraphQuery = Query2(Facility._subgraph);
 
     public Tabs: Tab[];
 
@@ -111,7 +111,7 @@ export class Facility_s
                             {
                                 if(!facility)
                                     return null;
-                                const subgraph = new Set<any>(Facility_s.SubgraphQuery(facility));
+                                const subgraph = new Set<any>(Facility.SubgraphQuery(facility));
                                 return new Map([...errors.entries()].filter(([entity,]) => subgraph.has(entity)));
                             }).pipe(share());
                     }));

@@ -21,6 +21,7 @@ import { Errors } from './Errors';
 import { Exclusivity } from './Exclusivity';
 import { ExternalFunding } from './ExternalFunding';
 import { Facilities } from './Facilities';
+import { Facility } from './Facility';
 import { FacilityErrors } from './FacilityErrors';
 import { FacilityFeeEditor_s } from './FacilityFeeEditor_s';
 import { FacilityFeeErrors } from './FacilityFeeErrors';
@@ -28,7 +29,6 @@ import { FacilityFees_s } from './FacilityFees_s';
 import { FacilityTab } from './FacilityTab';
 import { FacilityTab1 } from './FacilityTab1';
 import { FacilityTab3 } from './FacilityTab3';
-import { Facility_s } from './Facility_s';
 import { KeyCounterparties } from './KeyCounterparties';
 import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
@@ -58,7 +58,7 @@ const routes: Routes =
                 Exclusivity,
                 ExternalFunding,
                 Facilities,
-                Facility_s,
+                Facility,
                 FacilityErrors,
                 FacilityFeeEditor_s,
                 FacilityFeeErrors,
