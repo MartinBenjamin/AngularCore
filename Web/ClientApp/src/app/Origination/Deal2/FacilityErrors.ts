@@ -1,7 +1,7 @@
-import { Component, Inject, OnDestroy } from '@angular/core';
-import { combineLatest, Observable, Subject, Subscription } from "rxjs";
+import { Component, Inject } from '@angular/core';
+import { combineLatest, Observable, Subject } from "rxjs";
+import { map } from 'rxjs/operators';
 import { ErrorsObservableToken, HighlightedPropertySubjectToken, Property } from '../../Components/ValidatedProperty';
-import { Facility } from '../../FacilityAgreements';
 import { FacilityProvider } from '../../FacilityProvider';
 import { IErrors } from '../../Ontologies/Validate';
 
@@ -11,14 +11,13 @@ type Error = [Property, string, string];
     {
         selector: 'facility-errors',
         template: `
-<ul *ngIf="Errors" style="color: red;">
-  <li *ngFor="let error of Errors" [innerHTML]="error[1] + ': ' + error[2]" (click)="Highlight(error[0])" style="cursor: pointer;"></li>
+<ul *ngIf="Errors|async as errors" style="color: red;">
+  <li *ngFor="let error of errors" [innerHTML]="error[1] + ': ' + error[2]" (click)="Highlight(error[0])" style="cursor: pointer;"></li>
 </ul>`
     })
-export class FacilityErrors implements OnDestroy
+export class FacilityErrors
 {
-    private _subscriptions: Subscription[] = [];
-    private _errors       : Error[];
+    private _errors: Observable<Error[]>;
 
     private static _facilityPropertyDisplayName =
         {
@@ -45,63 +44,35 @@ export class FacilityErrors implements OnDestroy
         private _highlightedPropertyService: Subject<Property>
         )
     {
-        this._subscriptions.push(
-            combineLatest(
-                facilityProvider,
-                errorsService
-                ).subscribe(
-                    combined =>
-                    {
-                        this._errors = null;
-                        let facility: Facility;
-                        let errors: Map<object, Map<string, Set<keyof IErrors>>>;
-                        [facility, errors] = combined;
+        this._errors = combineLatest(
+            facilityProvider,
+            errorsService
+        ).pipe(
+            map(
+                ([facility, errorMap]) =>
+                {
+                    if(!(facility && errorMap))
+                        return null;
 
-                        if(!(facility && errors))
-                            return;
-
-                        [
-                            facility,
-                            facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web')
-                        ].forEach(
-                            object =>
-                            {
-                                let objectErrors = errors.get(object);                         
-
-                                if(objectErrors)
-                                {
-                                    this._errors = this._errors || [];
-                                    objectErrors.forEach(
-                                        (propertyErrors, propertyName) =>
-                                        {
-                                            let property: Property = [object, propertyName];
-                                            let propertyDisplayName = propertyName in FacilityErrors._facilityPropertyDisplayName ? FacilityErrors._facilityPropertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
-                                            propertyErrors.forEach(
-                                                propertyError => this._errors.push(
-                                                    [
-                                                        property,
-                                                        propertyDisplayName,
-                                                        FacilityErrors._errorMap[propertyError]
-                                                    ]));
-                                        });
-                                }
-                            });
-
-                        const externalFunding = facility.Parts.find(part => (<any>part).$type === 'Web.Model.ExternalFunding, Web');
-                        if(externalFunding)
+                    const errors: Error[] = [];
+                    [
+                        facility,
+                        facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web')
+                    ].forEach(
+                        object =>
                         {
-                            let externalFundingErrors = errors.get(externalFunding);
+                            let objectErrors = errorMap.get(object);
 
-                            if(externalFundingErrors)
+                            if(objectErrors)
                             {
                                 this._errors = this._errors || [];
-                                externalFundingErrors.forEach(
+                                objectErrors.forEach(
                                     (propertyErrors, propertyName) =>
                                     {
-                                        let property: Property = [externalFunding, propertyName];
-                                        let propertyDisplayName = propertyName in FacilityErrors._externalFundingPropertyDisplayName ? FacilityErrors._externalFundingPropertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
+                                        let property: Property = [object, propertyName];
+                                        let propertyDisplayName = propertyName in FacilityErrors._facilityPropertyDisplayName ? FacilityErrors._facilityPropertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
                                         propertyErrors.forEach(
-                                            propertyError => this._errors.push(
+                                            propertyError => errors.push(
                                                 [
                                                     property,
                                                     propertyDisplayName,
@@ -109,17 +80,37 @@ export class FacilityErrors implements OnDestroy
                                                 ]));
                                     });
                             }
+                        });
 
+                    const externalFunding = facility.Parts.find(part => (<any>part).$type === 'Web.Model.ExternalFunding, Web');
+                    if(externalFunding)
+                    {
+                        let externalFundingErrors = errorMap.get(externalFunding);
+
+                        if(externalFundingErrors)
+                        {
+                            this._errors = this._errors || [];
+                            externalFundingErrors.forEach(
+                                (propertyErrors, propertyName) =>
+                                {
+                                    let property: Property = [externalFunding, propertyName];
+                                    let propertyDisplayName = propertyName in FacilityErrors._externalFundingPropertyDisplayName ? FacilityErrors._externalFundingPropertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
+                                    propertyErrors.forEach(
+                                        propertyError => errors.push(
+                                            [
+                                                property,
+                                                propertyDisplayName,
+                                                FacilityErrors._errorMap[propertyError]
+                                            ]));
+                                });
                         }
-                    }));
+                    }
+
+                    return errors;
+                }));
     }
 
-    ngOnDestroy(): void
-    {
-        this._subscriptions.forEach(subscription => subscription.unsubscribe());
-    }
-
-    get Errors(): Error[]
+    get Errors(): Observable<Error[]>
     {
         return this._errors;
     }
