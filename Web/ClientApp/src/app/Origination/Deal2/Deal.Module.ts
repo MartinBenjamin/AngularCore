@@ -25,7 +25,7 @@ import { Facility } from './Facility';
 import { FacilityErrors } from './FacilityErrors';
 import { FacilityFeeEditor } from './FacilityFeeEditor';
 import { FacilityFeeErrors } from './FacilityFeeErrors';
-import { FacilityFees_s } from './FacilityFees_s';
+import { FacilityFees } from './FacilityFees';
 import { FacilityTab } from './FacilityTab';
 import { FacilityTab1 } from './FacilityTab1';
 import { FacilityTab3 } from './FacilityTab3';
@@ -62,7 +62,7 @@ const routes: Routes =
                 FacilityErrors,
                 FacilityFeeEditor,
                 FacilityFeeErrors,
-                FacilityFees_s,
+                FacilityFees,
                 FacilityTab,
                 FacilityTab1,
                 FacilityTab3,

@@ -19,7 +19,7 @@ import { PartyInRole } from '../../Parties';
 import { Alternative, Empty, IExpression, Property, Query2, Sequence, ZeroOrMore } from '../../RegularPathExpression';
 import { Role } from '../../Roles';
 import { RolesToken } from '../../RoleServiceProvider';
-import { FacilityFees_s } from './FacilityFees_s';
+import { FacilityFees } from './FacilityFees';
 import { FacilityTab } from './FacilityTab';
 import { FacilityTab1 } from './FacilityTab1';
 import { FacilityTab3 } from './FacilityTab3';
@@ -87,10 +87,10 @@ export class Facility
 
         this.Tabs =
             [
-                new Tab('Size &<br/>Dates'                , FacilityTab1  ),
-                new Tab('Upfront &<br/>Participation Fees', FacilityFees_s),
-                new Tab('Tab 3'                           , FacilityTab3  ),
-                new Tab('Tab 4'                           , FacilityTab   )
+                new Tab('Size &<br/>Dates'                , FacilityTab1),
+                new Tab('Upfront &<br/>Participation Fees', FacilityFees),
+                new Tab('Tab 3'                           , FacilityTab3),
+                new Tab('Tab 4'                           , FacilityTab )
             ];
 
         const errors = combineLatest(

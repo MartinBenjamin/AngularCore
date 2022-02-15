@@ -313,7 +313,7 @@
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityErrors.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityFeeEditor.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityFeeErrors.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityFees_s.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityFees.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityTab1.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityTab3.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\KeyCounterparties.ts" />
@@ -669,7 +669,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityFeeErrors.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityFees_s.ts">
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityFees.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityTab1.ts">

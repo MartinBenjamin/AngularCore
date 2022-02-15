@@ -9,9 +9,9 @@ import { FacilityFeeEditor } from './FacilityFeeEditor';
 
 @Component(
     {
-        templateUrl: './FacilityFees_s.html'
+        templateUrl: './FacilityFees.html'
     })
-export class FacilityFees_s implements OnDestroy
+export class FacilityFees implements OnDestroy
 {
     private _subscriptions      : Subscription[] = [];
     private _fees               : [FeeType, Fee[]][];
