@@ -65,8 +65,6 @@ export class FacilityErrors
                             let objectErrors = errorMap.get(object);
 
                             if(objectErrors)
-                            {
-                                this._errors = this._errors || [];
                                 objectErrors.forEach(
                                     (propertyErrors, propertyName) =>
                                     {
@@ -80,7 +78,6 @@ export class FacilityErrors
                                                     FacilityErrors._errorMap[propertyError]
                                                 ]));
                                     });
-                            }
                         });
 
                     const externalFunding = facility.Parts.find(part => (<any>part).$type === 'Web.Model.ExternalFunding, Web');
@@ -89,8 +86,6 @@ export class FacilityErrors
                         let externalFundingErrors = errorMap.get(externalFunding);
 
                         if(externalFundingErrors)
-                        {
-                            this._errors = this._errors || [];
                             externalFundingErrors.forEach(
                                 (propertyErrors, propertyName) =>
                                 {
@@ -104,7 +99,6 @@ export class FacilityErrors
                                                 FacilityErrors._errorMap[propertyError]
                                             ]));
                                 });
-                        }
                     }
 
                     return errors;

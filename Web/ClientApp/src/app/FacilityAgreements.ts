@@ -1,10 +1,8 @@
 import { Guid, Named } from "./CommonDomainObjects";
 import { AccrualDate } from "./Components/AccrualDate";
 import { Contract, ContractualCommitment } from "./Contracts";
-import { percentage } from './Deals';
-import { FeeType, QuantityValue } from './Fees';
-import { Currency } from "./Iso4217";
 import { MonetaryAmount } from "./CurrencyAmount";
+import { FeeType, QuantityValue } from './Fees';
 
 export interface FacilityAgreement extends Contract
 {

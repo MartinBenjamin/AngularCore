@@ -1,7 +1,8 @@
-import { Named, Guid, DomainObject } from "./CommonDomainObjects";
 import { AutonomousAgent } from "./Agents";
+import { Classifier } from "./ClassificationScheme";
+import { DomainObject, Guid } from "./CommonDomainObjects";
 
-export interface Role extends Named<Guid>
+export interface Role extends Classifier
 {
 }
 

@@ -88,7 +88,7 @@ export class DealStageIdentifier
 
 export type percentage = number;
 
-export interface DealType extends Named<Guid>
+export interface DealType extends Classifier
 {
 }
 

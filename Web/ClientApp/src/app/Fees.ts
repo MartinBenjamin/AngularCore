@@ -1,8 +1,8 @@
-import { ContractualCommitment } from './Contracts';
+import { Classifier } from './ClassificationScheme';
 import { AccrualDate } from './Components/AccrualDate';
-import { Named, Guid } from './CommonDomainObjects';
+import { ContractualCommitment } from './Contracts';
 
-export interface FeeType extends Named<Guid>
+export interface FeeType extends Classifier
 {
 }
 
