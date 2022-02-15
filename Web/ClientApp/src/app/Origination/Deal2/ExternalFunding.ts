@@ -10,6 +10,7 @@ import { LegalEntityFinder } from '../../LegalEntityFinder';
 import { Role } from '../../Roles';
 import { RolesToken } from '../../RoleServiceProvider';
 import { PartyInRole } from '../../Parties';
+import { Store } from '../../Ontology/IEavStore';
 
 @Component(
     {
@@ -71,17 +72,18 @@ export class ExternalFunding implements OnDestroy
         externallyFunded: boolean
         )
     {
+        const store = Store(this._deal);
+        store.SuspendPublish();
         if(externallyFunded && !this._externalFunding)
         {
-            this._externalFunding = <import('../../FacilityAgreements').ExternalFunding>
+            this._externalFunding = <import('../../FacilityAgreements').ExternalFunding>store.Assert(
             {
                 MeasurementUnit: 0.01,
-                NumericValue   : null,
                 Obligors       : [],
-                PartOf         : this._facility
-            };
+                PartOf         : this._facility,
+                $type          : 'Web.Model.ExternalFunding, Web'
+            });
 
-            (<any>this._externalFunding).$type = 'Web.Model.ExternalFunding, Web';
             this._externalFunding.PartOf.Parts.push(this._externalFunding);
         }
         else if(!externallyFunded && this._externalFunding)
@@ -89,8 +91,10 @@ export class ExternalFunding implements OnDestroy
             this._externalFunding.PartOf.Parts.splice(
                 this._externalFunding.PartOf.Parts.indexOf(this._externalFunding),
                 1);
+            store.DeleteEntity(this._externalFunding);
             this._externalFunding = null;
         }
+        store.UnsuspendPublish();
     }
 
     get ExternalFunding(): import('../../FacilityAgreements').ExternalFunding
@@ -131,18 +135,18 @@ export class ExternalFunding implements OnDestroy
                 let providerParty = this._deal.Parties.find(
                     party => party.Organisation.Id === legalEntity.Id && party.Role.Id === this._externalFundingProviderRole.Id);
 
+                const store = Store(this._deal);
+                store.SuspendPublish();
                 if(!providerParty)
-                    providerParty = <PartyInRole>
+                    providerParty = <PartyInRole>store.Assert(
                         {
-                            Id             : EmptyGuid,
                             AutonomousAgent: legalEntity,
                             Organisation   : legalEntity,
-                            Person         : null,
                             Role           : this._externalFundingProviderRole,
-                            Period         : null
-                        };
+                        });
 
                 this._externalFunding.Obligors.push(providerParty);
+                store.UnsuspendPublish();
                 this.ComputeProviders();
             });
     }
