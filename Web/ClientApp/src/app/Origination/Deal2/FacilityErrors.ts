@@ -55,6 +55,7 @@ export class FacilityErrors
                         return null;
 
                     const errors: Error[] = [];
+
                     [
                         facility,
                         facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web')

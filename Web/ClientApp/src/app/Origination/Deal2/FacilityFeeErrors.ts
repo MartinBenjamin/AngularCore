@@ -1,5 +1,6 @@
-import { Component, Inject, OnDestroy } from '@angular/core';
-import { Observable, Subject, Subscription } from "rxjs";
+import { Component, Inject } from '@angular/core';
+import { Observable, Subject } from "rxjs";
+import { map } from 'rxjs/operators';
 import { ErrorsObservableToken, HighlightedPropertySubjectToken, Property } from '../../Components/ValidatedProperty';
 import { IErrors } from '../../Ontologies/Validate';
 
@@ -9,14 +10,13 @@ type Error = [Property, string, string];
     {
         selector: 'facility-fee-errors',
         template: `
-<ul *ngIf="Errors" style="color: red;">
-  <li *ngFor="let error of Errors" [innerHTML]="error[1] + ': ' + error[2]" (click)="Highlight(error[0])" style="cursor: pointer;"></li>
+<ul *ngIf="Errors|async as errors" style="color: red;">
+  <li *ngFor="let error of errors" [innerHTML]="error[1] + ': ' + error[2]" (click)="Highlight(error[0])" style="cursor: pointer;"></li>
 </ul>`
     })
-export class FacilityFeeErrors implements OnDestroy
+export class FacilityFeeErrors
 {
-    private _subscriptions: Subscription[] = [];
-    private _errors       : Error[];
+    private _errors: Observable<Error[]>;
 
     private static _propertyDisplayName =
         {
@@ -38,45 +38,41 @@ export class FacilityFeeErrors implements OnDestroy
         private _highlightedPropertyService: Subject<Property>
         )
     {
-        this._subscriptions.push(
-            errorsService.subscribe(
-                errors =>
-                {
-                    this._errors = null;
+        this._errors = errorsService.pipe(map(
+            errorMap =>
+            {
+                if(!errorMap)
+                    return null;
 
-                    if(!errors)
-                        return;
+                const errors: Error[] = [];
 
-                    errors.forEach(
-                        (objectErrors, object) =>
-                        {
-                            this._errors = this._errors || [];
-                            objectErrors.forEach(
-                                (propertyErrors, propertyName) =>
-                                {
-                                    let property: Property = [object, propertyName];
-                                    let propertyDisplayName: string;
+                errorMap.forEach(
+                    (objectErrors, object) =>
+                    {
+                        this._errors = this._errors || [];
+                        objectErrors.forEach(
+                            (propertyErrors, propertyName) =>
+                            {
+                                let property: Property = [object, propertyName];
+                                let propertyDisplayName: string;
 
-                                    if(propertyName === 'NumericValue')
-                                        propertyDisplayName = (<any>object).MeasurementUnit ? '% Of Commitment' : 'Amount';
+                                if(propertyName === 'NumericValue')
+                                    propertyDisplayName = (<any>object).MeasurementUnit ? '% Of Commitment' : 'Amount';
 
-                                    else
-                                        propertyDisplayName = propertyName in FacilityFeeErrors._propertyDisplayName ? FacilityFeeErrors._propertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
+                                else
+                                    propertyDisplayName = propertyName in FacilityFeeErrors._propertyDisplayName ? FacilityFeeErrors._propertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
 
-                                    propertyErrors.forEach(
-                                        propertyError => this._errors.push([
-                                            property,
-                                            propertyDisplayName,
-                                            FacilityFeeErrors._errorMap[propertyError]
-                                        ]));
-                                });
-                        });
-                }));
-    }
+                                propertyErrors.forEach(
+                                    propertyError => errors.push([
+                                        property,
+                                        propertyDisplayName,
+                                        FacilityFeeErrors._errorMap[propertyError]
+                                    ]));
+                            });
+                    });
 
-    ngOnDestroy(): void
-    {
-        this._subscriptions.forEach(subscription => subscription.unsubscribe());
+                return errors;
+            }));
     }
 
     get Errors(): Error[]
