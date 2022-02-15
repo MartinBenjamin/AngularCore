@@ -17,10 +17,10 @@ import { RoleServiceToken } from '../../RoleServiceProvider';
 
 @Component(
     {
-        selector: 'borrowers-s',
-        templateUrl: './Borrowers_s.html'
+        selector: 'borrowers',
+        templateUrl: './Borrowers.html'
     })
-export class Borrowers_s implements OnDestroy
+export class Borrowers implements OnDestroy
 {
     private _subscriptions: Subscription[] = [];
     private _borrowerRole : Role;

@@ -12,7 +12,7 @@ import { GeographicRegionSelectorModule } from '../../GeographicRegionSelector.M
 import { LegalEntityFinderModule } from '../../LegalEntityFinder.Module';
 import { DealOntologyServiceProvider } from '../../Ontologies/DealOntologyServiceProvider';
 import { DealBuilderProvider } from '../../Ontologies/IDealBuilder';
-import { Borrowers_s } from './Borrowers_s';
+import { Borrowers } from './Borrowers';
 import { Common } from './Common';
 import { Deal } from './Deal';
 import { DealGeographicRegion } from './DealGeographicRegion';
@@ -51,7 +51,7 @@ const routes: Routes =
         declarations:
             [
                 Deal,
-                Borrowers_s,
+                Borrowers,
                 Common,
                 DealGeographicRegion,
                 Errors,
