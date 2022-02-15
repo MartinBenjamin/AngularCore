@@ -47,35 +47,31 @@ export class FacilityFeeErrors
                 const errors: Error[] = [];
 
                 errorMap.forEach(
-                    (objectErrors, object) =>
-                    {
-                        this._errors = this._errors || [];
-                        objectErrors.forEach(
-                            (propertyErrors, propertyName) =>
-                            {
-                                let property: Property = [object, propertyName];
-                                let propertyDisplayName: string;
+                    (objectErrors, object) => objectErrors.forEach(
+                        (propertyErrors, propertyName) =>
+                        {
+                            let property: Property = [object, propertyName];
+                            let propertyDisplayName: string;
 
-                                if(propertyName === 'NumericValue')
-                                    propertyDisplayName = (<any>object).MeasurementUnit ? '% Of Commitment' : 'Amount';
+                            if(propertyName === 'NumericValue')
+                                propertyDisplayName = (<any>object).MeasurementUnit ? '% Of Commitment' : 'Amount';
 
-                                else
-                                    propertyDisplayName = propertyName in FacilityFeeErrors._propertyDisplayName ? FacilityFeeErrors._propertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
+                            else
+                                propertyDisplayName = propertyName in FacilityFeeErrors._propertyDisplayName ? FacilityFeeErrors._propertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
 
-                                propertyErrors.forEach(
-                                    propertyError => errors.push([
-                                        property,
-                                        propertyDisplayName,
-                                        FacilityFeeErrors._errorMap[propertyError]
-                                    ]));
-                            });
-                    });
+                            propertyErrors.forEach(
+                                propertyError => errors.push([
+                                    property,
+                                    propertyDisplayName,
+                                    FacilityFeeErrors._errorMap[propertyError]
+                                ]));
+                        }));
 
                 return errors;
             }));
     }
 
-    get Errors(): Error[]
+    get Errors(): Observable<Error[]>
     {
         return this._errors;
     }
