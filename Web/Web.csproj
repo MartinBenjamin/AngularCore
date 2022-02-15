@@ -71,6 +71,8 @@
     <None Remove="ClientApp\src\app\Fees.ts" />
     <None Remove="ClientApp\src\app\GeographicRegionHierarchy.ts" />
     <None Remove="ClientApp\src\app\GeographicRegionHierarchyProvider.ts" />
+    <None Remove="ClientApp\src\app\GeographicRegionSelector.Module.ts" />
+    <None Remove="ClientApp\src\app\GeographicRegionSelector.ts" />
     <None Remove="ClientApp\src\app\Hierarchy.ts" />
     <None Remove="ClientApp\src\app\Home\Aircraft.ts" />
     <None Remove="ClientApp\src\app\Home\Globe.ts" />
@@ -80,6 +82,7 @@
     <None Remove="ClientApp\src\app\Iso3166.ts" />
     <None Remove="ClientApp\src\app\Iso4217.ts" />
     <None Remove="ClientApp\src\app\LegalEntities.ts" />
+    <None Remove="ClientApp\src\app\LegalEntityFinder.Module.ts" />
     <None Remove="ClientApp\src\app\LegalEntityFinder.ts" />
     <None Remove="ClientApp\src\app\LegalEntityServiceProvider.ts" />
     <None Remove="ClientApp\src\app\LifeCycles.ts" />
@@ -306,9 +309,15 @@
     <None Remove="ClientApp\src\app\Origination\Deal2\EavStoreProvider.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\Errors.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\Exclusivity.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\ExternalFunding.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\Facilities.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityErrors.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityFeeEditor.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityFeeEditor_s.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityFeeErrors.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityFees_s.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityTab1.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityTab3.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\KeyCounterparties.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\Restricted_s.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\Sponsors_s.ts" />
@@ -398,6 +407,10 @@
     <TypeScriptCompile Include="ClientApp\src\app\Fees.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\GeographicRegionHierarchy.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\GeographicRegionHierarchyProvider.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\GeographicRegionSelector.Module.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\GeographicRegionSelector.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Hierarchy.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Home\Aircraft.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Home\Globe.ts" />
@@ -407,6 +420,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Iso3166.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Iso4217.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\LegalEntities.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\LegalEntityFinder.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\LegalEntityServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\LifeCycles.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Locations.ts" />
@@ -643,13 +657,31 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Exclusivity.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\ExternalFunding.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Facilities.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityErrors.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityFeeEditor.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityFeeEditor_s.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityFeeErrors.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityFees_s.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityTab1.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityTab3.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\KeyCounterparties.ts">

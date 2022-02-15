@@ -7,8 +7,9 @@ import { ErrorModule } from '../Components/ErrorModule';
 import { NumberModule } from '../Components/NumberModule';
 import { TabbedViewModule } from '../Components/TabbedView';
 import { YesNoPipeModule } from '../Components/YesNoPipe';
+import { GeographicRegionSelectorModule } from '../GeographicRegionSelector.Module';
 import { LegalEntityFinder, LegalEntityFinderButtons } from '../LegalEntityFinder';
-import { Restricted } from './Restricted';
+import { LegalEntityFinderModule } from '../LegalEntityFinder.Module';
 import { Borrowers } from './Borrowers';
 import { ExternalFunding } from './ExternalFunding';
 import { Facility } from './Facility';
@@ -20,6 +21,7 @@ import { FacilityTab } from './FacilityTab';
 import { FacilityTab1 } from './FacilityTab1';
 import { FacilityTab3 } from './FacilityTab3';
 import { GeographicRegionSelector } from './GeographicRegionSelector';
+import { Restricted } from './Restricted';
 import { Sponsors } from './Sponsors';
 
 @NgModule(
@@ -37,8 +39,6 @@ import { Sponsors } from './Sponsors';
                 FacilityTab1,
                 FacilityTab3,
                 GeographicRegionSelector,
-                LegalEntityFinder,
-                LegalEntityFinderButtons,
                 Restricted,
                 Sponsors
             ],
@@ -49,6 +49,7 @@ import { Sponsors } from './Sponsors';
                 DialogModule,
                 ErrorModule,
                 FormsModule,
+                LegalEntityFinderModule,
                 NumberModule,
                 TabbedViewModule,
                 YesNoPipeModule

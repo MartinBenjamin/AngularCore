@@ -210,6 +210,14 @@ table.ValidationError td
   border: 1px solid red;
 }
 
+table.DataGrid.ValidationError > tr > th,
+table.DataGrid.ValidationError > tr > td,
+table.DataGrid.ValidationError > tbody > tr > th,
+table.DataGrid.ValidationError > tbody > tr > td
+{
+  border-color: red;
+}
+
 .ValidationError.Highlight
 {
   border-width: 2px;

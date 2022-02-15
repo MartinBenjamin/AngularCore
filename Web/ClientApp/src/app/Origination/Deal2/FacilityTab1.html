@@ -1,0 +1,118 @@
+<style type="text/css">
+  input[type=text].Date, span.Field.Date
+  {
+    width: 100px;
+  }
+</style>
+<table class="GridLayout">
+  <tr>
+    <td style="vertical-align: top;">
+      <table class="GridLayout">
+        <tr>
+          <td class="RowHeading">Total Debt Size:</td>
+          <td>
+            <input type="text"
+                   [dtAmountModel]="Facility?.Amount"
+                   (dtAmountModelChange)="Facility.Amount = $event"
+                   [dtValidatedObject]="Facility"
+                   dtValidatedProperty="Amount"
+                   class="Amount" />
+          </td>
+        </tr>
+        <tr>
+          <td class="RowHeading">Bank Underwrite Amount:</td>
+          <td>
+            <input type="text"
+                   [dtAmountModel]="LenderParticipation?.UnderwriteAmount"
+                   (dtAmountModelChange)="LenderParticipation.UnderwriteAmount = $event"
+                   [dtValidatedObject]="LenderParticipation"
+                   dtValidatedProperty="UnderwriteAmount"
+                   class="Amount" />
+          </td>
+        </tr>
+        <tr>
+          <td class="RowHeading">Credit Sought Limit:</td>
+          <td>
+            <input type="text"
+                   [dtAmountModel]="LenderParticipation?.CreditSoughtLimit"
+                   (dtAmountModelChange)="LenderParticipation.CreditSoughtLimit = $event"
+                   [dtValidatedObject]="LenderParticipation"
+                   dtValidatedProperty="CreditSoughtLimit"
+                   class="Amount" />
+          </td>
+        </tr>
+        <tr>
+          <td class="RowHeading">Anticipated Hold Amount:</td>
+          <td>
+            <input type="text"
+                   [dtAmountModel]="LenderParticipation?.AnticipatedHoldAmount"
+                   (dtAmountModelChange)="LenderParticipation.AnticipatedHoldAmount = $event"
+                   [dtValidatedObject]="LenderParticipation"
+                   dtValidatedProperty="AnticipatedHoldAmount"
+                   class="Amount" />
+          </td>
+        </tr>
+        <tr>
+          <td class="RowHeading">Actual Allocation:</td>
+          <td>
+            <input type="text"
+                   [dtAmountModel]="LenderParticipation?.ActualAllocation"
+                   (dtAmountModelChange)="LenderParticipation.ActualAllocation = $event"
+                   [dtValidatedObject]="LenderParticipation"
+                   dtValidatedProperty="ActualAllocation"
+                   class="Amount" />
+          </td>
+        </tr>
+        <tr>
+          <td class="RowHeading">Bank Share (%):</td>
+          <td><span class="Field Percentage">{{LenderShare|percentage}}</span></td>
+        </tr>
+      </table>
+    </td>
+    <td style="vertical-align: top;">
+      <table class="GridLayout">
+        <tr>
+          <td class="RowHeading">Availability End Date:</td>
+          <td>
+            <input type="text"
+                   [dtDateModel]="Facility?.AvailabilityPeriodEndDate"
+                   (dtDateModelChange)="Facility.AvailabilityPeriodEndDate = $event"
+                   [dtValidatedObject]="Facility"
+                   dtValidatedProperty="AvailabilityPeriodEndDate"
+                   class="Date" /><dt-calendar (dateSelected)="Facility.AvailabilityPeriodEndDate = $event"></dt-calendar>
+          </td>
+        </tr>
+        <tr>
+          <td class="RowHeading">Expected 1<sup>st</sup> Drawndown Date:</td>
+          <td>
+            <input type="text"
+                   [dtDateModel]="Facility?.Expected1StDrawdownDate"
+                   (dtDateModelChange)="Facility.Expected1StDrawdownDate = $event"
+                   [dtValidatedObject]="Facility"
+                   dtValidatedProperty="Expected1StDrawdownDate"
+                   class="Date" /><dt-calendar (dateSelected)="Facility.Expected1StDrawdownDate = $event"></dt-calendar>
+          </td>
+        </tr>
+        <tr>
+          <td class="RowHeading">Maturity Date:</td>
+          <td>
+            <input type="text"
+                   [dtDateModel]="Facility?.MaturityDate"
+                   (dtDateModelChange)="Facility.MaturityDate = $event"
+                   [dtValidatedObject]="Facility"
+                   dtValidatedProperty="MaturityDate"
+                   class="Date" /><dt-calendar (dateSelected)="Facility.MaturityDate = $event"></dt-calendar>
+          </td>
+        </tr>
+        <tr>
+          <td class="RowHeading">Signed Date:</td>
+          <td><span class="Field Date"></span></td>
+        </tr>
+        <tr>
+          <td class="RowHeading">Financial Close Date:</td>
+          <td><span class="Field Date"></span></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

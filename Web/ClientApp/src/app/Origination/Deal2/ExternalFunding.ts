@@ -1,15 +1,15 @@
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { EmptyGuid } from '../CommonDomainObjects';
-import { DealProvider } from '../DealProvider';
-import { Deal, DealRoleIdentifier } from '../Deals';
-import { Facility } from '../FacilityAgreements';
-import { FacilityProvider } from '../FacilityProvider';
-import { LegalEntity } from '../LegalEntities';
-import { LegalEntityFinder } from '../LegalEntityFinder';
-import { Role } from '../Roles';
-import { RolesToken } from '../RoleServiceProvider';
-import { PartyInRole } from '../Parties';
+import { EmptyGuid } from '../../CommonDomainObjects';
+import { DealProvider } from '../../DealProvider';
+import { Deal, DealRoleIdentifier } from '../../Deals';
+import { Facility } from '../../FacilityAgreements';
+import { FacilityProvider } from '../../FacilityProvider';
+import { LegalEntity } from '../../LegalEntities';
+import { LegalEntityFinder } from '../../LegalEntityFinder';
+import { Role } from '../../Roles';
+import { RolesToken } from '../../RoleServiceProvider';
+import { PartyInRole } from '../../Parties';
 
 @Component(
     {
@@ -22,7 +22,7 @@ export class ExternalFunding implements OnDestroy
     private _subscriptions              : Subscription[] = [];
     private _deal                       : Deal;
     private _facility                   : Facility;
-    private _externalFunding            : import('../FacilityAgreements').ExternalFunding;
+    private _externalFunding            : import('../../FacilityAgreements').ExternalFunding;
     private _providers                  : LegalEntity[];
 
     @ViewChild('legalEntityFinder', { static: true })
@@ -46,7 +46,7 @@ export class ExternalFunding implements OnDestroy
                         this._externalFunding = null;
 
                     else
-                        this._externalFunding = <import('../FacilityAgreements').ExternalFunding>this._facility.Parts.find(part => (<any>part).$type === 'Web.Model.ExternalFunding, Web');
+                        this._externalFunding = <import('../../FacilityAgreements').ExternalFunding>this._facility.Parts.find(part => (<any>part).$type === 'Web.Model.ExternalFunding, Web');
 
                     this.ComputeProviders();
                 }));
@@ -73,7 +73,7 @@ export class ExternalFunding implements OnDestroy
     {
         if(externallyFunded && !this._externalFunding)
         {
-            this._externalFunding = <import('../FacilityAgreements').ExternalFunding>
+            this._externalFunding = <import('../../FacilityAgreements').ExternalFunding>
             {
                 MeasurementUnit: 0.01,
                 NumericValue   : null,
@@ -93,7 +93,7 @@ export class ExternalFunding implements OnDestroy
         }
     }
 
-    get ExternalFunding(): import('../FacilityAgreements').ExternalFunding
+    get ExternalFunding(): import('../../FacilityAgreements').ExternalFunding
     {
         return this._externalFunding;
     }

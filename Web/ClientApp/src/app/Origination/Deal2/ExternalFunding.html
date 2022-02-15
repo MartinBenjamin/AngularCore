@@ -1,0 +1,68 @@
+<style type="text/css">
+  .ExternalFunding .YesNo
+  {
+    width: 50px;
+  }
+
+  .ExternalFunding .Percentage
+  {
+    width: 50px;
+  }
+
+  table.ExternalFundingProviders td
+  {
+    max-width: 300px;
+  }
+</style>
+<legal-entity-finder Title="Find External Funding Provider" #legalEntityFinder></legal-entity-finder>
+<fieldset class="ExternalFunding">
+  <legend>External Funding</legend>
+  <table class="GridLayout">
+    <tr>
+      <td class="RowHeading">External Funding:</td>
+      <td>
+        <select [(ngModel)]="ExternallyFunded"
+                class="YesNo">
+          <option [ngValue]="null"></option>
+          <option [ngValue]="true">Yes</option>
+          <option [ngValue]="false">No</option>
+        </select>
+      </td>
+    </tr>
+    <tbody *ngIf="ExternallyFunded">
+      <tr>
+        <td>Percentage:</td>
+        <td><input
+          type="text"
+          [(dtPercentage100Model)]="ExternalFunding.NumericValue"          
+          [dtValidatedObject]="ExternalFunding"
+          dtValidatedProperty="NumericValue"
+          class="Percentage"/></td>
+      </tr>
+      <tr>
+        <td>Providers:</td>
+        <td>
+          <table
+            [dtValidatedObject]="ExternalFunding"
+            dtValidatedProperty="Obligors"
+            class="DataGrid ExternalFundingProviders">
+            <tr *ngFor="let provider of Providers">
+                <td>{{provider.Name}}</td>
+                <td><a (click)="DeleteProvider(provider)">delete</a></td>
+            </tr>
+            <tr *ngIf="!(Providers && Providers.length)">
+              <td>No Providers</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><input
+          type="button"
+          value="Add"
+          (click)="AddProvider()"/></td>
+      </tr>
+    </tbody>
+  </table>
+</fieldset>
