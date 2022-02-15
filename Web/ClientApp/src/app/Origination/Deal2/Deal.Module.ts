@@ -23,7 +23,7 @@ import { ExternalFunding } from './ExternalFunding';
 import { Facilities } from './Facilities';
 import { Facility } from './Facility';
 import { FacilityErrors } from './FacilityErrors';
-import { FacilityFeeEditor_s } from './FacilityFeeEditor_s';
+import { FacilityFeeEditor } from './FacilityFeeEditor';
 import { FacilityFeeErrors } from './FacilityFeeErrors';
 import { FacilityFees_s } from './FacilityFees_s';
 import { FacilityTab } from './FacilityTab';
@@ -60,7 +60,7 @@ const routes: Routes =
                 Facilities,
                 Facility,
                 FacilityErrors,
-                FacilityFeeEditor_s,
+                FacilityFeeEditor,
                 FacilityFeeErrors,
                 FacilityFees_s,
                 FacilityTab,

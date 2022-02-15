@@ -5,7 +5,7 @@ import { FacilityFeeTypesToken } from '../../FacilityFeeTypeServiceProvider';
 import { FacilityProvider } from '../../FacilityProvider';
 import { Fee } from '../../Fees';
 import { Group } from '../../Ontology/Group';
-import { FacilityFeeEditor_s } from './FacilityFeeEditor_s';
+import { FacilityFeeEditor } from './FacilityFeeEditor';
 
 @Component(
     {
@@ -21,7 +21,7 @@ export class FacilityFees_s implements OnDestroy
     private _feeType            : FeeType;
 
     @ViewChild('editor', { static: true })
-    private _editor: FacilityFeeEditor_s;
+    private _editor: FacilityFeeEditor;
 
     constructor(
         @Inject(FacilityFeeTypesToken)

@@ -1,16 +1,16 @@
 import { Component, Inject } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
-import { EmptyGuid, Guid } from '../CommonDomainObjects';
-import { AccrualDate } from '../Components/AccrualDate';
-import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../Components/ValidatedProperty';
-import { DealProvider } from '../DealProvider';
-import { Deal } from '../Deals';
-import { Facility, FacilityFee, FeeAmount, FeeAmountType, FeeType, LenderParticipation } from '../FacilityAgreements';
-import { FacilityProvider } from '../FacilityProvider';
-import { Validate } from '../Ontologies/Validate';
-import { Alternative, Empty, IExpression, Property, Query } from '../RegularPathExpression';
-import { Copy, Update } from './Facility';
-
+import { BehaviorSubject, combineLatest, NEVER, Subject, Subscription } from 'rxjs';
+import { distinctUntilChanged, filter, sample, share, switchMap } from 'rxjs/operators';
+import { AccrualDate } from '../../Components/AccrualDate';
+import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
+import { DealProvider } from '../../DealProvider';
+import { Deal } from '../../Deals';
+import { Facility, FeeType, LenderParticipation } from '../../FacilityAgreements';
+import { FacilityProvider } from '../../FacilityProvider';
+import { FacilityFeeUnit, Fee } from '../../Fees';
+import { Store } from '../../Ontology/IEavStore';
+import { ITransaction } from '../../Ontology/ITransactionManager';
+import { Alternative, Empty, IExpression, Property, Query2 } from '../../RegularPathExpression';
 
 type ApplyCallback = () => void;
 
@@ -28,13 +28,16 @@ type ApplyCallback = () => void;
     })
 export class FacilityFeeEditor
 {
-    private _subscriptions: Subscription[] = [];
-    private _deal         : Deal;
-    private _facility     : Facility;
-    private _fee          : FacilityFee;
-    private _copy         : Map<object, object>;
-    private _applyCallback: ApplyCallback;
-    private _participation: number;
+    private _subscriptions : Subscription[] = [];
+    private _deal          : Deal;
+    private _facility      : Facility;
+    private _fee           : Fee;
+    private _feeObservable = new BehaviorSubject<Fee>(null);
+    private _applyCallback : ApplyCallback;
+    private _transaction   : ITransaction;
+    private _observeErrors = new BehaviorSubject<boolean>(false);
+    private _apply         = new Subject<void>();
+    private _participation : number;
 
     private static _subgraph: IExpression = new Alternative(
         [
@@ -43,6 +46,8 @@ export class FacilityFeeEditor
             new Property('AccrualDate')
         ]);
 
+    public static SubgraphQuery = Query2(FacilityFeeEditor._subgraph);
+
     constructor(
         dealProvider: DealProvider,
         facilityProvider: FacilityProvider,
@@ -50,9 +55,45 @@ export class FacilityFeeEditor
         private _errorsService: Subject<Errors>
         )
     {
+        const errors = combineLatest(
+            dealProvider.ObserveErrors,
+            this._observeErrors,
+            (dealObserveErrors, observeErrors) => dealObserveErrors || observeErrors).pipe(
+                distinctUntilChanged(),
+                switchMap(
+                    observeErrors =>
+                    {
+                        if(!observeErrors)
+                            return NEVER;
+
+                        return combineLatest(
+                            dealProvider.Errors,
+                            this._feeObservable,
+                            (errors, fee) =>
+                            {
+                                if(!fee)
+                                    return null;
+                                const subgraph = new Set<any>(FacilityFeeEditor.SubgraphQuery(fee));
+                                return new Map([...errors.entries()].filter(([entity,]) => subgraph.has(entity)));
+                            }).pipe(share());
+                    }));
+
         this._subscriptions.push(
             dealProvider.subscribe(deal => this._deal = deal),
-            facilityProvider.subscribe(facility => this._facility = facility));
+            facilityProvider.subscribe(facility => this._facility = facility),
+            errors.subscribe(errors => this._errorsService.next(errors && errors.size ? errors : null)),
+            errors.pipe(
+                sample(this._apply),
+                filter(errors => !(errors && errors.size))).subscribe(
+                    () =>
+                    {
+                        this._transaction.Commit();
+
+                        if(this._applyCallback)
+                            this._applyCallback();
+
+                        this.Close();
+                    }));
     }
 
     ngOnDestroy(): void
@@ -60,16 +101,34 @@ export class FacilityFeeEditor
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
-    get Fee(): FacilityFee
+    get Fee(): Fee
     {
         return this._fee;
+    }
+
+    get FacilityFeeUnit(): FacilityFeeUnit
+    {
+        return this._fee.MeasurementUnit === 0.01 ? FacilityFeeUnit.Percentage : FacilityFeeUnit.CommitmentCurrency;
+    }
+
+    set FacilityFeeUnit(
+        facilityFeeUnit: FacilityFeeUnit
+        )
+    {
+        // Facility Fees expressed as Committed Currency Units per 100 Currency Units of Commitment (% of Commitment)
+        // is a quantity of dimension one (dimensionless quantity) which has a dimensionless Measurement Unit with a scalar value of 0.01.
+        // https://www.iso.org/sites/JCGM/VIM/JCGM_200e_FILES/MAIN_JCGM_200e/01_e.html#L_1_8
+        this._fee.MeasurementUnit = facilityFeeUnit === FacilityFeeUnit.Percentage ? 0.01 : null;
+
+        // Trigger error update.
+        this._feeObservable.next(this._fee);
     }
 
     get MonetaryAmount(): number
     {
         if(typeof this._participation === 'number' &&
-           typeof this._fee.Amount.Value === 'number')
-            return this._fee.Amount.Value * this._participation / 100;
+           typeof this._fee.NumericValue === 'number')
+            return this._fee.NumericValue * this._participation / 100;
 
         return null;
     }
@@ -77,8 +136,8 @@ export class FacilityFeeEditor
     get PercentageOfCommitment(): number
     {
         if(typeof this._participation === 'number' &&
-           typeof this._fee.Amount.Value === 'number')
-            return this._fee.Amount.Value * 100 / this._participation;
+           typeof this._fee.NumericValue === 'number')
+            return this._fee.NumericValue * 100 / this._participation;
 
         return null;
     }
@@ -95,15 +154,20 @@ export class FacilityFeeEditor
         if(!this._fee)
             return;
 
+        const store = Store(this._deal);
+        store.SuspendPublish();
         if(accrued && !this._fee.AccrualDate)
-            this._fee.AccrualDate = <AccrualDate>
+            this._fee.AccrualDate = <AccrualDate>store.Assert(
                 {
-                    Year : null,
-                    Month: null
-                };
+                    $type: 'Web.Model.AccrualDate, Web'
+                });
 
         else if(!accrued && this._fee.AccrualDate)
+        {
+            store.DeleteEntity(this._fee.AccrualDate);
             this._fee.AccrualDate = null;
+        }
+        store.UnsuspendPublish();
     }
 
     Create(
@@ -112,103 +176,58 @@ export class FacilityFeeEditor
         )
     {
         this._applyCallback = applyCallback;
-        this._copy          = null;
-        this._fee           = <FacilityFee>
-        {
-            Id                  : EmptyGuid,
-            PartOf              : this._facility,
-            Type                : feeType,
-            Amount              : <FeeAmount>
+        const store         = Store(this._deal);
+        this._transaction   = store.BeginTransaction();
+        store.SuspendPublish();
+        this._fee = <Fee>store.Assert(
             {
-                Type : FeeAmountType.MonetaryAmount,
-                Value: null
-            },
-            ExpectedReceivedDate: null,
-            Received            : false,
-            AccrualDate         : null
-        };
-
-        (<any>this._fee).$type = 'Web.Model.FacilityFee, Web';
-        (<any>this._fee.Amount).$type = 'Web.Model.FeeAmount, Web';
+                MeasurementUnit: null,
+                PartOf         : this._facility,
+                Type           : feeType,
+                Received       : false,
+                AccrualDate    : null,
+                $type          : 'Web.Model.FacilityFee, Web'
+            });
+        this._fee.PartOf.Parts.push(this._fee);
+        store.UnsuspendPublish();
+        this._feeObservable.next(this._fee);
         this._participation = this.CalculateParticipation(this._facility);
     }
 
     Update(
-        fee          : FacilityFee,
+        fee          : Fee,
         applyCallback: ApplyCallback,
         )
     {
         this._applyCallback = applyCallback;
-
-        let subgraph = Query(
-            fee,
-            FacilityFeeEditor._subgraph);
-
-        this._copy = new Map<object, object>();
-        this._fee = <FacilityFee>Copy(
-            subgraph,
-            this._copy,
-            fee);
-
+        const store = Store(this._deal);
+        this._transaction = store.BeginTransaction();
+        this._fee = fee;
+        this._feeObservable.next(this._fee);
         this._participation = this.CalculateParticipation(this._facility);
     }
 
     Apply(): void
     {
-        let subgraph = Query(
-            this._fee,
-            FacilityFeeEditor._subgraph);
-
-        let classifications = this._deal.Ontology.Classify(subgraph);
-        let applicableStages = new Set<Guid>();
-        for(let lifeCycleStage of this._deal.LifeCycle.Stages)
-        {
-            applicableStages.add(lifeCycleStage.Id);
-            if(lifeCycleStage.Id === this._deal.Stage.Id)
-                break;
-        }
-
-        let errors = Validate(
-            this._deal.Ontology,
-            classifications,
-            applicableStages);
-
-        this._errorsService.next(errors.size ? errors : null);
-
-        if(errors.size)
-            return;
-
-        if(this._copy)
-        {
-            let original = new Map<object, object>();
-            this._copy.forEach(
-                (value, key) => original.set(
-                    value,
-                    key));
-
-            Update(
-                subgraph,
-                original,
-                this._fee);
-        }
-        else
-            this._fee.PartOf.Parts.push(this._fee);
-
-        if(this._applyCallback)
-            this._applyCallback();
-
-        this.Close();
+        this._observeErrors.next(true);
+        this._apply.next();
     }
 
     Cancel(): void
     {
         this.Close();
+        const store = Store(this._deal);
+        store.SuspendPublish();
+        this._transaction.Rollback();
+        store.UnsuspendPublish();
     }
 
     Close(): void
     {
-        this._fee           = null;
+        this._fee = null;
         this._participation = null;
+        this._observeErrors.next(false);
+        this._feeObservable.next(this._fee);
         this._errorsService.next(null);
     }
 
