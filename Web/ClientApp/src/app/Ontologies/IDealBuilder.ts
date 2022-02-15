@@ -50,7 +50,6 @@ export class DealBuilder implements IDealBuilder
             Type              : null,
             Agreements        : [],
             Stage             : null,
-            Restricted        : false,
             ProjectName       : null,
             Classifiers       : [],
             GeographicRegion  : null,
@@ -177,7 +176,6 @@ export class DealBuilder implements IDealBuilder
             Type              : null,
             Agreements        : [],
             Stage             : null,
-            Restricted        : false,
             ProjectName       : null,
             Classifiers       : [],
             GeographicRegion  : null,
@@ -185,8 +183,7 @@ export class DealBuilder implements IDealBuilder
             Introducer        : null,
             TransactionDetails: null,
             CurrentStatus     : null,
-            SponsorsNA        : false,
-
+            SponsorsNA        : false
         };
 
         const functionalObjectProperties = new Set<IObjectPropertyExpression>(

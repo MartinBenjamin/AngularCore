@@ -100,7 +100,6 @@ export interface Deal extends Named<Guid>
     Type               : DealType;
     Agreements         : Agreement[];
     Stage              : LifeCycleStage;
-    Restricted         : boolean;
     ProjectName        : string;
     Classifiers        : Classifier[];
     GeographicRegion   : GeographicRegion;
