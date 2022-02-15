@@ -1,16 +1,15 @@
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { EmptyGuid } from '../../CommonDomainObjects';
 import { DealProvider } from '../../DealProvider';
 import { Deal, DealRoleIdentifier } from '../../Deals';
 import { Facility } from '../../FacilityAgreements';
 import { FacilityProvider } from '../../FacilityProvider';
 import { LegalEntity } from '../../LegalEntities';
 import { LegalEntityFinder } from '../../LegalEntityFinder';
+import { Store } from '../../Ontology/IEavStore';
+import { PartyInRole } from '../../Parties';
 import { Role } from '../../Roles';
 import { RolesToken } from '../../RoleServiceProvider';
-import { PartyInRole } from '../../Parties';
-import { Store } from '../../Ontology/IEavStore';
 
 @Component(
     {
