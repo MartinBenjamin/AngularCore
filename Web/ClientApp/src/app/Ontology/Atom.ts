@@ -24,6 +24,7 @@ function ComparisonAtom(
 export const LessThan               = ComparisonAtom((lhs, rhs) => lhs <   rhs);
 export const LessThanOrEqual        = ComparisonAtom((lhs, rhs) => lhs <=  rhs);
 export const Equal                  = ComparisonAtom((lhs, rhs) => lhs === rhs);
+export const NotEqual               = ComparisonAtom((lhs, rhs) => lhs !== rhs);
 export const GreaterThanOrEqualThan = ComparisonAtom((lhs, rhs) => lhs >=  rhs);
 export const GreaterThan            = ComparisonAtom((lhs, rhs) => lhs >   rhs);
 
