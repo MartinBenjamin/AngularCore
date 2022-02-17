@@ -1,7 +1,7 @@
 import { } from 'jasmine';
 import { ArraySet } from './ArraySet';
 import { assertBuilder } from './assertBuilder';
-import { Equal, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, NotEqual } from './Atom';
+import { Add, Equal, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, NotEqual } from './Atom';
 import { EavStore } from './EavStore';
 import { IEavStore } from './IEavStore';
 
@@ -14,7 +14,6 @@ describe(
             `Given store = new EavStore() and e = store.Assert(${JSON.stringify(o)}):`,
             () =>
             {
-
                 const store: IEavStore = new EavStore();
                 const e = store.Assert(o);
                 let assert = assertBuilder(
@@ -78,5 +77,25 @@ describe(
 
                 assert("new ArraySet(store.Query(['?result'], [e, 'a1', '?result'], GreaterThan(0, '?result'))).size === 1");
                 assert("new ArraySet(store.Query(['?result'], [e, 'a1', '?result'], GreaterThan(0, '?result'))).has([-1])");
+            });
+
+        const o1 = { Lhs: 1, Rhs: 2 };
+        describe(
+            `Given store = new EavStore() and e = store.Assert(${JSON.stringify(o1)}):`,
+            () =>
+            {
+                const store: IEavStore = new EavStore();
+                const e = store.Assert(o1);
+                let assert = assertBuilder(
+                    'ArraySet',
+                    'Add',
+                    'store',
+                    'e')(
+                        ArraySet,
+                        Add,
+                        store,
+                        e);
+                assert("new ArraySet(store.Query(['?result'], [e, 'Lhs', '?lhs'], [e, 'Rhs', '?rhs'], Add('?lhs', '?rhs', '?result'))).size === 1");
+                assert("new ArraySet(store.Query(['?result'], [e, 'Lhs', '?lhs'], [e, 'Rhs', '?rhs'], Add('?lhs', '?rhs', '?result'))).has([3])");
             });
     });

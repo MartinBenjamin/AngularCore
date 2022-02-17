@@ -51,15 +51,18 @@ function ArithmeticAtom(
                     IsVariable(lhs) ? substitution[lhs] : lhs,
                     IsVariable(rhs) ? substitution[rhs] : rhs);
 
-                if(IsVariable(result) &&
-                   !(result in substitution))
-                    yield {
-                        ...substitution,
-                        result: actualResult
-                    };
-
-                const expectedResult = IsVariable(result) ? substitution[result] : result
-                if(expectedResult === actualResult)
+                if(IsVariable(result))
+                {
+                    if(!(result in substitution))
+                    {
+                        let yielded = { ...substitution };
+                        yielded[result] = actualResult;
+                        yield yielded;
+                    }
+                    else if(substitution[result] === actualResult)
+                        yield substitution;
+                }
+                else if(result === actualResult)
                     yield substitution;
             }
         }
