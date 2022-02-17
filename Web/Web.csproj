@@ -179,6 +179,7 @@
     <None Remove="ClientApp\src\app\Ontology\EavStore.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\EavStore.ts" />
     <None Remove="ClientApp\src\app\Ontology\EavStoreLog.ts" />
+    <None Remove="ClientApp\src\app\Ontology\EavStoreQuery.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Entity.ts" />
     <None Remove="ClientApp\src\app\Ontology\EquivalentClasses.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\EquivalentClasses.ts" />
@@ -515,6 +516,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\EavStore.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\EavStore.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\EavStoreLog.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\EavStoreQuery.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Entity.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\EquivalentClasses.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\EquivalentClasses.ts" />

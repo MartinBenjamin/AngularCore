@@ -2,6 +2,7 @@ import { combineLatest, Observable, Subscriber } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
 import { ArraySet } from './ArraySet';
+import { BuiltIn } from './Atom';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
 import { AttributeSchema, Cardinality, Fact, IEavStore, Store, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
@@ -181,11 +182,14 @@ export class EavStore implements IEavStore, IPublisher
 
     Query<T extends [any, ...any[]]>(
         head   : T,
-        ...body: Fact[]): { [K in keyof T]: any; }[]
+        ...body: (Fact | BuiltIn)[]): { [K in keyof T]: any; }[]
     {
         return body.reduce(
             (substitutions, atom) =>
             {
+                if(typeof atom === 'function')
+                    return [...atom(substitutions)];
+
                 let count = substitutions.length;
                 while(count--)
                 {

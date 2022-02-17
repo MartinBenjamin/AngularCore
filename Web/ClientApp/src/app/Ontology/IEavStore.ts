@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { BuiltIn } from './Atom';
 import { ITransaction } from './ITransactionManager';
 
 export enum Cardinality
@@ -25,7 +26,7 @@ export interface IEavStore
         ...body: Fact[]): Observable<{ [K in keyof T]: any; }[]>;
     Query<T extends [any, ...any[]]>(
         head: T,
-        ...body: Fact[]): { [K in keyof T]: any; }[];
+        ...body: (Fact | BuiltIn)[]): { [K in keyof T]: any; }[];
 
     NewEntity(): any;
     DeleteEntity(entity: any): void
