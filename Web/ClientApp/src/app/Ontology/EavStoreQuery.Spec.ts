@@ -56,5 +56,27 @@ describe(
 
                 assert("new ArraySet(store.Query(['?result'], [e, 'a1', '?result'], GreaterThan('?result', 0))).size === 1");
                 assert("new ArraySet(store.Query(['?result'], [e, 'a1', '?result'], GreaterThan('?result', 0))).has([1])");
+
+
+                assert("new ArraySet(store.Query(['?result'], [e, 'a1', '?result'], LessThan(0, '?result'))).size === 1");
+                assert("new ArraySet(store.Query(['?result'], [e, 'a1', '?result'], LessThan(0, '?result'))).has([1])");
+
+                assert("new ArraySet(store.Query(['?result'], [e, 'a1', '?result'], LessThanOrEqual(0, '?result'))).size === 2");
+                assert("new ArraySet(store.Query(['?result'], [e, 'a1', '?result'], LessThanOrEqual(0, '?result'))).has([0])");
+                assert("new ArraySet(store.Query(['?result'], [e, 'a1', '?result'], LessThanOrEqual(0, '?result'))).has([1])");
+
+                assert("new ArraySet(store.Query(['?result'], [e, 'a1', '?result'], Equal(0, '?result'))).size === 1");
+                assert("new ArraySet(store.Query(['?result'], [e, 'a1', '?result'], Equal(0, '?result'))).has([0])");
+
+                assert("new ArraySet(store.Query(['?result'], [e, 'a1', '?result'], NotEqual(0, '?result'))).size === 2");
+                assert("new ArraySet(store.Query(['?result'], [e, 'a1', '?result'], NotEqual(0, '?result'))).has([-1])");
+                assert("new ArraySet(store.Query(['?result'], [e, 'a1', '?result'], NotEqual(0, '?result'))).has([1])");
+
+                assert("new ArraySet(store.Query(['?result'], [e, 'a1', '?result'], GreaterThanOrEqual(0, '?result'))).size === 2");
+                assert("new ArraySet(store.Query(['?result'], [e, 'a1', '?result'], GreaterThanOrEqual(0, '?result'))).has([-1])");
+                assert("new ArraySet(store.Query(['?result'], [e, 'a1', '?result'], GreaterThanOrEqual(0, '?result'))).has([0])");
+
+                assert("new ArraySet(store.Query(['?result'], [e, 'a1', '?result'], GreaterThan(0, '?result'))).size === 1");
+                assert("new ArraySet(store.Query(['?result'], [e, 'a1', '?result'], GreaterThan(0, '?result'))).has([-1])");
             });
     });
