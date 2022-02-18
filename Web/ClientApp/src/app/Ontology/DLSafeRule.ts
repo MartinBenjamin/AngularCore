@@ -1,15 +1,18 @@
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { DealStageIdentifier } from '../Deals';
 import { annotations } from '../Ontologies/Annotations';
 import { fees } from '../Ontologies/Fees';
+import { BuiltIn } from './Atom';
 import { Axiom } from './Axiom';
+import { IsVariable } from './EavStore';
 import { IAxiom } from "./IAxiom";
 import { IClassExpression } from "./IClassExpression";
+import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IDataRange } from "./IDataRange";
 import { IIndividual } from "./IIndividual";
 import { IOntology } from './IOntology';
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
-import { Observable } from 'rxjs';
-import { BuiltIn } from './Atom';
 
 // http://www.cs.ox.ac.uk/files/2445/rulesyntaxTR.pdf
 /*
@@ -102,10 +105,10 @@ export interface IGreaterThanAtom            extends IComparisonAtom {};
 
 export interface IAtomSelector<TResult>
 {
-    Class                 ($class                : IClassAtom                 ): TResult;
+    Class                 (class$                : IClassAtom                 ): TResult;
     DataRange             (dataRange             : IDataRangeAtom             ): TResult;
-    ObjectProperty        (objectPropertyAtom    : IObjectPropertyAtom        ): TResult;
-    DataProperty          (dataPropertyAtom      : IDataPropertyAtom          ): TResult;
+    ObjectProperty        (objectProperty        : IObjectPropertyAtom        ): TResult;
+    DataProperty          (dataProperty          : IDataPropertyAtom          ): TResult;
     LessThan              (lessThan              : ILessThanAtom              ): TResult;
     LessThanOrEqual       (lessThanOrEqual       : ILessThanOrEqualAtom       ): TResult;
     Equal                 (equal                 : IEqualAtom                 ): TResult;
@@ -373,48 +376,53 @@ export class DLSafeRule extends Axiom
     }
 }
 
-export class Converter implements IAtomSelector<Observable<Set<any> | Set<[any, any]> | BuiltIn>>
+export class Converter implements IAtomSelector<Observable<Set<any> | [any, any][]> | BuiltIn>
 {
-    Class($class: IClassAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn>
+    private static _empty = new Set();
+    private _converter: IClassExpressionSelector<Observable<Set<any>>>;
+
+    Class(
+        class$: IClassAtom
+        ): BuiltIn | Observable<Set<any> | [any, any][]>
+    {
+        const observable = class$.ClassExpression.Select(this._converter);
+        const individual = new Set([class$.Individual]);
+
+        return IsVariable(class$.Individual) ?
+            observable : observable.pipe(map(individuals => individuals.has(class$.Individual) ? individual : Converter._empty));
+    }
+
+    DataRange(
+        dataRange: IDataRangeAtom
+        ): BuiltIn | Observable<Set<any> | [any, any][]>
     {
         throw new Error("Method not implemented.");
     }
 
-    DataRange(dataRange: IDataRangeAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn>
-    {
+    ObjectProperty(objectProperty: IObjectPropertyAtom): BuiltIn | Observable<Set<any> | [any, any][]> {
         throw new Error("Method not implemented.");
     }
-
-    ObjectProperty(objectPropertyAtom: IObjectPropertyAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn>
-    {
+    DataProperty(dataProperty: IDataPropertyAtom): BuiltIn | Observable<Set<any> | [any, any][]> {
         throw new Error("Method not implemented.");
     }
-
-    DataProperty(dataPropertyAtom: IDataPropertyAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn>
-    {
+    LessThan(lessThan: ILessThanAtom): BuiltIn | Observable<Set<any> | [any, any][]> {
         throw new Error("Method not implemented.");
     }
-
-    LessThan(lessThan: ILessThanAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn> {
+    LessThanOrEqual(lessThanOrEqual: ILessThanOrEqualAtom): BuiltIn | Observable<Set<any> | [any, any][]> {
         throw new Error("Method not implemented.");
     }
-    LessThanOrEqual(lessThanOrEqual: ILessThanOrEqualAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn> {
+    Equal(equal: IEqualAtom): BuiltIn | Observable<Set<any> | [any, any][]> {
         throw new Error("Method not implemented.");
     }
-    Equal(equal: IEqualAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn> {
+    NotEqual(notEqual: INotEqualAtom): BuiltIn | Observable<Set<any> | [any, any][]> {
         throw new Error("Method not implemented.");
     }
-    NotEqual(notEqual: INotEqualAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn> {
+    GreaterThanThanOrEqual(greaterThanThanOrEqual: IGreaterThanThanOrEqualAtom): BuiltIn | Observable<Set<any> | [any, any][]> {
         throw new Error("Method not implemented.");
     }
-    GreaterThanThanOrEqual(greaterThanThanOrEqual: IGreaterThanThanOrEqualAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn> {
+    GreaterThan(greaterThan: IGreaterThanAtom): BuiltIn | Observable<Set<any> | [any, any][]> {
         throw new Error("Method not implemented.");
     }
-    GreaterThan(greaterThan: IGreaterThanAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn> {
-        throw new Error("Method not implemented.");
-    }
-
-
 }
 
 let builder: IDLSafeRuleBuilder;
