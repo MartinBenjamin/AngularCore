@@ -268,47 +268,54 @@ export class EavStore implements IEavStore, IPublisher
 
     Observe<T extends [any, ...any[]]>(
         head: T,
-        ...body: Fact[]): Observable<{ [K in keyof T]: any; }[]>
+        ...body: (Fact | BuiltIn)[]): Observable<{ [K in keyof T]: any; }[]>
     {
         return combineLatest(
-            body.map(atom => this.ObserveAtom(atom)),
-            (...facts) => body.reduce(
-                (substitutions, atom, atomIndex) =>
-                {
-                    let count = substitutions.length;
-                    while(count--)
+            body.filter(atom => atom instanceof Array).map(atom => this.ObserveAtom(<Fact>atom)),
+            (...observed) =>
+            {
+                let observedIndex = 0;
+                return body.reduce(
+                    (substitutions, atom) =>
                     {
-                        const substitution = substitutions.shift();
-                        for(const fact of facts[atomIndex])
+                        if(typeof atom === 'function')
+                            return [...atom(substitutions)];
+
+                        let count = substitutions.length;
+                        while(count--)
                         {
-                            const combined = atom.reduce(
-                                (substitution, term, termIndex) =>
-                                {
-                                    if(!substitution)
-                                        return substitution;
-
-                                    if(IsVariable(term))
+                            const substitution = substitutions.shift();
+                            for(const fact of observed[observedIndex++])
+                            {
+                                const combined = atom.reduce(
+                                    (substitution, term, termIndex) =>
                                     {
-                                        if(typeof substitution[term] === 'undefined')
-                                            substitution[term] = fact[termIndex];
+                                        if(!substitution)
+                                            return substitution;
 
-                                        else if(substitution[term] !== fact[termIndex])
-                                            // Fact does not match query pattern.
-                                            return null;
-                                    }
+                                        if(IsVariable(term))
+                                        {
+                                            if(typeof substitution[term] === 'undefined')
+                                                substitution[term] = fact[termIndex];
 
-                                    return substitution;
-                                },
-                                { ...substitution });
+                                            else if(substitution[term] !== fact[termIndex])
+                                                // Fact does not match query pattern.
+                                                return null;
+                                        }
 
-                            if(combined)
-                                substitutions.push(combined);
+                                        return substitution;
+                                    },
+                                    { ...substitution });
+
+                                if(combined)
+                                    substitutions.push(combined);
+                            }
                         }
-                    }
 
-                    return substitutions;
-                },
-                [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term)));
+                        return substitutions;
+                    },
+                    [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
+            });
     }
 
     NewEntity(): any

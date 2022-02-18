@@ -23,7 +23,7 @@ export interface IEavStore
     ObserveAttribute<TDomain = any, TRange = any>(attribute: PropertyKey): Observable<[TDomain, TRange][]>;
     Observe<T extends [any, ...any[]]>(
         head: T,
-        ...body: Fact[]): Observable<{ [K in keyof T]: any; }[]>;
+        ...body: (Fact | BuiltIn)[]): Observable<{ [K in keyof T]: any; }[]>;
     Query<T extends [any, ...any[]]>(
         head: T,
         ...body: (Fact | BuiltIn)[]): { [K in keyof T]: any; }[];
