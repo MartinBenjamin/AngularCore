@@ -44,7 +44,8 @@ MainClasses   ::= ‘MainClasses’ ‘(’ Class {Class } ‘)’
 
 export type IndividualVariable = string;
 export type IArg = IIndividual | IndividualVariable;
-export type DArg = any;
+export type LiteralVariable = string;
+export type DArg = any | LiteralVariable;
 export type Arg = IArg | DArg;
 
 export interface IAtom
@@ -113,6 +114,8 @@ export interface IAtomSelector<TResult>
 
 export interface IDLSafeRuleBuilder
 {
+    IndividualVariable(name: string): IndividualVariable;
+    LiteralVariable(name: string): LiteralVariable;
     ClassAtom(ce: IClassExpression, individual: IArg): IClassAtom;
     DataRangeAtom(dr: IDataRange, value: DArg): IDataRangeAtom;
     ObjectPropertyAtom(ope: IObjectPropertyExpression, domain: IArg, range: IArg): IObjectPropertyAtom;
@@ -136,6 +139,20 @@ export class DLSafeRuleBuilder implements IDLSafeRuleBuilder
         private _ontology: IOntology
         )
     {
+    }
+
+    IndividualVariable(
+        name: string
+        ): string
+    {
+        return name;
+    }
+
+    LiteralVariable(
+        name: string
+        ): string
+    {
+        return name;
     }
 
     ClassAtom(
