@@ -8,6 +8,8 @@ import { IDataRange } from "./IDataRange";
 import { IIndividual } from "./IIndividual";
 import { IOntology } from './IOntology';
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
+import { Observable } from 'rxjs';
+import { BuiltIn } from './Atom';
 
 // http://www.cs.ox.ac.uk/files/2445/rulesyntaxTR.pdf
 /*
@@ -369,6 +371,50 @@ export class DLSafeRule extends Axiom
     {
         super(ontology);
     }
+}
+
+export class Converter implements IAtomSelector<Observable<Set<any> | Set<[any, any]> | BuiltIn>>
+{
+    Class($class: IClassAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn>
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    DataRange(dataRange: IDataRangeAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn>
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    ObjectProperty(objectPropertyAtom: IObjectPropertyAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn>
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    DataProperty(dataPropertyAtom: IDataPropertyAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn>
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    LessThan(lessThan: ILessThanAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn> {
+        throw new Error("Method not implemented.");
+    }
+    LessThanOrEqual(lessThanOrEqual: ILessThanOrEqualAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn> {
+        throw new Error("Method not implemented.");
+    }
+    Equal(equal: IEqualAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn> {
+        throw new Error("Method not implemented.");
+    }
+    NotEqual(notEqual: INotEqualAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn> {
+        throw new Error("Method not implemented.");
+    }
+    GreaterThanThanOrEqual(greaterThanThanOrEqual: IGreaterThanThanOrEqualAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn> {
+        throw new Error("Method not implemented.");
+    }
+    GreaterThan(greaterThan: IGreaterThanAtom): Observable<Set<any> | Set<[any, any]> | BuiltIn> {
+        throw new Error("Method not implemented.");
+    }
+
+
 }
 
 let builder: IDLSafeRuleBuilder;
