@@ -13,7 +13,6 @@ import { IDataRange } from "./IDataRange";
 import { IIndividual } from "./IIndividual";
 import { IOntology } from './IOntology';
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
-import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 import { IEavStore } from './ObservableGenerator';
 
 // http://www.cs.ox.ac.uk/files/2445/rulesyntaxTR.pdf
@@ -128,12 +127,12 @@ export interface IDLSafeRuleBuilder
     ObjectPropertyAtom(ope: IObjectPropertyExpression, domain: IArg, range: IArg): IObjectPropertyAtom;
     DataPropertyAtom(dpe: IDataPropertyExpression, domain: IArg, range: DArg): IDataPropertyAtom;
 
-    LessThan              (lhs: Arg, rhs: Arg): ILessThanAtom          ;
-    LessThanOrEqual       (lhs: Arg, rhs: Arg): ILessThanOrEqualAtom   ;
-    Equal                 (lhs: Arg, rhs: Arg): IEqualAtom             ;
-    NotEqual              (lhs: Arg, rhs: Arg): INotEqualAtom          ;
-    GreaterThanThanOrEqual(lhs: Arg, rhs: Arg): IGreaterThanOrEqualAtom;
-    GreaterThan           (lhs: Arg, rhs: Arg): IGreaterThanAtom       ;
+    LessThan          (lhs: Arg, rhs: Arg): ILessThanAtom          ;
+    LessThanOrEqual   (lhs: Arg, rhs: Arg): ILessThanOrEqualAtom   ;
+    Equal             (lhs: Arg, rhs: Arg): IEqualAtom             ;
+    NotEqual          (lhs: Arg, rhs: Arg): INotEqualAtom          ;
+    GreaterThanOrEqual(lhs: Arg, rhs: Arg): IGreaterThanOrEqualAtom;
+    GreaterThan       (lhs: Arg, rhs: Arg): IGreaterThanAtom       ;
 
     Rule(
         head: IAtom[],
@@ -378,12 +377,17 @@ export class DLSafeRule extends Axiom
     }
 }
 
-export class Converter implements IAtomSelector<Observable<Set<any> | [any, any][]> | BuiltIn>
+export class Generator implements IAtomSelector<Observable<Set<any> | [any, any][]> | BuiltIn>
 {
-    private static _empty = new Set();
-    private _classObservableGenerator   : IClassExpressionSelector<Observable<Set<any>>>;
-    private _propertyObservableGenerator: IPropertyExpressionSelector<Observable<[any, any][]>>;
-    private _store                      : IEavStore;
+    private static readonly _empty = new Set<any>();
+
+    constructor(
+        private _store                   : IEavStore,
+        private _classObservableGenerator: IClassExpressionSelector<Observable<Set<any>>>
+        )
+    {
+
+    }
 
     Class(
         class$: IClassAtom
@@ -393,7 +397,7 @@ export class Converter implements IAtomSelector<Observable<Set<any> | [any, any]
         const individual = new Set([class$.Individual]);
 
         return IsVariable(class$.Individual) ?
-            observable : observable.pipe(map(individuals => individuals.has(class$.Individual) ? individual : Converter._empty));
+            observable : observable.pipe(map(individuals => individuals.has(class$.Individual) ? individual : Generator._empty));
     }
 
     DataRange(
@@ -401,10 +405,10 @@ export class Converter implements IAtomSelector<Observable<Set<any> | [any, any]
         ): BuiltIn | Observable<Set<any> | [any, any][]>
     {
         return function*(
-            subsitituions: Iterable<object>
+            subsititions: Iterable<object>
             ): Iterator<object>
         {
-            for(const substitution of subsitituions)
+            for(const substitution of subsititions)
                 if(dataRange.DataRange.HasMember(IsVariable(dataRange.Value) ? substitution[dataRange.Value] : dataRange.Value))
                     yield substitution;
         };
@@ -483,3 +487,28 @@ builder.Rule(
     ]).Annotate(
         annotations.RestrictedfromStage,
         DealStageIdentifier.Prospect);
+
+
+function ObserveAtoms(
+    atoms: any[]
+    )
+{
+
+
+}
+
+function Generate(
+    store                   : IEavStore,
+    observableClassGenerator: IClassExpressionSelector<Observable<Set<any>>>,
+    rule                    : IDLSafeRule
+    ): Observable<Set<any>>
+{
+    const generator = new Generator(
+        store,
+        observableClassGenerator);
+
+    const head = rule.Head.map(atom => atom.Select(generator));
+    const body = rule.Head.map(atom => atom.Select(generator));
+    return null;
+
+}
