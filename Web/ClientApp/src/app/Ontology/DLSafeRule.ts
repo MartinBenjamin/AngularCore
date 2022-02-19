@@ -3,7 +3,7 @@ import { map } from 'rxjs/operators';
 import { DealStageIdentifier } from '../Deals';
 import { annotations } from '../Ontologies/Annotations';
 import { fees } from '../Ontologies/Fees';
-import { BuiltIn } from './Atom';
+import { BuiltIn, Equal, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, NotEqual } from './Atom';
 import { Axiom } from './Axiom';
 import { IsVariable } from './EavStore';
 import { IAxiom } from "./IAxiom";
@@ -14,6 +14,7 @@ import { IIndividual } from "./IIndividual";
 import { IOntology } from './IOntology';
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
+import { IEavStore } from './ObservableGenerator';
 
 // http://www.cs.ox.ac.uk/files/2445/rulesyntaxTR.pdf
 /*
@@ -97,25 +98,25 @@ export interface IComparisonAtom extends IAtom
     readonly Rhs: Arg;
 }
 
-export interface ILessThanAtom               extends IComparisonAtom {};
-export interface ILessThanOrEqualAtom        extends IComparisonAtom {};
-export interface IEqualAtom                  extends IComparisonAtom {};
-export interface INotEqualAtom               extends IComparisonAtom {};
-export interface IGreaterThanThanOrEqualAtom extends IComparisonAtom {};
-export interface IGreaterThanAtom            extends IComparisonAtom {};
+export interface ILessThanAtom           extends IComparisonAtom {};
+export interface ILessThanOrEqualAtom    extends IComparisonAtom {};
+export interface IEqualAtom              extends IComparisonAtom {};
+export interface INotEqualAtom           extends IComparisonAtom {};
+export interface IGreaterThanOrEqualAtom extends IComparisonAtom {};
+export interface IGreaterThanAtom        extends IComparisonAtom {};
 
 export interface IAtomSelector<TResult>
 {
-    Class                 (class$                : IClassAtom                 ): TResult;
-    DataRange             (dataRange             : IDataRangeAtom             ): TResult;
-    ObjectProperty        (objectProperty        : IObjectPropertyAtom        ): TResult;
-    DataProperty          (dataProperty          : IDataPropertyAtom          ): TResult;
-    LessThan              (lessThan              : ILessThanAtom              ): TResult;
-    LessThanOrEqual       (lessThanOrEqual       : ILessThanOrEqualAtom       ): TResult;
-    Equal                 (equal                 : IEqualAtom                 ): TResult;
-    NotEqual              (notEqual              : INotEqualAtom              ): TResult;
-    GreaterThanThanOrEqual(greaterThanThanOrEqual: IGreaterThanThanOrEqualAtom): TResult;
-    GreaterThan           (greaterThan           : IGreaterThanAtom           ): TResult;
+    Class             (class$            : IClassAtom             ): TResult;
+    DataRange         (dataRange         : IDataRangeAtom         ): TResult;
+    ObjectProperty    (objectProperty    : IObjectPropertyAtom    ): TResult;
+    DataProperty      (dataProperty      : IDataPropertyAtom      ): TResult;
+    LessThan          (lessThan          : ILessThanAtom          ): TResult;
+    LessThanOrEqual   (lessThanOrEqual   : ILessThanOrEqualAtom   ): TResult;
+    Equal             (equal             : IEqualAtom             ): TResult;
+    NotEqual          (notEqual          : INotEqualAtom          ): TResult;
+    GreaterThanOrEqual(greaterThanOrEqual: IGreaterThanOrEqualAtom): TResult;
+    GreaterThan       (greaterThan       : IGreaterThanAtom       ): TResult;
 }
 
 export interface IDLSafeRuleBuilder
@@ -127,12 +128,12 @@ export interface IDLSafeRuleBuilder
     ObjectPropertyAtom(ope: IObjectPropertyExpression, domain: IArg, range: IArg): IObjectPropertyAtom;
     DataPropertyAtom(dpe: IDataPropertyExpression, domain: IArg, range: DArg): IDataPropertyAtom;
 
-    LessThan              (lhs: Arg, rhs: Arg): ILessThanAtom              ;
-    LessThanOrEqual       (lhs: Arg, rhs: Arg): ILessThanOrEqualAtom       ;
-    Equal                 (lhs: Arg, rhs: Arg): IEqualAtom                 ;
-    NotEqual              (lhs: Arg, rhs: Arg): INotEqualAtom              ;
-    GreaterThanThanOrEqual(lhs: Arg, rhs: Arg): IGreaterThanThanOrEqualAtom;
-    GreaterThan           (lhs: Arg, rhs: Arg): IGreaterThanAtom           ;
+    LessThan              (lhs: Arg, rhs: Arg): ILessThanAtom          ;
+    LessThanOrEqual       (lhs: Arg, rhs: Arg): ILessThanOrEqualAtom   ;
+    Equal                 (lhs: Arg, rhs: Arg): IEqualAtom             ;
+    NotEqual              (lhs: Arg, rhs: Arg): INotEqualAtom          ;
+    GreaterThanThanOrEqual(lhs: Arg, rhs: Arg): IGreaterThanOrEqualAtom;
+    GreaterThan           (lhs: Arg, rhs: Arg): IGreaterThanAtom       ;
 
     Rule(
         head: IAtom[],
@@ -257,15 +258,15 @@ export class DLSafeRuleBuilder implements IDLSafeRuleBuilder
         return notEqual;
     }
 
-    GreaterThanThanOrEqual(
+    GreaterThanOrEqual(
         lhs: any,
         rhs: any
-        ): IGreaterThanThanOrEqualAtom
+        ): IGreaterThanOrEqualAtom
     {
         const greaterThanOrEqual = {
             Lhs: lhs,
             Rhs: rhs,
-            Select: <TResult>(selector: IAtomSelector<TResult>): TResult => selector.GreaterThanThanOrEqual(greaterThanOrEqual)
+            Select: <TResult>(selector: IAtomSelector<TResult>): TResult => selector.GreaterThanOrEqual(greaterThanOrEqual)
         };
         return greaterThanOrEqual;
     }
@@ -380,14 +381,15 @@ export class DLSafeRule extends Axiom
 export class Converter implements IAtomSelector<Observable<Set<any> | [any, any][]> | BuiltIn>
 {
     private static _empty = new Set();
-    private _classConverter   : IClassExpressionSelector<Observable<Set<any>>>;
-    private _propertyConverter: IPropertyExpressionSelector<Observable<[any, any][]>>;
+    private _classObservableGenerator   : IClassExpressionSelector<Observable<Set<any>>>;
+    private _propertyObservableGenerator: IPropertyExpressionSelector<Observable<[any, any][]>>;
+    private _store                      : IEavStore;
 
     Class(
         class$: IClassAtom
         ): BuiltIn | Observable<Set<any> | [any, any][]>
     {
-        const observable = class$.ClassExpression.Select(this._classConverter);
+        const observable = class$.ClassExpression.Select(this._classObservableGenerator);
         const individual = new Set([class$.Individual]);
 
         return IsVariable(class$.Individual) ?
@@ -398,36 +400,72 @@ export class Converter implements IAtomSelector<Observable<Set<any> | [any, any]
         dataRange: IDataRangeAtom
         ): BuiltIn | Observable<Set<any> | [any, any][]>
     {
-        throw new Error("Method not implemented.");
+        return function*(
+            subsitituions: Iterable<object>
+            ): Iterator<object>
+        {
+            for(const substitution of subsitituions)
+                if(dataRange.DataRange.HasMember(IsVariable(dataRange.Value) ? substitution[dataRange.Value] : dataRange.Value))
+                    yield substitution;
+        };
     }
 
     ObjectProperty(
         objectProperty: IObjectPropertyAtom
         ): BuiltIn | Observable<Set<any> | [any, any][]>
     {
-        const observable = objectProperty.ObjectPropertyExpression.Select(this._propertyConverter);
-        throw new Error("Method not implemented.");
+        return this._store.ObserveAtom([objectProperty.Domain, objectProperty.ObjectPropertyExpression.LocalName, objectProperty.Range])
+            .pipe(map(facts => facts.map(([entity, , value]) => [entity, value])));
     }
-    DataProperty(dataProperty: IDataPropertyAtom): BuiltIn | Observable<Set<any> | [any, any][]> {
-        throw new Error("Method not implemented.");
+
+    DataProperty(
+        dataProperty: IDataPropertyAtom
+        ): BuiltIn | Observable<Set<any> | [any, any][]>
+    {
+        return this._store.ObserveAtom([dataProperty.Domain, dataProperty.DataPropertyExpression.LocalName, dataProperty.Range])
+            .pipe(map(facts => facts.map(([entity, , value]) => [entity, value])));
     }
-    LessThan(lessThan: ILessThanAtom): BuiltIn | Observable<Set<any> | [any, any][]> {
-        throw new Error("Method not implemented.");
+
+    LessThan(
+        lessThan: ILessThanAtom
+        ): BuiltIn | Observable<Set<any> | [any, any][]>
+    {
+        return LessThan(lessThan.Lhs, lessThan.Rhs);
     }
-    LessThanOrEqual(lessThanOrEqual: ILessThanOrEqualAtom): BuiltIn | Observable<Set<any> | [any, any][]> {
-        throw new Error("Method not implemented.");
+
+    LessThanOrEqual(
+        lessThanOrEqual: ILessThanOrEqualAtom
+        ): BuiltIn | Observable<Set<any> | [any, any][]>
+    {
+        return LessThanOrEqual(lessThanOrEqual.Lhs, lessThanOrEqual.Rhs);
     }
-    Equal(equal: IEqualAtom): BuiltIn | Observable<Set<any> | [any, any][]> {
-        throw new Error("Method not implemented.");
+
+    Equal(
+        equal: IEqualAtom
+        ): BuiltIn | Observable<Set<any> | [any, any][]>
+    {
+        return Equal(equal.Lhs, equal.Rhs);
     }
-    NotEqual(notEqual: INotEqualAtom): BuiltIn | Observable<Set<any> | [any, any][]> {
-        throw new Error("Method not implemented.");
+
+    NotEqual(
+        notEqual: INotEqualAtom
+        ): BuiltIn | Observable<Set<any> | [any, any][]>
+    {
+        return NotEqual(notEqual.Lhs, notEqual.Rhs);
     }
-    GreaterThanThanOrEqual(greaterThanThanOrEqual: IGreaterThanThanOrEqualAtom): BuiltIn | Observable<Set<any> | [any, any][]> {
-        throw new Error("Method not implemented.");
+
+    GreaterThanOrEqual(
+        greaterThanOrEqual: IGreaterThanOrEqualAtom
+        ): BuiltIn | Observable<Set<any> | [any, any][]>
+    {
+        GreaterThanOrEqual(greaterThanOrEqual.Lhs, greaterThanOrEqual.Rhs);
     }
-    GreaterThan(greaterThan: IGreaterThanAtom): BuiltIn | Observable<Set<any> | [any, any][]> {
-        throw new Error("Method not implemented.");
+
+    GreaterThan(
+        greaterThan: IGreaterThanAtom
+        ): BuiltIn | Observable<Set<any> | [any, any][]>
+    {
+        return GreaterThan(greaterThan.Lhs, greaterThan.Rhs);
     }
 }
 
