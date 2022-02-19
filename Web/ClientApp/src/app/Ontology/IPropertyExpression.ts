@@ -6,9 +6,11 @@ import { IDataRange } from "./IDataRange";
 import { IEntity } from "./IEntity";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectHasValue } from "./IObjectHasValue";
+import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
 
 export interface IPropertyExpression extends IEntity
 {
+    Select<TResult>(selector: IPropertyExpressionSelector<TResult>): TResult
 }
 
 export interface IObjectPropertyExpression extends IPropertyExpression

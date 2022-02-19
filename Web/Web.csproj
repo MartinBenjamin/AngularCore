@@ -243,6 +243,7 @@
     <None Remove="ClientApp\src\app\Ontology\IObjectUnionOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\IOntology.ts" />
     <None Remove="ClientApp\src\app\Ontology\IPropertyExpression.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IPropertyExpressionSelector.ts" />
     <None Remove="ClientApp\src\app\Ontology\IPropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\IPublisher.ts" />
     <None Remove="ClientApp\src\app\Ontology\IsAxiom.ts" />
@@ -580,6 +581,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IObjectUnionOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IOntology.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IPropertyExpression.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IPropertyExpressionSelector.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IPropertyRestriction.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IPublisher.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IsAxiom.ts" />

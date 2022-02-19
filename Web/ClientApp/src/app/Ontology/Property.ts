@@ -14,6 +14,7 @@ import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality }
 import { IObjectHasValue } from "./IObjectHasValue";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
+import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
 import { ObjectExactCardinality } from "./ObjectExactCardinality";
 import { ObjectHasValue } from "./ObjectHasValue";
 import { ObjectMaxCardinality } from "./ObjectMaxCardinality";
@@ -31,6 +32,13 @@ export class ObjectProperty
         super(
             ontology,
             localName);
+    }
+
+    Select<TResult>(
+        selector: IPropertyExpressionSelector<TResult>
+        ): TResult
+    {
+        return selector.ObjectPropertyExpression(this);
     }
 
     HasValue(
@@ -88,6 +96,13 @@ export class DataProperty
         super(
             ontology,
             localName);
+    }
+
+    Select<TResult>(
+        selector: IPropertyExpressionSelector<TResult>
+        ): TResult
+    {
+        return selector.DataPropertyExpression(this);
     }
 
     HasValue(

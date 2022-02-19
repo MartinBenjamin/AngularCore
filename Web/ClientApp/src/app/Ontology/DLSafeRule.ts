@@ -13,6 +13,7 @@ import { IDataRange } from "./IDataRange";
 import { IIndividual } from "./IIndividual";
 import { IOntology } from './IOntology';
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
+import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 
 // http://www.cs.ox.ac.uk/files/2445/rulesyntaxTR.pdf
 /*
@@ -379,13 +380,14 @@ export class DLSafeRule extends Axiom
 export class Converter implements IAtomSelector<Observable<Set<any> | [any, any][]> | BuiltIn>
 {
     private static _empty = new Set();
-    private _converter: IClassExpressionSelector<Observable<Set<any>>>;
+    private _classConverter   : IClassExpressionSelector<Observable<Set<any>>>;
+    private _propertyConverter: IPropertyExpressionSelector<Observable<[any, any][]>>;
 
     Class(
         class$: IClassAtom
         ): BuiltIn | Observable<Set<any> | [any, any][]>
     {
-        const observable = class$.ClassExpression.Select(this._converter);
+        const observable = class$.ClassExpression.Select(this._classConverter);
         const individual = new Set([class$.Individual]);
 
         return IsVariable(class$.Individual) ?
@@ -399,7 +401,11 @@ export class Converter implements IAtomSelector<Observable<Set<any> | [any, any]
         throw new Error("Method not implemented.");
     }
 
-    ObjectProperty(objectProperty: IObjectPropertyAtom): BuiltIn | Observable<Set<any> | [any, any][]> {
+    ObjectProperty(
+        objectProperty: IObjectPropertyAtom
+        ): BuiltIn | Observable<Set<any> | [any, any][]>
+    {
+        const observable = objectProperty.ObjectPropertyExpression.Select(this._propertyConverter);
         throw new Error("Method not implemented.");
     }
     DataProperty(dataProperty: IDataPropertyAtom): BuiltIn | Observable<Set<any> | [any, any][]> {
