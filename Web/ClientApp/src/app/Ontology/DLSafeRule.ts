@@ -10,6 +10,7 @@ import { IAxiom } from "./IAxiom";
 import { IClassExpression } from "./IClassExpression";
 import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IDataRange } from "./IDataRange";
+import { Fact } from './IEavStore';
 import { IIndividual } from "./IIndividual";
 import { IOntology } from './IOntology';
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
@@ -386,7 +387,6 @@ export class Generator implements IAtomSelector<Observable<object[]>>
         private _classObservableGenerator: IClassExpressionSelector<Observable<Set<any>>>
         )
     {
-
     }
 
     Class(
@@ -441,53 +441,23 @@ export class Generator implements IAtomSelector<Observable<object[]>>
         objectProperty: IObjectPropertyAtom
         ): Observable<object[]>
     {
-        return combineLatest(
-            this._previous,
-            this._store.ObserveAtom([objectProperty.Domain, objectProperty.ObjectPropertyExpression.LocalName, objectProperty.Range]),
-            (previous, facts) => previous.reduce<object[]>(
-                (previous, next: object[]) =>
-                {
-                    for(const fact of facts)
-                    {
-                        let merged = {
-                            ...previous
-                        };
-
-                        if(IsVariable(objectProperty.Domain))
-                        {
-                            if(typeof merged[<string>objectProperty.Domain] === 'undefined')
-                                merged[<string>objectProperty.Domain] = fact[0];
-
-                            else if(merged[<string>objectProperty.Domain] !== fact[0])
-                                // Fact does not match query pattern.
-                                merged = null;
-                        }
-
-                        if(merged && IsVariable(objectProperty.Range))
-                        {
-                            if(typeof merged[<string>objectProperty.Range] === 'undefined')
-                                merged[<string>objectProperty.Range] = fact[2];
-
-                            else if(merged[<string>objectProperty.Range] !== fact[2])
-                                // Fact does not match query pattern.
-                                merged = null;
-                        }
-
-                        if(merged)
-                            next.push(merged);
-                    }
-                    return next;
-                },
-                []));
+        return this.Property([objectProperty.Domain, objectProperty.ObjectPropertyExpression.LocalName, objectProperty.Range]);
     }
 
     DataProperty(
         dataProperty: IDataPropertyAtom
         ): Observable<object[]>
     {
+        return this.Property([dataProperty.Domain, dataProperty.DataPropertyExpression.LocalName, dataProperty.Range]);
+    }
+
+    private Property(
+        atom: Fact
+        ): Observable<object[]>
+    {
         return combineLatest(
             this._previous,
-            this._store.ObserveAtom([dataProperty.Domain, dataProperty.DataPropertyExpression.LocalName, dataProperty.Range]),
+            this._store.ObserveAtom(atom),
             (previous, facts) => previous.reduce<object[]>(
                 (previous, next: object[]) =>
                 {
@@ -497,22 +467,22 @@ export class Generator implements IAtomSelector<Observable<object[]>>
                             ...previous
                         };
 
-                        if(IsVariable(dataProperty.Domain))
+                        if(IsVariable(atom[0]))
                         {
-                            if(typeof merged[<string>dataProperty.Domain] === 'undefined')
-                                merged[<string>dataProperty.Domain] = fact[0];
+                            if(typeof merged[atom[0]] === 'undefined')
+                                merged[atom[0]] = fact[0];
 
-                            else if(merged[<string>dataProperty.Domain] !== fact[0])
+                            else if(merged[atom[0]] !== fact[0])
                                 // Fact does not match query pattern.
                                 merged = null;
                         }
 
-                        if(merged && IsVariable(dataProperty.Range))
+                        if(merged && IsVariable(atom[2]))
                         {
-                            if(typeof merged[<string>dataProperty.Range] === 'undefined')
-                                merged[<string>dataProperty.Range] = fact[2];
+                            if(typeof merged[atom[2]] === 'undefined')
+                                merged[atom[2]] = fact[2];
 
-                            else if(merged[<string>dataProperty.Range] !== fact[2])
+                            else if(merged[atom[2]] !== fact[2])
                                 // Fact does not match query pattern.
                                 merged = null;
                         }
@@ -605,14 +575,11 @@ builder.Rule(
         annotations.RestrictedfromStage,
         DealStageIdentifier.Prospect);
 
-
-
-function Generate(
+function ObserveComparisonErrors(
     store                   : IEavStore,
     observableClassGenerator: IClassExpressionSelector<Observable<Set<any>>>,
     rule                    : IDLSafeRule
     ): Observable<Set<any>>
 {
     return null;
-
 }
