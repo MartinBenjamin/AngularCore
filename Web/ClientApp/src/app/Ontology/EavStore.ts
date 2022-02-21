@@ -196,9 +196,6 @@ export class EavStore implements IEavStore, IPublisher
                             atom.reduce(
                                 (merged, term, termIndex) =>
                                 {
-                                    if(!merged)
-                                        return merged;
-
                                     if(IsVariable(term))
                                     {
                                         if(typeof merged[term] === 'undefined')
@@ -275,9 +272,6 @@ export class EavStore implements IEavStore, IPublisher
                                     atom.reduce(
                                         (merged, term, termIndex) =>
                                         {
-                                            if(!merged)
-                                                return merged;
-
                                             if(IsVariable(term))
                                             {
                                                 if(typeof merged[term] === 'undefined')

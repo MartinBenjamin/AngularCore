@@ -464,9 +464,6 @@ export class Generator implements IAtomSelector<Observable<object[]>>
                     previous.concat(facts.map(fact => keys.reduce(
                         (merged, key) =>
                         {
-                            if(!merged)
-                                return merged;
-
                             if(IsVariable(atom[key]))
                             {
                                 if(typeof merged[atom[key]] === 'undefined')
@@ -476,6 +473,8 @@ export class Generator implements IAtomSelector<Observable<object[]>>
                                     // Fact does not match query pattern.
                                     merged = null;
                             }
+
+                            return merged;
                         },
                         { ...substitution })).filter(merged => merged !== null)),
                 []));
