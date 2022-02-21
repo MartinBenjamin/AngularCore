@@ -396,27 +396,27 @@ export class Generator implements IAtomSelector<Observable<object[]>>
         return combineLatest(
             this._previous,
             class$.ClassExpression.Select(this._classObservableGenerator),
-            (previous, individuals) => previous.reduce<object[]>(
-                (previous, next: object[]) =>
+            (substitutions, individuals) => substitutions.reduce<object[]>(
+                (previous, substitution) =>
                 {
                     if(IsConstant(class$.Individual) && individuals.has(class$.Individual))
-                        next.push(previous);
+                        previous.push(previous);
 
                     else for(const individual of individuals)
                     {
-                        if(typeof previous[<string>class$.Individual] === 'undefined')
+                        if(typeof substitution[<string>class$.Individual] === 'undefined')
                         {
                             const merged = {
-                                ...previous
+                                ...substitution
                             };
 
                             merged[<string>class$.Individual] = individual;
-                            next.push(merged);
+                            previous.push(merged);
                         }
-                        else if(previous[<string>class$.Individual] === individual)
-                            next.push(previous);
+                        else if(substitution[<string>class$.Individual] === individual)
+                            previous.push(previous);
                     }
-                    return next;
+                    return previous;
                 },
                 []));
     }
