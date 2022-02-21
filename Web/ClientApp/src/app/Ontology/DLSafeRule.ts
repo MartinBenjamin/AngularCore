@@ -537,7 +537,8 @@ export class Generator implements IAtomSelector<Observable<object[]>>
         let next: Observable<object[]>;
         for(const atom of atoms)
         {
-            this._previous = next;
+            if(next)
+                this._previous = next;
             next = atom.Select(this);
         }
         return next;
@@ -565,5 +566,33 @@ function ObserveComparisonErrors(
     rule                    : IDLSafeRule
     ): Observable<Set<any>>
 {
-    return null;
+    const generator = new Generator(
+        store,
+        observableClassGenerator);
+    return combineLatest(
+        generator.Atoms(rule.Head),
+        generator.Atoms(rule.Body),
+        (head, body) =>
+        {
+            const failed = new Set<any>(); 
+            for(const x of body)
+                for(const y of head)
+                {
+                    let match = true;
+                    for(const key in x)
+                    {
+                        match = match && x[key] === y[key];
+                        if(!match)
+                            break;
+                    }
+
+                    if(!match)
+                    {
+                        failed.add(x);
+                        break;
+                    }
+                }
+
+            return failed;
+        });
 }
