@@ -461,32 +461,23 @@ export class Generator implements IAtomSelector<Observable<object[]>>
             this._store.ObserveAtom(atom),
             (previous, facts) => previous.reduce<object[]>(
                 (previous, next: object[]) =>
-                {
-                    for(const fact of facts)
-                    {
-                        let merged = keys.reduce(
-                            (merged, key) =>
+                    next.concat(facts.map(fact => keys.reduce(
+                        (merged, key) =>
+                        {
+                            if(!merged)
+                                return merged;
+
+                            if(IsVariable(atom[key]))
                             {
-                                if(!merged)
-                                    return merged;
+                                if(typeof merged[atom[key]] === 'undefined')
+                                    merged[atom[key]] = fact[key];
 
-                                if(IsVariable(atom[key]))
-                                {
-                                    if(typeof merged[atom[key]] === 'undefined')
-                                        merged[atom[key]] = fact[key];
-
-                                    else if(merged[atom[key]] !== fact[key])
-                                        // Fact does not match query pattern.
-                                        merged = null;
-                                }
-                            },
-                            { ...previous });
-
-                        if(merged)
-                            next.push(merged);
-                    }
-                    return next;
-                },
+                                else if(merged[atom[key]] !== fact[key])
+                                    // Fact does not match query pattern.
+                                    merged = null;
+                            }
+                        },
+                        { ...previous })).filter(merged => merged !== null)),
                 []));
     }
 
