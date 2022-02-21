@@ -130,11 +130,11 @@ export class EavStore implements IEavStore, IPublisher
         ): Fact[]
     {
         const facts: Fact[] = [];
-        if(IsConstant(entity))
+        if(typeof entity !== 'undefined')
         {
             const av = this._eav.get(entity)
             if(av)
-                if(IsConstant(attribute))
+                if(typeof attribute !== 'undefined')
                 {
                     const value = av.get(attribute);
                     if(value instanceof Array)
@@ -152,7 +152,7 @@ export class EavStore implements IEavStore, IPublisher
                         facts.push([entity, attribute, value]);
                 }
         }
-        else if(IsConstant(attribute))
+        else if(typeof attribute !== 'undefined')
         {
             const ev = this._aev.get(attribute);
             if(ev)
@@ -177,7 +177,7 @@ export class EavStore implements IEavStore, IPublisher
                     facts.push([entity, attribute, value]);
             }
 
-        return IsConstant(value) ? facts.filter(fact => fact[2] === value) : facts;
+        return typeof value !== 'undefined' ? facts.filter(fact => fact[2] === value) : facts;
     }
 
     Query<T extends [any, ...any[]]>(
@@ -195,10 +195,9 @@ export class EavStore implements IEavStore, IPublisher
                 {
                     const substitution = substitutions.shift();
                     // Substitute known variables.
-                    const updatedAtom = <Fact>atom.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term);
-                    for(const fact of this.Facts(updatedAtom))
+                    for(const fact of this.Facts(<Fact>atom.map(term => IsVariable(term) ? substitution[term] : term)))
                     {
-                        const combined = updatedAtom.reduce(
+                        const combined = atom.reduce(
                             (substitution, term, termIndex) =>
                             {
                                 if(!substitution)
@@ -235,13 +234,12 @@ export class EavStore implements IEavStore, IPublisher
         return new Observable<Fact[]>(
             subscriber =>
             {
-                const key = <Fact>atom.map(element => IsVariable(element) ? undefined : element);
-                let subscribers = this._atomSubscribers.get(key);
+                let subscribers = this._atomSubscribers.get(atom);
                 if(!subscribers)
                 {
                     subscribers = new Set<Subscriber<Fact[]>>();
                     this._atomSubscribers.set(
-                        key,
+                        atom,
                         subscribers);
                 }
 
@@ -252,10 +250,10 @@ export class EavStore implements IEavStore, IPublisher
                     {
                         subscribers.delete(subscriber);
                         if(!subscribers.size)
-                            this._atomSubscribers.delete(key);
+                            this._atomSubscribers.delete(atom);
                     });
 
-                subscriber.next(this.Facts(key));
+                subscriber.next(this.Facts(atom));
             });
     }
 
@@ -271,7 +269,7 @@ export class EavStore implements IEavStore, IPublisher
         ...body: (Fact | BuiltIn)[]): Observable<{ [K in keyof T]: any; }[]>
     {
         return combineLatest(
-            body.filter(atom => atom instanceof Array).map(atom => this.ObserveAtom(<Fact>atom)),
+            body.filter(atom => atom instanceof Array).map(atom => this.ObserveAtom(<Fact>(<Fact>atom).map(term => IsVariable(term) ? undefined : term))),
             (...observed) =>
             {
                 let observedIndex = 0;
