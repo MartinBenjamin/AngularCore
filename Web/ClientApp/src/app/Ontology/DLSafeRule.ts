@@ -455,6 +455,7 @@ export class Generator implements IAtomSelector<Observable<object[]>>
         atom: Fact
         ): Observable<object[]>
     {
+        const keys = [0, 2];
         return combineLatest(
             this._previous,
             this._store.ObserveAtom(atom),
@@ -463,29 +464,23 @@ export class Generator implements IAtomSelector<Observable<object[]>>
                 {
                     for(const fact of facts)
                     {
-                        let merged = {
-                            ...previous
-                        };
+                        let merged = keys.reduce(
+                            (merged, key) =>
+                            {
+                                if(!merged)
+                                    return merged;
 
-                        if(IsVariable(atom[0]))
-                        {
-                            if(typeof merged[atom[0]] === 'undefined')
-                                merged[atom[0]] = fact[0];
+                                if(IsVariable(atom[key]))
+                                {
+                                    if(typeof merged[atom[key]] === 'undefined')
+                                        merged[atom[key]] = fact[key];
 
-                            else if(merged[atom[0]] !== fact[0])
-                                // Fact does not match query pattern.
-                                merged = null;
-                        }
-
-                        if(merged && IsVariable(atom[2]))
-                        {
-                            if(typeof merged[atom[2]] === 'undefined')
-                                merged[atom[2]] = fact[2];
-
-                            else if(merged[atom[2]] !== fact[2])
-                                // Fact does not match query pattern.
-                                merged = null;
-                        }
+                                    else if(merged[atom[key]] !== fact[key])
+                                        // Fact does not match query pattern.
+                                        merged = null;
+                                }
+                            },
+                            { ...previous });
 
                         if(merged)
                             next.push(merged);
