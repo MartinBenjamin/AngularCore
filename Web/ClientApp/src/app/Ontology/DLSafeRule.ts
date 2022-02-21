@@ -461,22 +461,21 @@ export class Generator implements IAtomSelector<Observable<object[]>>
             this._store.ObserveAtom(atom),
             (substitutions, facts) => substitutions.reduce<object[]>(
                 (previous, substitution) =>
-                    previous.concat(facts.map(fact => keys.reduce(
-                        (merged, key) =>
-                        {
-                            if(IsVariable(atom[key]))
-                            {
-                                if(typeof merged[atom[key]] === 'undefined')
-                                    merged[atom[key]] = fact[key];
+                    previous.concat(facts
+                        .filter(
+                            fact => keys.every(
+                                key =>
+                                    !IsVariable(atom[key]) || typeof substitution[atom[key]] === 'undefined' || substitution[atom[key]] === fact[key]))
+                        .map(
+                            fact => keys.reduce(
+                                (merged, key) =>
+                                {
+                                    if(IsVariable(atom[key]))
+                                        merged[atom[key]] = fact[key];
 
-                                else if(merged[atom[key]] !== fact[key])
-                                    // Fact does not match query pattern.
-                                    merged = null;
-                            }
-
-                            return merged;
-                        },
-                        { ...substitution })).filter(merged => merged !== null)),
+                                    return merged;
+                                },
+                                { ...substitution }))),
                 []));
     }
 
