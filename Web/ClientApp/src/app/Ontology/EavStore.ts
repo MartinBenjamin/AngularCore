@@ -191,24 +191,21 @@ export class EavStore implements IEavStore, IPublisher
                     return [...atom(substitutions)];
 
                 return substitutions.reduce<object[]>(
-                    (previous, substitution) => previous.concat(this.Facts(<Fact>atom.map(term => IsVariable(term) ? substitution[term] : term)).map(
-                        fact =>
-                            atom.reduce(
+                    (previous, substitution) => previous.concat(this.Facts(<Fact>atom.map(term => IsVariable(term) ? substitution[term] : term))
+                        .filter(
+                            fact => atom.every(
+                                (term, termIndex) =>
+                                    !IsVariable(term) || typeof substitution[term] === 'undefined' || substitution[term] === fact[termIndex]))
+                        .map(
+                            fact => atom.reduce(
                                 (merged, term, termIndex) =>
                                 {
                                     if(IsVariable(term))
-                                    {
-                                        if(typeof merged[term] === 'undefined')
-                                            merged[term] = fact[termIndex];
-
-                                        else if(merged[term] !== fact[termIndex])
-                                            // Fact does not match query pattern.
-                                            return null;
-                                    }
+                                        merged[term] = fact[termIndex];
 
                                     return merged;
                                 },
-                                { ...substitution })).filter(merged => merged !== null)),
+                                { ...substitution }))),
                     []);
             },
             [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
@@ -267,24 +264,21 @@ export class EavStore implements IEavStore, IPublisher
                             return [...atom(substitutions)];
 
                         return substitutions.reduce<object[]>(
-                            (previous, substitution) => previous.concat(observed[observedIndex++].map(
-                                fact =>
-                                    atom.reduce(
+                            (previous, substitution) => previous.concat(observed[observedIndex++]
+                                .filter(
+                                    fact => atom.every(
+                                        (term, termIndex) =>
+                                            !IsVariable(term) || typeof substitution[term] === 'undefined' || substitution[term] === fact[termIndex]))
+                                .map(
+                                    fact => atom.reduce(
                                         (merged, term, termIndex) =>
                                         {
                                             if(IsVariable(term))
-                                            {
-                                                if(typeof merged[term] === 'undefined')
-                                                    merged[term] = fact[termIndex];
-
-                                                else if(merged[term] !== fact[termIndex])
-                                                    // Fact does not match query pattern.
-                                                    return null;
-                                            }
+                                                merged[term] = fact[termIndex];
 
                                             return merged;
                                         },
-                                        { ...substitution })).filter(merged => merged !== null)),
+                                        { ...substitution }))),
                             []);
                     },
                     [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
