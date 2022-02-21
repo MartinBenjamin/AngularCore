@@ -459,9 +459,9 @@ export class Generator implements IAtomSelector<Observable<object[]>>
         return combineLatest(
             this._previous,
             this._store.ObserveAtom(atom),
-            (previous, facts) => previous.reduce<object[]>(
-                (previous, next: object[]) =>
-                    next.concat(facts.map(fact => keys.reduce(
+            (substitutions, facts) => substitutions.reduce<object[]>(
+                (previous, substitution) =>
+                    previous.concat(facts.map(fact => keys.reduce(
                         (merged, key) =>
                         {
                             if(!merged)
@@ -477,7 +477,7 @@ export class Generator implements IAtomSelector<Observable<object[]>>
                                     merged = null;
                             }
                         },
-                        { ...previous })).filter(merged => merged !== null)),
+                        { ...substitution })).filter(merged => merged !== null)),
                 []));
     }
 

@@ -190,39 +190,29 @@ export class EavStore implements IEavStore, IPublisher
                 if(typeof atom === 'function')
                     return [...atom(substitutions)];
 
-                let count = substitutions.length;
-                while(count--)
-                {
-                    const substitution = substitutions.shift();
-                    // Substitute known variables.
-                    for(const fact of this.Facts(<Fact>atom.map(term => IsVariable(term) ? substitution[term] : term)))
-                    {
-                        const combined = atom.reduce(
-                            (substitution, term, termIndex) =>
-                            {
-                                if(!substitution)
-                                    return substitution;
-
-                                if(IsVariable(term))
+                return substitutions.reduce<object[]>(
+                    (previous, substitution) => previous.concat(this.Facts(<Fact>atom.map(term => IsVariable(term) ? substitution[term] : term)).map(
+                        fact =>
+                            atom.reduce(
+                                (merged, term, termIndex) =>
                                 {
-                                    if(typeof substitution[term] === 'undefined')
-                                        substitution[term] = fact[termIndex];
+                                    if(!merged)
+                                        return merged;
 
-                                    else if(substitution[term] !== fact[termIndex])
-                                        // Fact does not match query pattern.
-                                        return null;
-                                }
+                                    if(IsVariable(term))
+                                    {
+                                        if(typeof merged[term] === 'undefined')
+                                            merged[term] = fact[termIndex];
 
-                                return substitution;
-                            },
-                            { ...substitution });
+                                        else if(merged[term] !== fact[termIndex])
+                                            // Fact does not match query pattern.
+                                            return null;
+                                    }
 
-                        if(combined)
-                            substitutions.push(combined);
-                    }
-                }
-
-                return substitutions;
+                                    return merged;
+                                },
+                                { ...substitution })).filter(merged => merged !== null)),
+                    []);
             },
             [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
     }
@@ -279,38 +269,29 @@ export class EavStore implements IEavStore, IPublisher
                         if(typeof atom === 'function')
                             return [...atom(substitutions)];
 
-                        let count = substitutions.length;
-                        while(count--)
-                        {
-                            const substitution = substitutions.shift();
-                            for(const fact of observed[observedIndex++])
-                            {
-                                const combined = atom.reduce(
-                                    (substitution, term, termIndex) =>
-                                    {
-                                        if(!substitution)
-                                            return substitution;
-
-                                        if(IsVariable(term))
+                        return substitutions.reduce<object[]>(
+                            (previous, substitution) => previous.concat(observed[observedIndex++].map(
+                                fact =>
+                                    atom.reduce(
+                                        (merged, term, termIndex) =>
                                         {
-                                            if(typeof substitution[term] === 'undefined')
-                                                substitution[term] = fact[termIndex];
+                                            if(!merged)
+                                                return merged;
 
-                                            else if(substitution[term] !== fact[termIndex])
-                                                // Fact does not match query pattern.
-                                                return null;
-                                        }
+                                            if(IsVariable(term))
+                                            {
+                                                if(typeof merged[term] === 'undefined')
+                                                    merged[term] = fact[termIndex];
 
-                                        return substitution;
-                                    },
-                                    { ...substitution });
+                                                else if(merged[term] !== fact[termIndex])
+                                                    // Fact does not match query pattern.
+                                                    return null;
+                                            }
 
-                                if(combined)
-                                    substitutions.push(combined);
-                            }
-                        }
-
-                        return substitutions;
+                                            return merged;
+                                        },
+                                        { ...substitution })).filter(merged => merged !== null)),
+                            []);
                     },
                     [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
             });
