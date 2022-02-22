@@ -197,28 +197,28 @@ export class EavStore implements IEavStore, IPublisher
                     // Substitute known variables.
                     for(const fact of this.Facts(<Fact>atom.map(term => IsVariable(term) ? substitution[term] : term)))
                     {
-                        const combined = atom.reduce(
-                            (substitution, term, termIndex) =>
+                        const merged = atom.reduce(
+                            (merged, term, termIndex) =>
                             {
                                 if(!substitution)
-                                    return substitution;
+                                    return merged;
 
                                 if(IsVariable(term))
                                 {
-                                    if(typeof substitution[term] === 'undefined')
-                                        substitution[term] = fact[termIndex];
+                                    if(typeof merged[term] === 'undefined')
+                                        merged[term] = fact[termIndex];
 
-                                    else if(substitution[term] !== fact[termIndex])
+                                    else if(merged[term] !== fact[termIndex])
                                         // Fact does not match query pattern.
                                         return null;
                                 }
 
-                                return substitution;
+                                return merged;
                             },
                             { ...substitution });
 
-                        if(combined)
-                            substitutions.push(combined);
+                        if(merged)
+                            substitutions.push(merged);
                     }
                 }
 
@@ -285,28 +285,28 @@ export class EavStore implements IEavStore, IPublisher
                             const substitution = substitutions.shift();
                             for(const fact of observed[observedIndex++])
                             {
-                                const combined = atom.reduce(
-                                    (substitution, term, termIndex) =>
+                                const merged = atom.reduce(
+                                    (merged, term, termIndex) =>
                                     {
-                                        if(!substitution)
-                                            return substitution;
+                                        if(!merged)
+                                            return merged;
 
                                         if(IsVariable(term))
                                         {
-                                            if(typeof substitution[term] === 'undefined')
-                                                substitution[term] = fact[termIndex];
+                                            if(typeof merged[term] === 'undefined')
+                                                merged[term] = fact[termIndex];
 
-                                            else if(substitution[term] !== fact[termIndex])
+                                            else if(merged[term] !== fact[termIndex])
                                                 // Fact does not match query pattern.
                                                 return null;
                                         }
 
-                                        return substitution;
+                                        return merged;
                                     },
                                     { ...substitution });
 
-                                if(combined)
-                                    substitutions.push(combined);
+                                if(merged)
+                                    substitutions.push(merged);
                             }
                         }
 
