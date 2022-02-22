@@ -459,23 +459,34 @@ export class Generator implements IAtomSelector<Observable<object[]>>
         return combineLatest(
             this._previous,
             this._store.ObserveAtom(atom),
-            (substitutions, facts) => substitutions.reduce<object[]>(
-                (previous, substitution) =>
-                    previous.concat(facts
-                        .filter(
-                            fact => keys.every(
-                                key =>
-                                    !IsVariable(atom[key]) || typeof substitution[atom[key]] === 'undefined' || substitution[atom[key]] === fact[key]))
-                        .map(
-                            fact => keys.reduce(
-                                (merged, key) =>
+            (previous, facts) => previous.reduce<object[]>(
+                (previous, next: object[]) =>
+                {
+                    for(const fact of facts)
+                    {
+                        let merged = keys.reduce(
+                            (merged, key) =>
+                            {
+                                if(!merged)
+                                    return merged;
+
+                                if(IsVariable(atom[key]))
                                 {
-                                    if(IsVariable(atom[key]))
+                                    if(typeof merged[atom[key]] === 'undefined')
                                         merged[atom[key]] = fact[key];
 
-                                    return merged;
-                                },
-                                { ...substitution }))),
+                                    else if(merged[atom[key]] !== fact[key])
+                                        // Fact does not match query pattern.
+                                        merged = null;
+                                }
+                            },
+                            { ...previous });
+
+                        if(merged)
+                            next.push(merged);
+                    }
+                    return next;
+                },
                 []));
     }
 

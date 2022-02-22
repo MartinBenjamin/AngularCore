@@ -159,6 +159,7 @@ export class FacilityFeeEditor
         if(accrued && !this._fee.AccrualDate)
             this._fee.AccrualDate = <AccrualDate>store.Assert(
                 {
+                    Day  : 1,
                     $type: 'Web.Model.AccrualDate, Web'
                 });
 

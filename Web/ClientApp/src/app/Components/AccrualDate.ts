@@ -1,9 +1,11 @@
+import { DateDescription } from './Time';
+
 export type AccrualDateMonth = 3 | 6 | 9 | 12;
 
-export interface AccrualDate
+export interface AccrualDate extends DateDescription
 {
-    Year: number;
     Month: AccrualDateMonth;
+    Day  : 1;
 }
 
 export let AccrualDateMonths = [3, 6, 9, 12];

@@ -28,6 +28,6 @@ export class AccrualDatePipe implements PipeTransform
         accrualDate: AccrualDate
         ): string
     {
-        return accrualDate ? this._formatUTCDate(new Date(Date.UTC(accrualDate.Year, accrualDate.Month - 1, 1))) : '';
+        return accrualDate ? this._formatUTCDate(new Date(Date.UTC(accrualDate.Year, accrualDate.Month - 1, accrualDate.Day))) : '';
     }
 }
