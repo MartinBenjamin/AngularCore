@@ -13,7 +13,7 @@ import { IDataRange } from "./IDataRange";
 import { Fact } from './IEavStore';
 import { IIndividual } from "./IIndividual";
 import { IOntology } from './IOntology';
-import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
+import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
 import { IEavStore } from './ObservableGenerator';
 
 // http://www.cs.ox.ac.uk/files/2445/rulesyntaxTR.pdf
@@ -78,17 +78,22 @@ export interface IDataRangeAtom extends IAtom
     readonly Value    : DArg;
 }
 
-export interface IObjectPropertyAtom extends IAtom
+export interface IPropertyAtom extends IAtom
+{
+    readonly PropertyExpression: IPropertyExpression;
+    readonly Domain            : IArg;
+    readonly Range             : Arg;
+}
+
+export interface IObjectPropertyAtom extends IPropertyAtom
 {
     readonly ObjectPropertyExpression: IObjectPropertyExpression;
-    readonly Domain                  : IArg;
     readonly Range                   : IArg;
 }
 
-export interface IDataPropertyAtom extends IAtom
+export interface IDataPropertyAtom extends IPropertyAtom
 {
     readonly DataPropertyExpression: IDataPropertyExpression;
-    readonly Domain                : IArg;
     readonly Range                 : DArg;
 }
 
@@ -330,14 +335,36 @@ export class DataRangeAtom implements IDataRangeAtom
     }
 }
 
-export class ObjectPropertyAtom implements IObjectPropertyAtom
+export abstract class PropertyAtom implements IPropertyAtom
+{
+    constructor(
+        public readonly PropertyExpression: IPropertyExpression,
+        public readonly Domain            : IArg,
+        public readonly Range             : Arg
+        )
+    {
+    }
+
+    Select<TResult>(
+        selector: IAtomSelector<TResult>
+        ): TResult
+    {
+        throw new Error("Method not implemented.");
+    }
+}
+
+export class ObjectPropertyAtom extends PropertyAtom implements IObjectPropertyAtom
 {
     constructor(
         public readonly ObjectPropertyExpression: IObjectPropertyExpression,
-        public readonly Domain                  : IArg,
+        domain                                  : IArg,
         public readonly Range                   : IArg
         )
     {
+        super(
+            ObjectPropertyExpression,
+            domain,
+            Range);
     }
 
     Select<TResult>(
@@ -348,14 +375,18 @@ export class ObjectPropertyAtom implements IObjectPropertyAtom
     }
 }
 
-export class DataPropertyAtom implements IDataPropertyAtom
+export class DataPropertyAtom extends PropertyAtom implements IDataPropertyAtom
 {
     constructor(
         public readonly DataPropertyExpression: IDataPropertyExpression,
-        public readonly Domain                : IArg,
+        domain                                : IArg,
         public readonly Range                 : DArg
         )
     {
+        super(
+            DataPropertyExpression,
+            domain,
+            Range);
     }
 
     Select<TResult>(
