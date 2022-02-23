@@ -1,8 +1,8 @@
 import { DealStageIdentifier } from '../Deals';
 import { IClass } from '../Ontology/IClass';
 import { IDataPropertyExpression, IObjectPropertyExpression } from '../Ontology/IPropertyExpression';
-import { Ontology } from "../Ontology/Ontology";
-import { Decimal } from "../Ontology/Xsd";
+import { Ontology } from '../Ontology/Ontology';
+import { Decimal } from '../Ontology/Xsd';
 import { annotations } from './Annotations';
 
 export class Quantities extends Ontology

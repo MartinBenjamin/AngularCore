@@ -393,32 +393,32 @@ export class Generator implements IAtomSelector<Observable<object[]>>
         class$: IClassAtom
         ): Observable<object[]>
     {
+        if(IsVariable(class$.Individual))
         return combineLatest(
             this._previous,
             class$.ClassExpression.Select(this._classObservableGenerator),
             (substitutions, individuals) => substitutions.reduce<object[]>(
-                (previous, substitution) =>
+                (substitutions, substitution) =>
                 {
-                    if(IsConstant(class$.Individual) && individuals.has(class$.Individual))
-                        previous.push(previous);
-
-                    else for(const individual of individuals)
+                    for(const individual of individuals)
                     {
                         if(typeof substitution[<string>class$.Individual] === 'undefined')
                         {
-                            const merged = {
-                                ...substitution
-                            };
-
+                            const merged = { ...substitution };
                             merged[<string>class$.Individual] = individual;
-                            previous.push(merged);
+                            substitutions.push(merged);
                         }
                         else if(substitution[<string>class$.Individual] === individual)
-                            previous.push(previous);
+                            substitutions.push(substitution);
                     }
-                    return previous;
+                    return substitutions;
                 },
                 []));
+
+        return combineLatest(
+            this._previous,
+            class$.ClassExpression.Select(this._classObservableGenerator),
+            (substitutions, individuals) => individuals.has(class$.Individual) ? substitutions : []);
     }
 
     DataRange(
@@ -459,33 +459,33 @@ export class Generator implements IAtomSelector<Observable<object[]>>
         return combineLatest(
             this._previous,
             this._store.ObserveAtom(atom),
-            (previous, facts) => previous.reduce<object[]>(
-                (previous, next: object[]) =>
+            (substitutions, facts) => substitutions.reduce<object[]>(
+                (substitutions, substitution) =>
                 {
                     for(const fact of facts)
                     {
-                        let merged = keys.reduce(
-                            (merged, key) =>
+                        let merged = { ...substitution };
+                        for(const key of keys)
+                        {
+                            const term = atom[key];
+                            if(IsVariable(term))
                             {
-                                if(!merged)
-                                    return merged;
+                                if(typeof merged[term] === 'undefined')
+                                    merged[term] = fact[key];
 
-                                if(IsVariable(atom[key]))
+                                else if(merged[term] !== fact[key])
                                 {
-                                    if(typeof merged[atom[key]] === 'undefined')
-                                        merged[atom[key]] = fact[key];
-
-                                    else if(merged[atom[key]] !== fact[key])
-                                        // Fact does not match query pattern.
-                                        merged = null;
+                                    // Fact does not match query pattern.
+                                    merged = null;
+                                    break;
                                 }
-                            },
-                            { ...previous });
+                            }
+                        }
 
                         if(merged)
-                            next.push(merged);
+                            substitutions.push(merged);
                     }
-                    return next;
+                    return substitutions;
                 },
                 []));
     }
@@ -560,13 +560,13 @@ let builder: IDLSafeRuleBuilder;
 
 builder.Rule(
     [
-        builder.ObjectPropertyAtom(fees.HasAccrualDate, '?fee', '?AccrualDate'),
+        builder.ClassAtom(fees.AccrualDate, '?fee'),
+        builder.ObjectPropertyAtom(fees.HasAccrualDate, '?fee', '?accrualDate'),
         builder.DataPropertyAtom(fees.ExpectedReceivedDate, '?fee', '?expectedReceivedDate'),
         builder.LessThan('?accrualDate', '?expectedReceivedDate')
     ],
     [
-        builder.ObjectPropertyAtom(fees.HasAccrualDate, '?fee', '?AccrualDate'),
-        builder.DataPropertyAtom(fees.ExpectedReceivedDate, '?fee', '?expectedReceivedDate')
+        builder.ClassAtom(fees.AccrualDate, '?fee')
     ]).Annotate(
         annotations.RestrictedfromStage,
         DealStageIdentifier.Prospect);
