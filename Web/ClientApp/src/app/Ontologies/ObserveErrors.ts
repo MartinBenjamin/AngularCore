@@ -1,6 +1,7 @@
 import { combineLatest, Observable } from "rxjs";
 import { map, switchMap } from 'rxjs/operators';
 import { Guid } from "../CommonDomainObjects";
+import { IAxiom } from "../Ontology/IAxiom";
 import { IEavStore } from "../Ontology/IEavStore";
 import { IOntology } from "../Ontology/IOntology";
 import { ISubClassOf } from "../Ontology/ISubClassOf";
@@ -117,12 +118,14 @@ export function ObserveErrors(
         });
 }
 
+export type Error = keyof IErrors | IAxiom
+
 export function ObserveRestrictedFromStageSwitchMap(
     superClass  : Observable<Set<any>>,
     subClass    : Observable<Set<any>>,
     propertyName: string,
-    error       : keyof IErrors
-    ): Observable<[string, keyof IErrors, Set<any>]>
+    error       : Error
+    ): Observable<[string, Error, Set<any>]>
 {
     return combineLatest(
         superClass,
@@ -140,13 +143,13 @@ export function ObserveErrorsSwitchMap(
     ontology        : IOntology,
     store           : IEavStore,
     applicableStages: Observable<Set<Guid>>
-    ): Observable<Map<any, Map<string, Set<keyof IErrors>>>>
+    ): Observable<Map<any, Map<string, Set<Error>>>>
 {
     const generator = new ObservableGenerator(
         ontology,
         store);
 
-    let dataRangeObservables: Observable<[string, keyof IErrors, Set<any>]>[] = [...ontology.Get(ontology.IsAxiom.IDataPropertyRange)].map(
+    let dataRangeObservables: Observable<[string, Error, Set<any>]>[] = [...ontology.Get(ontology.IsAxiom.IDataPropertyRange)].map(
         dataPropertyRange => store.ObserveAttribute(dataPropertyRange.DataPropertyExpression.LocalName).pipe(
             map(relations =>
                 [
@@ -157,7 +160,7 @@ export function ObserveErrorsSwitchMap(
 
     return applicableStages.pipe(switchMap(applicableStages =>
     {
-        let observables: Observable<[string, keyof IErrors, Set<any>]>[] = [...dataRangeObservables];
+        let observables: Observable<[string, Error, Set<any>]>[] = [...dataRangeObservables];
 
         for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
             for(let annotation of subClassOf.Annotations)
@@ -189,7 +192,7 @@ export function ObserveErrorsSwitchMap(
             observables,
             (...errors) =>
             {
-                let errorMap = new Map<any, Map<string, Set<keyof IErrors>>>();
+                let errorMap = new Map<any, Map<string, Set<Error>>>();
                 errors.forEach(
                     ([property, error, individuals]) =>
                     {
@@ -199,7 +202,7 @@ export function ObserveErrorsSwitchMap(
                                 let individualErrors = errorMap.get(individual);
                                 if(!individualErrors)
                                 {
-                                    individualErrors = new Map<string, Set<keyof IErrors>>();
+                                    individualErrors = new Map<string, Set<Error>>();
                                     errorMap.set(
                                         individual,
                                         individualErrors);
@@ -208,7 +211,7 @@ export function ObserveErrorsSwitchMap(
                                 let propertyErrors = individualErrors.get(property);
                                 if(!propertyErrors)
                                 {
-                                    propertyErrors = new Set<keyof IErrors>();
+                                    propertyErrors = new Set<Error>();
                                     individualErrors.set(
                                         property,
                                         propertyErrors);

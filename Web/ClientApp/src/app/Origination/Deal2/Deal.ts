@@ -12,8 +12,7 @@ import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServicePr
 import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
 import { IDealOntologyService } from '../../Ontologies/IDealOntologyService';
-import { ObserveErrorsSwitchMap } from '../../Ontologies/ObserveErrors';
-import { IErrors } from '../../Ontologies/Validate';
+import { Error, ObserveErrorsSwitchMap } from '../../Ontologies/ObserveErrors';
 import { Store } from '../../Ontology/IEavStore';
 import { Origination } from '../Origination';
 import { Facility } from './Facility';
@@ -120,7 +119,7 @@ export class Deal
                                             let facilityErrors = errors.get(commitment);
                                             if(!facilityErrors)
                                             {
-                                                facilityErrors = new Map<string, Set<keyof IErrors>>();
+                                                facilityErrors = new Map<string, Set<Error>>();
                                                 errors.set(
                                                     commitment,
                                                     facilityErrors);
@@ -130,7 +129,7 @@ export class Deal
                                             if(!hasErrors)
                                                 facilityErrors.set(
                                                     '$HasErrors',
-                                                    new Set<keyof IErrors>());
+                                                    new Set<Error>());
                                             break;
                                         }
                                 });

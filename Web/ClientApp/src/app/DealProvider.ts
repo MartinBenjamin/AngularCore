@@ -1,11 +1,11 @@
 import { BehaviorSubject, Observable } from "rxjs";
 import { Deal } from "./Deals";
-import { IErrors } from './Ontologies/Validate';
+import { Error } from './Ontologies/ObserveErrors';
 
 export abstract class DealProvider extends Observable<Deal>
 {
     protected _deal          = new BehaviorSubject<Deal>(null);
-    protected _errors        : Observable<Map<any, Map<string, Set<keyof IErrors>>>>;
+    protected _errors        : Observable<Map<any, Map<string, Set<Error>>>>;
     protected _observeErrors = new BehaviorSubject<boolean>(false);
 
     protected constructor()
@@ -18,7 +18,7 @@ export abstract class DealProvider extends Observable<Deal>
             });
     }
 
-    get Errors(): Observable<Map<any, Map<string, Set<keyof IErrors>>>>
+    get Errors(): Observable<Map<any, Map<string, Set<Error>>>>
     {
         return this._errors;
     }
