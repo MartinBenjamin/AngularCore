@@ -216,12 +216,7 @@ export class DLSafeRuleBuilder implements IDLSafeRuleBuilder
         rhs: any
         ): ILessThanAtom
     {
-        const lessThan = {
-            Lhs: lhs,
-            Rhs: rhs,
-            Select: <TResult>(selector: IAtomSelector<TResult>): TResult => selector.LessThan(lessThan)
-        };
-        return lessThan;
+        return new LessThanAtom(lhs, rhs);
     }
 
     LessThanOrEqual(
@@ -229,12 +224,7 @@ export class DLSafeRuleBuilder implements IDLSafeRuleBuilder
         rhs: any
         ): ILessThanOrEqualAtom
     {
-        const lessThanOrEqual = {
-            Lhs: lhs,
-            Rhs: rhs,
-            Select: <TResult>(selector: IAtomSelector<TResult>): TResult => selector.LessThanOrEqual(lessThanOrEqual)
-        };
-        return lessThanOrEqual;
+        return new LessThanOrEqualAtom(lhs, rhs);
     }
 
     Equal(
@@ -242,12 +232,7 @@ export class DLSafeRuleBuilder implements IDLSafeRuleBuilder
         rhs: any
         ): IEqualAtom
     {
-        const equal = {
-            Lhs: lhs,
-            Rhs: rhs,
-            Select: <TResult>(selector: IAtomSelector<TResult>): TResult => selector.Equal(equal)
-        };
-        return equal;
+        return new EqualAtom(lhs, rhs);
     }
 
     NotEqual(
@@ -260,7 +245,7 @@ export class DLSafeRuleBuilder implements IDLSafeRuleBuilder
             Rhs: rhs,
             Select: <TResult>(selector: IAtomSelector<TResult>): TResult => selector.NotEqual(notEqual)
         };
-        return notEqual;
+        return new NotEqualAtom(lhs, rhs);
     }
 
     GreaterThanOrEqual(
@@ -268,12 +253,7 @@ export class DLSafeRuleBuilder implements IDLSafeRuleBuilder
         rhs: any
         ): IGreaterThanOrEqualAtom
     {
-        const greaterThanOrEqual = {
-            Lhs: lhs,
-            Rhs: rhs,
-            Select: <TResult>(selector: IAtomSelector<TResult>): TResult => selector.GreaterThanOrEqual(greaterThanOrEqual)
-        };
-        return greaterThanOrEqual;
+        return new GreaterThanOrEqualAtom(lhs, rhs);
     }
 
     GreaterThan(
@@ -281,12 +261,7 @@ export class DLSafeRuleBuilder implements IDLSafeRuleBuilder
         rhs: any
         ): IGreaterThanAtom
     {
-        const greaterThan = {
-            Lhs: lhs,
-            Rhs: rhs,
-            Select: <TResult>(selector: IAtomSelector<TResult>): TResult => selector.GreaterThan(greaterThan)
-        };
-        return greaterThan;
+        return new GreaterThanAtom(lhs, rhs);
     }
 
     Rule(
@@ -396,6 +371,30 @@ export class DataPropertyAtom extends PropertyAtom implements IDataPropertyAtom
         return selector.DataProperty(this);
     }
 }
+
+export abstract class ComparisonAtom implements IComparisonAtom
+{
+    constructor(
+        public Lhs: Arg,
+        public Rhs: Arg,
+        )
+    {
+    }
+
+    Select<TResult>(
+        selector: IAtomSelector<TResult>
+        ): TResult
+    {
+        throw new Error("Method not implemented.");
+    }
+}
+
+export class LessThanAtom           extends ComparisonAtom implements ILessThanAtom           { constructor(lhs: Arg, rhs: Arg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.LessThan          (this);}};
+export class LessThanOrEqualAtom    extends ComparisonAtom implements ILessThanOrEqualAtom    { constructor(lhs: Arg, rhs: Arg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.LessThanOrEqual   (this);}};
+export class EqualAtom              extends ComparisonAtom implements IEqualAtom              { constructor(lhs: Arg, rhs: Arg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.Equal             (this);}};
+export class NotEqualAtom           extends ComparisonAtom implements INotEqualAtom           { constructor(lhs: Arg, rhs: Arg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.NotEqual          (this);}};
+export class GreaterThanOrEqualAtom extends ComparisonAtom implements IGreaterThanOrEqualAtom { constructor(lhs: Arg, rhs: Arg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.GreaterThanOrEqual(this);}};
+export class GreaterThanAtom        extends ComparisonAtom implements IGreaterThanAtom        { constructor(lhs: Arg, rhs: Arg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.GreaterThan       (this);}};
 
 export class DLSafeRule extends Axiom
 {
@@ -602,11 +601,11 @@ builder.Rule(
         annotations.RestrictedfromStage,
         DealStageIdentifier.Prospect);
 
-function ObserveComparisonErrors(
+function ObserveRuleContradictions(
     store                   : IEavStore,
     observableClassGenerator: IClassExpressionSelector<Observable<Set<any>>>,
     rule                    : IDLSafeRule
-    ): Observable<Set<any>>
+    ): Observable<object[]>
 {
     const generator = new Generator(
         store,
@@ -616,7 +615,7 @@ function ObserveComparisonErrors(
         generator.Atoms(rule.Body),
         (head, body) =>
         {
-            const failed = new Set<any>(); 
+            const failed: object[] = []; 
             for(const x of body)
                 for(const y of head)
                 {
@@ -630,11 +629,31 @@ function ObserveComparisonErrors(
 
                     if(!match)
                     {
-                        failed.add(x);
+                        failed.push(x);
                         break;
                     }
                 }
 
             return failed;
         });
+}
+
+function ObserveComparisonContradiction(
+    store                   : IEavStore,
+    observableClassGenerator: IClassExpressionSelector<Observable<Set<any>>>,
+    rule                    : IDLSafeRule
+    ): Observable<[string, IAxiom, Set<any>]>
+{
+    // Assume rule is a comparison.
+    let property   = <IPropertyAtom>rule.Head.find(atom => atom instanceof PropertyAtom)
+
+    return ObserveRuleContradictions(
+        store,
+        observableClassGenerator,
+        rule).pipe(map(
+            contraditions => [
+                property.PropertyExpression.LocalName,
+                rule,
+                new Set(contraditions.map(o => o[<string>property.Domain]))
+            ]));
 }
