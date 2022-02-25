@@ -586,17 +586,17 @@ export class Generator implements IAtomSelector<Observable<object[]>>
     }
 }
 
-let builder: IDLSafeRuleBuilder;
+const builder: IDLSafeRuleBuilder = new DLSafeRuleBuilder(fees);
 
 builder.Rule(
     [
-        builder.ClassAtom(fees.AccrualDate, '?fee'),
+        builder.ClassAtom(fees.AccruedFee, '?fee'),
         builder.ObjectPropertyAtom(fees.HasAccrualDate, '?fee', '?accrualDate'),
         builder.DataPropertyAtom(fees.ExpectedReceivedDate, '?fee', '?expectedReceivedDate'),
         builder.LessThan('?accrualDate', '?expectedReceivedDate')
     ],
     [
-        builder.ClassAtom(fees.AccrualDate, '?fee')
+        builder.ClassAtom(fees.AccruedFee, '?fee')
     ]).Annotate(
         annotations.RestrictedfromStage,
         DealStageIdentifier.Prospect);
@@ -645,7 +645,7 @@ function ObserveComparisonContradiction(
     ): Observable<[string, IAxiom, Set<any>]>
 {
     // Assume rule is a comparison.
-    let property   = <IPropertyAtom>rule.Head.find(atom => atom instanceof PropertyAtom)
+    let property = <IPropertyAtom>rule.Head.find(atom => atom instanceof PropertyAtom)
 
     return ObserveRuleContradictions(
         store,
