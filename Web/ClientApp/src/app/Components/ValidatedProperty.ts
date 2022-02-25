@@ -1,7 +1,7 @@
 import { Directive, ElementRef, Inject, InjectionToken, Input, OnDestroy, Provider } from '@angular/core';
 import { Observable, BehaviorSubject, Subject, Subscription } from "rxjs";
 
-export type Errors = Map<object, Map<string, Set<string>>>;
+export type Errors = Map<object, Map<string, unknown>>;
 export type Property = [object, string];
 
 export const ErrorsSubjectToken                 = new InjectionToken<Subject<Errors>>('ErrorsSubjectToken');
@@ -95,8 +95,8 @@ export class ValidatedProperty implements OnDestroy
                 this._errorsServiceSubscription = this._errorsService.subscribe(
                     errors =>
                     {
-                        let objectErrors  : Map<string, Set<string>> = null;
-                        let propertyErrors: Set<string> = null;
+                        let objectErrors  : Map<string, unknown> = null;
+                        let propertyErrors: unknown = null;
 
                         if(errors)
                             objectErrors = errors.get(this._object);
