@@ -3,6 +3,7 @@ import { Observable, Subject } from "rxjs";
 import { map } from 'rxjs/operators';
 import { ErrorsObservableToken, HighlightedPropertySubjectToken, Property } from '../../Components/ValidatedProperty';
 import { IErrors } from '../../Ontologies/Validate';
+import { Axiom } from '../../Ontology/Axiom';
 
 type Error = [Property, string, string];
 
@@ -60,11 +61,23 @@ export class FacilityFeeErrors
                                 propertyDisplayName = propertyName in FacilityFeeErrors._propertyDisplayName ? FacilityFeeErrors._propertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
 
                             propertyErrors.forEach(
-                                propertyError => errors.push([
-                                    property,
-                                    propertyDisplayName,
-                                    FacilityFeeErrors._errorMap[propertyError]
-                                ]));
+                                propertyError =>
+                                {
+                                    if(<any>propertyError instanceof Axiom) // Contradiction.
+                                    {
+                                        errors.push([
+                                            property,
+                                            propertyDisplayName,
+                                            'Contradiction'
+                                        ]);
+                                    }
+                                    else
+                                        errors.push([
+                                            property,
+                                            propertyDisplayName,
+                                            FacilityFeeErrors._errorMap[propertyError]
+                                        ]);
+                                });
                         }));
 
                 return errors;

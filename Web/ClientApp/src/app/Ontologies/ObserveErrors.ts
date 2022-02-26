@@ -1,6 +1,7 @@
 import { combineLatest, Observable } from "rxjs";
 import { map, switchMap } from 'rxjs/operators';
 import { Guid } from "../CommonDomainObjects";
+import { DLSafeRule, IDLSafeRule, ObserveComparisonContradiction } from "../Ontology/DLSafeRule";
 import { IAxiom } from "../Ontology/IAxiom";
 import { IEavStore } from "../Ontology/IEavStore";
 import { IOntology } from "../Ontology/IOntology";
@@ -149,7 +150,7 @@ export function ObserveErrorsSwitchMap(
         ontology,
         store);
 
-    let dataRangeObservables: Observable<[string, Error, Set<any>]>[] = [...ontology.Get(ontology.IsAxiom.IDataPropertyRange)].map(
+    const dataRangeObservables: Observable<[string, Error, Set<any>]>[] = [...ontology.Get(ontology.IsAxiom.IDataPropertyRange)].map(
         dataPropertyRange => store.ObserveAttribute(dataPropertyRange.DataPropertyExpression.LocalName).pipe(
             map(relations =>
                 [
@@ -161,6 +162,13 @@ export function ObserveErrorsSwitchMap(
     return applicableStages.pipe(switchMap(applicableStages =>
     {
         let observables: Observable<[string, Error, Set<any>]>[] = [...dataRangeObservables];
+
+        for(const rule of ontology.Get((axiom: IAxiom): axiom is IDLSafeRule => axiom instanceof DLSafeRule))
+            // Assume comparison.
+            observables.push(ObserveComparisonContradiction(
+                store,
+                generator,
+                rule));
 
         for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
             for(let annotation of subClassOf.Annotations)

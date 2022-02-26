@@ -1,8 +1,5 @@
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DealStageIdentifier } from '../Deals';
-import { annotations } from '../Ontologies/Annotations';
-import { fees } from '../Ontologies/Fees';
 import { BuiltIn, Equal, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, NotEqual } from './Atom';
 import { Axiom } from './Axiom';
 import { IsConstant, IsVariable } from './EavStore';
@@ -193,7 +190,7 @@ export class DLSafeRuleBuilder implements IDLSafeRuleBuilder
         range : IArg
         ): IObjectPropertyAtom
     {
-        throw new ObjectPropertyAtom(
+        return new ObjectPropertyAtom(
             ope,
             domain,
             range);
@@ -574,7 +571,7 @@ export class Generator implements IAtomSelector<Observable<object[]>>
         atoms: IAtom[]
         ): Observable<object[]>
     {
-        this._previous = new BehaviorSubject<object[]>([]).asObservable();
+        this._previous = new BehaviorSubject<object[]>([{}]).asObservable();
         let next: Observable<object[]>;
         for(const atom of atoms)
         {
@@ -585,21 +582,6 @@ export class Generator implements IAtomSelector<Observable<object[]>>
         return next;
     }
 }
-
-const builder: IDLSafeRuleBuilder = new DLSafeRuleBuilder(fees);
-
-builder.Rule(
-    [
-        builder.ClassAtom(fees.AccruedFee, '?fee'),
-        builder.ObjectPropertyAtom(fees.HasAccrualDate, '?fee', '?accrualDate'),
-        builder.DataPropertyAtom(fees.ExpectedReceivedDate, '?fee', '?expectedReceivedDate'),
-        builder.LessThan('?accrualDate', '?expectedReceivedDate')
-    ],
-    [
-        builder.ClassAtom(fees.AccruedFee, '?fee')
-    ]).Annotate(
-        annotations.RestrictedfromStage,
-        DealStageIdentifier.Prospect);
 
 function ObserveRuleContradictions(
     store                   : IEavStore,
@@ -638,7 +620,7 @@ function ObserveRuleContradictions(
         });
 }
 
-function ObserveComparisonContradiction(
+export function ObserveComparisonContradiction(
     store                   : IEavStore,
     observableClassGenerator: IClassExpressionSelector<Observable<Set<any>>>,
     rule                    : IDLSafeRule

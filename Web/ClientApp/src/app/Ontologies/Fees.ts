@@ -2,6 +2,7 @@ import { AccrualDateMonths } from '../Components/AccrualDate';
 import { DealStageIdentifier } from '../Deals';
 import { ObjectIntersectionOf } from '../Ontology/ClassExpression';
 import { DataOneOf } from '../Ontology/DataOneOf';
+import { DLSafeRuleBuilder, IDLSafeRuleBuilder } from '../Ontology/DLSafeRule';
 import { IClass } from '../Ontology/IClass';
 import { IDataPropertyExpression, IObjectPropertyExpression } from '../Ontology/IPropertyExpression';
 import { Ontology } from '../Ontology/Ontology';
@@ -66,3 +67,18 @@ export class Fees extends Ontology
 }
 
 export const fees = new Fees();
+
+const builder: IDLSafeRuleBuilder = new DLSafeRuleBuilder(fees);
+
+builder.Rule(
+    [
+        builder.ClassAtom(fees.AccruedFee, '?fee'),
+        builder.DataPropertyAtom(fees.ExpectedReceivedDate, '?fee', '?expectedReceivedDate'),
+        builder.ObjectPropertyAtom(fees.HasAccrualDate, '?fee', '?accrualDate'),
+        builder.LessThan('?accrualDate', '?expectedReceivedDate')
+    ],
+    [
+        builder.ClassAtom(fees.AccruedFee, '?fee')
+    ]).Annotate(
+        annotations.RestrictedfromStage,
+        DealStageIdentifier.Prospect);

@@ -226,6 +226,7 @@ export class EavStore implements IEavStore, IPublisher
         atom: Fact
         ): Observable<Fact[]>
     {
+        atom = <Fact>atom.map(term => IsVariable(term) ? undefined : term);
         return new Observable<Fact[]>(
             subscriber =>
             {
@@ -264,7 +265,7 @@ export class EavStore implements IEavStore, IPublisher
         ...body: (Fact | BuiltIn)[]): Observable<{ [K in keyof T]: any; }[]>
     {
         return combineLatest(
-            body.filter(atom => atom instanceof Array).map(atom => this.ObserveAtom(<Fact>(<Fact>atom).map(term => IsVariable(term) ? undefined : term))),
+            body.filter(atom => atom instanceof Array).map(atom => this.ObserveAtom(<Fact>atom)),
             (...observed) =>
             {
                 let observedIndex = 0;
