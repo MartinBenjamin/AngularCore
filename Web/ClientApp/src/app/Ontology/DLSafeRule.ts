@@ -595,11 +595,9 @@ function ObserveRuleContradictions(
     return combineLatest(
         generator.Atoms(rule.Head),
         generator.Atoms(rule.Body),
-        (head, body) =>
-        {
-            const failed: object[] = [];
-
-            for(const x of body)
+        (head, body) => body.reduce<object[]>(
+            (failed, x) =>
+            {
                 if(!head.some(y =>
                 {
                     for(const key in x)
@@ -609,8 +607,9 @@ function ObserveRuleContradictions(
                 }))
                     failed.push(x);
 
-            return failed;
-        });
+                return failed;
+            },
+            []));
 }
 
 export function ObserveComparisonContradiction(
