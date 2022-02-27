@@ -597,24 +597,17 @@ function ObserveRuleContradictions(
         generator.Atoms(rule.Body),
         (head, body) =>
         {
-            const failed: object[] = []; 
-            for(const x of body)
-                for(const y of head)
-                {
-                    let match = true;
-                    for(const key in x)
-                    {
-                        match = match && x[key] === y[key];
-                        if(!match)
-                            break;
-                    }
+            const failed: object[] = [];
 
-                    if(!match)
-                    {
-                        failed.push(x);
-                        break;
-                    }
-                }
+            for(const x of body)
+                if(!head.some(y =>
+                {
+                    for(const key in x)
+                        if(x[key] !== y[key])
+                            return false;
+                    return true;
+                }))
+                    failed.push(x);
 
             return failed;
         });
