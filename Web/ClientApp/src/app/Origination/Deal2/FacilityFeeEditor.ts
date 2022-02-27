@@ -158,14 +158,13 @@ export class FacilityFeeEditor
         const store = Store(this._deal);
         store.SuspendPublish();
         if(accrued && !this._fee.AccrualDate)
-        {
             this._fee.AccrualDate = <AccrualDate>store.Assert(
                 {
-                    Day  : 1,
-                    $type: 'Web.Model.AccrualDate, Web'
+                    Day                 : 1,
+                    [Symbol.toPrimitive]: ToPrimitive,
+                    $type               : 'Web.Model.AccrualDate, Web'
                 });
-            this._fee.AccrualDate[Symbol.toPrimitive] = ToPrimitive;
-        }
+
         else if(!accrued && this._fee.AccrualDate)
         {
             store.DeleteEntity(this._fee.AccrualDate);

@@ -630,6 +630,8 @@ export class EavStore implements IEavStore, IPublisher
                     added);
         }
 
+        entity[Symbol.toPrimitive] = object[Symbol.toPrimitive] !== 'undefined' ? object[Symbol.toPrimitive] : (hint) => 'Proxy';
+
         return entity;
     }
 
@@ -767,11 +769,6 @@ export class EavStore implements IEavStore, IPublisher
     }
 }
 
-function toPrimitive(hint)
-{
-    return 'Proxy';
-}
-
 function EntityProxyFactory(
     publisher: IPublisher,
     av       : Map<PropertyKey, any>,
@@ -785,8 +782,6 @@ function EntityProxyFactory(
             p
             ): any
         {
-            if(p == Symbol.toPrimitive)
-                return av.get(p) || toPrimitive;
             return av.get(p);
         },
         getOwnPropertyDescriptor: function(
