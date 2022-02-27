@@ -5,7 +5,7 @@ export interface DateDescription
     Day  : number;
 }
 
-export function toPrimitive(
+export function ToPrimitive(
     hint: string
     ): any
 {

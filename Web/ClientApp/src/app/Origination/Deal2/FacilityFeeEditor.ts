@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { BehaviorSubject, combineLatest, NEVER, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, filter, sample, share, switchMap } from 'rxjs/operators';
 import { AccrualDate } from '../../Components/AccrualDate';
+import { ToPrimitive } from '../../Components/Time';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
 import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
@@ -11,7 +12,6 @@ import { FacilityFeeUnit, Fee } from '../../Fees';
 import { Store } from '../../Ontology/IEavStore';
 import { ITransaction } from '../../Ontology/ITransactionManager';
 import { Alternative, Empty, IExpression, Property, Query2 } from '../../RegularPathExpression';
-import { toPrimitive } from '../../Components/Time';
 
 type ApplyCallback = () => void;
 
@@ -164,7 +164,7 @@ export class FacilityFeeEditor
                     Day  : 1,
                     $type: 'Web.Model.AccrualDate, Web'
                 });
-            this._fee.AccrualDate[Symbol.toPrimitive] = toPrimitive;
+            this._fee.AccrualDate[Symbol.toPrimitive] = ToPrimitive;
         }
         else if(!accrued && this._fee.AccrualDate)
         {
