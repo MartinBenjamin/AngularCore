@@ -1,5 +1,4 @@
 import { IsVariable } from "./EavStore";
-import { IsDateDescription } from '../Components/Time';
 
 export type BuiltIn = (substitutions: Iterable<object>) => Iterable<object>;
 
@@ -17,27 +16,10 @@ function ComparisonAtom(
             )
         {
             for(const substitution of substitutions)
-            {
-                let currentLhs = IsVariable(lhs) ? substitution[lhs] : lhs;
-                let currentRhs = IsVariable(rhs) ? substitution[rhs] : rhs;
-
-                if(IsDateDescription(currentLhs))
-                    currentLhs = new Date(Date.UTC(
-                        currentLhs.Year,
-                        currentLhs.Month - 1,
-                        currentLhs.Day));
-
-                if(IsDateDescription(currentRhs))
-                    currentRhs = new Date(Date.UTC(
-                        currentRhs.Year,
-                        currentRhs.Month - 1,
-                        currentRhs.Day));
-
                 if(comparison(
-                    currentLhs,
-                    currentRhs))
+                    IsVariable(lhs) ? substitution[lhs] : lhs,
+                    IsVariable(rhs) ? substitution[rhs] : rhs))
                     yield substitution;
-            }
         };
     }
 };

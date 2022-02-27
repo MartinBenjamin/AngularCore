@@ -11,6 +11,7 @@ import { FacilityFeeUnit, Fee } from '../../Fees';
 import { Store } from '../../Ontology/IEavStore';
 import { ITransaction } from '../../Ontology/ITransactionManager';
 import { Alternative, Empty, IExpression, Property, Query2 } from '../../RegularPathExpression';
+import { toPrimitive } from '../../Components/Time';
 
 type ApplyCallback = () => void;
 
@@ -157,12 +158,14 @@ export class FacilityFeeEditor
         const store = Store(this._deal);
         store.SuspendPublish();
         if(accrued && !this._fee.AccrualDate)
+        {
             this._fee.AccrualDate = <AccrualDate>store.Assert(
                 {
                     Day  : 1,
                     $type: 'Web.Model.AccrualDate, Web'
                 });
-
+            this._fee.AccrualDate[Symbol.toPrimitive] = toPrimitive;
+        }
         else if(!accrued && this._fee.AccrualDate)
         {
             store.DeleteEntity(this._fee.AccrualDate);

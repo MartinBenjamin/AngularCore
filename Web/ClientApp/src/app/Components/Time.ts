@@ -5,6 +5,16 @@ export interface DateDescription
     Day  : number;
 }
 
+export function toPrimitive(
+    hint: string
+    ): any
+{
+    return Date.UTC(
+        this.Year,
+        this.Month - 1,
+        this.Day);
+}
+
 export function IsDateDescription(
     o: any
     ): o is DateDescription

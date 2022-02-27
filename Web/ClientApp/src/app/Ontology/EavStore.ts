@@ -786,7 +786,7 @@ function EntityProxyFactory(
             ): any
         {
             if(p == Symbol.toPrimitive)
-                return toPrimitive;
+                return av.get(p) || toPrimitive;
             return av.get(p);
         },
         getOwnPropertyDescriptor: function(
