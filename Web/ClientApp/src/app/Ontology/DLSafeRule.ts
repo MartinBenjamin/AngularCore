@@ -424,7 +424,7 @@ export class Generator implements IAtomSelector<Observable<object[]>>
         return combineLatest(
             this._previous,
             class$.ClassExpression.Select(this._classObservableGenerator),
-            (substitutions, individuals) => substitutions.reduce<object[]>(
+            (substitutions, individuals) => substitutions.reduce(
                 (substitutions, substitution) =>
                 {
                     for(const individual of individuals)
@@ -486,7 +486,7 @@ export class Generator implements IAtomSelector<Observable<object[]>>
         return combineLatest(
             this._previous,
             this._store.ObserveAtom(atom),
-            (substitutions, facts) => substitutions.reduce<object[]>(
+            (substitutions, facts) => substitutions.reduce(
                 (substitutions, substitution) =>
                 {
                     for(const fact of facts)
