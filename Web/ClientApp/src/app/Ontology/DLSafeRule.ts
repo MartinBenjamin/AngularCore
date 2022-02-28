@@ -424,7 +424,7 @@ export class Generator implements IAtomSelector<Observable<object[]>>
         return combineLatest(
             this._previous,
             class$.ClassExpression.Select(this._classObservableGenerator),
-            (substitutions, individuals) => substitutions.reduce(
+            (substitutions, individuals) => substitutions.reduce<object[]>(
                 (substitutions, substitution) =>
                 {
                     for(const individual of individuals)
@@ -486,7 +486,7 @@ export class Generator implements IAtomSelector<Observable<object[]>>
         return combineLatest(
             this._previous,
             this._store.ObserveAtom(atom),
-            (substitutions, facts) => substitutions.reduce(
+            (substitutions, facts) => substitutions.reduce<object[]>(
                 (substitutions, substitution) =>
                 {
                     for(const fact of facts)
@@ -595,7 +595,7 @@ function ObserveRuleContradictions(
     return combineLatest(
         generator.Atoms(rule.Head),
         generator.Atoms(rule.Body),
-        (head, body) => body.reduce(
+        (head, body) => body.reduce<object[]>(
             (failed, x) =>
             {
                 if(!head.some(y =>
