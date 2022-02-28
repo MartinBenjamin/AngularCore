@@ -19,7 +19,7 @@ export class FacilityFeeErrors
 {
     private _errors: Observable<Error[]>;
 
-    private static _temporalText = new Map(
+    private static _temporalText = new Map<Function, string>(
         [
             [LessThanAtom          , 'before'      ],
             [LessThanOrEqualAtom   , 'on or before'],
@@ -71,7 +71,7 @@ export class FacilityFeeErrors
                             propertyErrors.forEach(
                                 propertyError =>
                                 {
-                                    if(IsDLSafeRule(<any>propertyError))
+                                    if(IsDLSafeRule(propertyError))
                                     {
                                         // Assume comparison.
                                         let count = 0;

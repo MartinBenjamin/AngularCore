@@ -406,7 +406,7 @@ export class DLSafeRule extends Axiom implements IDLSafeRule
 }
 
 export function IsDLSafeRule(
-    axiom: object
+    axiom: any
     ): axiom is IDLSafeRule
 {
     return axiom instanceof DLSafeRule;

@@ -1,5 +1,5 @@
 import { combineLatest, Observable } from "rxjs";
-import { map, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { Guid } from "../CommonDomainObjects";
 import { IsDLSafeRule, ObserveComparisonContradiction } from "../Ontology/DLSafeRule";
 import { IAxiom } from "../Ontology/IAxiom";
@@ -10,7 +10,7 @@ import { ObservableGenerator } from "../Ontology/ObservableGenerator";
 import { annotations } from './Annotations';
 import { IErrors } from './Validate';
 
-const noErrors = new Set<any>();
+const empty = new Set<any>();
 
 export function ObserveRestrictedFromStage(
     generator          : ObservableGenerator,
@@ -33,7 +33,7 @@ export function ObserveRestrictedFromStage(
             [
                 propertyName,
                 error,
-                active ? new Set<any>([...subClassExpression].filter(element => !superClassExpression.has(element))) : noErrors
+                active ? new Set<any>([...subClassExpression].filter(element => !superClassExpression.has(element))) : empty
             ]);
 }
 
@@ -132,11 +132,16 @@ export function ObserveRestrictedFromStageSwitchMap(
         superClass,
         subClass,
         (superClass, subClass) =>
-            [
-                propertyName,
-                error,
-                new Set<any>([...subClass].filter(element => !superClass.has(element)))
-            ]);
+        {
+            const contradictions = [...subClass].filter(element => !superClass.has(element));
+            return contradictions.length ? new Set<any>(contradictions) : empty;
+        }).pipe(
+            distinctUntilChanged(),
+            map(
+                contradictions => [
+                    propertyName,
+                    error,
+                    contradictions]));
 }
 
 
