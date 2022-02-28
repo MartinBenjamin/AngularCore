@@ -73,8 +73,8 @@ const builder: IDLSafeRuleBuilder = new DLSafeRuleBuilder(fees);
 builder.Rule(
     [
         builder.ClassAtom(fees.AccruedFee, '?fee'),
-        builder.DataPropertyAtom(fees.ExpectedReceivedDate, '?fee', '?expectedReceivedDate'),
         builder.ObjectPropertyAtom(fees.HasAccrualDate, '?fee', '?accrualDate'),
+        builder.DataPropertyAtom(fees.ExpectedReceivedDate, '?fee', '?expectedReceivedDate'),
         builder.LessThan('?accrualDate', '?expectedReceivedDate')
     ],
     [

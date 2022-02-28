@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators';
 import { ErrorsObservableToken, HighlightedPropertySubjectToken, Property } from '../../Components/ValidatedProperty';
 import { IErrors } from '../../Ontologies/Validate';
 import { Axiom } from '../../Ontology/Axiom';
+import { IsDLSafeRule, PropertyAtom, IPropertyAtom } from '../../Ontology/DLSafeRule';
 
 type Error = [Property, string, string];
 
@@ -63,12 +64,25 @@ export class FacilityFeeErrors
                             propertyErrors.forEach(
                                 propertyError =>
                                 {
-                                    if(<any>propertyError instanceof Axiom) // Contradiction.
+                                    if(IsDLSafeRule(<any>propertyError))
                                     {
+                                        // Assume comparison.
+                                        let count = 0;
+                                        const secondProperty = <IPropertyAtom>propertyError.Head.find(
+                                            atom =>
+                                            {
+                                                if(atom instanceof PropertyAtom)
+                                                    if(++count === 2)
+                                                        return true;
+                                                return false;
+                                            });
+                                        const secondPropertyName = secondProperty.PropertyExpression.LocalName;
+                                        const secondPropertyDisplayName = secondPropertyName in FacilityFeeErrors._propertyDisplayName ?
+                                            FacilityFeeErrors._propertyDisplayName[secondPropertyName] : secondPropertyName.replace(/\B[A-Z]/g, ' $&');
                                         errors.push([
                                             property,
                                             propertyDisplayName,
-                                            'Contradiction'
+                                            `Must be less than ${secondPropertyDisplayName}`
                                         ]);
                                     }
                                     else
