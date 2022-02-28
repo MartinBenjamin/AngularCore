@@ -595,7 +595,7 @@ function ObserveRuleContradictions(
     return combineLatest(
         generator.Atoms(rule.Head),
         generator.Atoms(rule.Body),
-        (head, body) => body.reduce<object[]>(
+        (head, body) => body.reduce(
             (failed, x) =>
             {
                 if(!head.some(y =>
