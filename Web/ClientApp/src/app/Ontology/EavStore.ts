@@ -744,6 +744,7 @@ export class EavStore implements IEavStore, IPublisher
                     assertedValue,
                     retractedValue));
 
+        this.SuspendPublish();
         Match(
             this._atomSubscribers,
             [entity, attribute, assertedValue],
@@ -752,6 +753,7 @@ export class EavStore implements IEavStore, IPublisher
             this._atomSubscribers,
             [entity, attribute, retractedValue],
             (atom, subscribers: Set<Subscriber<Fact[]>>) => this.PublishAtom(atom, subscribers));
+        this.UnsuspendPublish();
     }
 
     BeginTransaction(): ITransaction
