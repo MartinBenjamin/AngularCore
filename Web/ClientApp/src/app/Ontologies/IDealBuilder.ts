@@ -200,7 +200,11 @@ export class DealBuilder implements IDealBuilder
                 .map(hasKey => hasKey.DataPropertyExpressions[0])
                 .filter(keyProperty => functionalDataProperties.has(keyProperty)));
 
-        const attributeSchema: AttributeSchema[] = [];
+        const attributeSchema: AttributeSchema[] = [
+            {
+                Name       : Symbol.toPrimitive,
+                Cardinality: Cardinality.One
+            }];
 
         for(const keyProperty of keyProperties)
             attributeSchema.push(

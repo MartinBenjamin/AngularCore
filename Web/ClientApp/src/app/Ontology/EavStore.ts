@@ -598,13 +598,17 @@ export class EavStore implements IEavStore, IPublisher
                     throw 'Unique Identity Conflict';
             });
 
+        const toPrimitive = object[Symbol.toPrimitive];
         if(!entity)
         {
             entity = this.NewEntity();
+            entity[Symbol.toPrimitive] = toPrimitive || (() => 'Proxy');
             added.set(
                 object,
                 entity);
         }
+        else if(toPrimitive)
+            entity[Symbol.toPrimitive] = toPrimitive;
 
         for(const key in object)
         {
@@ -629,8 +633,6 @@ export class EavStore implements IEavStore, IPublisher
                     value,
                     added);
         }
-
-        entity[Symbol.toPrimitive] = object[Symbol.toPrimitive] !== 'undefined' ? object[Symbol.toPrimitive] : (hint) => 'Proxy';
 
         return entity;
     }
