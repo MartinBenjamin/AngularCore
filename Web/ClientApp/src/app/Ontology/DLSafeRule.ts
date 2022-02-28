@@ -393,7 +393,7 @@ export class NotEqualAtom           extends ComparisonAtom implements INotEqualA
 export class GreaterThanOrEqualAtom extends ComparisonAtom implements IGreaterThanOrEqualAtom { constructor(lhs: Arg, rhs: Arg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.GreaterThanOrEqual(this);}};
 export class GreaterThanAtom        extends ComparisonAtom implements IGreaterThanAtom        { constructor(lhs: Arg, rhs: Arg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.GreaterThan       (this);}};
 
-export class DLSafeRule extends Axiom
+export class DLSafeRule extends Axiom implements IDLSafeRule
 {
     constructor(
         ontology            : IOntology,
@@ -403,6 +403,13 @@ export class DLSafeRule extends Axiom
     {
         super(ontology);
     }
+}
+
+export function IsDLSafeRule(
+    axiom: object
+    ): axiom is IDLSafeRule
+{
+    return axiom instanceof DLSafeRule;
 }
 
 export class Generator implements IAtomSelector<Observable<object[]>>

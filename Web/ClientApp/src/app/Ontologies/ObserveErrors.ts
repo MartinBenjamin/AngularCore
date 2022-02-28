@@ -1,7 +1,7 @@
 import { combineLatest, Observable } from "rxjs";
 import { map, switchMap } from 'rxjs/operators';
 import { Guid } from "../CommonDomainObjects";
-import { DLSafeRule, IDLSafeRule, ObserveComparisonContradiction } from "../Ontology/DLSafeRule";
+import { IsDLSafeRule, ObserveComparisonContradiction } from "../Ontology/DLSafeRule";
 import { IAxiom } from "../Ontology/IAxiom";
 import { IEavStore } from "../Ontology/IEavStore";
 import { IOntology } from "../Ontology/IOntology";
@@ -163,7 +163,7 @@ export function ObserveErrorsSwitchMap(
     {
         let observables: Observable<[string, Error, Set<any>]>[] = [...dataRangeObservables];
 
-        for(const rule of ontology.Get((axiom: IAxiom): axiom is IDLSafeRule => axiom instanceof DLSafeRule))
+        for(const rule of ontology.Get(IsDLSafeRule))
             // Assume comparison.
             observables.push(ObserveComparisonContradiction(
                 store,
