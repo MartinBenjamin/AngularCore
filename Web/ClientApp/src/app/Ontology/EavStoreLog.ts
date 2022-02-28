@@ -75,7 +75,7 @@ export class AssertRetract extends LogEntry
                 this.Attribute,
                 this.AssertedValue);
             
-        Store(this.Entity).Assert(
+        store.Assert(
             this.Entity,
             this.Attribute,
             this.RetractedValue);
