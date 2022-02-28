@@ -3,8 +3,7 @@ import { Observable, Subject } from "rxjs";
 import { map } from 'rxjs/operators';
 import { ErrorsObservableToken, HighlightedPropertySubjectToken, Property } from '../../Components/ValidatedProperty';
 import { IErrors } from '../../Ontologies/Validate';
-import { Axiom } from '../../Ontology/Axiom';
-import { IsDLSafeRule, PropertyAtom, IPropertyAtom } from '../../Ontology/DLSafeRule';
+import { GreaterThanAtom, GreaterThanOrEqualAtom, IPropertyAtom, IsDLSafeRule, LessThanAtom, LessThanOrEqualAtom, PropertyAtom, ComparisonAtom } from '../../Ontology/DLSafeRule';
 
 type Error = [Property, string, string];
 
@@ -19,6 +18,14 @@ type Error = [Property, string, string];
 export class FacilityFeeErrors
 {
     private _errors: Observable<Error[]>;
+
+    private static _temporalText = new Map(
+        [
+            [LessThanAtom          , 'before'      ],
+            [LessThanOrEqualAtom   , 'on or before'],
+            [GreaterThanOrEqualAtom, 'on or after' ],
+            [GreaterThanAtom       , 'after'       ]
+        ]);
 
     private static _propertyDisplayName =
         {
@@ -79,10 +86,11 @@ export class FacilityFeeErrors
                                         const secondPropertyName = secondProperty.PropertyExpression.LocalName;
                                         const secondPropertyDisplayName = secondPropertyName in FacilityFeeErrors._propertyDisplayName ?
                                             FacilityFeeErrors._propertyDisplayName[secondPropertyName] : secondPropertyName.replace(/\B[A-Z]/g, ' $&');
+                                        const comparison = propertyError.Head.find(atom => atom instanceof ComparisonAtom);
                                         errors.push([
                                             property,
                                             propertyDisplayName,
-                                            `Must be less than ${secondPropertyDisplayName}`
+                                            `Must be ${FacilityFeeErrors._temporalText.get(comparison.constructor)} ${secondPropertyDisplayName}`
                                         ]);
                                     }
                                     else
