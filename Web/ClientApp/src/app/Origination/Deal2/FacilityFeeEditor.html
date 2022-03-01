@@ -89,7 +89,10 @@
       </tr>
       <tr *ngIf="Accrued">
         <td class="RowHeading">Accrual Date:</td>
-        <td><accrual-date-editor [AccrualDate]="Fee.AccrualDate"></accrual-date-editor></td>
+        <td><accrual-date-editor
+          [AccrualDate]="Fee.AccrualDate"
+          [dtValidatedObject]="Fee"
+          dtValidatedProperty="AccrualDate"></accrual-date-editor></td>
       </tr>
     </table>
   </dt-dialog-body>

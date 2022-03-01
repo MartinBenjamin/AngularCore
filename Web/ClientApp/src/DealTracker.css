@@ -227,3 +227,30 @@ table.ValidationError.Highlight
 {
   border-width: 2px;
 }
+
+accrual-date-editor.ValidationError select.Month
+{
+  color: red;
+  border-color: red;
+}
+
+accrual-date-editor.ValidationError input.Year
+{
+  color: red;
+  border-color: red;
+}
+
+accrual-date-editor span.Separator
+{
+  color: red;
+}
+
+accrual-date-editor.ValidationError.Highlight select.Month
+{
+  border-width: 2px;
+}
+
+accrual-date-editor.ValidationError.Highlight input.Year
+{
+  border-width: 2px;
+}
