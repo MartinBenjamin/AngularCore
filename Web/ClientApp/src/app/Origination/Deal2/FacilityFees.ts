@@ -41,7 +41,8 @@ export class FacilityFees implements OnDestroy
                         this._lenderParticipation = null;
 
                     else
-                        this._lenderParticipation = <LenderParticipation>this._facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
+                        this._lenderParticipation = this._facility.Parts.find<LenderParticipation>(
+                            (part): part is LenderParticipation => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
 
                     this.ComputeFees();
                 }));
