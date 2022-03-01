@@ -92,11 +92,11 @@ export class Facilities implements OnDestroy
         }
 
         this._facilities = this._deal.Commitments
-            .filter(commitment => (<any>commitment).$type == 'Web.Model.Facility, Web')
-            .map(commitment => <[Facility, LenderParticipation]>
+            .filter<Facility>((commitment): commitment is Facility => (<any>commitment).$type == 'Web.Model.Facility, Web')
+            .map(facility =>
                 [
-                    commitment,
-                    (<ContractualCommitment>commitment).Parts.find(commitment => (<any>commitment).$type == 'Web.Model.LenderParticipation, Web')
+                    facility,
+                    facility.Parts.find((part): part is LenderParticipation => (<any>part).$type == 'Web.Model.LenderParticipation, Web')
                 ]);
     }
 }
