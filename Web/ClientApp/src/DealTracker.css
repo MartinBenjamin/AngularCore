@@ -240,7 +240,7 @@ accrual-date-editor.ValidationError input.Year
   border-color: red;
 }
 
-accrual-date-editor span.Separator
+accrual-date-editor.ValidationError span.Separator
 {
   color: red;
 }
