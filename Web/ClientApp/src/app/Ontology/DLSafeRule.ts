@@ -591,14 +591,10 @@ export class Generator implements IAtomSelector<Observable<object[]>>
 }
 
 function ObserveRuleContradictions(
-    store                   : IEavStore,
-    observableClassGenerator: IClassExpressionSelector<Observable<Set<any>>>,
-    rule                    : IDLSafeRule
+    generator: Generator,
+    rule     : IDLSafeRule
     ): Observable<object[]>
 {
-    const generator = new Generator(
-        store,
-        observableClassGenerator);
     return combineLatest(
         generator.Atoms(rule.Head),
         generator.Atoms(rule.Body),
@@ -619,23 +615,31 @@ function ObserveRuleContradictions(
             []));
 }
 
-export function ObserveComparisonContradiction(
+export function* ObserveContradictions(
     store                   : IEavStore,
     observableClassGenerator: IClassExpressionSelector<Observable<Set<any>>>,
-    rule                    : IDLSafeRule
-    ): Observable<[string, IAxiom, Set<any>]>
+    rules                   : Iterable<IDLSafeRule>
+    ): Iterable<Observable<[string, IAxiom, Set<any>]>>
 {
-    // Assume rule is a comparison.
-    const comparison  = rule.Head.find<IComparisonAtom>((atom): atom is IComparisonAtom => atom instanceof ComparisonAtom);
-    const lhsProperty = rule.Head.find<IPropertyAtom>((atom): atom is IPropertyAtom => atom instanceof PropertyAtom && atom.Range === comparison.Lhs);
-
-    return ObserveRuleContradictions(
+    const generator = new Generator(
         store,
-        observableClassGenerator,
-        rule).pipe(map(
-            contraditions => [
-                lhsProperty.PropertyExpression.LocalName,
-                rule,
-                new Set(contraditions.map(o => o[<string>lhsProperty.Domain]))
-            ]));
+        observableClassGenerator);
+
+    for(const rule of rules)
+    {
+        const comparison = rule.Head.find<IComparisonAtom>((atom): atom is IComparisonAtom => atom instanceof ComparisonAtom);
+        const lhsProperty = rule.Head.find<IPropertyAtom>((atom): atom is IPropertyAtom => atom instanceof PropertyAtom && atom.Range === comparison.Lhs);
+
+        if(comparison && lhsProperty)
+        {
+            yield ObserveRuleContradictions(
+                generator,
+                rule).pipe(map(
+                    contraditions => [
+                        lhsProperty.PropertyExpression.LocalName,
+                        rule,
+                        new Set(contraditions.map(o => o[<string>lhsProperty.Domain]))
+                    ]));
+        }
+    }
 }
