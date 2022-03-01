@@ -61,7 +61,7 @@ export class Exclusivity implements OnDestroy
                                         classificationSchemeClassifier.Classifier.Id === ExclusivityClassifierIdentifier.Yes);
 
                                 this._classifier = this._deal.Classifiers.find(classifer => (<any>classifer).$type === 'Web.Model.ExclusivityClassifier, Web');
-                                this._exclusivity = this._deal.Commitments.find<ExclusivityCommitment>(
+                                this._exclusivity = this._deal.Commitments.find(
                                     (commitment): commitment is ExclusivityCommitment => (<any>commitment).$type === 'Web.Model.Exclusivity, Web');
                                 this.ComputeExclusive();
                             });

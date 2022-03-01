@@ -238,7 +238,7 @@ export class FacilityFeeEditor
         facility: Facility
         ): number
     {
-        let lenderParticipation = facility.Parts.find<LenderParticipation>((part): part is LenderParticipation => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
+        let lenderParticipation = facility.Parts.find((part): part is LenderParticipation => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
         return lenderParticipation.ActualAllocation !== null ? lenderParticipation.ActualAllocation : lenderParticipation.AnticipatedHoldAmount;
     }
 }

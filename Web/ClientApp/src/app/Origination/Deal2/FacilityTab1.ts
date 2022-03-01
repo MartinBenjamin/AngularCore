@@ -26,8 +26,7 @@ export class FacilityTab1 implements OnDestroy
                         this._lenderParticipation = null;
 
                     else
-                        this._lenderParticipation = this._facility.Parts.find<LenderParticipation>(
-                            (part): part is LenderParticipation => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
+                        this._lenderParticipation = this._facility.Parts.find((part): part is LenderParticipation => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
                 }));
     }
 
