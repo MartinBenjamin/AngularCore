@@ -3,7 +3,7 @@ import { Observable, Subject } from "rxjs";
 import { map } from 'rxjs/operators';
 import { ErrorsObservableToken, HighlightedPropertySubjectToken, Property } from '../../Components/ValidatedProperty';
 import { IErrors } from '../../Ontologies/Validate';
-import { GreaterThanAtom, GreaterThanOrEqualAtom, IPropertyAtom, IsDLSafeRule, LessThanAtom, LessThanOrEqualAtom, PropertyAtom, ComparisonAtom } from '../../Ontology/DLSafeRule';
+import { GreaterThanAtom, GreaterThanOrEqualAtom, IPropertyAtom, IsDLSafeRule, LessThanAtom, LessThanOrEqualAtom, PropertyAtom, ComparisonAtom, IComparisonAtom } from '../../Ontology/DLSafeRule';
 
 type Error = [Property, string, string];
 
@@ -74,23 +74,17 @@ export class FacilityFeeErrors
                                     if(IsDLSafeRule(propertyError))
                                     {
                                         // Assume comparison.
-                                        let count = 0;
-                                        const secondProperty = <IPropertyAtom>propertyError.Head.find(
-                                            atom =>
-                                            {
-                                                if(atom instanceof PropertyAtom)
-                                                    if(++count === 2)
-                                                        return true;
-                                                return false;
-                                            });
-                                        const secondPropertyName = secondProperty.PropertyExpression.LocalName;
-                                        const secondPropertyDisplayName = secondPropertyName in FacilityFeeErrors._propertyDisplayName ?
-                                            FacilityFeeErrors._propertyDisplayName[secondPropertyName] : secondPropertyName.replace(/\B[A-Z]/g, ' $&');
-                                        const comparison = propertyError.Head.find(atom => atom instanceof ComparisonAtom);
+                                        const comparison = propertyError.Head.find<IComparisonAtom>((atom): atom is IComparisonAtom => atom instanceof ComparisonAtom);
+                                        const rhsProperty = propertyError.Head.find<IPropertyAtom>(
+                                            (atom): atom is IPropertyAtom => atom instanceof PropertyAtom && atom.Range === comparison.Rhs);
+
+                                        const rhsPropertyName = rhsProperty.PropertyExpression.LocalName;
+                                        const rhsPropertyDisplayName = rhsPropertyName in FacilityFeeErrors._propertyDisplayName ?
+                                            FacilityFeeErrors._propertyDisplayName[rhsPropertyName] : rhsPropertyName.replace(/\B[A-Z]/g, ' $&');
                                         errors.push([
                                             property,
                                             propertyDisplayName,
-                                            `Must be ${FacilityFeeErrors._temporalText.get(comparison.constructor)} ${secondPropertyDisplayName}`
+                                            `Must be ${FacilityFeeErrors._temporalText.get(comparison.constructor)} ${rhsPropertyDisplayName}`
                                         ]);
                                     }
                                     else

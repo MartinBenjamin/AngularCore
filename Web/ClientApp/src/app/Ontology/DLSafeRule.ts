@@ -626,15 +626,16 @@ export function ObserveComparisonContradiction(
     ): Observable<[string, IAxiom, Set<any>]>
 {
     // Assume rule is a comparison.
-    let property = <IPropertyAtom>rule.Head.find(atom => atom instanceof PropertyAtom)
+    const comparison  = rule.Head.find<IComparisonAtom>((atom): atom is IComparisonAtom => atom instanceof ComparisonAtom);
+    const lhsProperty = rule.Head.find<IPropertyAtom>((atom): atom is IPropertyAtom => atom instanceof PropertyAtom && atom.Range === comparison.Lhs);
 
     return ObserveRuleContradictions(
         store,
         observableClassGenerator,
         rule).pipe(map(
             contraditions => [
-                property.PropertyExpression.LocalName,
+                lhsProperty.PropertyExpression.LocalName,
                 rule,
-                new Set(contraditions.map(o => o[<string>property.Domain]))
+                new Set(contraditions.map(o => o[<string>lhsProperty.Domain]))
             ]));
 }
