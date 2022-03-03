@@ -4,10 +4,10 @@ let dateParser = parseUTCDate('yyyy-MM-ddTHH:mm:ss.SSSZ');
 
 export function newReferenceDeserialiser()
 {
-    let objectMap = {};
+    let objectMap: { [key: string]: object } = {};
     let deserialiser = function(
         object: any
-        )
+        ): any
     {
         if(object === null)
             return object;
@@ -45,11 +45,11 @@ export function newReferenceDeserialiser()
 
 export function newReferenceSerialiser()
 {
-    let objects = [];
+    let objects: object[] = [];
 
     let serialiser = function(
         object: any
-        )
+        ): any
     {
         if(object === null)
             return object;
@@ -72,7 +72,7 @@ export function newReferenceSerialiser()
 
         objects.push(object);
 
-        let serialised = {
+        let serialised: { [key: string]: any } = {
             $id: String(objects.length)
         };
 

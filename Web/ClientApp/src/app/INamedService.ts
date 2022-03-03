@@ -40,7 +40,7 @@ export class NamedService<TId, TNamed extends Named<TId>, TNamedFilters extends 
     {
         let params = new HttpParams();
 
-        for(let key in <object>filters)
+        for(let key in filters)
         {
             let value = filters[key];
             switch(typeof value)

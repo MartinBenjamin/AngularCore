@@ -177,6 +177,11 @@ export class Deal
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
     }
 
+    get Deal(): import('../../Deals').Deal
+    {
+        return this._deal.getValue();
+    }
+
     Save(): void
     {
         this._observeErrors.next(true);
