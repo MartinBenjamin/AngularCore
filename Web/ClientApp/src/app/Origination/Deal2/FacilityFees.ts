@@ -1,9 +1,13 @@
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
+import { ClassificationScheme } from '../../ClassificationScheme';
+import { ClassificationSchemeServiceToken } from '../../ClassificationSchemeServiceProvider';
+import { Guid } from '../../CommonDomainObjects';
+import { ClassificationSchemeIdentifier } from '../../Deals';
 import { Facility, FeeType, LenderParticipation } from '../../FacilityAgreements';
-import { FacilityFeeTypesToken } from '../../FacilityFeeTypeServiceProvider';
 import { FacilityProvider } from '../../FacilityProvider';
 import { Fee } from '../../Fees';
+import { IDomainObjectService } from '../../IDomainObjectService';
 import { Group } from '../../Ontology/Group';
 import { FacilityFeeEditor } from './FacilityFeeEditor';
 
@@ -24,13 +28,20 @@ export class FacilityFees implements OnDestroy
     private _editor: FacilityFeeEditor;
 
     constructor(
-        @Inject(FacilityFeeTypesToken)
-        facilityFeeTypes: Observable<FeeType[]>,
+        @Inject(ClassificationSchemeServiceToken)
+        classificationSchemeService: IDomainObjectService<Guid, ClassificationScheme>,
         facilityProvider: FacilityProvider
         )
     {
         this._subscriptions.push(
-            facilityFeeTypes.subscribe(feeTypes => this._feeTypes = feeTypes),
+            classificationSchemeService
+                .Get(ClassificationSchemeIdentifier.FacilityFeeType)
+                .subscribe(
+                    classificationScheme =>
+                        this._feeTypes = classificationScheme
+                            .Classifiers
+                            .map(classificationSchemeClassifier => <FeeType>classificationSchemeClassifier.Classifier)
+                            .sort((a, b) => a.Name.localeCompare(b.Name))),
             facilityProvider.subscribe(
                 facility =>
                 {

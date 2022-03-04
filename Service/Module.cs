@@ -84,10 +84,6 @@ namespace Service
                 .RegisterType<NamedService<Guid, Role, NamedFilters>>()
                 .As<INamedService<Guid, Role, NamedFilters>>()
                 .InstancePerLifetimeScope();
-            builder
-                .RegisterType<NamedService<Guid, FacilityFeeType, NamedFilters>>()
-                .As<INamedService<Guid, FacilityFeeType, NamedFilters>>()
-                .InstancePerLifetimeScope();
         }
     }
 }

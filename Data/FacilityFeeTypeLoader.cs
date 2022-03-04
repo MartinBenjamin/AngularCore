@@ -1,45 +1,19 @@
-﻿using CommonDomainObjects;
-using FacilityAgreements;
-using NHibernate;
+﻿using NHibernate;
 using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Data
 {
-    public class FacilityFeeTypeLoader: IEtl
+    public class FacilityFeeTypeLoader: FeeTypeLoader
     {
-        private readonly ICsvExtractor   _csvExtractor;
-        private readonly ISessionFactory _sessionFactory;
-
-        private readonly string _fileName = "FacilityFeeType.csv";
-
         public FacilityFeeTypeLoader(
             ICsvExtractor   csvExtractor,
             ISessionFactory sessionFactory
-            )
+            ): base(
+            csvExtractor,
+            sessionFactory,
+            new Guid("d0439195-f8ed-43d7-8313-71f1c58648cd"),
+            "FacilityFeeType.csv")
         {
-            _csvExtractor   = csvExtractor;
-            _sessionFactory = sessionFactory;
-        }
-
-        string IEtl.FileName
-        {
-            get => _fileName;
-        }
-
-        async Task IEtl.ExecuteAsync()
-        {
-            using(var session = _sessionFactory.OpenSession())
-            using(var transaction = session.BeginTransaction())
-            {
-                await (
-                    from record in await _csvExtractor.ExtractAsync(_fileName)
-                    select new FacilityFeeType(
-                        new Guid(record[0]),
-                        record[1])).ForEachAsync(facilityFeeType => session.SaveAsync(facilityFeeType));
-                await transaction.CommitAsync();
-            }
         }
     }
 }

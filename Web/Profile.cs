@@ -44,12 +44,14 @@ namespace Web
                 .Include<RestrictedClassifier        , Model.RestrictedClassifier           >()
                 .Include<SponsoredClassifier         , Model.SponsoredClassifier            >()
                 .Include<LifeCycleStage              , Model.LifeCycleStage                 >()
-                .Include<DealType                    , Model.DealType                       >().PreserveReferences();
+                .Include<DealType                    , Model.DealType                       >()
+                .Include<FeeType                     , Model.FeeType                        >().PreserveReferences();
             CreateMap<ExclusivityClassifier          , Model.ExclusivityClassifier          >().PreserveReferences();
             CreateMap<RestrictedClassifier           , Model.RestrictedClassifier           >().PreserveReferences();
             CreateMap<SponsoredClassifier            , Model.SponsoredClassifier            >().PreserveReferences();
             CreateMap<LifeCycleStage                 , Model.LifeCycleStage                 >().PreserveReferences();
             CreateMap<DealType                       , Model.DealType                       >().PreserveReferences();
+            CreateMap<FeeType                        , Model.FeeType                        >().PreserveReferences();
             CreateMap<Currency                       , Model.Currency                       >().PreserveReferences();
             CreateMap<GeographicRegion               , Model.GeographicRegion               >()
                 .ForMember(
@@ -69,7 +71,6 @@ namespace Web
             CreateMap<Branch                         , Model.Branch                         >().PreserveReferences();
             CreateMap<LegalEntity                    , Model.LegalEntity                    >().PreserveReferences();
             CreateMap<Role                           , Model.Role                           >().PreserveReferences();
-            CreateMap<FacilityFeeType                , Model.FacilityFeeType                >().PreserveReferences();
             CreateMap<LifeCycle                      , Model.LifeCycle                      >().PreserveReferences();
         }
     }

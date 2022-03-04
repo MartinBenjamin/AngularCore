@@ -1,12 +1,6 @@
-﻿using System;
-
-namespace Web.Model
+﻿namespace Web.Model
 {
-    public class FeeType: Named<Guid>
-    {
-    }
-
-    public class FacilityFeeType: FeeType
+    public class FeeType: Classifier
     {
     }
 }

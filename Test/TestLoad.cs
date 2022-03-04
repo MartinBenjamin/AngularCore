@@ -84,30 +84,6 @@ namespace Test
         }
 
         [Test]
-        public async Task FacilityFeeType()
-        {
-            var loader = _container.ResolveKeyed<IEtl>(typeof(FacilityFeeType));
-            await loader.ExecuteAsync();
-            using(var scope = _container.BeginLifetimeScope())
-            {
-                var csvExtractor = scope.Resolve<ICsvExtractor>();
-                var extracted = await csvExtractor.ExtractAsync(loader.FileName);
-                var service = scope.Resolve<INamedService<Guid, FacilityFeeType, NamedFilters>>();
-                var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(facilityFeeType => facilityFeeType.Id);
-
-                Assert.That(extracted.Count, Is.EqualTo(loaded.Keys.Count));
-
-                foreach(var record in extracted)
-                {
-                    var id = new Guid(record[0]);
-                    Assert.That(loaded.ContainsKey(id), Is.True);
-                    var facilityFeeType = loaded[id];
-                    Assert.That(facilityFeeType.Name, Is.EqualTo(record[1]));
-                }
-            }
-        }
-
-        [Test]
         public async Task Iso3166_1()
         {
             var loader = _container.ResolveKeyed<IEtl>(typeof(Country));
@@ -346,11 +322,12 @@ namespace Test
             }
         }
 
-        [TestCase(typeof(DealStageLoader  ), "947b1353-bd48-4f36-a934-a03a942aaae2")]
-        [TestCase(typeof(DealTypeLoader   ), "e28b89e1-97e4-4820-aabc-af31e6959888")]
-        [TestCase(typeof(ExclusivityLoader), "f7c20b62-ffe8-4c20-86b4-e5c68ba2469d")]
-        [TestCase(typeof(RestrictedLoader ), "10414c1c-da0c-44f0-be02-7f70fe1b8649")]
-        [TestCase(typeof(SponsoredLoader  ), "3110ec17-e5d1-430d-ba95-7aedfddd2358")]
+        [TestCase(typeof(DealStageLoader      ), "947b1353-bd48-4f36-a934-a03a942aaae2")]
+        [TestCase(typeof(DealTypeLoader       ), "e28b89e1-97e4-4820-aabc-af31e6959888")]
+        [TestCase(typeof(ExclusivityLoader    ), "f7c20b62-ffe8-4c20-86b4-e5c68ba2469d")]
+        [TestCase(typeof(RestrictedLoader     ), "10414c1c-da0c-44f0-be02-7f70fe1b8649")]
+        [TestCase(typeof(SponsoredLoader      ), "3110ec17-e5d1-430d-ba95-7aedfddd2358")]
+        [TestCase(typeof(FacilityFeeTypeLoader), "d0439195-f8ed-43d7-8313-71f1c58648cd")]
         public async Task ClassificationScheme(
             Type   loaderType,
             string schemeId
@@ -450,7 +427,6 @@ namespace Test
         public async Task Load()
         {
             await _container.ResolveKeyed<IEtl>(typeof(Role)).ExecuteAsync();
-            await _container.ResolveKeyed<IEtl>(typeof(FacilityFeeType)).ExecuteAsync();
             await _container.ResolveKeyed<IEtl>(typeof(Country)).ExecuteAsync();
             await _container.ResolveKeyed<IEnumerable<IEtl>>(typeof(Subdivision)).ForEachAsync(loader => loader.ExecuteAsync());
             await _container.ResolveKeyed<IEtl>(typeof(GeographicRegionHierarchy)).ExecuteAsync();
@@ -458,9 +434,9 @@ namespace Test
             await _container.ResolveKeyed<IEtl>(typeof(Branch)).ExecuteAsync();
             await _container.ResolveKeyed<IEnumerable<IEtl>>(typeof(ClassificationScheme)).ForEachAsync(loader => loader.ExecuteAsync());
             await _container.ResolveKeyed<IEtl>(typeof(LifeCycle)).ExecuteAsync();
-            //await new LegalEntityLoader(
-            //    _container.Resolve<ISessionFactory>(),
-            //    100).LoadAsync();
+            await new LegalEntityLoader(
+                _container.Resolve<ISessionFactory>(),
+                100).LoadAsync();
         }
 
         private static Range<int> Convert(

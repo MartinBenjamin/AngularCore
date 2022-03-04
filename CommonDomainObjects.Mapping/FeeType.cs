@@ -2,16 +2,9 @@
 
 namespace CommonDomainObjects.Mapping
 {
-    public class FeeType: ClassMapping<FacilityAgreements.FeeType>
+    public class FeeType: SubclassMapping<FacilityAgreements.FeeType>
     {
         public FeeType()
-        {
-        }
-    }
-
-    public class FacilityFeeType: SubclassMapping<FacilityAgreements.FacilityFeeType>
-    {
-        public FacilityFeeType()
         {
         }
     }

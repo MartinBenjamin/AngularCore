@@ -73,7 +73,6 @@ namespace CommonDomainObjects.Mapping
             mapper.AddMapping<LifeCycle                      >();
             mapper.AddMapping<DealType                       >();
             mapper.AddMapping<FeeType                        >();
-            mapper.AddMapping<FacilityFeeType                >();
         }
 
         private static bool IsDomainObject<TId>(

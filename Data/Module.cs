@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using CommonDomainObjects;
-using FacilityAgreements;
 using Iso3166._1;
 using Iso3166._2;
 using Iso4217;
@@ -103,7 +102,8 @@ namespace Data
 
             builder
                 .RegisterType<FacilityFeeTypeLoader>()
-                .Keyed<IEtl>(typeof(FacilityFeeType))
+                .Keyed<IEtl>(typeof(ClassificationScheme))
+                .Keyed<IEtl>(typeof(FacilityFeeTypeLoader))
                 .SingleInstance();
         }
     }
