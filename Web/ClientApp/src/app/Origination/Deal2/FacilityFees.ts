@@ -9,6 +9,7 @@ import { FacilityProvider } from '../../FacilityProvider';
 import { Fee } from '../../Fees';
 import { IDomainObjectService } from '../../IDomainObjectService';
 import { Group } from '../../Ontology/Group';
+import { Store } from '../../Ontology/IEavStore';
 import { FacilityFeeEditor } from './FacilityFeeEditor';
 
 @Component(
@@ -34,14 +35,6 @@ export class FacilityFees implements OnDestroy
         )
     {
         this._subscriptions.push(
-            classificationSchemeService
-                .Get(ClassificationSchemeIdentifier.FacilityFeeType)
-                .subscribe(
-                    classificationScheme =>
-                        this._feeTypes = classificationScheme
-                            .Classifiers
-                            .map(classificationSchemeClassifier => <FeeType>classificationSchemeClassifier.Classifier)
-                            .sort((a, b) => a.Name.localeCompare(b.Name))),
             facilityProvider.subscribe(
                 facility =>
                 {
@@ -52,8 +45,20 @@ export class FacilityFees implements OnDestroy
                         this._lenderParticipation = null;
 
                     else
+                    {
                         this._lenderParticipation = this._facility.Parts.find<LenderParticipation>(
                             (part): part is LenderParticipation => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
+
+                        const store = Store(this._facility);
+                        classificationSchemeService
+                            .Get(ClassificationSchemeIdentifier.FacilityFeeType)
+                            .subscribe(
+                                classificationScheme =>
+                                    this._feeTypes = classificationScheme
+                                        .Classifiers
+                                        .map(classificationSchemeClassifier => <FeeType>store.Assert(classificationSchemeClassifier.Classifier))
+                                        .sort((a, b) => a.Name.localeCompare(b.Name)))
+                    }
 
                     this.ComputeFees();
                 }));

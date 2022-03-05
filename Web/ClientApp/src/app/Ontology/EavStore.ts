@@ -773,6 +773,14 @@ export class EavStore implements IEavStore, IPublisher
     }
 }
 
+function ToPrimitive(
+    hint
+    )
+{
+    return 'Proxy';
+}
+
+
 function EntityProxyFactory(
     publisher: IPublisher,
     av       : Map<PropertyKey, any>,
@@ -786,6 +794,8 @@ function EntityProxyFactory(
             p
             ): any
         {
+            if(p === Symbol.toPrimitive)
+                return av.get(p) || ToPrimitive;
             return av.get(p);
         },
         getOwnPropertyDescriptor: function(
