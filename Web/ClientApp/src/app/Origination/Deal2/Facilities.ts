@@ -1,14 +1,13 @@
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { HighlightedPropertyObservableToken, Property } from '../../Components/ValidatedProperty';
-import { ContractualCommitment } from '../../Contracts';
-import { DealProvider } from '../../DealProvider';
-import { Deal, ClassificationSchemeIdentifier } from '../../Deals';
-import { Facility, LenderParticipation, FacilityType } from '../../FacilityAgreements';
-import { IDomainObjectService } from '../../IDomainObjectService';
-import { Guid } from '../../CommonDomainObjects';
 import { ClassificationScheme } from '../../ClassificationScheme';
 import { ClassificationSchemeServiceToken } from '../../ClassificationSchemeServiceProvider';
+import { Guid } from '../../CommonDomainObjects';
+import { HighlightedPropertyObservableToken, Property } from '../../Components/ValidatedProperty';
+import { DealProvider } from '../../DealProvider';
+import { ClassificationSchemeIdentifier, Deal } from '../../Deals';
+import { Facility, FacilityType, LenderParticipation } from '../../FacilityAgreements';
+import { IDomainObjectService } from '../../IDomainObjectService';
 import { Store } from '../../Ontology/IEavStore';
 
 @Component(
@@ -98,7 +97,9 @@ export class Facilities implements OnDestroy
 
     Add(): void
     {
-        this._facility.Create(() => this.ComputeFacilities());
+        this._facility.Create(
+            this._facilityType,
+            () => this.ComputeFacilities());
     }
 
     Update(

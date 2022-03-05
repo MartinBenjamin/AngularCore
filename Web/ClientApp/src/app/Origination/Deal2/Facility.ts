@@ -9,6 +9,7 @@ import { CurrenciesOrderedByCodeToken } from '../../CurrencyServiceProvider';
 import { DealProvider } from '../../DealProvider';
 import { Deal, DealRoleIdentifier } from '../../Deals';
 import * as facilityAgreements from '../../FacilityAgreements';
+import { FacilityType } from '../../FacilityAgreements'
 import { LenderParticipation } from '../../FacilityAgreements';
 import { FacilityProvider } from '../../FacilityProvider';
 import { Currency } from '../../Iso4217';
@@ -219,6 +220,7 @@ export class Facility
     }
 
     Create(
+        facilityType : FacilityType,
         applyCallback: ApplyCallback,
         )
     {
@@ -226,6 +228,7 @@ export class Facility
 
         let facility = <facilityAgreements.Facility>
         {
+            Type                     : facilityType,
             Name                     : '',
             Obligors                 : [],
             Contract                 : null,
