@@ -15,9 +15,11 @@ import { agreements } from './Agreements';
 import { annotations } from './Annotations';
 import { commonDomainObjects } from "./CommonDomainObjects";
 import { facilityAgreements } from './FacilityAgreements';
+import { fees } from "./Fees";
 import { legalEntities } from "./LegalEntities";
 import { lifeCycles } from "./LifeCycles";
 import { parties } from "./Parties";
+import { quantities } from "./Quantities";
 import { roleIndividuals } from "./RoleIndividuals";
 import { roles } from "./Roles";
 
@@ -55,6 +57,7 @@ export class Deals extends Ontology
             "Deals",
             commonDomainObjects,
             roles,
+            fees,
             roleIndividuals,
             legalEntities,
             parties,
@@ -195,6 +198,12 @@ export class Deals extends Ontology
         this.NotRestricted = this.DeclareNamedIndividual("NotRestricted");
         this.NotRestricted.DataPropertyValue(commonDomainObjects.Id, RestrictedClassifierIdentifier.No);
         this.NotRestricted.DataPropertyValue(commonDomainObjects.$type, 'Web.Model.RestrictedClassifier, Web');
+
+        const fee = this.DeclareClass("Fee");
+        fee.Define(commonDomainObjects.$type.HasValue("Web.Model.Fee, Web"));
+        fee.SubClassOf(fees.Fee);
+        fee.SubClassOf(quantities.MeasurementUnit.ExactCardinality(1))
+            .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect)
 
         new DisjointClasses(this, [this.Deal, parties.PartyInRole, commonDomainObjects.Classifier]);
     }

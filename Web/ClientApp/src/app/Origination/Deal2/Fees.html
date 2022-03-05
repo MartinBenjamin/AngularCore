@@ -36,7 +36,7 @@
     <tr *ngFor="let fee of feesGroupedByfeeType[1]; first as first; count as count">
       <td *ngIf="first" [rowSpan]="count" style="text-align: left;">{{feesGroupedByfeeType[0].Name}}</td>
       <td>{{fee.MeasurementUnit.Id}}</td>
-      <td>{{fee.NumericValue}}</td>
+      <td class="Amount">{{fee.NumericValue}}</td>
       <td>{{fee.Received|yesNo}}</td>
       <td>{{fee.ExpectedReceivedDate|utcDate}}</td>
       <td>{{fee.AccrualDate|accrualDate}}</td>
