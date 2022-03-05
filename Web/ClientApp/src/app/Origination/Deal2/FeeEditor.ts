@@ -1,16 +1,19 @@
 import { Component, Inject } from '@angular/core';
-import { BehaviorSubject, combineLatest, NEVER, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, NEVER, Observable, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, filter, sample, share, switchMap } from 'rxjs/operators';
 import { AccrualDate } from '../../Components/AccrualDate';
 import { ToPrimitive } from '../../Components/Time';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
+import { CurrenciesOrderedByCodeToken } from '../../CurrencyServiceProvider';
 import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
 import { FeeType } from '../../FacilityAgreements';
 import { Fee } from '../../Fees';
+import { Currency } from '../../Iso4217';
 import { Store } from '../../Ontology/IEavStore';
 import { ITransaction } from '../../Ontology/ITransactionManager';
 import { Alternative, Empty, IExpression, Property, Query2 } from '../../RegularPathExpression';
+import { DomainObject, Guid } from '../../CommonDomainObjects';
 
 type ApplyCallback = () => void;
 
@@ -47,6 +50,8 @@ export class FeeEditor
     public static SubgraphQuery = Query2(FeeEditor._subgraph);
 
     constructor(
+        @Inject(CurrenciesOrderedByCodeToken)
+        private _currencies: Observable<Currency[]>,
         dealProvider: DealProvider,
         @Inject(ErrorsSubjectToken)
         private _errorsService: Subject<Errors>
@@ -95,6 +100,11 @@ export class FeeEditor
     ngOnDestroy(): void
     {
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
+    }
+
+    get Currencies(): Observable<Currency[]>
+    {
+        return this._currencies;
     }
 
     get Fee(): Fee
@@ -187,5 +197,13 @@ export class FeeEditor
         this._observeErrors.next(false);
         this._feeObservable.next(this._fee);
         this._errorsService.next(null);
+    }
+
+    CompareById(
+        lhs: DomainObject<Guid>,
+        rhs: DomainObject<Guid>
+        )
+    {
+        return lhs === rhs || (lhs && rhs && lhs.Id === rhs.Id);
     }
 }
