@@ -1,3 +1,4 @@
+import { Classifier } from './ClassificationScheme';
 import { Guid, Named } from "./CommonDomainObjects";
 import { AccrualDate } from "./Components/AccrualDate";
 import { Contract, ContractualCommitment } from "./Contracts";
@@ -6,11 +7,15 @@ import { FeeType, QuantityValue } from './Fees';
 
 export interface FacilityAgreement extends Contract
 {
+}
 
+export interface FacilityType extends Classifier
+{
 }
 
 export interface Facility extends Named<Guid>, ContractualCommitment, MonetaryAmount
 {
+    Type                     : FacilityType;
     AvailabilityPeriodEndDate: Date;
     MaturityDate             : Date;
     Expected1StDrawdownDate  : Date;

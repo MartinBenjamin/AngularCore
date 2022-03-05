@@ -38,7 +38,9 @@ export class ClassificationSchemeIdentifier
     static readonly DealType        = 'e28b89e1-97e4-4820-aabc-af31e6959888';
     static readonly Exclusivity     = 'f7c20b62-ffe8-4c20-86b4-e5c68ba2469d';
     static readonly Restricted      = '10414c1c-da0c-44f0-be02-7f70fe1b8649';
+    static readonly FacilityType    = 'a007e4e2-d910-4cf7-af26-8e07901cce79';
     static readonly FacilityFeeType = 'd0439195-f8ed-43d7-8313-71f1c58648cd';
+    static readonly OtherFeeType    = 'c4c62970-1962-4a56-9ca7-812820e23b14';
 }
 
 export class ExclusivityClassifierIdentifier

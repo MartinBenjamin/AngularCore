@@ -50,9 +50,12 @@
   <tr><td *ngIf="!Facilities.length" colspan="16" style="text-align: center;">No Credit Risk Tranches</td></tr>
 </table>
 <div style="margin-top: 5px;">
-  <select>
-    <option></option>
-    <option>Term Loan</option>
-    <option>Revolving Credit Facility</option>
-  </select><input type="button" value="Add" (click)="Add()" style="height: 20px; margin-left: 1px;" />
+  <select [(ngModel)]="FacilityType">
+    <option [ngValue]="null"></option>
+    <option *ngFor="let facilityType of FacilityTypes" [ngValue]="facilityType">{{facilityType.Name}}</option>
+  </select><input type="button"
+                  value="Add"
+                  (click)="Add()"
+                  [disabled]="!FacilityType"
+                  style="height: 20px; margin-left: 1px;" />
 </div>

@@ -436,9 +436,9 @@ namespace Test
             await _container.ResolveKeyed<IEtl>(typeof(Branch)).ExecuteAsync();
             await _container.ResolveKeyed<IEnumerable<IEtl>>(typeof(ClassificationScheme)).ForEachAsync(loader => loader.ExecuteAsync());
             await _container.ResolveKeyed<IEtl>(typeof(LifeCycle)).ExecuteAsync();
-            await new LegalEntityLoader(
-                _container.Resolve<ISessionFactory>(),
-                100).LoadAsync();
+            //await new LegalEntityLoader(
+            //    _container.Resolve<ISessionFactory>(),
+            //    100).LoadAsync();
         }
 
         private static Range<int> Convert(

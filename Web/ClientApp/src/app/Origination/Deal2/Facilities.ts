@@ -3,8 +3,13 @@ import { Observable, Subscription } from 'rxjs';
 import { HighlightedPropertyObservableToken, Property } from '../../Components/ValidatedProperty';
 import { ContractualCommitment } from '../../Contracts';
 import { DealProvider } from '../../DealProvider';
-import { Deal } from '../../Deals';
-import { Facility, LenderParticipation } from '../../FacilityAgreements';
+import { Deal, ClassificationSchemeIdentifier } from '../../Deals';
+import { Facility, LenderParticipation, FacilityType } from '../../FacilityAgreements';
+import { IDomainObjectService } from '../../IDomainObjectService';
+import { Guid } from '../../CommonDomainObjects';
+import { ClassificationScheme } from '../../ClassificationScheme';
+import { ClassificationSchemeServiceToken } from '../../ClassificationSchemeServiceProvider';
+import { Store } from '../../Ontology/IEavStore';
 
 @Component(
     {
@@ -16,6 +21,8 @@ export class Facilities implements OnDestroy
     private _subscriptions: Subscription[] = [];
     private _deal         : Deal;
     private _facilities   : [Facility, LenderParticipation][]
+    private _facilityTypes: FacilityType[];
+    private _facilityType : FacilityType;
 
     @ViewChild('facility', { static: true })
     private _facility: import('./Facility').Facility;
@@ -23,7 +30,9 @@ export class Facilities implements OnDestroy
     constructor(
         dealProvider: DealProvider,
         @Inject(HighlightedPropertyObservableToken)
-        highlightedPropertyService: Observable<Property>
+        highlightedPropertyService: Observable<Property>,
+        @Inject(ClassificationSchemeServiceToken)
+        classificationSchemeService: IDomainObjectService<Guid, ClassificationScheme>,
         )
     {
         this._subscriptions.push(
@@ -31,6 +40,21 @@ export class Facilities implements OnDestroy
                 deal =>
                 {
                     this._deal = deal;
+
+                    if(this._deal)
+                    {
+                        const store = Store(this._deal);
+                        classificationSchemeService
+                            .Get(ClassificationSchemeIdentifier.FacilityType)
+                            .subscribe(
+                                classificationScheme =>
+                                    this._facilityTypes = classificationScheme
+                                        .Classifiers
+                                        .map(classificationSchemeClassifier => <FacilityType>store.Assert(classificationSchemeClassifier.Classifier))
+                                        .sort((a, b) => a.Name.localeCompare(b.Name)))
+
+                    }
+
                     this.ComputeFacilities();
                 }),
             highlightedPropertyService.subscribe(
@@ -48,6 +72,23 @@ export class Facilities implements OnDestroy
     ngOnDestroy(): void
     {
         this._subscriptions.forEach(subscription => subscription.unsubscribe());
+    }
+
+    get FacilityTypes(): FacilityType[]
+    {
+        return this._facilityTypes;
+    }
+
+    get FacilityType(): FacilityType
+    {
+        return this._facilityType;
+    }
+
+    set FacilityType(
+        facilityType: FacilityType
+        )
+    {
+        this._facilityType = facilityType;
     }
 
     get Facilities(): [Facility, LenderParticipation][]
