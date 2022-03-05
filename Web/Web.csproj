@@ -321,6 +321,7 @@
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityFees.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityTab1.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityTab3.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\FeeEditor.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\Fees.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FeesTab.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\KeyCounterparties.ts" />
@@ -654,6 +655,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Common.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FeeEditor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FeesTab.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\DealGeographicRegion.ts">
       <SubType>Code</SubType>

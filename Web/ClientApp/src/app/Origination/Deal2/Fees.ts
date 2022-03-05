@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy } from '@angular/core';
+import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ClassificationScheme } from '../../ClassificationScheme';
 import { ClassificationSchemeServiceToken } from '../../ClassificationSchemeServiceProvider';
@@ -10,6 +10,7 @@ import { Fee } from '../../Fees';
 import { IDomainObjectService } from '../../IDomainObjectService';
 import { Group } from '../../Ontology/Group';
 import { Store } from '../../Ontology/IEavStore';
+import { FeeEditor } from './FeeEditor';
 
 @Component(
     {
@@ -18,14 +19,14 @@ import { Store } from '../../Ontology/IEavStore';
     })
 export class Fees implements OnDestroy
 {
-    private _subscriptions      : Subscription[] = [];
-    private _deal               : Deal;
-    private _fees               : [FeeType, Fee[]][];
-    private _feeTypes           : FeeType[];
-    private _feeType            : FeeType;
+    private _subscriptions: Subscription[] = [];
+    private _deal         : Deal;
+    private _fees         : [FeeType, Fee[]][];
+    private _feeTypes     : FeeType[];
+    private _feeType      : FeeType;
 
-    //@ViewChild('editor', { static: true })
-    //private _editor: FeeEditor;
+    @ViewChild('editor', { static: true })
+    private _editor: FeeEditor;
 
     constructor(
         dealProvider: DealProvider,
@@ -87,18 +88,18 @@ export class Fees implements OnDestroy
 
     Add(): void
     {
-        //this._editor.Create(
-        //    this._feeType,
-        //    () => this.ComputeFees());
+        this._editor.Create(
+            this._feeType,
+            () => this.ComputeFees());
     }
 
     Update(
         fee: Fee
         ): void
     {
-        //this._editor.Update(
-        //    fee,
-        //    () => this.ComputeFees());
+        this._editor.Update(
+            fee,
+            () => this.ComputeFees());
     }
 
     Delete(

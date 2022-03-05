@@ -38,6 +38,7 @@ import { OriginationTab } from './OriginationTab';
 import { Restricted } from './Restricted';
 import { Sponsors } from './Sponsors';
 import { TransactionDetails } from './TransactionDetails';
+import { FeeEditor } from './FeeEditor';
 
 const routes: Routes =
     [
@@ -68,6 +69,7 @@ const routes: Routes =
                 FacilityTab,
                 FacilityTab1,
                 FacilityTab3,
+                FeeEditor,
                 FeesTab,
                 Fees,
                 KeyCounterparties,

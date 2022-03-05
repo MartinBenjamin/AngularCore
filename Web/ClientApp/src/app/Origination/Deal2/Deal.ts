@@ -16,12 +16,12 @@ import { Error, ObserveErrorsSwitchMap } from '../../Ontologies/ObserveErrors';
 import { Store } from '../../Ontology/IEavStore';
 import { Origination } from '../Origination';
 import { Facility } from './Facility';
+import { FeesTab } from './FeesTab';
 import { KeyCounterparties } from './KeyCounterparties';
 import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
 import { OriginationTab } from './OriginationTab';
 import { TransactionDetails } from './TransactionDetails';
-import { FeesTab } from './FeesTab';
 
 @Component(
     {

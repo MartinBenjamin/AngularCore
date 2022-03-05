@@ -1,0 +1,71 @@
+<style typeof="text/css">
+  .FeeEditorDialog *.Amount
+  {
+    width: 200px;
+  }
+
+  .FeeEditorDialog *.Percentage,
+  .FeeEditorDialog input[type=text].Date
+  {
+    width: 100px;
+  }
+</style>
+<dt-dialog [Title]="Fee?.Type.Name + ' Fee'"
+           [Open]="Fee">
+  <dt-dialog-body>
+    <facility-fee-errors></facility-fee-errors>
+    <table *ngIf="Fee"
+           class="GridLayout FeeEditorDialog">
+      <tr>
+        <td class="RowHeading">Currency:</td>
+        <td>
+        </td>
+      </tr>
+      <tr>
+        <td class="RowHeading">Amount:</td>
+        <td>
+          <input type="text"
+                 [(dtAmountModel)]="Fee.NumericValue"
+                 [dtValidatedObject]="Fee"
+                 dtValidatedProperty="NumericValue"
+                 class="Amount" />
+        </td>
+      </tr>
+      <tr>
+        <td class="RowHeading">Expected/Received Date:</td>
+        <td>
+          <input type="text"
+                 [(dtDateModel)]="Fee.ExpectedReceivedDate"
+                 [dtValidatedObject]="Fee"
+                 dtValidatedProperty="ExpectedReceivedDate"
+                 class="Date" /><dt-calendar (dateSelected)="Fee.ExpectedReceivedDate = $event"></dt-calendar>
+        </td>
+      </tr>
+      <tr>
+        <td class="RowHeading">Received:</td>
+        <td>
+          <input type="checkbox"
+                 [(ngModel)]="Fee.Received" />
+        </td>
+      </tr>
+      <tr>
+        <td class="RowHeading">Accrued:</td>
+        <td>
+          <input type="checkbox"
+                 [(ngModel)]="Accrued" />
+        </td>
+      </tr>
+      <tr *ngIf="Accrued">
+        <td class="RowHeading">Accrual Date:</td>
+        <td>
+          <accrual-date-editor [AccrualDate]="Fee.AccrualDate"
+                               [dtValidatedObject]="Fee"
+                               dtValidatedProperty="AccrualDate"></accrual-date-editor>
+        </td>
+      </tr>
+    </table>
+  </dt-dialog-body>
+  <dt-dialog-buttons>
+    <input type="button" value="Apply" (click)="Apply()" class="Button" /><input type="button" value="Cancel" (click)="Cancel()" class="Button" />
+  </dt-dialog-buttons>
+</dt-dialog>
