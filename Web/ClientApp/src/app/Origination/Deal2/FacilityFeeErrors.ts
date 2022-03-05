@@ -2,8 +2,9 @@ import { Component, Inject } from '@angular/core';
 import { Observable, Subject } from "rxjs";
 import { map } from 'rxjs/operators';
 import { ErrorsObservableToken, HighlightedPropertySubjectToken, Property } from '../../Components/ValidatedProperty';
+import { Fee } from '../../Fees';
 import { IErrors } from '../../Ontologies/Validate';
-import { GreaterThanAtom, GreaterThanOrEqualAtom, IPropertyAtom, IsDLSafeRule, LessThanAtom, LessThanOrEqualAtom, PropertyAtom, ComparisonAtom, IComparisonAtom } from '../../Ontology/DLSafeRule';
+import { ComparisonAtom, GreaterThanAtom, GreaterThanOrEqualAtom, IComparisonAtom, IPropertyAtom, IsDLSafeRule, LessThanAtom, LessThanOrEqualAtom, PropertyAtom } from '../../Ontology/DLSafeRule';
 
 type Error = [Property, string, string];
 
@@ -63,7 +64,7 @@ export class FacilityFeeErrors
                             let propertyDisplayName: string;
 
                             if(propertyName === 'NumericValue')
-                                propertyDisplayName = (<any>object).MeasurementUnit ? '% Of Commitment' : 'Amount';
+                                propertyDisplayName = (<Fee>object).MeasurementUnit === 0.01 ? '% Of Commitment' : 'Amount';
 
                             else
                                 propertyDisplayName = propertyName in FacilityFeeErrors._propertyDisplayName ? FacilityFeeErrors._propertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
