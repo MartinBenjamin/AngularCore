@@ -328,6 +328,7 @@ namespace Test
         [TestCase(typeof(RestrictedLoader     ), "10414c1c-da0c-44f0-be02-7f70fe1b8649")]
         [TestCase(typeof(SponsoredLoader      ), "3110ec17-e5d1-430d-ba95-7aedfddd2358")]
         [TestCase(typeof(FacilityFeeTypeLoader), "d0439195-f8ed-43d7-8313-71f1c58648cd")]
+        [TestCase(typeof(OtherFeeTypeLoader   ), "c4c62970-1962-4a56-9ca7-812820e23b14")]
         public async Task ClassificationScheme(
             Type   loaderType,
             string schemeId

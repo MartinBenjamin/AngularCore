@@ -96,14 +96,20 @@ namespace Data
                 .SingleInstance();
 
             builder
-                .RegisterType<LifeCycleLoader>()
-                .Keyed<IEtl>(typeof(LifeCycle))
-                .SingleInstance();
-
-            builder
                 .RegisterType<FacilityFeeTypeLoader>()
                 .Keyed<IEtl>(typeof(ClassificationScheme))
                 .Keyed<IEtl>(typeof(FacilityFeeTypeLoader))
+                .SingleInstance();
+
+            builder
+                .RegisterType<OtherFeeTypeLoader>()
+                .Keyed<IEtl>(typeof(ClassificationScheme))
+                .Keyed<IEtl>(typeof(OtherFeeTypeLoader))
+                .SingleInstance();
+
+            builder
+                .RegisterType<LifeCycleLoader>()
+                .Keyed<IEtl>(typeof(LifeCycle))
                 .SingleInstance();
         }
     }
