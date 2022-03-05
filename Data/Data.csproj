@@ -11,6 +11,7 @@
     <None Remove="DealType.csv" />
     <None Remove="Exclusivity.csv" />
     <None Remove="FacilityFeeType.csv" />
+    <None Remove="FacilityType.csv" />
     <None Remove="ISO3166-1.csv" />
     <None Remove="ISO3166-2-AE.csv" />
     <None Remove="ISO3166-2-CA.csv" />
@@ -35,6 +36,7 @@
     <EmbeddedResource Include="DealType.csv" />
     <EmbeddedResource Include="Exclusivity.csv" />
     <EmbeddedResource Include="FacilityFeeType.csv" />
+    <EmbeddedResource Include="FacilityType.csv" />
     <EmbeddedResource Include="ISO3166-1.csv" />
     <EmbeddedResource Include="ISO3166-2-AE.csv" />
     <EmbeddedResource Include="ISO3166-2-CA.csv" />

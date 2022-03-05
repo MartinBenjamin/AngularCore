@@ -96,6 +96,12 @@ namespace Data
                 .SingleInstance();
 
             builder
+                .RegisterType<FacilityTypeLoader>()
+                .Keyed<IEtl>(typeof(ClassificationScheme))
+                .Keyed<IEtl>(typeof(FacilityTypeLoader))
+                .SingleInstance();
+
+            builder
                 .RegisterType<FacilityFeeTypeLoader>()
                 .Keyed<IEtl>(typeof(ClassificationScheme))
                 .Keyed<IEtl>(typeof(FacilityFeeTypeLoader))
