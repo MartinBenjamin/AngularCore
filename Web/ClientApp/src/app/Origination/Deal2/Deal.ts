@@ -21,6 +21,7 @@ import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
 import { OriginationTab } from './OriginationTab';
 import { TransactionDetails } from './TransactionDetails';
+import { FeesTab } from './FeesTab';
 
 @Component(
     {
@@ -196,7 +197,7 @@ export class Deal
         this.Tabs =
             [
                 new Tab('Key Deal<br/>Data'     , KeyDealData      ),
-                new Tab('Fees &<br/>Income'     , OriginationTab   ),
+                new Tab('Fees &<br/>Income'     , FeesTab          ),
                 new Tab('Key<br/>Dates'         , OriginationTab   ),
                 new Tab('Deal<br/>Team'         , OriginationTab   ),
                 new Tab('Key<br/>Counterparties', KeyCounterparties)
@@ -210,7 +211,7 @@ export class Deal
                 new Tab('Key Deal<br/>Data'     , KeyDealData       ),
                 new Tab('Transaction<br>Details', TransactionDetails),
                 new Tab('Security'              , OriginationTab    ),
-                new Tab('Fees &<br/>Income'     , OriginationTab    ),
+                new Tab('Fees &<br/>Income'     , FeesTab           ),
                 new Tab('Key<br/>Dates'         , OriginationTab    ),
                 new Tab('Deal<br/>Team'         , OriginationTab    ),
                 new Tab('Key<br/>Counterparties', KeyCounterparties ),

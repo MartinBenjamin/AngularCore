@@ -29,6 +29,8 @@ import { FacilityFees } from './FacilityFees';
 import { FacilityTab } from './FacilityTab';
 import { FacilityTab1 } from './FacilityTab1';
 import { FacilityTab3 } from './FacilityTab3';
+import { Fees } from './Fees';
+import { FeesTab } from './FeesTab';
 import { KeyCounterparties } from './KeyCounterparties';
 import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
@@ -66,6 +68,8 @@ const routes: Routes =
                 FacilityTab,
                 FacilityTab1,
                 FacilityTab3,
+                FeesTab,
+                Fees,
                 KeyCounterparties,
                 KeyDealData,
                 MoreTabs,

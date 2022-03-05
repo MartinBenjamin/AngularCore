@@ -1,0 +1,58 @@
+<style type="text/css">
+  table.DataGrid.Fees th
+  {
+    text-align: center;
+    vertical-align: top;
+  }
+
+  table.DataGrid.Fees td
+  {
+    text-align: center
+  }
+
+    table.DataGrid.Fees td.Amount,
+    table.DataGrid.Fees td.Percentage
+    {
+      text-align: right
+    }
+
+  table.DataGrid.Fees a
+  {
+    margin-right: 2px;
+  }
+</style>
+<table class="DataGrid Fees">
+  <tr>
+    <th>Type</th>
+    <th>Currency</th>
+    <th>Amount</th>
+    <th>Received</th>
+    <th>Expected/<br />Received Date</th>
+    <th>Accrual<br />Date</th>
+    <th></th>
+  </tr>
+  <tbody *ngFor="let feesGroupedByfeeType of Fees">
+    <tr *ngFor="let fee of feesGroupedByfeeType[1]; first as first; count as count">
+      <td *ngIf="first" [rowSpan]="count" style="text-align: left;">{{feesGroupedByfeeType[0].Name}}</td>
+      <td></td>
+      <td></td>
+      <td>{{fee.Received|yesNo}}</td>
+      <td>{{fee.ExpectedReceivedDate|utcDate}}</td>
+      <td>{{fee.AccrualDate|accrualDate}}</td>
+      <td><a (click)="Update(fee)">edit</a><a (click)="Delete(fee)">delete</a></td>
+    </tr>
+  </tbody>
+  <tr *ngIf="!Fees?.length">
+    <td colspan="7" style="text-align: center;">No Fees</td>
+  </tr>
+</table>
+<div style="margin-top: 5px;">
+  <select [(ngModel)]="FeeType">
+    <option [ngValue]="null"></option>
+    <option *ngFor="let feeType of FeeTypes" [ngValue]="feeType">{{feeType.Name}}</option>
+  </select><input type="button"
+                  value="Add"
+                  (click)="Add()"
+                  [disabled]="!FeeType"
+                  style="height: 20px; margin-left: 1px;" />
+</div>

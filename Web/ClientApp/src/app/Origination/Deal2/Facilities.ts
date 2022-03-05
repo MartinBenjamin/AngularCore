@@ -39,6 +39,7 @@ export class Facilities implements OnDestroy
                 deal =>
                 {
                     this._deal = deal;
+                    this._facilityType = null;
 
                     if(this._deal)
                     {
