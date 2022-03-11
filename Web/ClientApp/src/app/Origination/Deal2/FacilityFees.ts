@@ -138,6 +138,11 @@ export class FacilityFees implements OnDestroy
         this._facility.Parts.splice(
             this._facility.Parts.indexOf(fee),
             1);
+        const store = Store(this._facility);
+        store.SuspendPublish();
+        store.DeleteEntity(fee.AccrualDate);
+        store.DeleteEntity(fee);
+        store.UnsuspendPublish();
         this.ComputeFees();
     }
 

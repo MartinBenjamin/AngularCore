@@ -34,6 +34,8 @@ export class Fees extends Ontology
         this.ExpectedReceivedDate = this.DeclareFunctionalDataProperty("ExpectedReceivedDate");
         this.ExpectedReceivedDate.Range(DateTime);
 
+        this.DeclareFunctionalDataProperty("Received");
+
         this.HasAccrualDate = this.DeclareFunctionalObjectProperty("AccrualDate");
 
         this.AccrualDate = this.DeclareClass("AccrualDate");
