@@ -174,7 +174,7 @@ export class Facility
         const store = Store(this._deal);
         store.SuspendPublish();
         const facility = this._facility.getValue();
-        let lenderParticipation = <facilityAgreements.LenderParticipation>facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
+        const lenderParticipation = facility.Parts.find((part): part is LenderParticipation => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
         if(this._bookingOffice)
         {
             lenderParticipation.Obligors.splice(
@@ -182,8 +182,13 @@ export class Facility
                 1);
 
             if(this._deal.Commitments.every(commitment => !commitment.Obligors.includes(this._bookingOffice)))
+            {
                 // Booking Office party no longer referenced.
+                this._deal.Parties.splice(
+                    this._deal.Parties.indexOf(this._bookingOffice),
+                    1);
                 store.DeleteEntity(this._bookingOffice);
+            }
         }
 
         if(branch)
@@ -193,17 +198,14 @@ export class Facility
 
             if(!bookingOffice)
             {
-                bookingOffice = <PartyInRole>
+                bookingOffice = <PartyInRole>store.Assert(
                     {
-                        Id             : EmptyGuid,
                         AutonomousAgent: branch,
                         Organisation   : branch,
-                        Person         : null,
                         Role           : this._bookingOfficeRole,
                         Period         : null
-                    };
-
-                bookingOffice = <PartyInRole>store.Assert(bookingOffice);
+                    });
+                this._deal.Parties.push(bookingOffice);
             }
 
             lenderParticipation.Obligors.push(bookingOffice);
@@ -265,9 +267,8 @@ export class Facility
         this._transaction = store.BeginTransaction();
         store.SuspendPublish();
         facility = <facilityAgreements.Facility>store.Assert(facility);
-        this._deal.Commitments.push(
-            facility,
-            lenderParticipation);
+        this._deal.Commitments.push(facility);
+        this._deal.Commitments.push(...facility.Parts);
         store.UnsuspendPublish();
         this._facility.next(facility);
         this.ComputeBookingOffice();
