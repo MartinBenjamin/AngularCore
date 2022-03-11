@@ -2,15 +2,14 @@ import { Component, forwardRef, Inject, OnDestroy } from '@angular/core';
 import { BehaviorSubject, combineLatest, NEVER, Observable, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, filter, map, sample, share, switchMap } from 'rxjs/operators';
 import { BranchesToken } from '../../BranchServiceProvider';
-import { DomainObject, EmptyGuid, Guid } from '../../CommonDomainObjects';
+import { DomainObject, Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
 import { CurrenciesOrderedByCodeToken } from '../../CurrencyServiceProvider';
 import { DealProvider } from '../../DealProvider';
 import { Deal, DealRoleIdentifier } from '../../Deals';
 import * as facilityAgreements from '../../FacilityAgreements';
-import { FacilityType } from '../../FacilityAgreements'
-import { LenderParticipation } from '../../FacilityAgreements';
+import { FacilityType, LenderParticipation } from '../../FacilityAgreements';
 import { FacilityProvider } from '../../FacilityProvider';
 import { Currency } from '../../Iso4217';
 import { Store } from '../../Ontology/IEavStore';
