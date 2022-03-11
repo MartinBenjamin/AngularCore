@@ -769,6 +769,7 @@ export class EavStore implements IEavStore, IPublisher
         if(attributeSchema && typeof attributeSchema.Cardinality !== 'undefined')
             return attributeSchema.Cardinality;
 
+        console.warn(`No schema for attribute: ${String(attribute)}`);
         return this._defaultCardinality;
     }
 }
