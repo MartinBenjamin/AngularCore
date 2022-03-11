@@ -1,6 +1,6 @@
 import { Component, forwardRef, Inject, OnDestroy } from '@angular/core';
 import { BehaviorSubject, combineLatest, NEVER, Observable, Subject, Subscription } from 'rxjs';
-import { distinctUntilChanged, filter, sample, share, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, sample, share, switchMap } from 'rxjs/operators';
 import { BranchesToken } from '../../BranchServiceProvider';
 import { DomainObject, EmptyGuid, Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
@@ -47,14 +47,15 @@ export class Facility
     extends FacilityProvider
     implements OnDestroy
 {
-    private _subscriptions    : Subscription[] = [];
-    private _bookingOfficeRole: Role;
-    private _deal             : Deal;
-    private _bookingOffice    : PartyInRole;
-    private _applyCallback    : ApplyCallback;
-    private _transaction      : ITransaction;
-    private _observeErrors    = new BehaviorSubject<boolean>(false);
-    private _apply            = new Subject<void>();
+    private _subscriptions      : Subscription[] = [];
+    private _bookingOfficeRole  : Role;
+    private _deal               : Deal;
+    private _lenderParticipation: LenderParticipation;
+    private _bookingOffice      : PartyInRole;
+    private _applyCallback      : ApplyCallback;
+    private _transaction        : ITransaction;
+    private _observeErrors      = new BehaviorSubject<boolean>(false);
+    private _apply              = new Subject<void>();
 
     private static _subgraph: IExpression = new Sequence(
         [
@@ -120,6 +121,10 @@ export class Facility
         this._subscriptions.push(
             roles.subscribe(roles => this._bookingOfficeRole = roles.find(role => role.Id == DealRoleIdentifier.BookingOffice)),
             dealProvider.subscribe(deal => this._deal = deal),
+            this.pipe(
+                map(facility =>
+                    facility ? facility.Parts.find((part): part is LenderParticipation => (<any>part).$type === 'Web.Model.LenderParticipation, Web') : null)
+                ).subscribe(lenderParticipation => this._lenderParticipation = lenderParticipation),
             errors.subscribe(
                 errors =>
                 {
@@ -173,12 +178,10 @@ export class Facility
     {
         const store = Store(this._deal);
         store.SuspendPublish();
-        const facility = this._facility.getValue();
-        const lenderParticipation = facility.Parts.find((part): part is LenderParticipation => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
         if(this._bookingOffice)
         {
-            lenderParticipation.Obligors.splice(
-                lenderParticipation.Obligors.indexOf(this._bookingOffice),
+            this._lenderParticipation.Obligors.splice(
+                this._lenderParticipation.Obligors.indexOf(this._bookingOffice),
                 1);
 
             if(this._deal.Commitments.every(commitment => !commitment.Obligors.includes(this._bookingOffice)))
@@ -208,7 +211,7 @@ export class Facility
                 this._deal.Parties.push(bookingOffice);
             }
 
-            lenderParticipation.Obligors.push(bookingOffice);
+            this._lenderParticipation.Obligors.push(bookingOffice);
         }
         store.UnsuspendPublish();
         this.ComputeBookingOffice();
@@ -216,9 +219,7 @@ export class Facility
 
     ComputeBookingOffice(): void
     {
-        const facility = this._facility.getValue();
-        let lenderParticipation = <facilityAgreements.LenderParticipation>facility.Parts.find(part => (<any>part).$type === 'Web.Model.LenderParticipation, Web');
-        this._bookingOffice = lenderParticipation.Obligors.find(obligor => obligor.Role.Id === DealRoleIdentifier.BookingOffice);
+        this._bookingOffice = this._lenderParticipation.Obligors.find(obligor => obligor.Role.Id === DealRoleIdentifier.BookingOffice);
     }
 
     Create(
