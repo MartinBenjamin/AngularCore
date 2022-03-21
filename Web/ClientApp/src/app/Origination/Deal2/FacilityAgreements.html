@@ -4,12 +4,11 @@
   <tr>
     <th rowspan="2">Name</th>
     <th colspan="2">Dates</th>
-    <th></th>
+    <th rowspan="2"></th>
   </tr>
   <tr>
     <th>Signed</th>
     <th>Financial<br />Close</th>
-    <th></th>
   </tr>
   <tr *ngFor="let facilityAgreement of facilityAgreements">
     <td style="max-width: 300px;">{{facilityAgreement.Name}}</td>
@@ -17,7 +16,7 @@
     <td>{{facilityAgreement.EffectiveDate|utcDate}}</td>
     <td><a (click)="Delete(facilityAgreement)">delete</a></td>
   </tr>
-  <tr *ngIf="!facilityAgreements.length.length"><td colspan="4" style="text-align: center;">No Facility Agreements</td></tr>
+  <tr *ngIf="!facilityAgreements.length"><td colspan="4" style="text-align: center;">No Facility Agreements</td></tr>
 </table>
 <div style="margin-top: 5px;">
   <input type="button" value="Add" (click)="Add()" />

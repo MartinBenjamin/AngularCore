@@ -1,24 +1,13 @@
-import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
-import { Subscription, Observable, NEVER } from 'rxjs';
+import { Component, OnDestroy } from '@angular/core';
+import { NEVER, Observable, Subscription } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { Guid } from "../../CommonDomainObjects";
 import { DealProvider } from '../../DealProvider';
-import { Deal, Sponsor } from '../../Deals';
-import { IDomainObjectService } from "../../IDomainObjectService";
-import { LegalEntityFinder } from '../../LegalEntityFinder';
-import { annotations } from '../../Ontologies/Annotations';
+import { Deal } from '../../Deals';
+import { FacilityAgreement } from '../../FacilityAgreements';
 import { deals } from '../../Ontologies/Deals';
-import { IDealOntology } from '../../Ontologies/IDealOntology';
-import { roleIndividuals } from '../../Ontologies/RoleIndividuals';
-import { AddIndividual } from '../../Ontology/AddIndividuals';
+import { facilityAgreements } from '../../Ontologies/FacilityAgreements';
 import { Store } from '../../Ontology/IEavStore';
 import { ObservableGenerator } from '../../Ontology/ObservableGenerator';
-import { Sort } from '../../Parties';
-import { Role } from '../../Roles';
-import { RoleServiceToken } from "../../RoleServiceProvider";
-import { Contract } from '../../Contracts';
-import { FacilityAgreement } from '../../FacilityAgreements';
-import { facilityAgreements } from '../../Ontologies/FacilityAgreements';
 
 @Component(
     {
