@@ -2,9 +2,13 @@
        class="DataGrid FacilityAgreements">
   <caption style="white-space: nowrap;">Facility Agreements</caption>
   <tr>
-    <th>Name</th>
-    <th>Signed<br/>Date</th>
-    <th>Close<br/>Date</th>
+    <th rowspan="2">Name</th>
+    <th colspan="2">Dates</th>
+    <th></th>
+  </tr>
+  <tr>
+    <th>Signed</th>
+    <th>Financial<br />Close</th>
     <th></th>
   </tr>
   <tr *ngFor="let facilityAgreement of facilityAgreements">
