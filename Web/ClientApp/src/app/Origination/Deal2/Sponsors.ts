@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { NEVER, Observable, Subscription } from 'rxjs';
+import { first, map, switchMap } from 'rxjs/operators';
 import { Guid } from "../../CommonDomainObjects";
 import { DealProvider } from '../../DealProvider';
 import { Deal, Sponsor } from '../../Deals';
@@ -28,7 +28,7 @@ export class Sponsors implements OnDestroy
     private _subscriptions: Subscription[] = [];
     private _sponsorRole  : Role;
     private _deal         : Deal;
-    private _sponsors     : Sponsor[];
+    private _sponsors     : Observable<Sponsor[]>;
 
     @ViewChild('legalEntityFinder', { static: true })
     private _legalEntityFinder: LegalEntityFinder;
@@ -53,15 +53,22 @@ export class Sponsors implements OnDestroy
                             store);
                         roleService.Get(this._sponsorRole.Id).subscribe(sponsorRole => store.Assert(sponsorRole));
                         this.Build(deal.Ontology);
-
-                        const generator = new ObservableGenerator(
-                            deals,
-                            store);
-
-                        this._subscriptions.push(deals.SponsorParty.Select(generator)
-                            .pipe(map(sponsors => [...sponsors].sort(Sort)))
-                            .subscribe(sponsors => this._sponsors = sponsors));
                     }
+                }));
+
+        this._sponsors = dealProvider.pipe(
+            switchMap(
+                deal =>
+                {
+                    if(!deal)
+                        return NEVER;
+
+                    const store = Store(deal);
+                    const generator = new ObservableGenerator(
+                        deals,
+                        store);
+
+                    return deals.SponsorParty.Select(generator).pipe(map(sponsors => [...sponsors].sort(Sort)));
                 }));
     }
 
@@ -80,7 +87,7 @@ export class Sponsors implements OnDestroy
         return this._naEnabled;
     }
 
-    get Sponsors(): Sponsor[]
+    get Sponsors(): Observable<Sponsor[]>
     {
         return this._sponsors;
     }
@@ -102,7 +109,10 @@ export class Sponsors implements OnDestroy
         this._legalEntityFinder.Find(
             legalEntity =>
             {
-                if(this._sponsors.find(sponsor => sponsor.Organisation.Id == legalEntity.Id))
+                let currentSponsors: Sponsor[];
+                this._sponsors.pipe(first()).subscribe(sponsors => currentSponsors = sponsors);
+
+                if(currentSponsors.find(sponsor => sponsor.Organisation.Id == legalEntity.Id))
                 {
                     alert(`${legalEntity.Name} is already a ${this._sponsorRole.Name}.`);
                     return;

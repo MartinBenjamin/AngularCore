@@ -22,6 +22,7 @@ import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
 import { OriginationTab } from './OriginationTab';
 import { TransactionDetails } from './TransactionDetails';
+import { KeyDates } from './KeyDates';
 
 @Component(
     {
@@ -198,7 +199,7 @@ export class Deal
             [
                 new Tab('Key Deal<br/>Data'     , KeyDealData      ),
                 new Tab('Fees &<br/>Income'     , FeesTab          ),
-                new Tab('Key<br/>Dates'         , OriginationTab   ),
+                new Tab('Key<br/>Dates'         , KeyDates         ),
                 new Tab('Deal<br/>Team'         , OriginationTab   ),
                 new Tab('Key<br/>Counterparties', KeyCounterparties)
             ];
@@ -212,7 +213,7 @@ export class Deal
                 new Tab('Transaction<br>Details', TransactionDetails),
                 new Tab('Security'              , OriginationTab    ),
                 new Tab('Fees &<br/>Income'     , FeesTab           ),
-                new Tab('Key<br/>Dates'         , OriginationTab    ),
+                new Tab('Key<br/>Dates'         , KeyDates          ),
                 new Tab('Deal<br/>Team'         , OriginationTab    ),
                 new Tab('Key<br/>Counterparties', KeyCounterparties ),
                 new Tab('Syndicate<br/>Info'    , OriginationTab    ),

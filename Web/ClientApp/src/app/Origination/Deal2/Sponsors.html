@@ -10,7 +10,7 @@
     color: red;
   }
 </style>
-<table *ngIf="Sponsors as sponsors"
+<table *ngIf="Sponsors|async as sponsors"
        [dtValidatedObject]="Deal"
        dtValidatedProperty="Sponsors"
        class="DataGrid Sponsors">

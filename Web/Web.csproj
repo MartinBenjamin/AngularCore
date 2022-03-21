@@ -315,6 +315,7 @@
     <None Remove="ClientApp\src\app\Origination\Deal2\Exclusivity.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\ExternalFunding.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\Facilities.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityAgreements.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityErrors.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityFeeEditor.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityFeeErrors.ts" />
@@ -325,6 +326,7 @@
     <None Remove="ClientApp\src\app\Origination\Deal2\Fees.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FeesTab.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\KeyCounterparties.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\KeyDates.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\Restricted.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\Sponsors.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\TransactionDetails.ts" />
@@ -655,6 +657,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Common.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityAgreements.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FeeEditor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FeesTab.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\DealGeographicRegion.ts">
@@ -697,6 +700,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\KeyCounterparties.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\KeyDates.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Restricted.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>

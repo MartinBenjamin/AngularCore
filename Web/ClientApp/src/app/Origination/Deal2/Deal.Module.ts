@@ -22,6 +22,7 @@ import { Exclusivity } from './Exclusivity';
 import { ExternalFunding } from './ExternalFunding';
 import { Facilities } from './Facilities';
 import { Facility } from './Facility';
+import { FacilityAgreements } from './FacilityAgreements';
 import { FacilityErrors } from './FacilityErrors';
 import { FacilityFeeEditor } from './FacilityFeeEditor';
 import { FacilityFeeErrors } from './FacilityFeeErrors';
@@ -29,16 +30,17 @@ import { FacilityFees } from './FacilityFees';
 import { FacilityTab } from './FacilityTab';
 import { FacilityTab1 } from './FacilityTab1';
 import { FacilityTab3 } from './FacilityTab3';
+import { FeeEditor } from './FeeEditor';
 import { Fees } from './Fees';
 import { FeesTab } from './FeesTab';
 import { KeyCounterparties } from './KeyCounterparties';
+import { KeyDates } from './KeyDates';
 import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
 import { OriginationTab } from './OriginationTab';
 import { Restricted } from './Restricted';
 import { Sponsors } from './Sponsors';
 import { TransactionDetails } from './TransactionDetails';
-import { FeeEditor } from './FeeEditor';
 
 const routes: Routes =
     [
@@ -62,6 +64,7 @@ const routes: Routes =
                 ExternalFunding,
                 Facilities,
                 Facility,
+                FacilityAgreements,
                 FacilityErrors,
                 FacilityFeeEditor,
                 FacilityFeeErrors,
@@ -73,6 +76,7 @@ const routes: Routes =
                 FeesTab,
                 Fees,
                 KeyCounterparties,
+                KeyDates,
                 KeyDealData,
                 MoreTabs,
                 OriginationTab,

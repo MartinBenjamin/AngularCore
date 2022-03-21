@@ -1,6 +1,7 @@
 import { DealStageIdentifier } from '../Deals';
 import { DataComplementOf } from '../Ontology/DataComplementOf';
 import { DataOneOf } from '../Ontology/DataOneOf';
+import { IClass } from '../Ontology/IClass';
 import { Ontology } from "../Ontology/Ontology";
 import { DateTime, Decimal } from "../Ontology/Xsd";
 import { agreements } from './Agreements';
@@ -12,6 +13,8 @@ import { quantities } from './Quantities';
 
 export class FacilityAgreements extends Ontology
 {
+    readonly FacilityAgreement: IClass;
+
     constructor()
     {
         super(
@@ -22,6 +25,9 @@ export class FacilityAgreements extends Ontology
             agreements,
             fees,
             annotations);
+
+        this.FacilityAgreement = this.DeclareClass("FacilityAgreement");
+        this.FacilityAgreement.Define(commonDomainObjects.$type.HasValue("Web.Model.FacilityAgreement, Web"));
 
         const nonEmptyString = new DataComplementOf(new DataOneOf([""]));
         const facility = this.DeclareClass("Facility");
