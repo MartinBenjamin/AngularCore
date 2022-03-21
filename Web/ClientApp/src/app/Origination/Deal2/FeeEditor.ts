@@ -43,7 +43,6 @@ export class FeeEditor
     private static _subgraph: IExpression = new Alternative(
         [
             Empty,
-            new Property('Amount'),
             new Property('AccrualDate')
         ]);
 

@@ -62,7 +62,6 @@ export class Facility
             new Alternative(
             [
                 Empty,
-                new Property('Amount'),
                 new Property('AccrualDate')
             ])
         ]);
