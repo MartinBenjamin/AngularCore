@@ -9,7 +9,7 @@ import { CurrenciesOrderedByCodeToken } from '../../CurrencyServiceProvider';
 import { DealProvider } from '../../DealProvider';
 import { Deal, DealRoleIdentifier } from '../../Deals';
 import * as facilityAgreements from '../../FacilityAgreements';
-import { FacilityType, LenderParticipation } from '../../FacilityAgreements';
+import { FacilityAgreement, FacilityType, LenderParticipation } from '../../FacilityAgreements';
 import { FacilityProvider } from '../../FacilityProvider';
 import { Currency } from '../../Iso4217';
 import { Store } from '../../Ontology/IEavStore';
@@ -228,12 +228,15 @@ export class Facility
     {
         this._applyCallback = applyCallback;
 
+        const facilityAgreements = this._deal.Agreements
+            .filter((agreement): agreement is FacilityAgreement => (<any>agreement).$type === 'Web.Model.FacilityAgreement, Web');
+
         let facility = <facilityAgreements.Facility>
         {
             Type                     : facilityType,
             Name                     : '',
             Obligors                 : [],
-            Contract                 : null,
+            ConferredBy              : null,
             PartOf                   : null,
             Parts                    : [],
             Currency                 : null,
@@ -250,7 +253,7 @@ export class Facility
         let lenderParticipation = <LenderParticipation>
         {
             Obligors             : [],
-            Contract             : null,
+            ConferredBy          : null,
             PartOf               : facility,
             Parts                : [],
             Lender               : null,
@@ -269,6 +272,26 @@ export class Facility
         facility = <facilityAgreements.Facility>store.Assert(facility);
         this._deal.Commitments.push(facility);
         this._deal.Commitments.push(...facility.Parts);
+
+        if(!facilityAgreements.length)
+        {
+            const facilityAgreement = <FacilityAgreement>store.Assert(
+                {
+                    Name   : 'Facility Agreement',
+                    Confers: [],
+                    $type  : 'Web.Model.FacilityAgreement, Web'
+                });
+            facilityAgreements.push(facilityAgreement);
+            this._deal.Agreements.push(facilityAgreement);
+        }
+
+        if(facilityAgreements.length === 1)
+        {
+            const facilityAgreement = facilityAgreements[0];
+            facility.ConferredBy = facilityAgreement;
+            facilityAgreement.Confers.push(facility);
+        }
+
         store.UnsuspendPublish();
         this._facility.next(facility);
         this.ComputeBookingOffice();

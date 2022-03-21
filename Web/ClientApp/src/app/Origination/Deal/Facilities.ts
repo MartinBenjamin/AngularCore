@@ -63,7 +63,7 @@ export class Facilities implements OnDestroy
             Id                       : EmptyGuid,
             Name                     : '',
             Obligors                 : [],
-            Contract                 : null,
+            ConferredBy              : null,
             PartOf                   : null,
             Parts                    : [],
             Currency                 : null,
@@ -81,7 +81,7 @@ export class Facilities implements OnDestroy
         {
             Id                   : EmptyGuid,
             Obligors             : [],
-            Contract             : null,
+            ConferredBy          : null,
             PartOf               : facility,
             Parts                : [],
             Lender               : null,

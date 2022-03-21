@@ -2,11 +2,14 @@ import { Agreement, Commitment } from "./Agreements";
 
 export interface Contract extends Agreement
 {
+    Mandates     ?: ContractualCommitment[];
+    ExecutionDate?: Date;
+    EffectiveDate?: Date;
 }
 
 export interface ContractualCommitment extends Commitment
 {
-    Contract?: Contract;
-    PartOf  ?: ContractualCommitment;
-    Parts   ?: ContractualCommitment[];
+    MandatedBy?: Contract;
+    PartOf    ?: ContractualCommitment;
+    Parts     ?: ContractualCommitment[];
 }

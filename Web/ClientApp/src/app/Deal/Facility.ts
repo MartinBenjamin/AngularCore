@@ -318,9 +318,9 @@ export class Facility
             .forEach(
                 commitment =>
                 {
-                    if(commitment.Contract)
-                        commitment.Contract.Confers.splice(
-                            commitment.Contract.Confers.indexOf(commitment),
+                    if(commitment.ConferredBy)
+                        commitment.ConferredBy.Confers.splice(
+                            commitment.ConferredBy.Confers.indexOf(commitment),
                             1);
 
                     this._deal.Commitments.splice(
@@ -333,8 +333,8 @@ export class Facility
             .forEach(
                 commitment =>
                 {
-                    if(commitment.Contract)
-                        commitment.Contract.Confers.push(commitment);
+                    if(commitment.ConferredBy)
+                        commitment.ConferredBy.Confers.push(commitment);
 
                     this._deal.Commitments.push(commitment);
                 });

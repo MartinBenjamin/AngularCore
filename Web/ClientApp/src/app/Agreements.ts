@@ -9,5 +9,6 @@ export interface Agreement extends Named<Guid>
 
 export interface Commitment extends DomainObject<Guid>
 {
-    Obligors?: PartyInRole[]
+    Obligors   ?: PartyInRole[];
+    ConferredBy?: Agreement;
 }
