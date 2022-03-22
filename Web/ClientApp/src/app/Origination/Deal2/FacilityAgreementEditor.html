@@ -1,0 +1,53 @@
+<style typeof="text/css">
+  .FacilityAgreementEditorDialog input[type=text],
+  .FacilityAgreementEditorDialog span.Field,
+  .FacilityAgreementEditorDialog select
+  {
+      width: 200px;
+  }
+
+  .FacilityAgreementEditorDialog input[type=text].Date
+  {
+    width: 100px;
+  }
+</style>
+<dt-dialog Title="Facility Agreement"
+           [Open]="FacilityAgreement|async">
+  <dt-dialog-body>
+    <table *ngIf="FacilityAgreement|async as facilityAgreement"
+           class="GridLayout FacilityAgreementEditorDialog">
+      <tr>
+        <td class="RowHeading">Name:</td>
+        <td>
+          <input type="text"
+                 [(ngModel)]="facilityAgreement.Name"
+                 [dtValidatedObject]="facilityAgreement"
+                 dtValidatedProperty="Name" />
+        </td>
+      </tr>
+      <tr>
+        <td class="RowHeading">Signed Date:</td>
+        <td>
+          <input type="text"
+                 [(dtDateModel)]="facilityAgreement.ExecutionDate"
+                 [dtValidatedObject]="facilityAgreement"
+                 dtValidatedProperty="ExecutionDate"
+                 class="Date" /><dt-calendar (dateSelected)="facilityAgreement.ExecutionDate = $event"></dt-calendar>
+        </td>
+      </tr>
+      <tr>
+        <td class="RowHeading">Financial Close Date:</td>
+        <td>
+          <input type="text"
+                 [(dtDateModel)]="facilityAgreement.EffectiveDate"
+                 [dtValidatedObject]="facilityAgreement"
+                 dtValidatedProperty="EffectiveDate"
+                 class="Date" /><dt-calendar (dateSelected)="facilityAgreement.EffectiveDate = $event"></dt-calendar>
+        </td>
+      </tr>
+    </table>
+  </dt-dialog-body>
+  <dt-dialog-buttons>
+    <input type="button" value="Apply" (click)="Apply()" class="Button" /><input type="button" value="Cancel" (click)="Cancel()" class="Button" />
+  </dt-dialog-buttons>
+</dt-dialog>

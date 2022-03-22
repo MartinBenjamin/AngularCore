@@ -315,6 +315,7 @@
     <None Remove="ClientApp\src\app\Origination\Deal2\Exclusivity.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\ExternalFunding.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\Facilities.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityAgreementEditor.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityAgreements.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityErrors.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityFeeEditor.ts" />
@@ -657,6 +658,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Common.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityAgreementEditor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityAgreements.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FeeEditor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FeesTab.ts" />

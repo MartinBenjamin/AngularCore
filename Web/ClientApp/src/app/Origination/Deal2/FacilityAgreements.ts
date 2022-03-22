@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { NEVER, Observable, Subscription } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { DealProvider } from '../../DealProvider';
@@ -19,6 +19,9 @@ export class FacilityAgreements implements OnDestroy
     private _subscriptions     : Subscription[] = [];
     private _deal              : Deal;
     private _facilityAgreements: Observable<FacilityAgreement[]>;
+
+    @ViewChild('editor', { static: true })
+    private _facilityAgreementEditor: import('./FacilityAgreementEditor').FacilityAgreementEditor;
 
     constructor(
         dealProvider: DealProvider
@@ -62,6 +65,7 @@ export class FacilityAgreements implements OnDestroy
 
     Add(): void
     {
+        this._facilityAgreementEditor.Create(() => { });
     }
 
     Delete(

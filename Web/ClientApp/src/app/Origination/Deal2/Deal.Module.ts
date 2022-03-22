@@ -22,6 +22,7 @@ import { Exclusivity } from './Exclusivity';
 import { ExternalFunding } from './ExternalFunding';
 import { Facilities } from './Facilities';
 import { Facility } from './Facility';
+import { FacilityAgreementEditor } from './FacilityAgreementEditor';
 import { FacilityAgreements } from './FacilityAgreements';
 import { FacilityErrors } from './FacilityErrors';
 import { FacilityFeeEditor } from './FacilityFeeEditor';
@@ -64,6 +65,7 @@ const routes: Routes =
                 ExternalFunding,
                 Facilities,
                 Facility,
+                FacilityAgreementEditor,
                 FacilityAgreements,
                 FacilityErrors,
                 FacilityFeeEditor,

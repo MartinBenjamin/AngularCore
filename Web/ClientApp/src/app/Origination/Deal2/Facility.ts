@@ -222,7 +222,7 @@ export class Facility
 
     Create(
         facilityType : FacilityType,
-        applyCallback: ApplyCallback,
+        applyCallback: ApplyCallback
         )
     {
         this._applyCallback = applyCallback;
@@ -298,7 +298,7 @@ export class Facility
 
     Update(
         facility     : facilityAgreements.Facility,
-        applyCallback: ApplyCallback,
+        applyCallback: ApplyCallback
         )
     {
         this._applyCallback = applyCallback;
