@@ -136,6 +136,7 @@ export class Facilities implements OnDestroy
 
         this._facilities = this._deal.Commitments
             .filter((commitment): commitment is Facility => (<any>commitment).$type == 'Web.Model.Facility, Web')
+            .sort((a, b) => a.Name.localeCompare(b.Name))
             .map(facility =>
                 [
                     facility,
