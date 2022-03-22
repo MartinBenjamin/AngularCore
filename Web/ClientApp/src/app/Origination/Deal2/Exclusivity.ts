@@ -145,11 +145,10 @@ export class Exclusivity implements OnDestroy
             let exclusive = this._yes.Interval.Start <= current.Interval.Start && current.Interval.End <= this._yes.Interval.End;
             if(exclusive && !this._exclusivity)
             {
-                const exclusivity = <ExclusivityCommitment>{
-                    EndDate: null
-                };
-                (<any>exclusivity).$type = 'Web.Model.Exclusivity, Web';
-                this._exclusivity = store.Assert(exclusivity);
+                this._exclusivity = store.Assert({
+                    EndDate: null,
+                    $type  : 'Web.Model.Exclusivity, Web'
+                });
                 this._deal.Commitments.push(this._exclusivity);
             }
             else if(!exclusive && this._exclusivity)
