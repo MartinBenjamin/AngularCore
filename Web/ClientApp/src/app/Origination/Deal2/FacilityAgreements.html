@@ -1,3 +1,9 @@
+<style type="text/css">
+  table.FacilityAgreements a
+  {
+    margin-right: 2px;
+  }
+</style>
 <facility-agreement-editor #editor></facility-agreement-editor>
 <table *ngIf="FacilityAgreements|async as facilityAgreements"
        class="DataGrid FacilityAgreements">
@@ -15,7 +21,11 @@
     <td style="max-width: 300px;">{{facilityAgreement.Name}}</td>
     <td>{{facilityAgreement.ExecutionDate|utcDate}}</td>
     <td>{{facilityAgreement.EffectiveDate|utcDate}}</td>
-    <td><a (click)="Delete(facilityAgreement)">delete</a></td>
+    <td>
+      <a (click)="Update(facilityAgreement)"
+         [dtValidatedObject]="facilityAgreement"
+         dtValidatedProperty="$HasErrors">edit</a><a (click)="Delete(facilityAgreement)">delete</a>
+    </td>
   </tr>
   <tr *ngIf="!facilityAgreements.length"><td colspan="4" style="text-align: center;">No Facility Agreements</td></tr>
 </table>

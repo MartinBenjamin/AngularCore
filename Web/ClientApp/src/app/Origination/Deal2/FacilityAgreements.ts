@@ -68,6 +68,15 @@ export class FacilityAgreements implements OnDestroy
         this._facilityAgreementEditor.Create(() => { });
     }
 
+    Update(
+        facilityAgreement: FacilityAgreement
+        ): void
+    {
+        this._facilityAgreementEditor.Update(
+            facilityAgreement,
+            () => { });
+    }
+
     Delete(
         facilityAgreement: FacilityAgreement
         ): void
