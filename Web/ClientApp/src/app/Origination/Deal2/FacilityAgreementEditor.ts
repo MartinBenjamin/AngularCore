@@ -95,9 +95,12 @@ export class FacilityAgreementEditor implements OnDestroy
         const store = Store(this._deal);
         this._transaction = store.BeginTransaction();
         store.SuspendPublish();
-        let facilityAgreement = <FacilityAgreement>store.Assert({
-            $type: 'Web.Models.FacilityAgreement, Web'
-        });
+        let facilityAgreement = <FacilityAgreement>store.Assert(
+            {
+                Name   : '',
+                Confers: [],
+                $type  : 'Web.Model.FacilityAgreement, Web'
+            });
         this._facilityAgreement.next(facilityAgreement);
         this._deal.Agreements.push(facilityAgreement);
         store.UnsuspendPublish();
