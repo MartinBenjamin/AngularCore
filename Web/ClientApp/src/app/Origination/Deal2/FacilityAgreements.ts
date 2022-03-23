@@ -36,15 +36,20 @@ export class FacilityAgreements implements OnDestroy
                         return NEVER;
 
                     const store = Store(deal);
-                    //return store.Observe(
-                    //    ['?facilityAgreement'],
-                    //    [deal, 'Agreements', '?facilityAgreement'],['?facilityAgreement', '$type', 'Web.Models.FacilityAgreement, Web']);
-                    const generator = new ObservableGenerator(
-                        deals,
-                        store);
+                    return store.Observe(
+                        ['?facilityAgreement'],
+                        [deal, 'Agreements', '?facilityAgreement'],
+                        ['?facilityAgreement', '$type', 'Web.Model.FacilityAgreement, Web'],
+                        ['?facilityAgreement', 'Name', undefined]
+                    ).pipe(
+                        map((facilityAgreements: [FacilityAgreement][]) => facilityAgreements.map(facilityAgreement => facilityAgreement[0])),
+                        map((facilityAgreements: FacilityAgreement[]) => facilityAgreements.sort((a, b) => a.Name.localeCompare(b.Name))));
+                    //const generator = new ObservableGenerator(
+                    //    deals,
+                    //    store);
 
-                    return facilityAgreements.FacilityAgreement.Select(generator)
-                        .pipe(map(facilityAgreements => [...facilityAgreements].sort((a, b) => a.Name.localeCompare(b.Name))));
+                    //return facilityAgreements.FacilityAgreement.Select(generator)
+                    //    .pipe(map(facilityAgreements => [...facilityAgreements].sort((a, b) => a.Name.localeCompare(b.Name))));
                 }));
     }
 

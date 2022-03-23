@@ -279,7 +279,7 @@ export class EavStore implements IEavStore, IPublisher
                         while(count--)
                         {
                             const substitution = substitutions.shift();
-                            for(const fact of observed[observedIndex++])
+                            for(const fact of observed[observedIndex])
                             {
                                 let merged = { ...substitution };
                                 for(let index = 0; index < atom.length && merged; ++index)
@@ -301,6 +301,7 @@ export class EavStore implements IEavStore, IPublisher
                             }
                         }
 
+                        ++observedIndex;
                         return substitutions;
                     },
                     [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
