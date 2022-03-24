@@ -34,9 +34,17 @@
                              class="FacilityType" />
                     </td>
                   </tr>
+                  <tr *ngIf="Agreements.length > 1">
+                    <td class="RowHeading">Agreement:</td>
+                    <td>
+                      <select [(ngModel)]="Agreement">
+                        <option *ngFor="let agreement of Agreements" [ngValue]="agreement">{{agreement.Name}}</option>
+                      </select>
+                    </td>
+                  </tr>
                 </table>
               </td>
-              <td>
+              <td style="vertical-align: top;">
                 <table>
                   <tr>
                     <td class="RowHeading">Booking Office:</td>

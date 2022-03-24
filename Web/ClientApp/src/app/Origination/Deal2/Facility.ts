@@ -49,6 +49,7 @@ export class Facility
     private _subscriptions      : Subscription[] = [];
     private _bookingOfficeRole  : Role;
     private _deal               : Deal;
+    private _agreements         : FacilityAgreement[];
     private _lenderParticipation: LenderParticipation;
     private _bookingOffice      : PartyInRole;
     private _applyCallback      : ApplyCallback;
@@ -160,9 +161,32 @@ export class Facility
         return this._branches;
     }
 
+    get Agreements(): FacilityAgreement[]
+    {
+        return this._agreements;
+    }
+
     get Facility(): Observable<facilityAgreements.Facility>
     {
         return this._facility;
+    }
+
+    get Agreement(): FacilityAgreement
+    {
+        return this._facility.getValue().ConferredBy;
+    }
+
+    set Agreement(
+        agreement: FacilityAgreement
+        )
+    {
+        const facility = this._facility.getValue();
+        facility.ConferredBy.Confers.splice(
+            facility.ConferredBy.Confers.indexOf(facility),
+            1);
+
+        facility.ConferredBy = agreement;
+        agreement.Confers.push(agreement);
     }
 
     get BookingOffice(): Branch
@@ -226,8 +250,7 @@ export class Facility
         )
     {
         this._applyCallback = applyCallback;
-
-        const facilityAgreements = this._deal.Agreements
+        this._agreements = this._deal.Agreements
             .filter((agreement): agreement is FacilityAgreement => (<any>agreement).$type === 'Web.Model.FacilityAgreement, Web');
 
         let facility = <facilityAgreements.Facility>
@@ -272,7 +295,7 @@ export class Facility
         this._deal.Commitments.push(facility);
         this._deal.Commitments.push(...facility.Parts);
 
-        if(!facilityAgreements.length)
+        if(!this._agreements.length)
         {
             const facilityAgreement = <FacilityAgreement>store.Assert(
                 {
@@ -280,15 +303,15 @@ export class Facility
                     Confers: [],
                     $type  : 'Web.Model.FacilityAgreement, Web'
                 });
-            facilityAgreements.push(facilityAgreement);
+            this._agreements.push(facilityAgreement);
             this._deal.Agreements.push(facilityAgreement);
         }
 
-        if(facilityAgreements.length === 1)
+        if(this._agreements.length === 1)
         {
-            const facilityAgreement = facilityAgreements[0];
-            facility.ConferredBy = facilityAgreement;
-            facilityAgreement.Confers.push(facility);
+            const agreement = this._agreements[0];
+            facility.ConferredBy = agreement;
+            agreement.Confers.push(facility);
         }
 
         store.UnsuspendPublish();
@@ -302,6 +325,8 @@ export class Facility
         )
     {
         this._applyCallback = applyCallback;
+        this._agreements = this._deal.Agreements
+            .filter((agreement): agreement is FacilityAgreement => (<any>agreement).$type === 'Web.Model.FacilityAgreement, Web');
         const store = Store(this._deal);
         this._transaction = store.BeginTransaction();
         this._facility.next(facility);
