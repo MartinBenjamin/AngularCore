@@ -38,16 +38,17 @@ namespace Data
 
             new[]
             {
-                "ISO3166-2-AE.csv",
-                "ISO3166-2-CA.csv",
-                "ISO3166-2-GB.csv",
-                "ISO3166-2-KN.csv",
-                "ISO3166-2-PT.csv",
-                "ISO3166-2-US.csv"
-            }.ForEach(fileName => builder
+                "AE",
+                "CA",
+                "GB",
+                "KN",
+                "PT",
+                "US"
+            }.ForEach(alpha2Code => builder
                 .RegisterType<SubdivisionLoader>()
                 .Keyed<IEtl>(typeof(Subdivision))
-                .WithParameter("fileName", fileName)
+                .Keyed<SubdivisionLoader>(alpha2Code)
+                .WithParameter("fileName", $"ISO3166-2-{alpha2Code}.csv")
                 .SingleInstance());
 
             builder
