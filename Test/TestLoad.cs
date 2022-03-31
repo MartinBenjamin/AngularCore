@@ -143,55 +143,52 @@ namespace Test
             }
         }
 
-        [Test]
-        public async Task Iso3166_2()
+        [TestCase("AE")]
+        [TestCase("CA")]
+        [TestCase("GB")]
+        [TestCase("KN")]
+        [TestCase("PT")]
+        [TestCase("US")]
+        public async Task Iso3166_2(
+            string alpha2Code
+            )
         {
             await _container.ResolveKeyed<IEtl>(typeof(Country)).ExecuteAsync();
-            var loaders = _container.ResolveKeyed<IEnumerable<IEtl>>(typeof(Subdivision));
-            Assert.That(loaders.Count(), Is.EqualTo(6));
-            int previous = 0;
-            foreach(var loader in loaders)
-            {
-                await loader.ExecuteAsync();
-                using(var scope = _container.BeginLifetimeScope())
-                {
-                    var csvExtractor = scope.Resolve<ICsvExtractor>();
-                    var extracted = await csvExtractor.ExtractAsync(loader.FileName);
-                    var service = scope.Resolve<INamedService<string, Subdivision, NamedFilters>>();
-                    var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(subdivision => subdivision.Id);
-
-                    Assert.That(loaded.Keys.Count - previous, Is.EqualTo(extracted.Count));
-                    previous = loaded.Keys.Count;
-
-                    foreach(var record in extracted)
-                    {
-                        Assert.That(loaded.ContainsKey(record[1]), Is.True);
-                        var subdivision = loaded[record[1]];
-                        Assert.That(subdivision.Id        , Is.EqualTo(record[1]                ));
-                        Assert.That(subdivision.Name      , Is.EqualTo(record[2]                ));
-                        Assert.That(subdivision.Country.Id, Is.EqualTo(record[1].Substring(0, 2)));
-                        Assert.That(subdivision.Category  , Is.EqualTo(record[0]                ));
-
-                        if(string.IsNullOrEmpty(record[6]))
-                        {
-                            Assert.That(subdivision.Region           , Is.EqualTo(subdivision.Country));
-                            Assert.That(subdivision.ParentSubdivision, Is.Null                        );
-                        }
-                        else
-                        {
-                            Assert.That(subdivision.Region              , Is.EqualTo(subdivision.ParentSubdivision));
-                            Assert.That(subdivision.ParentSubdivision.Id, Is.EqualTo(record[6])                    );
-                        }
-
-                        Assert.That(subdivision.Region.Subregions.Contains(subdivision), Is.True);
-                        foreach(var subregion in subdivision.Subregions)
-                            Assert.That(subregion.Region, Is.EqualTo(subdivision));
-                    }
-                }
-            }
-
+            var loader = (IEtl)_container.ResolveKeyed<SubdivisionLoader>(alpha2Code);
+            Assert.That(loader, Is.Not.Null);
+            await loader.ExecuteAsync();
             using(var scope = _container.BeginLifetimeScope())
             {
+                var csvExtractor = scope.Resolve<ICsvExtractor>();
+                var extracted = await csvExtractor.ExtractAsync(loader.FileName);
+                var service = scope.Resolve<INamedService<string, Subdivision, NamedFilters>>();
+                var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(subdivision => subdivision.Id);
+
+                foreach(var record in extracted)
+                {
+                    Assert.That(loaded.ContainsKey(record[1]), Is.True);
+                    var subdivision = loaded[record[1]];
+                    Assert.That(subdivision.Id        , Is.EqualTo(record[1]                ));
+                    Assert.That(subdivision.Name      , Is.EqualTo(record[2]                ));
+                    Assert.That(subdivision.Country.Id, Is.EqualTo(record[1].Substring(0, 2)));
+                    Assert.That(subdivision.Category  , Is.EqualTo(record[0]                ));
+
+                    if(string.IsNullOrEmpty(record[6]))
+                    {
+                        Assert.That(subdivision.Region           , Is.EqualTo(subdivision.Country));
+                        Assert.That(subdivision.ParentSubdivision, Is.Null                        );
+                    }
+                    else
+                    {
+                        Assert.That(subdivision.Region              , Is.EqualTo(subdivision.ParentSubdivision));
+                        Assert.That(subdivision.ParentSubdivision.Id, Is.EqualTo(record[6])                    );
+                    }
+
+                    Assert.That(subdivision.Region.Subregions.Contains(subdivision), Is.True);
+                    foreach(var subregion in subdivision.Subregions)
+                        Assert.That(subregion.Region, Is.EqualTo(subdivision));
+                }
+
                 var session = scope.Resolve<ISession>();
                 var identifiers = await session
                     .CreateCriteria<GeographicRegionIdentifier>()
@@ -199,10 +196,9 @@ namespace Test
                         .Add(Expression.Eq("Id", new Guid("0eedfbae-fec6-474c-b447-6f30af710e01")))
                         .ListAsync<GeographicRegionIdentifier>();
 
-                var service = scope.Resolve<INamedService<string, Subdivision, NamedFilters>>();
-                var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(subdivision => subdivision.Id);
-
                 var identifierSubdivision = loaded.Values.ToDictionary(subdivision => subdivision.Id);
+                Assert.That(identifiers.Count, Is.EqualTo(identifierSubdivision.Keys.Count));
+
                 Assert.That(identifiers.Count, Is.EqualTo(identifierSubdivision.Keys.Count));
                 foreach(var identifier in identifiers)
                     Assert.That(identifier.GeographicRegion, Is.EqualTo(identifierSubdivision[identifier.Tag]));
