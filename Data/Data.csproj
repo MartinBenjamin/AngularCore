@@ -16,6 +16,7 @@
     <None Remove="ISO3166-2-AE.csv" />
     <None Remove="ISO3166-2-CA.csv" />
     <None Remove="ISO3166-2-GB.csv" />
+    <None Remove="ISO3166-2-KN.csv" />
     <None Remove="ISO3166-2-PT.csv" />
     <None Remove="ISO3166-2-US.csv" />
     <None Remove="ISO4217.csv" />
@@ -41,6 +42,7 @@
     <EmbeddedResource Include="ISO3166-2-AE.csv" />
     <EmbeddedResource Include="ISO3166-2-CA.csv" />
     <EmbeddedResource Include="ISO3166-2-GB.csv" />
+    <EmbeddedResource Include="ISO3166-2-KN.csv" />
     <EmbeddedResource Include="ISO3166-2-PT.csv" />
     <EmbeddedResource Include="ISO3166-2-US.csv" />
     <EmbeddedResource Include="ISO4217.csv" />

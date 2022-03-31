@@ -41,6 +41,7 @@ namespace Data
                 "ISO3166-2-AE.csv",
                 "ISO3166-2-CA.csv",
                 "ISO3166-2-GB.csv",
+                "ISO3166-2-KN.csv",
                 "ISO3166-2-PT.csv",
                 "ISO3166-2-US.csv"
             }.ForEach(fileName => builder

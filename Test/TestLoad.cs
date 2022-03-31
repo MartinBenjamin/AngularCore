@@ -148,7 +148,7 @@ namespace Test
         {
             await _container.ResolveKeyed<IEtl>(typeof(Country)).ExecuteAsync();
             var loaders = _container.ResolveKeyed<IEnumerable<IEtl>>(typeof(Subdivision));
-            Assert.That(loaders.Count(), Is.EqualTo(5));
+            Assert.That(loaders.Count(), Is.EqualTo(6));
             int previous = 0;
             foreach(var loader in loaders)
             {
