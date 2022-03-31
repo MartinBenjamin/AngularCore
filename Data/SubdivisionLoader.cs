@@ -1,7 +1,10 @@
 ﻿using CommonDomainObjects;
+using Identifiers;
 using Iso3166._1;
 using Iso3166._2;
+using Locations;
 using NHibernate;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +16,8 @@ namespace Data
         private readonly ICsvExtractor   _csvExtractor;
         private readonly ISessionFactory _sessionFactory;
         private readonly string          _fileName;
+
+        private static readonly Guid _identificationSchemeId = new Guid("0eedfbae-fec6-474c-b447-6f30af710e01");
 
         public SubdivisionLoader(
             ICsvExtractor   csvExtractor,
@@ -68,6 +73,23 @@ namespace Data
 
                 await subdivisions.ForEachAsync(
                     subdivision => subdivision.VisitAsync(geographicRegion => session.SaveAsync(geographicRegion)));
+
+                var identificationScheme = await session.GetAsync<IdentificationScheme>(_identificationSchemeId);
+                if(identificationScheme == null)
+                {
+                    identificationScheme = new IdentificationScheme(
+                        _identificationSchemeId,
+                        "ISO3166-2");
+                    session.Save(identificationScheme);
+                }
+
+                await subdivisions.ForEachAsync(
+                    subdivision => subdivision.VisitAsync(
+                        geographicRegion => session.SaveAsync(
+                            new GeographicRegionIdentifier(
+                                identificationScheme,
+                                geographicRegion.Id,
+                                geographicRegion))));
 
                 await transaction.CommitAsync();
             }

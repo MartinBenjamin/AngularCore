@@ -190,6 +190,24 @@ namespace Test
                     }
                 }
             }
+
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var session = scope.Resolve<ISession>();
+                var identifiers = await session
+                    .CreateCriteria<GeographicRegionIdentifier>()
+                    .CreateCriteria("Scheme")
+                        .Add(Expression.Eq("Id", new Guid("0eedfbae-fec6-474c-b447-6f30af710e01")))
+                        .ListAsync<GeographicRegionIdentifier>();
+
+                var service = scope.Resolve<INamedService<string, Subdivision, NamedFilters>>();
+                var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(subdivision => subdivision.Id);
+
+                var identifierSubdivision = loaded.Values.ToDictionary(subdivision => subdivision.Id);
+                Assert.That(identifiers.Count, Is.EqualTo(identifierSubdivision.Keys.Count));
+                foreach(var identifier in identifiers)
+                    Assert.That(identifier.GeographicRegion, Is.EqualTo(identifierSubdivision[identifier.Tag]));
+            }
         }
 
         [Test]
