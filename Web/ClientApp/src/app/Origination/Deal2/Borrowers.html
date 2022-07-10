@@ -1,7 +1,7 @@
 <legal-entity-finder Title="Find Borrower"
                      #legalEntityFinder></legal-entity-finder>
 <table
-  *ngIf="Borrowers as borrowers"
+  *ngIf="Borrowers|async as borrowers"
   [dtValidatedObject]="Deal"
   dtValidatedProperty="Borrowers"
   class="DataGrid">

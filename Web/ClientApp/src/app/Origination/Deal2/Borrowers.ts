@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { NEVER, Observable, Subscription } from 'rxjs';
+import { first, map, switchMap } from 'rxjs/operators';
 import { Guid } from '../../CommonDomainObjects';
 import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
@@ -25,7 +25,7 @@ export class Borrowers implements OnDestroy
     private _subscriptions: Subscription[] = [];
     private _borrowerRole : Role;
     private _deal         : Deal;
-    private _borrowers    : PartyInRole[];
+    private _borrowers    : Observable<PartyInRole[]>;
 
     @ViewChild('legalEntityFinder', { static: true })
     private _legalEntityFinder: LegalEntityFinder;
@@ -49,15 +49,22 @@ export class Borrowers implements OnDestroy
                             roleIndividuals.Borrower,
                             store);
                         roleService.Get(this._borrowerRole.Id).subscribe(borrowerRole => store.Assert(borrowerRole));
-
-                        const generator = new ObservableGenerator(
-                            deals,
-                            store);
-
-                        this._subscriptions.push(deals.BorrowerParty.Select(generator)
-                            .pipe(map(borrowers => [...borrowers].sort(Sort)))
-                            .subscribe(borrowers => this._borrowers = borrowers));
                     }
+                }));
+
+        this._borrowers = dealProvider.pipe(
+            switchMap(
+                deal =>
+                {
+                    if(!deal)
+                        return NEVER;
+
+                    const store = Store(deal);
+                    const generator = new ObservableGenerator(
+                        deals,
+                        store);
+
+                    return deals.BorrowerParty.Select(generator).pipe(map(borrowers => [...borrowers].sort(Sort)));
                 }));
     }
 
@@ -71,7 +78,7 @@ export class Borrowers implements OnDestroy
         return this._deal;
     }
 
-    get Borrowers(): PartyInRole[]
+    get Borrowers(): Observable<PartyInRole[]>
     {
         return this._borrowers;
     }
@@ -81,7 +88,10 @@ export class Borrowers implements OnDestroy
         this._legalEntityFinder.Find(
             legalEntity =>
             {
-                if(this._borrowers.find(borrower => borrower.Organisation.Id == legalEntity.Id))
+                let currentBorrowers: PartyInRole[];
+                this._borrowers.pipe(first()).subscribe(borrowers => currentBorrowers = borrowers);
+
+                if(currentBorrowers.find(borrower => borrower.Organisation.Id == legalEntity.Id))
                 {
                     alert(`${legalEntity.Name} is already a ${this._borrowerRole.Name}.`);
                     return;
