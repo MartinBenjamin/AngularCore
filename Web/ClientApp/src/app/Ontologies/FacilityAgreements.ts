@@ -26,10 +26,12 @@ export class FacilityAgreements extends Ontology
             fees,
             annotations);
 
+        const nonEmptyString = new DataComplementOf(new DataOneOf([""]));
         this.FacilityAgreement = this.DeclareClass("FacilityAgreement");
         this.FacilityAgreement.Define(commonDomainObjects.$type.HasValue("Web.Model.FacilityAgreement, Web"));
+        this.FacilityAgreement.SubClassOf(commonDomainObjects.Name.MinCardinality(1, nonEmptyString))
+            .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
 
-        const nonEmptyString = new DataComplementOf(new DataOneOf([""]));
         const facility = this.DeclareClass("Facility");
         facility.Define(commonDomainObjects.$type.HasValue("Web.Model.Facility, Web"));
         facility.SubClassOf(agreements.Commitment);

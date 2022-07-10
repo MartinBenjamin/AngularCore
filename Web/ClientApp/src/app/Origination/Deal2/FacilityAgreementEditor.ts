@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
 import { BehaviorSubject, combineLatest, NEVER, Observable, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, filter, sample, share, switchMap } from 'rxjs/operators';
-import { Errors, ErrorsSubjectToken } from '../../Components/ValidatedProperty';
+import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
 import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
 import { FacilityAgreement } from '../../FacilityAgreements';
@@ -13,7 +13,14 @@ type ApplyCallback = () => void;
 @Component(
     {
         selector: 'facility-agreement-editor',
-        templateUrl: './FacilityAgreementEditor.html'
+        templateUrl: './FacilityAgreementEditor.html',
+        providers:
+            [
+                ErrorsSubjectProvider,
+                ErrorsObservableProvider,
+                HighlightedPropertySubjectProvider,
+                HighlightedPropertyObservableProvider
+            ]
     })
 export class FacilityAgreementEditor implements OnDestroy
 {
