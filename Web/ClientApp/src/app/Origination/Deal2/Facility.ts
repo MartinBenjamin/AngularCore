@@ -181,9 +181,10 @@ export class Facility
         )
     {
         const facility = this._facility.getValue();
-        facility.ConferredBy.Confers.splice(
-            facility.ConferredBy.Confers.indexOf(facility),
-            1);
+        if(facility.ConferredBy)
+            facility.ConferredBy.Confers.splice(
+                facility.ConferredBy.Confers.indexOf(facility),
+                1);
 
         facility.ConferredBy = agreement;
         agreement.Confers.push(agreement);

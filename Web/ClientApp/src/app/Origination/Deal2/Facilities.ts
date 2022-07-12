@@ -1,5 +1,6 @@
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { NEVER, Observable, Subscription } from 'rxjs';
+import { first, map, switchMap } from 'rxjs/operators';
 import { ClassificationScheme } from '../../ClassificationScheme';
 import { ClassificationSchemeServiceToken } from '../../ClassificationSchemeServiceProvider';
 import { Guid } from '../../CommonDomainObjects';
@@ -34,6 +35,22 @@ export class Facilities implements OnDestroy
         classificationSchemeService: IDomainObjectService<Guid, ClassificationScheme>,
         )
     {
+        var x = dealProvider.pipe(
+            switchMap(
+                deal =>
+                {
+                    if(!deal)
+                        return NEVER;
+
+                    const store = Store(deal);
+                    return <Observable<[Facility, LenderParticipation][]>>store.Observe(
+                        ['?facility', '?lenderParticipation'],
+                        [deal, 'Commitments', '?commitment'],
+                        ['?commitment', '$type', 'Web.Model.Facility, Web'],
+                        ['?commitment', 'Parts', '?part'],
+                        ['?part', '$type', 'Web.Model.LenderParticipation, Web']);
+                }));
+
         this._subscriptions.push(
             dealProvider.subscribe(
                 deal =>
