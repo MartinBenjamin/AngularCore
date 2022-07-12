@@ -5,7 +5,9 @@
   }
 </style>
 <facility #facility></facility>
-<table class="DataGrid Facilities">
+<table
+  *ngIf="Facilities|async as facilities"
+  class="DataGrid Facilities">
   <caption>Credit Risk Tranches</caption>
   <tr>
     <th>ID</th>
@@ -25,7 +27,7 @@
     <th>Availability<br />End<br />Date</th>
     <th></th>
   </tr>
-  <tr *ngFor="let facility of Facilities">
+  <tr *ngFor="let facility of facilities">
     <td></td>
     <td>{{facility[0]?.ConferredBy.Name}}</td>
     <td>{{facility[0].Type.Name}}</td>
@@ -47,7 +49,7 @@
          dtValidatedProperty="$HasErrors">edit</a><a (click)="Delete(facility[0])">delete</a>
     </td>
   </tr>
-  <tr><td *ngIf="!Facilities.length" colspan="16" style="text-align: center;">No Credit Risk Tranches</td></tr>
+  <tr><td *ngIf="!facilities.length" colspan="16" style="text-align: center;">No Credit Risk Tranches</td></tr>
 </table>
 <div style="margin-top: 5px;">
   <select [(ngModel)]="FacilityType">

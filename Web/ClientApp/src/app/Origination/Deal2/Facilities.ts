@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
-import { NEVER, Observable, Subscription } from 'rxjs';
-import { first, map, switchMap } from 'rxjs/operators';
+import { combineLatest, NEVER, Observable, Subscription } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
 import { ClassificationScheme } from '../../ClassificationScheme';
 import { ClassificationSchemeServiceToken } from '../../ClassificationSchemeServiceProvider';
 import { Guid } from '../../CommonDomainObjects';
@@ -20,7 +20,7 @@ export class Facilities implements OnDestroy
 {
     private _subscriptions: Subscription[] = [];
     private _deal         : Deal;
-    private _facilities   : [Facility, LenderParticipation][]
+    private _facilities   : Observable<[Facility, LenderParticipation][]>;
     private _facilityTypes: FacilityType[];
     private _facilityType : FacilityType;
 
@@ -35,16 +35,15 @@ export class Facilities implements OnDestroy
         classificationSchemeService: IDomainObjectService<Guid, ClassificationScheme>,
         )
     {
-        var x = dealProvider.pipe(
+        this._facilities = dealProvider.pipe(
             switchMap(
                 deal =>
                 {
                     if(!deal)
                         return NEVER;
 
-                    const store = Store(deal);
-                    return <Observable<[Facility, LenderParticipation][]>>store.Observe(
-                        ['?facility', '?lenderParticipation'],
+                    return Store(deal).Observe(
+                        ['?commitment', '?part'],
                         [deal, 'Commitments', '?commitment'],
                         ['?commitment', '$type', 'Web.Model.Facility, Web'],
                         ['?commitment', 'Parts', '?part'],
@@ -71,18 +70,18 @@ export class Facilities implements OnDestroy
                                         .sort((a, b) => a.Name.localeCompare(b.Name)))
 
                     }
-
-                    this.ComputeFacilities();
                 }),
-            highlightedPropertyService.subscribe(
-                highlightedProperty =>
-                {                    
-                    if(this._facilities)
-                    {
-                        let highlighted = this._facilities.find(tuple => tuple[0] === highlightedProperty[0]);
-                        if(highlighted)
-                            this.Update(highlighted[0]);
-                    }
+            combineLatest(
+                this._facilities,
+                highlightedPropertyService.pipe(filter(highlightedProperty => highlightedProperty)),
+                (facilities, highlightedProperty) =>
+                {
+                    let highlighted = facilities.find(tuple => tuple[0] === highlightedProperty[0]);
+                    return highlighted ? highlighted[0] : null;
+                }).subscribe(highlightedFacility =>
+                {
+                    if(highlightedFacility)
+                        this.Update(highlightedFacility);
                 }));
     }
 
@@ -108,7 +107,7 @@ export class Facilities implements OnDestroy
         this._facilityType = facilityType;
     }
 
-    get Facilities(): [Facility, LenderParticipation][]
+    get Facilities(): Observable<[Facility, LenderParticipation][]>
     {
         return this._facilities;
     }
@@ -117,7 +116,7 @@ export class Facilities implements OnDestroy
     {
         this._facility.Create(
             this._facilityType,
-            () => this.ComputeFacilities());
+            () => { });
     }
 
     Update(
@@ -126,7 +125,7 @@ export class Facilities implements OnDestroy
     {
         this._facility.Update(
             facility,
-            () => this.ComputeFacilities());
+            () => { });
     }
 
     Delete(
@@ -134,30 +133,8 @@ export class Facilities implements OnDestroy
         ): void
     {
         if(confirm(`Delete Facility ${facility.Name}?`))
-        {
             this._deal.Commitments.splice(
                 this._deal.Commitments.indexOf(facility),
                 1);
-
-            this.ComputeFacilities();
-        }
-    }
-
-    private ComputeFacilities(): void
-    {
-        if(!this._deal)
-        {
-            this._facilities = null;
-            return;
-        }
-
-        this._facilities = this._deal.Commitments
-            .filter((commitment): commitment is Facility => (<any>commitment).$type == 'Web.Model.Facility, Web')
-            .sort((a, b) => a.Name.localeCompare(b.Name))
-            .map(facility =>
-                [
-                    facility,
-                    facility.Parts.find((part): part is LenderParticipation => (<any>part).$type == 'Web.Model.LenderParticipation, Web')
-                ]);
     }
 }
