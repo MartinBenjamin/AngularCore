@@ -27,7 +27,7 @@
   </tr>
   <tr *ngFor="let facility of Facilities">
     <td></td>
-    <td></td>
+    <td>{{facility[0]?.ConferredBy.Name}}</td>
     <td>{{facility[0].Type.Name}}</td>
     <td>{{facility[0].Name}}</td>
     <td>{{facility[0].Currency?.Id}}</td>
