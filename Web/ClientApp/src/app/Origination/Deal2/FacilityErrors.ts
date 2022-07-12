@@ -21,6 +21,7 @@ export class FacilityErrors
 
     private static _facilityPropertyDisplayName =
         {
+            ConferredBy: 'Agreement',
             Amount: 'Total Debt Size',
             Expected1StDrawdownDate: 'Expected 1<sup>st</sup> Drawdown Date'
         };

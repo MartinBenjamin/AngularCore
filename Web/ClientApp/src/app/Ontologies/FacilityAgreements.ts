@@ -53,6 +53,9 @@ export class FacilityAgreements extends Ontology
         facility.SubClassOf(agreements.Commitment);
         facility.SubClassOf(currencyAmount.MonetaryAmount);
 
+        facility.SubClassOf(agreements.ConferredBy.MinCardinality(1))
+            .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
+
         facility.SubClassOf(commonDomainObjects.Name.ExactCardinality(1, nonEmptyString))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
 

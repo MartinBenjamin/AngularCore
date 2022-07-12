@@ -6,11 +6,12 @@ import { commonDomainObjects } from "./CommonDomainObjects";
 export class Agreements extends Ontology
 {
 
-    readonly Agreement : IClass;
-    readonly Commitment: IClass;
-    readonly Parties   : IObjectPropertyExpression;
-    readonly Confers   : IObjectPropertyExpression;
-    readonly Obligors  : IObjectPropertyExpression;
+    readonly Agreement  : IClass;
+    readonly Commitment : IClass;
+    readonly Parties    : IObjectPropertyExpression;
+    readonly Confers    : IObjectPropertyExpression;
+    readonly ConferredBy: IObjectPropertyExpression;
+    readonly Obligors   : IObjectPropertyExpression;
 
     constructor()
     {
@@ -18,11 +19,12 @@ export class Agreements extends Ontology
             "Agreements",
             commonDomainObjects);
 
-        this.Agreement  = this.DeclareClass("Agreement" );
-        this.Commitment = this.DeclareClass("Commitment");
-        this.Parties    = this.DeclareObjectProperty("Parties");
-        this.Confers    = this.DeclareObjectProperty("Confers");
-        this.Obligors   = this.DeclareObjectProperty("Obligors");
+        this.Agreement   = this.DeclareClass("Agreement" );
+        this.Commitment  = this.DeclareClass("Commitment");
+        this.Parties     = this.DeclareObjectProperty("Parties");
+        this.Confers     = this.DeclareObjectProperty("Confers");
+        this.ConferredBy = this.DeclareObjectProperty("ConferredBy");
+        this.Obligors    = this.DeclareObjectProperty("Obligors");
     }
 }
 
