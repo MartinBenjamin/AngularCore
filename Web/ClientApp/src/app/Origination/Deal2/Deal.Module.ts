@@ -42,6 +42,7 @@ import { OriginationTab } from './OriginationTab';
 import { Restricted } from './Restricted';
 import { Sponsors } from './Sponsors';
 import { TransactionDetails } from './TransactionDetails';
+import { FacilityAgreementErrors } from './FacilityAgreementErrors';
 
 const routes: Routes =
     [
@@ -66,6 +67,7 @@ const routes: Routes =
                 Facilities,
                 Facility,
                 FacilityAgreementEditor,
+                FacilityAgreementErrors,
                 FacilityAgreements,
                 FacilityErrors,
                 FacilityFeeEditor,

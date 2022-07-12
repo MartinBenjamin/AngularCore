@@ -197,6 +197,7 @@
     <None Remove="ClientApp\src\app\Ontology\IAnnotationProperty.ts" />
     <None Remove="ClientApp\src\app\Ontology\IAssertion.ts" />
     <None Remove="ClientApp\src\app\Ontology\IAxiom.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IAxiomSelector.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClass.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClassAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClassExpression.ts" />
@@ -316,6 +317,7 @@
     <None Remove="ClientApp\src\app\Origination\Deal2\ExternalFunding.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\Facilities.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityAgreementEditor.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityAgreementErrors.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityAgreements.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityErrors.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\FacilityFeeEditor.ts" />
@@ -543,6 +545,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IAnnotation.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IAssertion.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IAxiom.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IAxiomSelector.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IClass.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IClassAxiom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IClassExpression.ts" />
@@ -659,6 +662,7 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityAgreementEditor.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityAgreementErrors.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityAgreements.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FeeEditor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FeesTab.ts" />

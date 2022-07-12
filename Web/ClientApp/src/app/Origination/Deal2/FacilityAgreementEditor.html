@@ -14,6 +14,7 @@
 <dt-dialog Title="Facility Agreement"
            [Open]="FacilityAgreement|async">
   <dt-dialog-body>
+    <facility-agreement-errors></facility-agreement-errors>
     <table *ngIf="FacilityAgreement|async as facilityAgreement"
            class="GridLayout FacilityAgreementEditorDialog">
       <tr>
