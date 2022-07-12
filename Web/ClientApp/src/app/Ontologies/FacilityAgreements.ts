@@ -11,6 +11,8 @@ import { commonDomainObjects } from "./CommonDomainObjects";
 import { currencyAmount } from './CurrencyAmount';
 import { fees } from './Fees';
 import { quantities } from './Quantities';
+import { DataSomeValuesFrom } from '../Ontology/DataSomeValuesFrom';
+import { SubClassOf } from '../Ontology/SubClassOf';
 
 export class FacilityAgreements extends Ontology
 {
@@ -39,6 +41,12 @@ export class FacilityAgreements extends Ontology
         this.ExecutionDate.Range(DateTime);
         this.EffectiveDate = this.DeclareFunctionalDataProperty("EffectiveDate");
         this.EffectiveDate.Range(DateTime);
+
+        new SubClassOf(
+            this,
+            this.EffectiveDate.MinCardinality(1, DateTime),
+            this.ExecutionDate.MinCardinality(1))
+            .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);;
 
         const facility = this.DeclareClass("Facility");
         facility.Define(commonDomainObjects.$type.HasValue("Web.Model.Facility, Web"));
