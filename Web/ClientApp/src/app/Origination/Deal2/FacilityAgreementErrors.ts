@@ -20,6 +20,8 @@ export class FacilityAgreementErrors
 
     private static _propertyDisplayName =
         {
+            ExecutionDate: 'Signed Date',
+            EffectiveDate: 'Financial Close Date'
         };
     private static _errorMap: IErrors =
         {

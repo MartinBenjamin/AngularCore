@@ -2,6 +2,7 @@ import { DealStageIdentifier } from '../Deals';
 import { DataComplementOf } from '../Ontology/DataComplementOf';
 import { DataOneOf } from '../Ontology/DataOneOf';
 import { IClass } from '../Ontology/IClass';
+import { IDataPropertyExpression } from '../Ontology/IPropertyExpression';
 import { Ontology } from "../Ontology/Ontology";
 import { DateTime, Decimal } from "../Ontology/Xsd";
 import { agreements } from './Agreements';
@@ -14,6 +15,8 @@ import { quantities } from './Quantities';
 export class FacilityAgreements extends Ontology
 {
     readonly FacilityAgreement: IClass;
+    readonly ExecutionDate    : IDataPropertyExpression;
+    readonly EffectiveDate    : IDataPropertyExpression;
 
     constructor()
     {
@@ -31,6 +34,11 @@ export class FacilityAgreements extends Ontology
         this.FacilityAgreement.Define(commonDomainObjects.$type.HasValue("Web.Model.FacilityAgreement, Web"));
         this.FacilityAgreement.SubClassOf(commonDomainObjects.Name.MinCardinality(1, nonEmptyString))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
+
+        this.ExecutionDate = this.DeclareFunctionalDataProperty("ExecutionDate");
+        this.ExecutionDate.Range(DateTime);
+        this.EffectiveDate = this.DeclareFunctionalDataProperty("EffectiveDate");
+        this.EffectiveDate.Range(DateTime);
 
         const facility = this.DeclareClass("Facility");
         facility.Define(commonDomainObjects.$type.HasValue("Web.Model.Facility, Web"));
