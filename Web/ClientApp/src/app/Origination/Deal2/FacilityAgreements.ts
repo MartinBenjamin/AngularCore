@@ -4,10 +4,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
 import { FacilityAgreement } from '../../FacilityAgreements';
-import { deals } from '../../Ontologies/Deals';
-import { facilityAgreements } from '../../Ontologies/FacilityAgreements';
 import { Store } from '../../Ontology/IEavStore';
-import { ObservableGenerator } from '../../Ontology/ObservableGenerator';
 
 @Component(
     {
@@ -30,26 +27,14 @@ export class FacilityAgreements implements OnDestroy
         this._subscriptions.push(dealProvider.subscribe(deal => this._deal = deal));
         this._facilityAgreements = dealProvider.pipe(
             switchMap(
-                deal =>
-                {
-                    if(!deal)
-                        return NEVER;
-
-                    const store = Store(deal);
-                    return store.Observe(
-                        ['?facilityAgreement'],
-                        [deal, 'Agreements', '?facilityAgreement'],
-                        ['?facilityAgreement', '$type', 'Web.Model.FacilityAgreement, Web']
+                deal => !deal ? NEVER : Store(deal).Observe(
+                    ['?facilityAgreement'],
+                    [deal, 'Agreements', '?facilityAgreement'],
+                    ['?facilityAgreement', '$type', 'Web.Model.FacilityAgreement, Web'],
+                    ['?facilityAgreement', 'Name', undefined]
                     ).pipe(
                         map((facilityAgreements: [FacilityAgreement][]) => facilityAgreements.map(facilityAgreement => facilityAgreement[0])),
-                        map((facilityAgreements: FacilityAgreement[]) => facilityAgreements.sort((a, b) => a.Name.localeCompare(b.Name))));
-                    //const generator = new ObservableGenerator(
-                    //    deals,
-                    //    store);
-
-                    //return facilityAgreements.FacilityAgreement.Select(generator)
-                    //    .pipe(map(facilityAgreements => [...facilityAgreements].sort((a, b) => a.Name.localeCompare(b.Name))));
-                }));
+                        map((facilityAgreements: FacilityAgreement[]) => facilityAgreements.sort((a, b) => a.Name.localeCompare(b.Name))))));
     }
 
     ngOnDestroy(): void

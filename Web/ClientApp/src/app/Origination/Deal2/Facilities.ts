@@ -37,18 +37,12 @@ export class Facilities implements OnDestroy
     {
         this._facilities = dealProvider.pipe(
             switchMap(
-                deal =>
-                {
-                    if(!deal)
-                        return NEVER;
-
-                    return Store(deal).Observe(
-                        ['?commitment', '?part'],
-                        [deal, 'Commitments', '?commitment'],
-                        ['?commitment', '$type', 'Web.Model.Facility, Web'],
-                        ['?commitment', 'Parts', '?part'],
-                        ['?part', '$type', 'Web.Model.LenderParticipation, Web']);
-                }));
+                deal => !deal ? NEVER : Store(deal).Observe(
+                    ['?commitment', '?part'],
+                    [deal, 'Commitments', '?commitment'],
+                    ['?commitment', '$type', 'Web.Model.Facility, Web'],
+                    ['?commitment', 'Parts', '?part'],
+                    ['?part', '$type', 'Web.Model.LenderParticipation, Web'])));
 
         this._subscriptions.push(
             dealProvider.subscribe(
