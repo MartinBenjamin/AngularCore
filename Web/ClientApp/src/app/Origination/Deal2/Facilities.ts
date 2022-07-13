@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { combineLatest, NEVER, Observable, Subscription } from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { ClassificationScheme } from '../../ClassificationScheme';
 import { ClassificationSchemeServiceToken } from '../../ClassificationSchemeServiceProvider';
 import { Guid } from '../../CommonDomainObjects';
@@ -38,11 +38,13 @@ export class Facilities implements OnDestroy
         this._facilities = dealProvider.pipe(
             switchMap(
                 deal => !deal ? NEVER : Store(deal).Observe(
-                    ['?commitment', '?part'],
-                    [deal, 'Commitments', '?commitment'],
-                    ['?commitment', '$type', 'Web.Model.Facility, Web'],
-                    ['?commitment', 'Parts', '?part'],
-                    ['?part', '$type', 'Web.Model.LenderParticipation, Web'])));
+                    ['?facility', '?lenderParticipation'],
+                    [deal, 'Commitments', '?facility'],
+                    ['?facility', '$type', 'Web.Model.Facility, Web'],
+                    ['?facility', 'Name', undefined],
+                    ['?facility', 'Parts', '?lenderParticipation'],
+                    ['?lenderParticipation', '$type', 'Web.Model.LenderParticipation, Web'])
+                    .pipe(map((facilities: [Facility, LenderParticipation][]) => facilities.sort((a, b) => a[0].Name.localeCompare(b[0].Name))))));
 
         this._subscriptions.push(
             dealProvider.subscribe(
@@ -67,7 +69,7 @@ export class Facilities implements OnDestroy
                 }),
             combineLatest(
                 this._facilities,
-                highlightedPropertyService.pipe(filter(highlightedProperty => highlightedProperty)),
+                highlightedPropertyService.pipe(filter(highlightedProperty => highlightedProperty !== null)),
                 (facilities, highlightedProperty) =>
                 {
                     let highlighted = facilities.find(tuple => tuple[0] === highlightedProperty[0]);
@@ -127,8 +129,19 @@ export class Facilities implements OnDestroy
         ): void
     {
         if(confirm(`Delete Facility ${facility.Name}?`))
+        {
             this._deal.Commitments.splice(
                 this._deal.Commitments.indexOf(facility),
                 1);
+
+            const agreement = facility.ConferredBy;
+            if(agreement)
+                agreement.Confers.splice(
+                    agreement.Confers.indexOf(facility),
+                    1);
+
+            const store = Store(this._deal);
+            // Delete all entities in subgraph.
+        }
     }
 }
