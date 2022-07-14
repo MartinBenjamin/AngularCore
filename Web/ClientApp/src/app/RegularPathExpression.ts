@@ -1,8 +1,8 @@
-export type PathSegment = [string, object];
+export type PathSegment = [PropertyKey, object];
 export type Path = PathSegment[];
 
 type Traversal = [State, Path];
-export type Transition = [string, State];
+export type Transition = [PropertyKey, State];
 
 export interface State
 {
@@ -25,13 +25,13 @@ export class Nfa
 
 export interface Selector<TResult>
 {
-    Empty      (                      ): TResult;
-    Property   (name: string          ): TResult;
-    Alternative(expressions: TResult[]): TResult;
-    Sequence   (expressions: TResult[]): TResult;
-    ZeroOrOne  (expression: TResult   ): TResult;
-    ZeroOrMore (expression: TResult   ): TResult;
-    OneOrMore  (expression: TResult   ): TResult;
+    Empty      (                        ): TResult;
+    Property   (name       : PropertyKey): TResult;
+    Alternative(expressions: TResult[]  ): TResult;
+    Sequence   (expressions: TResult[]  ): TResult;
+    ZeroOrOne  (expression : TResult    ): TResult;
+    ZeroOrMore (expression : TResult    ): TResult;
+    OneOrMore  (expression : TResult    ): TResult;
 }
 
 export interface IExpression
@@ -62,7 +62,7 @@ export const Empty = <IExpression>
 export class Property implements IExpression
 {
     constructor(
-        public Name: string
+        public Name: PropertyKey
         )
     {
     }
@@ -239,7 +239,7 @@ class NfaFactorySelector implements Selector<(initialState?: State) => Nfa>
     }
 
     Property(
-        name: string
+        name: PropertyKey
         ): (initialState?: State) => Nfa
     {
         return (initialState?: State) =>
