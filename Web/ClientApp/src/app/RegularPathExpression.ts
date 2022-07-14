@@ -55,7 +55,7 @@ export const Empty = <IExpression>
         initialState: State
         ): Nfa =>
     {
-        let nfa = new Nfa(initialState);
+        const nfa = new Nfa(initialState);
         nfa.Initial.EpsilonTransitions = [nfa.Final];
         return nfa;
     }
@@ -80,7 +80,7 @@ export class Property implements IExpression
         initialState: State
         ): Nfa
     {
-        let nfa = new Nfa(initialState);
+        const nfa = new Nfa(initialState);
         nfa.Initial.Transitions = [[this.Name, nfa.Final]];
         return nfa;
     }
@@ -107,8 +107,8 @@ export class Alternative implements IExpression
         initialState: State
         ): Nfa
     {
-        let nfa = new Nfa(initialState);
-        let innerNfas = this.Expressions.map(expression => expression.Nfa());
+        const nfa = new Nfa(initialState);
+        const innerNfas = this.Expressions.map(expression => expression.Nfa());
         nfa.Initial.EpsilonTransitions = innerNfas.map(innerNfa => innerNfa.Initial);
         innerNfas.forEach(innerNfa => innerNfa.Final.EpsilonTransitions = [nfa.Final]);
         return nfa;
@@ -166,8 +166,8 @@ export class ZeroOrOne implements IExpression
         initialState: State
         ): Nfa
     {
-        let nfa = new Nfa(initialState);
-        let innerNfa = this.Expression.Nfa();
+        const nfa = new Nfa(initialState);
+        const innerNfa = this.Expression.Nfa();
         nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         innerNfa.Final.EpsilonTransitions = [nfa.Final];
         return nfa;
@@ -193,8 +193,8 @@ export class ZeroOrMore implements IExpression
         initialState: State
         ): Nfa
     {
-        let nfa = new Nfa(initialState);
-        let innerNfa = this.Expression.Nfa();
+        const nfa = new Nfa(initialState);
+        const innerNfa = this.Expression.Nfa();
         nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         return nfa;
@@ -220,8 +220,8 @@ export class OneOrMore implements IExpression
         initialState: State
         ): Nfa
     {
-        let nfa = new Nfa(initialState);
-        let innerNfa = this.Expression.Nfa();
+        const nfa = new Nfa(initialState);
+        const innerNfa = this.Expression.Nfa();
         nfa.Initial.EpsilonTransitions = [innerNfa.Initial];
         innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
         return nfa;
@@ -234,7 +234,7 @@ class NfaFactorySelector implements Selector<(initialState?: State) => Nfa>
     {
         return (initialState?: State) =>
         {
-            let nfa = new Nfa(initialState);
+            const nfa = new Nfa(initialState);
             nfa.Initial.EpsilonTransitions = [nfa.Final];
             return nfa;
         };
@@ -246,7 +246,7 @@ class NfaFactorySelector implements Selector<(initialState?: State) => Nfa>
     {
         return (initialState?: State) =>
         {
-            let nfa = new Nfa(initialState);
+            const nfa = new Nfa(initialState);
             nfa.Initial.Transitions = [[name, nfa.Final]];
             return nfa;
         };
@@ -258,8 +258,8 @@ class NfaFactorySelector implements Selector<(initialState?: State) => Nfa>
     {
         return (initialState?: State) =>
         {
-            let nfa = new Nfa(initialState);
-            let innerNfas = nfaFactories.map(nfaFactory => nfaFactory());
+            const nfa = new Nfa(initialState);
+            const innerNfas = nfaFactories.map(nfaFactory => nfaFactory());
             nfa.Initial.EpsilonTransitions = innerNfas.map(innerNfa => innerNfa.Initial);
             innerNfas.forEach(innerNfa => innerNfa.Final.EpsilonTransitions = [nfa.Final]);
             return nfa;
@@ -291,8 +291,8 @@ class NfaFactorySelector implements Selector<(initialState?: State) => Nfa>
     {
         return (initialState?: State) =>
         {
-            let nfa = new Nfa(initialState);
-            let innerNfa = nfaFactory();
+            const nfa = new Nfa(initialState);
+            const innerNfa = nfaFactory();
             nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
             innerNfa.Final.EpsilonTransitions = [nfa.Final];
             return nfa;
@@ -305,8 +305,8 @@ class NfaFactorySelector implements Selector<(initialState?: State) => Nfa>
     {
         return (initialState?: State) =>
         {
-            let nfa = new Nfa(initialState);
-            let innerNfa = nfaFactory();
+            const nfa = new Nfa(initialState);
+            const innerNfa = nfaFactory();
             nfa.Initial.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
             innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
             return nfa;
@@ -319,8 +319,8 @@ class NfaFactorySelector implements Selector<(initialState?: State) => Nfa>
     {
         return (initialState?: State) =>
         {
-            let nfa = new Nfa(initialState);
-            let innerNfa = nfaFactory();
+            const nfa = new Nfa(initialState);
+            const innerNfa = nfaFactory();
             nfa.Initial.EpsilonTransitions = [innerNfa.Initial];
             innerNfa.Final.EpsilonTransitions = [innerNfa.Initial, nfa.Final];
             return nfa;
@@ -334,14 +334,14 @@ export function Query(
     ): Set<any>
 {
     //return new Set<any>(Query2(expression)(object));
-    let result = new Set<any>();
-    //let nfa = expression.Nfa();
-    let nfa = expression.Select(new NfaFactorySelector())();
-    let traversals: [State, object][] = [[nfa.Initial, object]];
+    const result = new Set<any>();
+    //const nfa = expression.Nfa();
+    const nfa = expression.Select(new NfaFactorySelector())();
+    const traversals: [State, object][] = [[nfa.Initial, object]];
 
     while(traversals.length)
     {
-        let [state, object] = traversals.shift();
+        const [state, object] = traversals.shift();
 
         if(state === nfa.Final)
             result.add(object);
@@ -350,11 +350,11 @@ export function Query(
             state.EpsilonTransitions.forEach(state => traversals.push([state, object]));
 
         else if(typeof object === 'object' && object !== null)
-            for(let [property, nextState] of state.Transitions)
+            for(const [property, nextState] of state.Transitions)
                 if(property === AnySymbol)
-                    for(let key in object)
+                    for(const key in object)
                     {
-                        let value = object[key];
+                        const value = object[key];
                         if(value instanceof Array)
                             value.forEach(element => traversals.push([nextState, element]));
 
@@ -363,7 +363,7 @@ export function Query(
                     }
                 else if(property in object)
                 {
-                    let value = object[property];
+                    const value = object[property];
                     if(value instanceof Array)
                         value.forEach(element => traversals.push([nextState, element]));
 
@@ -379,18 +379,18 @@ export function Query2(
     expression: IExpression
     ): (object: object) => Generator<any>
 {
-    let nfa = expression.Select(new NfaFactorySelector())();
+    const nfa = expression.Select(new NfaFactorySelector())();
 
     return function*(
         object: object
         ): Generator<any>
     {
-        //let nfa = expression.Nfa();
-        let traversals: [State, object][] = [[nfa.Initial, object]];
+        //const nfa = expression.Nfa();
+        const traversals: [State, object][] = [[nfa.Initial, object]];
 
         while(traversals.length)
         {
-            let [state, object] = traversals.shift();
+            const [state, object] = traversals.shift();
 
             if(state === nfa.Final)
                 yield object;
@@ -399,11 +399,11 @@ export function Query2(
                 state.EpsilonTransitions.forEach(state => traversals.push([state, object]));
 
             else if(typeof object === 'object' && object !== null)
-                for(let [property, nextState] of state.Transitions)
+                for(const [property, nextState] of state.Transitions)
                     if(property === AnySymbol)
-                        for(let key in object)
+                        for(const key in object)
                         {
-                            let value = object[key];
+                            const value = object[key];
                             if(value instanceof Array)
                                 value.forEach(element => traversals.push([nextState, element]));
 
@@ -412,7 +412,7 @@ export function Query2(
                         }
                     else if(property in object)
                     {
-                        let value = object[property];
+                        const value = object[property];
                         if(value instanceof Array)
                             value.forEach(element => traversals.push([nextState, element]));
 
@@ -428,14 +428,14 @@ export function QueryPaths(
     expression: IExpression
     ): Path[]
 {
-    let paths: Path[] = [];
-    let nfa = expression.Nfa();
-    let traversals: Traversal[] = [[nfa.Initial, [[null, object]]]];
+    const paths: Path[] = [];
+    const nfa = expression.Nfa();
+    const traversals: Traversal[] = [[nfa.Initial, [[null, object]]]];
 
     while(traversals.length)
     {
-        let [state, path] = traversals.shift();
-        let [,object] = path[path.length - 1];
+        const [state, path] = traversals.shift();
+        const [,object] = path[path.length - 1];
 
         if(state === nfa.Final)
             paths.push(path);
@@ -444,11 +444,11 @@ export function QueryPaths(
             state.EpsilonTransitions.forEach(state => traversals.push([state, [...path]]));
 
         else if(typeof object === 'object' && object !== null)
-            for(let [property, nextState] of state.Transitions)
+            for(const [property, nextState] of state.Transitions)
                 if(property === AnySymbol)
-                    for(let key in object)
+                    for(const key in object)
                     {
-                        let value = object[property];
+                        const value = object[property];
                         if(value instanceof Array)
                             value.forEach(element => traversals.push([nextState, [...path, [key, element]]]));
 
@@ -457,7 +457,7 @@ export function QueryPaths(
                     }
                 else if(property in object)
                 {
-                    let value = object[property];
+                    const value = object[property];
                     if(value instanceof Array)
                         value.forEach(element => traversals.push([nextState, [...path, [property, element]]]));
 
