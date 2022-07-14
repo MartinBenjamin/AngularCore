@@ -4,6 +4,8 @@ export type Path = PathSegment[];
 type Traversal = [State, Path];
 export type Transition = [PropertyKey, State];
 
+export const AnySymbol = Symbol('Any');
+
 export interface State
 {
     EpsilonTransitions?: State[];
@@ -84,7 +86,7 @@ export class Property implements IExpression
     }
 }
 
-export const Any = new Property('.');
+export const Any = new Property(AnySymbol);
 
 export class Alternative implements IExpression
 {
@@ -349,7 +351,7 @@ export function Query(
 
         else if(typeof object === 'object' && object !== null)
             for(let [property, nextState] of state.Transitions)
-                if(property === '.')
+                if(property === AnySymbol)
                     for(let key in object)
                     {
                         let value = object[key];
@@ -398,7 +400,7 @@ export function Query2(
 
             else if(typeof object === 'object' && object !== null)
                 for(let [property, nextState] of state.Transitions)
-                    if(property === '.')
+                    if(property === AnySymbol)
                         for(let key in object)
                         {
                             let value = object[key];
@@ -443,7 +445,7 @@ export function QueryPaths(
 
         else if(typeof object === 'object' && object !== null)
             for(let [property, nextState] of state.Transitions)
-                if(property === '.')
+                if(property === AnySymbol)
                     for(let key in object)
                     {
                         let value = object[property];
