@@ -139,7 +139,7 @@ export class ExternalFunding implements OnDestroy
                 if(!providerParty)
                     providerParty = <PartyInRole>store.Assert(
                         {
-                            AutonomousAgent: legalEntity,
+                            //AutonomousAgent: legalEntity,
                             Organisation   : legalEntity,
                             Role           : this._externalFundingProviderRole,
                         });
@@ -157,6 +157,8 @@ export class ExternalFunding implements OnDestroy
         if(!confirm(`Delete ${this._externalFundingProviderRole.Name} ${provider.Name}?`))
             return;
 
+        const store = Store(this._deal);
+        store.SuspendPublish();
         for(let index = 0; index < this._externalFunding.Obligors.length; ++index)
         {
             let obligor = this._externalFunding.Obligors[index];
@@ -166,9 +168,11 @@ export class ExternalFunding implements OnDestroy
                 this._externalFunding.Obligors.splice(
                     index,
                     1);
-                this.ComputeProviders();
+                store.DeleteEntity(obligor);
                 break;
             }
         }
+        store.UnsuspendPublish();
+        this.ComputeProviders();
     }
 }

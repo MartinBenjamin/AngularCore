@@ -15,7 +15,6 @@ import { Currency } from '../../Iso4217';
 import { Store } from '../../Ontology/IEavStore';
 import { ITransaction } from '../../Ontology/ITransactionManager';
 import { Branch } from '../../Organisations';
-import { PartyInRole } from '../../Parties';
 import { Alternative, Empty, IExpression, Property, Query2, Sequence, ZeroOrMore } from '../../RegularPathExpression';
 import { Role } from '../../Roles';
 import { RolesToken } from '../../RoleServiceProvider';
@@ -51,7 +50,7 @@ export class Facility
     private _deal               : Deal;
     private _agreements         : FacilityAgreement[];
     private _lenderParticipation: LenderParticipation;
-    private _bookingOffice      : PartyInRole;
+    private _bookingOffice      : facilityAgreements.BookingOffice;
     private _applyCallback      : ApplyCallback;
     private _transaction        : ITransaction;
     private _observeErrors      = new BehaviorSubject<boolean>(false);
@@ -207,35 +206,54 @@ export class Facility
                 this._lenderParticipation.Obligors.indexOf(this._bookingOffice),
                 1);
 
-            if(this._deal.Commitments.every(commitment => !commitment.Obligors.includes(this._bookingOffice)))
+            const dealBookingOffice = this._bookingOffice.PartOf;
+            dealBookingOffice.Parts.splice(
+                dealBookingOffice.Parts.indexOf(this._bookingOffice),
+                1);
+
+            if(!dealBookingOffice.Parts.length)
             {
-                // Booking Office party no longer referenced.
                 this._deal.Parties.splice(
-                    this._deal.Parties.indexOf(this._bookingOffice),
+                    this._deal.Parties.indexOf(dealBookingOffice),
                     1);
-                store.DeleteEntity(this._bookingOffice);
+
+                store.DeleteEntity(this._bookingOffice.PartOf);
             }
+
+            store.DeleteEntity(this._bookingOffice);
         }
 
         if(branch)
         {
-            let bookingOffice = this._deal.Parties.find(
-                party => party.Organisation.Id === branch.Id && party.Role.Id === this._bookingOfficeRole.Id);
+            let dealBookingOffice = <facilityAgreements.BookingOffice>this._deal.Parties.find(
+                party => party.Organisation.Id === branch.Id && party.Role.Id === DealRoleIdentifier.BookingOffice);
 
-            if(!bookingOffice)
+            if(!dealBookingOffice)
             {
-                bookingOffice = <PartyInRole>store.Assert(
+                dealBookingOffice = <facilityAgreements.BookingOffice>store.Assert(
                     {
-                        AutonomousAgent: branch,
+                        //AutonomousAgent: branch,
                         Organisation   : branch,
                         Role           : this._bookingOfficeRole,
-                        Period         : null
+                        Period         : null,
+                        Parts          : []
                     });
-                this._deal.Parties.push(bookingOffice);
+                this._deal.Parties.push(dealBookingOffice);
             }
 
+            const bookingOffice = <facilityAgreements.BookingOffice>store.Assert(
+                {
+                    //AutonomousAgent: branch,
+                    Organisation   : branch,
+                    Role           : this._bookingOfficeRole,
+                    Period         : null,
+                    PartOf         : dealBookingOffice
+                });
+
+            dealBookingOffice.Parts.push(bookingOffice);
             this._lenderParticipation.Obligors.push(bookingOffice);
         }
+
         store.UnsuspendPublish();
         this.ComputeBookingOffice();
     }

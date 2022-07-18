@@ -5,11 +5,11 @@ import { commonDomainObjects } from "./CommonDomainObjects";
 
 export class Parties extends Ontology
 {
-
     readonly PartyInRole : IClass;
     readonly Role        : IObjectPropertyExpression;
     readonly Organisation: IObjectPropertyExpression;
     readonly Person      : IObjectPropertyExpression;
+    readonly Period      : IObjectPropertyExpression;
 
     constructor()
     {
@@ -23,6 +23,7 @@ export class Parties extends Ontology
         this.Role         = this.DeclareFunctionalObjectProperty("Role");
         this.Organisation = this.DeclareFunctionalObjectProperty("Organisation");
         this.Person       = this.DeclareFunctionalObjectProperty("Person");
+        this.Period       = this.DeclareFunctionalObjectProperty("Period");
     }
 }
 

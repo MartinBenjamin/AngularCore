@@ -1,4 +1,5 @@
 import { Agreement, Commitment } from "./Agreements";
+import { PartWhole } from './PartWhole';
 
 export interface Contract extends Agreement
 {
@@ -8,10 +9,8 @@ export interface Contract extends Agreement
     EffectiveDate?: Date;
 }
 
-export interface ContractualCommitment extends Commitment
+export interface ContractualCommitment extends Commitment, PartWhole<ContractualCommitment>
 {
     ConferredBy?: Contract;
     MandatedBy ?: Contract;
-    PartOf     ?: ContractualCommitment;
-    Parts      ?: ContractualCommitment[];
 }

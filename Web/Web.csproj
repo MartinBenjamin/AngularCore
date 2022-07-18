@@ -111,6 +111,7 @@
     <None Remove="ClientApp\src\app\Ontologies\ObserveErrors.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Organisations.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Parties.ts" />
+    <None Remove="ClientApp\src\app\Ontologies\PartWhole.ts" />
     <None Remove="ClientApp\src\app\Ontologies\ProjectFinance.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Quantities.ts" />
     <None Remove="ClientApp\src\app\Ontologies\RoleIndividuals.ts" />
@@ -347,6 +348,7 @@
     <None Remove="ClientApp\src\app\Origination\ProjectFinance.ts" />
     <None Remove="ClientApp\src\app\Origination\Sponsors.ts" />
     <None Remove="ClientApp\src\app\Parties.ts" />
+    <None Remove="ClientApp\src\app\PartWhole.ts" />
     <None Remove="ClientApp\src\app\People.ts" />
     <None Remove="ClientApp\src\app\Performance.ts" />
     <None Remove="ClientApp\src\app\ReferenceSerialisation.ts" />
@@ -460,6 +462,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\ObserveErrors.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Organisations.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Parties.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontologies\PartWhole.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\ProjectFinance.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Quantities.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\RoleIndividuals.ts" />
@@ -741,6 +744,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Origination.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Deal\Sponsors.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Parties.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\PartWhole.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Performance.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\RegularPathExpression.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\RegularPathExpression.ts" />

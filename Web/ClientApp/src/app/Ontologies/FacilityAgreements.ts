@@ -4,15 +4,15 @@ import { DataOneOf } from '../Ontology/DataOneOf';
 import { IClass } from '../Ontology/IClass';
 import { IDataPropertyExpression } from '../Ontology/IPropertyExpression';
 import { Ontology } from "../Ontology/Ontology";
+import { SubClassOf } from '../Ontology/SubClassOf';
 import { DateTime, Decimal } from "../Ontology/Xsd";
 import { agreements } from './Agreements';
 import { annotations } from './Annotations';
 import { commonDomainObjects } from "./CommonDomainObjects";
 import { currencyAmount } from './CurrencyAmount';
 import { fees } from './Fees';
+import { partWhole } from './PartWhole';
 import { quantities } from './Quantities';
-import { DataSomeValuesFrom } from '../Ontology/DataSomeValuesFrom';
-import { SubClassOf } from '../Ontology/SubClassOf';
 
 export class FacilityAgreements extends Ontology
 {
@@ -24,6 +24,7 @@ export class FacilityAgreements extends Ontology
     {
         super(
             "FacilityAgreements",
+            partWhole,
             commonDomainObjects,
             quantities,
             currencyAmount,

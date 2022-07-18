@@ -4,6 +4,8 @@ import { AccrualDate } from "./Components/AccrualDate";
 import { Contract, ContractualCommitment } from "./Contracts";
 import { MonetaryAmount } from "./CurrencyAmount";
 import { FeeType, QuantityValue } from './Fees';
+import { PartyInRole } from './Parties';
+import { PartWhole } from './PartWhole';
 
 export interface FacilityAgreement extends Contract
 {
@@ -36,6 +38,10 @@ export interface LenderParticipation extends ContractualCommitment
 }
 
 export interface ExternalFunding extends ContractualCommitment, QuantityValue
+{
+}
+
+export interface BookingOffice extends PartyInRole, PartWhole<BookingOffice>
 {
 }
 
