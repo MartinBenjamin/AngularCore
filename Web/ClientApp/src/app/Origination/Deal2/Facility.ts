@@ -99,22 +99,16 @@ export class Facility
             (dealObserveErrors, observeErrors) => dealObserveErrors || observeErrors).pipe(
                 distinctUntilChanged(),
                 switchMap(
-                    observeErrors =>
-                    {
-                        if(!observeErrors)
-                            return NEVER;
-
-                        return combineLatest(
-                            dealProvider.Errors,
-                            this._facility,
-                            (errors, facility) =>
-                            {
-                                if(!facility)
-                                    return null;
-                                const subgraph = new Set<any>(Facility.SubgraphQuery(facility));
-                                return new Map([...errors.entries()].filter(([entity,]) => subgraph.has(entity)));
-                            }).pipe(share());
-                    }));
+                    observeErrors => !observeErrors ? NEVER : combineLatest(
+                        dealProvider.Errors,
+                        this._facility,
+                        (errors, facility) =>
+                        {
+                            if(!facility)
+                                return null;
+                            const subgraph = new Set<any>(Facility.SubgraphQuery(facility));
+                            return new Map([...errors.entries()].filter(([entity,]) => subgraph.has(entity)));
+                        }).pipe(share())));
 
         this._subscriptions.push(
             roles.subscribe(roles => this._bookingOfficeRole = roles.find(role => role.Id == DealRoleIdentifier.BookingOffice)),
