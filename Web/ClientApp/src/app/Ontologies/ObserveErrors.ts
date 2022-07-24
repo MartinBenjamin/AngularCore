@@ -1,5 +1,5 @@
 import { combineLatest, Observable } from "rxjs";
-import { distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { Guid } from "../CommonDomainObjects";
 import { IsDLSafeRule, ObserveContradictions } from "../Ontology/DLSafeRule";
 import { IAxiom } from "../Ontology/IAxiom";
@@ -199,9 +199,7 @@ export function ObserveErrorsSwitchMap(
                         error));
                 }
 
-        return combineLatest(
-            observables,
-            (...errors) =>
+        return combineLatest(observables).pipe(debounceTime(0), map(errors =>
             {
                 let errorMap = new Map<any, Map<string, Set<Error>>>();
                 errors.forEach(
@@ -232,7 +230,7 @@ export function ObserveErrorsSwitchMap(
                             });
                     });
                 return errorMap;
-            });
+            }));
     }));
 }
 
