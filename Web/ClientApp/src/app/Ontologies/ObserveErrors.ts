@@ -1,4 +1,4 @@
-import { combineLatest, Observable } from "rxjs";
+import { asapScheduler, combineLatest, Observable } from "rxjs";
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { Guid } from "../CommonDomainObjects";
 import { IsDLSafeRule, ObserveContradictions } from "../Ontology/DLSafeRule";
@@ -199,7 +199,7 @@ export function ObserveErrorsSwitchMap(
                         error));
                 }
 
-        return combineLatest(observables).pipe(debounceTime(0), map(errors =>
+        return combineLatest(observables).pipe(debounceTime(0, asapScheduler), map(errors =>
             {
                 let errorMap = new Map<any, Map<string, Set<Error>>>();
                 errors.forEach(
