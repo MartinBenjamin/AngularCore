@@ -1,23 +1,19 @@
-import { Directive, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Directive, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { BehaviorSubject, fromEvent, merge, Observable, Subject, timer } from 'rxjs';
 import { debounce, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { Named } from './CommonDomainObjects';
 import { INamedService, NamedFilters } from './INamedService';
 
 @Directive()
-export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters extends NamedFilters> implements OnInit, OnDestroy
+export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters extends NamedFilters> implements OnInit
 {
     @ViewChild('nameFragmentInput', { static: true })
     private   _nameFragmentInput: ElementRef;
-    protected _filters = <TNamedFilters>{
-        NameFragment: '',
-        MaxResults  : 20
-        };
-    private   _select  : (named: TNamed) => void;
-    private   _cancel  : () => void;
-    private   _reset   = new Subject<string>();
-    private   _finding = new BehaviorSubject<boolean>(false);
-    private   _results : Observable<TNamed[]>;
+    private   _select           : (named: TNamed) => void;
+    private   _cancel           : () => void;
+    private   _reset            = new Subject<string>();
+    private   _finding          = new BehaviorSubject<boolean>(false);
+    private   _results          : Observable<TNamed[]>;
 
     protected constructor(
         private _namedService: INamedService<TId, TNamed, TNamedFilters>
@@ -53,10 +49,6 @@ export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters 
                         });
                 }),
                 tap(() => this._finding.next(false)));
-    }
-
-    ngOnDestroy(): void
-    {
     }
 
     get Open(): boolean
