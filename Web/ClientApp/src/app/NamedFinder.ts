@@ -1,6 +1,6 @@
-import { ElementRef, Input, OnDestroy, OnInit, ViewChild, Directive } from '@angular/core';
-import { BehaviorSubject, fromEvent, merge, Observable, Subject, Subscription, timer } from 'rxjs';
-import { debounce, distinctUntilChanged, filter, map } from 'rxjs/operators';
+import { Directive, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { BehaviorSubject, fromEvent, merge, Observable, Subject, timer } from 'rxjs';
+import { debounce, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { Named } from './CommonDomainObjects';
 import { INamedService, NamedFilters } from './INamedService';
 
@@ -9,16 +9,15 @@ export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters 
 {
     @ViewChild('nameFragmentInput', { static: true })
     private   _nameFragmentInput: ElementRef;
-    private   _subscription     : Subscription;
     protected _filters = <TNamedFilters>{
         NameFragment: '',
         MaxResults  : 20
         };
-    private   _select           : (named: TNamed) => void;
-    private   _cancel           : () => void;
-    private   _reset            = new Subject<string>();
-    private   _finding          = new BehaviorSubject<boolean>(false);
-    private   _results          = new BehaviorSubject<TNamed[]>(null);
+    private   _select  : (named: TNamed) => void;
+    private   _cancel  : () => void;
+    private   _reset   = new Subject<string>();
+    private   _finding = new BehaviorSubject<boolean>(false);
+    private   _results : Observable<TNamed[]>;
 
     protected constructor(
         private _namedService: INamedService<TId, TNamed, TNamedFilters>
@@ -28,30 +27,36 @@ export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters 
 
     ngOnInit(): void
     {
-        let component = this;
-        this._subscription = merge(
+        const empty = new BehaviorSubject<TNamed[]>([]).asObservable();
+
+        this._results = merge(
             merge(
                 fromEvent(
                     this._nameFragmentInput.nativeElement,
                     'keyup'),
                 fromEvent(
                     this._nameFragmentInput.nativeElement,
-                    'click')).pipe(map(() => (<HTMLInputElement>component._nameFragmentInput.nativeElement).value.toLowerCase())),
+                    'click')).pipe(map(() => (<HTMLInputElement>this._nameFragmentInput.nativeElement).value)),
             this._reset).pipe(
                 distinctUntilChanged(),
                 debounce(nameFragment => timer(nameFragment == null ? 0 : 750)),
-                filter(nameFragment => nameFragment != null))
-            .subscribe(nameFragment =>
-            {
-                this._filters.NameFragment = nameFragment;
-                this.ExecuteFind();
-            });
+                switchMap(nameFragment =>
+                {
+                    if(nameFragment === null)
+                        return empty;
+
+                    this._finding.next(true);
+                    return this._namedService.Find(
+                        <TNamedFilters>{
+                            NameFragment: nameFragment,
+                            MaxResults  : 20
+                        });
+                }),
+                tap(() => this._finding.next(false)));
     }
 
     ngOnDestroy(): void
     {
-        if(this._subscription)
-            this._subscription.unsubscribe();
     }
 
     get Open(): boolean
@@ -100,23 +105,9 @@ export abstract class NamedFinder<TId, TNamed extends Named<TId>, TNamedFilters 
     protected Close(): void
     {
         this._nameFragmentInput.nativeElement.value = '';
-        this._results.next(null);
         this._finding.next(false);
         this._select = null;
         this._cancel = null;
         this._reset.next(null);
-    }
-
-    protected ExecuteFind()
-    {
-        this._finding.next(true);
-        this._namedService.Find(
-            this._filters
-            ).subscribe(
-                results =>
-                {
-                    this._results.next(results);
-                    this._finding.next(false);
-                });
     }
 }
