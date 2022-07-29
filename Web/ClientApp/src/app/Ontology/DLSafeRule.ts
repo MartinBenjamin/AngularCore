@@ -1,5 +1,5 @@
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { BuiltIn, Equal, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, NotEqual } from './Atom';
 import { Axiom } from './Axiom';
 import { IsConstant, IsVariable } from './EavStore';
@@ -587,6 +587,191 @@ export class Generator implements IAtomSelector<Observable<object[]>>
             next = atom.Select(this);
         }
         return next;
+    }
+}
+
+export class Generator2 implements IAtomSelector<Observable<{}[]> | BuiltIn>
+{
+    constructor(
+        private _store                   : IEavStore,
+        private _classObservableGenerator: IClassExpressionSelector<Observable<Set<any>>>
+        )
+    {
+    }
+
+    Class(
+        class$: IClassAtom
+        ): Observable<{}[]>
+    {
+        if(IsVariable(class$.Individual))
+            return class$.ClassExpression.Select(this._classObservableGenerator).pipe(
+                map(
+                    individuals => [...individuals].map(
+                        individual =>
+                        {
+                            return { [<string>class$.Individual]: individual };
+                        })));
+
+        return class$.ClassExpression.Select(this._classObservableGenerator).pipe(
+            filter(individuals => individuals.has(class$.Individual)),
+            map(() => [{ }]));
+    }
+
+    DataRange(
+        dataRange: IDataRangeAtom
+        ): BuiltIn
+    {
+        return function*(
+            substitutions: Iterable<object>
+            )
+        {
+            if(IsConstant(dataRange.Value))
+                return dataRange.DataRange.HasMember(dataRange.Value) ? substitutions : [];
+
+            return [...substitutions].filter(substitution => dataRange.DataRange.HasMember(substitution[dataRange.Value]));
+        };
+    }
+
+    ObjectProperty(
+        objectProperty: IObjectPropertyAtom
+        ): Observable<{}[]>
+    {
+        return this.Property([objectProperty.Domain, objectProperty.ObjectPropertyExpression.LocalName, objectProperty.Range]);
+    }
+
+    DataProperty(
+        dataProperty: IDataPropertyAtom
+        ): Observable<{}[]>
+    {
+        return this.Property([dataProperty.Domain, dataProperty.DataPropertyExpression.LocalName, dataProperty.Range]);
+    }
+
+    private Property(
+        atom: Fact
+        ): Observable<{}[]>
+    {
+        const keys = [0, 2];
+        return this._store.ObserveAtom(atom)
+            .pipe(map(
+                facts =>
+                {
+                    const substitutions = [];
+                    for(const fact of facts)
+                    {
+                        let substitution = {};
+
+                        for(const key of keys)
+                        {
+                            const term = atom[key];
+
+                            if(IsVariable(term))
+                            {
+                                if(typeof substitution[term] === 'undefined')
+                                    substitution[term] = fact[key];
+
+                                else if(substitution[term] !== fact[key])
+                                {
+                                    substitution = null;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if(substitution)
+                            substitutions.push(substitution);
+                    }
+
+                    return substitutions;
+                }));
+    }
+
+    LessThan(
+        lessThan: ILessThanAtom
+        ): BuiltIn
+    {
+        return LessThan(lessThan.Lhs, lessThan.Rhs);
+    }
+
+    LessThanOrEqual(
+        lessThanOrEqual: ILessThanOrEqualAtom
+        ): BuiltIn
+    {
+
+        return LessThanOrEqual(lessThanOrEqual.Lhs, lessThanOrEqual.Rhs);
+    }
+
+    Equal(
+        equal: IEqualAtom
+        ): BuiltIn
+    {
+        return Equal(equal.Lhs, equal.Rhs);
+    }
+
+    NotEqual(
+        notEqual: INotEqualAtom
+        ): BuiltIn
+    {
+        return NotEqual(notEqual.Lhs, notEqual.Rhs);
+    }
+
+    GreaterThanOrEqual(
+        greaterThanOrEqual: IGreaterThanOrEqualAtom
+        ): BuiltIn
+    {
+        return GreaterThanOrEqual(greaterThanOrEqual.Lhs, greaterThanOrEqual.Rhs);
+    }
+
+    GreaterThan(
+        greaterThan: IGreaterThanAtom
+        ): BuiltIn
+    {
+        return GreaterThan(greaterThan.Lhs, greaterThan.Rhs);
+    }
+
+    Atoms(
+        atoms: IAtom[]
+        ): Observable<{}[]>
+    {
+        let current = new BehaviorSubject<{}[]>([{}]).asObservable();
+        for(const atom of atoms)
+        {
+            const next = atom.Select(<IAtomSelector<Observable<{}[]> | BuiltIn>>this);
+
+            if(typeof next === 'function')
+                current = current.pipe(map(substitutions => [...next(substitutions)]));
+
+            else
+                current = combineLatest(
+                    current,
+                    next,
+                    (current, next) =>
+                    {
+                        const substitutions = [];
+                        for(const lhs of current)
+                            for(const rhs of next)
+                            {
+                                if(Object.keys(rhs).every(key => typeof lhs[key] === 'undefined' || lhs[key] === rhs[key]))
+                                    substitutions.push({ ...lhs, ...rhs });
+                                    
+                                //let merged = { ...lhs };
+                                //for(const key in rhs)
+                                //    if(typeof merged[key] === 'undefined')
+                                //        merged[key] = rhs[key];
+
+                                //    else if(merged[key] !== rhs[key])
+                                //    {
+                                //        merged = null;
+                                //        break;
+                                //    }
+
+                                //if(merged)
+                                //    substitutions.push(merged);
+                            }
+                        return substitutions;
+                    });
+        }
+
+        return current;
     }
 }
 
