@@ -749,24 +749,8 @@ export class Generator2 implements IAtomSelector<Observable<{}[]> | BuiltIn>
                         const substitutions = [];
                         for(const lhs of current)
                             for(const rhs of next)
-                            {
                                 if(Object.keys(rhs).every(key => typeof lhs[key] === 'undefined' || lhs[key] === rhs[key]))
                                     substitutions.push({ ...lhs, ...rhs });
-                                    
-                                //let merged = { ...lhs };
-                                //for(const key in rhs)
-                                //    if(typeof merged[key] === 'undefined')
-                                //        merged[key] = rhs[key];
-
-                                //    else if(merged[key] !== rhs[key])
-                                //    {
-                                //        merged = null;
-                                //        break;
-                                //    }
-
-                                //if(merged)
-                                //    substitutions.push(merged);
-                            }
                         return substitutions;
                     });
         }
@@ -776,7 +760,7 @@ export class Generator2 implements IAtomSelector<Observable<{}[]> | BuiltIn>
 }
 
 function ObserveRuleContradictions(
-    generator: Generator,
+    generator: Generator2,
     rule     : IDLSafeRule
     ): Observable<object[]>
 {
@@ -806,7 +790,7 @@ export function* ObserveContradictions(
     rules                   : Iterable<IDLSafeRule>
     ): Iterable<Observable<[string, IAxiom, Set<any>]>>
 {
-    const generator = new Generator(
+    const generator = new Generator2(
         store,
         observableClassGenerator);
 
