@@ -132,16 +132,24 @@ export class EavStore implements IEavStore, IPublisher
         const facts: Fact[] = [];
 
         function ProcessValue(
-            entity   : any,
-            attribute: PropertyKey,
-            value    : any
+            e: any,
+            a: PropertyKey,
+            v: any
             )
         {
-            if(value instanceof Array)
-                facts.push(...value.map<Fact>(value => [entity, attribute, value]));
+            if(typeof value !== 'undefined')
+            {
+                if((v instanceof Array && v.includes(value)) || v === value)
+                    facts.push([e, a, value]);
+            }
+            else
+            {
+                if(v instanceof Array)
+                    facts.push(...v.map<Fact>(v => [e, a, v]));
 
-            else if(typeof value !== 'undefined' && value !== null)
-                facts.push([entity, attribute, value]);
+                else if(typeof v !== 'undefined' && v !== null)
+                    facts.push([e, a, v]);
+            }
         }
 
         if(typeof entity !== 'undefined')
@@ -177,7 +185,7 @@ export class EavStore implements IEavStore, IPublisher
                     attribute,
                     value);
 
-        return typeof value !== 'undefined' ? facts.filter(fact => fact[2] === value) : facts;
+        return facts;
     }
 
     Query<T extends [any, ...any[]]>(
