@@ -57,7 +57,7 @@ export class EavStore implements IEavStore, IPublisher
     private _eav                = new Map<any, Map<PropertyKey, any>>();
     private _aev                = new Map<PropertyKey, Map<any, any>>();
     private _ave                : Map<PropertyKey, Map<any, any>>;
-    private _entitiesSubscribers: Subscriber<Set<any>>[] = [];
+    private _entitiesSubscribers= new Set<Subscriber<Set<any>>>();
     private _atomSubscribers    = new ArrayKeyedMap<Fact, Set<Subscriber<Fact[]>>>();
     private _schema             : Map<PropertyKey, AttributeSchema>;
     private _publishSuspended   = 0;
@@ -109,19 +109,9 @@ export class EavStore implements IEavStore, IPublisher
         return new Observable<Set<any>>(
             subscriber =>
             {
-                this._entitiesSubscribers.push(subscriber);
-                subscriber.next(new Set<any>(this.Entities()));
-
-                subscriber.add(
-                    () =>
-                    {
-                        const index = this._entitiesSubscribers.indexOf(subscriber);
-
-                        if(index != -1)
-                            this._entitiesSubscribers.splice(
-                                index,
-                                1);
-                    });
+                this._entitiesSubscribers.add(subscriber);
+                subscriber.add(() => this._entitiesSubscribers.delete(subscriber));
+                subscriber.next(this.Entities());
             });
     }
 
@@ -670,7 +660,7 @@ export class EavStore implements IEavStore, IPublisher
             return;
         }
 
-        if(this._entitiesSubscribers.length)
+        if(this._entitiesSubscribers.size)
         {
             const entities = this.Entities();
             this._entitiesSubscribers.forEach(subscriber => subscriber.next(entities));
