@@ -129,53 +129,57 @@ export class EavStore implements IEavStore, IPublisher
         [entity, attribute, value]: Fact
         ): Fact[]
     {
+        function ProcessValue(
+            entity   : any,
+            attribute: PropertyKey,
+            value    : any,
+            facts    : Fact[]
+            )
+        {
+            if(value instanceof Array)
+                facts.push(...value.map<Fact>(value => [entity, attribute, value]));
+
+            else if(typeof value !== 'undefined' && value !== null)
+                facts.push([entity, attribute, value]);
+        }
+
         const facts: Fact[] = [];
         if(typeof entity !== 'undefined')
         {
             const av = this._eav.get(entity)
             if(av)
                 if(typeof attribute !== 'undefined')
-                {
-                    const value = av.get(attribute);
-                    if(value instanceof Array)
-                        facts.push(...value.map<Fact>(value => [entity, attribute, value]));
+                    ProcessValue(
+                        entity,
+                        attribute,
+                        av.get(attribute),
+                        facts);
 
-                    else if(typeof value !== 'undefined' && value !== null)
-                        facts.push([entity, attribute, value]);
-                }
                 else for(const [attribute, value] of av)
-                {
-                    if(value instanceof Array)
-                        facts.push(...value.map<Fact>(value => [entity, attribute, value]));
-
-                    else if(typeof value !== 'undefined' && value !== null)
-                        facts.push([entity, attribute, value]);
-                }
+                    ProcessValue(
+                        entity,
+                        attribute,
+                        value,
+                        facts);
         }
         else if(typeof attribute !== 'undefined')
         {
             const ev = this._aev.get(attribute);
             if(ev)
-            {
                 for(const [entity, value] of ev)
-                {
-                    if(value instanceof Array)
-                        facts.push(...value.map<Fact>(value => [entity, attribute, value]));
-
-                    else if(typeof value !== 'undefined' && value !== null)
-                        facts.push([entity, attribute, value]);
-                }
-            }
+                    ProcessValue(
+                        entity,
+                        attribute,
+                        value,
+                        facts);
         }
         else for(const [entity, av] of this._eav)
             for(const [attribute, value] of av)
-            {
-                if(value instanceof Array)
-                    facts.push(...value.map<Fact>(value => [entity, attribute, value]));
-
-                else if(typeof value !== 'undefined' && value !== null)
-                    facts.push([entity, attribute, value]);
-            }
+                ProcessValue(
+                    entity,
+                    attribute,
+                    value,
+                    facts);
 
         return typeof value !== 'undefined' ? facts.filter(fact => fact[2] === value) : facts;
     }
