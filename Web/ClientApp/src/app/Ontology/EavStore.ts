@@ -130,60 +130,76 @@ export class EavStore implements IEavStore, IPublisher
         ): Fact[]
     {
         const facts: Fact[] = [];
-
-        const processFact = typeof value !== 'undefined' ?
-            (
-                e: any,
-                a: PropertyKey,
-                v: any) =>
-            {
-                if((v instanceof Array && v.includes(value)) || v === value)
-                    facts.push([e, a, value]);
-            } :
-            (
-                e: any,
-                a: PropertyKey,
-                v: any) =>
-            {
-                if(v instanceof Array)
-                    facts.push(...v.map<Fact>(v => [e, a, v]));
-
-                else if(typeof v !== 'undefined' && v !== null)
-                    facts.push([e, a, v]);
-            };
-
         if(typeof entity !== 'undefined')
         {
             const av = this._eav.get(entity)
             if(av)
                 if(typeof attribute !== 'undefined')
-                    processFact(
-                        entity,
-                        attribute,
-                        av.get(attribute));
+                {
+                    const v = av.get(attribute);
+                    if(typeof value !== 'undefined')
+                    {
+                        if((v instanceof Array && v.includes(value)) || v === value)
+                            facts.push([entity, attribute, value]);
+                    }
+                    else
+                    {
+                        if(v instanceof Array)
+                            facts.push(...v.map<Fact>(v => [entity, attribute, v]));
 
-                else for(const [attribute, value] of av)
-                    processFact(
-                        entity,
-                        attribute,
-                        value);
+                        else if(typeof v !== 'undefined' && v !== null)
+                            facts.push([entity, attribute, v]);
+                    }
+                }
+                else for(const [a, v] of av)
+                    if(typeof value !== 'undefined')
+                    {
+                        if((v instanceof Array && v.includes(value)) || v === value)
+                            facts.push([entity, a, value]);
+                    }
+                    else
+                    {
+                        if(v instanceof Array)
+                            facts.push(...v.map<Fact>(v => [entity, a, v]));
+
+                        else if(typeof v !== 'undefined' && v !== null)
+                            facts.push([entity, a, v]);
+                    }
         }
         else if(typeof attribute !== 'undefined')
         {
             const ev = this._aev.get(attribute);
             if(ev)
-                for(const [entity, value] of ev)
-                    processFact(
-                        entity,
-                        attribute,
-                        value);
+                for(const [e, v] of ev)
+                    if(typeof value !== 'undefined')
+                    {
+                        if((v instanceof Array && v.includes(value)) || v === value)
+                            facts.push([e, attribute, value]);
+                    }
+                    else
+                    {
+                        if(v instanceof Array)
+                            facts.push(...v.map<Fact>(v => [e, attribute, v]));
+
+                        else if(typeof v !== 'undefined' && v !== null)
+                            facts.push([e, attribute, v]);
+                    }
         }
-        else for(const [entity, av] of this._eav)
-            for(const [attribute, value] of av)
-                processFact(
-                    entity,
-                    attribute,
-                    value);
+        else for(const [e, av] of this._eav)
+            for(const [a, v] of av)
+                if(typeof value !== 'undefined')
+                {
+                    if((v instanceof Array && v.includes(value)) || v === value)
+                        facts.push([e, a, value]);
+                }
+                else
+                {
+                    if(v instanceof Array)
+                        facts.push(...v.map<Fact>(v => [e, a, v]));
+
+                    else if(typeof v !== 'undefined' && v !== null)
+                        facts.push([e, a, v]);
+                }
 
         return facts;
     }
