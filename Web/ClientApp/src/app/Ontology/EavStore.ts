@@ -129,11 +129,12 @@ export class EavStore implements IEavStore, IPublisher
         [entity, attribute, value]: Fact
         ): Fact[]
     {
+        const facts: Fact[] = [];
+
         function ProcessValue(
             entity   : any,
             attribute: PropertyKey,
-            value    : any,
-            facts    : Fact[]
+            value    : any
             )
         {
             if(value instanceof Array)
@@ -143,7 +144,6 @@ export class EavStore implements IEavStore, IPublisher
                 facts.push([entity, attribute, value]);
         }
 
-        const facts: Fact[] = [];
         if(typeof entity !== 'undefined')
         {
             const av = this._eav.get(entity)
@@ -152,15 +152,13 @@ export class EavStore implements IEavStore, IPublisher
                     ProcessValue(
                         entity,
                         attribute,
-                        av.get(attribute),
-                        facts);
+                        av.get(attribute));
 
                 else for(const [attribute, value] of av)
                     ProcessValue(
                         entity,
                         attribute,
-                        value,
-                        facts);
+                        value);
         }
         else if(typeof attribute !== 'undefined')
         {
@@ -170,16 +168,14 @@ export class EavStore implements IEavStore, IPublisher
                     ProcessValue(
                         entity,
                         attribute,
-                        value,
-                        facts);
+                        value);
         }
         else for(const [entity, av] of this._eav)
             for(const [attribute, value] of av)
                 ProcessValue(
                     entity,
                     attribute,
-                    value,
-                    facts);
+                    value);
 
         return typeof value !== 'undefined' ? facts.filter(fact => fact[2] === value) : facts;
     }
