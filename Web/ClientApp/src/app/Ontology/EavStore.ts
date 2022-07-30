@@ -131,39 +131,39 @@ export class EavStore implements IEavStore, IPublisher
     {
         const facts: Fact[] = [];
 
-        function ProcessValue(
-            e: any,
-            a: PropertyKey,
-            v: any
-            )
-        {
-            if(typeof value !== 'undefined')
+        const processFact = typeof value !== 'undefined' ?
+            (
+                e: any,
+                a: PropertyKey,
+                v: any) =>
             {
                 if((v instanceof Array && v.includes(value)) || v === value)
                     facts.push([e, a, value]);
-            }
-            else
+            } :
+            (
+                e: any,
+                a: PropertyKey,
+                v: any) =>
             {
                 if(v instanceof Array)
                     facts.push(...v.map<Fact>(v => [e, a, v]));
 
                 else if(typeof v !== 'undefined' && v !== null)
                     facts.push([e, a, v]);
-            }
-        }
+            };
 
         if(typeof entity !== 'undefined')
         {
             const av = this._eav.get(entity)
             if(av)
                 if(typeof attribute !== 'undefined')
-                    ProcessValue(
+                    processFact(
                         entity,
                         attribute,
                         av.get(attribute));
 
                 else for(const [attribute, value] of av)
-                    ProcessValue(
+                    processFact(
                         entity,
                         attribute,
                         value);
@@ -173,14 +173,14 @@ export class EavStore implements IEavStore, IPublisher
             const ev = this._aev.get(attribute);
             if(ev)
                 for(const [entity, value] of ev)
-                    ProcessValue(
+                    processFact(
                         entity,
                         attribute,
                         value);
         }
         else for(const [entity, av] of this._eav)
             for(const [attribute, value] of av)
-                ProcessValue(
+                processFact(
                     entity,
                     attribute,
                     value);
