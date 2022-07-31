@@ -92,7 +92,7 @@ export class SortedList<T>
                 this._array[start],
                 t) === 0 ? start : -1;
 
-        const mid = (start + end) / 2;
+        const mid = Math.floor((start + end) / 2);
         const midValue = this._array[mid];
         const comparison = this._compare(midValue, t);
 
@@ -122,7 +122,7 @@ export class SortedList<T>
                 this._array[start],
                 t) < 0 ? start : -1;
 
-        const mid = (start + end + 1) / 2;
+        const mid = Math.ceil((start + end) / 2);
         const midValue = this._array[mid];
         const comparison = this._compare(midValue, t);
 
@@ -152,7 +152,7 @@ export class SortedList<T>
                 this._array[start],
                 t) === 0 ? start : -1;
 
-        const mid = (start + end + 1) / 2;
+        const mid = Math.ceil((start + end) / 2);
         const midValue = this._array[mid];
         const comparison = this._compare(midValue, t);
 
@@ -182,7 +182,7 @@ export class SortedList<T>
                 this._array[start],
                 t) > 0 ? start : -1;
 
-        const mid = (start + end) / 2;
+        const mid = Math.floor((start + end) / 2);
         const midValue = this._array[mid];
         const comparison = this._compare(midValue, t);
 
