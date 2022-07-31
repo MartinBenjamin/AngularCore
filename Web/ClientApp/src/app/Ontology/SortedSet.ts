@@ -290,7 +290,7 @@ export class SortedSet<T> extends SortedList<T> implements Set<T>
 
     *values(): IterableIterator<T>
     {
-        for(const [, value] of this._array.entries())
+        for(const value of this._array)
             yield value;
     }
 

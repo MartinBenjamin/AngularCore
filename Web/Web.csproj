@@ -303,6 +303,7 @@
     <None Remove="ClientApp\src\app\Ontology\PropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\ReservedVocabulary.ts" />
     <None Remove="ClientApp\src\app\Ontology\SortedList.Spec.ts" />
+    <None Remove="ClientApp\src\app\Ontology\SortedSet.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\SortedSet.ts" />
     <None Remove="ClientApp\src\app\Ontology\SubClassOf.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\SubClassOf.ts" />
@@ -656,6 +657,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ReservedVocabulary.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\PrefixIris.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\SortedList.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\SortedSet.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\SortedSet.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\SubClassOf.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\SubClassOf.ts" />
