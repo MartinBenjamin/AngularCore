@@ -93,18 +93,16 @@ export class SortedList<T>
                 t) === 0 ? start : -1;
 
         const mid = Math.floor((start + end) / 2);
-        const midValue = this._array[mid];
-        const comparison = this._compare(midValue, t);
 
-        if(comparison < 0)
-            // midValue < t.
+        if(this._compare(this._array[mid], t) < 0)
+            // mid value < t.
             return this.findFirst(
                 t,
                 mid + 1,
                 end);
 
         else
-            // midValue >= t.
+            // mid value >= t.
             return this.findFirst(
                 t,
                 start,
@@ -123,18 +121,16 @@ export class SortedList<T>
                 t) < 0 ? start : -1;
 
         const mid = Math.ceil((start + end) / 2);
-        const midValue = this._array[mid];
-        const comparison = this._compare(midValue, t);
 
-        if(comparison < 0)
-            // midValue < t.
+        if(this._compare(this._array[mid], t) < 0)
+            // mid value < t.
             return this.findLastBefore(
                 t,
                 mid,
                 end);
 
         else
-            // midValue >= t;
+            // mid value >= t;
             return this.findLastBefore(
                 t,
                 start,
@@ -153,18 +149,16 @@ export class SortedList<T>
                 t) === 0 ? start : -1;
 
         const mid = Math.ceil((start + end) / 2);
-        const midValue = this._array[mid];
-        const comparison = this._compare(midValue, t);
 
-        if(comparison <= 0)
-            // midValue <= t.
+        if(this._compare(this._array[mid], t) <= 0)
+            // mid value <= t.
             return this.findLast(
                 t,
                 mid,
                 end);
 
         else
-            // midValue > t.
+            // mid value > t.
             return this.findLast(
                 t,
                 start,
@@ -183,18 +177,16 @@ export class SortedList<T>
                 t) > 0 ? start : -1;
 
         const mid = Math.floor((start + end) / 2);
-        const midValue = this._array[mid];
-        const comparison = this._compare(midValue, t);
 
-        if(comparison <= 0)
-            // midValue <= t.
+        if(this._compare(this._array[mid], t) <= 0)
+            // mid value <= t.
             return this.findFirstAfter(
                 t,
                 mid + 1,
                 end);
 
         else
-            // midValue > t.
+            // mid value > t.
             return this.findFirstAfter(
                 t,
                 start,
