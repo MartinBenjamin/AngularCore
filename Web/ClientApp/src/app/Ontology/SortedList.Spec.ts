@@ -1,6 +1,5 @@
 import { } from 'jasmine';
 import { assertBuilder } from './assertBuilder';
-import { ArraySet } from './ArraySet';
 import { SortedList } from './SortedSet';
 
 describe(
