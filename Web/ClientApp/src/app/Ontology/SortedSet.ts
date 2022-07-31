@@ -21,10 +21,16 @@ export class SortedList<T>
         value: T
         ): this
     {
-        this._array.splice(
-            this.last(value) + 1,
-            0,
-            value);
+        const index = this.firstAfter(value);
+
+        if(index === -1)
+            this._array.push(value);
+
+        else
+            this._array.splice(
+                this.firstAfter(value),
+                0,
+                value);
 
         return this;
     }
