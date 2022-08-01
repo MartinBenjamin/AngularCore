@@ -36,10 +36,25 @@ export class SortedList<T>
         if(!this._array.length)
             return -1;
 
-        return this.findFirst(
-            t,
-            0,
-            this._array.length - 1);
+        let start = 0;
+        let end = this._array.length - 1;
+
+        while(start !== end)
+        {
+            const mid = Math.floor((start + end) / 2);
+
+            if(this._compare(this._array[mid], t) < 0)
+                // mid value < t.
+                start = mid + 1;
+
+            else
+                // mid value >= t.
+                end = mid;
+        }
+
+        return this._compare(
+            this._array[start],
+            t) === 0 ? start : -1;
     }
 
     lastBefore(
@@ -49,10 +64,25 @@ export class SortedList<T>
         if(!this._array.length)
             return -1;
 
-        return this.findLastBefore(
-            t,
-            0,
-            this._array.length - 1);
+        let start = 0;
+        let end = this._array.length - 1;
+
+        while(start !== end)
+        {
+            const mid = Math.ceil((start + end) / 2);
+
+            if(this._compare(this._array[mid], t) < 0)
+                // mid value < t.
+                start = mid;
+
+            else
+                // mid value >= t;
+                end = mid - 1;
+        }
+
+        return this._compare(
+            this._array[start],
+            t) < 0 ? start : -1;
     }
 
     last(
@@ -62,10 +92,25 @@ export class SortedList<T>
         if(!this._array.length)
             return -1;
 
-        return this.findLast(
-            t,
-            0,
-            this._array.length - 1);
+        let start = 0;
+        let end = this._array.length - 1;
+
+        while(start !== end)
+        {
+            const mid = Math.ceil((start + end) / 2);
+
+            if(this._compare(this._array[mid], t) <= 0)
+                // mid value <= t.
+                start = mid;
+
+            else
+                // mid value > t.
+                end = mid - 1;
+        }
+
+        return this._compare(
+            this._array[start],
+            t) === 0 ? start : -1;
     }
 
     firstAfter(
@@ -75,122 +120,25 @@ export class SortedList<T>
         if(!this._array.length)
             return -1;
 
-        return this.findFirstAfter(
-            t,
-            0,
-            this._array.length - 1);
-    }
+        let start = 0;
+        let end = this._array.length - 1;
 
-    private findFirst(
-        t    : T,          
-        start: number,
-        end  : number           
-        ): number
-    {
-        if(start === end)
-            return this._compare(
-                this._array[start],
-                t) === 0 ? start : -1;
+        while(start !== end)
+        {
+            const mid = Math.floor((start + end) / 2);
 
-        const mid = Math.floor((start + end) / 2);
+            if(this._compare(this._array[mid], t) <= 0)
+                // mid value <= t.
+                start = mid + 1;
 
-        if(this._compare(this._array[mid], t) < 0)
-            // mid value < t.
-            return this.findFirst(
-                t,
-                mid + 1,
-                end);
+            else
+                // mid value > t.
+                end = mid;
+        }
 
-        else
-            // mid value >= t.
-            return this.findFirst(
-                t,
-                start,
-                mid);
-    }
-
-    private findLastBefore(
-        t    : T,
-        start: number,
-        end  : number
-        ): number
-    {
-        if(start === end)
-            return this._compare(
-                this._array[start],
-                t) < 0 ? start : -1;
-
-        const mid = Math.ceil((start + end) / 2);
-
-        if(this._compare(this._array[mid], t) < 0)
-            // mid value < t.
-            return this.findLastBefore(
-                t,
-                mid,
-                end);
-
-        else
-            // mid value >= t;
-            return this.findLastBefore(
-                t,
-                start,
-                mid - 1);
-    }
-
-    private findLast(
-        t    : T,          
-        start: number,
-        end  : number           
-        ): number
-    {
-        if(start == end)
-            return this._compare(
-                this._array[start],
-                t) === 0 ? start : -1;
-
-        const mid = Math.ceil((start + end) / 2);
-
-        if(this._compare(this._array[mid], t) <= 0)
-            // mid value <= t.
-            return this.findLast(
-                t,
-                mid,
-                end);
-
-        else
-            // mid value > t.
-            return this.findLast(
-                t,
-                start,
-                mid - 1);
-    }
-
-    private findFirstAfter(
-        t    : T,          
-        start: number,
-        end  : number           
-        ): number
-    {
-        if(start == end)
-            return this._compare(
-                this._array[start],
-                t) > 0 ? start : -1;
-
-        const mid = Math.floor((start + end) / 2);
-
-        if(this._compare(this._array[mid], t) <= 0)
-            // mid value <= t.
-            return this.findFirstAfter(
-                t,
-                mid + 1,
-                end);
-
-        else
-            // mid value > t.
-            return this.findFirstAfter(
-                t,
-                start,
-                mid);
+        return this._compare(
+            this._array[start],
+            t) > 0 ? start : -1;
     }
 }
 
