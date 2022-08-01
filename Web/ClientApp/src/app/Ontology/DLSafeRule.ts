@@ -590,7 +590,7 @@ export class Generator implements IAtomSelector<Observable<object[]>>
     }
 }
 
-export class Generator2 implements IAtomSelector<Observable<{}[]> | BuiltIn>
+export class Generator2 implements IAtomSelector<Observable<object[]> | BuiltIn>
 {
     constructor(
         private _store                   : IEavStore,
@@ -601,7 +601,7 @@ export class Generator2 implements IAtomSelector<Observable<{}[]> | BuiltIn>
 
     Class(
         class$: IClassAtom
-        ): Observable<{}[]>
+        ): Observable<object[]>
     {
         if(IsVariable(class$.Individual))
             return class$.ClassExpression.Select(this._classObservableGenerator).pipe(
@@ -634,21 +634,21 @@ export class Generator2 implements IAtomSelector<Observable<{}[]> | BuiltIn>
 
     ObjectProperty(
         objectProperty: IObjectPropertyAtom
-        ): Observable<{}[]>
+        ): Observable<object[]>
     {
         return this.Property([objectProperty.Domain, objectProperty.ObjectPropertyExpression.LocalName, objectProperty.Range]);
     }
 
     DataProperty(
         dataProperty: IDataPropertyAtom
-        ): Observable<{}[]>
+        ): Observable<object[]>
     {
         return this.Property([dataProperty.Domain, dataProperty.DataPropertyExpression.LocalName, dataProperty.Range]);
     }
 
     private Property(
         atom: Fact
-        ): Observable<{}[]>
+        ): Observable<object[]>
     {
         const keys = [0, 2];
         return this._store.ObserveAtom(atom)
@@ -730,12 +730,12 @@ export class Generator2 implements IAtomSelector<Observable<{}[]> | BuiltIn>
 
     Atoms(
         atoms: IAtom[]
-        ): Observable<{}[]>
+        ): Observable<object[]>
     {
-        let current = new BehaviorSubject<{}[]>([{}]).asObservable();
+        let current = new BehaviorSubject<object[]>([{}]).asObservable();
         for(const atom of atoms)
         {
-            const next = atom.Select(<IAtomSelector<Observable<{}[]> | BuiltIn>>this);
+            const next = atom.Select(<IAtomSelector<Observable<object[]> | BuiltIn>>this);
 
             if(typeof next === 'function')
                 current = current.pipe(map(substitutions => [...next(substitutions)]));
