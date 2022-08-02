@@ -1,6 +1,23 @@
 import { } from 'jasmine';
 import { assertBuilder } from './assertBuilder';
 import { ArraySet } from './ArraySet';
+import { SortedSet } from './SortedSet';
+
+function compareTuple(
+    lhs: any[],
+    rhs: any[]
+): number
+{
+    const difference = lhs.length - rhs.length;
+    if(difference !== 0)
+        return difference;
+
+    for(let index = 0; index < lhs.length; ++index)
+        if(lhs[index] !== rhs[index])
+            return lhs[index] < rhs[index] ? -1 : 1;
+
+    return 0;
+}
 
 describe(
     'ArraySet',
@@ -12,6 +29,7 @@ describe(
             {
                 const values: any[][] = [[], [0], [0, 1], [0, 2]];
                 const set = new ArraySet(values);
+                //const set = new SortedSet(compareTuple, values)
                 let assert = assertBuilder('values', 'set')(values, set);
                 assert('set.size === 4');
                 assert('values.every(value => set.has(value))');
