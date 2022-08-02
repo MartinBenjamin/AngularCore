@@ -31,6 +31,8 @@ describe(
                     assert(`set.add(${value}) === set`);
                     assert(`set.size === 4`);
                     assert(`set.has(${value})`);
+                    assert(`set.add(${value}) === set`);
+                    assert(`set.size === 4`);
                     assert(`set.delete(${value})`);
                     assert(`set.size === 3`);
                     assert(`!set.has(${value})`);
