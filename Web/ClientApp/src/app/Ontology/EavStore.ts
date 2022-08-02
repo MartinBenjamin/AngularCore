@@ -1089,11 +1089,7 @@ export function ArrayProxyFactory(
             p
             ): any
         {
-            const methodHandler = methodHandlers.get(p);
-            if(methodHandler)
-                return methodHandler;
-
-            return target[p];
+            return methodHandlers.get(p) || target[p];
         },
         set: function(
             target,
