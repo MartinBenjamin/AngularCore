@@ -129,8 +129,7 @@ export class FeeEditor
             this._fee.AccrualDate = <AccrualDate>store.Assert(
                 {
                     Day                 : 1,
-                    [Symbol.toPrimitive]: ToPrimitive,
-                    $type               : 'Web.Model.AccrualDate, Web'
+                    [Symbol.toPrimitive]: ToPrimitive
                 });
 
         else if(!accrued && this._fee.AccrualDate)
