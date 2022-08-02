@@ -773,7 +773,7 @@ function ObserveRuleContradictions(
                 if(!head.some(y =>
                 {
                     for(const key in x)
-                        if(x[key] !== y[key])
+                        if(key in y && x[key] !== y[key])
                             return false;
                     return true;
                 }))
