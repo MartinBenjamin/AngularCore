@@ -5,6 +5,7 @@ import { DataOneOf } from '../Ontology/DataOneOf';
 import { DLSafeRuleBuilder, IDLSafeRuleBuilder } from '../Ontology/DLSafeRule';
 import { IClass } from '../Ontology/IClass';
 import { IDataPropertyExpression, IObjectPropertyExpression } from '../Ontology/IPropertyExpression';
+import { ObjectPropertyRange } from '../Ontology/ObjectPropertyRange';
 import { Ontology } from '../Ontology/Ontology';
 import { DateTime, Decimal } from '../Ontology/Xsd';
 import { agreements } from './Agreements';
@@ -39,7 +40,11 @@ export class Fees extends Ontology
         this.HasAccrualDate = this.DeclareFunctionalObjectProperty("AccrualDate");
 
         this.AccrualDate = this.DeclareClass("AccrualDate");
-        this.AccrualDate.Define(commonDomainObjects.$type.HasValue("Web.Model.AccrualDate, Web"));
+        new ObjectPropertyRange(
+            this,
+            this.HasAccrualDate,
+            this.AccrualDate);
+
         this.AccrualDate.SubClassOf(time.Year.ExactCardinality(1))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
         this.AccrualDate.SubClassOf(time.Month.ExactCardinality(1))

@@ -22,7 +22,7 @@ import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from './IOntology';
-import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
+import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 import { Nothing } from './Nothing';
 import { Thing } from './Thing';
@@ -115,9 +115,24 @@ export class ObservableGenerator implements
                 .filter(subClassOf => subClassOf.SuperClassExpression === class$)
                 .map(subClassOf => subClassOf.SubClassExpression));
 
-            if(classDefinitions.length)
+            let classObservables = classDefinitions.map(classExpression => classExpression.Select(this));
+            classObservables = classObservables.concat(
+                [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyDomain)]
+                    .filter(objectPropertyDomain => objectPropertyDomain.Domain === class$)
+                    .map(objectPropertyDomain => objectPropertyDomain.ObjectPropertyExpression)
+                    .map(objectPropertyExpression =>
+                        objectPropertyExpression.Select(this).pipe(map(relations => new Set<any>(relations.map(([domain,]) => domain))))));
+
+            classObservables = classObservables.concat(
+                [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyRange)]
+                    .filter(objectPropertyRange => objectPropertyRange.Range === class$)
+                    .map(objectPropertyRange => objectPropertyRange.ObjectPropertyExpression)
+                    .map(objectPropertyExpression =>
+                        objectPropertyExpression.Select(this).pipe(map(relations => new Set<any>(relations.map(([, range]) => range))))));
+
+            if(classObservables.length)
                 classObservable = combineLatest(
-                    classDefinitions.map(classExpression => classExpression.Select(this)),
+                    classObservables,
                     (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])));
 
             else
