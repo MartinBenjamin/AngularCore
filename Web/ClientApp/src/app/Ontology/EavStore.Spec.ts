@@ -29,6 +29,19 @@ class DummyPublisher implements IPublisher
     }
 }
 
+class TestObject
+{
+    [Symbol.toPrimitive](
+        hint: string
+        )
+    {
+    }
+}
+
+class TestObject2 extends TestObject
+{
+}
+
 describe(
     'Entity Attribute Value Store',
     () =>
@@ -75,7 +88,51 @@ describe(
                 assert('arrayProxy.length === 0');
             });
 
-        const o = { a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null };
+        describe(
+            `Given store = new EavStore(), o = new TestObject() and e = store.Assert(o):`,
+            () =>
+            {
+                const store: IEavStore = new EavStore();
+                const o = new TestObject();
+                const e = store.Assert(o);
+
+                let assert = assertBuilder('TestObject', 'o', 'e')
+                    (TestObject, o, e);
+
+                assert('o instanceof TestObject');
+                assert("typeof Reflect.getPrototypeOf(o)[Symbol.toPrimitive] === 'function'")
+                assert("typeof o[Symbol.toPrimitive] === 'function'")
+                assert('Reflect.getPrototypeOf(o) === Reflect.getPrototypeOf(e)');
+                assert('e instanceof TestObject');
+                assert("typeof Reflect.getPrototypeOf(e)[Symbol.toPrimitive] === 'function'")
+                assert("typeof e[Symbol.toPrimitive] === 'function'")
+                assert("o[Symbol.toPrimitive] === e[Symbol.toPrimitive]")
+            });
+
+        describe(
+            `Given store = new EavStore(), o = new TestObject2() and e = store.Assert(o):`,
+            () =>
+            {
+                const store: IEavStore = new EavStore();
+                const o = new TestObject2();
+                const e = store.Assert(o);
+
+                let assert = assertBuilder('TestObject', 'TestObject2', 'o', 'e')
+                    (TestObject, TestObject2, o, e);
+
+                assert('o instanceof TestObject');
+                assert('o instanceof TestObject2');
+                assert("typeof Reflect.getPrototypeOf(o)[Symbol.toPrimitive] === 'function'")
+                assert("typeof o[Symbol.toPrimitive] === 'function'")
+                assert('Reflect.getPrototypeOf(o) === Reflect.getPrototypeOf(e)');
+                assert('e instanceof TestObject');
+                assert('e instanceof TestObject2');
+                assert("typeof Reflect.getPrototypeOf(e)[Symbol.toPrimitive] === 'function'")
+                assert("typeof e[Symbol.toPrimitive] === 'function'")
+                assert("o[Symbol.toPrimitive] === e[Symbol.toPrimitive]")
+            });
+
+        const o = { a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null, [Symbol.toPrimitive]: function(){ } };
         describe(
             `Given store = new EavStore() and e = store.Assert(${JSON.stringify(o)}):`,
             () =>
@@ -108,7 +165,7 @@ describe(
                 for(const ownKey of Reflect.ownKeys(o))
                     it(
                         `Reflect.ownKeys(e).includes('${String(ownKey)}')`,
-                        () => expect(Reflect.ownKeys(e).includes(ownKey)));
+                        () => expect(Reflect.ownKeys(e).includes(ownKey)).toBe(true));
                 it(
                     `for...in e has ${originalKeys.length} keys`,
                     () => expect(keys.size).toBe(originalKeys.length));

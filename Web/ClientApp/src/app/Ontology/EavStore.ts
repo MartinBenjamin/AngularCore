@@ -322,14 +322,17 @@ export class EavStore implements IEavStore, IPublisher
             });
     }
 
-    NewEntity(): any
+    NewEntity(
+        target?: object
+        ): any
     {
         const av = new Map<PropertyKey, any>();
         const entity = EntityProxyFactory(
             this,
             av,
             this._aev,
-            this._ave);
+            this._ave,
+            target);
         this._eav.set(
             entity,
             av);
@@ -613,21 +616,17 @@ export class EavStore implements IEavStore, IPublisher
                     throw 'Unique Identity Conflict';
             });
 
-        const toPrimitive = object[Symbol.toPrimitive];
         if(!entity)
         {
-            entity = this.NewEntity();
-            entity[Symbol.toPrimitive] = toPrimitive || (() => 'Proxy');
+            entity = this.NewEntity(object);
             added.set(
                 object,
                 entity);
         }
-        else if(toPrimitive)
-            entity[Symbol.toPrimitive] = toPrimitive;
 
-        for(const key in object)
+        for(const key of Reflect.ownKeys(object)) // Include Symbol keys.
         {
-            let value = object[key];
+            const value = object[key];
             if(value instanceof Array)
             {
                 if(!entity[key])
@@ -789,19 +788,12 @@ export class EavStore implements IEavStore, IPublisher
     }
 }
 
-function ToPrimitive(
-    hint
-    )
-{
-    return 'Proxy';
-}
-
-
 function EntityProxyFactory(
     publisher: IPublisher,
     av       : Map<PropertyKey, any>,
     aev      : Map<PropertyKey, Map<any, any>>,
-    ave      : Map<PropertyKey, Map<any, any>>
+    ave      : Map<PropertyKey, Map<any, any>>,
+    target   : object = {}
     ): object
 {
     let handler: ProxyHandler<object> = {
@@ -810,9 +802,8 @@ function EntityProxyFactory(
             p
             ): any
         {
-            if(p === Symbol.toPrimitive)
-                return av.get(p) || ToPrimitive;
-            return av.get(p);
+            const value = av.get(p);
+            return typeof value === 'undefined' ? Reflect.getPrototypeOf(target)[p] : value;
         },
         getOwnPropertyDescriptor: function(
             target,
@@ -898,7 +889,7 @@ function EntityProxyFactory(
     };
 
     return new Proxy(
-        {},
+        target, // Use target for prototype.
         handler);
 }
 
