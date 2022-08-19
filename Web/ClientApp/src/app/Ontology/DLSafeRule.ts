@@ -428,25 +428,27 @@ export class Generator implements IAtomSelector<Observable<object[]>>
         ): Observable<object[]>
     {
         if(IsVariable(class$.Individual))
-        return combineLatest(
-            this._previous,
-            class$.ClassExpression.Select(this._classObservableGenerator),
-            (substitutions, individuals) => substitutions.reduce<object[]>(
-                (substitutions, substitution) =>
-                {
-                    for(const individual of individuals)
+            return combineLatest(
+                this._previous,
+                class$.ClassExpression.Select(this._classObservableGenerator),
+                (substitutions, individuals) => substitutions.reduce<object[]>(
+                    (substitutions, substitution) =>
                     {
-                        if(typeof substitution[<string>class$.Individual] === 'undefined')
+                        const substitutionIndividual = substitution[<string>class$.Individual];
+                        if(typeof substitutionIndividual === 'undefined')
                         {
-                            const merged = { ...substitution };
-                            merged[<string>class$.Individual] = individual;
-                            substitutions.push(merged);
+                            substitutions.push(...[...individuals]
+                                .map(individual =>
+                                {
+                                    return { ...substitution, [<string>class$.Individual]: individual };
+                                }));
+                            return substitutions;
                         }
-                        else if(substitution[<string>class$.Individual] === individual)
+                        else if(individuals.has(substitutionIndividual))
                             substitutions.push(substitution);
-                    }
-                    return substitutions;
-                },
+
+                        return substitutions;
+                    },
                 []));
 
         return combineLatest(

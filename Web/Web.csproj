@@ -360,6 +360,8 @@
     <None Remove="ClientApp\src\app\RegularPathQuery.ts" />
     <None Remove="ClientApp\src\app\Roles.ts" />
     <None Remove="ClientApp\src\app\RoleServiceProvider.ts" />
+    <None Remove="ClientApp\src\app\Signal.Spec.ts" />
+    <None Remove="ClientApp\src\app\Signal.ts" />
     <None Remove="ClientApp\src\app\Time.ts" />
     <None Remove="ClientApp\src\app\Validation.ts" />
   </ItemGroup>
@@ -435,6 +437,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\INamedService.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Iso3166.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Iso4217.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Signal.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Signal.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\LegalEntities.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\LegalEntityFinder.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\LegalEntityServiceProvider.ts" />
