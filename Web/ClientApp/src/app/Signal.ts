@@ -18,7 +18,7 @@ export interface IScheduler
     Schedule(schedulable: ISchedulable): void;
     Suspend(): void;
     Unsuspend(): void;
-    Update(update: (scheduler: IScheduler) => void)
+    Update(update: (scheduler: IScheduler) => void);
 }
 
 export interface ISignal<T> extends IVertex
@@ -36,6 +36,8 @@ export interface ISignal<T> extends IVertex
     Observe(): Observable<T>;
 
     Map<R>(map: (t: T) => R): ISignal<R>;
+
+    Dispose(): void;
 }
 
 export class Signal<T> implements ISignal<T>
@@ -128,6 +130,10 @@ export class Signal<T> implements ISignal<T>
             [this],
             map);
     }
+
+    Dispose(): void
+    {
+    }
 }
 
 class SignalExpression<T> extends Signal<T> implements ISchedulable
@@ -162,6 +168,17 @@ class SignalExpression<T> extends Signal<T> implements ISchedulable
     get LongestPath(): number
     {
         return this._longestPath;
+    }
+
+    Dispose(): void
+    {
+        while(this._in.length)
+        {
+            const signal = this._in.pop();
+            signal.Unsubscribe(this);
+            if(!signal.Out.length)
+                signal.Dispose();
+        }
     }
 
     Run(
