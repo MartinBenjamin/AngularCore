@@ -23,6 +23,9 @@ describe(
                 subscriptions.push(s2.Observe().subscribe(value => trace.push({ Signal: s2, Value: value })));
                 subscriptions.push(s3.Observe().subscribe(value => trace.push({ Signal: s3, Value: value })));
                 const assert = assertBuilder('trace', 's1', 's2', 's3')(trace, s1, s2, s3);
+                assert('s1.LongestPath === 0');
+                assert('s2.LongestPath === 0');
+                assert('s3.LongestPath === 1');
                 assert('trace[0].Signal === s1');
                 assert('trace[0].Value  === 1' );
                 assert('trace[1].Signal === s2');
@@ -65,6 +68,9 @@ describe(
                 subscriptions.push(s2.Observe().subscribe(value => trace.push({ Signal: s2, Value: value })));
                 subscriptions.push(s3.Observe().subscribe(value => trace.push({ Signal: s3, Value: value })));
                 const assert = assertBuilder('trace', 's1', 's2', 's3')(trace, s1, s2, s3);
+                assert('s1.LongestPath === 0');
+                assert('s2.LongestPath === 0');
+                assert('s3.LongestPath === 1');
                 assert('trace[0].Signal === s1');
                 assert('trace[0].Value  === 1' );
                 assert('trace[1].Signal === s2');
@@ -117,6 +123,11 @@ s5 = Map(s3, s4, (n1, n2) => n1 + n2):`,
                 subscriptions.push(s4.Observe().subscribe(value => trace.push({ Signal: s4, Value: value })));
                 subscriptions.push(s5.Observe().subscribe(value => trace.push({ Signal: s5, Value: value })));
                 const assert = assertBuilder('trace', 's1', 's2', 's3', 's4', 's5')(trace, s1, s2, s3, s4, s5);
+                assert('s1.LongestPath === 0');
+                assert('s2.LongestPath === 0');
+                assert('s3.LongestPath === 0');
+                assert('s4.LongestPath === 1');
+                assert('s5.LongestPath === 2');
                 assert('trace[0].Signal === s1');
                 assert('trace[0].Value  === 1' );
                 assert('trace[1].Signal === s2');
