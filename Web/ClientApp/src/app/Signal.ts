@@ -3,8 +3,8 @@ import { Observable, Subscriber } from "rxjs";
 
 export interface IVertex
 {
-    readonly In         : IVertex[];
-    readonly Out        : IVertex[];
+    readonly In         : ReadonlyArray<IVertex>;
+    readonly Out        : ReadonlyArray<IVertex>;
     readonly LongestPath: number;
 }
 
@@ -23,8 +23,11 @@ export interface IScheduler
 
 export interface ISignal<T> extends IVertex
 {
-    readonly Out  : ISchedulable[];
+    readonly Out  : ReadonlyArray<ISchedulable>;
     readonly Value: T;
+
+    Subscribe(schedulable: ISchedulable): void;
+    Unsubscribe(schedulable: ISchedulable): void;
 
     Update(
         value    : T,
@@ -50,12 +53,12 @@ export class Signal<T> implements ISignal<T>
         this._value = value;
     }
 
-    get In(): IVertex[]
+    get In(): ReadonlyArray<IVertex>
     {
         return Signal._in;
     }
 
-    get Out(): ISchedulable[]
+    get Out(): ReadonlyArray<ISchedulable>
     {
         return this._out;
     }
@@ -68,6 +71,22 @@ export class Signal<T> implements ISignal<T>
     get Value(): T
     {
         return this._value;
+    }
+
+    Subscribe(
+        schedulable: ISchedulable
+        ): void
+    {
+        this._out.push(schedulable);
+    }
+
+    Unsubscribe(
+        schedulable: ISchedulable
+        ): void
+    {
+        this._out.splice(
+            this._out.indexOf(schedulable),
+            1);
     }
 
     Update(
@@ -132,7 +151,7 @@ class SignalExpression<T> extends Signal<T> implements ISchedulable
             0);
 
         for(const signal of this._in)
-            signal.Out.push(this);
+            signal.Subscribe(this);
     }
 
     get In(): ISignal<any>[]
