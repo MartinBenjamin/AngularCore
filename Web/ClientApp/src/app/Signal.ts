@@ -46,7 +46,7 @@ export class Signal<T> implements ISignal<T>
     private _out             : ISchedulable[] = [];
     private _eventSubscribers: Set<Subscriber<T>>;
 
-    private static _in: IVertex[] = [];
+    private static _in: ReadonlyArray<ISignal<any>> = [];
 
     constructor(
         value: T
@@ -55,7 +55,7 @@ export class Signal<T> implements ISignal<T>
         this._value = value;
     }
 
-    get In(): ReadonlyArray<IVertex>
+    get In(): ReadonlyArray<ISignal<any>>
     {
         return Signal._in;
     }
@@ -160,7 +160,7 @@ class SignalExpression<T> extends Signal<T> implements ISchedulable
             signal.Subscribe(this);
     }
 
-    get In(): ISignal<any>[]
+    get In(): ReadonlyArray<ISignal<any>>
     {
         return this._in;
     }
