@@ -30,6 +30,7 @@ export class FacilityFeeErrors
 
     private static _propertyDisplayName =
         {
+            MeasurementUnit     : 'Currency',
             ExpectedReceivedDate: 'Expected/Received Date',
             Year                : 'Accrual Date Year',
             Month               : 'Accrual Date Month'
