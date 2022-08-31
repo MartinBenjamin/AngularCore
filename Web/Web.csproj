@@ -363,7 +363,6 @@
     <None Remove="ClientApp\src\app\Signal.Spec.ts" />
     <None Remove="ClientApp\src\app\Signal.ts" />
     <None Remove="ClientApp\src\app\Time.ts" />
-    <None Remove="ClientApp\src\app\Validation.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -764,7 +763,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\Roles.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\RoleServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Time.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Validation.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
