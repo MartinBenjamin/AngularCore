@@ -23,7 +23,7 @@ const routes: Routes =
                     },
                     {
                         path: 'Deal',
-                        loadChildren: () => import('./Deal2/Deal.Module').then(
+                        loadChildren: () => import('./Deal/Deal.Module').then(
                             module => module.DealModule)
                     }
                 ]

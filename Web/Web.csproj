@@ -313,30 +313,30 @@
     <None Remove="ClientApp\src\app\Ontology\TransitiveClosure.ts" />
     <None Remove="ClientApp\src\app\Ontology\Xsd.ts" />
     <None Remove="ClientApp\src\app\Organisations.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\Common.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\DealGeographicRegion.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\EavStoreProvider.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\Errors.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\Exclusivity.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\ExternalFunding.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\Facilities.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityAgreementEditor.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityAgreementErrors.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityAgreements.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityErrors.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityFeeEditor.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityFeeErrors.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityFees.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityTab1.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\FacilityTab3.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\FeeEditor.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\Fees.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\FeesTab.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\KeyCounterparties.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\KeyDates.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\Restricted.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\Sponsors.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal2\TransactionDetails.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\Common.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\DealGeographicRegion.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\EavStoreProvider.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\Errors.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\Exclusivity.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\ExternalFunding.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\Facilities.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\FacilityAgreementEditor.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\FacilityAgreementErrors.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\FacilityAgreements.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\FacilityErrors.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\FacilityFeeEditor.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\FacilityFeeErrors.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\FacilityFees.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\FacilityTab1.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\FacilityTab3.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\FeeEditor.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\Fees.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\FeesTab.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\KeyCounterparties.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\KeyDates.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\Restricted.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\Sponsors.ts" />
+    <None Remove="ClientApp\src\app\Origination\Deal\TransactionDetails.ts" />
     <None Remove="ClientApp\src\app\Origination\MyDeals.ts" />
     <None Remove="ClientApp\src\app\Origination\MyDeals\MyDeals.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\Origination.Module.ts" />
@@ -662,62 +662,62 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\TransitiveClosure.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Xsd.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Organisations.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Common.ts">
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\Common.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityAgreementEditor.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityAgreementErrors.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityAgreements.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FeeEditor.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FeesTab.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\DealGeographicRegion.ts">
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\FacilityAgreementEditor.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\FacilityAgreementErrors.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\FacilityAgreements.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\FeeEditor.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\FeesTab.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\DealGeographicRegion.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\EavStoreProvider.ts">
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\EavStoreProvider.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Errors.ts">
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\Errors.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Exclusivity.ts">
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\Exclusivity.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\ExternalFunding.ts">
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\ExternalFunding.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Facilities.ts">
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\Facilities.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityErrors.ts">
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\FacilityErrors.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityFeeEditor.ts">
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\FacilityFeeEditor.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityFeeErrors.ts">
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\FacilityFeeErrors.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityFees.ts">
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\FacilityFees.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityTab1.ts">
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\FacilityTab1.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\FacilityTab3.ts">
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\FacilityTab3.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Fees.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\KeyCounterparties.ts">
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\Fees.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\KeyCounterparties.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\KeyDates.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Restricted.ts">
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\KeyDates.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\Restricted.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\Sponsors.ts">
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\Sponsors.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\TransactionDetails.ts">
+    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\TransactionDetails.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Origination\MyDeals\MyDeals.Module.ts" />
