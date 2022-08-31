@@ -617,12 +617,11 @@ export class EavStore implements IEavStore, IPublisher
             });
 
         if(!entity)
-        {
             entity = this.NewEntity(object);
-            added.set(
-                object,
-                entity);
-        }
+
+        added.set(
+            object,
+            entity);
 
         for(const key of Reflect.ownKeys(object)) // Include Symbol keys.
         {
