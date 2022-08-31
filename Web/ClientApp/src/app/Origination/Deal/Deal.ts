@@ -156,7 +156,7 @@ export class Deal
                                     this[annotation.Value]();
 
                     this._observeErrors.next(false);
-                    this._deal.next(dealBuilder.Build2(this._ontology));
+                    this._deal.next(dealBuilder.Build(this._ontology));
                     this._errorsService.next(null);
                 }),
             errors.subscribe(

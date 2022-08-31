@@ -2,8 +2,8 @@ import { Inject, Injectable, InjectionToken, Provider } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { ClassificationScheme, Classifier } from "../ClassificationScheme";
 import { ClassificationSchemeServiceToken } from "../ClassificationSchemeServiceProvider";
-import { EmptyGuid, Guid } from "../CommonDomainObjects";
-import { ClassificationSchemeIdentifier, Deal, DealRoleIdentifier, Sponsor } from "../Deals";
+import { Guid } from "../CommonDomainObjects";
+import { ClassificationSchemeIdentifier, Deal } from "../Deals";
 import { DealLifeCycleServiceToken, IDealLifeCycleService } from '../IDealLifeCycleService';
 import { IDomainObjectService } from "../IDomainObjectService";
 import { AddIndividual } from '../Ontology/AddIndividuals';
@@ -11,17 +11,16 @@ import { EavStore } from '../Ontology/EavStore';
 import { AttributeSchema, Cardinality, IEavStore } from '../Ontology/IEavStore';
 import { IIndividual } from '../Ontology/IIndividual';
 import { IDataPropertyExpression, IObjectPropertyExpression } from '../Ontology/IPropertyExpression';
+import { Thing } from '../Ontology/Thing';
 import { commonDomainObjects } from './CommonDomainObjects';
 import { deals } from './Deals';
 import { IDealOntology } from "./IDealOntology";
-import { Thing } from '../Ontology/Thing';
 
 export const DealBuilderToken = new InjectionToken<IDealBuilder>('DealBuilder');
 
 export interface IDealBuilder
 {
-    Build(dealOntology: IDealOntology, callback: (deal: Deal) => void): void
-    Build2(dealOntology: IDealOntology): Deal;
+    Build(dealOntology: IDealOntology): Deal;
 }
 
 @Injectable()
@@ -37,134 +36,6 @@ export class DealBuilder implements IDealBuilder
     }
 
     Build(
-        ontology: IDealOntology,
-        callback: (deal: Deal) => void
-        ): void
-    {
-        let deal: Deal = {
-            Id                : EmptyGuid,
-            Name              : null,
-            Parties           : [],
-            Commitments       : [],
-            ClassIri          : ontology.Deal.Iri,
-            Type              : null,
-            Agreements        : [],
-            Stage             : null,
-            ProjectName       : null,
-            Classifiers       : [],
-            GeographicRegion  : null,
-            Currency          : null,
-            Introducer        : null,
-            TransactionDetails: null,
-            CurrentStatus     : null,
-            SponsorsNA        : false
-        };
-
-        Object.defineProperty(
-            deal,
-            'Ontology',
-            { get: () => ontology });
-
-        Object.defineProperty(
-            deal,
-            'TotalSponsorEquity',
-            {
-                get: () =>
-                    deal.Parties
-                        .filter(party => party.Role.Id === DealRoleIdentifier.Sponsor)
-                        .map(party => (<Sponsor>party).Equity)
-                        .reduce(
-                            (total, currentValue) =>
-                            {
-                                if(typeof total === 'number' &&
-                                    typeof currentValue == 'number' &&
-                                    !isNaN(currentValue))
-                                    return total + currentValue;
-
-                                return null;
-                            },
-                            0)
-            });
-
-        let dealType: IIndividual = null;
-        const classes = ontology.SuperClasses(ontology.Deal);
-        for(const class$ of classes)
-            if(ontology.IsClassExpression.IObjectHasValue(class$) &&
-                class$.ObjectPropertyExpression === deals.Type)
-            {
-                dealType = class$.Individual;
-                break;
-            }
-
-        let dealTypeId: string = null;
-        for(const dataPropertyAssertion of ontology.Get(ontology.IsAxiom.IDataPropertyAssertion))
-            if(dataPropertyAssertion.DataPropertyExpression === commonDomainObjects.Id &&
-               dataPropertyAssertion.SourceIndividual === dealType)
-            {
-                dealTypeId = dataPropertyAssertion.TargetValue;
-                break;
-            }
-
-        this._classificationSchemeService
-            .Get(ClassificationSchemeIdentifier.DealType)
-            .subscribe(
-                classificationScheme => deal.Type = classificationScheme.Classifiers
-                    .map(classificationSchemeClassifier => classificationSchemeClassifier.Classifier)
-                    .find(classifier => classifier.Id === dealTypeId));
-
-        let lifeCycle: IIndividual = null;
-        for(const class$ of classes)
-            if(ontology.IsClassExpression.IObjectHasValue(class$) &&
-                class$.ObjectPropertyExpression === deals.LifeCycle)
-            {
-                lifeCycle = class$.Individual;
-                break;
-            }
-
-        let lifeCycleId: string = null;
-        for(const dataPropertyAssertion of ontology.Get(ontology.IsAxiom.IDataPropertyAssertion))
-            if(dataPropertyAssertion.DataPropertyExpression === commonDomainObjects.Id &&
-                dataPropertyAssertion.SourceIndividual === lifeCycle)
-            {
-                lifeCycleId = dataPropertyAssertion.TargetValue;
-                break;
-            }
-
-        let notRestrictedId: string = null;
-        for(const dataPropertyAssertion of ontology.Get(ontology.IsAxiom.IDataPropertyAssertion))
-            if(dataPropertyAssertion.DataPropertyExpression === commonDomainObjects.Id &&
-                dataPropertyAssertion.SourceIndividual === deals.NotRestricted)
-            {
-                notRestrictedId = dataPropertyAssertion.TargetValue;
-                break;
-            }
-
-        this._classificationSchemeService
-            .Get(ClassificationSchemeIdentifier.Restricted)
-            .subscribe(
-                classificationScheme =>
-                {
-                    deal.Classifiers.push(classificationScheme.Classifiers
-                        .map(classificationSchemeClassifier => classificationSchemeClassifier.Classifier)
-                        .find(classifier => classifier.Id === notRestrictedId));
-
-                    callback(deal);
-                });
-
-        this._dealLifeCycleService
-            .Get(lifeCycleId)
-            .subscribe(
-                dealLifeCycle =>
-                {
-                    deal.Stage = dealLifeCycle.Stages[0];
-                    Object.defineProperty(
-                        deal,
-                        'LifeCycle',
-                        { get: () => dealLifeCycle });
-                });
-    }
-
-    Build2(
         ontology: IDealOntology
         ): Deal
     {
