@@ -57,14 +57,6 @@
     <None Remove="ClientApp\src\app\DealTrackerLayout.ts" />
     <None Remove="ClientApp\src\app\Components\TestTab.ts" />
     <None Remove="ClientApp\src\app\Deal\DealComponents.Module.ts" />
-    <None Remove="ClientApp\src\app\Deal\ExternalFunding.ts" />
-    <None Remove="ClientApp\src\app\Deal\FacilityErrors.ts" />
-    <None Remove="ClientApp\src\app\Deal\FacilityFeeEditor.ts" />
-    <None Remove="ClientApp\src\app\Deal\FacilityFeeErrors.ts" />
-    <None Remove="ClientApp\src\app\Deal\FacilityFees.ts" />
-    <None Remove="ClientApp\src\app\Deal\FacilityTab1.ts" />
-    <None Remove="ClientApp\src\app\Deal\FacilityTab3.ts" />
-    <None Remove="ClientApp\src\app\Deal\Restricted.ts" />
     <None Remove="ClientApp\src\app\FacilityAgreements.ts" />
     <None Remove="ClientApp\src\app\FacilityFeeTypeServiceProvider.ts" />
     <None Remove="ClientApp\src\app\FacilityProvider.ts" />
@@ -400,16 +392,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\Deal\DealComponents.Module.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Deal\ExternalFunding.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Deal\FacilityErrors.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Deal\FacilityFeeEditor.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Deal\FacilityFeeErrors.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Deal\FacilityFees.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Deal\FacilityTab1.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Deal\FacilityTab3.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Deal\Restricted.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\FacilityAgreements.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\FacilityFeeTypeServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\FacilityProvider.ts" />
@@ -724,7 +706,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\Origination\MyDeals\MyDeals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Origination.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Origination.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Deal\Sponsors.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Parties.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\PartWhole.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Performance.ts" />
