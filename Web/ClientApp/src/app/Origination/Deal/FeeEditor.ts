@@ -1,19 +1,18 @@
 import { Component, Inject } from '@angular/core';
 import { BehaviorSubject, combineLatest, NEVER, Observable, Subject, Subscription } from 'rxjs';
 import { distinctUntilChanged, filter, sample, share, switchMap } from 'rxjs/operators';
+import { DomainObject, Guid } from '../../CommonDomainObjects';
 import { AccrualDate } from '../../Components/AccrualDate';
 import { ToPrimitive } from '../../Components/Time';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
 import { CurrenciesOrderedByCodeToken } from '../../CurrencyServiceProvider';
 import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
-import { FeeType } from '../../FacilityAgreements';
-import { Fee } from '../../Fees';
+import { Fee, FeeType } from '../../Fees';
 import { Currency } from '../../Iso4217';
 import { Store } from '../../Ontology/IEavStore';
 import { ITransaction } from '../../Ontology/ITransactionManager';
 import { Alternative, Empty, IExpression, Property, Query2 } from '../../RegularPathExpression';
-import { DomainObject, Guid } from '../../CommonDomainObjects';
 
 type ApplyCallback = () => void;
 

@@ -5,8 +5,7 @@ import { ClassificationSchemeServiceToken } from '../../ClassificationSchemeServ
 import { Guid } from '../../CommonDomainObjects';
 import { DealProvider } from '../../DealProvider';
 import { ClassificationSchemeIdentifier, Deal } from '../../Deals';
-import { FeeType } from '../../FacilityAgreements';
-import { Fee } from '../../Fees';
+import { Fee, FeeType } from '../../Fees';
 import { IDomainObjectService } from '../../IDomainObjectService';
 import { Group } from '../../Ontology/Group';
 import { Store } from '../../Ontology/IEavStore';

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { InjectionToken, Provider } from "@angular/core";
 import { Observable } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
-import { FeeType } from './FacilityAgreements';
+import { FeeType } from './Fees';
 import { INamedService, NamedFilters, NamedService } from "./INamedService";
 
 export const FacilityFeeTypeServiceToken = new InjectionToken<INamedService<string, FeeType, NamedFilters>>('FacilityFeeTypeService');
