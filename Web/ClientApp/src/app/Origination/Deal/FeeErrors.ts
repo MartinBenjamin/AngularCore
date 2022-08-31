@@ -10,13 +10,13 @@ type Error = [Property, string, string];
 
 @Component(
     {
-        selector: 'facility-fee-errors',
+        selector: 'fee-errors',
         template: `
 <ul *ngIf="Errors|async as errors" style="color: red;">
   <li *ngFor="let error of errors" [innerHTML]="error[1] + ': ' + error[2]" (click)="Highlight(error[0])" style="cursor: pointer;"></li>
 </ul>`
     })
-export class FacilityFeeErrors
+export class FeeErrors
 {
     private _errors: Observable<Error[]>;
 
@@ -68,7 +68,7 @@ export class FacilityFeeErrors
                                 propertyDisplayName = (<Fee>object).MeasurementUnit === 0.01 ? '% Of Commitment' : 'Amount';
 
                             else
-                                propertyDisplayName = propertyName in FacilityFeeErrors._propertyDisplayName ? FacilityFeeErrors._propertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
+                                propertyDisplayName = propertyName in FeeErrors._propertyDisplayName ? FeeErrors._propertyDisplayName[propertyName] : propertyName.replace(/\B[A-Z]/g, ' $&');
 
                             propertyErrors.forEach(
                                 propertyError =>
@@ -81,19 +81,19 @@ export class FacilityFeeErrors
                                             (atom): atom is IPropertyAtom => atom instanceof PropertyAtom && atom.Range === comparison.Rhs);
 
                                         const rhsPropertyName = rhsProperty.PropertyExpression.LocalName;
-                                        const rhsPropertyDisplayName = rhsPropertyName in FacilityFeeErrors._propertyDisplayName ?
-                                            FacilityFeeErrors._propertyDisplayName[rhsPropertyName] : rhsPropertyName.replace(/\B[A-Z]/g, ' $&');
+                                        const rhsPropertyDisplayName = rhsPropertyName in FeeErrors._propertyDisplayName ?
+                                            FeeErrors._propertyDisplayName[rhsPropertyName] : rhsPropertyName.replace(/\B[A-Z]/g, ' $&');
                                         errors.push([
                                             property,
                                             propertyDisplayName,
-                                            `Must be ${FacilityFeeErrors._temporalText.get(comparison.constructor)} ${rhsPropertyDisplayName}`
+                                            `Must be ${FeeErrors._temporalText.get(comparison.constructor)} ${rhsPropertyDisplayName}`
                                         ]);
                                     }
                                     else
                                         errors.push([
                                             property,
                                             propertyDisplayName,
-                                            FacilityFeeErrors._errorMap[propertyError]
+                                            FeeErrors._errorMap[propertyError]
                                         ]);
                                 });
                         }));
