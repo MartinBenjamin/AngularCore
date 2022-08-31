@@ -337,13 +337,6 @@
     <None Remove="ClientApp\src\app\Origination\Deal2\Restricted.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\Sponsors.ts" />
     <None Remove="ClientApp\src\app\Origination\Deal2\TransactionDetails.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal\Common.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal\DealGeographicRegion.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal\Errors.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal\Exclusivity.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal\Facilities.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal\KeyCounterparties.ts" />
-    <None Remove="ClientApp\src\app\Origination\Deal\TransactionDetails.ts" />
     <None Remove="ClientApp\src\app\Origination\MyDeals.ts" />
     <None Remove="ClientApp\src\app\Origination\MyDeals\MyDeals.Module.ts" />
     <None Remove="ClientApp\src\app\Origination\Origination.Module.ts" />
@@ -725,25 +718,6 @@
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal2\TransactionDetails.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\Common.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\DealGeographicRegion.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\Errors.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\Exclusivity.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\Facilities.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\KeyCounterparties.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
-    <TypeScriptCompile Include="ClientApp\src\app\Origination\Deal\TransactionDetails.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\Origination\MyDeals\MyDeals.Module.ts" />
