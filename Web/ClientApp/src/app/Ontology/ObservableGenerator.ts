@@ -130,6 +130,13 @@ export class ObservableGenerator implements
                     .map(objectPropertyExpression =>
                         objectPropertyExpression.Select(this).pipe(map(relations => new Set<any>(relations.map(([, range]) => range))))));
 
+            classObservables = classObservables.concat(
+                [...this._ontology.Get(this._ontology.IsAxiom.IDataPropertyDomain)]
+                    .filter(dataPropertyDomain => dataPropertyDomain.Domain === class$)
+                    .map(dataPropertyDomain => dataPropertyDomain.DataPropertyExpression)
+                    .map(dataPropertyExpression =>
+                        dataPropertyExpression.Select(this).pipe(map(relations => new Set<any>(relations.map(([domain,]) => domain))))));
+
             if(classObservables.length)
                 classObservable = combineLatest(
                     classObservables,
