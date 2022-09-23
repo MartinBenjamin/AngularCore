@@ -12,7 +12,7 @@ import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServicePr
 import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
 import { IDealOntologyService } from '../../Ontologies/IDealOntologyService';
-import { Error, ObserveErrorsSwitchMap } from '../../Ontologies/ObserveErrors';
+import { Error, ObserveErrors } from '../../Ontologies/ObserveErrors';
 import { Store } from '../../Ontology/IEavStore';
 import { Origination } from '../Origination';
 import { Facility } from './Facility';
@@ -93,7 +93,7 @@ export class Deal
                             return applicableStages;
                         }));
 
-                return ObserveErrorsSwitchMap(
+                return ObserveErrors(
                     deal.Ontology,
                     store,
                     applicableStages);
