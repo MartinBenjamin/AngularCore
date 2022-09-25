@@ -1,7 +1,6 @@
 import { IClassExpression } from "./IClassExpression";
 import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
-import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectPropertyExpression } from "./IPropertyExpression";
 import { ObjectCardinality } from "./ObjectCardinality";
@@ -34,15 +33,5 @@ export class ObjectMinCardinality
         ): TResult
     {
         return selector.ObjectMinCardinality(this);
-    }
-
-    Evaluate(
-        evaluator : IClassMembershipEvaluator,
-        individual: object
-        ): boolean
-    {
-        return evaluator.ObjectMinCardinality(
-            this,
-            individual);
     }
 }

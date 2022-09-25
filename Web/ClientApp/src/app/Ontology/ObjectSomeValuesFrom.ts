@@ -1,7 +1,6 @@
 import { IClassExpression } from "./IClassExpression";
 import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
-import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectPropertyExpression } from "./IPropertyExpression";
 import { ObjectPropertyRestriction } from "./ObjectPropertyRestriction";
@@ -30,15 +29,5 @@ export class ObjectSomeValuesFrom
         ): TResult
     {
         return selector.ObjectSomeValuesFrom(this);
-    }
-    
-    Evaluate(
-        evaluator : IClassMembershipEvaluator,
-        individual: object
-        ): boolean
-    {
-        return evaluator.ObjectSomeValuesFrom(
-            this,
-            individual);
     }
 }

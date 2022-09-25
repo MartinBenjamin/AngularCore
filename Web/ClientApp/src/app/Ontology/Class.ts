@@ -6,7 +6,6 @@ import { IClass } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
 import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
-import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IEquivalentClasses } from "./IEquivalentClasses";
 import { IHasKey } from "./IHasKey";
 import { INamedIndividual } from "./INamedIndividual";
@@ -47,16 +46,6 @@ export class Class
         ): TResult
     {
         return selector.Class(this);
-    }
-
-    Evaluate(
-        evaluator : IClassMembershipEvaluator,
-        individual: object
-        ): boolean
-    {
-        return evaluator.Class(
-            this,
-            individual);
     }
 
     DeclareNamedIndividual(

@@ -1,7 +1,6 @@
 import { IClassExpression } from "./IClassExpression";
 import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
-import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IObjectComplementOf } from "./IObjectComplementOf";
 import { IObjectIntersectionOf } from "./IObjectIntersectionOf";
 import { IObjectUnionOf } from "./IObjectUnionOf";
@@ -18,14 +17,6 @@ export class ClassExpression implements IClassExpression
     Select<TResult>(
         selector: IClassExpressionSelector<TResult>
         ): TResult
-    {
-        throw new Error("Method not implemented.");
-    }
-
-    Evaluate(
-        evaluator : IClassMembershipEvaluator,
-        individual: object
-        ): boolean
     {
         throw new Error("Method not implemented.");
     }
@@ -74,16 +65,6 @@ export class ObjectIntersectionOf
     {
         return selector.ObjectIntersectionOf(this);
     }
-
-    Evaluate(
-        evaluator : IClassMembershipEvaluator,
-        individual: object
-        ): boolean
-    {
-        return evaluator.ObjectIntersectionOf(
-            this,
-            individual);
-    }
 }
 
 export class ObjectUnionOf
@@ -110,16 +91,6 @@ export class ObjectUnionOf
     {
         return selector.ObjectUnionOf(this);
     }
-    
-    Evaluate(
-        evaluator : IClassMembershipEvaluator,
-        individual: object
-        ): boolean
-    {
-        return evaluator.ObjectUnionOf(
-            this,
-            individual);
-    }
 }
 
 export class ObjectComplementOf
@@ -145,15 +116,5 @@ export class ObjectComplementOf
         ): TResult
     {
         return selector.ObjectComplementOf(this);
-    }
-
-    Evaluate(
-        evaluator : IClassMembershipEvaluator,
-        individual: object
-        ): boolean
-    {
-        return evaluator.ObjectComplementOf(
-            this,
-            individual);
     }
 }

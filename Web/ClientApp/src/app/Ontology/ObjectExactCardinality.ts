@@ -1,7 +1,6 @@
 import { IClassExpression } from "./IClassExpression";
 import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
-import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IObjectExactCardinality } from "./IObjectCardinality";
 import { IObjectPropertyExpression } from "./IPropertyExpression";
 import { ObjectCardinality } from "./ObjectCardinality";
@@ -34,15 +33,5 @@ export class ObjectExactCardinality
         ): TResult
     {
         return selector.ObjectExactCardinality(this);
-    }
-
-    Evaluate(
-        evaluator : IClassMembershipEvaluator,
-        individual: object
-        ): boolean
-    {
-        return evaluator.ObjectExactCardinality(
-            this,
-            individual);
     }
 }

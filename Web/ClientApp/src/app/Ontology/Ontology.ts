@@ -1,6 +1,5 @@
 import { AnnotationProperty } from "./AnnotationProperty";
 import { Class } from "./Class";
-import { ClassMembershipEvaluator } from "./ClassMembershipEvaluator";
 import { FunctionalDataProperty } from "./FunctionalDataProperty";
 import { FunctionalObjectProperty } from "./FunctionalObjectProperty";
 import { IAnnotationProperty } from "./IAnnotationProperty";
@@ -81,21 +80,6 @@ export class Ontology implements IOntology
             for(let axiom of ontology.Axioms)
                 if(typeGuard(axiom))
                     yield axiom;
-    }
-
-    Classify(individuals: Set<object>): Map<object, Set<IClass>>;
-    Classify(individual: object): Map<object, Set<IClass>>;
-    Classify(individualOrIndividuals: object | Set<object>): Map<object, Set<IClass>>
-    {
-        let individuals = individualOrIndividuals instanceof Set ? individualOrIndividuals : Individuals(individualOrIndividuals);
-        let classifications = new Map<object, Set<IClass>>()
-        let classMembershipEvaluator = new ClassMembershipEvaluator(
-            this,
-            classifications);
-
-        individuals.forEach(individual => classMembershipEvaluator.Classify(individual));
-
-        return classifications;
     }
 
     SuperClasses(

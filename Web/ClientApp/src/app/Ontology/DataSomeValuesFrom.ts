@@ -1,7 +1,6 @@
 import { DataPropertyRestriction } from "./DataPropertyRestriction";
 import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
-import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IDataRange } from "./IDataRange";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
 import { IDataPropertyExpression } from "./IPropertyExpression";
@@ -30,15 +29,5 @@ export class DataSomeValuesFrom
         ): TResult
     {
         return selector.DataSomeValuesFrom(this);
-    }
-
-    Evaluate(
-        evaluator : IClassMembershipEvaluator,
-        individual: object
-        ): boolean
-    {
-        return evaluator.DataSomeValuesFrom(
-            this,
-            individual);
     }
 }

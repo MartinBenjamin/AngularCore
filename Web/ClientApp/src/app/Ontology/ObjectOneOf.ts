@@ -1,7 +1,6 @@
 import { ClassExpression } from "./ClassExpression";
 import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
-import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IIndividual } from "./IIndividual";
 import { IObjectOneOf } from "./IObjectOneOf";
 
@@ -28,15 +27,5 @@ export class ObjectOneOf
         ): TResult
     {
         return selector.ObjectOneOf(this);
-    }
-    
-    Evaluate(
-        evaluator : IClassMembershipEvaluator,
-        individual: object
-        ): boolean
-    {
-        return evaluator.ObjectOneOf(
-            this,
-            individual);
     }
 }

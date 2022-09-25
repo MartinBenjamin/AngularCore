@@ -1,6 +1,5 @@
 import { Class } from "./Class";
 import { IClass } from "./IClass";
-import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { PrefixIris } from "./PrefixIris";
 
 class Nothing
@@ -17,14 +16,6 @@ class Nothing
     get PrefixIri(): string
     {
         return PrefixIris.owl;
-    }
-    
-    Evaluate(
-        evaluator : IClassMembershipEvaluator,
-        individual: object
-        ): boolean
-    {
-        return false;
     }
 }
 

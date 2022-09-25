@@ -1,7 +1,6 @@
 import { DataCardinality } from "./DataCardinality";
 import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
-import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IDataExactCardinality } from "./IDataCardinality";
 import { IDataRange } from "./IDataRange";
 import { IDataPropertyExpression } from "./IPropertyExpression";
@@ -34,15 +33,5 @@ export class DataExactCardinality
         ): TResult
     {
         return selector.DataExactCardinality(this);
-    }
-
-    Evaluate(
-        evaluator : IClassMembershipEvaluator,
-        individual: object
-        ): boolean
-    {
-        return evaluator.DataExactCardinality(
-            this,
-            individual);
     }
 }

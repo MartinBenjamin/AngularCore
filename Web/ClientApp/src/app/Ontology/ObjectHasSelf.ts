@@ -1,6 +1,5 @@
 import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
-import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IObjectHasSelf } from "./IObjectHasSelf";
 import { IObjectPropertyExpression } from "./IPropertyExpression";
 import { ObjectPropertyRestriction } from "./ObjectPropertyRestriction";
@@ -28,15 +27,5 @@ export class ObjectHasSelf
         ): TResult
     {
         return selector.ObjectHasSelf(this);
-    }
-
-    Evaluate(
-        evaluator : IClassMembershipEvaluator,
-        individual: object
-        ): boolean
-    {
-        return evaluator.ObjectHasSelf(
-            this,
-            individual);
     }
 }

@@ -1,6 +1,5 @@
 import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
-import { IClassMembershipEvaluator } from "./IClassMembershipEvaluator";
 import { IIndividual } from './IIndividual';
 import { IObjectHasValue } from "./IObjectHasValue";
 import { IObjectPropertyExpression } from "./IPropertyExpression";
@@ -30,15 +29,5 @@ export class ObjectHasValue
         ): TResult
     {
         return selector.ObjectHasValue(this);
-    }
-
-    Evaluate(
-        evaluator : IClassMembershipEvaluator,
-        individual: object
-        ): boolean
-    {
-        return evaluator.ObjectHasValue(
-            this,
-            individual);
     }
 }
