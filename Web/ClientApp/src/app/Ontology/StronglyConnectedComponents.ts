@@ -97,21 +97,31 @@ export function Condense<TVertex, TAdjacent extends Iterable<TVertex>>(
         stronglyConnectedComponent => stronglyConnectedComponent.map<[TVertex, TVertex[]]>(
             vertex => [vertex, stronglyConnectedComponent]))));
 
-    const condensed = new Map(stronglyConnectedComponents.map(
+    return new Map(stronglyConnectedComponents.map(
         stronglyConnectedComponent =>
             [
                 stronglyConnectedComponent,
-                new Set<TVertex[]>()
+                new Set<TVertex[]>([].concat(
+                    ...stronglyConnectedComponent.map(
+                        vertex => [...graph.get(vertex)]
+                            .map(adjacent => map.get(adjacent))
+                            .filter(adjacentStronglyConnectedComponent => adjacentStronglyConnectedComponent !== stronglyConnectedComponent))))
             ]));
+    //const condensed = new Map(stronglyConnectedComponents.map(
+    //    stronglyConnectedComponent =>
+    //        [
+    //            stronglyConnectedComponent,
+    //            new Set<TVertex[]>()
+    //        ]));
 
-    for(const [stronglyConnectedComponent, adjacentStronglyConnectedComponents] of condensed)
-        for(const vertex of stronglyConnectedComponent)
-            for(const adjacent of graph.get(vertex))
-            {
-                const adjacentStronglyConnectedComponent = map.get(adjacent);
-                if(adjacentStronglyConnectedComponent !== stronglyConnectedComponent)
-                    adjacentStronglyConnectedComponents.add(adjacentStronglyConnectedComponent);
-            }
+    //for(const [stronglyConnectedComponent, adjacentStronglyConnectedComponents] of condensed)
+    //    for(const vertex of stronglyConnectedComponent)
+    //        for(const adjacent of graph.get(vertex))
+    //        {
+    //            const adjacentStronglyConnectedComponent = map.get(adjacent);
+    //            if(adjacentStronglyConnectedComponent !== stronglyConnectedComponent)
+    //                adjacentStronglyConnectedComponents.add(adjacentStronglyConnectedComponent);
+    //        }
 
-    return condensed;
+    //return condensed;
 }
