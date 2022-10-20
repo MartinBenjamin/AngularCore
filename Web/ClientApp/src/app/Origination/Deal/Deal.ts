@@ -139,6 +139,7 @@ export class Deal
                     });
             }));
 
+        //const dealOntologyObserver = this._activatedRoute.queryParamMap.pipe(map(params => dealOntologyService.Get(params.get('originate'))));
         this._subscriptions.push(
             this._activatedRoute.queryParamMap.subscribe(
                 params =>

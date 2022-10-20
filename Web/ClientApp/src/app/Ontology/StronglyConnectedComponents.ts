@@ -1,0 +1,113 @@
+/*
+ 
+  BEGIN
+    INTEGER i;
+    PROCEDURE STRONGCONNECT (v);
+    BEGIN
+      LOWLINK (v) := NUMBER (v) := i := i + 1;
+      put v on stack of points;
+      FOR w in the adjacency list of v DO
+      BEGIN
+        IF w is not yet numbered THEN
+        BEGIN comment (v, w) is a tree arc;
+          STRONGCONNECT (w);
+          LOWLINK (v) := min (LOWLINK (v), LOWLINK (w));
+        END
+        ELSE IF NUMBER (w) < NUMBER (v) DO
+        BEGIN comment (v, w) is a frond or cross-link;
+          if w is on stack of points THEN
+            LOWLINK (v) := min (LOWLINK (v), NUMBER (w));
+        END;
+      END;
+
+      If (LOWLINK (v) = NUMBER (v)) THEN
+      BEGIN comment v is the root of a component;
+        start new strongly connected component;
+        WHILE w on top of point stack satisfies NUMBER (w) >= NUMBER (v) DO
+          delete w from point stack and put w in current component
+      END;
+
+    i = 0;
+    empty stack of points;
+    FOR w a vertex IF w is not yet numbered THEN STRONGCONNECT(w);
+  END;
+*/
+
+export function StronglyConnectedComponents<TVertex, TAdjacent extends Iterable<TVertex>>(
+    graph: Map<TVertex, TAdjacent>
+    ): TVertex[][]
+{
+    const stronglyConnectedComponents: TVertex[][] = [];
+    const lowlink = new Map<TVertex, number>();
+    const number = new Map<TVertex, number>();
+    const stack: TVertex[] = [];
+
+    let i = 0;
+
+    function StronglyConnect(
+        v: TVertex
+        )
+    {
+        i += 1;
+        lowlink.set(v, i);
+        number.set(v, i);
+        stack.push(v);
+
+        for(const w of graph.get(v))
+        {
+            if(!number.get(w))
+            {
+                StronglyConnect(w);
+                lowlink.set(
+                    v,
+                    Math.min(lowlink.get(v), lowlink.get(w)));
+            }
+            else if(number.get(w) < number.get(v))
+            {
+                if(stack.includes(w))
+                    lowlink.set(
+                        v,
+                        Math.min(lowlink.get(v), number.get(w)));
+            }
+        }
+
+        if(lowlink.get(v) === number.get(v))
+        {
+            const stronglyConnectedComponent: TVertex[] = [];
+            stronglyConnectedComponents.push(stronglyConnectedComponent);
+
+            let w: TVertex;
+            do
+            {
+                w = stack.pop();
+                stronglyConnectedComponent.push(w);
+            }
+            while(w !== v)
+        }
+    }
+
+    for(const v of graph.keys())
+        if(!number.get(v))
+            StronglyConnect(v);
+
+    return stronglyConnectedComponents;
+}
+
+export const TestGraph = new Map<number, Iterable<number>>(
+    [
+        [1, [2   ]],
+        [2, [3, 8]],
+        [3, [4, 7]],
+        [4, [5   ]],
+        [5, [3, 6]],
+        [6, [    ]],
+        [7, [4, 6]],
+        [8, [1, 7]]
+    ]
+);
+
+export const TestGraphStronglyConnectedComponents = [
+    [6],
+    [1, 2, 8],
+    [3, 4, 5, 7]
+];

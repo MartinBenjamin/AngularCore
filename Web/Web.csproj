@@ -274,6 +274,8 @@
     <None Remove="ClientApp\src\app\Ontology\SortedList.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\SortedSet.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\SortedSet.ts" />
+    <None Remove="ClientApp\src\app\Ontology\StronglyConnectedComponents.Spec.ts" />
+    <None Remove="ClientApp\src\app\Ontology\StronglyConnectedComponents.ts" />
     <None Remove="ClientApp\src\app\Ontology\SubClassOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\Thing.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Thing.ts" />
@@ -386,6 +388,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\INamedService.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Iso3166.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Iso4217.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\StronglyConnectedComponents.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\StronglyConnectedComponents.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Signal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Signal.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\LegalEntities.ts" />
