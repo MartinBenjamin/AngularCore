@@ -87,3 +87,30 @@ export function StronglyConnectedComponents<TVertex, TAdjacent extends Iterable<
 
     return stronglyConnectedComponents;
 }
+
+export function Condense<TVertex, TAdjacent extends Iterable<TVertex>>(
+    graph: Map<TVertex, TAdjacent>
+    ): Map<TVertex[], Iterable<TVertex[]>>
+{
+    const stronglyConnectedComponents = StronglyConnectedComponents(graph);
+    const map = new Map<TVertex, TVertex[]>([].concat(...stronglyConnectedComponents.map(
+        stronglyConnectedComponent => stronglyConnectedComponent.map<[TVertex, TVertex[]]>(
+            vertex => [vertex, stronglyConnectedComponent]))));
+
+    const condensed = new Map(stronglyConnectedComponents.map(
+        stronglyConnectedComponent =>
+            [
+                stronglyConnectedComponent,
+                new Set<TVertex[]>()
+            ]));
+
+    for(const [stronglyConnectedComponent, adjacentStronglyConnectedComponents] of condensed)
+        for(const vertex of stronglyConnectedComponent)
+            for(const adjacent of graph.get(vertex))
+            {
+                const adjacentStronglyConnectedComponent = map.get(adjacent);
+                if(adjacentStronglyConnectedComponent !== stronglyConnectedComponent)
+                    adjacentStronglyConnectedComponents.add(adjacentStronglyConnectedComponent);
+            }
+    return condensed;
+}

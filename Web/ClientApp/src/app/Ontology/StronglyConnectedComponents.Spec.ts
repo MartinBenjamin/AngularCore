@@ -1,5 +1,5 @@
 import { } from 'jasmine';
-import { StronglyConnectedComponents } from './StronglyConnectedComponents';
+import { Condense, StronglyConnectedComponents } from './StronglyConnectedComponents';
 
 const testGraph = new Map<number, Iterable<number>>(
     [
@@ -47,5 +47,9 @@ describe(
         it(
             `The strongly connected components of ${JSON.stringify([...testGraph])} are ${JSON.stringify(stronglyConnectedComponents)}`,
             () => expect(JSON.stringify(stronglyConnectedComponents)).toBe(JSON.stringify(testGraphStronglyConnectedComponents)));
+
+        it(
+            `${JSON.stringify([...Condense(testGraph)].map(element => [element[0], [...element[1]]]))}`,
+            () => true);
 
     });
