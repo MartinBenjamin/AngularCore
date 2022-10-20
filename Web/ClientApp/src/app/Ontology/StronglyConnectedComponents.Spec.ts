@@ -48,8 +48,12 @@ describe(
             `The strongly connected components of ${JSON.stringify([...testGraph])} are ${JSON.stringify(stronglyConnectedComponents)}`,
             () => expect(JSON.stringify(stronglyConnectedComponents)).toBe(JSON.stringify(testGraphStronglyConnectedComponents)));
 
+        let condensed = Condense(testGraph);
+        for(const key of condensed.keys())
+            key.sort((a, b) => a - b);
+
         it(
-            `${JSON.stringify([...Condense(testGraph)].map(element => [element[0], [...element[1]]]))}`,
+            `${JSON.stringify([...condensed].map(([vertex, adjacent]) => [vertex, [...adjacent]]))}`,
             () => true);
 
     });

@@ -112,5 +112,6 @@ export function Condense<TVertex, TAdjacent extends Iterable<TVertex>>(
                 if(adjacentStronglyConnectedComponent !== stronglyConnectedComponent)
                     adjacentStronglyConnectedComponents.add(adjacentStronglyConnectedComponent);
             }
+
     return condensed;
 }
