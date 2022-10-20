@@ -14,16 +14,38 @@ const testGraph = new Map<number, Iterable<number>>(
     ]
 );
 
+const testGraphStronglyConnectedComponents = [
+    [6],
+    [1, 2, 8],
+    [3, 4, 5, 7]
+];
+
+function Compare(
+    lhs: number[],
+    rhs: number[]
+    ): number
+{
+    let result = lhs.length - rhs.length;
+    if(result !== 0)
+        return result;
+
+    for(let index = 0; index < lhs.length && result === 0; ++index)
+        result = lhs[index] - rhs[index];
+
+    return result;
+}
 
 describe(
     'StronglyConnectedComponents',
     () =>
     {
 
-        const stronglyConnectedComponents = StronglyConnectedComponents(testGraph);
+        let stronglyConnectedComponents = StronglyConnectedComponents(testGraph);
+        stronglyConnectedComponents = stronglyConnectedComponents.map(component => component.sort((a, b) => a - b));
+        stronglyConnectedComponents = stronglyConnectedComponents.sort(Compare);
 
         it(
-            JSON.stringify(stronglyConnectedComponents),
-            () => true);
+            `The strongly connected components of ${JSON.stringify([...testGraph])} are ${JSON.stringify(stronglyConnectedComponents)}`,
+            () => expect(JSON.stringify(stronglyConnectedComponents)).toBe(JSON.stringify(testGraphStronglyConnectedComponents)));
 
     });
