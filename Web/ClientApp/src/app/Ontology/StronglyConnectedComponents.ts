@@ -92,22 +92,3 @@ export function StronglyConnectedComponents<TVertex, TAdjacent extends Iterable<
 
     return stronglyConnectedComponents;
 }
-
-export const TestGraph = new Map<number, Iterable<number>>(
-    [
-        [1, [2   ]],
-        [2, [3, 8]],
-        [3, [4, 7]],
-        [4, [5   ]],
-        [5, [3, 6]],
-        [6, [    ]],
-        [7, [4, 6]],
-        [8, [1, 7]]
-    ]
-);
-
-export const TestGraphStronglyConnectedComponents = [
-    [6],
-    [1, 2, 8],
-    [3, 4, 5, 7]
-];
