@@ -54,7 +54,6 @@ export function StronglyConnectedComponents<TVertex, TAdjacent extends Iterable<
         stack.push(v);
 
         for(const w of graph.get(v))
-        {
             if(!number.get(w))
             {
                 StronglyConnect(w);
@@ -62,14 +61,10 @@ export function StronglyConnectedComponents<TVertex, TAdjacent extends Iterable<
                     v,
                     Math.min(lowlink.get(v), lowlink.get(w)));
             }
-            else if(number.get(w) < number.get(v))
-            {
-                if(stack.includes(w))
-                    lowlink.set(
-                        v,
-                        Math.min(lowlink.get(v), number.get(w)));
-            }
-        }
+            else if(stack.includes(w))
+                lowlink.set(
+                    v,
+                    Math.min(lowlink.get(v), number.get(w)));
 
         if(lowlink.get(v) === number.get(v))
         {
