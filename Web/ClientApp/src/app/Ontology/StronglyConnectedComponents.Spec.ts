@@ -42,14 +42,24 @@ function Compare(
     return result;
 }
 
+function Order<TVertex>(
+    graph: Iterable<[TVertex, TVertex[]]>,
+    vertexComparer: (lhs: TVertex, rhs: TVertex) => number
+    ): [TVertex, TVertex[]][]
+{
+    return [...graph]
+        .sort(([lhs,], [rhs,]) => vertexComparer(lhs, rhs))
+        .map(([vertex, adjacent]) => [vertex, adjacent.sort(vertexComparer)]);
+}
+
 describe(
     'StronglyConnectedComponents',
     () =>
     {
-
         let stronglyConnectedComponents = StronglyConnectedComponents(testGraph);
-        stronglyConnectedComponents = stronglyConnectedComponents.map(component => component.sort((a, b) => a - b));
-        stronglyConnectedComponents = stronglyConnectedComponents.sort(Compare);
+        stronglyConnectedComponents = stronglyConnectedComponents
+            .map(component => component.sort((a, b) => a - b))
+            .sort(Compare);
 
         it(
             `The strongly connected components of ${JSON.stringify([...testGraph])} are ${JSON.stringify(stronglyConnectedComponents)}`,
@@ -59,10 +69,7 @@ describe(
         for(const vertex of condensed.keys())
             vertex.sort((a, b) => a - b);
 
-        for(const adjacent of condensed.values())
-            adjacent.sort(Compare);
-
         it(
             `The condenced graph of ${JSON.stringify([...testGraph])} is ${JSON.stringify(expectedStronglyConnectedComponentGraph)}`,
-            () => expect(JSON.stringify([...condensed].sort(([a,], [b,]) => Compare(a, b)))).toBe(JSON.stringify(expectedStronglyConnectedComponentGraph)));
+            () => expect(JSON.stringify(Order(condensed, Compare))).toBe(JSON.stringify(expectedStronglyConnectedComponentGraph)));
     });
