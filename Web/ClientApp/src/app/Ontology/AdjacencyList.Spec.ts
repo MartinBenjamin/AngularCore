@@ -46,6 +46,6 @@ describe(
 
                 it(
                     'Topological sorting of A, B and C should yield [C, B, A]',
-                    () => expect(Array.from(TopologicalSort(adjacencyList))).toEqual([3, 2, 1]));
+                    () => expect(TopologicalSort(adjacencyList)).toEqual([3, 2, 1]));
             });
     });

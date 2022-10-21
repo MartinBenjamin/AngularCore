@@ -37,7 +37,7 @@ export function LongestPaths<TVertex>(
 
 export function TopologicalSort<TVertex>(
     graph: ReadonlyMap<TVertex, Iterable<TVertex>>
-    ): Iterable<TVertex>
+    ): TVertex[]
 {
     let longestPaths = LongestPaths(graph);
     return [...graph.keys()].sort((a, b) => longestPaths.get(a) - longestPaths.get(b));
