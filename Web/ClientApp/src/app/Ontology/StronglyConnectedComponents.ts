@@ -90,7 +90,7 @@ export function StronglyConnectedComponents<TVertex>(
 
 export function Condense<TVertex>(
     graph: ReadonlyMap<TVertex, Iterable<TVertex>>
-    ): Map<TVertex[], Iterable<TVertex[]>>
+    ): Map<TVertex[], TVertex[][]>
 {
     const stronglyConnectedComponents = StronglyConnectedComponents(graph);
     const map = new Map<TVertex, TVertex[]>([].concat(...stronglyConnectedComponents.map(
@@ -101,27 +101,10 @@ export function Condense<TVertex>(
         stronglyConnectedComponent =>
             [
                 stronglyConnectedComponent,
-                new Set<TVertex[]>([].concat(
+                [...new Set<TVertex[]>([].concat(
                     ...stronglyConnectedComponent.map(
                         vertex => [...graph.get(vertex)]
                             .map(adjacent => map.get(adjacent))
-                            .filter(adjacentStronglyConnectedComponent => adjacentStronglyConnectedComponent !== stronglyConnectedComponent))))
+                            .filter(adjacentStronglyConnectedComponent => adjacentStronglyConnectedComponent !== stronglyConnectedComponent))))]
             ]));
-    //const condensed = new Map(stronglyConnectedComponents.map(
-    //    stronglyConnectedComponent =>
-    //        [
-    //            stronglyConnectedComponent,
-    //            new Set<TVertex[]>()
-    //        ]));
-
-    //for(const [stronglyConnectedComponent, adjacentStronglyConnectedComponents] of condensed)
-    //    for(const vertex of stronglyConnectedComponent)
-    //        for(const adjacent of graph.get(vertex))
-    //        {
-    //            const adjacentStronglyConnectedComponent = map.get(adjacent);
-    //            if(adjacentStronglyConnectedComponent !== stronglyConnectedComponent)
-    //                adjacentStronglyConnectedComponents.add(adjacentStronglyConnectedComponent);
-    //        }
-
-    //return condensed;
 }

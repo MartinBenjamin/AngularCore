@@ -53,7 +53,7 @@ describe(
             key.sort((a, b) => a - b);
 
         it(
-            `${JSON.stringify([...condensed].map(([vertex, adjacent]) => [vertex, [...adjacent]]))}`,
+            `${JSON.stringify([...condensed])}`,
             () => true);
 
     });
