@@ -20,6 +20,13 @@ const testGraphStronglyConnectedComponents = [
     [3, 4, 5, 7]
 ];
 
+const stronglyConnectedComponentGraph = [
+
+    [[6], []],
+    [[1, 2, 8], [[3, 4, 5, 7]]],
+    [[3, 4, 5, 7], [[6]]]
+];
+
 function Compare(
     lhs: number[],
     rhs: number[]
@@ -49,11 +56,13 @@ describe(
             () => expect(JSON.stringify(stronglyConnectedComponents)).toBe(JSON.stringify(testGraphStronglyConnectedComponents)));
 
         let condensed = Condense(testGraph);
-        for(const key of condensed.keys())
-            key.sort((a, b) => a - b);
+        for(const vertex of condensed.keys())
+            vertex.sort((a, b) => a - b);
+
+        for(const adjacent of condensed.values())
+            adjacent.sort(Compare);
 
         it(
-            `${JSON.stringify([...condensed])}`,
-            () => true);
-
+            `The condenced graph of ${JSON.stringify([...testGraph])} is ${JSON.stringify(stronglyConnectedComponentGraph)}`,
+            () => expect(JSON.stringify([...condensed].sort(([a,], [b,]) => Compare(a, b)))).toBe(JSON.stringify(stronglyConnectedComponentGraph)));
     });
