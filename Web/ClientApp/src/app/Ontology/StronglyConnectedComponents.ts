@@ -34,7 +34,7 @@
 */
 
 export function StronglyConnectedComponents<TVertex, TAdjacent extends Iterable<TVertex>>(
-    graph: Map<TVertex, TAdjacent>
+    graph: ReadonlyMap<TVertex, TAdjacent>
     ): TVertex[][]
 {
     const stronglyConnectedComponents: TVertex[][] = [];
@@ -89,7 +89,7 @@ export function StronglyConnectedComponents<TVertex, TAdjacent extends Iterable<
 }
 
 export function Condense<TVertex, TAdjacent extends Iterable<TVertex>>(
-    graph: Map<TVertex, TAdjacent>
+    graph: ReadonlyMap<TVertex, TAdjacent>
     ): Map<TVertex[], Iterable<TVertex[]>>
 {
     const stronglyConnectedComponents = StronglyConnectedComponents(graph);
