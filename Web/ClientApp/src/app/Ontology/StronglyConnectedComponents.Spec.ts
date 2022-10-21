@@ -14,13 +14,13 @@ const testGraph = new Map(
     ]
 );
 
-const testGraphStronglyConnectedComponents = [
+const expectedStronglyConnectedComponents = [
     [6],
     [1, 2, 8],
     [3, 4, 5, 7]
 ];
 
-const stronglyConnectedComponentGraph = [
+const expectedStronglyConnectedComponentGraph = [
 
     [[6], []],
     [[1, 2, 8], [[3, 4, 5, 7]]],
@@ -53,7 +53,7 @@ describe(
 
         it(
             `The strongly connected components of ${JSON.stringify([...testGraph])} are ${JSON.stringify(stronglyConnectedComponents)}`,
-            () => expect(JSON.stringify(stronglyConnectedComponents)).toBe(JSON.stringify(testGraphStronglyConnectedComponents)));
+            () => expect(JSON.stringify(stronglyConnectedComponents)).toBe(JSON.stringify(expectedStronglyConnectedComponents)));
 
         let condensed = Condense(testGraph);
         for(const vertex of condensed.keys())
@@ -63,6 +63,6 @@ describe(
             adjacent.sort(Compare);
 
         it(
-            `The condenced graph of ${JSON.stringify([...testGraph])} is ${JSON.stringify(stronglyConnectedComponentGraph)}`,
-            () => expect(JSON.stringify([...condensed].sort(([a,], [b,]) => Compare(a, b)))).toBe(JSON.stringify(stronglyConnectedComponentGraph)));
+            `The condenced graph of ${JSON.stringify([...testGraph])} is ${JSON.stringify(expectedStronglyConnectedComponentGraph)}`,
+            () => expect(JSON.stringify([...condensed].sort(([a,], [b,]) => Compare(a, b)))).toBe(JSON.stringify(expectedStronglyConnectedComponentGraph)));
     });
