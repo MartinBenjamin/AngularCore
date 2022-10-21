@@ -1,5 +1,5 @@
-export function LongestPath<TVertex, TAdjacent extends Iterable<TVertex>>(
-    graph       : Map<TVertex, TAdjacent>,
+export function LongestPath<TVertex>(
+    graph       : ReadonlyMap<TVertex, Iterable<TVertex>>,
     longestPaths: Map<TVertex, number>,
     vertex      : TVertex
     )
@@ -7,7 +7,7 @@ export function LongestPath<TVertex, TAdjacent extends Iterable<TVertex>>(
     if(!longestPaths.has(vertex))
     {
         let longestPath = 0;
-        for(let adjacentVertex of graph.get(vertex))
+        for(const adjacentVertex of graph.get(vertex))
             longestPath = Math.max(
                 longestPath,
                 LongestPath(
@@ -22,12 +22,12 @@ export function LongestPath<TVertex, TAdjacent extends Iterable<TVertex>>(
     return longestPaths.get(vertex);
 }
 
-export function LongestPaths<TVertex, TAdjacent extends Iterable<TVertex>>(
-    graph: Map<TVertex, TAdjacent>
+export function LongestPaths<TVertex>(
+    graph: ReadonlyMap<TVertex, Iterable<TVertex>>
     ): Map<TVertex, number>
 {
     let longestPaths = new Map<TVertex, number>();
-    for(let vertex of graph.keys())
+    for(const vertex of graph.keys())
         LongestPath(
             graph,
             longestPaths,
@@ -35,11 +35,10 @@ export function LongestPaths<TVertex, TAdjacent extends Iterable<TVertex>>(
     return longestPaths;
 }
 
-export function TopologicalSort<TVertex, TAdjacent extends Iterable<TVertex>>(
-    graph: Map<TVertex, TAdjacent>
+export function TopologicalSort<TVertex>(
+    graph: ReadonlyMap<TVertex, Iterable<TVertex>>
     ): Iterable<TVertex>
 {
     let longestPaths = LongestPaths(graph);
-    return Array.from(graph.keys()).sort(
-        (a, b) => longestPaths.get(a) - longestPaths.get(b));
+    return [...graph.keys()].sort((a, b) => longestPaths.get(a) - longestPaths.get(b));
 }
