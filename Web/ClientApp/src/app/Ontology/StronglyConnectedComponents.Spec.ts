@@ -1,7 +1,7 @@
 import { } from 'jasmine';
 import { Condense, StronglyConnectedComponents } from './StronglyConnectedComponents';
 
-const testGraph = new Map<number, Iterable<number>>(
+const testGraph = new Map(
     [
         [1, [2   ]],
         [2, [3, 8]],
