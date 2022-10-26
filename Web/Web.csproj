@@ -325,6 +325,7 @@
     <None Remove="ClientApp\src\app\RoleServiceProvider.ts" />
     <None Remove="ClientApp\src\app\Signal.Spec.ts" />
     <None Remove="ClientApp\src\app\Signal.ts" />
+    <None Remove="ClientApp\src\app\Signal2.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -672,6 +673,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\RegularPathQuery.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Roles.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\RoleServiceProvider.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Signal2.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

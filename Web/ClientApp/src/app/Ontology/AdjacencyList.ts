@@ -42,3 +42,16 @@ export function TopologicalSort<TVertex>(
     let longestPaths = LongestPaths(graph);
     return [...graph.keys()].sort((a, b) => longestPaths.get(a) - longestPaths.get(b));
 }
+
+export function Transpose<TVertex>(
+    graph: ReadonlyMap<TVertex, Iterable<TVertex>>
+    ): Map<TVertex, TVertex[]>
+{
+    return new Array<[TVertex, TVertex]>().concat(...[...graph].map(([vertex, adjacent]) => [...adjacent].map(adjacent => <[TVertex, TVertex]>[adjacent, vertex]))).reduce(
+        (transpose, [vertex, adjacentVertex]) =>
+        {
+            transpose.get(vertex).push(adjacentVertex);
+            return transpose;
+        },
+        new Map([...graph.keys()].map(vertex => [vertex, <TVertex[]>[]])));
+}
