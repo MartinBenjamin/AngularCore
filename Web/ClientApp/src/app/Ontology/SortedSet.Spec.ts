@@ -7,10 +7,10 @@ describe(
     () =>
     {
         describe(
-            "Given values: number[] = [1, 1, 3, 3, 3, 5, 5, 5, 5] and set = new SortedSet(null, values):",
+            "Given values: number[] = [1, 1, 3, 3, 3, 5, 5, 5, 5].reverse() and set = new SortedSet(null, values):",
             () =>
             {
-                const values: number[] = [1, 1, 3, 3, 3, 5, 5, 5, 5];
+                const values: number[] = [1, 1, 3, 3, 3, 5, 5, 5, 5].reverse();
                 const set = new SortedSet(
                     null,
                     values);
@@ -38,5 +38,21 @@ describe(
                     assert(`!set.has(${value})`);
                     assert(`!set.delete(${value})`);
                 }
+
+                it(
+                    'Expect [...set.values()] to be [1, 3, 5]',
+                    () => expect(JSON.stringify([...set.values()])).toBe(JSON.stringify([1, 3, 5])));
+
+                it(
+                    'Expect [...set.keys()] to be [1, 3, 5]',
+                    () => expect(JSON.stringify([...set.keys()])).toBe(JSON.stringify([1, 3, 5])));
+
+                it(
+                    'Expect [...set.entries()] to be [[1, 1], [3, 3], [5, 5]]',
+                    () => expect(JSON.stringify([...set.entries()])).toBe(JSON.stringify([[1, 1], [3, 3], [5, 5]])));
+
+                it(
+                    'Expect [...set] to be [1, 3, 5]',
+                    () => expect(JSON.stringify([...set])).toBe(JSON.stringify([1, 3, 5])));
             });
     });
