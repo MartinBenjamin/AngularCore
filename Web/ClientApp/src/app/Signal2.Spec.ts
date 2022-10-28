@@ -134,24 +134,21 @@ scheduler = new Scheduler(graph):`,
             });
         subscriptions.forEach(subscription => subscription.unsubscribe());
 
+        type Tuple = any[];
         describe(
             'Recursion',
             () =>
             {
-                const Comparer = (a: number, b: number) => a - b;
-                function TupleComparer<T1 extends [any, ...any[]], T2 extends [any, ...any[]]>(
+                function TupleComparer(
                     elementComparer: (a, b) => number
-                    ): (a: T1, b: T2) => number
+                    ): (a: Tuple, b: Tuple) => number
                 {
                     return function(
-                        a: T1,
-                        b: T2
+                        a: Tuple,
+                        b: Tuple
                        ): number
                     {
                         let result = a.length - b.length;
-                        if(result !== 0)
-                            return result;
-
                         for(let index = 1; index < a.length && result === 0; ++index)
                             result = elementComparer(
                                 a[index],
@@ -161,29 +158,49 @@ scheduler = new Scheduler(graph):`,
                     }
                 }
 
-                const emptySet = new Set();
-                function Union<T extends [any, ...any[]]>(
-                    tupleComparer: (a: [any, ...any[]], b: [any, ...any[]]) => number
+                const emptySet = new Set<Tuple>();
+                function Union(
+                    tupleComparer: (a: Tuple, b: Tuple) => number
                     )
                 {
                     return function(
-                        ...sets: Iterable<T>[]
-                        ): Set<T>
+                        ...sets: Iterable<Tuple>[]
+                        ): Set<Tuple>
                     {
-                        return sets.reduce<Set<T>>((lhs, rhs) => new SortedSet<T>(
+                        return sets.reduce<Set<Tuple>>((lhs, rhs) => new SortedSet(
                             tupleComparer,
                             [...lhs, ...rhs]),
-                            <Set<T>>emptySet);
+                            emptySet);
                     };
                 }
 
+                const comparer = (a: number, b: number) => a - b;
+                const tupleComparer = TupleComparer(comparer);
+                const union = Union(tupleComparer);
 
-                function Union2<T extends [any, ...any[]]>(
-                    ...sets: Iterable<T>[]
-                    ): Set<T>
+                function AreEqual<T>(
+                    lhs: Set<T>,
+                    rhs: Set<T>
+                    )
                 {
-                    return sets.reduce<Set<T>>((lhs, rhs) => new SortedSet(null, [...lhs, ...rhs]), new Set<T>());
+                    if(lhs.size != rhs.size)
+                        return false;
+
+                    for(const a of lhs)
+                        if(!rhs.has(a))
+                            return false;
+
+                    return true;
                 }
+
+                const R = [
+                    [1, 2],
+                    [2, 1],
+                    [2, 3],
+                    [1, 4],
+                    [3, 4],
+                    [4, 5]
+                ];
             });
 
     });
