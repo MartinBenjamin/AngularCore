@@ -24,11 +24,13 @@ export interface IScheduler
     Observe<TOut>(signal: Signal): Observable<TOut>;
 }
 
-export class Scheduler extends SortedList<Signal[]> implements IScheduler
+type SCC<T> = ReadonlyArray<T>
+
+export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 {
-    private _outputInputMap             : Map<Signal, Signal[]>;
-    private _condensed                  : Map<Signal[], Signal[][]>;
-    private _stronglyConnectedComponents: Map<Signal, Signal[]>;
+    private _outputInputMap             : ReadonlyMap<Signal, ReadonlyArray<Signal>>;
+    private _condensed                  : ReadonlyMap<SCC<Signal>, ReadonlyArray<SCC<Signal>>>;
+    private _stronglyConnectedComponents: ReadonlyMap<Signal, ReadonlyArray<Signal>>;
     private _values                     = new Map<Signal, any>();
     private _subscribers                = new Map<Signal, Set<Subscriber<any>>>();
     private _suspended                  = 0;
@@ -36,7 +38,7 @@ export class Scheduler extends SortedList<Signal[]> implements IScheduler
     private _flushing                   = false;
 
     constructor(
-        private _inputOutputMap: Map<Signal, Signal[]>
+        private _inputOutputMap: ReadonlyMap<Signal, ReadonlyArray<Signal>>
         )
     {
         super((lhs, rhs) => (<IVertex>lhs).LongestPath - (<IVertex>rhs).LongestPath);
@@ -47,9 +49,9 @@ export class Scheduler extends SortedList<Signal[]> implements IScheduler
         // Condense the transpose.
         this._condensed = Condense(this._inputOutputMap);
 
-        this._stronglyConnectedComponents = new Map<Signal, Signal[]>([].concat(...[...this._condensed.keys()]
+        this._stronglyConnectedComponents = new Map<Signal, SCC<Signal>>([].concat(...[...this._condensed.keys()]
             .map(stronglyConnectedComponent => stronglyConnectedComponent
-                .map<[Signal, Signal[]]>(signal => [signal, stronglyConnectedComponent]))));
+                .map<[Signal, SCC<Signal>]>(signal => [signal, stronglyConnectedComponent]))));
 
         // Determine longest path for each strongly connect component in condensed graph.
         const longestPaths = LongestPaths(this._condensed);
@@ -64,20 +66,20 @@ export class Scheduler extends SortedList<Signal[]> implements IScheduler
     }
 
     public add(
-        signal: Signal[]
+        stronglyConnectedComponent: SCC<Signal>
         ): this
     {
-        const indexBefore = this.lastBefore(signal);
+        const indexBefore = this.lastBefore(stronglyConnectedComponent);
 
-        for(let index = indexBefore + 1; index < this._array.length && this._compare(this._array[index], signal) === 0; ++index)
-            if(this._array[index] === signal)
+        for(let index = indexBefore + 1; index < this._array.length && this._compare(this._array[index], stronglyConnectedComponent) === 0; ++index)
+            if(this._array[index] === stronglyConnectedComponent)
                 // Already scheduled.
                 return this;
 
         this._array.splice(
             indexBefore + 1,
             0,
-            signal);
+            stronglyConnectedComponent);
 
         return this;
     }
@@ -202,7 +204,7 @@ export class Scheduler extends SortedList<Signal[]> implements IScheduler
     }
 
     private Run(
-        stronglyConnectedComponent: Signal[]
+        stronglyConnectedComponent: SCC<Signal>
         )
     {
         if(stronglyConnectedComponent.length === 1)
