@@ -60,7 +60,7 @@ export class Scheduler extends SortedList<Signal> implements IScheduler
     {
         const indexBefore = this.lastBefore(signal);
 
-        for(let index = indexBefore + 1; index < this._array.length && this._array[index].LongestPath === signal.LongestPath; ++index)
+        for(let index = indexBefore + 1; index < this._array.length && this._compare(this._array[index], signal) === 0; ++index)
             if(this._array[index] === signal)
                 // Already scheduled.
                 return this;
