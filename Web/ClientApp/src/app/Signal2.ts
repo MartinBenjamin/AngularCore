@@ -98,7 +98,6 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 
             else
                 this.add(stronglyConnectedComponent);
-
         }
         finally
         {
