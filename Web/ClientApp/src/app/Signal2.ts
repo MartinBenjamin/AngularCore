@@ -26,7 +26,7 @@ export interface IScheduler
 
 export class Scheduler extends SortedList<Signal[]> implements IScheduler
 {
-    private _inputOutputMap             : Map<Signal, Signal[]>;
+    private _outputInputMap             : Map<Signal, Signal[]>;
     private _condensed                  : Map<Signal[], Signal[][]>;
     private _stronglyConnectedComponents: Map<Signal, Signal[]>;
     private _values                     = new Map<Signal, any>();
@@ -36,13 +36,13 @@ export class Scheduler extends SortedList<Signal[]> implements IScheduler
     private _flushing                   = false;
 
     constructor(
-        private _outputInputMap: Map<Signal, Signal[]>
+        private _inputOutputMap: Map<Signal, Signal[]>
         )
     {
         super((lhs, rhs) => (<IVertex>lhs).LongestPath - (<IVertex>rhs).LongestPath);
 
         // Determine the transpose.
-        this._inputOutputMap = Transpose(this._outputInputMap)
+        this._outputInputMap = Transpose(this._inputOutputMap)
 
         // Condense the transpose.
         this._condensed = Condense(this._inputOutputMap);

@@ -27,9 +27,9 @@ scheduler = new Scheduler(graph):`,
                 const s3: Signal = { Map: (...numbers: number[]) => numbers.reduce((total, current) => total + current, 0) };
 
                 const graph = new Map([
-                    [s1, [s3]],
-                    [s2, [s3]],
-                    [s3, []]]);
+                    [s1, []],
+                    [s2, []],
+                    [s3, [s1, s2]]]);
                 const scheduler = new Scheduler(graph);
                 subscriptions = [...graph.keys()].map(signal => scheduler.Observe<number>(signal).subscribe(value => trace.push({ Signal: signal, Value: value })));
                 const assert = assertBuilder('trace', 's1', 's2', 's3')(trace, s1, s2, s3);
@@ -85,11 +85,11 @@ scheduler = new Scheduler(graph):`,
                 const s5: Signal = { Map: s4.Map };
 
                 const graph = new Map([
-                    [s1, [s4]],
-                    [s2, [s4]],
-                    [s3, [s5]],
-                    [s4, [s5]],
-                    [s5, [  ]]]);
+                    [s1, []],
+                    [s2, []],
+                    [s3, []],
+                    [s4, [s1, s2]],
+                    [s5, [s3, s4]]]);
                 const scheduler = new Scheduler(graph);
                 subscriptions = [...graph.keys()].map(signal => scheduler.Observe<number>(signal).subscribe(value => trace.push({ Signal: signal, Value: value })));
                 const assert = assertBuilder('trace', 's1', 's2', 's3', 's4', 's5')(trace, s1, s2, s3, s4, s5);
