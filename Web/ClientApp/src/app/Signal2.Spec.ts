@@ -2,6 +2,7 @@ import { } from 'jasmine';
 import { assertBuilder } from './Ontology/assertBuilder';
 import { Scheduler, Signal } from './Signal2';
 import { Observable, Subscription } from 'rxjs';
+import { SortedSet } from './Ontology/SortedSet';
 
 
 describe(
@@ -132,5 +133,57 @@ scheduler = new Scheduler(graph):`,
                     });
             });
         subscriptions.forEach(subscription => subscription.unsubscribe());
+
+        describe(
+            'Recursion',
+            () =>
+            {
+                const Comparer = (a: number, b: number) => a - b;
+                function TupleComparer<T1 extends [any, ...any[]], T2 extends [any, ...any[]]>(
+                    elementComparer: (a, b) => number
+                    ): (a: T1, b: T2) => number
+                {
+                    return function(
+                        a: T1,
+                        b: T2
+                       ): number
+                    {
+                        let result = a.length - b.length;
+                        if(result !== 0)
+                            return result;
+
+                        for(let index = 1; index < a.length && result === 0; ++index)
+                            result = elementComparer(
+                                a[index],
+                                b[index]);
+
+                        return result;
+                    }
+                }
+
+                const emptySet = new Set();
+                function Union<T extends [any, ...any[]]>(
+                    tupleComparer: (a: [any, ...any[]], b: [any, ...any[]]) => number
+                    )
+                {
+                    return function(
+                        ...sets: Iterable<T>[]
+                        ): Set<T>
+                    {
+                        return sets.reduce<Set<T>>((lhs, rhs) => new SortedSet<T>(
+                            tupleComparer,
+                            [...lhs, ...rhs]),
+                            <Set<T>>emptySet);
+                    };
+                }
+
+
+                function Union2<T extends [any, ...any[]]>(
+                    ...sets: Iterable<T>[]
+                    ): Set<T>
+                {
+                    return sets.reduce<Set<T>>((lhs, rhs) => new SortedSet(null, [...lhs, ...rhs]), new Set<T>());
+                }
+            });
 
     });
