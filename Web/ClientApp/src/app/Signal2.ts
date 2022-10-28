@@ -184,13 +184,6 @@ export class Scheduler extends SortedList<Signal[]> implements IScheduler
             });
     }
 
-    LongestPath(
-        signal: Signal
-        ): number
-    {
-        return (<IVertex>this._stronglyConnectedComponents.get(signal)).LongestPath;
-    }
-
     private Flush(): void
     {
         if(this._flushing)
