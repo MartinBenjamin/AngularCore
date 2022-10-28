@@ -24,38 +24,47 @@ export interface IScheduler
     Observe<TOut>(signal: Signal): Observable<TOut>;
 }
 
-export class Scheduler extends SortedList<Signal> implements IScheduler
+export class Scheduler extends SortedList<Signal[]> implements IScheduler
 {
-    private _inputOutputMap: Map<Signal, Signal[]>;
-    private _values        = new Map<Signal, any>();
-    private _subscribers   = new Map<Signal, Set<Subscriber<any>>>();
-    private _suspended     = 0;
-    private _entryCount    = 0;
-    private _flushing      = false;
+    private _inputOutputMap             : Map<Signal, Signal[]>;
+    private _condensed                  : Map<Signal[], Signal[][]>;
+    private _stronglyConnectedComponents: Map<Signal, Signal[]>;
+    private _values                     = new Map<Signal, any>();
+    private _subscribers                = new Map<Signal, Set<Subscriber<any>>>();
+    private _suspended                  = 0;
+    private _entryCount                 = 0;
+    private _flushing                   = false;
 
     constructor(
         private _outputInputMap: Map<Signal, Signal[]>
         )
     {
-        super((lhs, rhs) => lhs.LongestPath - rhs.LongestPath);
+        super((lhs, rhs) => (<IVertex>lhs).LongestPath - (<IVertex>rhs).LongestPath);
 
         // Determine the transpose.
         this._inputOutputMap = Transpose(this._outputInputMap)
 
         // Condense the transpose.
-        const condensed = Condense(this._inputOutputMap);
+        this._condensed = Condense(this._inputOutputMap);
+
+        this._stronglyConnectedComponents = new Map<Signal, Signal[]>([].concat(...[...this._condensed.keys()]
+            .map(stronglyConnectedComponent => stronglyConnectedComponent
+                .map<[Signal, Signal[]]>(signal => [signal, stronglyConnectedComponent]))));
 
         // Determine longest path for each strongly connect component in condensed graph.
-        const longestPaths = LongestPaths(condensed);
+        const longestPaths = LongestPaths(this._condensed);
 
         for(const [stronglyConnectComponent, longestPath] of longestPaths)
-            // Each vertex of the strongly connect component get assigned the longest path of the strongly connect component.
-            for(const vertex of stronglyConnectComponent)
-                vertex.LongestPath = longestPath;
+        {
+            (<IVertex>stronglyConnectComponent).LongestPath = longestPath;
+
+            for(const signal of stronglyConnectComponent)
+                (<IVertex>signal).LongestPath = longestPath;
+        }
     }
 
     public add(
-        signal: Signal
+        signal: Signal[]
         ): this
     {
         const indexBefore = this.lastBefore(signal);
@@ -80,12 +89,13 @@ export class Scheduler extends SortedList<Signal> implements IScheduler
         try
         {
             this._entryCount += 1;
+            const stronglyConnectedComponent = this._stronglyConnectedComponents.get(signal);
             if(this._inputOutputMap.get(signal).length === 1 && !this._suspended)
                 // Run immediately.
-                this.Run(signal);
+                this.Run(stronglyConnectedComponent);
 
             else
-                this.add(signal);
+                this.add(stronglyConnectedComponent);
 
         }
         finally
@@ -174,9 +184,11 @@ export class Scheduler extends SortedList<Signal> implements IScheduler
             });
     }
 
-    *Signals(): IterableIterator<Signal>
+    LongestPath(
+        signal: Signal
+        ): number
     {
-        yield* this._array;
+        return (<IVertex>this._stronglyConnectedComponents.get(signal)).LongestPath;
     }
 
     private Flush(): void
@@ -197,14 +209,22 @@ export class Scheduler extends SortedList<Signal> implements IScheduler
     }
 
     private Run(
-        signal: Signal
+        stronglyConnectedComponent: Signal[]
         )
     {
-        if(signal.Map)
-            this.SetValue(
-                signal,
-                signal.Map.apply(
-                    null,
-                    this._inputOutputMap.get(signal).map(output => this._values.get(output))));
+        if(stronglyConnectedComponent.length === 1)
+        {
+            const signal = stronglyConnectedComponent[0]
+            if(signal.Map)
+                this.SetValue(
+                    signal,
+                    signal.Map.apply(
+                        null,
+                        this._inputOutputMap.get(signal).map(output => this._values.get(output))));
+        }
+        else
+        {
+
+        }
     }
 }
