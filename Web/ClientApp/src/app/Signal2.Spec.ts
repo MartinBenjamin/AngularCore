@@ -201,6 +201,19 @@ scheduler = new Scheduler(graph):`,
                     [3, 4],
                     [4, 5]
                 ];
+
+                function Join(
+                    lhs: Iterable<[number, number]>,
+                    rhs: Iterable<[number, number]>
+                    ): Set<[number, number]>
+                {
+                    const result: Set<[number, number]> = new SortedSet<[number, number]>(tupleComparer);
+                    for(const a of lhs)
+                        for(const b of rhs)
+                            if(a[1] === b[0])
+                                result.add([a[0], b[1]])
+                    return result;
+                }
             });
 
     });
