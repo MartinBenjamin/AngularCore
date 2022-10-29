@@ -228,7 +228,7 @@ scheduler = new Scheduler(graph):`,
                     rhs: Set<T>
                     )
                 {
-                    if(lhs.size != rhs.size)
+                    if(!(lhs && rhs && lhs.size === rhs.size))
                         return false;
 
                     for(const a of lhs)

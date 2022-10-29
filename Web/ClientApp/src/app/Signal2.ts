@@ -11,6 +11,7 @@ export interface IVertex
 export interface Signal
 {
     Map?: (...parameters: any) => any;
+    AreEqual?: (lhs: any, rhs: any) => boolean;
 }
 
 export interface IScheduler
@@ -218,7 +219,46 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         }
         else
         {
+            for(const signal of stronglyConnectedComponent)
+                this._values.delete(signal);
 
+            const nextValues = new Map<Signal, any>();
+            let fixedPoint;
+            do
+            {
+                for(const signal of stronglyConnectedComponent)
+                    nextValues.set(
+                        signal,
+                        signal.Map.apply(
+                            null,
+                            this._inputOutputMap.get(signal).map(output => this._values.get(output))));
+
+                for(const signal of stronglyConnectedComponent)
+                {
+                    fixedPoint = signal.AreEqual(
+                        this._values.get(signal),
+                        nextValues.get(signal));
+
+                    if(!fixedPoint)
+                        break;
+                }
+
+                for(const signal of stronglyConnectedComponent)
+                    this._values.set(
+                        signal,
+                        nextValues.get(signal));
+            }
+            while(!fixedPoint);
+
+            for(const signal of stronglyConnectedComponent)
+            {
+                for(const input of this._outputInputMap.get(signal))
+                    this.Schedule(input);
+
+                const subscribers = this._subscribers.get(signal);
+                if(subscribers)
+                    subscribers.forEach(subscriber => subscriber.next(this._values.get(signal)));
+            }
         }
     }
 }
