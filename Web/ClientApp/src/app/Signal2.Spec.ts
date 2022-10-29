@@ -3,7 +3,83 @@ import { assertBuilder } from './Ontology/assertBuilder';
 import { Scheduler, Signal } from './Signal2';
 import { Observable, Subscription } from 'rxjs';
 import { SortedSet } from './Ontology/SortedSet';
+import { BuiltIn } from './Ontology/Atom';
+import { IsVariable } from './Ontology/EavStore';
 
+type Tuple = any[];
+
+type Comparer<T> = (a: T, b: T) => number;
+
+function TupleComparer(
+    elementComparer: Comparer<any>
+    ): Comparer<Tuple>
+{
+    return function(
+        a: Tuple,
+        b: Tuple
+        ): number
+    {
+        let result = a.length - b.length;
+        for(let index = 1; index < a.length && result === 0; ++index)
+            result = elementComparer(
+                a[index],
+                b[index]);
+
+        return result;
+    }
+}
+
+const empty = new Set<Tuple>();
+const Union = (
+    setBuilder: (tuple: Iterable<Tuple>) => Set<Tuple>
+    ): (...iterables: Iterable<Tuple>[]) => Set<Tuple> =>
+    (...iterables: Iterable<Tuple>[]): Set<Tuple> => iterables.reduce<Set<Tuple>>(
+        (lhs, rhs) => rhs ? setBuilder([...lhs, ...rhs]) : lhs,
+        empty);
+
+const Query = <T extends [any, ...any[]]>(
+    head: T,
+    ...body: (Tuple | BuiltIn)[]): (relations: Tuple[][]) => { [K in keyof T]: any; }[] =>
+    (relations: Tuple[][]): { [K in keyof T]: any; }[] =>
+    {
+        let relationIndex = 0;
+        return body.reduce<{}[]>(
+            (substitutions, atom) =>
+            {
+                if(typeof atom === 'function')
+                    return [...atom(substitutions)];
+
+                let count = substitutions.length;
+                while(count--)
+                {
+                    const substitution = substitutions.shift();
+                    for(const fact of relations[relationIndex])
+                    {
+                        let merged = { ...substitution };
+                        for(let index = 0; index < atom.length && merged; ++index)
+                        {
+                            const term = atom[index];
+                            if(IsVariable(term))
+                            {
+                                if(typeof merged[term] === 'undefined')
+                                    merged[term] = fact[index];
+
+                                else if(merged[term] !== fact[index])
+                                    // Fact does not match query pattern.
+                                    merged = null;
+                            }
+                        }
+
+                        if(merged)
+                            substitutions.push(merged);
+                    }
+                }
+
+                ++relationIndex;
+                return substitutions;
+            },
+            [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
+    };
 
 describe(
     'Signal2',
@@ -134,49 +210,18 @@ scheduler = new Scheduler(graph):`,
             });
         subscriptions.forEach(subscription => subscription.unsubscribe());
 
-        type Tuple = any[];
         describe(
             'Recursion',
             () =>
             {
-                function TupleComparer(
-                    elementComparer: (a, b) => number
-                    ): (a: Tuple, b: Tuple) => number
-                {
-                    return function(
-                        a: Tuple,
-                        b: Tuple
-                       ): number
-                    {
-                        let result = a.length - b.length;
-                        for(let index = 1; index < a.length && result === 0; ++index)
-                            result = elementComparer(
-                                a[index],
-                                b[index]);
+                const elementComparer = (a: number, b: number) => a - b;
+                const tupleComparer = TupleComparer(elementComparer);
+                const setBuilder = (tuples: Iterable<Tuple>) => new SortedSet(
+                    tupleComparer,
+                    tuples);
+                const union = Union(setBuilder);
+                const query = Query(['?x', '?y'], ['?x', '?z'], ['?z', '?y']);
 
-                        return result;
-                    }
-                }
-
-                const emptySet = new Set<Tuple>();
-                function Union(
-                    tupleComparer: (a: Tuple, b: Tuple) => number
-                    )
-                {
-                    return function(
-                        ...sets: Iterable<Tuple>[]
-                        ): Set<Tuple>
-                    {
-                        return sets.reduce<Set<Tuple>>((lhs, rhs) => new SortedSet(
-                            tupleComparer,
-                            [...lhs, ...rhs]),
-                            emptySet);
-                    };
-                }
-
-                const comparer = (a: number, b: number) => a - b;
-                const tupleComparer = TupleComparer(comparer);
-                const union = Union(tupleComparer);
 
                 function AreEqual<T>(
                     lhs: Set<T>,
@@ -201,19 +246,6 @@ scheduler = new Scheduler(graph):`,
                     [3, 4],
                     [4, 5]
                 ];
-
-                function Join(
-                    lhs: Iterable<[number, number]>,
-                    rhs: Iterable<[number, number]>
-                    ): Set<[number, number]>
-                {
-                    const result: Set<[number, number]> = new SortedSet<[number, number]>(tupleComparer);
-                    for(const a of lhs)
-                        for(const b of rhs)
-                            if(a[1] === b[0])
-                                result.add([a[0], b[1]])
-                    return result;
-                }
             });
 
     });
