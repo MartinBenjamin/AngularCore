@@ -37,9 +37,9 @@ const Union = (
         (lhs, rhs) => rhs ? setBuilder([...lhs, ...rhs]) : lhs,
         empty);
 
-const Query = <T extends [any, ...any[]]>(
+const ConjunctiveQuery = <T extends [any, ...any[]]>(
     head: T,
-    ...body: (Tuple | BuiltIn)[]): (relations: Tuple[][]) => { [K in keyof T]: any; }[] =>
+    body: (Tuple | BuiltIn)[]): (relations: Tuple[][]) => { [K in keyof T]: any; }[] =>
     (relations: Tuple[][]): { [K in keyof T]: any; }[] =>
     {
         let relationIndex = 0;
@@ -220,7 +220,7 @@ scheduler = new Scheduler(graph):`,
                     tupleComparer,
                     tuples);
                 const union = Union(setBuilder);
-                const query = Query(['?x', '?y'], ['?x', '?z'], ['?z', '?y']);
+                const query = ConjunctiveQuery(['?x', '?y'], [['?x', '?z'], ['?z', '?y']]);
 
 
                 function AreEqual<T>(
