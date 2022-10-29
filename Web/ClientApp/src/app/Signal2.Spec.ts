@@ -1,10 +1,10 @@
 import { } from 'jasmine';
+import { Subscription } from 'rxjs';
 import { assertBuilder } from './Ontology/assertBuilder';
-import { Scheduler, Signal } from './Signal2';
-import { Observable, Subscription } from 'rxjs';
-import { SortedSet } from './Ontology/SortedSet';
 import { BuiltIn } from './Ontology/Atom';
 import { IsVariable } from './Ontology/EavStore';
+import { SortedSet } from './Ontology/SortedSet';
+import { Scheduler, Signal } from './Signal2';
 
 type Tuple = any[];
 
@@ -53,7 +53,7 @@ const Query = <T extends [any, ...any[]]>(
                 while(count--)
                 {
                     const substitution = substitutions.shift();
-                    for(const fact of relations[relationIndex])
+                    for(const fact of relations[relationIndex] || empty)
                     {
                         let merged = { ...substitution };
                         for(let index = 0; index < atom.length && merged; ++index)
