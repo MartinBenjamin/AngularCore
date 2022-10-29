@@ -81,6 +81,18 @@ const ConjunctiveQuery = <T extends [any, ...any[]]>(
             [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
     };
 
+const ConjunctiveQueryDistinct = <T extends [any, ...any[]]>(
+    setBuilder: (tuple: Iterable<Tuple>) => Set<Tuple>,
+    head: T,
+    body: (Tuple | BuiltIn)[]): (relations: Tuple[][]) => Set<{ [K in keyof T]: any; }> =>
+{
+    const query = ConjunctiveQuery(
+        head,
+        body);
+
+    return (relations: Tuple[][]): Set<{ [K in keyof T]: any; }> => <Set<{ [K in keyof T]: any; }>>setBuilder(query(relations));
+}
+
 describe(
     'Signal2',
     () =>
@@ -210,6 +222,9 @@ scheduler = new Scheduler(graph):`,
             });
         subscriptions.forEach(subscription => subscription.unsubscribe());
 
+        trace = [];
+        subscriptions = [];
+
         describe(
             'Recursion',
             () =>
@@ -220,7 +235,10 @@ scheduler = new Scheduler(graph):`,
                     tupleComparer,
                     tuples);
                 const union = Union(setBuilder);
-                const query = ConjunctiveQuery(['?x', '?y'], [['?x', '?z'], ['?z', '?y']]);
+                const query = ConjunctiveQueryDistinct(
+                    setBuilder,
+                    ['?x', '?y'],
+                    [['?x', '?z'], ['?z', '?y']]);
 
 
                 function AreEqual<T>(
@@ -246,6 +264,24 @@ scheduler = new Scheduler(graph):`,
                     [3, 4],
                     [4, 5]
                 ];
-            });
 
+                const RSignal: Signal = {};
+                const TSignal: Signal = { Map: union, AreEqual: AreEqual };
+                const QSignal: Signal = {
+                    Map: query,
+                    AreEqual: AreEqual
+                };
+
+                const graph = new Map([
+                    [RSignal, []],
+                    [TSignal, [TSignal, RSignal, QSignal]],
+                    [QSignal, [TSignal, RSignal]]]);
+
+                const scheduler = new Scheduler(graph);
+                subscriptions = [...graph.keys()].map(signal => scheduler.Observe<number>(signal).subscribe(value => trace.push({ Signal: signal, Value: value })));
+                const assert = assertBuilder('trace', 'RSignal', 'TSignal', 'QSignal')(trace, RSignal, TSignal, QSignal);
+                assert('RSignal.LongestPath === 0');
+                assert('TSignal.LongestPath === 1');
+                assert('QSignal.LongestPath === 1');
+            });
     });
