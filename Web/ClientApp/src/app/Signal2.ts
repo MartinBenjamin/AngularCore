@@ -8,7 +8,7 @@ export interface IVertex
     LongestPath?: number;
 }
 
-export interface Signal extends IVertex
+export interface Signal
 {
     Map?: (...parameters: any) => any;
 }
