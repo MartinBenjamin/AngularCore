@@ -266,10 +266,7 @@ scheduler = new Scheduler(graph):`,
 
                 const RSignal: Signal = {};
                 const TSignal: Signal = { Map: union, AreEqual: AreEqual };
-                const QSignal: Signal = {
-                    Map: query,
-                    AreEqual: AreEqual
-                };
+                const QSignal: Signal = { Map: query, AreEqual: AreEqual };
 
                 const graph = new Map([
                     [RSignal, []],

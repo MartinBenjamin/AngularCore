@@ -234,14 +234,15 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                             this._inputOutputMap.get(signal).map(output => this._values.get(output))));
 
                 for(const signal of stronglyConnectedComponent)
-                {
-                    fixedPoint = signal.AreEqual(
-                        this._values.get(signal),
-                        nextValues.get(signal));
+                    if(signal.AreEqual)
+                    {
+                        fixedPoint = signal.AreEqual(
+                            this._values.get(signal),
+                            nextValues.get(signal));
 
-                    if(!fixedPoint)
-                        break;
-                }
+                        if(!fixedPoint)
+                            break;
+                    }
 
                 for(const signal of stronglyConnectedComponent)
                     this._values.set(
