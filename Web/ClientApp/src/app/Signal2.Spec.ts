@@ -6,7 +6,7 @@ import { IsVariable } from './Ontology/EavStore';
 import { SortedSet } from './Ontology/SortedSet';
 import { Scheduler, Signal } from './Signal2';
 
-type Tuple = any[];
+type Tuple = [any, ...any[]];
 
 type Comparer<T> = (a: T, b: T) => number;
 
@@ -37,7 +37,7 @@ const Union = (
         (lhs, rhs) => rhs ? setBuilder([...lhs, ...rhs]) : lhs,
         empty);
 
-const ConjunctiveQuery = <T extends [any, ...any[]]>(
+const ConjunctiveQuery = <T extends Tuple> (
     head: T,
     body: (Tuple | BuiltIn)[]): (relations: Tuple[][]) => { [K in keyof T]: any; }[] =>
     (relations: Tuple[][]): { [K in keyof T]: any; }[] =>
@@ -81,8 +81,8 @@ const ConjunctiveQuery = <T extends [any, ...any[]]>(
             [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
     };
 
-const ConjunctiveQueryDistinct = <T extends [any, ...any[]]>(
-    setBuilder: (tuple: Iterable<Tuple>) => Set<Tuple>,
+const ConjunctiveQueryDistinct = <T extends Tuple>(
+    setBuilder: (tuple: Iterable<{ [K in keyof T]: any; }>) => Set<{ [K in keyof T]: any; }>,
     head: T,
     body: (Tuple | BuiltIn)[]): (relations: Tuple[][]) => Set<{ [K in keyof T]: any; }> =>
 {
@@ -90,7 +90,7 @@ const ConjunctiveQueryDistinct = <T extends [any, ...any[]]>(
         head,
         body);
 
-    return (relations: Tuple[][]): Set<{ [K in keyof T]: any; }> => <Set<{ [K in keyof T]: any; }>>setBuilder(query(relations));
+    return (relations: Tuple[][]): Set<{ [K in keyof T]: any; }> => setBuilder(query(relations));
 }
 
 describe(
@@ -231,7 +231,7 @@ scheduler = new Scheduler(graph):`,
             {
                 const elementComparer = (a: number, b: number) => a - b;
                 const tupleComparer = TupleComparer(elementComparer);
-                const setBuilder = (tuples: Iterable<Tuple>) => new SortedSet(
+                const setBuilder = (tuples: Iterable<any>): Set<any> => new SortedSet(
                     tupleComparer,
                     tuples);
                 const union = Union(setBuilder);
@@ -239,7 +239,6 @@ scheduler = new Scheduler(graph):`,
                     setBuilder,
                     ['?x', '?y'],
                     [['?x', '?z'], ['?z', '?y']]);
-
 
                 function AreEqual<T>(
                     lhs: Set<T>,
