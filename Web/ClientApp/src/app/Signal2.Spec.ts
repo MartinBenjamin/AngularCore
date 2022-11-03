@@ -229,6 +229,7 @@ scheduler = new Scheduler(graph):`,
             'Recursion',
             () =>
             {
+                let trace: { Signal: Signal, Value: undefined | Iterable<Tuple> }[] = [];
                 const elementComparer = (a: number, b: number) => a - b;
                 const tupleComparer = TupleComparer(elementComparer);
                 const setBuilder = (tuples: Iterable<any>): Set<any> => new SortedSet(
@@ -274,7 +275,8 @@ scheduler = new Scheduler(graph):`,
                     [QSignal, [RSignal, TSignal]]]);
 
                 const scheduler = new Scheduler(graph);
-                subscriptions = [...graph.keys()].map(signal => scheduler.Observe<number>(signal).subscribe(value => trace.push({ Signal: signal, Value: value })));
+                subscriptions = [...graph.keys()].map(signal => scheduler.Observe<Iterable<Tuple>>(signal).subscribe(
+                    value => trace.push({ Signal: signal, Value: value })));
                 const assert = assertBuilder('trace', 'RSignal', 'TSignal', 'QSignal')(trace, RSignal, TSignal, QSignal);
                 assert('RSignal.LongestPath === 0');
                 assert('TSignal.LongestPath === 1');
@@ -284,5 +286,8 @@ scheduler = new Scheduler(graph):`,
                 {
                     s.SetValue(RSignal, R);
                 });
+
+                for(const traceItem of trace)
+                    console.log(`${traceItem.Signal === TSignal ? 'T' : traceItem.Signal === QSignal ? 'Q' : 'R'}: ${JSON.stringify(traceItem.Value ? [...traceItem.Value] : traceItem.Value)}`);
             });
     });
