@@ -254,7 +254,8 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
             for(const signal of stronglyConnectedComponent)
             {
                 for(const input of this._outputInputMap.get(signal))
-                    this.Schedule(input);
+                    if(stronglyConnectedComponent.indexOf(signal) === -1) // Do not schedule signals within the strongly connected component.
+                        this.Schedule(input);
 
                 const subscribers = this._subscribers.get(signal);
                 if(subscribers)

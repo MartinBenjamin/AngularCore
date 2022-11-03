@@ -20,7 +20,7 @@ function TupleComparer(
         ): number
     {
         let result = a.length - b.length;
-        for(let index = 1; index < a.length && result === 0; ++index)
+        for(let index = 0; index < a.length && result === 0; ++index)
             result = elementComparer(
                 a[index],
                 b[index]);
@@ -39,8 +39,8 @@ const Union = (
 
 const ConjunctiveQuery = <T extends Tuple> (
     head: T,
-    body: (Tuple | BuiltIn)[]): (relations: Tuple[][]) => { [K in keyof T]: any; }[] =>
-    (relations: Tuple[][]): { [K in keyof T]: any; }[] =>
+    body: (Tuple | BuiltIn)[]): (...relations: Tuple[][]) => { [K in keyof T]: any; }[] =>
+    (...relations: Tuple[][]): { [K in keyof T]: any; }[] =>
     {
         let relationIndex = 0;
         return body.reduce<{}[]>(
@@ -84,13 +84,13 @@ const ConjunctiveQuery = <T extends Tuple> (
 const ConjunctiveQueryDistinct = <T extends Tuple>(
     setBuilder: (tuple: Iterable<{ [K in keyof T]: any; }>) => Set<{ [K in keyof T]: any; }>,
     head: T,
-    body: (Tuple | BuiltIn)[]): (relations: Tuple[][]) => Set<{ [K in keyof T]: any; }> =>
+    body: (Tuple | BuiltIn)[]): (thisArg: any, relations: Tuple[][]) => Set<{ [K in keyof T]: any; }> =>
 {
     const query = ConjunctiveQuery(
         head,
         body);
 
-    return (relations: Tuple[][]): Set<{ [K in keyof T]: any; }> => setBuilder(query(relations));
+    return (...relations: Tuple[][]): Set<{ [K in keyof T]: any; }> => setBuilder(query(...relations));
 }
 
 describe(
@@ -271,7 +271,7 @@ scheduler = new Scheduler(graph):`,
                 const graph = new Map([
                     [RSignal, []],
                     [TSignal, [TSignal, RSignal, QSignal]],
-                    [QSignal, [TSignal, RSignal]]]);
+                    [QSignal, [RSignal, TSignal]]]);
 
                 const scheduler = new Scheduler(graph);
                 subscriptions = [...graph.keys()].map(signal => scheduler.Observe<number>(signal).subscribe(value => trace.push({ Signal: signal, Value: value })));
@@ -279,5 +279,10 @@ scheduler = new Scheduler(graph):`,
                 assert('RSignal.LongestPath === 0');
                 assert('TSignal.LongestPath === 1');
                 assert('QSignal.LongestPath === 1');
+
+                scheduler.Update(s =>
+                {
+                    s.SetValue(RSignal, R);
+                });
             });
     });
