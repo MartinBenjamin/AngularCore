@@ -265,6 +265,24 @@ scheduler = new Scheduler(graph):`,
                     [4, 5]
                 ];
 
+                const expectedT: [number, number][] = [
+                    [1, 2],
+                    [2, 1],
+                    [2, 3],
+                    [1, 4],
+                    [3, 4],
+                    [4, 5],
+                    [1, 1],
+                    [2, 2],
+                    [1, 3],
+                    [2, 4],
+                    [1, 5],
+                    [3, 5],
+                    [2, 5]
+                ];
+
+                expectedT.sort(tupleComparer)
+
                 const RSignal: Signal = {};
                 const TSignal: Signal = { Map: union, AreEqual: AreEqual };
                 const QSignal: Signal = { Map: query, AreEqual: AreEqual };
@@ -289,5 +307,12 @@ scheduler = new Scheduler(graph):`,
 
                 for(const traceItem of trace)
                     console.log(`${traceItem.Signal === TSignal ? 'T' : traceItem.Signal === QSignal ? 'Q' : 'R'}: ${JSON.stringify(traceItem.Value ? [...traceItem.Value] : traceItem.Value)}`);
+
+                const last = trace[trace.length - 1];
+
+                it(
+                    `The expected value of T is ${JSON.stringify(expectedT)}`,
+                    () => expect(JSON.stringify([...last.Value])).toBe(JSON.stringify(expectedT)));
+
             });
     });
