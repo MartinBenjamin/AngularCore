@@ -223,33 +223,36 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                 this._values.delete(signal);
 
             const nextValues = new Map<Signal, any>();
-            let fixedPoint;
-            do
+            const schedule: Signal[] = [...stronglyConnectedComponent];
+            while(schedule.length)
             {
-                for(const signal of stronglyConnectedComponent)
+                for(const signal of schedule)
                     nextValues.set(
                         signal,
                         signal.Map.apply(
                             null,
                             this._inputOutputMap.get(signal).map(output => this._values.get(output))));
 
-                for(const signal of stronglyConnectedComponent)
-                    if(signal.AreEqual)
+                let count = schedule.length;
+                while(count--)
+                {
+                    const signal = schedule.shift();
+                    const areEqual = signal.AreEqual || ((lhs, rhs) => lhs === rhs);
+                    if(!areEqual(
+                        this._values.get(signal),
+                        nextValues.get(signal)))
                     {
-                        fixedPoint = signal.AreEqual(
-                            this._values.get(signal),
+                        for(const input of this._outputInputMap.get(signal))
+                            if((<any>input).LongestPath === (<any>signal).LongestPath &&
+                                schedule.indexOf(input) === -1)
+                                schedule.push(input);
+
+                        this._values.set(
+                            signal,
                             nextValues.get(signal));
-
-                        if(!fixedPoint)
-                            break;
                     }
-
-                for(const signal of stronglyConnectedComponent)
-                    this._values.set(
-                        signal,
-                        nextValues.get(signal));
+                }
             }
-            while(!fixedPoint);
 
             for(const signal of stronglyConnectedComponent)
             {
