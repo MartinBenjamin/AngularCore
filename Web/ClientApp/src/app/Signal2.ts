@@ -8,13 +8,22 @@ export interface IVertex
     LongestPath?: number;
 }
 
-export interface Signal
+export class Signal
 {
-    Map?: (...parameters: any) => any;
-    AreEqual?: (lhs: any, rhs: any) => boolean;
+    constructor(
+        public Map?: (...parameters: any) => any,
+        public AreEqual?: (lhs: any, rhs: any) => boolean
+        )
+    {
+    }
+
+    CurrentValue(): CurrentValue
+    {
+        return new CurrentValue(this);
+    }
 }
 
-export class CurrentValue
+class CurrentValue
 {
     constructor(
         public readonly Signal: Signal

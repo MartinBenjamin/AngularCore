@@ -4,7 +4,7 @@ import { assertBuilder } from './Ontology/assertBuilder';
 import { BuiltIn } from './Ontology/Atom';
 import { IsVariable } from './Ontology/EavStore';
 import { SortedSet } from './Ontology/SortedSet';
-import { Scheduler, Signal, CurrentValue } from './Signal2';
+import { Scheduler, Signal } from './Signal2';
 
 type Tuple = [any, ...any[]];
 
@@ -110,9 +110,9 @@ graph = new Map([[s1, [s3]], [s2, [s3]], [s3, [  ]]]) and
 scheduler = new Scheduler(graph):`,
             () =>
             {
-                const s1: Signal = {};
-                const s2: Signal = {};
-                const s3: Signal = { Map: (...numbers: number[]) => numbers.reduce((total, current) => total + current, 0) };
+                const s1 = new Signal();
+                const s2 = new Signal();
+                const s3 = new Signal((...numbers: number[]) => numbers.reduce((total, current) => total + current, 0));
 
                 const graph = new Map([
                     [s1, []],
@@ -166,11 +166,11 @@ graph = new Map([[s1, [s4]], [s2, [s4]], [s3, [s5]], [s4, [s5]], [s5, [  ]]]) an
 scheduler = new Scheduler(graph):`,
             () =>
             {
-                const s1: Signal = {};
-                const s2: Signal = {};
-                const s3: Signal = {};
-                const s4: Signal = { Map: (...numbers: number[]) => numbers.reduce((total, current) => total + current, 0) };
-                const s5: Signal = { Map: s4.Map };
+                const s1 = new Signal();
+                const s2 = new Signal();
+                const s3 = new Signal();
+                const s4 = new Signal((...numbers: number[]) => numbers.reduce((total, current) => total + current, 0));
+                const s5 = new Signal(s4.Map);
 
                 const graph = new Map([
                     [s1, []],
@@ -283,13 +283,13 @@ scheduler = new Scheduler(graph):`,
 
                 expectedT.sort(tupleComparer)
 
-                const RSignal: Signal = {};
-                const TSignal: Signal = { Map: union, AreEqual: AreEqual };
-                const QSignal: Signal = { Map: query, AreEqual: AreEqual };
+                const RSignal = new Signal();
+                const TSignal = new Signal(union, AreEqual);
+                const QSignal = new Signal(query, AreEqual);
 
                 const graph = new Map([
                     [RSignal, []],
-                    [TSignal, [new CurrentValue(TSignal), RSignal, QSignal]],
+                    [TSignal, [TSignal.CurrentValue(), RSignal, QSignal]],
                     [QSignal, [RSignal, TSignal]]]);
 
                 const scheduler = new Scheduler(graph);
