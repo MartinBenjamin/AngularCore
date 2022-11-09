@@ -4,7 +4,7 @@ import { assertBuilder } from './Ontology/assertBuilder';
 import { BuiltIn } from './Ontology/Atom';
 import { IsVariable } from './Ontology/EavStore';
 import { SortedSet } from './Ontology/SortedSet';
-import { Scheduler, Signal } from './Signal2';
+import { Scheduler, Signal, CurrentValue } from './Signal2';
 
 type Tuple = [any, ...any[]];
 
@@ -289,7 +289,7 @@ scheduler = new Scheduler(graph):`,
 
                 const graph = new Map([
                     [RSignal, []],
-                    [TSignal, [TSignal, RSignal, QSignal]],
+                    [TSignal, [new CurrentValue(TSignal), RSignal, QSignal]],
                     [QSignal, [RSignal, TSignal]]]);
 
                 const scheduler = new Scheduler(graph);

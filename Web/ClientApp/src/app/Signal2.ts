@@ -14,6 +14,15 @@ export interface Signal
     AreEqual?: (lhs: any, rhs: any) => boolean;
 }
 
+export class CurrentValue
+{
+    constructor(
+        public readonly Signal: Signal
+        )
+    {
+    }
+}
+
 export interface IScheduler
 {
     SetValue(
@@ -29,6 +38,7 @@ type SCC<T> = ReadonlyArray<T>
 
 export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 {
+    private _inputOutputMap             : ReadonlyMap<Signal, ReadonlyArray<Signal>>;
     private _outputInputMap             : ReadonlyMap<Signal, ReadonlyArray<Signal>>;
     private _condensed                  : ReadonlyMap<SCC<Signal>, ReadonlyArray<SCC<Signal>>>;
     private _stronglyConnectedComponents: ReadonlyMap<Signal, ReadonlyArray<Signal>>;
@@ -39,13 +49,17 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
     private _flushing                   = false;
 
     constructor(
-        private _inputOutputMap: ReadonlyMap<Signal, ReadonlyArray<Signal>>
+        inputOutputMap: ReadonlyMap<Signal, ReadonlyArray<Signal|CurrentValue>>
         )
     {
         super((lhs, rhs) => (<IVertex>lhs).LongestPath - (<IVertex>rhs).LongestPath);
 
+        this._inputOutputMap = new Map(
+            [...inputOutputMap].map(([signal, inputs]) => [signal, inputs.map(input => input instanceof CurrentValue ? input.Signal : input)]));
+
         // Determine the transpose.
-        this._outputInputMap = Transpose(this._inputOutputMap)
+        this._outputInputMap = Transpose(
+            new Map([...inputOutputMap].map(([signal, inputs]) => [signal, <Signal[]>inputs.filter(input => !(input instanceof CurrentValue))])));
 
         // Condense the transpose.
         this._condensed = Condense(this._inputOutputMap);
@@ -244,8 +258,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                     {
                         for(const input of this._outputInputMap.get(signal))
                             if((<IVertex>input).LongestPath === (<IVertex>signal).LongestPath &&
-                                !schedule.includes(input) &&
-                                input !== signal)
+                                !schedule.includes(input))
                                 schedule.push(input);
 
                         this._values.set(
