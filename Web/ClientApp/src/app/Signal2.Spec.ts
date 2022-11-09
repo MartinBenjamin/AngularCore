@@ -103,9 +103,9 @@ describe(
 
         describe(
             `Given,
-s1 = {},
-s2 = {},
-s3 = { Map: (...numbers: number[]) => numbers.reduce((total, current) => total + current, 0) },
+s1 = new Signal(),
+s2 = new Signal(),
+s3 = new Signal((...numbers: number[]) => numbers.reduce((total, current) => total + current, 0)),
 graph = new Map([[s1, [s3]], [s2, [s3]], [s3, [  ]]]) and
 scheduler = new Scheduler(graph):`,
             () =>
@@ -157,11 +157,11 @@ scheduler = new Scheduler(graph):`,
 
         describe(
             `Given,
-s1 = {},
-s2 = {},
-s3 = {},
-s4 = { Map: (...numbers: number[]) => numbers.reduce((total, current) => total + current, 0) },
-s5 = { Map: s4.Map },
+s1 = new Signal(),
+s2 = new Signal(),
+s3 = new Signal(),
+s4 = new Signal((...numbers: number[]) => numbers.reduce((total, current) => total + current, 0)),
+s5 = new Signal(s4.Map),
 graph = new Map([[s1, [s4]], [s2, [s4]], [s3, [s5]], [s4, [s5]], [s5, [  ]]]) and
 scheduler = new Scheduler(graph):`,
             () =>
