@@ -68,7 +68,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 
         // Determine the transpose.
         this._outputInputMap = Transpose(
-            new Map([...inputOutputMap].map(([signal, inputs]) => [signal, <Signal[]>inputs.filter(input => !(input instanceof CurrentValue))])));
+            new Map([...inputOutputMap].map(([signal, inputs]) => [signal, inputs.filter((input): input is Signal => input instanceof Signal)])));
 
         // Condense the signal graph.
         this._condensed = Condense(this._inputOutputMap);
