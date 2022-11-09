@@ -243,7 +243,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                         nextValues.get(signal)))
                     {
                         for(const input of this._outputInputMap.get(signal))
-                            if((<any>input).LongestPath === (<any>signal).LongestPath &&
+                            if((<IVertex>input).LongestPath === (<IVertex>signal).LongestPath &&
                                 !schedule.includes(input) &&
                                 input !== signal)
                                 schedule.push(input);
