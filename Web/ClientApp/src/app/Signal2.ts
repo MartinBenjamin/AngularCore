@@ -144,7 +144,9 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         )
     {
         const current = this._values.get(signal);
-        if(current !== value)
+        if(!signal.AreEqual(
+            value,
+            current))
         {
             this._values.set(
                 signal,
