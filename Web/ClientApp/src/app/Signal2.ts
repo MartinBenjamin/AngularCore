@@ -3,6 +3,10 @@ import { LongestPaths, Transpose } from './Ontology/AdjacencyList';
 import { SortedList } from './Ontology/SortedSet';
 import { Condense } from './Ontology/StronglyConnectedComponents';
 
+type AreEqual = (lhs: any, rhs: any) => boolean;
+
+const ReferenceEquality: AreEqual = (lhs: any, rhs: any) => lhs === rhs;
+
 export interface IVertex
 {
     LongestPath?: number;
@@ -14,7 +18,7 @@ export class Signal implements IVertex
 
     constructor(
         public Map?: (...parameters: any) => any,
-        public AreEqual?: (lhs: any, rhs: any) => boolean
+        public AreEqual: AreEqual = ReferenceEquality
         )
     {
     }
@@ -262,8 +266,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                 while(count--)
                 {
                     const signal = schedule.shift();
-                    const areEqual = signal.AreEqual || ((lhs, rhs) => lhs === rhs);
-                    if(!areEqual(
+                    if(!signal.AreEqual(
                         this._values.get(signal),
                         nextValues.get(signal)))
                     {
