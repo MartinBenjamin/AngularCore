@@ -8,8 +8,10 @@ export interface IVertex
     LongestPath?: number;
 }
 
-export class Signal
+export class Signal implements IVertex
 {
+    LongestPath?: number;
+
     constructor(
         public Map?: (...parameters: any) => any,
         public AreEqual?: (lhs: any, rhs: any) => boolean
@@ -43,7 +45,7 @@ export interface IScheduler
     Observe<TOut>(signal: Signal): Observable<TOut>;
 }
 
-type SCC<T> = ReadonlyArray<T>
+type SCC<T> = ReadonlyArray<T> & IVertex;
 
 export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 {
@@ -61,7 +63,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         inputOutputMap: ReadonlyMap<Signal, ReadonlyArray<Signal|CurrentValue>>
         )
     {
-        super((lhs, rhs) => (<IVertex>lhs).LongestPath - (<IVertex>rhs).LongestPath);
+        super((lhs, rhs) => lhs.LongestPath - rhs.LongestPath);
 
         this._inputOutputMap = new Map(
             [...inputOutputMap].map(([signal, inputs]) => [signal, inputs.map(input => input instanceof CurrentValue ? input.Signal : input)]));
@@ -82,10 +84,10 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 
         for(const [stronglyConnectComponent, longestPath] of longestPaths)
         {
-            (<IVertex>stronglyConnectComponent).LongestPath = longestPath;
+            stronglyConnectComponent.LongestPath = longestPath;
 
             for(const signal of stronglyConnectComponent)
-                (<IVertex>signal).LongestPath = longestPath;
+                signal.LongestPath = longestPath;
         }
     }
 
@@ -266,7 +268,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                         nextValues.get(signal)))
                     {
                         for(const input of this._outputInputMap.get(signal))
-                            if((<IVertex>input).LongestPath === (<IVertex>signal).LongestPath &&
+                            if(input.LongestPath === signal.LongestPath &&
                                 !schedule.includes(input))
                                 schedule.push(input);
 
@@ -280,7 +282,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
             for(const signal of stronglyConnectedComponent)
             {
                 for(const input of this._outputInputMap.get(signal))
-                    if((<IVertex>input).LongestPath > (<IVertex>signal).LongestPath) // Do not schedule signals within the strongly connected component.
+                    if(input.LongestPath > signal.LongestPath) // Do not schedule signals within the strongly connected component.
                         this.Schedule(input);
 
                 const subscribers = this._subscribers.get(signal);
