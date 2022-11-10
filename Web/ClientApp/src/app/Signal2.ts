@@ -266,9 +266,10 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                 while(count--)
                 {
                     const signal = schedule.shift();
+                    const nextValue = nextValues.get(signal);
                     if(!signal.AreEqual(
                         this._values.get(signal),
-                        nextValues.get(signal)))
+                        nextValue))
                     {
                         for(const input of this._outputInputMap.get(signal))
                             if(input.LongestPath === signal.LongestPath &&
@@ -277,7 +278,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 
                         this._values.set(
                             signal,
-                            nextValues.get(signal));
+                            nextValue);
                     }
                 }
             }
