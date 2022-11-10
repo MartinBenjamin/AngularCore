@@ -17,7 +17,7 @@ export class Signal implements IVertex
     LongestPath?: number;
 
     constructor(
-        public Map?: (...parameters: any) => any,
+        public Function?: (...parameters: any) => any,
         public AreEqual: AreEqual = ReferenceEquality
         )
     {
@@ -241,10 +241,10 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         if(stronglyConnectedComponent.length === 1)
         {
             const signal = stronglyConnectedComponent[0]
-            if(signal.Map)
+            if(signal.Function)
                 this.SetValue(
                     signal,
-                    signal.Map.apply(
+                    signal.Function.apply(
                         null,
                         this._inputOutputMap.get(signal).map(output => this._values.get(output))));
         }
@@ -260,7 +260,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                 for(const signal of schedule)
                     nextValues.set(
                         signal,
-                        signal.Map.apply(
+                        signal.Function.apply(
                             null,
                             this._inputOutputMap.get(signal).map(output => this._values.get(output))));
 

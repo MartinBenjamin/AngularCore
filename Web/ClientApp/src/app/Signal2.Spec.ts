@@ -161,7 +161,7 @@ s1 = new Signal(),
 s2 = new Signal(),
 s3 = new Signal(),
 s4 = new Signal((...numbers: number[]) => numbers.reduce((total, current) => total + current, 0)),
-s5 = new Signal(s4.Map),
+s5 = new Signal(s4.Function),
 graph = new Map([[s1, [s4]], [s2, [s4]], [s3, [s5]], [s4, [s5]], [s5, [  ]]]) and
 scheduler = new Scheduler(graph):`,
             () =>
@@ -170,7 +170,7 @@ scheduler = new Scheduler(graph):`,
                 const s2 = new Signal();
                 const s3 = new Signal();
                 const s4 = new Signal((...numbers: number[]) => numbers.reduce((total, current) => total + current, 0));
-                const s5 = new Signal(s4.Map);
+                const s5 = new Signal(s4.Function);
 
                 const graph = new Map([
                     [s1, []],
