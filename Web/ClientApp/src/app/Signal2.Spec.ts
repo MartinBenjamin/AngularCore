@@ -224,7 +224,9 @@ scheduler = new Scheduler(graph):`,
         subscriptions = [];
 
         describe(
-            'Recursion',
+            `Recursion:
+T(x, y) : - R(x, y)
+T(x, y) : - R(x, z), T(z, y)`,
             () =>
             {
                 let trace: { Signal: Signal, Value: undefined | Iterable<Tuple> }[] = [];
@@ -293,46 +295,57 @@ scheduler = new Scheduler(graph):`,
                 T0.sort(tupleComparer);
                 T1.sort(tupleComparer);
 
-                let R = R0;
-                const RSignal = new Signal(() => R);
-                const TSignal = new Signal(union, AreEqual);
-                const QSignal = new Signal(query, AreEqual);
+                let RValue = R0;
+                const R = new Signal(() => RValue);
+                const T = new Signal(union, AreEqual);
+                const Q = new Signal(query, AreEqual);
 
                 const graph = new Map([
-                    [RSignal, []],
-                    [TSignal, [TSignal.CurrentValue(), RSignal, QSignal]],
-                    [QSignal, [RSignal, TSignal]]]);
+                    [R, []],
+                    [T, [T.CurrentValue(), R, Q]],
+                    [Q, [R, T]]]);
 
                 const scheduler = new Scheduler(
                     graph,
                     (signal, value) => trace.push({ Signal: signal, Value: value }));
-                const assert = assertBuilder('trace', 'RSignal', 'TSignal', 'QSignal')(trace, RSignal, TSignal, QSignal);
+                const assert = assertBuilder('trace', 'R', 'T', 'Q')(trace, R, T, Q);
                 describe('',
                     () =>
                     {
                         scheduler.Update(
                             s =>
                             {
-                                R = R1;
-                                s.Schedule(RSignal);
+                                RValue = R1;
+                                s.Schedule(R);
                             });
                     });
 
-                assert('RSignal.LongestPath === 0');
-                assert('TSignal.LongestPath === 1');
-                assert('QSignal.LongestPath === 1');
+                assert('R.LongestPath === 0');
+                assert('T.LongestPath === 1');
+                assert('Q.LongestPath === 1');
 
                 for(const traceItem of trace)
-                    console.log(`${traceItem.Signal === TSignal ? 'T' : traceItem.Signal === QSignal ? 'Q' : 'R'}: ${JSON.stringify(traceItem.Value ? [...traceItem.Value] : traceItem.Value)}`);
+                    console.log(`${traceItem.Signal === T ? 'T' : traceItem.Signal === Q ? 'Q' : 'R'}: ${JSON.stringify(traceItem.Value ? [...traceItem.Value] : traceItem.Value)}`);
 
-                const values = trace.filter(t => t.Signal === TSignal).map(t => t.Value);;
+                const values = trace.filter(t => t.Signal === T).map(t => t.Value);;
 
-                it(
-                    `The expected value of T is ${JSON.stringify(T0)}`,
-                    () => expect(JSON.stringify([...values[0]])).toBe(JSON.stringify(T0)));
-                it(
-                    `The expected value of T is ${JSON.stringify(T1)}`,
-                    () => expect(JSON.stringify([...values[1]])).toBe(JSON.stringify(T1)));
+                describe(
+                    `Given R: ${JSON.stringify(R0)}`,
+                    () =>
+                    {
+                        it(
+                          `The expected value of T is ${JSON.stringify(T0)}`,
+                          () => expect(JSON.stringify([...values[0]])).toBe(JSON.stringify(T0)));
+                    });
+
+                describe(
+                    `Given R: ${JSON.stringify(R1)}`,
+                    () =>
+                    {
+                        it(
+                            `The expected value of T is ${JSON.stringify(T1)}`,
+                            () => expect(JSON.stringify([...values[1]])).toBe(JSON.stringify(T1)));
+                    });
 
             });
     });
