@@ -40,9 +40,7 @@ class CurrentValue
 
 export interface IScheduler
 {
-    SetValue(
-        signal: Signal,
-        value: any);
+    Schedule(signal: Signal): void
     Suspend(): void;
     Unsuspend(): void;
     Update(update: (scheduler: IScheduler) => void);
@@ -64,7 +62,8 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
     private _flushing                   = false;
 
     constructor(
-        inputOutputMap: ReadonlyMap<Signal, ReadonlyArray<Signal|CurrentValue>>
+        inputOutputMap: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>,
+        private _signalTrace?: (signal: Signal, value: any) => void
         )
     {
         super((lhs, rhs) => lhs.LongestPath - rhs.LongestPath);
@@ -92,6 +91,19 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 
             for(const signal of stronglyConnectComponent)
                 signal.LongestPath = longestPath;
+        }
+
+        // Schedule signals with LongestPath 0.
+        try
+        {
+            this.Suspend();
+            for(const signal of this._inputOutputMap.keys())
+                if(signal.LongestPath === 0)
+                    this.Schedule(signal);
+        }
+        finally
+        {
+            this.Unsuspend();
         }
     }
 
@@ -136,28 +148,6 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 
         if(!this._suspended && this._entryCount === 0)
             this.Flush();
-    }
-
-    SetValue(
-        signal: Signal,
-        value: any
-        )
-    {
-        const current = this._values.get(signal);
-        if(!signal.AreEqual(
-            value,
-            current))
-        {
-            this._values.set(
-                signal,
-                value);
-            for(const input of this._outputInputMap.get(signal))
-                this.Schedule(input);
-
-            const subscribers = this._subscribers.get(signal);
-            if(subscribers)
-                subscribers.forEach(subscriber => subscriber.next(value));
-        }
     }
 
     Suspend(): void
@@ -241,12 +231,29 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         if(stronglyConnectedComponent.length === 1)
         {
             const signal = stronglyConnectedComponent[0]
-            if(signal.Function)
-                this.SetValue(
+            const value = signal.Function.apply(
+                null,
+                this._inputOutputMap.get(signal).map(output => this._values.get(output)));
+
+            if(!signal.AreEqual(
+                value,
+                this._values.get(signal)))
+            {
+                this._values.set(
                     signal,
-                    signal.Function.apply(
-                        null,
-                        this._inputOutputMap.get(signal).map(output => this._values.get(output))));
+                    value);
+                for(const input of this._outputInputMap.get(signal))
+                    this.Schedule(input);
+
+                const subscribers = this._subscribers.get(signal);
+                if(subscribers)
+                    subscribers.forEach(subscriber => subscriber.next(value));
+
+                if(this._signalTrace)
+                    this._signalTrace(
+                        signal,
+                        value);
+            }
         }
         else
         {
@@ -294,6 +301,11 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                 const subscribers = this._subscribers.get(signal);
                 if(subscribers)
                     subscribers.forEach(subscriber => subscriber.next(this._values.get(signal)));
+
+                if(this._signalTrace)
+                    this._signalTrace(
+                        signal,
+                        this._values.get(signal));
             }
         }
     }
