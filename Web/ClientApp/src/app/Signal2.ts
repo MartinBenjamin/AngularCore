@@ -51,7 +51,7 @@ type SCC<T> = ReadonlyArray<T> & IVertex;
 
 export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 {
-    private _incoming                   : Map<Signal, ReadonlyArray<Signal>>;
+    private _incoming                   : ReadonlyMap<Signal, ReadonlyArray<Signal>>;
     private _outgoing                   : ReadonlyMap<Signal, ReadonlyArray<Signal>>;
     private _condensed                  : ReadonlyMap<SCC<Signal>, ReadonlyArray<SCC<Signal>>>;
     private _stronglyConnectedComponents: ReadonlyMap<Signal, ReadonlyArray<Signal>>;
@@ -67,6 +67,12 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         )
     {
         super((lhs, rhs) => lhs.LongestPath - rhs.LongestPath);
+
+        this._incoming = new Map();
+        this._outgoing = new Map();
+        this.Extend(incoming);
+        return;
+        /*
 
         this._incoming = new Map(
             [...incoming].map(([signal, incomingSignals]) => [signal, incomingSignals.map(input => input instanceof CurrentValue ? input.Signal : input)]));
@@ -105,6 +111,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         {
             this.Unsuspend();
         }
+        */
     }
 
     public Extend(
@@ -117,18 +124,31 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                 incomingSignals.filter((input): input is Signal => input instanceof Signal).some(input => this._incoming.has(input))).map(([signal,]) => signal);
 
         for(const [signal, incomingSignals] of incoming)
-            this._incoming.set(
+            (<Map<Signal, Signal[]>>this._incoming).set(
                 signal,
                 incomingSignals.map(input => input instanceof CurrentValue ? input.Signal : input));
 
-        for(const [signal, incomingSignals] of incoming)
-            this._incoming.set(
+        for(const signal of incoming.keys())
+            (<Map<Signal, Signal[]>>this._outgoing).set(
                 signal,
-                incomingSignals.map(input => input instanceof CurrentValue ? input.Signal : input));
+                []);
 
-        // Determine the transpose.
-        this._outgoing = Transpose(
-            new Map([...incoming].map(([signal, incomingSignals]) => [signal, incomingSignals.filter((input): input is Signal => input instanceof Signal)])));
+        new Array<[Signal, Signal]>().concat(...[...incoming]
+            .map<[Signal, Signal[]]>(([signal, incomingSignals]) => [signal, incomingSignals.filter((input): input is Signal => input instanceof Signal)])
+            .map(([signal, incomingSignals]) => incomingSignals.map<[Signal, Signal]>(input => [input, signal]))).forEach(
+                ([signal, outgoingSignal]) =>
+                {
+                    let outgoing = <Signal[]>this._outgoing.get(signal);
+                    if(!outgoing)
+                    {
+                        outgoing = [];
+                        (<Map<Signal, Signal[]>>this._outgoing).set(
+                            signal,
+                            outgoing);
+                    }
+                    outgoing.push(outgoingSignal);
+                }
+            );
 
         // Condense the signal graph.
         this._condensed = Condense(this._incoming);
