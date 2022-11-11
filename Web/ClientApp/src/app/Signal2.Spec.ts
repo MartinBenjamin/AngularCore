@@ -256,46 +256,49 @@ T(x, y) : - R(x, z), T(z, y)`,
                     return true;
                 }
 
-                const R0 = [
-                    [1, 2],
-                    [2, 1],
-                    [2, 3],
-                    [1, 4],
-                    [3, 4],
-                    [4, 5]
+                const RValues = [
+                    [
+                        [1, 2],
+                        [2, 1],
+                        [2, 3],
+                        [1, 4],
+                        [3, 4],
+                        [4, 5]
+                    ],
+                    [
+                        [1, 2],
+                        [2, 3]
+                    ],
+                    []
                 ];
 
-                const R1 = [
-                    [1, 2],
-                    [2, 3]
+                const TValues: [number, number][][] = [
+                    [
+                        [1, 2],
+                        [2, 1],
+                        [2, 3],
+                        [1, 4],
+                        [3, 4],
+                        [4, 5],
+                        [1, 1],
+                        [2, 2],
+                        [1, 3],
+                        [2, 4],
+                        [1, 5],
+                        [3, 5],
+                        [2, 5]
+                    ],
+                    [
+                        [1, 2],
+                        [2, 3],
+                        [1, 3]
+                    ],
+                    []
                 ];
 
-                const T0: [number, number][] = [
-                    [1, 2],
-                    [2, 1],
-                    [2, 3],
-                    [1, 4],
-                    [3, 4],
-                    [4, 5],
-                    [1, 1],
-                    [2, 2],
-                    [1, 3],
-                    [2, 4],
-                    [1, 5],
-                    [3, 5],
-                    [2, 5]
-                ];
+                TValues.forEach(values => values.sort(tupleComparer));
 
-                const T1: [number, number][] = [
-                    [1, 2],
-                    [2, 3],
-                    [1, 3]
-                ];
-
-                T0.sort(tupleComparer);
-                T1.sort(tupleComparer);
-
-                let RValue = R0;
+                let RValue = RValues[0];
                 const R = new Signal(() => RValue);
                 const T = new Signal(union, AreEqual);
                 const Q = new Signal(query, AreEqual);
@@ -309,12 +312,14 @@ T(x, y) : - R(x, z), T(z, y)`,
                     graph,
                     (signal, value) => trace.push({ Signal: signal, Value: value }));
                 const assert = assertBuilder('trace', 'R', 'T', 'Q')(trace, R, T, Q);
-                scheduler.Update(
-                    s =>
-                    {
-                        RValue = R1;
-                        s.Schedule(R);
-                    });
+
+                for(let index = 1; index < RValues.length;++index)
+                    scheduler.Update(
+                        s =>
+                        {
+                            RValue = RValues[index];
+                            s.Schedule(R);
+                        });
 
                 assert('R.LongestPath === 0');
                 assert('T.LongestPath === 1');
@@ -325,23 +330,14 @@ T(x, y) : - R(x, z), T(z, y)`,
 
                 const values = trace.filter(t => t.Signal === T).map(t => t.Value);;
 
-                describe(
-                    `Given R: ${JSON.stringify(R0)}`,
-                    () =>
-                    {
-                        it(
-                          `The expected value of T is ${JSON.stringify(T0)}`,
-                          () => expect(JSON.stringify([...values[0]])).toBe(JSON.stringify(T0)));
-                    });
-
-                describe(
-                    `Given R: ${JSON.stringify(R1)}`,
-                    () =>
-                    {
-                        it(
-                            `The expected value of T is ${JSON.stringify(T1)}`,
-                            () => expect(JSON.stringify([...values[1]])).toBe(JSON.stringify(T1)));
-                    });
-
+                for(let index = 0; index < RValues.length; ++index)
+                    describe(
+                        `Given R: ${JSON.stringify(RValues[index])}`,
+                        () =>
+                        {
+                            it(
+                              `The expected value of T is ${JSON.stringify(TValues[index])}`,
+                              () => expect(JSON.stringify([...values[index]])).toBe(JSON.stringify(TValues[index])));
+                        });
             });
     });
