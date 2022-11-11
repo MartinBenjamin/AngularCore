@@ -225,7 +225,7 @@ scheduler = new Scheduler(graph):`,
 
         describe(
             `Recursion:
-T(x, y) : - R(x, y)
+T(x, y) : - R(x, y),
 T(x, y) : - R(x, z), T(z, y)`,
             () =>
             {
@@ -309,15 +309,11 @@ T(x, y) : - R(x, z), T(z, y)`,
                     graph,
                     (signal, value) => trace.push({ Signal: signal, Value: value }));
                 const assert = assertBuilder('trace', 'R', 'T', 'Q')(trace, R, T, Q);
-                describe('',
-                    () =>
+                scheduler.Update(
+                    s =>
                     {
-                        scheduler.Update(
-                            s =>
-                            {
-                                RValue = R1;
-                                s.Schedule(R);
-                            });
+                        RValue = R1;
+                        s.Schedule(R);
                     });
 
                 assert('R.LongestPath === 0');
