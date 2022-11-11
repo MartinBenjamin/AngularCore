@@ -254,7 +254,7 @@ scheduler = new Scheduler(graph):`,
                     return true;
                 }
 
-                const R = [
+                const R0 = [
                     [1, 2],
                     [2, 1],
                     [2, 3],
@@ -263,7 +263,12 @@ scheduler = new Scheduler(graph):`,
                     [4, 5]
                 ];
 
-                const expectedT: [number, number][] = [
+                const R1 = [
+                    [1, 2],
+                    [2, 3]
+                ];
+
+                const T0: [number, number][] = [
                     [1, 2],
                     [2, 1],
                     [2, 3],
@@ -279,8 +284,16 @@ scheduler = new Scheduler(graph):`,
                     [2, 5]
                 ];
 
-                expectedT.sort(tupleComparer)
+                const T1: [number, number][] = [
+                    [1, 2],
+                    [2, 3],
+                    [1, 3]
+                ];
 
+                T0.sort(tupleComparer);
+                T1.sort(tupleComparer);
+
+                let R = R0;
                 const RSignal = new Signal(() => R);
                 const TSignal = new Signal(union, AreEqual);
                 const QSignal = new Signal(query, AreEqual);
@@ -294,6 +307,17 @@ scheduler = new Scheduler(graph):`,
                     graph,
                     (signal, value) => trace.push({ Signal: signal, Value: value }));
                 const assert = assertBuilder('trace', 'RSignal', 'TSignal', 'QSignal')(trace, RSignal, TSignal, QSignal);
+                describe('',
+                    () =>
+                    {
+                        scheduler.Update(
+                            s =>
+                            {
+                                R = R1;
+                                s.Schedule(RSignal);
+                            });
+                    });
+
                 assert('RSignal.LongestPath === 0');
                 assert('TSignal.LongestPath === 1');
                 assert('QSignal.LongestPath === 1');
@@ -301,10 +325,14 @@ scheduler = new Scheduler(graph):`,
                 for(const traceItem of trace)
                     console.log(`${traceItem.Signal === TSignal ? 'T' : traceItem.Signal === QSignal ? 'Q' : 'R'}: ${JSON.stringify(traceItem.Value ? [...traceItem.Value] : traceItem.Value)}`);
 
-                const last = trace[trace.length - 1];
+                const values = trace.filter(t => t.Signal === TSignal).map(t => t.Value);;
 
                 it(
-                    `The expected value of T is ${JSON.stringify(expectedT)}`,
-                    () => expect(JSON.stringify([...last.Value])).toBe(JSON.stringify(expectedT)));
+                    `The expected value of T is ${JSON.stringify(T0)}`,
+                    () => expect(JSON.stringify([...values[0]])).toBe(JSON.stringify(T0)));
+                it(
+                    `The expected value of T is ${JSON.stringify(T1)}`,
+                    () => expect(JSON.stringify([...values[1]])).toBe(JSON.stringify(T1)));
+
             });
     });
