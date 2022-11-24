@@ -128,6 +128,7 @@
     <None Remove="ClientApp\src\app\Ontology\BuiltIn.ts" />
     <None Remove="ClientApp\src\app\Ontology\Class.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassExpression.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ClassExpressionInterpreter.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassExpressionNavigator.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassExpressionWriter.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassObservable.Spec.ts" />
@@ -390,6 +391,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\INamedService.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Iso3166.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Iso4217.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassExpressionInterpreter.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\StronglyConnectedComponents.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\StronglyConnectedComponents.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Signal.Spec.ts" />

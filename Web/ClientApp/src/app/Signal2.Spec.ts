@@ -97,10 +97,6 @@ describe(
     'Signal2',
     () =>
     {
-
-        let trace: { Signal: Signal, Value: number }[] = [];
-        let subscriptions: Subscription[] = [];
-
         describe(
             `Given,
 s1 = new Signal(() => s1Value),
@@ -151,10 +147,6 @@ scheduler = new Scheduler(graph):`,
                         assert('trace.length    === 5' );
                     });
             });
-        subscriptions.forEach(subscription => subscription.unsubscribe());
-
-        trace = [];
-        subscriptions = [];
 
         describe(
             `Given,
@@ -218,10 +210,6 @@ scheduler = new Scheduler(graph):`,
                         assert('trace.length    === 8' );
                     });
             });
-        subscriptions.forEach(subscription => subscription.unsubscribe());
-
-        trace = [];
-        subscriptions = [];
 
         describe(
             `Recursion:
@@ -304,9 +292,10 @@ T(x, y) : - R(x, z), T(z, y)`,
                 const Q = new Signal(query, AreEqual);
 
                 const graph = new Map([
-                    [R, []],
+                    [<Signal>R, []],
                     [T, [T.CurrentValue(), R, Q]],
-                    [Q, [R, T]]]);
+                    [Q, [R, T]]]
+                );
 
                 const scheduler = new Scheduler(
                     graph,

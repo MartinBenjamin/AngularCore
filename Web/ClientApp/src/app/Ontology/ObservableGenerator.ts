@@ -285,7 +285,7 @@ export class ObservableGenerator implements
         if(objectMaxCardinality.ClassExpression)
             observableObjectPropertyExpression = combineLatest(
                 observableObjectPropertyExpression,
-                this.ClassExpression(objectMaxCardinality.ClassExpression),
+                objectMaxCardinality.ClassExpression.Select(this),
                 (objectPropertyExpression, classExpression) =>
                     objectPropertyExpression.filter(([, range]) => classExpression.has(range)));
 
@@ -312,7 +312,7 @@ export class ObservableGenerator implements
         if(objectExactCardinality.ClassExpression)
             observableObjectPropertyExpression = combineLatest(
                 observableObjectPropertyExpression,
-                this.ClassExpression(objectExactCardinality.ClassExpression),
+                objectExactCardinality.ClassExpression.Select(this),
                 (objectPropertyExpression, classExpression) =>
                     objectPropertyExpression.filter(([, range]) => classExpression.has(range)));
 
@@ -332,7 +332,7 @@ export class ObservableGenerator implements
                                     .map(([domain,]) => domain))));
 
         if(objectExactCardinality.Cardinality === 1 && this._functionalObjectProperties.has(objectExactCardinality.ObjectPropertyExpression))
-            // Optimise for Functional Data Properties.
+            // Optimise for Functional Object Properties.
             return observableObjectPropertyExpression.pipe(
                 map(objectPropertyExpression => new Set<any>(objectPropertyExpression.map(([domain,]) => domain))));
 

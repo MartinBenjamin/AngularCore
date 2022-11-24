@@ -3,7 +3,7 @@ import { LongestPaths, Transpose } from './Ontology/AdjacencyList';
 import { SortedList } from './Ontology/SortedSet';
 import { Condense } from './Ontology/StronglyConnectedComponents';
 
-type AreEqual = (lhs: any, rhs: any) => boolean;
+type AreEqual<T = any> = (lhs: T, rhs: T) => boolean;
 
 const ReferenceEquality: AreEqual = (lhs: any, rhs: any) => lhs === rhs;
 
@@ -12,27 +12,27 @@ export interface IVertex
     LongestPath?: number;
 }
 
-export class Signal implements IVertex
+export class Signal<TOut = any, TIn extends any[] = any[]> implements IVertex
 {
     LongestPath?: number;
 
     constructor(
-        public Function?: (...parameters: any) => any,
-        public AreEqual: AreEqual = ReferenceEquality
+        public Function?: (...parameters: TIn) => TOut,
+        public AreEqual: AreEqual<TOut> = ReferenceEquality
         )
     {
     }
 
-    CurrentValue(): CurrentValue
+    CurrentValue(): CurrentValue<TOut>
     {
-        return new CurrentValue(this);
+        return new CurrentValue<TOut>(this);
     }
 }
 
-class CurrentValue
+class CurrentValue<TOut = any>
 {
     constructor(
-        public readonly Signal: Signal
+        public readonly Signal: Signal<TOut, any[]>
         )
     {
     }
@@ -44,7 +44,7 @@ export interface IScheduler
     Suspend(): void;
     Unsuspend(): void;
     Update(update: (scheduler: IScheduler) => void);
-    Observe<TOut>(signal: Signal): Observable<TOut>;
+    Observe<TOut>(signal: Signal<TOut>): Observable<TOut>;
 }
 
 type SCC<T> = ReadonlyArray<T> & IVertex;
@@ -251,7 +251,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
     }
 
     Observe<TOut>(
-        signal: Signal
+        signal: Signal<TOut>
         ): Observable<TOut>
     {
         return new Observable<TOut>(
