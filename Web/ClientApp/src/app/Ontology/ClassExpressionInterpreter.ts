@@ -30,25 +30,27 @@ export { IEavStore, EavStore };
 
 type Wrapped<T> = {};
 
-export abstract class ClassExpressionInterpreter<T, U> implements IClassExpressionSelector<T>
+export abstract class ClassExpressionInterpreter<T, U extends Wrapped<[any, any][]>> implements IClassExpressionSelector<T>
 {
     private _classDefinitions             : Map<IClass, IClassExpression[]>;
     private _functionalObjectProperties   = new Set<IObjectPropertyExpression>();
     private _functionalDataProperties     = new Set<IDataPropertyExpression>();
     private _wrapped                      : Map<IClass, T>;
     private _individualInterpretation     : Map<IIndividual, any>;
+    private _propertyExpressionInterpreter: IPropertyExpressionSelector<Wrapped<[any, any][]>>;
     private _nothing                      : Wrapped<Set<any>>;
 
     protected abstract Wrap<P extends any[], R>(map: (...params: P) => R,
         ...params: { [Parameter in keyof P]: Wrapped<P[Parameter]>; }): Wrapped<R>;
 
     constructor(
-        private _propertyExpressionInterpreter: IPropertyExpressionSelector<U>,
-        private _ontology                     : IOntology,
-        private _store                        : IEavStore,
-        private _objectDomain                 : Wrapped<Set<any>>
+        propertyExpressionInterpreter: IPropertyExpressionSelector<U>,
+        private _ontology            : IOntology,
+        private _store               : IEavStore,
+        private _objectDomain        : Wrapped<Set<any>>
         )
     {
+        this._propertyExpressionInterpreter = propertyExpressionInterpreter;
         this._nothing = this.Wrap(() => new Set<any>());
         this._wrapped = new Map<IClass, T>(
             [
@@ -121,7 +123,7 @@ export abstract class ClassExpressionInterpreter<T, U> implements IClassExpressi
                     .filter(objectPropertyDomain => objectPropertyDomain.Domain === class$)
                     .map(objectPropertyDomain => objectPropertyDomain.ObjectPropertyExpression)
                     .map(objectPropertyExpression => this.Wrap(
-                        (relations: [any, any][]) => new Set<any>(relations.map(([domain,]) => domain)),
+                        relations => new Set<any>(relations.map(([domain,]) => domain)),
                         objectPropertyExpression.Select(this._propertyExpressionInterpreter))));
 
             wrapped = wrapped.concat(
@@ -129,7 +131,7 @@ export abstract class ClassExpressionInterpreter<T, U> implements IClassExpressi
                     .filter(objectPropertyRange => objectPropertyRange.Range === class$)
                     .map(objectPropertyRange => objectPropertyRange.ObjectPropertyExpression)
                     .map(objectPropertyExpression => this.Wrap(
-                        (relations: [any, any][]) => new Set<any>(relations.map(([, range]) => range)),
+                        relations => new Set<any>(relations.map(([, range]) => range)),
                         objectPropertyExpression.Select(this._propertyExpressionInterpreter))));
 
             wrapped = wrapped.concat(
@@ -137,7 +139,7 @@ export abstract class ClassExpressionInterpreter<T, U> implements IClassExpressi
                     .filter(dataPropertyDomain => dataPropertyDomain.Domain === class$)
                     .map(dataPropertyDomain => dataPropertyDomain.DataPropertyExpression)
                     .map(dataPropertyExpression => this.Wrap(
-                        (relations: [any, any][]) => new Set<any>(relations.map(([domain,]) => domain)),
+                        relations => new Set<any>(relations.map(([domain,]) => domain)),
                         dataPropertyExpression.Select(this._propertyExpressionInterpreter))));
 
             if(wrapped.length)
@@ -194,7 +196,7 @@ export abstract class ClassExpressionInterpreter<T, U> implements IClassExpressi
         ): T
     {
         return <T>this.Wrap(
-            (objectPropertyExpression: [any, any][], classExpression: Set<any>) =>
+            (objectPropertyExpression, classExpression: Set<any>) =>
                 new Set<any>(
                     objectPropertyExpression
                         .filter(([, range]) => classExpression.has(range))
@@ -209,7 +211,7 @@ export abstract class ClassExpressionInterpreter<T, U> implements IClassExpressi
         ): T
     {
         const groupedByDomain = this.Wrap(
-            (objectDomain, objectPropertyExpression: [any, any][]) =>
+            (objectDomain, objectPropertyExpression) =>
                 GroupJoin(
                     objectDomain,
                     objectPropertyExpression,
@@ -234,7 +236,7 @@ export abstract class ClassExpressionInterpreter<T, U> implements IClassExpressi
     {
         const individual = this.InterpretIndividual(objectHasValue.Individual);
         return <T>this.Wrap(
-            (objectPropertyExpression: [any, any][]) =>
+            objectPropertyExpression =>
                 new Set<any>(objectPropertyExpression
                     .filter(([, range]) => range === individual)
                     .map(([domain,]) => domain)),
@@ -246,7 +248,7 @@ export abstract class ClassExpressionInterpreter<T, U> implements IClassExpressi
         ): T
     {
         return <T>this.Wrap(
-            (objectPropertyExpression: [any, any][]) =>
+            objectPropertyExpression =>
                 new Set<any>(objectPropertyExpression
                     .filter(([domain, range]) => domain === range)
                     .map(([domain,]) => domain)),
@@ -260,7 +262,7 @@ export abstract class ClassExpressionInterpreter<T, U> implements IClassExpressi
         if(objectMinCardinality.Cardinality === 0)
             return <T>this._objectDomain;
 
-        let objectPropertyExpression = <Wrapped<[any, any][]>>objectMinCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter);
+        let objectPropertyExpression = objectMinCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter);
         if(objectMinCardinality.ClassExpression)
             objectPropertyExpression = this.Wrap(
                 (objectPropertyExpression, classExpression: Set<any>) => objectPropertyExpression.filter(([, range]) => classExpression.has(range)),
@@ -286,10 +288,10 @@ export abstract class ClassExpressionInterpreter<T, U> implements IClassExpressi
         objectMaxCardinality: IObjectMaxCardinality
         ): T
     {
-        let objectPropertyExpression: Wrapped<[any, any][]> = objectMaxCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter);
+        let objectPropertyExpression = objectMaxCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter);
         if(objectMaxCardinality.ClassExpression)
             objectPropertyExpression = this.Wrap(
-                (objectPropertyExpression: [any, any][], classExpression: Set<any>) => objectPropertyExpression.filter(([, range]) => classExpression.has(range)),
+                (objectPropertyExpression, classExpression: Set<any>) => objectPropertyExpression.filter(([, range]) => classExpression.has(range)),
                 objectPropertyExpression,
                 objectMaxCardinality.ClassExpression.Select(this));
 
@@ -314,10 +316,10 @@ export abstract class ClassExpressionInterpreter<T, U> implements IClassExpressi
         objectExactCardinality: IObjectExactCardinality
         ): T
     {
-        let objectPropertyExpression: Wrapped<[any, any][]> = objectExactCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter);
+        let objectPropertyExpression = objectExactCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter);
         if(objectExactCardinality.ClassExpression)
             objectPropertyExpression = this.Wrap(
-                (objectPropertyExpression: [any, any][], classExpression: Set<any>) => objectPropertyExpression.filter(([, range]) => classExpression.has(range)),
+                (objectPropertyExpression, classExpression: Set<any>) => objectPropertyExpression.filter(([, range]) => classExpression.has(range)),
                 objectPropertyExpression,
                 this.ClassExpression(objectExactCardinality.ClassExpression));
 
@@ -364,7 +366,7 @@ export abstract class ClassExpressionInterpreter<T, U> implements IClassExpressi
         ): T
     {
         return <T>this.Wrap(
-            (dataPropertyExpression: [any, any][]) =>
+            dataPropertyExpression =>
                 new Set<any>(dataPropertyExpression
                     .filter(([, range]) => dataSomeValuesFrom.DataRange.HasMember(range))
                     .map(([domain,]) => domain)),
@@ -376,10 +378,10 @@ export abstract class ClassExpressionInterpreter<T, U> implements IClassExpressi
         ): T
     {
         const groupedByDomain = this.Wrap(
-            (objectDomain, objectPropertyExpression: [any, any][]) =>
+            (objectDomain, dataPropertyExpression) =>
                 GroupJoin(
                     objectDomain,
-                    objectPropertyExpression,
+                    dataPropertyExpression,
                     individual => individual,
                     ([domain,]) => domain),
             this._objectDomain,
@@ -411,7 +413,7 @@ export abstract class ClassExpressionInterpreter<T, U> implements IClassExpressi
         if(dataMinCardinality.Cardinality === 0)
             return <T>this._objectDomain;
 
-        let dataPropertyExpression: Wrapped<[any, any][]> = dataMinCardinality.DataPropertyExpression.Select(this._propertyExpressionInterpreter);
+        let dataPropertyExpression = dataMinCardinality.DataPropertyExpression.Select(this._propertyExpressionInterpreter);
         if(dataMinCardinality.DataRange)
             dataPropertyExpression = this.Wrap(
                 dataPropertyExpression => dataPropertyExpression.filter(([, range]) => dataMinCardinality.DataRange.HasMember(range)),
@@ -439,7 +441,7 @@ export abstract class ClassExpressionInterpreter<T, U> implements IClassExpressi
         dataMaxCardinality: IDataMaxCardinality
         ): T
     {
-        let dataPropertyExpression: Wrapped<[any, any][]> = dataMaxCardinality.DataPropertyExpression.Select(this._propertyExpressionInterpreter);
+        let dataPropertyExpression = dataMaxCardinality.DataPropertyExpression.Select(this._propertyExpressionInterpreter);
         if(dataMaxCardinality.DataRange)
             dataPropertyExpression = this.Wrap(
                 dataPropertyExpression => dataPropertyExpression.filter(([, range]) => dataMaxCardinality.DataRange.HasMember(range)),
@@ -467,7 +469,7 @@ export abstract class ClassExpressionInterpreter<T, U> implements IClassExpressi
         dataExactCardinality: IDataExactCardinality
         ): T
     {
-        let dataPropertyExpression: Wrapped<[any, any][]> = dataExactCardinality.DataPropertyExpression.Select(this._propertyExpressionInterpreter);
+        let dataPropertyExpression = dataExactCardinality.DataPropertyExpression.Select(this._propertyExpressionInterpreter);
         if(dataExactCardinality.DataRange)
             dataPropertyExpression = this.Wrap(
                 dataPropertyExpression => dataPropertyExpression.filter(([, range]) => dataExactCardinality.DataRange.HasMember(range)),

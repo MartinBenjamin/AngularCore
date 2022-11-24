@@ -362,10 +362,10 @@ export class ObservableGenerator implements
         return combineLatest(
             this._objectDomain,
             dataAllValuesFrom.DataPropertyExpression.Select(this),
-            (objectDomain, objectPropertyExpression) =>
+            (objectDomain, dataPropertyExpression) =>
                 GroupJoin(
                     objectDomain,
-                    objectPropertyExpression,
+                    dataPropertyExpression,
                     individual => individual,
                     ([domain,]) => domain)).pipe(
                         map(groupedByDomain => new Set<any>(
