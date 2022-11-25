@@ -34,6 +34,7 @@ export class ObservableGenerator implements
     IClassExpressionSelector<Observable<Set<any>>>,
     IPropertyExpressionSelector<Observable<[any, any][]>>
 {
+    private _equivalentClasses          : Map<IClass, Set<IClass>>;
     private _classDefinitions           : Map<IClass, IClassExpression[]>;
     private _functionalObjectProperties = new Set<IObjectPropertyExpression>();
     private _functionalDataProperties   = new Set<IDataPropertyExpression>();
@@ -63,7 +64,7 @@ export class ObservableGenerator implements
             this._functionalDataProperties.add(functionalDataProperty.DataPropertyExpression);
 
         const classes = [...this._ontology.Get(this._ontology.IsAxiom.IClass)];
-        const adjacencyList = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, new Set<IClass>()]));
+        const adjacencyList = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, new Set<IClass>([class$])]));
         for(const equivalentClassExpressions of this._ontology.Get(this._ontology.IsAxiom.IEquivalentClasses))
         {
             const equivalentClasses = <IClass[]>equivalentClassExpressions.ClassExpressions.filter(classExpression => this._ontology.IsAxiom.IClass(classExpression));
@@ -77,14 +78,14 @@ export class ObservableGenerator implements
                 }
         }
 
-        const transitiveClosure = TransitiveClosure3(adjacencyList);
+        this._equivalentClasses = TransitiveClosure3(adjacencyList);
 
         const definitions: [IClass, IClassExpression][] = [];
         for(const equivalentClasses of this._ontology.Get(this._ontology.IsAxiom.IEquivalentClasses))
-            for(const class$ of equivalentClasses.ClassExpressions.filter(classExpression => this._ontology.IsAxiom.IClass(classExpression)))
+            for(const class$ of equivalentClasses.ClassExpressions.filter(this._ontology.IsAxiom.IClass))
             {
                 for(const classExpression of equivalentClasses.ClassExpressions.filter(classExpression => !this._ontology.IsAxiom.IClass(classExpression)))
-                    for(const equivalentClass of transitiveClosure.get(<IClass>class$))
+                    for(const equivalentClass of this._equivalentClasses.get(class$))
                         definitions.push(
                             [
                                 equivalentClass,
@@ -95,8 +96,8 @@ export class ObservableGenerator implements
 
         this._classDefinitions = Group(
             definitions,
-            definition => definition[0],
-            definition => definition[1]);
+            ([class$,]) => class$,
+            ([, classExpression]) => classExpression);
 
         this._individualInterpretation = AddIndividuals(
             this._ontology,
@@ -111,31 +112,35 @@ export class ObservableGenerator implements
         if(!classObservable)
         {
             let classDefinitions = this._classDefinitions.get(class$) || [];
-            classDefinitions = classDefinitions.concat([...this._ontology.Get(this._ontology.IsAxiom.ISubClassOf)]
-                .filter(subClassOf => subClassOf.SuperClassExpression === class$)
-                .map(subClassOf => subClassOf.SubClassExpression));
-
             let classObservables = classDefinitions.map(classExpression => classExpression.Select(this));
-            classObservables = classObservables.concat(
-                [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyDomain)]
-                    .filter(objectPropertyDomain => objectPropertyDomain.Domain === class$)
-                    .map(objectPropertyDomain => objectPropertyDomain.ObjectPropertyExpression)
-                    .map(objectPropertyExpression =>
-                        objectPropertyExpression.Select(this).pipe(map(relations => new Set<any>(relations.map(([domain,]) => domain))))));
 
-            classObservables = classObservables.concat(
-                [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyRange)]
-                    .filter(objectPropertyRange => objectPropertyRange.Range === class$)
-                    .map(objectPropertyRange => objectPropertyRange.ObjectPropertyExpression)
-                    .map(objectPropertyExpression =>
-                        objectPropertyExpression.Select(this).pipe(map(relations => new Set<any>(relations.map(([, range]) => range))))));
+            for(const equivalentClass of this._equivalentClasses.get(class$))
+            {
+                classObservables = classObservables.concat([...this._ontology.Get(this._ontology.IsAxiom.ISubClassOf)]
+                    .filter(subClassOf => subClassOf.SuperClassExpression === equivalentClass)
+                    .map(subClassOf => subClassOf.SubClassExpression.Select(this)));
 
-            classObservables = classObservables.concat(
-                [...this._ontology.Get(this._ontology.IsAxiom.IDataPropertyDomain)]
-                    .filter(dataPropertyDomain => dataPropertyDomain.Domain === class$)
-                    .map(dataPropertyDomain => dataPropertyDomain.DataPropertyExpression)
-                    .map(dataPropertyExpression =>
-                        dataPropertyExpression.Select(this).pipe(map(relations => new Set<any>(relations.map(([domain,]) => domain))))));
+                classObservables = classObservables.concat(
+                    [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyDomain)]
+                        .filter(objectPropertyDomain => objectPropertyDomain.Domain === equivalentClass)
+                        .map(objectPropertyDomain => objectPropertyDomain.ObjectPropertyExpression)
+                        .map(objectPropertyExpression =>
+                            objectPropertyExpression.Select(this).pipe(map(relations => new Set<any>(relations.map(([domain,]) => domain))))));
+
+                classObservables = classObservables.concat(
+                    [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyRange)]
+                        .filter(objectPropertyRange => objectPropertyRange.Range === equivalentClass)
+                        .map(objectPropertyRange => objectPropertyRange.ObjectPropertyExpression)
+                        .map(objectPropertyExpression =>
+                            objectPropertyExpression.Select(this).pipe(map(relations => new Set<any>(relations.map(([, range]) => range))))));
+
+                classObservables = classObservables.concat(
+                    [...this._ontology.Get(this._ontology.IsAxiom.IDataPropertyDomain)]
+                        .filter(dataPropertyDomain => dataPropertyDomain.Domain === equivalentClass)
+                        .map(dataPropertyDomain => dataPropertyDomain.DataPropertyExpression)
+                        .map(dataPropertyExpression =>
+                            dataPropertyExpression.Select(this).pipe(map(relations => new Set<any>(relations.map(([domain,]) => domain))))));
+            }
 
             if(classObservables.length)
                 classObservable = combineLatest(
