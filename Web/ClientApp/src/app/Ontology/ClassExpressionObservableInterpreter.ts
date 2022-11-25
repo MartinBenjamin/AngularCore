@@ -1,5 +1,4 @@
 import { BehaviorSubject, combineLatest, Observable } from "rxjs";
-//import { map as mapObservable} from 'rxjs/operators';
 import { ClassExpressionInterpreter, IEavStore, Wrapped } from "./ClassExpressionInterpreter";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression, IObjectPropertyExpression } from './IPropertyExpression';
@@ -17,9 +16,6 @@ export class ClassExpressionObservableInterpreter extends ClassExpressionInterpr
         const observableParams = <ObservableParams<P>>params;
         if(!observableParams.length)
             return new BehaviorSubject<R>(map(...<P>(<unknown>[])));
-
-        //else if(params.length === 1)
-        //    return observableParams[0].pipe(mapObservable(<(param: ObservableParams<P>[0]) => R><unknown>map));
 
         else
             return combineLatest(
