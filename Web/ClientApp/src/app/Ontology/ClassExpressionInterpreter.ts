@@ -36,7 +36,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
     private _classDefinitions             : Map<IClass, IClassExpression[]>;
     private _functionalObjectProperties   = new Set<IObjectPropertyExpression>();
     private _functionalDataProperties     = new Set<IDataPropertyExpression>();
-    private _wrapped                      : Map<IClass, T>;
+    private _classInterpretation          : Map<IClass, T>;
     private _individualInterpretation     : Map<IIndividual, any>;
     private _classExpressionInterpreter   : IClassExpressionSelector<Wrapped<Set<any>>>;
     private _propertyExpressionInterpreter: IPropertyExpressionSelector<Wrapped<[any, any][]>>;
@@ -50,14 +50,14 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
         propertyExpressionInterpreter: IPropertyExpressionSelector<U>,
         private _ontology            : IOntology,
         private _store               : IEavStore,
-        objectDomain                 : Wrapped<T>
+        objectDomain                 : T
         )
     {
         this._classExpressionInterpreter = this;
         this._propertyExpressionInterpreter = propertyExpressionInterpreter;
         this._nothing = this.Wrap(() => new Set<any>());
         this._objectDomain = objectDomain;
-        this._wrapped = new Map<IClass, T>(
+        this._classInterpretation = new Map<IClass, T>(
             [
                 [Thing  , <T>this._objectDomain],
                 [Nothing, <T>this._nothing     ]
@@ -114,20 +114,20 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
         class$: IClass
         ): T
     {
-        let wrappedClass = this._wrapped.get(class$);
-        if(!wrappedClass)
+        let interpretation = this._classInterpretation.get(class$);
+        if(!interpretation)
         {
             let classDefinitions = this._classDefinitions.get(class$) || [];
 
-            let wrapped = classDefinitions.map(classExpression => classExpression.Select(this._classExpressionInterpreter));
+            let interpretations = classDefinitions.map(classExpression => classExpression.Select(this._classExpressionInterpreter));
 
             for(const equivalentClass of this._equivalentClasses.get(class$))
             {
-                wrapped = wrapped.concat([...this._ontology.Get(this._ontology.IsAxiom.ISubClassOf)]
+                interpretations = interpretations.concat([...this._ontology.Get(this._ontology.IsAxiom.ISubClassOf)]
                     .filter(subClassOf => subClassOf.SuperClassExpression === equivalentClass)
                     .map(subClassOf => subClassOf.SubClassExpression.Select(this._classExpressionInterpreter)));
 
-                wrapped = wrapped.concat(
+                interpretations = interpretations.concat(
                     [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyDomain)]
                         .filter(objectPropertyDomain => objectPropertyDomain.Domain === equivalentClass)
                         .map(objectPropertyDomain => objectPropertyDomain.ObjectPropertyExpression)
@@ -135,7 +135,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
                             relations => new Set<any>(relations.map(([domain,]) => domain)),
                             objectPropertyExpression.Select(this._propertyExpressionInterpreter))));
 
-                wrapped = wrapped.concat(
+                interpretations = interpretations.concat(
                     [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyRange)]
                         .filter(objectPropertyRange => objectPropertyRange.Range === equivalentClass)
                         .map(objectPropertyRange => objectPropertyRange.ObjectPropertyExpression)
@@ -143,7 +143,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
                             relations => new Set<any>(relations.map(([, range]) => range)),
                             objectPropertyExpression.Select(this._propertyExpressionInterpreter))));
 
-                wrapped = wrapped.concat(
+                interpretations = interpretations.concat(
                     [...this._ontology.Get(this._ontology.IsAxiom.IDataPropertyDomain)]
                         .filter(dataPropertyDomain => dataPropertyDomain.Domain === equivalentClass)
                         .map(dataPropertyDomain => dataPropertyDomain.DataPropertyExpression)
@@ -152,20 +152,23 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
                             dataPropertyExpression.Select(this._propertyExpressionInterpreter))));
             }
 
-            if(wrapped.length)
-                wrappedClass = <T>this.Wrap(
-                    (...sets: Set<any>[]) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])),
-                    wrapped);
+            if(!interpretations.length)
+                interpretation = <T>this._nothing;
+
+            else if(interpretations.length === 1)
+                interpretation = <T>interpretations[0];
 
             else
-                wrappedClass = <T>this._nothing;
+                interpretation = <T>this.Wrap(
+                    (...sets: Set<any>[]) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])),
+                    interpretations);
 
-            this._wrapped.set(
+            this._classInterpretation.set(
                 class$,
-                wrappedClass);
+                interpretation);
         }
 
-        return wrappedClass;
+        return interpretation;
     }
 
     ObjectIntersectionOf(

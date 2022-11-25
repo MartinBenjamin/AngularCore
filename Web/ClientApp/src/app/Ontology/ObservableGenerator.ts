@@ -38,7 +38,7 @@ export class ObservableGenerator implements
     private _classDefinitions           : Map<IClass, IClassExpression[]>;
     private _functionalObjectProperties = new Set<IObjectPropertyExpression>();
     private _functionalDataProperties   = new Set<IDataPropertyExpression>();
-    private _classObservables           : Map<IClass, Observable<Set<any>>>;
+    private _classInterpretation        : Map<IClass, Observable<Set<any>>>;
     private _individualInterpretation   : Map<IIndividual, any>;
     private _objectDomain               : Observable<Set<any>>;
 
@@ -51,7 +51,7 @@ export class ObservableGenerator implements
     {
         this._objectDomain = this._store.ObserveEntities();
 
-        this._classObservables = new Map<IClass, Observable<Set<any>>>(
+        this._classInterpretation = new Map<IClass, Observable<Set<any>>>(
             [
                 [Thing  , this._objectDomain          ],
                 [Nothing, ObservableGenerator._nothing]
@@ -108,33 +108,33 @@ export class ObservableGenerator implements
         class$: IClass
         ): Observable<Set<any>>
     {
-        let classObservable = this._classObservables.get(class$);
-        if(!classObservable)
+        let interpretation = this._classInterpretation.get(class$);
+        if(!interpretation)
         {
             let classDefinitions = this._classDefinitions.get(class$) || [];
-            let classObservables = classDefinitions.map(classExpression => classExpression.Select(this));
+            let interpretations = classDefinitions.map(classExpression => classExpression.Select(this));
 
             for(const equivalentClass of this._equivalentClasses.get(class$))
             {
-                classObservables = classObservables.concat([...this._ontology.Get(this._ontology.IsAxiom.ISubClassOf)]
+                interpretations = interpretations.concat([...this._ontology.Get(this._ontology.IsAxiom.ISubClassOf)]
                     .filter(subClassOf => subClassOf.SuperClassExpression === equivalentClass)
                     .map(subClassOf => subClassOf.SubClassExpression.Select(this)));
 
-                classObservables = classObservables.concat(
+                interpretations = interpretations.concat(
                     [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyDomain)]
                         .filter(objectPropertyDomain => objectPropertyDomain.Domain === equivalentClass)
                         .map(objectPropertyDomain => objectPropertyDomain.ObjectPropertyExpression)
                         .map(objectPropertyExpression =>
                             objectPropertyExpression.Select(this).pipe(map(relations => new Set<any>(relations.map(([domain,]) => domain))))));
 
-                classObservables = classObservables.concat(
+                interpretations = interpretations.concat(
                     [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyRange)]
                         .filter(objectPropertyRange => objectPropertyRange.Range === equivalentClass)
                         .map(objectPropertyRange => objectPropertyRange.ObjectPropertyExpression)
                         .map(objectPropertyExpression =>
                             objectPropertyExpression.Select(this).pipe(map(relations => new Set<any>(relations.map(([, range]) => range))))));
 
-                classObservables = classObservables.concat(
+                interpretations = interpretations.concat(
                     [...this._ontology.Get(this._ontology.IsAxiom.IDataPropertyDomain)]
                         .filter(dataPropertyDomain => dataPropertyDomain.Domain === equivalentClass)
                         .map(dataPropertyDomain => dataPropertyDomain.DataPropertyExpression)
@@ -142,20 +142,23 @@ export class ObservableGenerator implements
                             dataPropertyExpression.Select(this).pipe(map(relations => new Set<any>(relations.map(([domain,]) => domain))))));
             }
 
-            if(classObservables.length)
-                classObservable = combineLatest(
-                    classObservables,
-                    (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])));
+            if(!interpretations.length)
+                interpretation = ObservableGenerator._nothing;
+
+            else if(interpretations.length === 1)
+                interpretation = interpretations[0];
 
             else
-                classObservable = ObservableGenerator._nothing;
+                interpretation = combineLatest(
+                    interpretations,
+                    (...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])));
 
-            this._classObservables.set(
+            this._classInterpretation.set(
                 class$,
-                classObservable);
+                interpretation);
         }
 
-        return classObservable;
+        return interpretation;
     }
 
     ObjectIntersectionOf(
