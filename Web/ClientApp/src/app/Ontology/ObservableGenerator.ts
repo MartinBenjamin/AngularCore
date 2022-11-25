@@ -67,7 +67,7 @@ export class ObservableGenerator implements
         const adjacencyList = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, new Set<IClass>([class$])]));
         for(const equivalentClassExpressions of this._ontology.Get(this._ontology.IsAxiom.IEquivalentClasses))
         {
-            const equivalentClasses = <IClass[]>equivalentClassExpressions.ClassExpressions.filter(classExpression => this._ontology.IsAxiom.IClass(classExpression));
+            const equivalentClasses = equivalentClassExpressions.ClassExpressions.filter(this._ontology.IsAxiom.IClass);
             for(let index1 = 0; index1 < equivalentClasses.length; ++index1)
                 for(let index2 = index1; index2 < equivalentClasses.length; ++index2)
                 {

@@ -32,6 +32,7 @@ type Wrapped<T> = {};
 
 export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U extends Wrapped<[any, any][]>> implements IClassExpressionSelector<T>
 {
+    private _equivalentClasses            : Map<IClass, Set<IClass>>;
     private _classDefinitions             : Map<IClass, IClassExpression[]>;
     private _functionalObjectProperties   = new Set<IObjectPropertyExpression>();
     private _functionalDataProperties     = new Set<IDataPropertyExpression>();
@@ -69,10 +70,10 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
             this._functionalDataProperties.add(functionalDataProperty.DataPropertyExpression);
 
         const classes = [...this._ontology.Get(this._ontology.IsAxiom.IClass)];
-        const adjacencyList = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, new Set<IClass>()]));
+        const adjacencyList = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, new Set<IClass>([class$])]));
         for(const equivalentClassExpressions of this._ontology.Get(this._ontology.IsAxiom.IEquivalentClasses))
         {
-            const equivalentClasses = <IClass[]>equivalentClassExpressions.ClassExpressions.filter(classExpression => this._ontology.IsAxiom.IClass(classExpression));
+            const equivalentClasses = equivalentClassExpressions.ClassExpressions.filter(this._ontology.IsAxiom.IClass);
             for(let index1 = 0; index1 < equivalentClasses.length; ++index1)
                 for(let index2 = index1; index2 < equivalentClasses.length; ++index2)
                 {
@@ -83,14 +84,14 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
                 }
         }
 
-        const transitiveClosure = TransitiveClosure3(adjacencyList);
+        this._equivalentClasses = TransitiveClosure3(adjacencyList);
 
         const definitions: [IClass, IClassExpression][] = [];
         for(const equivalentClasses of this._ontology.Get(this._ontology.IsAxiom.IEquivalentClasses))
-            for(const class$ of equivalentClasses.ClassExpressions.filter(classExpression => this._ontology.IsAxiom.IClass(classExpression)))
+            for(const class$ of equivalentClasses.ClassExpressions.filter(this._ontology.IsAxiom.IClass))
             {
                 for(const classExpression of equivalentClasses.ClassExpressions.filter(classExpression => !this._ontology.IsAxiom.IClass(classExpression)))
-                    for(const equivalentClass of transitiveClosure.get(<IClass>class$))
+                    for(const equivalentClass of this._equivalentClasses.get(class$))
                         definitions.push(
                             [
                                 equivalentClass,
@@ -101,8 +102,8 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
         this._classDefinitions = Group(
             definitions,
-            definition => definition[0],
-            definition => definition[1]);
+            ([class$,]) => class$,
+            ([, classExpression]) => classExpression);
 
         this._individualInterpretation = AddIndividuals(
             this._ontology,
@@ -117,34 +118,39 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
         if(!wrappedClass)
         {
             let classDefinitions = this._classDefinitions.get(class$) || [];
-            classDefinitions = classDefinitions.concat([...this._ontology.Get(this._ontology.IsAxiom.ISubClassOf)]
-                .filter(subClassOf => subClassOf.SuperClassExpression === class$)
-                .map(subClassOf => subClassOf.SubClassExpression));
 
             let wrapped = classDefinitions.map(classExpression => classExpression.Select(this._classExpressionInterpreter));
-            wrapped = wrapped.concat(
-                [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyDomain)]
-                    .filter(objectPropertyDomain => objectPropertyDomain.Domain === class$)
-                    .map(objectPropertyDomain => objectPropertyDomain.ObjectPropertyExpression)
-                    .map(objectPropertyExpression => this.Wrap(
-                        relations => new Set<any>(relations.map(([domain,]) => domain)),
-                        objectPropertyExpression.Select(this._propertyExpressionInterpreter))));
 
-            wrapped = wrapped.concat(
-                [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyRange)]
-                    .filter(objectPropertyRange => objectPropertyRange.Range === class$)
-                    .map(objectPropertyRange => objectPropertyRange.ObjectPropertyExpression)
-                    .map(objectPropertyExpression => this.Wrap(
-                        relations => new Set<any>(relations.map(([, range]) => range)),
-                        objectPropertyExpression.Select(this._propertyExpressionInterpreter))));
+            for(const equivalentClass of this._equivalentClasses.get(class$))
+            {
+                wrapped = wrapped.concat([...this._ontology.Get(this._ontology.IsAxiom.ISubClassOf)]
+                    .filter(subClassOf => subClassOf.SuperClassExpression === equivalentClass)
+                    .map(subClassOf => subClassOf.SubClassExpression.Select(this._classExpressionInterpreter)));
 
-            wrapped = wrapped.concat(
-                [...this._ontology.Get(this._ontology.IsAxiom.IDataPropertyDomain)]
-                    .filter(dataPropertyDomain => dataPropertyDomain.Domain === class$)
-                    .map(dataPropertyDomain => dataPropertyDomain.DataPropertyExpression)
-                    .map(dataPropertyExpression => this.Wrap(
-                        relations => new Set<any>(relations.map(([domain,]) => domain)),
-                        dataPropertyExpression.Select(this._propertyExpressionInterpreter))));
+                wrapped = wrapped.concat(
+                    [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyDomain)]
+                        .filter(objectPropertyDomain => objectPropertyDomain.Domain === equivalentClass)
+                        .map(objectPropertyDomain => objectPropertyDomain.ObjectPropertyExpression)
+                        .map(objectPropertyExpression => this.Wrap(
+                            relations => new Set<any>(relations.map(([domain,]) => domain)),
+                            objectPropertyExpression.Select(this._propertyExpressionInterpreter))));
+
+                wrapped = wrapped.concat(
+                    [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyRange)]
+                        .filter(objectPropertyRange => objectPropertyRange.Range === equivalentClass)
+                        .map(objectPropertyRange => objectPropertyRange.ObjectPropertyExpression)
+                        .map(objectPropertyExpression => this.Wrap(
+                            relations => new Set<any>(relations.map(([, range]) => range)),
+                            objectPropertyExpression.Select(this._propertyExpressionInterpreter))));
+
+                wrapped = wrapped.concat(
+                    [...this._ontology.Get(this._ontology.IsAxiom.IDataPropertyDomain)]
+                        .filter(dataPropertyDomain => dataPropertyDomain.Domain === equivalentClass)
+                        .map(dataPropertyDomain => dataPropertyDomain.DataPropertyExpression)
+                        .map(dataPropertyExpression => this.Wrap(
+                            relations => new Set<any>(relations.map(([domain,]) => domain)),
+                            dataPropertyExpression.Select(this._propertyExpressionInterpreter))));
+            }
 
             if(wrapped.length)
                 wrappedClass = <T>this.Wrap(
