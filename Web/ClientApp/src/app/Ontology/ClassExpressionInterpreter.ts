@@ -28,15 +28,15 @@ import { TransitiveClosure3 } from "./TransitiveClosure";
 
 export { IEavStore, EavStore };
 
-type Wrapped<T> = {};
+export type Wrapped<TClass> = {};
 
-export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U extends Wrapped<[any, any][]>> implements IClassExpressionSelector<T>
+export abstract class ClassExpressionInterpreter<TClass, TProperty> implements IClassExpressionSelector<TClass>
 {
     private _equivalentClasses            : Map<IClass, Set<IClass>>;
     private _classDefinitions             : Map<IClass, IClassExpression[]>;
     private _functionalObjectProperties   = new Set<IObjectPropertyExpression>();
     private _functionalDataProperties     = new Set<IDataPropertyExpression>();
-    private _classInterpretation          : Map<IClass, T>;
+    private _classInterpretation          : Map<IClass, TClass>;
     private _individualInterpretation     : Map<IIndividual, any>;
     private _classExpressionInterpreter   : IClassExpressionSelector<Wrapped<Set<any>>>;
     private _propertyExpressionInterpreter: IPropertyExpressionSelector<Wrapped<[any, any][]>>;
@@ -47,20 +47,20 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
         ...params: { [Parameter in keyof P]: Wrapped<P[Parameter]>; }): Wrapped<R>;
 
     constructor(
-        propertyExpressionInterpreter: IPropertyExpressionSelector<U>,
+        propertyExpressionInterpreter: IPropertyExpressionSelector<TProperty>,
         private _ontology            : IOntology,
         private _store               : IEavStore,
-        objectDomain                 : T
+        objectDomain                 : TClass
         )
     {
         this._classExpressionInterpreter = this;
         this._propertyExpressionInterpreter = propertyExpressionInterpreter;
         this._nothing = this.Wrap(() => new Set<any>());
         this._objectDomain = objectDomain;
-        this._classInterpretation = new Map<IClass, T>(
+        this._classInterpretation = new Map<IClass, TClass>(
             [
-                [Thing  , <T>this._objectDomain],
-                [Nothing, <T>this._nothing     ]
+                [Thing  , <TClass>this._objectDomain],
+                [Nothing, <TClass>this._nothing     ]
             ]);
 
         for(const functionalObjectProperty of this._ontology.Get(this._ontology.IsAxiom.IFunctionalObjectProperty))
@@ -112,7 +112,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
     Class(
         class$: IClass
-        ): T
+        ): TClass
     {
         let interpretation = this._classInterpretation.get(class$);
         if(!interpretation)
@@ -153,13 +153,13 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
             }
 
             if(!interpretations.length)
-                interpretation = <T>this._nothing;
+                interpretation = <TClass>this._nothing;
 
             else if(interpretations.length === 1)
-                interpretation = <T>interpretations[0];
+                interpretation = <TClass>interpretations[0];
 
             else
-                interpretation = <T>this.Wrap(
+                interpretation = <TClass>this.Wrap(
                     (...sets: Set<any>[]) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])),
                     interpretations);
 
@@ -173,25 +173,25 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
     ObjectIntersectionOf(
         objectIntersectionOf: IObjectIntersectionOf
-        ): T
+        ): TClass
     {
-        return <T>this.Wrap((...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs].filter(element => rhs.has(element)))),
+        return <TClass>this.Wrap((...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs].filter(element => rhs.has(element)))),
             ...objectIntersectionOf.ClassExpressions.map(classExpression => classExpression.Select(this._classExpressionInterpreter)));
     }
 
     ObjectUnionOf(
         objectUnionOf: IObjectUnionOf
-        ): T
+        ): TClass
     {
-        return <T>this.Wrap((...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])),
+        return <TClass>this.Wrap((...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])),
             ...objectUnionOf.ClassExpressions.map(classExpression => classExpression.Select(this._classExpressionInterpreter)));
     }
 
     ObjectComplementOf(
         objectComplementOf: IObjectComplementOf
-        ): T
+        ): TClass
     {
-        return <T>this.Wrap(
+        return <TClass>this.Wrap(
             (objectDomain, classExpression) => new Set<any>([...objectDomain].filter(element => !classExpression.has(element))),
             this._objectDomain,
             objectComplementOf.ClassExpression.Select(this._classExpressionInterpreter));
@@ -199,16 +199,16 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
     ObjectOneOf(
         objectOneOf: IObjectOneOf
-        ): T
+        ): TClass
     {
-        return <T>this.Wrap(() => new Set<any>(objectOneOf.Individuals.map(individual => this.InterpretIndividual(individual))));
+        return <TClass>this.Wrap(() => new Set<any>(objectOneOf.Individuals.map(individual => this.InterpretIndividual(individual))));
     }
 
     ObjectSomeValuesFrom(
         objectSomeValuesFrom: IObjectSomeValuesFrom
-        ): T
+        ): TClass
     {
-        return <T>this.Wrap(
+        return <TClass>this.Wrap(
             (objectPropertyExpression, classExpression) =>
                 new Set<any>(
                     objectPropertyExpression
@@ -220,7 +220,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
     ObjectAllValuesFrom(
         objectAllValuesFrom: IObjectAllValuesFrom
-        ): T
+        ): TClass
     {
         const groupedByDomain = this.Wrap(
             (objectDomain, objectPropertyExpression) =>
@@ -232,7 +232,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
             this._objectDomain,
             objectAllValuesFrom.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter));
 
-        return <T>this.Wrap(
+        return <TClass>this.Wrap(
             (groupedByDomain, classExpression) =>
                 new Set<any>(
                     [...groupedByDomain]
@@ -244,10 +244,10 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
     ObjectHasValue(
         objectHasValue: IObjectHasValue
-        ): T
+        ): TClass
     {
         const individual = this.InterpretIndividual(objectHasValue.Individual);
-        return <T>this.Wrap(
+        return <TClass>this.Wrap(
             objectPropertyExpression =>
                 new Set<any>(objectPropertyExpression
                     .filter(([, range]) => range === individual)
@@ -257,9 +257,9 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
     ObjectHasSelf(
         objectHasSelf: IObjectHasSelf
-        ): T
+        ): TClass
     {
-        return <T>this.Wrap(
+        return <TClass>this.Wrap(
             objectPropertyExpression =>
                 new Set<any>(objectPropertyExpression
                     .filter(([domain, range]) => domain === range)
@@ -269,10 +269,10 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
     ObjectMinCardinality(
         objectMinCardinality: IObjectMinCardinality
-        ): T
+        ): TClass
     {
         if(objectMinCardinality.Cardinality === 0)
-            return <T>this._objectDomain;
+            return <TClass>this._objectDomain;
 
         let objectPropertyExpression = objectMinCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter);
         if(objectMinCardinality.ClassExpression)
@@ -283,12 +283,12 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
         if(objectMinCardinality.Cardinality === 1)
             // Optimise for a minimum cardinality of 1.
-            return <T>this.Wrap(
+            return <TClass>this.Wrap(
                 objectPropertyExpression => new Set<any>(objectPropertyExpression.map(([domain,]) => domain)),
                 objectPropertyExpression);
 
         const groupedByDomain = this.Wrap(this.GroupByDomain, objectPropertyExpression);
-        return <T>this.Wrap(
+        return <TClass>this.Wrap(
             groupedByDomain =>
                 new Set<any>([...groupedByDomain]
                     .filter(([, relations]) => relations.length >= objectMinCardinality.Cardinality)
@@ -298,7 +298,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
     ObjectMaxCardinality(
         objectMaxCardinality: IObjectMaxCardinality
-        ): T
+        ): TClass
     {
         let objectPropertyExpression = objectMaxCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter);
         if(objectMaxCardinality.ClassExpression)
@@ -317,7 +317,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
             this._objectDomain,
             objectPropertyExpression);
 
-        return <T>this.Wrap(
+        return <TClass>this.Wrap(
             groupedByDomain => new Set<any>([...groupedByDomain]
                 .filter(([, relations]) => relations.length <= objectMaxCardinality.Cardinality)
                 .map(([domain,]) => domain)),
@@ -326,7 +326,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
     ObjectExactCardinality(
         objectExactCardinality: IObjectExactCardinality
-        ): T
+        ): TClass
     {
         let objectPropertyExpression = objectExactCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter);
         if(objectExactCardinality.ClassExpression)
@@ -347,7 +347,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
                 this._objectDomain,
                 objectPropertyExpression);
 
-            return <T>this.Wrap(
+            return <TClass>this.Wrap(
                 groupedByDomain =>
                     new Set<any>([...groupedByDomain]
                         .filter(([, relations]) => relations.length === objectExactCardinality.Cardinality)
@@ -357,7 +357,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
         if(objectExactCardinality.Cardinality === 1 && this._functionalObjectProperties.has(objectExactCardinality.ObjectPropertyExpression))
             // Optimise for Functional Object Properties.
-            return <T>this.Wrap(
+            return <TClass>this.Wrap(
                 objectPropertyExpression => new Set<any>(objectPropertyExpression.map(([domain,]) => domain)),
                 objectPropertyExpression);
 
@@ -365,7 +365,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
             this.GroupByDomain,
             objectPropertyExpression);
 
-        return <T>this.Wrap(
+        return <TClass>this.Wrap(
             groupedByDomain =>
                 new Set<any>([...groupedByDomain]
                     .filter(([, relations]) => relations.length === objectExactCardinality.Cardinality)
@@ -375,9 +375,9 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
     DataSomeValuesFrom(
         dataSomeValuesFrom: IDataSomeValuesFrom
-        ): T
+        ): TClass
     {
-        return <T>this.Wrap(
+        return <TClass>this.Wrap(
             dataPropertyExpression =>
                 new Set<any>(dataPropertyExpression
                     .filter(([, range]) => dataSomeValuesFrom.DataRange.HasMember(range))
@@ -387,7 +387,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
     DataAllValuesFrom(
         dataAllValuesFrom: IDataAllValuesFrom
-        ): T
+        ): TClass
     {
         const groupedByDomain = this.Wrap(
             (objectDomain, dataPropertyExpression) =>
@@ -399,7 +399,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
             this._objectDomain,
             dataAllValuesFrom.DataPropertyExpression.Select(this._propertyExpressionInterpreter));
 
-        return <T>this.Wrap(
+        return <TClass>this.Wrap(
             groupedByDomain => new Set<any>(
                 [...groupedByDomain]
                     .filter(([, relations]) => relations.every(([, range]) => dataAllValuesFrom.DataRange.HasMember(range)))
@@ -409,9 +409,9 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
     DataHasValue(
         dataHasValue: IDataHasValue
-        ): T
+        ): TClass
     {
-        return <T>this.Wrap(
+        return <TClass>this.Wrap(
             dataPropertyExpression =>
                 new Set<any>(dataPropertyExpression
                     .filter(([, range]) => range === dataHasValue.Value)
@@ -421,10 +421,10 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
     DataMinCardinality(
         dataMinCardinality: IDataMinCardinality
-        ): T
+        ): TClass
     {
         if(dataMinCardinality.Cardinality === 0)
-            return <T>this._objectDomain;
+            return <TClass>this._objectDomain;
 
         let dataPropertyExpression = dataMinCardinality.DataPropertyExpression.Select(this._propertyExpressionInterpreter);
         if(dataMinCardinality.DataRange)
@@ -434,7 +434,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
         if(dataMinCardinality.Cardinality === 1)
             // Optimise for a minimum cardinality of 1.
-            return <T>this.Wrap(
+            return <TClass>this.Wrap(
                 dataPropertyExpression => new Set<any>(dataPropertyExpression.map(([domain,]) => domain)),
                 dataPropertyExpression);
 
@@ -442,7 +442,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
             this.GroupByDomain,
             dataPropertyExpression);
 
-        return <T>this.Wrap(
+        return <TClass>this.Wrap(
             groupedByDomain =>
                 new Set<any>([...groupedByDomain]
                     .filter(([, relations]) => relations.length >= dataMinCardinality.Cardinality)
@@ -452,7 +452,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
     DataMaxCardinality(
         dataMaxCardinality: IDataMaxCardinality
-        ): T
+        ): TClass
     {
         let dataPropertyExpression = dataMaxCardinality.DataPropertyExpression.Select(this._propertyExpressionInterpreter);
         if(dataMaxCardinality.DataRange)
@@ -470,7 +470,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
             this._objectDomain,
             dataPropertyExpression);
 
-        return <T>this.Wrap(
+        return <TClass>this.Wrap(
             groupedByDomain =>
                 new Set<any>([...groupedByDomain]
                     .filter(([, relations]) => relations.length <= dataMaxCardinality.Cardinality)
@@ -480,7 +480,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
     DataExactCardinality(
         dataExactCardinality: IDataExactCardinality
-        ): T
+        ): TClass
     {
         let dataPropertyExpression = dataExactCardinality.DataPropertyExpression.Select(this._propertyExpressionInterpreter);
         if(dataExactCardinality.DataRange)
@@ -500,7 +500,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
                 this._objectDomain,
                 dataPropertyExpression);
 
-            return <T>this.Wrap(
+            return <TClass>this.Wrap(
                 groupedByDomain =>
                     new Set<any>([...groupedByDomain]
                         .filter(([, relations]) => relations.length === dataExactCardinality.Cardinality)
@@ -510,7 +510,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
 
         if(dataExactCardinality.Cardinality === 1 && this._functionalDataProperties.has(dataExactCardinality.DataPropertyExpression))
             // Optimise for Functional Data Properties.
-            return <T>this.Wrap(
+            return <TClass>this.Wrap(
                 dataPropertyExpression => new Set<any>(dataPropertyExpression.map(([domain,]) => domain)),
                 dataPropertyExpression);
 
@@ -524,7 +524,7 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
             this._objectDomain,
             dataPropertyExpression);
 
-        return <T>this.Wrap(
+        return <TClass>this.Wrap(
             groupedByDomain =>
                 new Set<any>([...groupedByDomain]
                     .filter(([, relations]) => relations.length === dataExactCardinality.Cardinality)
@@ -532,14 +532,14 @@ export abstract class ClassExpressionInterpreter<T extends Wrapped<Set<any>>, U 
             groupedByDomain);
     }
 
-    get ObjectDomain(): T
+    get ObjectDomain(): TClass
     {
-        return <T>this._objectDomain;
+        return <TClass>this._objectDomain;
     }
 
     ClassExpression(
         classExpression: IClassExpression
-        ): T
+        ): TClass
     {
         return classExpression.Select(this);
     }
