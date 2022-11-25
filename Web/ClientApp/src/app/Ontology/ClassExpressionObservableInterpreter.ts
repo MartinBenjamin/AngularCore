@@ -57,6 +57,4 @@ export class PropertyExpressionObservableGenerator implements IPropertyExpressio
     {
         return this._store.ObserveAttribute(dataPropertyExpression.LocalName);
     }
-
-
 }
