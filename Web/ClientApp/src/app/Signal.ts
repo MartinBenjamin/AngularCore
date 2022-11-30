@@ -1,268 +1,218 @@
-import { SortedList } from "./Ontology/SortedSet";
-import { Observable, Subscriber } from "rxjs";
+import { Observable, Subscriber } from 'rxjs';
+import { LongestPaths, Transpose } from './Ontology/AdjacencyList';
+import { SortedList } from './Ontology/SortedSet';
+import { Condense } from './Ontology/StronglyConnectedComponents';
+
+type AreEqual<T = any> = (lhs: T, rhs: T) => boolean;
+
+const ReferenceEquality: AreEqual = (lhs: any, rhs: any) => lhs === rhs;
 
 export interface IVertex
 {
-    readonly In         : ReadonlyArray<IVertex>;
-    readonly Out        : ReadonlyArray<IVertex>;
-    readonly LongestPath: number;
+    LongestPath?: number;
 }
 
-export interface ISchedulable extends IVertex
+export class Signal<TOut = any, TIn extends any[] = any[]> implements IVertex
 {
-    Run(scheduler: IScheduler): void;
+    LongestPath?: number;
+
+    constructor(
+        public Function?: (...parameters: TIn) => TOut,
+        public AreEqual: AreEqual<TOut> = ReferenceEquality
+        )
+    {
+    }
+
+    CurrentValue(): CurrentValue<TOut>
+    {
+        return new CurrentValue<TOut>(this);
+    }
+}
+
+class CurrentValue<TOut = any>
+{
+    constructor(
+        public readonly Signal: Signal<TOut, any[]>
+        )
+    {
+    }
 }
 
 export interface IScheduler
 {
-    Schedule(schedulable: ISchedulable): void;
+    Schedule(signal: Signal): void
     Suspend(): void;
     Unsuspend(): void;
     Update(update: (scheduler: IScheduler) => void);
+    Observe<TOut>(signal: Signal<TOut>): Observable<TOut>;
 }
 
-export interface ISignal<T> extends IVertex
+type SCC<T> = ReadonlyArray<T> & IVertex;
+
+export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 {
-    readonly Out  : ReadonlyArray<ISchedulable>;
-    readonly Value: T;
-
-    Subscribe(schedulable: ISchedulable): void;
-    Unsubscribe(schedulable: ISchedulable): void;
-
-    Update(
-        value    : T,
-        scheduler: IScheduler): void
-
-    Observe(): Observable<T>;
-
-    Map<R>(map: (t: T) => R): ISignal<R>;
-
-    Dispose(): void;
-}
-
-export class Signal<T> implements ISignal<T>
-{
-    private _value           : T;
-    private _out             : ISchedulable[] = [];
-    private _eventSubscribers: Set<Subscriber<T>>;
-
-    private static _in: ReadonlyArray<ISignal<any>> = [];
+    private _incoming                   : ReadonlyMap<Signal, ReadonlyArray<Signal>>;
+    private _outgoing                   : ReadonlyMap<Signal, ReadonlyArray<Signal>>;
+    private _condensed                  : ReadonlyMap<SCC<Signal>, ReadonlyArray<SCC<Signal>>>;
+    private _stronglyConnectedComponents: ReadonlyMap<Signal, ReadonlyArray<Signal>>;
+    private _values                     = new Map<Signal, any>();
+    private _subscribers                = new Map<Signal, Set<Subscriber<any>>>();
+    private _suspended                  = 0;
+    private _entryCount                 = 0;
+    private _flushing                   = false;
 
     constructor(
-        value: T
+        incoming: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>,
+        private _signalTrace?: (signal: Signal, value: any) => void
         )
     {
-        this._value = value;
-    }
+        super((lhs, rhs) => lhs.LongestPath - rhs.LongestPath);
 
-    get In(): ReadonlyArray<ISignal<any>>
-    {
-        return Signal._in;
-    }
+        this._incoming = new Map();
+        this._outgoing = new Map();
+        this.Extend(incoming);
+        return;
+        /*
 
-    get Out(): ReadonlyArray<ISchedulable>
-    {
-        return this._out;
-    }
+        this._incoming = new Map(
+            [...incoming].map(([signal, incomingSignals]) => [signal, incomingSignals.map(input => input instanceof CurrentValue ? input.Signal : input)]));
 
-    get LongestPath(): number
-    {
-        return 0;
-    }
+        // Determine the transpose.
+        this._outgoing = Transpose(
+            new Map([...incoming].map(([signal, incomingSignals]) => [signal, incomingSignals.filter((input): input is Signal => input instanceof Signal)])));
 
-    get Value(): T
-    {
-        return this._value;
-    }
+        // Condense the signal graph.
+        this._condensed = Condense(this._incoming);
 
-    Subscribe(
-        schedulable: ISchedulable
-        ): void
-    {
-        this._out.push(schedulable);
-    }
+        this._stronglyConnectedComponents = new Map<Signal, SCC<Signal>>([].concat(...[...this._condensed.keys()]
+            .map(stronglyConnectedComponent => stronglyConnectedComponent
+                .map<[Signal, SCC<Signal>]>(signal => [signal, stronglyConnectedComponent]))));
 
-    Unsubscribe(
-        schedulable: ISchedulable
-        ): void
-    {
-        this._out.splice(
-            this._out.indexOf(schedulable),
-            1);
-    }
+        // Determine longest path for each strongly connect component in condensed graph.
+        const longestPaths = LongestPaths(this._condensed);
 
-    Update(
-        value    : T,
-        scheduler: IScheduler
-        ): void
-    {
-        this._value = value;
-        for(const schedulable of this._out)
-            scheduler.Schedule(schedulable);
-
-        if(this._eventSubscribers)
-            this._eventSubscribers.forEach(subscriber => subscriber.next(this._value));
-    }
-
-    Observe(): Observable<T>
-    {
-        return new Observable<T>(
-            subscriber =>
-            {
-                this._eventSubscribers = this._eventSubscribers || new Set<Subscriber<T>>();
-                this._eventSubscribers.add(subscriber);
-
-                subscriber.add(
-                    () =>
-                    {
-                        this._eventSubscribers.delete(subscriber);
-                        if(!this._eventSubscribers.size)
-                            this._eventSubscribers = null;;
-                    });
-
-                subscriber.next(this._value);
-            });
-    }
-
-    Map<R>(map: (t: T) => R): ISignal<R>
-    {
-        return new SignalExpression(
-            [this],
-            map);
-    }
-
-    Dispose(): void
-    {
-    }
-}
-
-class SignalExpression<T> extends Signal<T> implements ISchedulable
-{
-    private _map        : (...values) => T;
-    private _in         : ISignal<any>[];
-    private _longestPath: number;
-
-    constructor(
-        inputs: ISignal<any>[],
-        map   : (...values) => T
-        )
-    {
-        super(map.apply(
-            null,
-            inputs.map(signal => signal.Value)));
-        this._map = map;
-        this._in  = inputs;
-        this._longestPath = this._in.reduce(
-            (longestPath, signal) => Math.max(longestPath, signal.LongestPath + 1),
-            0);
-
-        for(const signal of this._in)
-            signal.Subscribe(this);
-    }
-
-    get In(): ReadonlyArray<ISignal<any>>
-    {
-        return this._in;
-    }
-
-    get LongestPath(): number
-    {
-        return this._longestPath;
-    }
-
-    Dispose(): void
-    {
-        while(this._in.length)
+        for(const [stronglyConnectComponent, longestPath] of longestPaths)
         {
-            const signal = this._in.pop();
-            signal.Unsubscribe(this);
-            if(!signal.Out.length)
-                signal.Dispose();
+            stronglyConnectComponent.LongestPath = longestPath;
+
+            for(const signal of stronglyConnectComponent)
+                signal.LongestPath = longestPath;
+        }
+
+        // Schedule signals with LongestPath 0.
+        try
+        {
+            this.Suspend();
+            for(const signal of this._incoming.keys())
+                if(signal.LongestPath === 0)
+                    this.Schedule(signal);
+        }
+        finally
+        {
+            this.Unsuspend();
+        }
+        */
+    }
+
+    public Extend(
+        incoming: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>
+        )
+    {
+        const signalsToBeScheduled: Signal[] = [...incoming].filter(
+            ([, incomingSignals]) =>
+                !incomingSignals.length ||
+                incomingSignals.filter((input): input is Signal => input instanceof Signal).some(input => this._incoming.has(input))).map(([signal,]) => signal);
+
+        for(const [signal, incomingSignals] of incoming)
+            (<Map<Signal, Signal[]>>this._incoming).set(
+                signal,
+                incomingSignals.map(input => input instanceof CurrentValue ? input.Signal : input));
+
+        for(const signal of incoming.keys())
+            (<Map<Signal, Signal[]>>this._outgoing).set(
+                signal,
+                []);
+
+        new Array<[Signal, Signal]>().concat(...[...incoming]
+            .map<[Signal, Signal[]]>(([signal, incomingSignals]) => [signal, incomingSignals.filter((input): input is Signal => input instanceof Signal)])
+            .map(([signal, incomingSignals]) => incomingSignals.map<[Signal, Signal]>(input => [input, signal]))).forEach(
+                ([signal, outgoingSignal]) =>
+                {
+                    let outgoing = <Signal[]>this._outgoing.get(signal);
+                    if(!outgoing)
+                    {
+                        outgoing = [];
+                        (<Map<Signal, Signal[]>>this._outgoing).set(
+                            signal,
+                            outgoing);
+                    }
+                    outgoing.push(outgoingSignal);
+                }
+            );
+
+        // Condense the signal graph.
+        this._condensed = Condense(this._incoming);
+
+        this._stronglyConnectedComponents = new Map<Signal, SCC<Signal>>([].concat(...[...this._condensed.keys()]
+            .map(stronglyConnectedComponent => stronglyConnectedComponent
+                .map<[Signal, SCC<Signal>]>(signal => [signal, stronglyConnectedComponent]))));
+
+        // Determine longest path for each strongly connect component in condensed graph.
+        const longestPaths = LongestPaths(this._condensed);
+
+        for(const [stronglyConnectComponent, longestPath] of longestPaths)
+        {
+            stronglyConnectComponent.LongestPath = longestPath;
+
+            for(const signal of stronglyConnectComponent)
+                signal.LongestPath = longestPath;
+        }
+
+        // Schedule new Signals which do not dependent on other Signals or are dependent on existing Signals.
+        try
+        {
+            this.Suspend();
+            signalsToBeScheduled.forEach(signal => this.Schedule(signal));
+        }
+        finally
+        {
+            this.Unsuspend();
         }
     }
 
-    Run(
-        scheduler: IScheduler
-        ): void
-    {
-        const value = this._map.apply(
-            null,
-            this._in.map(signal => signal.Value)); // this._map(...this._in.map(signal => signal.Value));
-
-        this.Update(
-            value,
-            scheduler);
-    }
-}
-
-export function Map<T1                    , R>(s1: ISignal<T1>                                                                                     , map: (t1: T1                                        ) => R): ISignal<R>;
-export function Map<T1, T2                , R>(s1: ISignal<T1>, s2: ISignal<T2>                                                                    , map: (t1: T1, t2: T2                                ) => R): ISignal<R>;
-export function Map<T1, T2, T3            , R>(s1: ISignal<T1>, s2: ISignal<T2>, s3: ISignal<T3>                                                   , map: (t1: T1, t2: T2, t3: T3                        ) => R): ISignal<R>;
-export function Map<T1, T2, T3, T4        , R>(s1: ISignal<T1>, s2: ISignal<T2>, s3: ISignal<T3>, s4: ISignal<T4>                                  , map: (t1: T1, t2: T2, t3: T3, t4: T4                ) => R): ISignal<R>;
-export function Map<T1, T2, T3, T4, T5    , R>(s1: ISignal<T1>, s2: ISignal<T2>, s3: ISignal<T3>, s4: ISignal<T4>, s5: ISignal<T5>                 , map: (t1: T1, t2: T2, t3: T3, t4: T4, t5: T5        ) => R): ISignal<R>;
-export function Map<T1, T2, T3, T4, T5, T6, R>(s1: ISignal<T1>, s2: ISignal<T2>, s3: ISignal<T3>, s4: ISignal<T4>, s5: ISignal<T5>, s6: ISignal<T6>, map: (t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6) => R): ISignal<R>;
-export function Map<T, R>(inputs: ISignal<T>[], map: (...t: T[]) => R): ISignal<R>;
-export function Map(...args): any
-{
-    let inputs: ISignal<any>[];
-
-    if(args[0] instanceof Array)
-        inputs = <ISignal<any>[]>args[0];
-
-    else
-        inputs = <ISignal<any>[]>args.slice(
-            0,
-            args.length - 1);
-
-    return new SignalExpression(
-        inputs,
-        <() => any>args[args.length - 1]);
-}
-
-export class Scheduler extends SortedList<ISchedulable> implements IScheduler
-{
-    private _suspended  = 0;
-    private _entryCount = 0;
-    private _flushing   = false;
-
-    constructor()
-    {
-        super((lhs, rhs) => lhs.LongestPath - rhs.LongestPath);
-    }
-
     public add(
-        schedulable: ISchedulable
+        stronglyConnectedComponent: SCC<Signal>
         ): this
     {
-        const indexBefore = this.lastBefore(schedulable);
+        const indexBefore = this.lastBefore(stronglyConnectedComponent);
 
-        for(let index = indexBefore + 1; index < this._array.length && this._array[index].LongestPath === schedulable.LongestPath; ++index)
-            if(this._array[index] === schedulable)
+        for(let index = indexBefore + 1; index < this._array.length && this._compare(this._array[index], stronglyConnectedComponent) === 0; ++index)
+            if(this._array[index] === stronglyConnectedComponent)
                 // Already scheduled.
                 return this;
 
         this._array.splice(
             indexBefore + 1,
             0,
-            schedulable);
+            stronglyConnectedComponent);
 
         return this;
     }
 
     Schedule(
-        schedulable: ISchedulable
+        signal: Signal
         ): void
     {
         try
         {
             this._entryCount += 1;
-            if(schedulable.In.length === 1 && !this._suspended)
+            const stronglyConnectedComponent = this._stronglyConnectedComponents.get(signal);
+            if(this._incoming.get(signal).length === 1 && !this._suspended)
                 // Run immediately.
-                schedulable.Run(this);
+                this.Run(stronglyConnectedComponent);
 
             else
-                this.add(schedulable);
-
+                this.add(stronglyConnectedComponent);
         }
         finally
         {
@@ -300,9 +250,34 @@ export class Scheduler extends SortedList<ISchedulable> implements IScheduler
         }
     }
 
-    *Schedulables(): IterableIterator<ISchedulable>
+    Observe<TOut>(
+        signal: Signal<TOut>
+        ): Observable<TOut>
     {
-        yield* this._array;
+        return new Observable<TOut>(
+            subscriber =>
+            {
+                let subscribers = this._subscribers.get(signal);
+                if(!subscribers)
+                {
+                    subscribers = new Set<Subscriber<any>>();
+                    this._subscribers.set(
+                        signal,
+                        subscribers);
+                }
+
+                subscribers.add(subscriber);
+
+                subscriber.add(
+                    () =>
+                    {
+                        subscribers.delete(subscriber);
+                        if(!subscribers.size)
+                            this._subscribers.delete(signal);
+                    });
+
+                subscriber.next(this._values.get(signal));
+            });
     }
 
     private Flush(): void
@@ -314,20 +289,97 @@ export class Scheduler extends SortedList<ISchedulable> implements IScheduler
         {
             this._flushing = true;
             while(this._array.length)
-                this._array.shift().Run(this);
+                this.Run(this._array.shift());
         }
         finally
         {
             this._flushing = false;
         }
     }
-}
 
-//let x: ISignal<number>;
-//let y: ISignal<number>;
-//let z: ISignal<string>;
-//x.Map((n: number) => n.toString());
-//Map(x, (n: number) => n.toString());
-//Map(x, y, (n1, n2) => Math.max(n1, n2));
-//Map(x, z, (n1, s1) => n1.toString() + s1);
-//Map([x, y], (...a) => Math.max(...a));
+    private Run(
+        stronglyConnectedComponent: SCC<Signal>
+        )
+    {
+        if(stronglyConnectedComponent.length === 1)
+        {
+            const signal = stronglyConnectedComponent[0]
+            const value = signal.Function.apply(
+                null,
+                this._incoming.get(signal).map(output => this._values.get(output)));
+
+            if(!signal.AreEqual(
+                value,
+                this._values.get(signal)))
+            {
+                this._values.set(
+                    signal,
+                    value);
+                for(const input of this._outgoing.get(signal))
+                    this.Schedule(input);
+
+                const subscribers = this._subscribers.get(signal);
+                if(subscribers)
+                    subscribers.forEach(subscriber => subscriber.next(value));
+
+                if(this._signalTrace)
+                    this._signalTrace(
+                        signal,
+                        value);
+            }
+        }
+        else
+        {
+            for(const signal of stronglyConnectedComponent)
+                this._values.delete(signal);
+
+            const nextValues = new Map<Signal, any>();
+            const schedule: Signal[] = [...stronglyConnectedComponent];
+            while(schedule.length)
+            {
+                for(const signal of schedule)
+                    nextValues.set(
+                        signal,
+                        signal.Function.apply(
+                            null,
+                            this._incoming.get(signal).map(output => this._values.get(output))));
+
+                let count = schedule.length;
+                while(count--)
+                {
+                    const signal = schedule.shift();
+                    const nextValue = nextValues.get(signal);
+                    if(!signal.AreEqual(
+                        this._values.get(signal),
+                        nextValue))
+                    {
+                        for(const input of this._outgoing.get(signal))
+                            if(input.LongestPath === signal.LongestPath &&
+                                !schedule.includes(input))
+                                schedule.push(input);
+
+                        this._values.set(
+                            signal,
+                            nextValue);
+                    }
+                }
+            }
+
+            for(const signal of stronglyConnectedComponent)
+            {
+                for(const input of this._outgoing.get(signal))
+                    if(input.LongestPath > signal.LongestPath) // Do not schedule signals within the strongly connected component.
+                        this.Schedule(input);
+
+                const subscribers = this._subscribers.get(signal);
+                if(subscribers)
+                    subscribers.forEach(subscriber => subscriber.next(this._values.get(signal)));
+
+                if(this._signalTrace)
+                    this._signalTrace(
+                        signal,
+                        this._values.get(signal));
+            }
+        }
+    }
+}
