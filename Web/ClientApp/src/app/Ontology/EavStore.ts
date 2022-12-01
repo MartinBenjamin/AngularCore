@@ -109,7 +109,10 @@ export class EavStore implements IEavStore, IPublisher
                     const v = av.get(attribute);
                     if(typeof value !== 'undefined')
                     {
-                        if((v instanceof Array && v.includes(value)) || v === value)
+                        if(v instanceof Array)
+                            facts.push(...v.filter(v => v === value).map<Fact>(v => [entity, attribute, value]));
+
+                        else if(v === value)
                             facts.push([entity, attribute, value]);
                     }
                     else
@@ -124,7 +127,10 @@ export class EavStore implements IEavStore, IPublisher
                 else for(const [a, v] of av)
                     if(typeof value !== 'undefined')
                     {
-                        if((v instanceof Array && v.includes(value)) || v === value)
+                        if(v instanceof Array)
+                            facts.push(...v.filter(v => v === value).map<Fact>(v => [entity, a, value]));
+
+                        else if(v === value)
                             facts.push([entity, a, value]);
                     }
                     else
@@ -143,7 +149,10 @@ export class EavStore implements IEavStore, IPublisher
                 for(const [e, v] of ev)
                     if(typeof value !== 'undefined')
                     {
-                        if((v instanceof Array && v.includes(value)) || v === value)
+                        if(v instanceof Array)
+                            facts.push(...v.filter(v => v === value).map<Fact>(v => ([e, attribute, value])));
+
+                        else if(v === value)
                             facts.push([e, attribute, value]);
                     }
                     else
@@ -159,7 +168,10 @@ export class EavStore implements IEavStore, IPublisher
             for(const [a, v] of av)
                 if(typeof value !== 'undefined')
                 {
-                    if((v instanceof Array && v.includes(value)) || v === value)
+                    if(v instanceof Array)
+                        facts.push(...v.filter(v => v === value).map<Fact>(v => [e, a, value]));
+                        
+                    else if(v === value)
                         facts.push([e, a, value]);
                 }
                 else
