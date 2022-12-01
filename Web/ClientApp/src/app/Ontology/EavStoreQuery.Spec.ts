@@ -75,38 +75,24 @@ describe(
                 assert("store.Query(['?result'], [[e, 'a1', '?result'], GreaterThan(0, '?result')]).flat().length === 1");
                 assert("store.Query(['?result'], [[e, 'a1', '?result'], GreaterThan(0, '?result')]).flat().includes(-1)");
 
-                [-1, 0, 1].forEach(
-                    n =>
-                    {
-                        if(n < 0)
-                        {
-                            assert(`store.Query([1], [LessThan          (${n}, 0)]).length === 1`);
-                            assert(`store.Query([1], [LessThanOrEqual   (${n}, 0)]).length === 1`);
-                            assert(`store.Query([1], [Equal             (${n}, 0)]).length === 0`);
-                            assert(`store.Query([1], [NotEqual          (${n}, 0)]).length === 1`);
-                            assert(`store.Query([1], [GreaterThanOrEqual(${n}, 0)]).length === 0`);
-                            assert(`store.Query([1], [GreaterThan       (${n}, 0)]).length === 0`);
-                        }
-                        else if(n === 0)
-                        {
-                            assert(`store.Query([1], [LessThan          (${n}, 0)]).length === 0`);
-                            assert(`store.Query([1], [LessThanOrEqual   (${n}, 0)]).length === 1`);
-                            assert(`store.Query([1], [Equal             (${n}, 0)]).length === 1`);
-                            assert(`store.Query([1], [NotEqual          (${n}, 0)]).length === 0`);
-                            assert(`store.Query([1], [GreaterThanOrEqual(${n}, 0)]).length === 1`);
-                            assert(`store.Query([1], [GreaterThan       (${n}, 0)]).length === 0`);
-                        }
-                        else // n > 0
-                        {
-                            assert(`store.Query([1], [LessThan          (${n}, 0)]).length === 0`);
-                            assert(`store.Query([1], [LessThanOrEqual   (${n}, 0)]).length === 0`);
-                            assert(`store.Query([1], [Equal             (${n}, 0)]).length === 0`);
-                            assert(`store.Query([1], [NotEqual          (${n}, 0)]).length === 1`);
-                            assert(`store.Query([1], [GreaterThanOrEqual(${n}, 0)]).length === 1`);
-                            assert(`store.Query([1], [GreaterThan       (${n}, 0)]).length === 1`);
-                        }
-
-                    });
+                assert(`store.Query([1], [LessThan          (-1, 0)]).length === 1`);
+                assert(`store.Query([1], [LessThanOrEqual   (-1, 0)]).length === 1`);
+                assert(`store.Query([1], [Equal             (-1, 0)]).length === 0`);
+                assert(`store.Query([1], [NotEqual          (-1, 0)]).length === 1`);
+                assert(`store.Query([1], [GreaterThanOrEqual(-1, 0)]).length === 0`);
+                assert(`store.Query([1], [GreaterThan       (-1, 0)]).length === 0`);
+                assert(`store.Query([1], [LessThan          ( 0, 0)]).length === 0`);
+                assert(`store.Query([1], [LessThanOrEqual   ( 0, 0)]).length === 1`);
+                assert(`store.Query([1], [Equal             ( 0, 0)]).length === 1`);
+                assert(`store.Query([1], [NotEqual          ( 0, 0)]).length === 0`);
+                assert(`store.Query([1], [GreaterThanOrEqual( 0, 0)]).length === 1`);
+                assert(`store.Query([1], [GreaterThan       ( 0, 0)]).length === 0`);
+                assert(`store.Query([1], [LessThan          ( 1, 0)]).length === 0`);
+                assert(`store.Query([1], [LessThanOrEqual   ( 1, 0)]).length === 0`);
+                assert(`store.Query([1], [Equal             ( 1, 0)]).length === 0`);
+                assert(`store.Query([1], [NotEqual          ( 1, 0)]).length === 1`);
+                assert(`store.Query([1], [GreaterThanOrEqual( 1, 0)]).length === 1`);
+                assert(`store.Query([1], [GreaterThan       ( 1, 0)]).length === 1`);
             });
 
         const o1 = { Lhs: 1, Rhs: 2, Result: 3 };
