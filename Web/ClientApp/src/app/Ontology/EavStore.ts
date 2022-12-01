@@ -187,7 +187,7 @@ export class EavStore implements IEavStore, IPublisher
     }
 
     private QueryRule<T extends [any, ...any[]]>(
-        head   : T,
+        head: T,
         body: (Fact | BuiltIn)[]): { [K in keyof T]: any; }[]
     {
         return body.reduce(
