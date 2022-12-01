@@ -179,15 +179,15 @@ describe(
                 assert('Store(e) === store');
                 assert('Store(e.a2[0]) === store');
 
-                assert("store.Query(['?result']).length === 1");
-                assert("store.Query(['?result'])[0].length === 1");
-                assert("store.Query(['?result'])[0][0] === '?result'");
-                assert("store.Query(['?result'], [e, 'a1', '?result']).length === 1");
-                assert("store.Query(['?result'], [e, 'a1', '?result'])[0].length === 1");
-                assert("store.Query(['?result'], [e, 'a1', '?result'])[0][0] === e.a1");
-                assert("store.Query(['?result'], [e, 'a2', '?a2'], ['?a2', 'a3', '?result']).length === 1");
-                assert("store.Query(['?result'], [e, 'a2', '?a2'], ['?a2', 'a3', '?result'])[0].length === 1");
-                assert("store.Query(['?result'], [e, 'a2', '?a2'], ['?a2', 'a3', '?result'])[0][0] === e.a2[0].a3");
+                assert("store.Query(['?result'], []).length === 1");
+                assert("store.Query(['?result'], [])[0].length === 1");
+                assert("store.Query(['?result'], [])[0][0] === '?result'");
+                assert("store.Query(['?result'], [[e, 'a1', '?result']]).length === 1");
+                assert("store.Query(['?result'], [[e, 'a1', '?result']])[0].length === 1");
+                assert("store.Query(['?result'], [[e, 'a1', '?result']])[0][0] === e.a1");
+                assert("store.Query(['?result'], [[e, 'a2', '?a2'], ['?a2', 'a3', '?result']]).length === 1");
+                assert("store.Query(['?result'], [[e, 'a2', '?a2'], ['?a2', 'a3', '?result']])[0].length === 1");
+                assert("store.Query(['?result'], [[e, 'a2', '?a2'], ['?a2', 'a3', '?result']])[0][0] === e.a2[0].a3");
 
                 describe(
                     'Given entities: Set<any> and store.Entities.subscribe(value => entities = value):',
@@ -206,11 +206,11 @@ describe(
                     });
 
                 describe(
-                    "Given a1: Set<[any, any]>and store.ObserveAttribute('a1').subscribe(value => a1 = new ArraySet(value)):",
+                    "Given a1: Set<[any, any]>and store.Observe('a1').subscribe(value => a1 = new ArraySet(value)):",
                     () =>
                     {
                         let a1: Set<[any, any]>;
-                        const subscription: Subscription = store.ObserveAttribute('a1').subscribe(value => a1 = new ArraySet(value));
+                        const subscription: Subscription = store.Observe('a1').subscribe(value => a1 = new ArraySet(value));
                         let assert = assertBuilder('store', 'e', 'a1')
                             (store, e, a1);
 
@@ -234,11 +234,11 @@ describe(
                     });
 
                 describe(
-                    "Given a2: Set<[any, any]> and store.ObserveAttribute('a2').subscribe(value => a2 = new ArraySet(value)):",
+                    "Given a2: Set<[any, any]> and store.Observe('a2').subscribe(value => a2 = new ArraySet(value)):",
                     () =>
                     {
                         let a2: Set<[any, any]>;
-                        const subscription: Subscription = store.ObserveAttribute('a2').subscribe(value => a2 = new ArraySet(value));
+                        const subscription: Subscription = store.Observe('a2').subscribe(value => a2 = new ArraySet(value));
                         let assert = assertBuilder('store', 'e', 'a2')
                             (store, e, a2);
 
@@ -263,7 +263,7 @@ describe(
             });
 
         describe(
-            "EavStore.Facts",
+            "EavStore.Query(atom: Fact): Fact[]",
             () =>
             {
 
@@ -280,7 +280,7 @@ describe(
                         `Given store = new EavStore(), e1 = store.Assert(${JSON.stringify(o)}) and e2 = store.Assert({}):`,
                         () =>
                         {
-                            const store = new EavStore();
+                            const store: IEavStore = new EavStore();
                             const entities = {
                                 e1: store.Assert(o),
                                 e2: store.Assert({})
@@ -290,11 +290,11 @@ describe(
                                 for(const atomAttribute of attributes)
                                     for(const atomValue of values)
                                         describe(
-                                            `Given facts = new ArraySet(store.Facts(<Fact>[${entityId}, ${atomAttribute}, ${atomValue}]))`,
+                                            `Given facts = new ArraySet(store.Query(<Fact>[${entityId}, ${atomAttribute}, ${atomValue}]))`,
                                             () =>
                                             {
                                                 const atom: Fact = [entityId ? entities[entityId] : undefined, atomAttribute, atomValue];
-                                                const facts = new ArraySet(store.Facts(atom));
+                                                const facts = new ArraySet(store.Query(atom));
 
                                                 if(value != undefined && // There is an attribute.
                                                     (atom[0] === undefined || atom[0] === entities.e1) &&
@@ -321,7 +321,7 @@ describe(
                         `Given store = new EavStore(), e1 = store.Assert(${JSON.stringify(o)}) and e2 = store.Assert({}):`,
                         () =>
                         {
-                            const store = new EavStore();
+                            const store: IEavStore = new EavStore();
                             const entities = {
                                 e1: store.Assert(o),
                                 e2: store.Assert({})
@@ -331,11 +331,11 @@ describe(
                                 for(const atomAttribute of attributes)
                                     for(const atomValue of values)
                                         describe(
-                                            `Given facts = new ArraySet(store.Facts(<Fact>[${entityId}, ${atomAttribute}, ${atomValue}]))`,
+                                            `Given facts = new ArraySet(store.Query(<Fact>[${entityId}, ${atomAttribute}, ${atomValue}]))`,
                                             () =>
                                             {
                                                 const atom: Fact = [entityId ? entities[entityId] : undefined, atomAttribute, atomValue];
-                                                const facts = new ArraySet(store.Facts(atom));
+                                                const facts = new ArraySet(store.Query(atom));
 
                                                 if(value != undefined && // There is an attribute.
                                                     (atom[0] === undefined || atom[0] === entities.e1) &&
@@ -354,7 +354,7 @@ describe(
             });
 
         describe(
-            "EavStore.ObserveAtom",
+            "EavStore.Observe(atom: Fact): Fact[]",
             () =>
             {
                 for(const atomEntityId of [undefined, 'e1', 'e2'])
@@ -372,20 +372,20 @@ describe(
                                             `Given store = new EavStore(), e1 = store.Assert(${JSON.stringify(o)}) and e2 = store.Assert({}):`,
                                             () =>
                                             {
-                                                const store = new EavStore();
+                                                const store: IEavStore = new EavStore();
                                                 const entities = {
                                                     e1: store.Assert(o),
                                                     e2: store.Assert({})
                                                 };
 
                                                 describe(
-                                                    `Given facts: Set<Fact> and store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result)):`,
+                                                    `Given facts: Set<Fact> and store.Observe(atom).subscribe(result => facts = new ArraySet(result)):`,
                                                     () =>
                                                     {
                                                         const atom: Fact = [atomEntityId ? entities[atomEntityId] : undefined, atomAttribute, atomValue];
                                                         const fact: Fact = [entities.e1, 'a1', value];
                                                         let facts: Set<Fact>;
-                                                        store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result));
+                                                        store.Observe(atom).subscribe(result => facts = new ArraySet(result));
 
                                                         const before = facts.has(fact);
                                                         it(
@@ -430,20 +430,20 @@ describe(
                                             `Given store = new EavStore(), e1 = store.Assert(${JSON.stringify(o)}) and e2 = store.Assert({}):`,
                                             () =>
                                             {
-                                                const store = new EavStore();
+                                                const store: IEavStore = new EavStore();
                                                 const entities = {
                                                     e1: store.Assert(o),
                                                     e2: store.Assert({})
                                                 };
 
                                                 describe(
-                                                    `Given facts: Set<Fact> and store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result)):`,
+                                                    `Given facts: Set<Fact> and store.Observe(atom).subscribe(result => facts = new ArraySet(result)):`,
                                                     () =>
                                                     {
                                                         const atom: Fact = [atomEntityId ? entities[atomEntityId] : undefined, atomAttribute, atomValue];
                                                         const fact: Fact = [entities.e1, 'a1', value];
                                                         let facts: Set<Fact>;
-                                                        store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result));
+                                                        store.Observe(atom).subscribe(result => facts = new ArraySet(result));
 
                                                         const before = facts.has(fact);
                                                         if((atom[0] === undefined || atom[0] === entities.e1) &&
@@ -490,20 +490,20 @@ describe(
                                                     `Given store = new EavStore(), e1 = store.Assert(${JSON.stringify(o)}) and e2 = store.Assert({}):`,
                                                     () =>
                                                     {
-                                                        const store = new EavStore();
+                                                        const store: IEavStore = new EavStore();
                                                         const entities = {
                                                             e1: store.Assert(o),
                                                             e2: store.Assert({})
                                                         };
 
                                                         describe(
-                                                            `Given facts: Set<Fact> and store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result)):`,
+                                                            `Given facts: Set<Fact> and store.Observe(atom).subscribe(result => facts = new ArraySet(result)):`,
                                                             () =>
                                                             {
                                                                 const atom: Fact = [atomEntityId ? entities[atomEntityId] : undefined, atomAttribute, atomValue];
                                                                 const beforeFact: Fact = [entities.e1, 'a1', before];
                                                                 let facts: Set<Fact>;
-                                                                store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result));
+                                                                store.Observe(atom).subscribe(result => facts = new ArraySet(result));
 
                                                                 const beforeHas = facts.has(beforeFact);
                                                                 if((atom[0] === undefined || atom[0] === entities.e1) &&
@@ -561,20 +561,20 @@ describe(
                                                 `Given store = new EavStore(), e1 = store.Assert(${JSON.stringify(o)}) and e2 = store.Assert({}):`,
                                                 () =>
                                                 {
-                                                    const store = new EavStore();
+                                                    const store: IEavStore = new EavStore();
                                                     const entities = {
                                                         e1: store.Assert(o),
                                                         e2: store.Assert({})
                                                     };
 
                                                     describe(
-                                                        `Given facts: Set<Fact> and store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result)):`,
+                                                        `Given facts: Set<Fact> and store.Observe(atom).subscribe(result => facts = new ArraySet(result)):`,
                                                         () =>
                                                         {
                                                             const atom: Fact = [atomEntityId ? entities[atomEntityId] : undefined, atomAttribute, atomValue];
                                                             const fact: Fact = [entities.e1, 'a1', value];
                                                             let facts: Set<Fact>;
-                                                            store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result));
+                                                            store.Observe(atom).subscribe(result => facts = new ArraySet(result));
 
                                                             const before = facts.has(fact);
                                                             it(
@@ -620,20 +620,20 @@ describe(
                                                 `Given store = new EavStore(), e1 = store.Assert(${JSON.stringify(o)}) and e2 = store.Assert({}):`,
                                                 () =>
                                                 {
-                                                    const store = new EavStore();
+                                                    const store: IEavStore = new EavStore();
                                                     const entities = {
                                                         e1: store.Assert(o),
                                                         e2: store.Assert({})
                                                     };
 
                                                     describe(
-                                                        `Given facts: Set<Fact> and store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result)):`,
+                                                        `Given facts: Set<Fact> and store.Observe(atom).subscribe(result => facts = new ArraySet(result)):`,
                                                         () =>
                                                         {
                                                             const atom: Fact = [atomEntityId ? entities[atomEntityId] : undefined, atomAttribute, atomValue];
                                                             const fact: Fact = [entities.e1, 'a1', value];
                                                             let facts: Set<Fact>;
-                                                            store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result));
+                                                            store.Observe(atom).subscribe(result => facts = new ArraySet(result));
 
                                                             const before = facts.has(fact);
                                                             if((atom[0] === undefined || atom[0] === entities.e1) &&
@@ -680,20 +680,20 @@ describe(
                                                     `Given store = new EavStore(), e1 = store.Assert(${JSON.stringify(o)}) and e2 = store.Assert({}):`,
                                                     () =>
                                                     {
-                                                        const store = new EavStore();
+                                                        const store: IEavStore = new EavStore();
                                                         const entities = {
                                                             e1: store.Assert(o),
                                                             e2: store.Assert({})
                                                         };
 
                                                         describe(
-                                                            `Given facts: Set<Fact> and store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result)):`,
+                                                            `Given facts: Set<Fact> and store.Observe(atom).subscribe(result => facts = new ArraySet(result)):`,
                                                             () =>
                                                             {
                                                                 const atom: Fact = [atomEntityId ? entities[atomEntityId] : undefined, atomAttribute, atomValue];
                                                                 const beforeFact: Fact = [entities.e1, 'a1', before];
                                                                 let facts: Set<Fact>;
-                                                                store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result));
+                                                                store.Observe(atom).subscribe(result => facts = new ArraySet(result));
 
                                                                 const beforeHas = facts.has(beforeFact);
                                                                 if((atom[0] === undefined || atom[0] === entities.e1) &&
@@ -753,20 +753,20 @@ describe(
                                                     `Given store = new EavStore(), e1 = store.Assert(${JSON.stringify(o)}) and e2 = store.Assert({}):`,
                                                     () =>
                                                     {
-                                                        const store = new EavStore();
+                                                        const store: IEavStore = new EavStore();
                                                         const entities = {
                                                             e1: store.Assert(o),
                                                             e2: store.Assert({})
                                                         };
 
                                                         describe(
-                                                            `Given facts: Set<Fact> and store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result)):`,
+                                                            `Given facts: Set<Fact> and store.Observe(atom).subscribe(result => facts = new ArraySet(result)):`,
                                                             () =>
                                                             {
                                                                 const atom: Fact = [atomEntityId ? entities[atomEntityId] : undefined, atomAttribute, atomValue];
                                                                 const beforeFact: Fact = [entities.e1, 'a1', before];
                                                                 let facts: Set<Fact>;
-                                                                store.ObserveAtom(atom).subscribe(result => facts = new ArraySet(result));
+                                                                store.Observe(atom).subscribe(result => facts = new ArraySet(result));
 
                                                                 const beforeHas = facts.has(beforeFact);
                                                                 if((atom[0] === undefined || atom[0] === entities.e1) &&

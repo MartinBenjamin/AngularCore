@@ -84,26 +84,6 @@ export class EavStore implements IEavStore, IPublisher
         return new Set<any>(this._eav.keys());
     }
 
-    public Attribute(
-        attribute: string
-        ): [any, any][]
-    {
-        const ev = this._aev.get(attribute);
-        if(!ev)
-            return EavStore._empty;
-
-        const list: [any, any][] = [];
-        for(const [entity, value] of ev)
-        {
-            if(value instanceof Array)
-                list.push(...value.map<[any, any]>(value => [entity, value]));
-
-            else if(typeof value !== 'undefined' && value !== null)
-                list.push([entity, value]);
-        }
-        return list;
-    }
-
     ObserveEntities(): Observable<Set<any>>
     {
         return new Observable<Set<any>>(
@@ -115,7 +95,7 @@ export class EavStore implements IEavStore, IPublisher
             });
     }
 
-    Facts(
+    private QueryAtom(
         [entity, attribute, value]: Fact
         ): Fact[]
     {
@@ -194,9 +174,9 @@ export class EavStore implements IEavStore, IPublisher
         return facts;
     }
 
-    Query<T extends [any, ...any[]]>(
+    private QueryRule<T extends [any, ...any[]]>(
         head   : T,
-        ...body: (Fact | BuiltIn)[]): { [K in keyof T]: any; }[]
+        body: (Fact | BuiltIn)[]): { [K in keyof T]: any; }[]
     {
         return body.reduce(
             (substitutions, atom) =>
@@ -209,7 +189,7 @@ export class EavStore implements IEavStore, IPublisher
                 {
                     const substitution = substitutions.shift();
                     // Substitute known variables.
-                    for(const fact of this.Facts(<Fact>atom.map(term => IsVariable(term) ? substitution[term] : term)))
+                    for(const fact of this.QueryAtom(<Fact>atom.map(term => IsVariable(term) ? substitution[term] : term)))
                     {
                         let merged = { ...substitution };
                         for(let index = 0; index < atom.length && merged; ++index)
@@ -236,7 +216,18 @@ export class EavStore implements IEavStore, IPublisher
             [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
     }
 
-    ObserveAtom(
+    Query(
+        ...params
+        ): any
+    {
+        return params.length === 1 ?
+            this.QueryAtom(<Fact>params[0]) :
+            this.QueryRule(
+                params[0],
+                params[1]);
+    }
+
+    private ObserveAtom(
         atom: Fact
         ): Observable<Fact[]>
     {
@@ -263,20 +254,13 @@ export class EavStore implements IEavStore, IPublisher
                             this._atomSubscribers.delete(atom);
                     });
 
-                subscriber.next(this.Facts(atom));
+                subscriber.next(this.QueryAtom(atom));
             });
     }
 
-    ObserveAttribute(
-        attribute: PropertyKey
-        ): Observable<[any, any][]>
-    {
-        return this.ObserveAtom([undefined, attribute, undefined]).pipe(map(facts => facts.map(([entity, , value]) => [entity, value])));
-    }
-
-    Observe<T extends [any, ...any[]]>(
+    private ObserveRule<T extends [any, ...any[]]>(
         head: T,
-        ...body: (Fact | BuiltIn)[]): Observable<{ [K in keyof T]: any; }[]>
+        body: (Fact | BuiltIn)[]): Observable<{ [K in keyof T]: any; }[]>
     {
         return combineLatest(
             body.filter(atom => atom instanceof Array).map(atom => this.ObserveAtom(<Fact>atom)),
@@ -320,6 +304,26 @@ export class EavStore implements IEavStore, IPublisher
                     },
                     [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
             });
+    }
+
+    Observe(
+        ...params
+        ): any
+    {
+        if(params.length === 1)
+            return params[0] instanceof Array ?
+                this.ObserveAtom(<Fact>params[0]) :
+                this.ObserveAtom([undefined, <PropertyKey>params[0], undefined]).pipe(map(facts => facts.map(([entity, , value]) => [entity, value])));
+
+        return this.ObserveRule(
+            params[0],
+            params[1]);
+    }
+
+    Signal(
+        ...args
+        ): any
+    {
     }
 
     NewEntity(
@@ -679,7 +683,7 @@ export class EavStore implements IEavStore, IPublisher
         subscribers = subscribers || this._atomSubscribers.get(atom);
 
         if(subscribers)
-            subscribers.forEach(subscriber => subscriber.next(this.Facts(atom)));
+            subscribers.forEach(subscriber => subscriber.next(this.QueryAtom(atom)));
     }
 
     SuspendPublish(): void

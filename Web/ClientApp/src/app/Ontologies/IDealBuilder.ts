@@ -120,7 +120,7 @@ export class DealBuilder implements IDealBuilder
         deal = <Deal>store.Assert(deal);
         deal.Ontology = ontology;
 
-        store.ObserveAttribute('Equity')
+        store.Observe('Equity')
             .pipe(map((sponsorEquity: [any, any][]) =>
                 sponsorEquity.length ? sponsorEquity.reduce(
                     (totalSponsorEquity, [, equity]) =>

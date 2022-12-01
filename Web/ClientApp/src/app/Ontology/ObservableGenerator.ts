@@ -483,14 +483,14 @@ export class ObservableGenerator implements
         objectPropertyExpression: IObjectPropertyExpression
         ): Observable<[any, any][]>
     {
-        return this._store.ObserveAttribute(objectPropertyExpression.LocalName);
+        return this._store.Observe(objectPropertyExpression.LocalName);
     }
 
     DataPropertyExpression(
         dataPropertyExpression: IDataPropertyExpression
         ): Observable<[any, any][]>
     {
-        return this._store.ObserveAttribute(dataPropertyExpression.LocalName);
+        return this._store.Observe(dataPropertyExpression.LocalName);
     }
 
     get ObjectDomain(): Observable<Set<any>>

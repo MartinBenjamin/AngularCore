@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs';
 import { BuiltIn } from './Atom';
 import { ITransaction } from './ITransactionManager';
+import { Signal } from '../Signal';
 
 export enum Cardinality
 {
@@ -19,15 +20,24 @@ export type Fact = [any, PropertyKey, any];
 
 export interface IEavStore
 {
-    ObserveEntities(): Observable<Set<any>>;
-    ObserveAtom(atom: Fact): Observable<Fact[]>;
-    ObserveAttribute(attribute: PropertyKey): Observable<[any, any][]>;
-    Observe<T extends [any, ...any[]]>(
-        head: T,
-        ...body: (Fact | BuiltIn)[]): Observable<{ [K in keyof T]: any; }[]>;
+    Entities(): Set<any>;
+    Query(atom: Fact): Fact[];
     Query<T extends [any, ...any[]]>(
         head: T,
-        ...body: (Fact | BuiltIn)[]): { [K in keyof T]: any; }[];
+        body: (Fact | BuiltIn)[]): { [K in keyof T]: any; }[];
+
+    ObserveEntities(): Observable<Set<any>>;
+    Observe(atom: Fact): Observable<Fact[]>;
+    Observe(attribute: PropertyKey): Observable<[any, any][]>;
+    Observe<T extends [any, ...any[]]>(
+        head: T,
+        body: (Fact | BuiltIn)[]): Observable<{ [K in keyof T]: any; }[]>;
+
+    Signal(atom: Fact): Signal<Fact[]>;
+    Signal(attribute: PropertyKey): Signal<[any, any][]>;
+    Signal<T extends [any, ...any[]]>(
+        head: T,
+        body: (Fact | BuiltIn)[]): Signal<{ [K in keyof T]: any; }[]>;
 
     NewEntity(): any;
     DeleteEntity(entity: any): void

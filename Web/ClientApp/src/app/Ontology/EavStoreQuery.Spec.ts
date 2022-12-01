@@ -32,48 +32,48 @@ describe(
                         GreaterThan,
                         store,
                         e);
-                assert("store.Query(['?result'], [e, 'a1', '?result'], LessThan('?result', 0)).flat().length === 1");
-                assert("store.Query(['?result'], [e, 'a1', '?result'], LessThan('?result', 0)).flat().includes(-1)");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], LessThan('?result', 0)]).flat().length === 1");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], LessThan('?result', 0)]).flat().includes(-1)");
 
-                assert("store.Query(['?result'], [e, 'a1', '?result'], LessThanOrEqual('?result', 0)).flat().length === 2");
-                assert("store.Query(['?result'], [e, 'a1', '?result'], LessThanOrEqual('?result', 0)).flat().includes(-1)");
-                assert("store.Query(['?result'], [e, 'a1', '?result'], LessThanOrEqual('?result', 0)).flat().includes(0)");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], LessThanOrEqual('?result', 0)]).flat().length === 2");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], LessThanOrEqual('?result', 0)]).flat().includes(-1)");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], LessThanOrEqual('?result', 0)]).flat().includes(0)");
 
-                assert("store.Query(['?result'], [e, 'a1', '?result'], Equal('?result', 0)).flat().length === 1");
-                assert("store.Query(['?result'], [e, 'a1', '?result'], Equal('?result', 0)).flat().includes(0)");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], Equal('?result', 0)]).flat().length === 1");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], Equal('?result', 0)]).flat().includes(0)");
 
-                assert("store.Query(['?result'], [e, 'a1', '?result'], NotEqual('?result', 0)).flat().length === 2");
-                assert("store.Query(['?result'], [e, 'a1', '?result'], NotEqual('?result', 0)).flat().includes(-1)");
-                assert("store.Query(['?result'], [e, 'a1', '?result'], NotEqual('?result', 0)).flat().includes(1)");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], NotEqual('?result', 0)]).flat().length === 2");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], NotEqual('?result', 0)]).flat().includes(-1)");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], NotEqual('?result', 0)]).flat().includes(1)");
 
-                assert("store.Query(['?result'], [e, 'a1', '?result'], GreaterThanOrEqual('?result', 0)).flat().length === 2");
-                assert("store.Query(['?result'], [e, 'a1', '?result'], GreaterThanOrEqual('?result', 0)).flat().includes(0)");
-                assert("store.Query(['?result'], [e, 'a1', '?result'], GreaterThanOrEqual('?result', 0)).flat().includes(1)");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], GreaterThanOrEqual('?result', 0)]).flat().length === 2");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], GreaterThanOrEqual('?result', 0)]).flat().includes(0)");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], GreaterThanOrEqual('?result', 0)]).flat().includes(1)");
 
-                assert("store.Query(['?result'], [e, 'a1', '?result'], GreaterThan('?result', 0)).flat().length === 1");
-                assert("store.Query(['?result'], [e, 'a1', '?result'], GreaterThan('?result', 0)).flat().includes(1)");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], GreaterThan('?result', 0)]).flat().length === 1");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], GreaterThan('?result', 0)]).flat().includes(1)");
 
 
-                assert("store.Query(['?result'], [e, 'a1', '?result'], LessThan(0, '?result')).flat().length === 1");
-                assert("store.Query(['?result'], [e, 'a1', '?result'], LessThan(0, '?result')).flat().includes(1)");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], LessThan(0, '?result')]).flat().length === 1");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], LessThan(0, '?result')]).flat().includes(1)");
 
-                assert("store.Query(['?result'], [e, 'a1', '?result'], LessThanOrEqual(0, '?result')).flat().length === 2");
-                assert("store.Query(['?result'], [e, 'a1', '?result'], LessThanOrEqual(0, '?result')).flat().includes(0)");
-                assert("store.Query(['?result'], [e, 'a1', '?result'], LessThanOrEqual(0, '?result')).flat().includes(1)");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], LessThanOrEqual(0, '?result')]).flat().length === 2");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], LessThanOrEqual(0, '?result')]).flat().includes(0)");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], LessThanOrEqual(0, '?result')]).flat().includes(1)");
 
-                assert("store.Query(['?result'], [e, 'a1', '?result'], Equal(0, '?result')).flat().length === 1");
-                assert("store.Query(['?result'], [e, 'a1', '?result'], Equal(0, '?result')).flat().includes(0)");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], Equal(0, '?result')]).flat().length === 1");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], Equal(0, '?result')]).flat().includes(0)");
 
-                assert("store.Query(['?result'], [e, 'a1', '?result'], NotEqual(0, '?result')).flat().length === 2");
-                assert("store.Query(['?result'], [e, 'a1', '?result'], NotEqual(0, '?result')).flat().includes(-1)");
-                assert("store.Query(['?result'], [e, 'a1', '?result'], NotEqual(0, '?result')).flat().includes(1)");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], NotEqual(0, '?result')]).flat().length === 2");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], NotEqual(0, '?result')]).flat().includes(-1)");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], NotEqual(0, '?result')]).flat().includes(1)");
 
-                assert("store.Query(['?result'], [e, 'a1', '?result'], GreaterThanOrEqual(0, '?result')).flat().length === 2");
-                assert("store.Query(['?result'], [e, 'a1', '?result'], GreaterThanOrEqual(0, '?result')).flat().includes(-1)");
-                assert("store.Query(['?result'], [e, 'a1', '?result'], GreaterThanOrEqual(0, '?result')).flat().includes(0)");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], GreaterThanOrEqual(0, '?result')]).flat().length === 2");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], GreaterThanOrEqual(0, '?result')]).flat().includes(-1)");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], GreaterThanOrEqual(0, '?result')]).flat().includes(0)");
 
-                assert("store.Query(['?result'], [e, 'a1', '?result'], GreaterThan(0, '?result')).flat().length === 1");
-                assert("store.Query(['?result'], [e, 'a1', '?result'], GreaterThan(0, '?result')).flat().includes(-1)");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], GreaterThan(0, '?result')]).flat().length === 1");
+                assert("store.Query(['?result'], [[e, 'a1', '?result'], GreaterThan(0, '?result')]).flat().includes(-1)");
             });
 
         const o1 = { Lhs: 1, Rhs: 2, Result: 3 };
@@ -90,14 +90,14 @@ describe(
                         Add,
                         store,
                         e);
-                assert("store.Query(['?result'], [e, 'Lhs', '?lhs'], [e, 'Rhs', '?rhs'], Add('?lhs', '?rhs', '?result')).flat().length === 1");
-                assert("store.Query(['?result'], [e, 'Lhs', '?lhs'], [e, 'Rhs', '?rhs'], Add('?lhs', '?rhs', '?result')).flat().includes(3)");
-                assert("store.Query(['?result'], [e, 'Lhs', '?lhs'], [e, 'Rhs', '?rhs'], [e, 'Result', '?result'], Add('?lhs', '?rhs', '?result')).flat().length === 1");
-                assert("store.Query(['?result'], [e, 'Lhs', '?lhs'], [e, 'Rhs', '?rhs'], [e, 'Result', '?result'], Add('?lhs', '?rhs', '?result')).flat().includes(3)");
-                assert("store.Query(['?result'], Add(1, 2, '?result')).flat().length === 1");
-                assert("store.Query(['?result'], Add(1, 2, '?result')).flat().includes(3)");
-                assert("store.Query(['?lhs'], [e, 'Lhs', '?lhs'], Add('?lhs', 2, 3)).flat().length === 1");
-                assert("store.Query(['?lhs'], [e, 'Lhs', '?lhs'], Add('?lhs', 2, 3)).flat().includes(1)");
-                assert("store.Query(['?lhs'], [e, 'Lhs', '?lhs'], Add('?lhs', 2, 4)).flat().length === 0");
+                assert("store.Query(['?result'], [[e, 'Lhs', '?lhs'], [e, 'Rhs', '?rhs'], Add('?lhs', '?rhs', '?result')]).flat().length === 1");
+                assert("store.Query(['?result'], [[e, 'Lhs', '?lhs'], [e, 'Rhs', '?rhs'], Add('?lhs', '?rhs', '?result')]).flat().includes(3)");
+                assert("store.Query(['?result'], [[e, 'Lhs', '?lhs'], [e, 'Rhs', '?rhs'], [e, 'Result', '?result'], Add('?lhs', '?rhs', '?result')]).flat().length === 1");
+                assert("store.Query(['?result'], [[e, 'Lhs', '?lhs'], [e, 'Rhs', '?rhs'], [e, 'Result', '?result'], Add('?lhs', '?rhs', '?result')]).flat().includes(3)");
+                assert("store.Query(['?result'], [Add(1, 2, '?result')]).flat().length === 1");
+                assert("store.Query(['?result'], [Add(1, 2, '?result')]).flat().includes(3)");
+                assert("store.Query(['?lhs'], [[e, 'Lhs', '?lhs'], Add('?lhs', 2, 3)]).flat().length === 1");
+                assert("store.Query(['?lhs'], [[e, 'Lhs', '?lhs'], Add('?lhs', 2, 3)]).flat().includes(1)");
+                assert("store.Query(['?lhs'], [[e, 'Lhs', '?lhs'], Add('?lhs', 2, 4)]).flat().length === 0");
             });
     });

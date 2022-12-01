@@ -74,7 +74,7 @@ export class Deal
                 const store = Store(deal);
                 const applicableStages = store.Observe(
                     ['?Stage', '?LifeCycle'],
-                    [deal, 'Stage', '?Stage'], [deal, 'LifeCycle', '?LifeCycle']).pipe(map(
+                    [[deal, 'Stage', '?Stage'], [deal, 'LifeCycle', '?LifeCycle']]).pipe(map(
                         (result: [LifeCycleStage, LifeCycle][]) =>
                         {
                             const applicableStages = new Set<Guid>();

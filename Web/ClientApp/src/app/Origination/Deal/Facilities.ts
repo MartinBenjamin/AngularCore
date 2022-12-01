@@ -39,11 +39,11 @@ export class Facilities implements OnDestroy
             switchMap(
                 deal => !deal ? NEVER : Store(deal).Observe(
                     ['?facility', '?lenderParticipation'],
-                    [deal, 'Commitments', '?facility'],
+                    [[deal, 'Commitments', '?facility'],
                     ['?facility', '$type', 'Web.Model.Facility, Web'],
                     ['?facility', 'Name', undefined],
                     ['?facility', 'Parts', '?lenderParticipation'],
-                    ['?lenderParticipation', '$type', 'Web.Model.LenderParticipation, Web'])
+                    ['?lenderParticipation', '$type', 'Web.Model.LenderParticipation, Web']])
                     .pipe(map((facilities: [Facility, LenderParticipation][]) => facilities.sort((a, b) => a[0].Name.localeCompare(b[0].Name))))));
 
         this._subscriptions.push(

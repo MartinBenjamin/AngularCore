@@ -29,9 +29,9 @@ export class FacilityAgreements implements OnDestroy
             switchMap(
                 deal => !deal ? NEVER : Store(deal).Observe(
                     ['?facilityAgreement'],
-                    [deal, 'Agreements', '?facilityAgreement'],
+                    [[deal, 'Agreements', '?facilityAgreement'],
                     ['?facilityAgreement', '$type', 'Web.Model.FacilityAgreement, Web'],
-                    ['?facilityAgreement', 'Name', undefined]
+                    ['?facilityAgreement', 'Name', undefined]]
                     ).pipe(
                         map((facilityAgreements: [FacilityAgreement][]) => facilityAgreements.map(facilityAgreement => facilityAgreement[0])),
                         map((facilityAgreements: FacilityAgreement[]) => facilityAgreements.sort((a, b) => a.Name.localeCompare(b.Name))))));

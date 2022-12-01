@@ -494,7 +494,7 @@ export class Generator implements IAtomSelector<Observable<object[]>>
         const keys = [0, 2];
         return combineLatest(
             this._previous,
-            this._store.ObserveAtom(atom),
+            this._store.Observe(atom),
             (substitutions, facts) => substitutions.reduce<object[]>(
                 (substitutions, substitution) =>
                 {
@@ -653,7 +653,7 @@ export class Generator2 implements IAtomSelector<Observable<object[]> | BuiltIn>
         ): Observable<object[]>
     {
         const keys = [0, 2];
-        return this._store.ObserveAtom(atom)
+        return this._store.Observe(atom)
             .pipe(map(
                 facts =>
                 {

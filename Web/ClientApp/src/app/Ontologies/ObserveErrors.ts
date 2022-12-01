@@ -47,7 +47,7 @@ export function ObserveErrors(
         store);
 
     const dataRangeObservables: Observable<[string, Error, Set<any>]>[] = [...ontology.Get(ontology.IsAxiom.IDataPropertyRange)].map(
-        dataPropertyRange => store.ObserveAttribute(dataPropertyRange.DataPropertyExpression.LocalName).pipe(
+        dataPropertyRange => store.Observe(dataPropertyRange.DataPropertyExpression.LocalName).pipe(
             map(relations =>
                 [
                     dataPropertyRange.DataPropertyExpression.LocalName,
