@@ -63,9 +63,9 @@ export class EavStore implements IEavStore, IPublisher
     private _atomActions         = new ArrayKeyedMap<Fact, Set<Action>>();
     private _schema              : Map<PropertyKey, AttributeSchema>;
     private _publishSuspended    = 0;
-    private _publishEntities     : boolean;
     private _unsuspendActions    = new Set<Action>();
     private _transactionManager  : ITransactionManager = new TransactionManager();
+    private _publishEntities     : Action;
 
     private static _empty: [any, any][] = [];
 
@@ -79,6 +79,8 @@ export class EavStore implements IEavStore, IPublisher
             attributeSchema
                 .filter(attributeSchema => attributeSchema.UniqueIdentity)
                 .map(attributeSchema => [attributeSchema.Name, new Map<any, any>()]));
+
+        this._publishEntities = () => this.PublishEntities();
     }
 
     public Entities(): Set<any>
@@ -683,7 +685,7 @@ export class EavStore implements IEavStore, IPublisher
     {
         if(this._publishSuspended)
         {
-            this._publishEntities = true;
+            this._unsuspendActions.add(this._publishEntities);
             return;
         }
 
@@ -697,10 +699,8 @@ export class EavStore implements IEavStore, IPublisher
     SuspendPublish(): void
     {
         if(!this._publishSuspended)
-        {
-            this._publishEntities = false;
             this._unsuspendActions.clear();
-        }
+
         ++this._publishSuspended;
     }
 
@@ -708,12 +708,7 @@ export class EavStore implements IEavStore, IPublisher
     {
         --this._publishSuspended;
         if(!this._publishSuspended)
-        {
-            if(this._publishEntities)
-                this.PublishEntities();
-
             this._unsuspendActions.forEach(action => action());
-        }
     }
 
     PublishAssert(
