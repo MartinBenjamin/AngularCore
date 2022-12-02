@@ -156,11 +156,60 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                 signal.LongestPath = longestPath;
         }
 
-        // Schedule new Signals which do not dependent on other Signals or are dependent on existing Signals.
+        // Schedule new Signals which do not depend on other Signals or are dependent on existing Signals.
         try
         {
             this.Suspend();
             signalsToBeScheduled.forEach(signal => this.Schedule(signal));
+        }
+        finally
+        {
+            this.Unsuspend();
+        }
+    }
+
+    public Extend1(
+        signal: Signal,
+        incomingSignals: ReadonlyArray<Signal | CurrentValue>
+        )
+    {
+        (<Map<Signal, Signal[]>>this._incoming).set(
+            signal,
+            incomingSignals.map(input => input instanceof CurrentValue ? input.Signal : input));
+
+        (<Map<Signal, Signal[]>>this._outgoing).set(
+            signal,
+            []);
+
+        incomingSignals
+            .filter((incomingSignal): incomingSignal is Signal => incomingSignal instanceof Signal)
+            .forEach(incomingSignal => (<Signal[]>this._outgoing.get(incomingSignal)).push(signal));
+
+        // Condense the signal graph.
+        this._condensed = Condense(this._incoming);
+
+        this._stronglyConnectedComponents = new Map<Signal, SCC<Signal>>([].concat(...[...this._condensed.keys()]
+            .map(stronglyConnectedComponent => stronglyConnectedComponent
+                .map<[Signal, SCC<Signal>]>(signal => [signal, stronglyConnectedComponent]))));
+
+        // Determine longest path for each strongly connect component in condensed graph.
+        const longestPaths = LongestPaths(this._condensed);
+
+        for(const [stronglyConnectComponent, longestPath] of longestPaths)
+        {
+            stronglyConnectComponent.LongestPath = longestPath;
+
+            for(const signal of stronglyConnectComponent)
+                signal.LongestPath = longestPath;
+        }
+
+        // Schedule new Signals which do not depend on other Signals or are dependent on existing Signals.
+        if(!incomingSignals.length ||
+            incomingSignals.filter((input): input is Signal => input instanceof Signal).some(input => this._incoming.has(input)))
+        try
+        {
+            this.Suspend();
+            this.Schedule(signal);
         }
         finally
         {
