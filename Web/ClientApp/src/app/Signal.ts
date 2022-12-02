@@ -51,8 +51,8 @@ type SCC<T> = ReadonlyArray<T> & IVertex;
 
 export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 {
-    private _incoming                   : ReadonlyMap<Signal, ReadonlyArray<Signal>>;
-    private _outgoing                   : ReadonlyMap<Signal, ReadonlyArray<Signal>>;
+    private _inputToOutputs             : ReadonlyMap<Signal, ReadonlyArray<Signal>>;
+    private _outputToInputs             : ReadonlyMap<Signal, ReadonlyArray<Signal>>;
     private _condensed                  : ReadonlyMap<SCC<Signal>, ReadonlyArray<SCC<Signal>>>;
     private _stronglyConnectedComponents: ReadonlyMap<Signal, ReadonlyArray<Signal>>;
     private _values                     = new Map<Signal, any>();
@@ -62,27 +62,27 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
     private _flushing                   = false;
 
     constructor(
-        incoming: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>,
+        inputToOutputs: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>,
         private _signalTrace?: (signal: Signal, value: any) => void
         )
     {
         super((lhs, rhs) => lhs.LongestPath - rhs.LongestPath);
 
-        this._incoming = new Map();
-        this._outgoing = new Map();
-        this.Extend(incoming);
+        this._inputToOutputs = new Map();
+        this._outputToInputs = new Map();
+        this.Extend(inputToOutputs);
         return;
         /*
 
-        this._incoming = new Map(
-            [...incoming].map(([signal, incomingSignals]) => [signal, incomingSignals.map(input => input instanceof CurrentValue ? input.Signal : input)]));
+        this._inputToOutputs = new Map(
+            [...inputToOutputs].map(([signal, incomingSignals]) => [signal, incomingSignals.map(input => input instanceof CurrentValue ? input.Signal : input)]));
 
         // Determine the transpose.
-        this._outgoing = Transpose(
-            new Map([...incoming].map(([signal, incomingSignals]) => [signal, incomingSignals.filter((input): input is Signal => input instanceof Signal)])));
+        this._outputToInputs = Transpose(
+            new Map([...inputToOutputs].map(([signal, incomingSignals]) => [signal, incomingSignals.filter((input): input is Signal => input instanceof Signal)])));
 
         // Condense the signal graph.
-        this._condensed = Condense(this._incoming);
+        this._condensed = Condense(this._inputToOutputs);
 
         this._stronglyConnectedComponents = new Map<Signal, SCC<Signal>>([].concat(...[...this._condensed.keys()]
             .map(stronglyConnectedComponent => stronglyConnectedComponent
@@ -103,7 +103,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         try
         {
             this.Suspend();
-            for(const signal of this._incoming.keys())
+            for(const signal of this._inputToOutputs.keys())
                 if(signal.LongestPath === 0)
                     this.Schedule(signal);
         }
@@ -115,31 +115,31 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
     }
 
     public Extend(
-        incoming: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>
+        inputToOutputs: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>
         )
     {
-        const signalsToBeScheduled: Signal[] = [...incoming].filter(
-            ([, outgoingSignals]) =>
-                !outgoingSignals.length ||
-                outgoingSignals.filter((output): output is Signal => output instanceof Signal).some(output => this._incoming.has(output))).map(([signal,]) => signal);
+        const signalsToBeScheduled: Signal[] = [...inputToOutputs].filter(
+            ([, outputs]) =>
+                !outputs.length ||
+                outputs.filter((output): output is Signal => output instanceof Signal).some(output => this._inputToOutputs.has(output))).map(([signal,]) => signal);
 
-        for(const [signal, outgoingSignals] of incoming)
-            (<Map<Signal, Signal[]>>this._incoming).set(
-                signal,
-                outgoingSignals.map(output => output instanceof CurrentValue ? output.Signal : output));
+        for(const [input, outputs] of inputToOutputs)
+            (<Map<Signal, Signal[]>>this._inputToOutputs).set(
+                input,
+                outputs.map(output => output instanceof CurrentValue ? output.Signal : output));
 
-        for(const signal of incoming.keys())
-            (<Map<Signal, Signal[]>>this._outgoing).set(
-                signal,
+        for(const input of inputToOutputs.keys())
+            (<Map<Signal, Signal[]>>this._outputToInputs).set(
+                input,
                 []);
 
-        new Array<[Signal, Signal]>().concat(...[...incoming]
-            .map<[Signal, Signal[]]>(([signal, outgoingSignals]) => [signal, outgoingSignals.filter((output): output is Signal => output instanceof Signal)])
-            .map(([signal, outgoingSignals]) => outgoingSignals.map<[Signal, Signal]>(output => [output, signal]))).forEach(
-                ([output, signal]) => (<Signal[]>this._outgoing.get(output)).push(signal));
+        new Array<[Signal, Signal]>().concat(...[...inputToOutputs]
+            .map<[Signal, Signal[]]>(([input, outputs]) => [input, outputs.filter((output): output is Signal => output instanceof Signal)])
+            .map(([input, outputs]) => outputs.map<[Signal, Signal]>(output => [output, input]))).forEach(
+                ([output, input]) => (<Signal[]>this._outputToInputs.get(output)).push(input));
 
         // Condense the signal graph.
-        this._condensed = Condense(this._incoming);
+        this._condensed = Condense(this._inputToOutputs);
 
         this._stronglyConnectedComponents = new Map<Signal, SCC<Signal>>([].concat(...[...this._condensed.keys()]
             .map(stronglyConnectedComponent => stronglyConnectedComponent
@@ -169,24 +169,24 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
     }
 
     public Extend1(
-        signal: Signal,
-        outgoingSignals: ReadonlyArray<Signal | CurrentValue>
+        input: Signal,
+        outputs: ReadonlyArray<Signal | CurrentValue>
         )
     {
-        (<Map<Signal, Signal[]>>this._incoming).set(
-            signal,
-            outgoingSignals.map(output => output instanceof CurrentValue ? output.Signal : output));
+        (<Map<Signal, Signal[]>>this._inputToOutputs).set(
+            input,
+            outputs.map(output => output instanceof CurrentValue ? output.Signal : output));
 
-        (<Map<Signal, Signal[]>>this._outgoing).set(
-            signal,
+        (<Map<Signal, Signal[]>>this._outputToInputs).set(
+            inputs,
             []);
 
-        outgoingSignals
+        outputs
             .filter((output): output is Signal => output instanceof Signal)
-            .forEach(output => (<Signal[]>this._outgoing.get(output)).push(signal));
+            .forEach(output => (<Signal[]>this._outputToInputs.get(output)).push(input));
 
         // Condense the signal graph.
-        this._condensed = Condense(this._incoming);
+        this._condensed = Condense(this._inputToOutputs);
 
         this._stronglyConnectedComponents = new Map<Signal, SCC<Signal>>([].concat(...[...this._condensed.keys()]
             .map(stronglyConnectedComponent => stronglyConnectedComponent
@@ -204,12 +204,12 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         }
 
         // Schedule new Signals which do not depend on other Signals or are dependent on existing Signals.
-        if(!outgoingSignals.length ||
-            outgoingSignals.filter((output): output is Signal => output instanceof Signal).some(output => this._incoming.has(output)))
+        if(!outputs.length ||
+            outputs.filter((output): output is Signal => output instanceof Signal).some(output => this._inputToOutputs.has(output)))
         try
         {
             this.Suspend();
-            this.Schedule(signal);
+            this.Schedule(input);
         }
         finally
         {
@@ -244,7 +244,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         {
             this._entryCount += 1;
             const stronglyConnectedComponent = this._stronglyConnectedComponents.get(signal);
-            if(this._incoming.get(signal).length === 1 && !this._suspended)
+            if(this._inputToOutputs.get(signal).length === 1 && !this._suspended)
                 // Run immediately.
                 this.Run(stronglyConnectedComponent);
 
@@ -343,7 +343,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
             const signal = stronglyConnectedComponent[0]
             const value = signal.Function.apply(
                 null,
-                this._incoming.get(signal).map(output => this._values.get(output)));
+                this._inputToOutputs.get(signal).map(output => this._values.get(output)));
 
             if(!signal.AreEqual(
                 value,
@@ -352,7 +352,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                 this._values.set(
                     signal,
                     value);
-                for(const input of this._outgoing.get(signal))
+                for(const input of this._outputToInputs.get(signal))
                     this.Schedule(input);
 
                 const subscribers = this._subscribers.get(signal);
@@ -379,7 +379,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                         signal,
                         signal.Function.apply(
                             null,
-                            this._incoming.get(signal).map(output => this._values.get(output))));
+                            this._inputToOutputs.get(signal).map(output => this._values.get(output))));
 
                 let count = schedule.length;
                 while(count--)
@@ -390,7 +390,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                         this._values.get(signal),
                         nextValue))
                     {
-                        for(const input of this._outgoing.get(signal))
+                        for(const input of this._outputToInputs.get(signal))
                             if(input.LongestPath === signal.LongestPath &&
                                 !schedule.includes(input))
                                 schedule.push(input);
@@ -404,7 +404,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 
             for(const signal of stronglyConnectedComponent)
             {
-                for(const input of this._outgoing.get(signal))
+                for(const input of this._outputToInputs.get(signal))
                     if(input.LongestPath > signal.LongestPath) // Do not schedule signals within the strongly connected component.
                         this.Schedule(input);
 
