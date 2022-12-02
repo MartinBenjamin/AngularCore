@@ -1,7 +1,7 @@
 import { combineLatest, Observable, Subscriber } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Scheduler, Signal } from '../Signal';
 import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
-import { ArraySet } from './ArraySet';
 import { BuiltIn } from './Atom';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
 import { AttributeSchema, Cardinality, Fact, IEavStore, Store, StoreSymbol } from './IEavStore';
@@ -59,6 +59,7 @@ export class EavStore implements IEavStore, IPublisher
     private _eav                 = new Map<any, Map<PropertyKey, any>>();
     private _aev                 = new Map<PropertyKey, Map<any, any>>();
     private _ave                 : Map<PropertyKey, Map<any, any>>;
+    private _signalScheduler     = new Scheduler();
     private _entitiesSubscribers = new Set<Subscriber<Set<any>>>();
     private _atomActions         = new ArrayKeyedMap<Fact, Set<Action>>();
     private _schema              : Map<PropertyKey, AttributeSchema>;
@@ -360,10 +361,35 @@ export class EavStore implements IEavStore, IPublisher
             params[1]);
     }
 
+    private SignalAtom(
+        atom: Fact
+        ): Signal<Fact[]>
+    {
+        atom = <Fact>atom.map(term => IsVariable(term) ? undefined : term);
+        const signal = new Signal(() => this.QueryAtom(atom));
+        this._signalScheduler.AddSignal(signal);
+
+        let actions = this._atomActions.get(atom);
+        if(!actions)
+        {
+            actions = new Set<Action>();
+            this._atomActions.set(
+                atom,
+                actions);
+        }
+
+        let action: Action = () => this._signalScheduler.Schedule(signal);
+        actions.add(action);
+
+        return signal;
+    }
+
     Signal(
-        ...args
+        ...params
         ): any
     {
+        if(params.length === 1)
+            return this.SignalAtom(<Fact>params[0]);
     }
 
     NewEntity(

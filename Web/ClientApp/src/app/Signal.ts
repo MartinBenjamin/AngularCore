@@ -62,7 +62,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
     private _flushing                   = false;
 
     constructor(
-        inputToOutputs: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>,
+        inputToOutputs?: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>,
         private _signalTrace?: (signal: Signal, value: any) => void
         )
     {
@@ -70,7 +70,9 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 
         this._inputToOutputs = new Map();
         this._outputToInputs = new Map();
-        this.AddSignals(inputToOutputs);
+
+        if(inputToOutputs)
+            this.AddSignals(inputToOutputs);
         return;
         /*
         this._inputToOutputs = new Map(
