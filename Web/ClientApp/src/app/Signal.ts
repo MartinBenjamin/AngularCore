@@ -148,9 +148,6 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                 signal.LongestPath = longestPath;
         }
 
-        // Schedule new Signals which do not depend on other Signals or are dependent on existing Signals.
-        if(!outputs.length ||
-            outputs.filter((output): output is Signal => output instanceof Signal).some(output => this._inputToOutputs.has(output)))
         try
         {
             this.Suspend();
