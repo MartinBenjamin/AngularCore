@@ -111,8 +111,8 @@ describe(
                         e);
                 assert("store.Query(['?result'], [[e, 'Lhs', '?lhs'], [e, 'Rhs', '?rhs'], Add('?lhs', '?rhs', '?result')]).flat().length === 1");
                 assert("store.Query(['?result'], [[e, 'Lhs', '?lhs'], [e, 'Rhs', '?rhs'], Add('?lhs', '?rhs', '?result')]).flat().includes(3)");
-                assert("store.Query(['?result'], [[e, 'Lhs', '?lhs'], [e, 'Rhs', '?rhs'], [e, 'Result', '?result'], Add('?lhs', '?rhs', '?result')]).flat().length === 1");
-                assert("store.Query(['?result'], [[e, 'Lhs', '?lhs'], [e, 'Rhs', '?rhs'], [e, 'Result', '?result'], Add('?lhs', '?rhs', '?result')]).flat().includes(3)");
+                assert("store.Query(['?entity'], [['?entity', 'Lhs', '?lhs'], ['?entity', 'Rhs', '?rhs'], ['?entity', 'Result', '?result'], Add('?lhs', '?rhs', '?result')]).flat().length === 1");
+                assert("store.Query(['?entity'], [['?entity', 'Lhs', '?lhs'], ['?entity', 'Rhs', '?rhs'], ['?entity', 'Result', '?result'], Add('?lhs', '?rhs', '?result')]).flat().includes(e)");
                 assert("store.Query(['?result'], [Add(1, 2, '?result')]).flat().length === 1");
                 assert("store.Query(['?result'], [Add(1, 2, '?result')]).flat().includes(3)");
                 assert("store.Query(['?lhs'], [[e, 'Lhs', '?lhs'], Add('?lhs', 2, 3)]).flat().length === 1");

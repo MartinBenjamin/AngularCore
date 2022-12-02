@@ -80,7 +80,20 @@ export class EavStore implements IEavStore, IPublisher
                 .filter(attributeSchema => attributeSchema.UniqueIdentity)
                 .map(attributeSchema => [attributeSchema.Name, new Map<any, any>()]));
 
-        this._publishEntities = () => this.PublishEntities();
+        this._publishEntities = () =>
+        {
+            if(this._publishSuspended)
+            {
+                this._unsuspendActions.add(this._publishEntities);
+                return;
+            }
+
+            if(this._entitiesSubscribers.size)
+            {
+                const entities = this.Entities();
+                this._entitiesSubscribers.forEach(subscriber => subscriber.next(entities));
+            }
+        };
     }
 
     public Entities(): Set<any>
@@ -683,17 +696,7 @@ export class EavStore implements IEavStore, IPublisher
 
     PublishEntities()
     {
-        if(this._publishSuspended)
-        {
-            this._unsuspendActions.add(this._publishEntities);
-            return;
-        }
-
-        if(this._entitiesSubscribers.size)
-        {
-            const entities = this.Entities();
-            this._entitiesSubscribers.forEach(subscriber => subscriber.next(entities));
-        }
+        this._publishEntities();
     }
 
     SuspendPublish(): void
