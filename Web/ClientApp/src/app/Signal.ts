@@ -118,7 +118,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
     public AddSignal(
         input: Signal,
         outputs: ReadonlyArray<Signal | CurrentValue> = []
-        )
+        ): void
     {
         (<Map<Signal, Signal[]>>this._inputToOutputs).set(
             input,
