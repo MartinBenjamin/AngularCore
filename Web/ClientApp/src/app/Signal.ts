@@ -119,14 +119,14 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         )
     {
         const signalsToBeScheduled: Signal[] = [...incoming].filter(
-            ([, incomingSignals]) =>
-                !incomingSignals.length ||
-                incomingSignals.filter((input): input is Signal => input instanceof Signal).some(input => this._incoming.has(input))).map(([signal,]) => signal);
+            ([, outgoingSignals]) =>
+                !outgoingSignals.length ||
+                outgoingSignals.filter((output): output is Signal => output instanceof Signal).some(output => this._incoming.has(output))).map(([signal,]) => signal);
 
-        for(const [signal, incomingSignals] of incoming)
+        for(const [signal, outgoingSignals] of incoming)
             (<Map<Signal, Signal[]>>this._incoming).set(
                 signal,
-                incomingSignals.map(input => input instanceof CurrentValue ? input.Signal : input));
+                outgoingSignals.map(output => output instanceof CurrentValue ? output.Signal : output));
 
         for(const signal of incoming.keys())
             (<Map<Signal, Signal[]>>this._outgoing).set(
@@ -134,9 +134,9 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                 []);
 
         new Array<[Signal, Signal]>().concat(...[...incoming]
-            .map<[Signal, Signal[]]>(([signal, incomingSignals]) => [signal, incomingSignals.filter((input): input is Signal => input instanceof Signal)])
-            .map(([signal, incomingSignals]) => incomingSignals.map<[Signal, Signal]>(input => [input, signal]))).forEach(
-                ([signal, outgoingSignal]) => (<Signal[]>this._outgoing.get(signal)).push(outgoingSignal));
+            .map<[Signal, Signal[]]>(([signal, outgoingSignals]) => [signal, outgoingSignals.filter((output): output is Signal => output instanceof Signal)])
+            .map(([signal, outgoingSignals]) => outgoingSignals.map<[Signal, Signal]>(output => [output, signal]))).forEach(
+                ([output, signal]) => (<Signal[]>this._outgoing.get(output)).push(signal));
 
         // Condense the signal graph.
         this._condensed = Condense(this._incoming);
@@ -170,20 +170,20 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 
     public Extend1(
         signal: Signal,
-        incomingSignals: ReadonlyArray<Signal | CurrentValue>
+        outgoingSignals: ReadonlyArray<Signal | CurrentValue>
         )
     {
         (<Map<Signal, Signal[]>>this._incoming).set(
             signal,
-            incomingSignals.map(input => input instanceof CurrentValue ? input.Signal : input));
+            outgoingSignals.map(output => output instanceof CurrentValue ? output.Signal : output));
 
         (<Map<Signal, Signal[]>>this._outgoing).set(
             signal,
             []);
 
-        incomingSignals
-            .filter((incomingSignal): incomingSignal is Signal => incomingSignal instanceof Signal)
-            .forEach(incomingSignal => (<Signal[]>this._outgoing.get(incomingSignal)).push(signal));
+        outgoingSignals
+            .filter((output): output is Signal => output instanceof Signal)
+            .forEach(output => (<Signal[]>this._outgoing.get(output)).push(signal));
 
         // Condense the signal graph.
         this._condensed = Condense(this._incoming);
@@ -204,8 +204,8 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         }
 
         // Schedule new Signals which do not depend on other Signals or are dependent on existing Signals.
-        if(!incomingSignals.length ||
-            incomingSignals.filter((input): input is Signal => input instanceof Signal).some(input => this._incoming.has(input)))
+        if(!outgoingSignals.length ||
+            outgoingSignals.filter((output): output is Signal => output instanceof Signal).some(output => this._incoming.has(output)))
         try
         {
             this.Suspend();
