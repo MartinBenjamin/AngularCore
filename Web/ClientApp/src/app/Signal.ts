@@ -136,19 +136,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         new Array<[Signal, Signal]>().concat(...[...incoming]
             .map<[Signal, Signal[]]>(([signal, incomingSignals]) => [signal, incomingSignals.filter((input): input is Signal => input instanceof Signal)])
             .map(([signal, incomingSignals]) => incomingSignals.map<[Signal, Signal]>(input => [input, signal]))).forEach(
-                ([signal, outgoingSignal]) =>
-                {
-                    let outgoing = <Signal[]>this._outgoing.get(signal);
-                    if(!outgoing)
-                    {
-                        outgoing = [];
-                        (<Map<Signal, Signal[]>>this._outgoing).set(
-                            signal,
-                            outgoing);
-                    }
-                    outgoing.push(outgoingSignal);
-                }
-            );
+                ([signal, outgoingSignal]) => (<Signal[]>this._outgoing.get(signal)).push(outgoingSignal));
 
         // Condense the signal graph.
         this._condensed = Condense(this._incoming);
