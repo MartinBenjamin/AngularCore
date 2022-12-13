@@ -68,8 +68,7 @@ export class EavStore implements IEavStore, IPublisher
     private _publishEntities     : Action;
 
     readonly SignalScheduler = new Scheduler();
-
-    private static _empty: [any, any][] = [];
+    readonly SignalEntities: Signal<Set<any>>;
 
     constructor(
         attributeSchema: AttributeSchema[] = [],
@@ -82,8 +81,12 @@ export class EavStore implements IEavStore, IPublisher
                 .filter(attributeSchema => attributeSchema.UniqueIdentity)
                 .map(attributeSchema => [attributeSchema.Name, new Map<any, any>()]));
 
+        this.SignalEntities = this.SignalScheduler.AddSignal(() => this.Entities());
+
         this._publishEntities = () =>
         {
+            this.SignalScheduler.Schedule(this.SignalEntities);
+
             if(this._publishSuspended)
             {
                 this._unsuspendActions.add(this._publishEntities);
@@ -367,8 +370,7 @@ export class EavStore implements IEavStore, IPublisher
         ): Signal<Fact[]>
     {
         atom = <Fact>atom.map(term => IsVariable(term) ? undefined : term);
-        const signal = new Signal(() => this.QueryAtom(atom));
-        this.SignalScheduler.AddSignal(signal);
+        const signal = this.SignalScheduler.AddSignal(() => this.QueryAtom(atom));
 
         let actions = this._atomActions.get(atom);
         if(!actions)
@@ -389,8 +391,11 @@ export class EavStore implements IEavStore, IPublisher
         ...params
         ): any
     {
-        if(params.length === 1)
-            return this.SignalAtom(<Fact>params[0]);
+        return params[0] instanceof Array ?
+            this.SignalAtom(<Fact>params[0]) :
+            this.SignalScheduler.AddSignal(
+                (facts: Fact[]) => facts.map(([entity, , value]) => [entity, value]),
+                [this.SignalAtom([undefined, <PropertyKey>params[0], undefined])]);
     }
 
     NewEntity(
@@ -728,6 +733,7 @@ export class EavStore implements IEavStore, IPublisher
 
     SuspendPublish(): void
     {
+        this.SignalScheduler.Suspend();
         if(!this._publishSuspended)
             this._unsuspendActions.clear();
 
@@ -736,6 +742,7 @@ export class EavStore implements IEavStore, IPublisher
 
     UnsuspendPublish(): void
     {
+        this.SignalScheduler.Unsuspend();
         --this._publishSuspended;
         if(!this._publishSuspended)
             this._unsuspendActions.forEach(action => action());

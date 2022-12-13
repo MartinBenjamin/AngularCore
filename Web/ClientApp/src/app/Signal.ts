@@ -5,6 +5,8 @@ import { Condense } from './Ontology/StronglyConnectedComponents';
 
 type AreEqual<T = any> = (lhs: T, rhs: T) => boolean;
 
+type SignalParams<P> = { [Parameter in keyof P]: Signal<P[Parameter]> | CurrentValue<P[Parameter]>; };
+
 const ReferenceEquality: AreEqual = (lhs: any, rhs: any) => lhs === rhs;
 
 export interface IVertex
@@ -40,9 +42,10 @@ class CurrentValue<TOut = any>
 
 export interface IScheduler
 {
-    AddSignal(
-        input: Signal,
-        outputs: ReadonlyArray<Signal | CurrentValue>): void
+    AddSignal<TOut = any, TIn extends any[] = any[]>(
+        map: (...parameters: TIn) => TOut,
+        inputs: { [Parameter in keyof TIn]: Signal<TIn[Parameter]> | CurrentValue<TIn[Parameter]>; }
+    ): Signal<TOut>
     AddSignals(inputToOutputs: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>): void
 
     Schedule(signal: Signal): void
@@ -120,22 +123,24 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         */
     }
 
-    public AddSignal(
-        input: Signal,
-        outputs: ReadonlyArray<Signal | CurrentValue> = []
-        ): void
+    public AddSignal<TOut = any, TIn extends any[] = any[]>(
+        map: (...parameters: TIn) => TOut,
+        inputs: SignalParams<TIn> = <SignalParams<TIn>>[]
+        ): Signal<TOut>
     {
+        const signal = new Signal(map);
+
         (<Map<Signal, Signal[]>>this._inputToOutputs).set(
-            input,
-            outputs.map(output => output instanceof CurrentValue ? output.Signal : output));
+            signal,
+            inputs.map(output => output instanceof CurrentValue ? output.Signal : output));
 
         (<Map<Signal, Signal[]>>this._outputToInputs).set(
-            input,
+            signal,
             []);
 
-        outputs
+        inputs
             .filter((output): output is Signal => output instanceof Signal)
-            .forEach(output => (<Signal[]>this._outputToInputs.get(output)).push(input));
+            .forEach(output => (<Signal[]>this._outputToInputs.get(output)).push(signal));
 
         // Condense the signal graph.
         this._condensed = Condense(this._inputToOutputs);
@@ -158,12 +163,14 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         try
         {
             this.Suspend();
-            this.Schedule(input);
+            this.Schedule(signal);
         }
         finally
         {
             this.Unsuspend();
         }
+
+        return signal;
     }
 
     public AddSignals(

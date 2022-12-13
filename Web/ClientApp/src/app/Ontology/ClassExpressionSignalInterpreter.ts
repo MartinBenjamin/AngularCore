@@ -13,11 +13,9 @@ export class ClassExpressionSignalInterpreter extends ClassExpressionInterpreter
         ...params: { [Parameter in keyof P]: Wrapped<P[Parameter]>; }
         ): Signal<R>
     {
-        const signal = new Signal(map);
-        this._store.SignalScheduler.AddSignal(
-            signal,
+        return this._store.SignalScheduler.AddSignal(
+            map,
             <SignalParams<P>>params);
-        return signal;
     }
 
     constructor(
@@ -29,7 +27,7 @@ export class ClassExpressionSignalInterpreter extends ClassExpressionInterpreter
             new PropertyExpressionObservableGenerator(store),
             ontology,
             store,
-            null);
+            store.SignalEntities);
     }
 }
 
