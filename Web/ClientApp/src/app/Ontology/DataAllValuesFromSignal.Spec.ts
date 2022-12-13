@@ -31,18 +31,12 @@ describe(
                     ce: IClassExpression
                     ): Set<any>
                 {
-                    let subscription: Subscription;
-                    try
-                    {
-                        let elements: Set<any> = null;
-                        let signal = interpreter.ClassExpression(ce);
-                        subscription = store.SignalScheduler.Observe(signal).subscribe(m => elements = m);
-                        return elements;
-                    }
-                    finally
-                    {
-                        subscription.unsubscribe();
-                    }
+                    let elements: Set<any> = null;
+                    let signal = interpreter.ClassExpression(ce);
+                    store.SignalScheduler.AddSignal(
+                        m => elements = m,
+                        [signal]);
+                    return elements;
                 }
 
                 describe(
