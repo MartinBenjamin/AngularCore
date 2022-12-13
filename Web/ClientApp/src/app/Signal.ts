@@ -40,6 +40,11 @@ class CurrentValue<TOut = any>
 
 export interface IScheduler
 {
+    AddSignal(
+        input: Signal,
+        outputs: ReadonlyArray<Signal | CurrentValue>): void
+    AddSignals(inputToOutputs: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>): void
+
     Schedule(signal: Signal): void
     Suspend(): void;
     Unsuspend(): void;
@@ -163,7 +168,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 
     public AddSignals(
         inputToOutputs: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>
-        )
+        ): void
     {
         const signalsToBeScheduled: Signal[] = [...inputToOutputs].filter(
             ([, outputs]) =>

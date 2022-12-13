@@ -59,7 +59,6 @@ export class EavStore implements IEavStore, IPublisher
     private _eav                 = new Map<any, Map<PropertyKey, any>>();
     private _aev                 = new Map<PropertyKey, Map<any, any>>();
     private _ave                 : Map<PropertyKey, Map<any, any>>;
-    private _signalScheduler     = new Scheduler();
     private _entitiesSubscribers = new Set<Subscriber<Set<any>>>();
     private _atomActions         = new ArrayKeyedMap<Fact, Set<Action>>();
     private _schema              : Map<PropertyKey, AttributeSchema>;
@@ -67,6 +66,8 @@ export class EavStore implements IEavStore, IPublisher
     private _unsuspendActions    = new Set<Action>();
     private _transactionManager  : ITransactionManager = new TransactionManager();
     private _publishEntities     : Action;
+
+    readonly SignalScheduler = new Scheduler();
 
     private static _empty: [any, any][] = [];
 
@@ -367,7 +368,7 @@ export class EavStore implements IEavStore, IPublisher
     {
         atom = <Fact>atom.map(term => IsVariable(term) ? undefined : term);
         const signal = new Signal(() => this.QueryAtom(atom));
-        this._signalScheduler.AddSignal(signal);
+        this.SignalScheduler.AddSignal(signal);
 
         let actions = this._atomActions.get(atom);
         if(!actions)
@@ -378,7 +379,7 @@ export class EavStore implements IEavStore, IPublisher
                 actions);
         }
 
-        let action: Action = () => this._signalScheduler.Schedule(signal);
+        let action: Action = () => this.SignalScheduler.Schedule(signal);
         actions.add(action);
 
         return signal;

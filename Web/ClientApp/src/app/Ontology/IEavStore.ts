@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
+import { IScheduler, Signal } from '../Signal';
 import { BuiltIn } from './Atom';
 import { ITransaction } from './ITransactionManager';
-import { Signal } from '../Signal';
 
 export enum Cardinality
 {
@@ -20,6 +20,7 @@ export type Fact = [any, PropertyKey, any];
 
 export interface IEavStore
 {
+    readonly SignalScheduler: IScheduler;
     Entities(): Set<any>;
     Query(atom: Fact): Fact[];
     Query<T extends [any, ...any[]]>(

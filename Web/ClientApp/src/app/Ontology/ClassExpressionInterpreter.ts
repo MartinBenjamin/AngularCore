@@ -48,8 +48,8 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
 
     constructor(
         propertyExpressionInterpreter: IPropertyExpressionSelector<TProperty>,
-        private _ontology            : IOntology,
-        private _store               : IEavStore,
+        private   _ontology          : IOntology,
+        protected _store             : IEavStore,
         objectDomain                 : TClass
         )
     {

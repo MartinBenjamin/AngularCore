@@ -131,6 +131,7 @@
     <None Remove="ClientApp\src\app\Ontology\ClassExpressionInterpreter.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassExpressionNavigator.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassExpressionObservableInterpreter.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ClassExpressionSignalInterpreter.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassExpressionWriter.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataAllValuesFrom.ts" />
@@ -392,6 +393,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Iso4217.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassExpressionInterpreter.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassExpressionObservableInterpreter.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassExpressionSignalInterpreter.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\StronglyConnectedComponents.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\StronglyConnectedComponents.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\LegalEntities.ts" />
