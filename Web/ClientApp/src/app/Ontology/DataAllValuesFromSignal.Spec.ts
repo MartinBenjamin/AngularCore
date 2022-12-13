@@ -1,13 +1,13 @@
 import { } from 'jasmine';
-import { Observable, Subscription } from 'rxjs';
+import { Signal } from '../Signal';
+import { ClassExpressionSignalInterpreter } from './ClassExpressionSignalInterpreter';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { DataAllValuesFrom } from './DataAllValuesFrom';
 import { DataOneOf } from './DataOneOf';
 import { IClassExpression } from './IClassExpression';
-import { EavStore, IEavStore, ObservableGenerator } from './ObservableGenerator';
+import { EavStore, IEavStore } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { DataProperty } from './Property';
-import { ClassExpressionSignalInterpreter } from './ClassExpressionSignalInterpreter';
 
 describe(
     'DataAllValuesFrom( DPE1 ... DPEn DR ) ({ x | ∀ y1, ... , yn : ( x , yk ) ∈ (DPEk)DP for each 1 ≤ k ≤ n imply ( y1 , ... , yn ) ∈ (DR)DT })',
@@ -31,12 +31,20 @@ describe(
                     ce: IClassExpression
                     ): Set<any>
                 {
+                    let signal: Signal<Set<any>>;
                     let elements: Set<any> = null;
-                    let signal = interpreter.ClassExpression(ce);
-                    store.SignalScheduler.AddSignal(
-                        m => elements = m,
-                        [signal]);
-                    return elements;
+                    try
+                    {
+                        signal = interpreter.ClassExpression(ce);
+                        store.SignalScheduler.AddSignal(
+                            m => elements = m,
+                            [signal]);
+                        return elements;
+                    }
+                    finally
+                    {
+                        store.SignalScheduler.RemoveSignal(signal);
+                    }
                 }
 
                 describe(

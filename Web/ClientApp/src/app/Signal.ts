@@ -47,6 +47,7 @@ export interface IScheduler
         inputs: { [Parameter in keyof TIn]: Signal<TIn[Parameter]> | CurrentValue<TIn[Parameter]>; }
     ): Signal<TOut>
     AddSignals(inputToOutputs: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>): void
+    RemoveSignal(signal: Signal): void
 
     Schedule(signal: Signal): void
     Suspend(): void;
@@ -227,6 +228,50 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         }
     }
 
+    RemoveSignal(
+        signal: Signal
+        ): void
+    {
+        const stronglyConnectedComponent = this._stronglyConnectedComponents.get(signal);
+
+        if(stronglyConnectedComponent)
+            this.RemoveStronglyConnectedComponent(
+                stronglyConnectedComponent,
+                Transpose(this._condensed));
+    }
+
+    private RemoveStronglyConnectedComponent(
+        stronglyConnectedComponent: SCC<Signal>,
+        condencedTranspose: ReadonlyMap<SCC<Signal>, ReadonlyArray<SCC<Signal>>>
+        ): void
+    {
+        // Delete dependent Strongly Connected Components.
+        const dependents = condencedTranspose.get(stronglyConnectedComponent);
+        for(const dependent of dependents)
+            this.RemoveStronglyConnectedComponent(
+                dependent,
+                condencedTranspose);
+
+        //  Delete Strongly Connected Component.
+        (<Map<SCC<Signal>, ReadonlyArray<SCC<Signal>>>>this._condensed).delete(stronglyConnectedComponent);
+
+        // Delete components of Strongly Connected Component.
+        for(const signal of stronglyConnectedComponent)
+        {
+            for(const output of this._inputToOutputs.get(signal))
+            {
+                const inputs =  <Signal[]>this._outputToInputs.get(output);
+                const index = inputs.indexOf(signal);
+                if(index !== -1)
+                    inputs.splice(
+                        index,
+                        1);
+            }
+
+            (<Map<Signal, Signal[]>>this._inputToOutputs).delete(signal);
+        }
+    }
+
     public add(
         stronglyConnectedComponent: SCC<Signal>
         ): this
@@ -254,6 +299,10 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         {
             this._entryCount += 1;
             const stronglyConnectedComponent = this._stronglyConnectedComponents.get(signal);
+
+            if(!stronglyConnectedComponent)
+                throw new Error("Unknown signal");
+
             if(this._inputToOutputs.get(signal).length === 1 && !this._suspended)
                 // Run immediately.
                 this.Run(stronglyConnectedComponent);
