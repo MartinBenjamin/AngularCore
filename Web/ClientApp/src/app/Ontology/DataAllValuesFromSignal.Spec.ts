@@ -41,7 +41,7 @@ describe(
                     }
                     finally
                     {
-                        //subscription.unsubscribe();
+                        subscription.unsubscribe();
                     }
                 }
 
