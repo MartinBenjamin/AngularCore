@@ -8,18 +8,17 @@ type ObservableParams<P> = { [Parameter in keyof P]: Observable<P[Parameter]>; }
 
 export class ClassExpressionObservableInterpreter extends ClassExpressionInterpreter<Observable<Set<any>>, Observable<[any, any][]>>
 {
-    protected Wrap<P extends any[], R>(
-        map: (...params: P) => R,
-        ...params: { [Parameter in keyof P]: Wrapped<P[Parameter]>; }
-        ): Observable<R>
+    protected Wrap<TIn extends any[], TOut>(
+        map: (...params: TIn) => TOut,
+        ...params: ObservableParams<TIn>
+        ): Observable<TOut>
     {
-        const observableParams = <ObservableParams<P>>params;
-        if(!observableParams.length)
-            return new BehaviorSubject<R>(map(...<P>(<unknown>[])));
+        if(!params.length)
+            return new BehaviorSubject<TOut>(map(...<TIn>[]));
 
         else
             return combineLatest(
-                observableParams,
+                params,
                 map);
     }
 

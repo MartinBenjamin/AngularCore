@@ -8,14 +8,14 @@ type SignalParams<P> = { [Parameter in keyof P]: Signal<P[Parameter]>; };
 
 export class ClassExpressionSignalInterpreter extends ClassExpressionInterpreter<Signal<Set<any>>, Signal<[any, any][]>>
 {
-    protected Wrap<P extends any[], R>(
-        map: (...params: P) => R,
-        ...params: { [Parameter in keyof P]: Wrapped<P[Parameter]>; }
-        ): Signal<R>
+    protected Wrap<TIn extends any[], TOut>(
+        map: (...params: TIn) => TOut,
+        ...params: SignalParams<TIn>
+        ): Signal<TOut>
     {
         return this._store.SignalScheduler.AddSignal(
             map,
-            <SignalParams<P>>params);
+            params);
     }
 
     constructor(

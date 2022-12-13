@@ -43,8 +43,8 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
     private _nothing                      : Wrapped<Set<any>>;
     private _objectDomain                 : Wrapped<Set<any>>;
 
-    protected abstract Wrap<P extends any[], R>(map: (...params: P) => R,
-        ...params: { [Parameter in keyof P]: Wrapped<P[Parameter]>; }): Wrapped<R>;
+    protected abstract Wrap<TIn extends any[], TOut>(map: (...params: TIn) => TOut,
+        ...params: { [Parameter in keyof TIn]: Wrapped<TIn[Parameter]>; }): Wrapped<TOut>;
 
     constructor(
         propertyExpressionInterpreter: IPropertyExpressionSelector<TProperty>,
