@@ -384,6 +384,14 @@ export class EavStore implements IEavStore, IPublisher
         let action: Action = () => this.SignalScheduler.Schedule(signal);
         actions.add(action);
 
+        signal.AddRemoveAction(
+            () =>
+            {
+                actions.delete(action);
+                if(!actions.size)
+                    this._atomActions.delete(atom);
+            });
+
         return signal;
     }
 

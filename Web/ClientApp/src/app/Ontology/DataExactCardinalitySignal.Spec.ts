@@ -36,15 +36,14 @@ describe(
                     let elements: Set<any> = null;
                     try
                     {
-                        signal = interpreter.ClassExpression(ce);
-                        store.SignalScheduler.AddSignal(
+                        signal = store.SignalScheduler.AddSignal(
                             m => elements = m,
-                            [signal]);
+                            [interpreter.ClassExpression(ce)]);
                         return elements;
                     }
                     finally
                     {
-                        store.SignalScheduler.RemoveSignal(signal);
+                        //store.SignalScheduler.RemoveSignal(signal);
                     }
                 }
 
@@ -117,7 +116,7 @@ describe(
                     }
                     finally
                     {
-                        store.SignalScheduler.RemoveSignal(signal);
+                        //store.SignalScheduler.RemoveSignal(signal);
                     }
                 }
 
@@ -179,7 +178,7 @@ describe(
                     }
                     finally
                     {
-                        store.SignalScheduler.RemoveSignal(signal);
+                        //store.SignalScheduler.RemoveSignal(signal);
                     }
                 }
 

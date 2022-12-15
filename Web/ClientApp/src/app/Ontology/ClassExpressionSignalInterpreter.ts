@@ -53,6 +53,7 @@ export class PropertyExpressionObservableGenerator implements IPropertyExpressio
             this._propertyExpressionInterpretation.set(
                 propertyExpression,
                 interpretation);
+            interpretation.AddRemoveAction(() => this._propertyExpressionInterpretation.delete(propertyExpression));
         }
 
         return interpretation;

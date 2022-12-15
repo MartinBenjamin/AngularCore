@@ -9,6 +9,8 @@ type SignalParams<P> = { [Parameter in keyof P]: Signal<P[Parameter]> | CurrentV
 
 const ReferenceEquality: AreEqual = (lhs: any, rhs: any) => lhs === rhs;
 
+export type RemoveAction = (signal: Signal) => void;
+
 export interface IVertex
 {
     LongestPath?: number;
@@ -16,6 +18,8 @@ export interface IVertex
 
 export class Signal<TOut = any, TIn extends any[] = any[]> implements IVertex
 {
+    private _removeActions: RemoveAction[];
+
     LongestPath?: number;
 
     constructor(
@@ -23,6 +27,21 @@ export class Signal<TOut = any, TIn extends any[] = any[]> implements IVertex
         public AreEqual: AreEqual<TOut> = ReferenceEquality
         )
     {
+    }
+
+    AddRemoveAction(
+        removeAction: RemoveAction
+        ): void
+    {
+        this._removeActions = this._removeActions || [];
+        this._removeActions.push(removeAction);
+    }
+
+    Remove(): void
+    {
+        if(this._removeActions)
+            while(this._removeActions.length)
+                this._removeActions.pop()(this);
     }
 
     CurrentValue(): CurrentValue<TOut>
@@ -63,7 +82,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
     private _inputToOutputs             : ReadonlyMap<Signal, ReadonlyArray<Signal>>;
     private _outputToInputs             : ReadonlyMap<Signal, ReadonlyArray<Signal>>;
     private _condensed                  : ReadonlyMap<SCC<Signal>, ReadonlyArray<SCC<Signal>>>;
-    private _stronglyConnectedComponents: ReadonlyMap<Signal, ReadonlyArray<Signal>>;
+    private _stronglyConnectedComponents: ReadonlyMap<Signal, SCC<Signal>>;
     private _values                     = new Map<Signal, any>();
     private _subscribers                = new Map<Signal, Set<Subscriber<any>>>();
     private _suspended                  = 0;
@@ -235,27 +254,24 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         const stronglyConnectedComponent = this._stronglyConnectedComponents.get(signal);
 
         if(stronglyConnectedComponent)
-            this.RemoveStronglyConnectedComponent(
-                stronglyConnectedComponent,
-                Transpose(this._condensed));
+            this.RemoveStronglyConnectedComponent(stronglyConnectedComponent);
     }
 
     private RemoveStronglyConnectedComponent(
-        stronglyConnectedComponent: SCC<Signal>,
-        condencedTranspose: ReadonlyMap<SCC<Signal>, ReadonlyArray<SCC<Signal>>>
+        stronglyConnectedComponent: SCC<Signal>
         ): void
     {
-        // Delete dependent Strongly Connected Components.
-        const dependents = condencedTranspose.get(stronglyConnectedComponent);
-        for(const dependent of dependents)
-            this.RemoveStronglyConnectedComponent(
-                dependent,
-                condencedTranspose);
+        // Check for descendents.
+        if([...this._condensed.values()].some(ancestors => ancestors.includes(stronglyConnectedComponent)))
+            // Strongly connected component has descendents.
+            return;
 
-        //  Delete Strongly Connected Component.
+        const ancestors = this._condensed.get(stronglyConnectedComponent);
+
+        //  Delete strongly connected component.
         (<Map<SCC<Signal>, ReadonlyArray<SCC<Signal>>>>this._condensed).delete(stronglyConnectedComponent);
 
-        // Delete components of Strongly Connected Component.
+        // Delete components of strongly connected component.
         for(const signal of stronglyConnectedComponent)
         {
             for(const output of this._inputToOutputs.get(signal))
@@ -269,7 +285,15 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
             }
 
             (<Map<Signal, Signal[]>>this._inputToOutputs).delete(signal);
+
+            (<Map<Signal, SCC<Signal>>>this._stronglyConnectedComponents).delete(signal);
+
+            signal.Remove();
         }
+
+        // Delete sncestor strongly connected components.
+        for(const ancestor of ancestors)
+            this.RemoveStronglyConnectedComponent(ancestor);
     }
 
     public add(
