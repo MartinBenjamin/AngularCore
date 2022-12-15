@@ -60,6 +60,7 @@ export class EavStore implements IEavStore, IPublisher
     private _aev                 = new Map<PropertyKey, Map<any, any>>();
     private _ave                 : Map<PropertyKey, Map<any, any>>;
     private _entitiesSubscribers = new Set<Subscriber<Set<any>>>();
+    private _entitiesSignal      : Signal<Set<any>>;
     private _atomActions         = new ArrayKeyedMap<Fact, Set<Action>>();
     private _schema              : Map<PropertyKey, AttributeSchema>;
     private _publishSuspended    = 0;
@@ -68,7 +69,6 @@ export class EavStore implements IEavStore, IPublisher
     private _publishEntities     : Action;
 
     readonly SignalScheduler = new Scheduler();
-    readonly SignalEntities: Signal<Set<any>>;
 
     constructor(
         attributeSchema: AttributeSchema[] = [],
@@ -81,11 +81,10 @@ export class EavStore implements IEavStore, IPublisher
                 .filter(attributeSchema => attributeSchema.UniqueIdentity)
                 .map(attributeSchema => [attributeSchema.Name, new Map<any, any>()]));
 
-        this.SignalEntities = this.SignalScheduler.AddSignal(() => this.Entities());
-
         this._publishEntities = () =>
         {
-            this.SignalScheduler.Schedule(this.SignalEntities);
+            if(this._entitiesSignal)
+                this.SignalScheduler.Schedule(this._entitiesSignal);
 
             if(this._publishSuspended)
             {
@@ -115,6 +114,16 @@ export class EavStore implements IEavStore, IPublisher
                 subscriber.add(() => this._entitiesSubscribers.delete(subscriber));
                 subscriber.next(this.Entities());
             });
+    }
+
+    SignalEntities(): Signal<Set<any>, any[]>
+    {
+        if(!this._entitiesSignal)
+        {
+            this._entitiesSignal = this.SignalScheduler.AddSignal(() => this.Entities());
+            this._entitiesSignal.AddRemoveAction(() => this._entitiesSignal = null);
+        }
+        return this._entitiesSignal;
     }
 
     private QueryAtom(

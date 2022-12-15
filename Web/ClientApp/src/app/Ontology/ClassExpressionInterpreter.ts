@@ -30,18 +30,23 @@ export { IEavStore, EavStore };
 
 export type Wrapped<TClass> = {};
 
+export interface ICache<TClass>
+{
+    Set(
+        class$: IClass,
+        wrapped: TClass): void;
+    Get(class$: IClass): TClass
+}
+
 export abstract class ClassExpressionInterpreter<TClass, TProperty> implements IClassExpressionSelector<TClass>
 {
     private _equivalentClasses            : Map<IClass, Set<IClass>>;
     private _classDefinitions             : Map<IClass, IClassExpression[]>;
     private _functionalObjectProperties   = new Set<IObjectPropertyExpression>();
     private _functionalDataProperties     = new Set<IDataPropertyExpression>();
-    private _classInterpretation          : Map<IClass, TClass>;
     private _individualInterpretation     : Map<IIndividual, any>;
     private _classExpressionInterpreter   : IClassExpressionSelector<Wrapped<Set<any>>>;
     private _propertyExpressionInterpreter: IPropertyExpressionSelector<Wrapped<[any, any][]>>;
-    private _nothing                      : Wrapped<Set<any>>;
-    private _objectDomain                 : Wrapped<Set<any>>;
 
     protected abstract Wrap<TIn extends any[], TOut>(
         map: (...params: TIn) => TOut,
@@ -49,20 +54,13 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
 
     constructor(
         propertyExpressionInterpreter: IPropertyExpressionSelector<TProperty>,
-        private   _ontology          : IOntology,
-        protected _store             : IEavStore,
-        objectDomain                 : TClass
+        private   _ontology           : IOntology,
+        protected _store              : IEavStore,
+        private   _classInterpretation: ICache<TClass>
         )
     {
         this._classExpressionInterpreter = this;
         this._propertyExpressionInterpreter = propertyExpressionInterpreter;
-        this._nothing = this.Wrap(() => new Set<any>());
-        this._objectDomain = objectDomain;
-        this._classInterpretation = new Map<IClass, TClass>(
-            [
-                [Thing  , <TClass>this._objectDomain],
-                [Nothing, <TClass>this._nothing     ]
-            ]);
 
         for(const functionalObjectProperty of this._ontology.Get(this._ontology.IsAxiom.IFunctionalObjectProperty))
             this._functionalObjectProperties.add(functionalObjectProperty.ObjectPropertyExpression);
@@ -115,46 +113,53 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
         class$: IClass
         ): TClass
     {
-        let interpretation = this._classInterpretation.get(class$);
+        let interpretation = this._classInterpretation.Get(class$);
         if(!interpretation)
         {
-            let classDefinitions = this._classDefinitions.get(class$) || [];
-
-            let interpretations = classDefinitions.map(classExpression => classExpression.Select(this._classExpressionInterpreter));
-
-            for(const equivalentClass of this._equivalentClasses.get(class$))
+            let interpretations: Wrapped<Set<any>>[];
+            switch(class$)
             {
-                interpretations = interpretations.concat([...this._ontology.Get(this._ontology.IsAxiom.ISubClassOf)]
-                    .filter(subClassOf => subClassOf.SuperClassExpression === equivalentClass)
-                    .map(subClassOf => subClassOf.SubClassExpression.Select(this._classExpressionInterpreter)));
+                case Thing  : interpretations = [this.WrapObjectDomain()        ]; break;
+                case Nothing: interpretations = [this.Wrap(() => new Set<any>())]; break;
+                default:
+                    let classDefinitions = this._classDefinitions.get(class$) || [];
 
-                interpretations = interpretations.concat(
-                    [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyDomain)]
-                        .filter(objectPropertyDomain => objectPropertyDomain.Domain === equivalentClass)
-                        .map(objectPropertyDomain => objectPropertyDomain.ObjectPropertyExpression)
-                        .map(objectPropertyExpression => this.Wrap(
-                            relations => new Set<any>(relations.map(([domain,]) => domain)),
-                            objectPropertyExpression.Select(this._propertyExpressionInterpreter))));
+                    interpretations = classDefinitions.map(classExpression => classExpression.Select(this._classExpressionInterpreter));
 
-                interpretations = interpretations.concat(
-                    [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyRange)]
-                        .filter(objectPropertyRange => objectPropertyRange.Range === equivalentClass)
-                        .map(objectPropertyRange => objectPropertyRange.ObjectPropertyExpression)
-                        .map(objectPropertyExpression => this.Wrap(
-                            relations => new Set<any>(relations.map(([, range]) => range)),
-                            objectPropertyExpression.Select(this._propertyExpressionInterpreter))));
+                    for(const equivalentClass of this._equivalentClasses.get(class$))
+                    {
+                        interpretations = interpretations.concat([...this._ontology.Get(this._ontology.IsAxiom.ISubClassOf)]
+                            .filter(subClassOf => subClassOf.SuperClassExpression === equivalentClass)
+                            .map(subClassOf => subClassOf.SubClassExpression.Select(this._classExpressionInterpreter)));
 
-                interpretations = interpretations.concat(
-                    [...this._ontology.Get(this._ontology.IsAxiom.IDataPropertyDomain)]
-                        .filter(dataPropertyDomain => dataPropertyDomain.Domain === equivalentClass)
-                        .map(dataPropertyDomain => dataPropertyDomain.DataPropertyExpression)
-                        .map(dataPropertyExpression => this.Wrap(
-                            relations => new Set<any>(relations.map(([domain,]) => domain)),
-                            dataPropertyExpression.Select(this._propertyExpressionInterpreter))));
+                        interpretations = interpretations.concat(
+                            [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyDomain)]
+                                .filter(objectPropertyDomain => objectPropertyDomain.Domain === equivalentClass)
+                                .map(objectPropertyDomain => objectPropertyDomain.ObjectPropertyExpression)
+                                .map(objectPropertyExpression => this.Wrap(
+                                    relations => new Set<any>(relations.map(([domain,]) => domain)),
+                                    objectPropertyExpression.Select(this._propertyExpressionInterpreter))));
+
+                        interpretations = interpretations.concat(
+                            [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyRange)]
+                                .filter(objectPropertyRange => objectPropertyRange.Range === equivalentClass)
+                                .map(objectPropertyRange => objectPropertyRange.ObjectPropertyExpression)
+                                .map(objectPropertyExpression => this.Wrap(
+                                    relations => new Set<any>(relations.map(([, range]) => range)),
+                                    objectPropertyExpression.Select(this._propertyExpressionInterpreter))));
+
+                        interpretations = interpretations.concat(
+                            [...this._ontology.Get(this._ontology.IsAxiom.IDataPropertyDomain)]
+                                .filter(dataPropertyDomain => dataPropertyDomain.Domain === equivalentClass)
+                                .map(dataPropertyDomain => dataPropertyDomain.DataPropertyExpression)
+                                .map(dataPropertyExpression => this.Wrap(
+                                    relations => new Set<any>(relations.map(([domain,]) => domain)),
+                                    dataPropertyExpression.Select(this._propertyExpressionInterpreter))));
+                    }
             }
 
             if(!interpretations.length)
-                interpretation = <TClass>this._nothing;
+                interpretation = <TClass>this.Class(Nothing);
 
             else if(interpretations.length === 1)
                 interpretation = <TClass>interpretations[0];
@@ -164,7 +169,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
                     (...sets: Set<any>[]) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])),
                     interpretations);
 
-            this._classInterpretation.set(
+            this._classInterpretation.Set(
                 class$,
                 interpretation);
         }
@@ -194,7 +199,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
     {
         return <TClass>this.Wrap(
             (objectDomain, classExpression) => new Set<any>([...objectDomain].filter(element => !classExpression.has(element))),
-            this._objectDomain,
+            this._classExpressionInterpreter.Class(Thing),
             objectComplementOf.ClassExpression.Select(this._classExpressionInterpreter));
     }
 
@@ -230,7 +235,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
                     objectPropertyExpression,
                     individual => individual,
                     ([domain,]) => domain),
-            this._objectDomain,
+            this._classExpressionInterpreter.Class(Thing),
             objectAllValuesFrom.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter));
 
         return <TClass>this.Wrap(
@@ -273,7 +278,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
         ): TClass
     {
         if(objectMinCardinality.Cardinality === 0)
-            return <TClass>this._objectDomain;
+            return this.Class(Thing);
 
         let objectPropertyExpression = objectMinCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter);
         if(objectMinCardinality.ClassExpression)
@@ -315,7 +320,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
                     objectPropertyExpression,
                     individual => individual,
                     ([domain,]) => domain),
-            this._objectDomain,
+            this._classExpressionInterpreter.Class(Thing),
             objectPropertyExpression);
 
         return <TClass>this.Wrap(
@@ -345,7 +350,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
                         objectPropertyExpression,
                         individual => individual,
                         ([domain,]) => domain),
-                this._objectDomain,
+                this._classExpressionInterpreter.Class(Thing),
                 objectPropertyExpression);
 
             return <TClass>this.Wrap(
@@ -397,7 +402,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
                     dataPropertyExpression,
                     individual => individual,
                     ([domain,]) => domain),
-            this._objectDomain,
+            this._classExpressionInterpreter.Class(Thing),
             dataAllValuesFrom.DataPropertyExpression.Select(this._propertyExpressionInterpreter));
 
         return <TClass>this.Wrap(
@@ -425,7 +430,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
         ): TClass
     {
         if(dataMinCardinality.Cardinality === 0)
-            return <TClass>this._objectDomain;
+            return this.Class(Thing);
 
         let dataPropertyExpression = dataMinCardinality.DataPropertyExpression.Select(this._propertyExpressionInterpreter);
         if(dataMinCardinality.DataRange)
@@ -468,7 +473,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
                     dataPropertyExpression,
                     individual => individual,
                     ([domain,]) => domain),
-            this._objectDomain,
+            this._classExpressionInterpreter.Class(Thing),
             dataPropertyExpression);
 
         return <TClass>this.Wrap(
@@ -498,7 +503,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
                         dataPropertyExpression,
                         individual => individual,
                         ([domain,]) => domain),
-                this._objectDomain,
+                this._classExpressionInterpreter.Class(Thing),
                 dataPropertyExpression);
 
             return <TClass>this.Wrap(
@@ -522,7 +527,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
                     dataPropertyExpression,
                     individual => individual,
                     ([domain,]) => domain),
-            this._objectDomain,
+            this._classExpressionInterpreter.Class(Thing),
             dataPropertyExpression);
 
         return <TClass>this.Wrap(
@@ -535,7 +540,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
 
     get ObjectDomain(): TClass
     {
-        return <TClass>this._objectDomain;
+        return this.Class(Thing);
     }
 
     ClassExpression(
@@ -561,4 +566,6 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
             relation => relation[0],
             relation => relation[1]);
     }
+
+    protected abstract WrapObjectDomain(): TClass;
 }

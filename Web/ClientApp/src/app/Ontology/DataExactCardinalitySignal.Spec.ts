@@ -43,7 +43,7 @@ describe(
                     }
                     finally
                     {
-                        //store.SignalScheduler.RemoveSignal(signal);
+                        store.SignalScheduler.RemoveSignal(signal);
                     }
                 }
 
@@ -116,7 +116,7 @@ describe(
                     }
                     finally
                     {
-                        //store.SignalScheduler.RemoveSignal(signal);
+                        store.SignalScheduler.RemoveSignal(signal);
                     }
                 }
 
@@ -178,7 +178,7 @@ describe(
                     }
                     finally
                     {
-                        //store.SignalScheduler.RemoveSignal(signal);
+                        store.SignalScheduler.RemoveSignal(signal);
                     }
                 }
 

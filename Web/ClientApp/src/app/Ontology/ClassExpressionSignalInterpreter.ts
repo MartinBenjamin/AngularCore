@@ -1,10 +1,34 @@
 import { Signal } from '../Signal';
-import { ClassExpressionInterpreter, IEavStore, Wrapped } from './ClassExpressionInterpreter';
+import { ClassExpressionInterpreter, ICache, IEavStore } from './ClassExpressionInterpreter';
+import { IClass } from './IClass';
 import { IOntology } from './IOntology';
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from './IPropertyExpression';
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 
 type SignalParams<P> = { [Parameter in keyof P]: Signal<P[Parameter]>; };
+
+class SignalCache implements ICache<Signal<Set<any>>>
+{
+    private readonly _signals = new Map<IClass, Signal<Set<any>>>();
+
+    Set(
+        class$: IClass,
+        wrapped: Signal<Set<any>>
+        ): void
+    {
+        this._signals.set(
+            class$,
+            wrapped);
+        wrapped.AddRemoveAction(() => this._signals.delete(class$));
+    }
+
+    Get(
+        class$: IClass
+        ): Signal<Set<any>>
+    {
+        return this._signals.get(class$);
+    }
+}
 
 export class ClassExpressionSignalInterpreter extends ClassExpressionInterpreter<Signal<Set<any>>, Signal<[any, any][]>>
 {
@@ -27,7 +51,12 @@ export class ClassExpressionSignalInterpreter extends ClassExpressionInterpreter
             new PropertyExpressionObservableGenerator(store),
             ontology,
             store,
-            store.SignalEntities);
+            new SignalCache());
+    }
+
+    protected WrapObjectDomain(): Signal<Set<any>>
+    {
+        return this._store.SignalEntities();
     }
 }
 

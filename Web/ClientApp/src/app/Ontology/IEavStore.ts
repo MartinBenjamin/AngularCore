@@ -34,7 +34,7 @@ export interface IEavStore
         head: T,
         body: (Fact | BuiltIn)[]): Observable<{ [K in keyof T]: any; }[]>;
 
-    readonly SignalEntities: Signal<Set<any>>;
+    SignalEntities(): Signal<Set<any>>;
     Signal(atom: Fact): Signal<Fact[]>;
     Signal(attribute: PropertyKey): Signal<[any, any][]>;
     Signal<T extends [any, ...any[]]>(

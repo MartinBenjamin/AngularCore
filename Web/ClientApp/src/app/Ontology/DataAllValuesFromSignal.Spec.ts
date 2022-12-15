@@ -42,7 +42,7 @@ describe(
                     }
                     finally
                     {
-                        //store.SignalScheduler.RemoveSignal(signal);
+                        store.SignalScheduler.RemoveSignal(signal);
                     }
                 }
 
