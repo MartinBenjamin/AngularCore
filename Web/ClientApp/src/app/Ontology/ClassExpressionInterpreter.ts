@@ -55,7 +55,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
     protected abstract WrapObjectDomain(): Wrapped<Set<any>>;
 
     constructor(
-        propertyExpressionInterpreter: IPropertyExpressionSelector<TProperty>,
+        propertyExpressionInterpreter : IPropertyExpressionSelector<TProperty>,
         private   _ontology           : IOntology,
         protected _store              : IEavStore,
         private   _classInterpretation: ICache<TClass>
