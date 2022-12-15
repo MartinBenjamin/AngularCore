@@ -149,6 +149,7 @@
     <None Remove="ClientApp\src\app\Ontology\DataIntersectionOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMaxCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMaxCardinalityObservable.Spec.ts" />
+    <None Remove="ClientApp\src\app\Ontology\DataMaxCardinalitySignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMinCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMinCardinalityObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataOneOf.Spec.ts" />
@@ -398,6 +399,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassExpressionSignalInterpreter.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataAllValuesFromSignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataExactCardinalitySignal.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataMaxCardinalitySignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\StronglyConnectedComponents.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\StronglyConnectedComponents.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\LegalEntities.ts" />
