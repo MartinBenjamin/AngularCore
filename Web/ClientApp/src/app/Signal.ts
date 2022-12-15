@@ -288,6 +288,8 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 
             (<Map<Signal, SCC<Signal>>>this._stronglyConnectedComponents).delete(signal);
 
+            this._values.delete(signal);
+
             signal.Remove();
         }
 
