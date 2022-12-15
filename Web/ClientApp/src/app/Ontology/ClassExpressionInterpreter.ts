@@ -52,6 +52,8 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
         map: (...params: TIn) => TOut,
         ...params: { [Parameter in keyof TIn]: Wrapped<TIn[Parameter]>; }): Wrapped<TOut>;
 
+    protected abstract WrapObjectDomain(): Wrapped<Set<any>>;
+
     constructor(
         propertyExpressionInterpreter: IPropertyExpressionSelector<TProperty>,
         private   _ontology           : IOntology,
@@ -566,6 +568,4 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
             relation => relation[0],
             relation => relation[1]);
     }
-
-    protected abstract WrapObjectDomain(): TClass;
 }

@@ -1,10 +1,33 @@
 import { BehaviorSubject, combineLatest, Observable } from "rxjs";
-import { ClassExpressionInterpreter, IEavStore, Wrapped } from "./ClassExpressionInterpreter";
+import { ClassExpressionInterpreter, ICache, IEavStore, Wrapped } from "./ClassExpressionInterpreter";
+import { IClass } from "./IClass";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from './IPropertyExpression';
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 
 type ObservableParams<P> = { [Parameter in keyof P]: Observable<P[Parameter]>; };
+
+class ObservableCache implements ICache<Observable<Set<any>>>
+{
+    private readonly _observables = new Map<IClass, Observable<Set<any>>>();
+
+    Set(
+        class$: IClass,
+        wrapped: Observable<Set<any>>
+        ): void
+    {
+        this._observables.set(
+            class$,
+            wrapped);
+    }
+
+    Get(
+        class$: IClass
+        ): Observable<Set<any>>
+    {
+        return this._observables.get(class$);
+    }
+}
 
 export class ClassExpressionObservableInterpreter extends ClassExpressionInterpreter<Observable<Set<any>>, Observable<[any, any][]>>
 {
@@ -31,7 +54,12 @@ export class ClassExpressionObservableInterpreter extends ClassExpressionInterpr
             new PropertyExpressionObservableGenerator(store),
             ontology,
             store,
-            store.ObserveEntities());
+            new ObservableCache());
+    }
+
+    protected WrapObjectDomain(): Wrapped<Set<any>>
+    {
+        return this._store.ObserveEntities();
     }
 }
 
