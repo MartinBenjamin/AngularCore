@@ -253,6 +253,7 @@
     <None Remove="ClientApp\src\app\Ontology\ObjectComplementOfObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectExactCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectExactCardinalityObservable.Spec.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectExactCardinalitySignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectHasSelf.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectHasSelfObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectHasValue.ts" />
@@ -261,8 +262,10 @@
     <None Remove="ClientApp\src\app\Ontology\ObjectIntersectionOfObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMaxCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMaxCardinalityObservable.Spec.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectMaxCardinalitySignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMinCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMinCardinalityObservable.Spec.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectMinCardinalitySignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectOneOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectOneOfObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyAxiom.ts" />
@@ -407,6 +410,9 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataMinCardinalitySignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataSomeValuesFromSignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectAllValuesFromSignal.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectExactCardinalitySignal.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectMaxCardinalitySignal.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectMinCardinalitySignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectSomeValuesFromSignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\StronglyConnectedComponents.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\StronglyConnectedComponents.ts" />
