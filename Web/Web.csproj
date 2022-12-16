@@ -152,6 +152,7 @@
     <None Remove="ClientApp\src\app\Ontology\DataMaxCardinalitySignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMinCardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMinCardinalityObservable.Spec.ts" />
+    <None Remove="ClientApp\src\app\Ontology\DataMinCardinalitySignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataOneOf.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataOneOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataPropertyAxiom.ts" />
@@ -162,6 +163,7 @@
     <None Remove="ClientApp\src\app\Ontology\DataRangeWriter.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataSomeValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataSomeValuesFromObservable.Spec.ts" />
+    <None Remove="ClientApp\src\app\Ontology\DataSomeValuesFromSignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Datatype.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataUnionOf.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataUnionOf.ts" />
@@ -400,6 +402,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataAllValuesFromSignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataExactCardinalitySignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataMaxCardinalitySignal.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataMinCardinalitySignal.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataSomeValuesFromSignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\StronglyConnectedComponents.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\StronglyConnectedComponents.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\LegalEntities.ts" />
