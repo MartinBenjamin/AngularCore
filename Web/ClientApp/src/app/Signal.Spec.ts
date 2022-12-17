@@ -1,7 +1,7 @@
 import { } from 'jasmine';
 import { assertBuilder } from './Ontology/assertBuilder';
 import { BuiltIn } from './Ontology/Atom';
-import { IsVariable } from './Ontology/EavStore';
+import { IsVariable } from './Ontology/IEavStore';
 import { SortedSet } from './Ontology/SortedSet';
 import { Scheduler, Signal } from './Signal';
 

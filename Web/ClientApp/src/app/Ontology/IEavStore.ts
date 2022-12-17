@@ -18,6 +18,9 @@ export interface AttributeSchema
 
 export type Fact = [any, PropertyKey, any];
 
+export const IsVariable = (element): element is string => typeof element === 'string' && element[0] === '?';
+export const IsConstant = element => !(typeof element === 'undefined' || IsVariable(element));
+
 export interface IEavStore
 {
     readonly SignalScheduler: IScheduler;

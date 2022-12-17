@@ -4,18 +4,9 @@ import { Scheduler, Signal } from '../Signal';
 import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
 import { BuiltIn } from './Atom';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
-import { AttributeSchema, Cardinality, Fact, IEavStore, Store, StoreSymbol } from './IEavStore';
+import { AttributeSchema, Cardinality, Fact, IEavStore, IsVariable, Store, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
-
-export const IsVariable = element => typeof element === 'string' && element[0] === '?';
-export const IsConstant = element => !(typeof element === 'undefined' || IsVariable(element));
-
-export interface Rule
-{
-    Head: [any, ...any[]],
-    Body: Fact[]
-}
 
 function Match<TTrieNode extends TrieNode<TTrieNode, V>, V>(
     trieNode: TTrieNode,
