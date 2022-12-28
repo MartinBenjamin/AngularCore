@@ -2,13 +2,17 @@ import { } from 'jasmine';
 import { Subscription } from 'rxjs';
 import { Class } from './Class';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
+import { EavStore } from './EavStore';
 import { EquivalentClasses } from './EquivalentClasses';
 import { IClassExpression } from './IClassExpression';
+import { IEavStore } from './IEavStore';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectOneOf } from './ObjectOneOf';
-import { EavStore, IEavStore, ObservableGenerator } from './ObservableGenerator';
+import { ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { SubClassOf } from './SubClassOf';
+
+
 
 describe(
     'EquivalentClasses( CE1 ... CEn ) ((CEj)C = (CEk)C for each 1 ≤ j ≤ n and each 1 ≤ k ≤ n)',

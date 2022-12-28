@@ -1,11 +1,13 @@
 import { } from 'jasmine';
 import { Subscription } from 'rxjs';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
+import { EavStore } from './EavStore';
 import { IClassExpression } from './IClassExpression';
+import { IEavStore } from './IEavStore';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectAllValuesFrom } from './ObjectAllValuesFrom';
 import { ObjectOneOf } from './ObjectOneOf';
-import { EavStore, IEavStore, ObservableGenerator } from './ObservableGenerator';
+import { ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { ObjectProperty } from './Property';
 

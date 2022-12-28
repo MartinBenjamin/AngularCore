@@ -4,8 +4,9 @@ import { ClassExpressionSignalInterpreter } from './ClassExpressionSignalInterpr
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { DataAllValuesFrom } from './DataAllValuesFrom';
 import { DataOneOf } from './DataOneOf';
+import { EavStore } from './EavStore';
 import { IClassExpression } from './IClassExpression';
-import { EavStore, IEavStore } from './ObservableGenerator';
+import { IEavStore } from './IEavStore';
 import { Ontology } from "./Ontology";
 import { DataProperty } from './Property';
 

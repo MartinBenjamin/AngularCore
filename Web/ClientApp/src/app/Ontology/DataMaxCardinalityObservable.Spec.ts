@@ -3,8 +3,10 @@ import { Subscription } from 'rxjs';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { DataMaxCardinality } from './DataMaxCardinality';
 import { DataOneOf } from './DataOneOf';
+import { EavStore } from './EavStore';
 import { IClassExpression } from './IClassExpression';
-import { EavStore, IEavStore, ObservableGenerator } from './ObservableGenerator';
+import { IEavStore } from './IEavStore';
+import { ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { DataProperty } from './Property';
 
