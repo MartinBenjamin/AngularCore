@@ -1,6 +1,7 @@
 import { } from 'jasmine';
-import { Subscription } from 'rxjs';
+import { Signal } from '../Signal';
 import { Class } from './Class';
+import { ClassExpressionSignalInterpreter } from './ClassExpressionSignalInterpreter';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { EavStore } from './EavStore';
 import { EquivalentClasses } from './EquivalentClasses';
@@ -8,7 +9,6 @@ import { IClassExpression } from './IClassExpression';
 import { IEavStore } from './IEavStore';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectOneOf } from './ObjectOneOf';
-import { ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { SubClassOf } from './SubClassOf';
 
@@ -30,30 +30,32 @@ describe(
                 new EquivalentClasses(o1, [c1, c2]);
                 new EquivalentClasses(o1, [c1, new ObjectOneOf([i1])]);
                 const store: IEavStore = new EavStore();
-                const generator = new ObservableGenerator(
+                const interpreter = new ClassExpressionSignalInterpreter(
                     o1,
                     store);
-                const i1Interpretation = generator.InterpretIndividual(i1);
-                const i2Interpretation = generator.InterpretIndividual(i2);
+                const i1Interpretation = interpreter.InterpretIndividual(i1);
+                const i2Interpretation = interpreter.InterpretIndividual(i2);
 
                 it(
-                    'ObservableGenerator generates same Observable for same class',
-                    () => expect(generator.ClassExpression(c1)).toBe(generator.ClassExpression(c1)))
+                    'ClassExpressionSignalInterpreter returns same Signal for same class',
+                    () => expect(interpreter.ClassExpression(c1)).toBe(interpreter.ClassExpression(c1)));
 
                 function elements(
                     ce: IClassExpression
                     ): Set<any>
                 {
-                    let subscription: Subscription;
+                    let signal: Signal<Set<any>>;
+                    let elements: Set<any> = null;
                     try
                     {
-                        let elements: Set<any> = null;
-                        subscription = generator.ClassExpression(ce).subscribe(m => elements = m);
+                        signal = store.SignalScheduler.AddSignal(
+                            m => elements = m,
+                            [interpreter.ClassExpression(ce)]);
                         return elements;
                     }
                     finally
                     {
-                        subscription.unsubscribe();
+                        store.SignalScheduler.RemoveSignal(signal);
                     }
                 }
 
@@ -88,30 +90,32 @@ describe(
                 const i2 = new NamedIndividual(o1, 'i2');
                 new SubClassOf(o1, new ObjectOneOf([i1]), c1);
                 const store: IEavStore = new EavStore();
-                const generator = new ObservableGenerator(
+                const interpreter = new ClassExpressionSignalInterpreter(
                     o1,
                     store);
-                const i1Interpretation = generator.InterpretIndividual(i1);
-                const i2Interpretation = generator.InterpretIndividual(i2);
+                const i1Interpretation = interpreter.InterpretIndividual(i1);
+                const i2Interpretation = interpreter.InterpretIndividual(i2);
 
                 it(
-                    'ObservableGenerator generates same Observable for same class',
-                    () => expect(generator.ClassExpression(c1)).toBe(generator.ClassExpression(c1)))
+                    'ClassExpressionSignalInterpreter returns same Signal for same class',
+                    () => expect(interpreter.ClassExpression(c1)).toBe(interpreter.ClassExpression(c1)));
 
                 function elements(
                     ce: IClassExpression
                     ): Set<any>
                 {
-                    let subscription: Subscription;
+                    let signal: Signal<Set<any>>;
+                    let elements: Set<any> = null;
                     try
                     {
-                        let elements: Set<any> = null;
-                        subscription = generator.ClassExpression(ce).subscribe(m => elements = m);
+                        signal = store.SignalScheduler.AddSignal(
+                            m => elements = m,
+                            [interpreter.ClassExpression(ce)]);
                         return elements;
                     }
                     finally
                     {
-                        subscription.unsubscribe();
+                        store.SignalScheduler.RemoveSignal(signal);
                     }
                 }
 
@@ -135,30 +139,32 @@ describe(
                 new EquivalentClasses(o1, [c1, c2]);
                 new SubClassOf(o1, new ObjectOneOf([i1]), c2);
                 const store: IEavStore = new EavStore();
-                const generator = new ObservableGenerator(
+                const interpreter = new ClassExpressionSignalInterpreter(
                     o1,
                     store);
-                const i1Interpretation = generator.InterpretIndividual(i1);
-                const i2Interpretation = generator.InterpretIndividual(i2);
+                const i1Interpretation = interpreter.InterpretIndividual(i1);
+                const i2Interpretation = interpreter.InterpretIndividual(i2);
 
                 it(
-                    'ObservableGenerator generates same Observable for same class',
-                    () => expect(generator.ClassExpression(c1)).toBe(generator.ClassExpression(c1)))
+                    'ClassExpressionSignalInterpreter returns same Signal for same class',
+                    () => expect(interpreter.ClassExpression(c1)).toBe(interpreter.ClassExpression(c1)));
 
                 function elements(
                     ce: IClassExpression
                     ): Set<any>
                 {
-                    let subscription: Subscription;
+                    let signal: Signal<Set<any>>;
+                    let elements: Set<any> = null;
                     try
                     {
-                        let elements: Set<any> = null;
-                        subscription = generator.ClassExpression(ce).subscribe(m => elements = m);
+                        signal = store.SignalScheduler.AddSignal(
+                            m => elements = m,
+                            [interpreter.ClassExpression(ce)]);
                         return elements;
                     }
                     finally
                     {
-                        subscription.unsubscribe();
+                        store.SignalScheduler.RemoveSignal(signal);
                     }
                 }
 
