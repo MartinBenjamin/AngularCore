@@ -31,6 +31,54 @@ export const NotEqual           = ComparisonAtom((lhs, rhs) => lhs !== rhs);
 export const GreaterThanOrEqual = ComparisonAtom((lhs, rhs) => lhs >=  rhs);
 export const GreaterThan        = ComparisonAtom((lhs, rhs) => lhs >   rhs);
 
+
+function Wrap<T1, TResult>(func: (t1: T1) => TResult): (t1: string | T1, result: string | TResult) => BuiltIn
+function Wrap<T1, T2, TResult>(func: (t1: T1, t2: T2) => TResult): (t1: string | T1, t2: string | T2, result: string | TResult) => BuiltIn
+function Wrap<TResult>(func:(...params) => TResult): () => BuiltIn
+{
+    return function(): BuiltIn
+    {
+        const args = <[]>[].slice.call(
+            arguments,
+            0,
+            arguments.length - 1);
+        const result = arguments[arguments.length - 1];
+
+        return IsVariable(result) ?
+            function*(
+                substitutions: Iterable<object>
+                )
+            {
+                for(const substitution of substitutions)
+                {
+                    const actualResult = func.apply(
+                        null,
+                        args.map(argument => IsVariable(argument) ? substitution[argument] : argument));
+
+                    if(!(result in substitution))
+                        yield { ...substitution, [result]: actualResult };
+
+                    else if(substitution[result] === actualResult)
+                        yield substitution;
+                }
+            } :
+            function*(
+                substitutions: Iterable<object>
+                )
+            {
+                for(const substitution of substitutions)
+                {
+                    const actualResult = func.apply(
+                        null,
+                        args.map(argument => IsVariable(argument) ? substitution[argument] : argument));
+
+                    if(result === actualResult)
+                        yield substitution;
+                }
+            }
+    }
+}
+
 function ArithmeticAtom(
     operation: (lhs, rhs) => any
     ): (lhs: any, rhs: any, result: any) => BuiltIn
@@ -66,8 +114,8 @@ function ArithmeticAtom(
     }
 };
 
-export const Add       = ArithmeticAtom((lhs, rhs) => lhs + rhs);
-export const Subtract  = ArithmeticAtom((lhs, rhs) => rhs - lhs);
-export const Multiply  = ArithmeticAtom((lhs, rhs) => lhs * rhs);
-export const Divide    = ArithmeticAtom((lhs, rhs) => rhs / lhs);
-export const Remainder = ArithmeticAtom((lhs, rhs) => rhs % lhs);
+export const Add       = Wrap((lhs, rhs) => lhs + rhs);
+export const Subtract  = Wrap((lhs, rhs) => rhs - lhs);
+export const Multiply  = Wrap((lhs, rhs) => lhs * rhs);
+export const Divide    = Wrap((lhs, rhs) => rhs / lhs);
+export const Remainder = Wrap((lhs, rhs) => rhs % lhs);
