@@ -18,8 +18,11 @@ export interface AttributeSchema
 
 export type Fact = [any, PropertyKey, any];
 
+export type Variable = string;
 export const IsVariable = (element): element is string => typeof element === 'string' && element[0] === '?';
 export const IsConstant = element => !(typeof element === 'undefined' || IsVariable(element));
+
+export type Rule = [[Variable, any, ...any[]], (Fact | BuiltIn)[]];
 
 export interface IEavStore
 {
@@ -42,7 +45,8 @@ export interface IEavStore
     Signal(attribute: PropertyKey): Signal<[any, any][]>;
     Signal<T extends [any, ...any[]]>(
         head: T,
-        body: (Fact | BuiltIn)[]): Signal<{ [K in keyof T]: any; }[]>;
+        body: (Fact | BuiltIn)[],
+        ...rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>;
 
     NewEntity(): any;
     DeleteEntity(entity: any): void
