@@ -4,7 +4,7 @@ import { Scheduler, Signal } from '../Signal';
 import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
 import { BuiltIn } from './Atom';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
-import { AttributeSchema, Cardinality, Fact, IEavStore, IsVariable, Store, StoreSymbol } from './IEavStore';
+import { AttributeSchema, Cardinality, Fact, IEavStore, IsVariable, Rule, RuleInvocation, Store, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
 
@@ -395,15 +395,29 @@ export class EavStore implements IEavStore, IPublisher
         return signal;
     }
 
+    SignalRule<T extends [any, ...any[]]>(
+        head: T,
+        body: (Fact | BuiltIn | RuleInvocation)[],
+        rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>
+    {
+        return null;
+    }
+
     Signal(
         ...params
         ): any
     {
-        return params[0] instanceof Array ?
-            this.SignalAtom(<Fact>params[0]) :
-            this.SignalScheduler.AddSignal(
-                (facts: Fact[]) => facts.map(([entity, , value]) => [entity, value]),
-                [this.SignalAtom([undefined, <PropertyKey>params[0], undefined])]);
+        if(params.length === 1)
+            return params[0] instanceof Array ?
+                this.SignalAtom(<Fact>params[0]) :
+                this.SignalScheduler.AddSignal(
+                    (facts: Fact[]) => facts.map(([entity, , value]) => [entity, value]),
+                    [this.SignalAtom([undefined, <PropertyKey>params[0], undefined])]);
+
+        return this.SignalRule(
+            params[0],
+            params[1],
+            params[2]);
     }
 
     NewEntity(

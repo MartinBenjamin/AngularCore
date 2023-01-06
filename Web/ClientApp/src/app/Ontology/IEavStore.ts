@@ -22,7 +22,10 @@ export type Variable = string;
 export const IsVariable = (element): element is string => typeof element === 'string' && element[0] === '?';
 export const IsConstant = element => !(typeof element === 'undefined' || IsVariable(element));
 
-export type Rule = [[Variable, any, ...any[]], (Fact | BuiltIn)[]];
+export type RuleInvocation = [string, ...any[]];
+export const IsRuleInvocation = atom => atom instanceof Array && typeof atom[0] === 'string' && atom[0][0] !== '?';
+
+export type Rule = [[string, ...any[]], (Fact | BuiltIn | RuleInvocation)[]];
 
 export interface IEavStore
 {
@@ -45,7 +48,7 @@ export interface IEavStore
     Signal(attribute: PropertyKey): Signal<[any, any][]>;
     Signal<T extends [any, ...any[]]>(
         head: T,
-        body: (Fact | BuiltIn)[],
+        body: (Fact | BuiltIn | RuleInvocation)[],
         ...rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>;
 
     NewEntity(): any;
