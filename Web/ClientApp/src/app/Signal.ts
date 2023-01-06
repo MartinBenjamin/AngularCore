@@ -50,7 +50,7 @@ export class Signal<TOut = any, TIn extends any[] = any[]> implements IVertex
     }
 }
 
-class CurrentValue<TOut = any>
+export class CurrentValue<TOut = any>
 {
     constructor(
         public readonly Signal: Signal<TOut, any[]>

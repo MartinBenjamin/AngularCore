@@ -4,9 +4,11 @@ import { Scheduler, Signal } from '../Signal';
 import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
 import { BuiltIn } from './Atom';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
-import { AttributeSchema, Cardinality, Fact, IEavStore, IsVariable, Rule, RuleInvocation, Store, StoreSymbol } from './IEavStore';
+import { Group } from './Group';
+import { AttributeSchema, Cardinality, Fact, IEavStore, IsRuleInvocation, IsVariable, Rule, RuleInvocation, Store, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
+import { Condense, StronglyConnectedComponents } from './StronglyConnectedComponents';
 
 function Match<TTrieNode extends TrieNode<TTrieNode, V>, V>(
     trieNode: TTrieNode,
@@ -395,12 +397,90 @@ export class EavStore implements IEavStore, IPublisher
         return signal;
     }
 
-    SignalRule<T extends [any, ...any[]]>(
+    SignalRules<T extends [any, ...any[]]>(
         head: T,
         body: (Fact | BuiltIn | RuleInvocation)[],
         rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>
     {
+        rules = [[<[string, any, ...any[]]>['', ...head], body], ...rules];
+        const rulesGroupedByName = Group(
+            rules,
+            rule => rule[0][0],
+            rule => rule);
+
+        const adjacencyList = new Map(
+            rules.map<[string, string[]]>(
+                rule => [
+                    rule[0][0],
+                    [].concat(...rulesGroupedByName.get(rule[0][0]).map(rule => rule[1].filter(IsRuleInvocation).map(ruleInvocation => ruleInvocation[0])))]));
+
+        const stronglyConnectedComponents = StronglyConnectedComponents(adjacencyList);
+
+        const signals = new Map<string, Signal>();
+
+        // Transform strong connected components.
+        for(const strongConnectedComponent of stronglyConnectedComponents)
+            if(strongConnectedComponent.length === 1)
+            {
+                const rules = rulesGroupedByName.get(strongConnectedComponent[0]);
+                if(rules.length === 1)
+                {
+                    const rule = rules[0];
+                    const signal = this.SignalRule(rule);
+                    signals.set(
+                        rule[0][0],
+                        signal);
+                }
+            }
+
         return null;
+    }
+
+    private SignalRule(
+        rule: Rule
+        )
+    {
+        const [[,...head], body] = rule;
+        return new Signal((...inputs: Fact[][]) =>
+        {
+            let inputIndex = 0;
+            return body.reduce(
+                (substitutions, atom) =>
+                {
+                    if(typeof atom === 'function')
+                        return [...atom(substitutions)];
+
+                    let count = substitutions.length;
+                    while(count--)
+                    {
+                        const substitution = substitutions.shift();
+                        for(const fact of inputs[inputIndex])
+                        {
+                            let merged = { ...substitution };
+                            for(let index = IsRuleInvocation(atom) ? 1 : 0; index < atom.length && merged; ++index)
+                            {
+                                const term = atom[index];
+                                if(IsVariable(term))
+                                {
+                                    if(typeof merged[term] === 'undefined')
+                                        merged[term] = fact[index];
+
+                                    else if(merged[term] !== fact[index])
+                                        // Fact does not match query pattern.
+                                        merged = null;
+                                }
+                            }
+
+                            if(merged)
+                                substitutions.push(merged);
+                        }
+                    }
+
+                    ++inputIndex;
+                    return substitutions;
+                },
+                [{}]).map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
+        });
     }
 
     Signal(
@@ -414,7 +494,7 @@ export class EavStore implements IEavStore, IPublisher
                     (facts: Fact[]) => facts.map(([entity, , value]) => [entity, value]),
                     [this.SignalAtom([undefined, <PropertyKey>params[0], undefined])]);
 
-        return this.SignalRule(
+        return this.SignalRules(
             params[0],
             params[1],
             params[2]);

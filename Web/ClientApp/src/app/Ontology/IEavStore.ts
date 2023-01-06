@@ -22,10 +22,10 @@ export type Variable = string;
 export const IsVariable = (element): element is string => typeof element === 'string' && element[0] === '?';
 export const IsConstant = element => !(typeof element === 'undefined' || IsVariable(element));
 
-export type RuleInvocation = [string, ...any[]];
-export const IsRuleInvocation = atom => atom instanceof Array && typeof atom[0] === 'string' && atom[0][0] !== '?';
+export type RuleInvocation = [string, any, ...any[]];
+export const IsRuleInvocation = (atom): atom is RuleInvocation => atom instanceof Array && typeof atom[0] === 'string' && atom[0][0] !== '?';
 
-export type Rule = [[string, ...any[]], (Fact | BuiltIn | RuleInvocation)[]];
+export type Rule = [[string, any, ...any[]], (Fact | BuiltIn | RuleInvocation)[]];
 
 export interface IEavStore
 {
