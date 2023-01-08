@@ -8,7 +8,9 @@ import { Group } from './Group';
 import { AttributeSchema, Cardinality, Fact, IEavStore, IsRuleInvocation, IsVariable, Rule, RuleInvocation, Store, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
-import { Condense, StronglyConnectedComponents } from './StronglyConnectedComponents';
+import { StronglyConnectedComponents } from './StronglyConnectedComponents';
+
+type Tuple = any[];
 
 function Match<TTrieNode extends TrieNode<TTrieNode, V>, V>(
     trieNode: TTrieNode,
@@ -408,40 +410,74 @@ export class EavStore implements IEavStore, IPublisher
             rule => rule[0][0],
             rule => rule);
 
-        const adjacencyList = new Map(
+        const ruleAdjacencyList = new Map(
             rules.map<[string, string[]]>(
                 rule => [
                     rule[0][0],
                     [].concat(...rulesGroupedByName.get(rule[0][0]).map(rule => rule[1].filter(IsRuleInvocation).map(ruleInvocation => ruleInvocation[0])))]));
 
-        const stronglyConnectedComponents = StronglyConnectedComponents(adjacencyList);
+        const stronglyConnectedComponents = StronglyConnectedComponents(ruleAdjacencyList);
 
+        const signalAdjacencyList = new Map<Signal, Signal[]>();
         const signals = new Map<string, Signal>();
+        const conjunctions = new Map<Signal, Rule>();
 
         // Transform strong connected components.
-        for(const strongConnectedComponent of stronglyConnectedComponents)
-            if(strongConnectedComponent.length === 1)
-            {
-                const rules = rulesGroupedByName.get(strongConnectedComponent[0]);
-                if(rules.length === 1)
+        for(const stronglyConnectedComponent of stronglyConnectedComponents)
+            for(const ruleName of stronglyConnectedComponent)
+                if(stronglyConnectedComponent.length === 1)
                 {
-                    const rule = rules[0];
-                    const signal = this.SignalRule(rule);
-                    signals.set(
-                        rule[0][0],
-                        signal);
-                }
-            }
+                    const rules = rulesGroupedByName.get(stronglyConnectedComponent[0]);
+                    if(rules.length === 1)
+                    {
+                        const rule = rules[0];
+                        const signal = this.Signal(EavStore.Conjunction(rule));
+                        signals.set(
+                            ruleName,
+                            signal);
+                        conjunctions.set(
+                            signal,
+                            rule);
+                    }
+                    else
+                    {
+                        const signal = this.Signal(EavStore.Disjunction);
+                        signals.set(
+                            ruleName,
+                            signal);
 
-        return null;
+                        const adjacentSignals: Signal[] = [];
+                        signalAdjacencyList.set(
+                            signal,
+                            adjacentSignals);
+
+                        for(const rule of rules)
+                        {
+                            const signal = this.Signal(EavStore.Conjunction(rule));
+                            adjacentSignals.push(signal);
+                            conjunctions.set(
+                                signal,
+                                rule);                
+                        }
+                    }
+                }
+
+        for(const [signal, rule] of conjunctions)
+            signalAdjacencyList.set(
+                signal,
+                rule[1]
+                    .filter((atom): atom is Fact | RuleInvocation => !(atom instanceof Function))
+                    .map(atom => IsRuleInvocation(atom) ? signals.get(atom[0]): this.SignalAtom(atom)));
+
+        return signals.get('');
     }
 
-    private SignalRule(
+    private static Conjunction(
         rule: Rule
-        )
+        ): (...inputs: Iterable<Tuple>[]) => Tuple[]
     {
         const [[,...head], body] = rule;
-        return new Signal((...inputs: Fact[][]) =>
+        return (...inputs: Iterable<Tuple>[]): Tuple[] =>
         {
             let inputIndex = 0;
             return body.reduce(
@@ -454,7 +490,7 @@ export class EavStore implements IEavStore, IPublisher
                     while(count--)
                     {
                         const substitution = substitutions.shift();
-                        for(const fact of inputs[inputIndex])
+                        for(const tuple of inputs[inputIndex])
                         {
                             let merged = { ...substitution };
                             for(let index = IsRuleInvocation(atom) ? 1 : 0; index < atom.length && merged; ++index)
@@ -463,10 +499,10 @@ export class EavStore implements IEavStore, IPublisher
                                 if(IsVariable(term))
                                 {
                                     if(typeof merged[term] === 'undefined')
-                                        merged[term] = fact[index];
+                                        merged[term] = tuple[index];
 
-                                    else if(merged[term] !== fact[index])
-                                        // Fact does not match query pattern.
+                                    else if(merged[term] !== tuple[index])
+                                        // Tuple does not match query pattern.
                                         merged = null;
                                 }
                             }
@@ -480,7 +516,14 @@ export class EavStore implements IEavStore, IPublisher
                     return substitutions;
                 },
                 [{}]).map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
-        });
+        };
+    }
+
+    private static Disjunction(
+        ...inputs: Iterable<Tuple>[]
+        ): Tuple[]
+    {
+        return null;
     }
 
     Signal(

@@ -17,6 +17,11 @@ export class SortedList<T>
                 this.add(value);
     }
 
+    get Array(): ReadonlyArray<T>
+    {
+        return this._array;
+    }
+
     public add(
         value: T
         ): this
