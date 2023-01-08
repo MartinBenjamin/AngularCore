@@ -657,34 +657,46 @@ describe(
                                                     };
 
                                                     describe(
-                                                        `Given facts: Set<Fact> and store.Observe(atom).subscribe(result => facts = new ArraySet(result)):`,
+                                                        `Given trace: Set<Fact>[] and store.Observe(atom).subscribe(result => trace.push(new ArraySet(result))):`,
                                                         () =>
                                                         {
-                                                            const atom: Fact = [atomEntityId ? entities[atomEntityId] : undefined, atomAttribute, atomValue];
-                                                            const fact: Fact = [entities.e1, 'a1', value];
-                                                            let facts: Set<Fact>;
-                                                            store.Observe(atom).subscribe(result => facts = new ArraySet(result));
-
-                                                            const before = facts.has(fact);
-                                                            if((atom[0] === undefined || atom[0] === entities.e1) &&
-                                                               (atom[1] === undefined || atom[1] === 'a1'       ) &&
-                                                               (atom[2] === undefined || atom[2] === value      ))
-                                                                it(
-                                                                    `facts.has([e1, 'a1', ${value}])`,
-                                                                    () => expect(before).toBe(true));
-                                                            else
-                                                                it(
-                                                                    `!facts.has([e1, 'a1', ${value}])`,
-                                                                    () => expect(before).toBe(false));
-
                                                             describe(
                                                                 `Given e1.a1.${method}():`,
                                                                 () =>
                                                                 {
+                                                                    const atom: Fact = [atomEntityId ? entities[atomEntityId] : undefined, atomAttribute, atomValue];
+                                                                    const fact: Fact = [entities.e1, 'a1', value];
+                                                                    const trace: Set<Fact>[] = [];
+                                                                    const subscription = store.Observe(atom).subscribe(result => trace.push(new ArraySet(result)));
                                                                     entities.e1.a1[method]();
-                                                                    it(
-                                                                        `!facts.has([e1, 'a1', ${value}])`,
-                                                                        () => expect(facts.has(fact)).toBe(false));
+                                                                    subscription.unsubscribe();
+
+                                                                    if((atom[0] === undefined || atom[0] === entities.e1) &&
+                                                                       (atom[1] === undefined || atom[1] === 'a1'       ) &&
+                                                                       (atom[2] === undefined || atom[2] === value      ))
+                                                                    {
+                                                                        it(
+                                                                            `trace.length === 2`,
+                                                                            () => expect(trace.length).toBe(2));
+
+                                                                        it(
+                                                                            `trace[0].has([e1, 'a1', ${value}])`,
+                                                                            () => expect(trace[0].has(fact)).toBe(true));
+
+                                                                        it(
+                                                                            `!trace[1].has([e1, 'a1', ${value}])`,
+                                                                            () => expect(trace[1].has(fact)).toBe(false));
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        it(
+                                                                            `trace.length === 1`,
+                                                                            () => expect(trace.length).toBe(1));
+
+                                                                        it(
+                                                                            `!trace[0].has([e1, 'a1', ${value}])`,
+                                                                            () => expect(trace[0].has(fact)).toBe(false));
+                                                                    }
                                                                 });
                                                         });
                                                 });
