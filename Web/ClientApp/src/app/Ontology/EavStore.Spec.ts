@@ -535,6 +535,10 @@ describe(
                                                                            (atom[2] === undefined || atom[2] === before     ))
                                                                         {
                                                                             it(
+                                                                                `trace.length === 2`,
+                                                                                () => expect(trace.length).toBe(2));
+
+                                                                            it(
                                                                                 `trace[0].has([e1, 'a1', ${before}])`,
                                                                                 () => expect(trace[0].has(beforeFact)).toBe(true));
 
