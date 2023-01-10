@@ -4,7 +4,7 @@ import { EavStore } from './EavStore';
 import { Fact, IEavStore } from './IEavStore';
 
 describe(
-    "EavStore.Signal(atom: Fact): Signal<Fact[]>",
+    'EavStore.Signal(atom: Fact): Signal<Fact[]>',
     () =>
     {
         for(const atomEntityId of [undefined, 'e1', 'e2'])
@@ -545,4 +545,12 @@ describe(
                                     }
                         });
                 }
+    });
+
+
+describe(
+    'Signal<T extends [any, ...any[]]>(head: T, body: (Fact | BuiltIn | RuleInvocation)[], ...rules: Rule[]): Signal< { [K in keyof T]: any; }[] >',
+    () =>
+    {
+
     });

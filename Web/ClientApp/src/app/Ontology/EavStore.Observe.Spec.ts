@@ -4,7 +4,7 @@ import { EavStore } from './EavStore';
 import { Fact, IEavStore } from './IEavStore';
 
 describe(
-    "EavStore.Observe(atom: Fact): Observable<Fact[]>",
+    'EavStore.Observe(atom: Fact): Observable<Fact[]>',
     () =>
     {
         for(const atomEntityId of [undefined, 'e1', 'e2'])
