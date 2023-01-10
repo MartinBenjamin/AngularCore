@@ -4,7 +4,7 @@ import { EavStore } from './EavStore';
 import { Fact, IEavStore } from './IEavStore';
 
 describe(
-    "EavStore.Observe(atom: Fact): Observable<Fact[]>",
+    "EavStore.Signal(atom: Fact): Signal<Fact[]>",
     () =>
     {
         for(const atomEntityId of [undefined, 'e1', 'e2'])
@@ -29,7 +29,7 @@ describe(
                                         };
 
                                         describe(
-                                            `Given trace: Set<Fact>[] and store.Observe(atom).subscribe(result => trace.push(new ArraySet(result))):`,
+                                            `Given trace: Set<Fact>[] and store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [store.Signal(atom)]):`,
                                             () =>
                                             {
                                                 describe(
@@ -39,9 +39,9 @@ describe(
                                                         const atom: Fact = [atomEntityId ? entities[atomEntityId] : undefined, atomAttribute, atomValue];
                                                         const fact: Fact = [entities.e1, 'a1', value];
                                                         const trace: Set<Fact>[] = [];
-                                                        const subscription = store.Observe(atom).subscribe(result => trace.push(new ArraySet(result)));
+                                                        const signal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [store.Signal(atom)]);
                                                         entities.e1.a1 = value;
-                                                        subscription.unsubscribe();
+                                                        store.SignalScheduler.RemoveSignal(signal);
 
                                                         it(
                                                             `!trace[0].has([entities.e1, 'a1', ${value}])`,
@@ -93,7 +93,7 @@ describe(
                                         };
 
                                         describe(
-                                            `Given trace: Set<Fact>[] and store.Observe(atom).subscribe(result => trace.push(new ArraySet(result))):`,
+                                            `Given trace: Set<Fact>[] and store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [store.Signal(atom)]):`,
                                             () =>
                                             {
                                                 describe(
@@ -103,9 +103,9 @@ describe(
                                                         const atom: Fact = [atomEntityId ? entities[atomEntityId] : undefined, atomAttribute, atomValue];
                                                         const fact: Fact = [entities.e1, 'a1', value];
                                                         const trace: Set<Fact>[] = [];
-                                                        const subscription = store.Observe(atom).subscribe(result => trace.push(new ArraySet(result)));
+                                                        const signal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [store.Signal(atom)]);
                                                         entities.e1.a1 = undefined;
-                                                        subscription.unsubscribe();
+                                                        store.SignalScheduler.RemoveSignal(signal);
 
                                                         if((atom[0] === undefined || atom[0] === entities.e1) &&
                                                            (atom[1] === undefined || atom[1] === 'a1'       ) &&
@@ -165,7 +165,7 @@ describe(
                                                 };
 
                                                 describe(
-                                                    `Given trace: Set<Fact>[] and store.Observe(atom).subscribe(result => trace.push(new ArraySet(result))):`,
+                                                    `Given trace: Set<Fact>[] and store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [store.Signal(atom)]):`,
                                                     () =>
                                                     {
                                                         describe(
@@ -176,9 +176,9 @@ describe(
                                                                 const beforeFact: Fact = [entities.e1, 'a1', before];
                                                                 const afterFact: Fact = [entities.e1, 'a1', after];
                                                                 const trace: Set<Fact>[] = [];
-                                                                const subscription = store.Observe(atom).subscribe(result => trace.push(new ArraySet(result)));
+                                                                const signal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [store.Signal(atom)]);
                                                                 entities.e1.a1 = after;
-                                                                subscription.unsubscribe();
+                                                                store.SignalScheduler.RemoveSignal(signal);
 
                                                                 if((atom[0] === undefined || atom[0] === entities.e1) &&
                                                                    (atom[1] === undefined || atom[1] === 'a1'       ) &&
@@ -253,7 +253,7 @@ describe(
                                             };
 
                                             describe(
-                                                `Given trace: Set<Fact>[] and store.Observe(atom).subscribe(result => trace.push(new ArraySet(result))):`,
+                                                `Given trace: Set<Fact>[] and store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [store.Signal(atom)]):`,
                                                 () =>
                                                 {
                                                     describe(
@@ -263,9 +263,9 @@ describe(
                                                             const atom: Fact = [atomEntityId ? entities[atomEntityId] : undefined, atomAttribute, atomValue];
                                                             const fact: Fact = [entities.e1, 'a1', value];
                                                             const trace: Set<Fact>[] = [];
-                                                            const subscription = store.Observe(atom).subscribe(result => trace.push(new ArraySet(result)));
+                                                            const signal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [store.Signal(atom)]);
                                                             entities.e1.a1[method](value);
-                                                            subscription.unsubscribe();
+                                                            store.SignalScheduler.RemoveSignal(signal);
 
                                                             it(
                                                                 `!trace[0].has([entities.e1, 'a1', ${value}])`,
@@ -317,7 +317,7 @@ describe(
                                             };
 
                                             describe(
-                                                `Given trace: Set<Fact>[] and store.Observe(atom).subscribe(result => trace.push(new ArraySet(result))):`,
+                                                `Given trace: Set<Fact>[] and store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [store.Signal(atom)]):`,
                                                 () =>
                                                 {
                                                     describe(
@@ -327,9 +327,9 @@ describe(
                                                             const atom: Fact = [atomEntityId ? entities[atomEntityId] : undefined, atomAttribute, atomValue];
                                                             const fact: Fact = [entities.e1, 'a1', value];
                                                             const trace: Set<Fact>[] = [];
-                                                            const subscription = store.Observe(atom).subscribe(result => trace.push(new ArraySet(result)));
+                                                            const signal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [store.Signal(atom)]);
                                                             entities.e1.a1[method]();
-                                                            subscription.unsubscribe();
+                                                            store.SignalScheduler.RemoveSignal(signal);
 
                                                             if((atom[0] === undefined || atom[0] === entities.e1) &&
                                                                (atom[1] === undefined || atom[1] === 'a1'       ) &&
@@ -389,7 +389,7 @@ describe(
                                                 };
 
                                                 describe(
-                                                    `Given trace: Set<Fact>[] and store.Observe(atom).subscribe(result => trace.push(new ArraySet(result))):`,
+                                                    `Given trace: Set<Fact>[] and store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [store.Signal(atom)]):`,
                                                     () =>
                                                     {
                                                         describe(
@@ -400,9 +400,9 @@ describe(
                                                                 const beforeFact: Fact = [entities.e1, 'a1', before];
                                                                 const afterFact: Fact = [entities.e1, 'a1', after];
                                                                 const trace: Set<Fact>[] = [];
-                                                                const subscription = store.Observe(atom).subscribe(result => trace.push(new ArraySet(result)));
+                                                                const signal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [store.Signal(atom)]);
                                                                 entities.e1.a1.splice(o, 1, after);
-                                                                subscription.unsubscribe();
+                                                                store.SignalScheduler.RemoveSignal(signal);
 
                                                                 if((atom[0] === undefined || atom[0] === entities.e1) &&
                                                                    (atom[1] === undefined || atom[1] === 'a1'       ) &&
@@ -480,7 +480,7 @@ describe(
                                                 };
 
                                                 describe(
-                                                    `Given trace: Set<Fact>[] and store.Observe(atom).subscribe(result => trace.push(new ArraySet(result))):`,
+                                                    `Given trace: Set<Fact>[] and store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [store.Signal(atom)]):`,
                                                     () =>
                                                     {
                                                         describe(
@@ -491,9 +491,9 @@ describe(
                                                                 const beforeFact: Fact = [entities.e1, 'a1', before];
                                                                 const afterFact: Fact = [entities.e1, 'a1', after];
                                                                 const trace: Set<Fact>[] = [];
-                                                                const subscription = store.Observe(atom).subscribe(result => trace.push(new ArraySet(result)));
+                                                                const signal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [store.Signal(atom)]);
                                                                 entities.e1.a1[0] = after;
-                                                                subscription.unsubscribe();
+                                                                store.SignalScheduler.RemoveSignal(signal);
 
                                                                 if((atom[0] === undefined || atom[0] === entities.e1) &&
                                                                    (atom[1] === undefined || atom[1] === 'a1'       ) &&
