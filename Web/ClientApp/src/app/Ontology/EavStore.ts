@@ -598,8 +598,8 @@ export class EavStore implements IEavStore, IPublisher
                     entity,
                     () => this.DeleteEntity(entity)));
 
-        entity[EntityId   ] = this._nextEntityId++;
         entity[StoreSymbol] = this;
+        entity[EntityId   ] = this._nextEntityId++;
 
         this.PublishEntities();
         return entity;
