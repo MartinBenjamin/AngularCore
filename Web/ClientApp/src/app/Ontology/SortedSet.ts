@@ -1,11 +1,32 @@
+export type Compare<T = any> = (a: T, b: T) => number;
+export const DefaultCompare = (a, b) => a === b ? 0 : a < b ? -1 : 1;
+
+export function ArrayCompareFactory(
+    elementCompare: Compare
+    ): Compare<any[]>
+{
+    return function(
+        a: any[],
+        b: any[]
+        ): number
+    {
+        let result = a.length - b.length;
+        for(let index = 0; index < a.length && result === 0; ++index)
+            result = elementCompare(
+                a[index],
+                b[index]);
+
+        return result;
+    }
+}
+
 export class SortedList<T>
 {
     protected _array  : T[] = [];
-    protected _compare: (lhs: T, rhs: T) => number =
-        (lhs, rhs) => lhs === rhs ? 0 : lhs < rhs ? -1 : 1;
+    protected _compare: Compare<T> = DefaultCompare;
 
     constructor(
-        compare: (lhs: T, rhs: T) => number,
+        compare: Compare<T>,
         values?: Iterable<T>,
         )
     {
@@ -150,7 +171,7 @@ export class SortedList<T>
 export class SortedSet<T> extends SortedList<T> implements Set<T>
 {
     constructor(
-        compare: (lhs: T, rhs: T) => number,
+        compare: Compare<T>,
         values?: Iterable<T>
         )
     {

@@ -9,8 +9,41 @@ import { AttributeSchema, Cardinality, Fact, IEavStore, IsRuleInvocation, IsVari
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
 import { StronglyConnectedComponents } from './StronglyConnectedComponents';
+import { ArrayCompareFactory } from './SortedSet';
 
 type Tuple = any[];
+
+const EntityId = Symbol('EntityId');
+
+function Compare(
+    a: any,
+    b: any
+    ): number
+{
+    if(a === b)
+        return 0;
+
+    const aType = typeof a;
+    const bType = typeof b;
+
+    if(aType !== bType)
+        return aType.localeCompare(bType);
+
+    if(typeof a === 'object')
+    {
+        const aId = a[EntityId];
+        if(typeof aId === 'number')
+        {
+            const bId = b[EntityId];
+            if(typeof bId === 'number')
+                return aId - bId;
+        }
+    }
+
+    return a < b ? -1 : 1
+}
+
+const tupleCompare = ArrayCompareFactory(Compare);
 
 function Match<TTrieNode extends TrieNode<TTrieNode, V>, V>(
     trieNode: TTrieNode,
@@ -54,6 +87,7 @@ export class EavStore implements IEavStore, IPublisher
     private _eav                 = new Map<any, Map<PropertyKey, any>>();
     private _aev                 = new Map<PropertyKey, Map<any, any>>();
     private _ave                 : Map<PropertyKey, Map<any, any>>;
+    private _nextEntityId        = 1
     private _entitiesSubscribers = new Set<Subscriber<Set<any>>>();
     private _entitiesSignal      : Signal<Set<any>>;
     private _atomActions         = new ArrayKeyedMap<Fact, Set<Action>>();
@@ -564,6 +598,7 @@ export class EavStore implements IEavStore, IPublisher
                     entity,
                     () => this.DeleteEntity(entity)));
 
+        entity[EntityId   ] = this._nextEntityId++;
         entity[StoreSymbol] = this;
 
         this.PublishEntities();
