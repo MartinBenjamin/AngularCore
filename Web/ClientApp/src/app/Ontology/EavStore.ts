@@ -518,11 +518,11 @@ export class EavStore implements IEavStore, IPublisher
 
     private static Substitute(
         atom: Fact | RuleInvocation
-        ): (tuples: Iterable<Tuple>) => {}[]
+        ): (tuples: Iterable<Tuple>) => object[]
     {
         return (tuples: Iterable<Tuple>) =>
         {
-            const substitutions: {}[] = [];
+            const substitutions: object[] = [];
             for(const tuple of tuples)
             {
                 let substitution = {};
@@ -550,13 +550,13 @@ export class EavStore implements IEavStore, IPublisher
 
     private static Conjunction(
         rule: Rule
-        ): (...inputs: Iterable<{}>[]) => Tuple[]
+        ): (...inputs: object[][]) => Tuple[]
     {
         const [[,...head], body] = rule;
-        return (...inputs: Iterable<{}>[]): Tuple[] =>
+        return (...inputs: object[][]): Tuple[] =>
         {
-            let inputIndex = 0;
-            return body.reduce(
+            let inputIndex = 1;
+            return body.splice(1).reduce(
                 (substitutions, atom) =>
                 {
                     if(typeof atom === 'function')
@@ -584,7 +584,7 @@ export class EavStore implements IEavStore, IPublisher
                     ++inputIndex;
                     return substitutions;
                 },
-                [{}]).map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
+                inputs[0]).map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
         };
     }
 
