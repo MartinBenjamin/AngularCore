@@ -1,7 +1,8 @@
 import { } from 'jasmine';
 import { ArraySet } from './ArraySet';
+import { assertBuilder } from './assertBuilder';
 import { EavStore } from './EavStore';
-import { Fact, IEavStore } from './IEavStore';
+import { Fact, IEavStore, Store } from './IEavStore';
 
 describe(
     'EavStore.Signal(atom: Fact): Signal<Fact[]>',
@@ -547,10 +548,36 @@ describe(
                 }
     });
 
-
 describe(
     'Signal<T extends [any, ...any[]]>(head: T, body: (Fact | BuiltIn | RuleInvocation)[], ...rules: Rule[]): Signal< { [K in keyof T]: any; }[] >',
     () =>
     {
+        const o = { a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null, [Symbol.toPrimitive]: function() { } };
+        describe(
+            `Given store = new EavStore() and e = store.Assert(${JSON.stringify(o)}):`,
+            () =>
+            {
+                const store: IEavStore = new EavStore();
+                //const o = { a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null };
+                const e = store.Assert(o);
+                const trace: Set<any[]>[] = [];
+                const assert = assertBuilder('Store', 'store', 'e', 'trace')
+                    (Store, store, e, trace);
 
+                describe(
+                    `Given
+trace: Set<any[]>[] and
+signal = store.Signal(['?result'], [[e, 'a1', '?result']]) and
+store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
+                    () =>
+                    {
+                        const signal = store.Signal(
+                            ['?result'],
+                            [[e, 'a1', '?result']]);
+                        const signal1 = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [signal]);
+                        store.SignalScheduler.RemoveSignal(signal1);
+                        assert('trace.length === 1')
+                        assert('trace[0].has([e.a1])')
+                    });
+            });
     });

@@ -433,10 +433,10 @@ export class EavStore implements IEavStore, IPublisher
         return signal;
     }
 
-    SignalRules<T extends [any, ...any[]]>(
+    SignalRule<T extends [any, ...any[]]>(
         head: T,
         body: (Fact | BuiltIn | RuleInvocation)[],
-        rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>
+        ...rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>
     {
         rules = [[<[string, any, ...any[]]>['', ...head], body], ...rules];
         const rulesGroupedByName = Group(
@@ -465,7 +465,7 @@ export class EavStore implements IEavStore, IPublisher
                     if(rules.length === 1)
                     {
                         const rule = rules[0];
-                        const signal = this.Signal(EavStore.Conjunction(rule));
+                        const signal = new Signal(EavStore.Conjunction(rule));
                         signals.set(
                             ruleName,
                             signal);
@@ -475,7 +475,7 @@ export class EavStore implements IEavStore, IPublisher
                     }
                     else
                     {
-                        const signal = this.Signal(EavStore.Disjunction);
+                        const signal = new Signal(EavStore.Disjunction);
                         signals.set(
                             ruleName,
                             signal);
@@ -503,6 +503,7 @@ export class EavStore implements IEavStore, IPublisher
                     .filter((atom): atom is Fact | RuleInvocation => !(atom instanceof Function))
                     .map(atom => IsRuleInvocation(atom) ? signals.get(atom[0]): this.SignalAtom(atom)));
 
+        this.SignalScheduler.AddSignals(signalAdjacencyList);
         return signals.get('');
     }
 
@@ -571,10 +572,10 @@ export class EavStore implements IEavStore, IPublisher
                     (facts: Fact[]) => facts.map(([entity, , value]) => [entity, value]),
                     [this.SignalAtom([undefined, <PropertyKey>params[0], undefined])]);
 
-        return this.SignalRules(
+        return this.SignalRule(
             params[0],
             params[1],
-            params[2]);
+            ...params.slice(2));
     }
 
     NewEntity(
