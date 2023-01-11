@@ -575,8 +575,8 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                             [[e, 'a1', '?result']]);
                         const traceSignal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [signal]);
                         store.SignalScheduler.RemoveSignal(traceSignal);
-                        assert('trace.length === 1')
-                        assert('trace[0].has([e.a1])')
+                        assert('trace.length === 1');
+                        assert('trace[0].has([e.a1])');
                     });
             });
 
@@ -603,8 +603,8 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                             [[e, 'a2', '?a2'], ['?a2', 'a3', '?result']]);
                         const traceSignal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [signal]);
                         store.SignalScheduler.RemoveSignal(traceSignal);
-                        assert('trace.length === 1')
-                        assert('trace[0].has([e.a2[0].a3])')
+                        assert('trace.length === 1');
+                        assert('trace[0].has([e.a2[0].a3])');
                     });
             });
     });
