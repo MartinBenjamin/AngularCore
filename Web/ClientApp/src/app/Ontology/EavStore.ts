@@ -556,7 +556,7 @@ export class EavStore implements IEavStore, IPublisher
         return (...inputs: object[][]): Tuple[] =>
         {
             let inputIndex = 1;
-            return body.splice(1).reduce(
+            return body.slice(1).reduce(
                 (substitutions, atom) =>
                 {
                     if(typeof atom === 'function')
