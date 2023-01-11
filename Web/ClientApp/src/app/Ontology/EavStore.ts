@@ -502,14 +502,23 @@ export class EavStore implements IEavStore, IPublisher
             signalAdjacencyList.set(
                 signal,
                 successors);
-            for(const atom of rule[1].filter((atom): atom is Fact | RuleInvocation => !(atom instanceof Function)))
-            {
-                const successor = new Signal(EavStore.Substitute(IsRuleInvocation(atom) ? atom.slice(1) : atom));
-                successors.push(successor);
-                signalAdjacencyList.set(
-                    successor,
-                    [IsRuleInvocation(atom) ? signals.get(atom[0]) : this.SignalAtom(atom)]);
-            }
+            for(const atom of rule[1])
+                if(atom instanceof Function)
+                {
+                    const successor = new Signal(() => atom);
+                    successors.push(successor);
+                    signalAdjacencyList.set(
+                        successor,
+                        []);
+                }
+                else
+                {
+                    const successor = new Signal(EavStore.Substitute(IsRuleInvocation(atom) ? atom.slice(1) : atom));
+                    successors.push(successor);
+                    signalAdjacencyList.set(
+                        successor,
+                        [IsRuleInvocation(atom) ? signals.get(atom[0]) : this.SignalAtom(atom)]);
+                }
         }
 
         this.SignalScheduler.AddSignals(signalAdjacencyList);
@@ -549,43 +558,38 @@ export class EavStore implements IEavStore, IPublisher
     }
 
     private static Conjunction(
-        rule: Rule
-        ): (...inputs: object[][]) => Tuple[]
+        rule: Rule       
+        ): (...inputs: (object[] | Function)[]) => Tuple[]
     {
-        const [[,...head], body] = rule;
-        return (...inputs: object[][]): Tuple[] =>
-        {
-            let inputIndex = 1;
-            return body.slice(1).reduce(
-                (substitutions, atom) =>
+        const [[, ...terms],] = rule;
+        return (...inputs: (object[] | Function)[]) => inputs.slice(1).reduce<object[]>(
+            (substitutions, input) =>
+            {
+                if(typeof input === 'function')
+                    return [...input(substitutions)];
+
+                let count = substitutions.length;
+                while(count--)
                 {
-                    if(typeof atom === 'function')
-                        return [...atom(substitutions)];
-
-                    let count = substitutions.length;
-                    while(count--)
+                    const outer = substitutions.shift();
+                    for(const inner of input)
                     {
-                        const outer = substitutions.shift();
-                        for(const inner of inputs[inputIndex])
-                        {
-                            let match = true;
-                            for(const variable in inner)
-                                if(!(outer[variable] === undefined || outer[variable] === inner[variable]))
-                                {
-                                    match = false;
-                                    break;
-                                }
+                        let match = true;
+                        for(const variable in inner)
+                            if(!(outer[variable] === undefined || outer[variable] === inner[variable]))
+                            {
+                                match = false;
+                                break;
+                            }
 
-                            if(match)
-                                substitutions.push({ ...outer, ...inner });
-                        }
+                        if(match)
+                            substitutions.push({ ...outer, ...inner });
                     }
+                }
 
-                    ++inputIndex;
-                    return substitutions;
-                },
-                inputs[0]).map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
-        };
+                return substitutions;
+            },
+            <object[]>inputs[0]).map(substitution => terms.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
     }
 
     private static Disjunction(

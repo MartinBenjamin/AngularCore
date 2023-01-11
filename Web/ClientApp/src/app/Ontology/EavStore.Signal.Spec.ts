@@ -3,6 +3,7 @@ import { ArraySet } from './ArraySet';
 import { assertBuilder } from './assertBuilder';
 import { EavStore } from './EavStore';
 import { Fact, IEavStore, Store } from './IEavStore';
+import { Add } from './Atom';
 
 describe(
     'EavStore.Signal(atom: Fact): Signal<Fact[]>',
@@ -577,6 +578,33 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                         store.SignalScheduler.RemoveSignal(traceSignal);
                         assert('trace.length === 1');
                         assert('trace[0].has([e.a1])');
+                    });
+            });
+
+        describe(
+            `Given store = new EavStore() and e = store.Assert(${JSON.stringify(o)}):`,
+            () =>
+            {
+                const store: IEavStore = new EavStore();
+                const e = store.Assert(o);
+
+                describe(
+                    `Given
+trace: Set<any[]>[] and
+signal = store.Signal(['?result'], [[e, 'a1', '?a1'], Add('?a1', 100, '?result')]) and
+store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
+                    () =>
+                    {
+                        const trace: Set<any[]>[] = [];
+                        const assert = assertBuilder('Store', 'store', 'e', 'trace')
+                            (Store, store, e, trace);
+                        const signal = store.Signal(
+                            ['?result'],
+                            [[e, 'a1', '?a1'], Add('?a1', 100, '?result')]);
+                        const traceSignal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [signal]);
+                        store.SignalScheduler.RemoveSignal(traceSignal);
+                        assert('trace.length === 1');
+                        assert('trace[0].has([e.a1 + 100])');
                     });
             });
 
