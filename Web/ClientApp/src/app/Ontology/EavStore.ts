@@ -497,22 +497,63 @@ export class EavStore implements IEavStore, IPublisher
                 }
 
         for(const [signal, rule] of conjunctions)
+        {
+            const successors: Signal[] = [];
             signalAdjacencyList.set(
                 signal,
-                rule[1]
-                    .filter((atom): atom is Fact | RuleInvocation => !(atom instanceof Function))
-                    .map(atom => IsRuleInvocation(atom) ? signals.get(atom[0]): this.SignalAtom(atom)));
+                successors);
+            for(const atom of rule[1].filter((atom): atom is Fact | RuleInvocation => !(atom instanceof Function)))
+            {
+                const successor = new Signal(EavStore.Substitute(atom));
+                successors.push(successor);
+                signalAdjacencyList.set(
+                    successor,
+                    [IsRuleInvocation(atom) ? signals.get(atom[0]) : this.SignalAtom(atom)]);
+            }
+        }
 
         this.SignalScheduler.AddSignals(signalAdjacencyList);
         return signals.get('');
     }
 
+    private static Substitute(
+        atom: Fact | RuleInvocation
+        ): (tuples: Iterable<Tuple>) => {}[]
+    {
+        return (tuples: Iterable<Tuple>) =>
+        {
+            const substitutions: {}[] = [];
+            for(const tuple of tuples)
+            {
+                let substitution = {};
+                for(let index = IsRuleInvocation(atom) ? 1 : 0; index < atom.length && substitution; ++index)
+                {
+                    const term = atom[index];
+                    if(IsVariable(term))
+                    {
+                        if(substitution[term] === undefined)
+                            substitution[term] = tuple[index];
+
+                        else if(substitution[term] !== tuple[index])
+                            // Tuple does not match query pattern.
+                            substitution = null;
+                    }
+                }
+
+                if(substitution)
+                    substitutions.push(substitution)
+            }
+
+            return substitutions;
+        };
+    }
+
     private static Conjunction(
         rule: Rule
-        ): (...inputs: Iterable<Tuple>[]) => Tuple[]
+        ): (...inputs: Iterable<{}>[]) => Tuple[]
     {
         const [[,...head], body] = rule;
-        return (...inputs: Iterable<Tuple>[]): Tuple[] =>
+        return (...inputs: Iterable<{}>[]): Tuple[] =>
         {
             let inputIndex = 0;
             return body.reduce(
@@ -524,26 +565,19 @@ export class EavStore implements IEavStore, IPublisher
                     let count = substitutions.length;
                     while(count--)
                     {
-                        const substitution = substitutions.shift();
-                        for(const tuple of inputs[inputIndex])
+                        const outer = substitutions.shift();
+                        for(const inner of inputs[inputIndex])
                         {
-                            let merged = { ...substitution };
-                            for(let index = IsRuleInvocation(atom) ? 1 : 0; index < atom.length && merged; ++index)
-                            {
-                                const term = atom[index];
-                                if(IsVariable(term))
+                            let match = true;
+                            for(const variable in inner)
+                                if(!(outer[variable] === undefined || outer[variable] === inner[variable]))
                                 {
-                                    if(typeof merged[term] === 'undefined')
-                                        merged[term] = tuple[index];
-
-                                    else if(merged[term] !== tuple[index])
-                                        // Tuple does not match query pattern.
-                                        merged = null;
+                                    match = false;
+                                    break;
                                 }
-                            }
 
-                            if(merged)
-                                substitutions.push(merged);
+                            if(match)
+                                substitutions.push({ ...outer, ...inner });
                         }
                     }
 
