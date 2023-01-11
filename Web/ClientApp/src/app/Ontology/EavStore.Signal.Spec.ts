@@ -580,7 +580,6 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                     });
             });
 
-
         describe(
             `Given store = new EavStore() and e = store.Assert(${JSON.stringify(o)}):`,
             () =>
@@ -605,6 +604,33 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                         store.SignalScheduler.RemoveSignal(traceSignal);
                         assert('trace.length === 1');
                         assert('trace[0].has([e.a2[0].a3])');
+                    });
+            });
+
+        describe(
+            `Given store = new EavStore() and e = store.Assert(${JSON.stringify(o)}):`,
+            () =>
+            {
+                const store: IEavStore = new EavStore();
+                const e = store.Assert(o);
+
+                describe(
+                    `Given
+trace: Set<any[]>[] and
+signal = store.Signal(['?result'], [['rule', '?result']], [['rule', '?result'], [[e, 'a1', '?result']]]) and
+store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
+                    () =>
+                    {
+                        const trace: Set<any[]>[] = [];
+                        const assert = assertBuilder('Store', 'store', 'e', 'trace')
+                            (Store, store, e, trace);
+                        const signal = store.Signal(
+                            ['?result'], [['rule', '?result']],
+                            [['rule', '?result'], [[e, 'a1', '?result']]]);
+                        const traceSignal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [signal]);
+                        store.SignalScheduler.RemoveSignal(traceSignal);
+                        assert('trace.length === 1');
+                        assert('trace[0].has([e.a1])');
                     });
             });
     });

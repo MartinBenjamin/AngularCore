@@ -520,15 +520,17 @@ export class EavStore implements IEavStore, IPublisher
         atom: Fact | RuleInvocation
         ): (tuples: Iterable<Tuple>) => object[]
     {
+        let terms = IsRuleInvocation(atom) ? atom.slice(1) : atom;
+
         return (tuples: Iterable<Tuple>) =>
         {
             const substitutions: object[] = [];
             for(const tuple of tuples)
             {
                 let substitution = {};
-                for(let index = IsRuleInvocation(atom) ? 1 : 0; index < atom.length && substitution; ++index)
+                for(let index = 0; index < atom.length && substitution; ++index)
                 {
-                    const term = atom[index];
+                    const term = terms[index];
                     if(IsVariable(term))
                     {
                         if(substitution[term] === undefined)
