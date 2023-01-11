@@ -504,7 +504,7 @@ export class EavStore implements IEavStore, IPublisher
                 successors);
             for(const atom of rule[1].filter((atom): atom is Fact | RuleInvocation => !(atom instanceof Function)))
             {
-                const successor = new Signal(EavStore.Substitute(atom));
+                const successor = new Signal(EavStore.Substitute(IsRuleInvocation(atom) ? atom.slice(1) : atom));
                 successors.push(successor);
                 signalAdjacencyList.set(
                     successor,
@@ -517,18 +517,16 @@ export class EavStore implements IEavStore, IPublisher
     }
 
     private static Substitute(
-        atom: Fact | RuleInvocation
+        terms: any[]
         ): (tuples: Iterable<Tuple>) => object[]
     {
-        let terms = IsRuleInvocation(atom) ? atom.slice(1) : atom;
-
         return (tuples: Iterable<Tuple>) =>
         {
             const substitutions: object[] = [];
             for(const tuple of tuples)
             {
                 let substitution = {};
-                for(let index = 0; index < atom.length && substitution; ++index)
+                for(let index = 0; index < terms.length && substitution; ++index)
                 {
                     const term = terms[index];
                     if(IsVariable(term))
