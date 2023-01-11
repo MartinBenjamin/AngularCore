@@ -573,8 +573,8 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                         const signal = store.Signal(
                             ['?result'],
                             [[e, 'a1', '?result']]);
-                        const signal1 = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [signal]);
-                        store.SignalScheduler.RemoveSignal(signal1);
+                        const traceSignal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [signal]);
+                        store.SignalScheduler.RemoveSignal(traceSignal);
                         assert('trace.length === 1')
                         assert('trace[0].has([e.a1])')
                     });
@@ -601,8 +601,8 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                         const signal = store.Signal(
                             ['?result'],
                             [[e, 'a2', '?a2'], ['?a2', 'a3', '?result']]);
-                        const signal1 = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [signal]);
-                        store.SignalScheduler.RemoveSignal(signal1);
+                        const traceSignal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [signal]);
+                        store.SignalScheduler.RemoveSignal(traceSignal);
                         assert('trace.length === 1')
                         assert('trace[0].has([e.a2[0].a3])')
                     });
