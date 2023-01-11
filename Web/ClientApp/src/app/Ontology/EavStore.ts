@@ -562,8 +562,8 @@ export class EavStore implements IEavStore, IPublisher
         ): (...inputs: (object[] | BuiltIn)[]) => Tuple[]
     {
         const [[, ...terms],] = rule;
-        return (...inputs: (object[] | Function)[]) => inputs.slice(1).reduce<object[]>(
-            (substitutions, input) =>
+        return (...inputs: (object[] | Function)[]) => inputs.slice(1).reduce(
+            (substitutions: object[], input) =>
             {
                 if(typeof input === 'function')
                     return [...input(substitutions)];
