@@ -559,7 +559,7 @@ export class EavStore implements IEavStore, IPublisher
 
     private static Conjunction(
         rule: Rule       
-        ): (...inputs: (object[] | Function)[]) => Tuple[]
+        ): (...inputs: (object[] | BuiltIn)[]) => Tuple[]
     {
         const [[, ...terms],] = rule;
         return (...inputs: (object[] | Function)[]) => inputs.slice(1).reduce<object[]>(
