@@ -504,13 +504,8 @@ export class EavStore implements IEavStore, IPublisher
                 successors);
             for(const atom of rule[1])
                 if(atom instanceof Function)
-                {
-                    const successor = new Signal(() => atom);
-                    successors.push(successor);
-                    signalAdjacencyList.set(
-                        successor,
-                        []);
-                }
+                    successors.push(this.SignalScheduler.AddSignal(() => atom));
+
                 else
                 {
                     const successor = new Signal(EavStore.Substitute(IsRuleInvocation(atom) ? atom.slice(1) : atom));
