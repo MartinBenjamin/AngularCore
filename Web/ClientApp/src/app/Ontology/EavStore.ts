@@ -1,4 +1,4 @@
-import { combineLatest, Observable, Subscriber } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, Subscriber } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Scheduler, Signal } from '../Signal';
 import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
@@ -8,8 +8,8 @@ import { Group } from './Group';
 import { AttributeSchema, Cardinality, Fact, IEavStore, IsRuleInvocation, IsVariable, Rule, RuleInvocation, Store, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
-import { StronglyConnectedComponents } from './StronglyConnectedComponents';
 import { ArrayCompareFactory } from './SortedSet';
+import { StronglyConnectedComponents } from './StronglyConnectedComponents';
 
 type Tuple = any[];
 
@@ -345,48 +345,10 @@ export class EavStore implements IEavStore, IPublisher
         head: T,
         body: (Fact | BuiltIn)[]): Observable<{ [K in keyof T]: any; }[]>
     {
-        return combineLatest(
-            body.filter(atom => atom instanceof Array).map(atom => this.ObserveAtom(<Fact>atom)),
-            (...observed) =>
-            {
-                let observedIndex = 0;
-                return body.reduce(
-                    (substitutions, atom) =>
-                    {
-                        if(typeof atom === 'function')
-                            return [...atom(substitutions)];
-
-                        let count = substitutions.length;
-                        while(count--)
-                        {
-                            const substitution = substitutions.shift();
-                            for(const fact of observed[observedIndex])
-                            {
-                                let merged = { ...substitution };
-                                for(let index = 0; index < atom.length && merged; ++index)
-                                {
-                                    const term = atom[index];
-                                    if(IsVariable(term))
-                                    {
-                                        if(typeof merged[term] === 'undefined')
-                                            merged[term] = fact[index];
-
-                                        else if(merged[term] !== fact[index])
-                                            // Fact does not match query pattern.
-                                            merged = null;
-                                    }
-                                }
-
-                                if(merged)
-                                    substitutions.push(merged);
-                            }
-                        }
-
-                        ++observedIndex;
-                        return substitutions;
-                    },
-                    [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
-            });
+        return <Observable<any>>combineLatest(
+            body.map<Observable<any>>(atom =>
+                atom instanceof Function ? new BehaviorSubject(atom) : this.ObserveAtom(<Fact>atom).pipe(map(EavStore.Substitute(atom)))),
+            EavStore.Conjunction(head));
     }
 
     Observe(
