@@ -221,12 +221,12 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         stronglyConnectedComponent: SCC<Signal>
         ): void
     {
-        // Check for descendents.
-        if([...this._condensed.values()].some(ancestors => ancestors.includes(stronglyConnectedComponent)))
-            // Strongly connected component has descendents.
+        // Check for successors.
+        if([...this._condensed.values()].some(predecessors => predecessors.includes(stronglyConnectedComponent)))
+            // Strongly connected component has successors.
             return;
 
-        const ancestors = this._condensed.get(stronglyConnectedComponent);
+        const predecessors = this._condensed.get(stronglyConnectedComponent);
 
         //  Delete strongly connected component.
         (<Map<SCC<Signal>, ReadonlyArray<SCC<Signal>>>>this._condensed).delete(stronglyConnectedComponent);
@@ -253,9 +253,9 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
             signal.Remove();
         }
 
-        // Delete sncestor strongly connected components.
-        for(const ancestor of ancestors)
-            this.RemoveStronglyConnectedComponent(ancestor);
+        // Delete predecessor strongly connected components.
+        for(const predecessor of predecessors)
+            this.RemoveStronglyConnectedComponent(predecessor);
     }
 
     public add(
