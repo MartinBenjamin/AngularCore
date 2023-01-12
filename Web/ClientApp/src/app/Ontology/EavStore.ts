@@ -465,7 +465,7 @@ export class EavStore implements IEavStore, IPublisher
                     if(rules.length === 1)
                     {
                         const rule = rules[0];
-                        const signal = new Signal(EavStore.Conjunction(rule));
+                        const signal = new Signal(EavStore.Conjunction(rule[0].slice(1)));
                         signals.set(
                             ruleName,
                             signal);
@@ -487,7 +487,7 @@ export class EavStore implements IEavStore, IPublisher
 
                         for(const rule of rules)
                         {
-                            const signal = this.Signal(EavStore.Conjunction(rule));
+                            const signal = this.Signal(EavStore.Conjunction(rule[0].slice(1)));
                             adjacentSignals.push(signal);
                             conjunctions.set(
                                 signal,
@@ -553,10 +553,9 @@ export class EavStore implements IEavStore, IPublisher
     }
 
     private static Conjunction(
-        rule: Rule       
+        terms: any[]
         ): (...inputs: (object[] | BuiltIn)[]) => Tuple[]
     {
-        const [[, ...terms],] = rule;
         return (...inputs: (object[] | Function)[]) => inputs.slice(1).reduce<object[]>(
             (substitutions, input) =>
             {
