@@ -492,7 +492,7 @@ export class EavStore implements IEavStore, IPublisher
         return signals.get('');
     }
 
-    private static Substitute(
+    public static Substitute(
         terms: any[]
         ): (tuples: Iterable<Tuple>) => object[]
     {
@@ -524,7 +524,7 @@ export class EavStore implements IEavStore, IPublisher
         };
     }
 
-    private static Conjunction(
+    public static Conjunction(
         terms: any[]
         ): (...inputs: (object[] | BuiltIn)[]) => Tuple[]
     {
@@ -558,7 +558,7 @@ export class EavStore implements IEavStore, IPublisher
             <object[]>inputs[0]).map(substitution => terms.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
     }
 
-    private static Disjunction(
+    public static Disjunction(
         ...inputs: Iterable<Tuple>[]
         ): Tuple[]
     {

@@ -2,11 +2,12 @@ import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { BuiltIn, Equal, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, NotEqual } from './Atom';
 import { Axiom } from './Axiom';
+import { EavStore } from './EavStore';
 import { IAxiom } from "./IAxiom";
 import { IClassExpression } from "./IClassExpression";
 import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IDataRange } from "./IDataRange";
-import { Fact, IEavStore, IsConstant, IsVariable } from './IEavStore';
+import { IEavStore, IsConstant, IsVariable } from './IEavStore';
 import { IIndividual } from "./IIndividual";
 import { IOntology } from './IOntology';
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
@@ -410,187 +411,7 @@ export function IsDLSafeRule(
     return axiom instanceof DLSafeRule;
 }
 
-export class Generator implements IAtomSelector<Observable<object[]>>
-{
-    private _previous: Observable<object[]>;
-
-    constructor(
-        private _store                   : IEavStore,
-        private _classObservableGenerator: IClassExpressionSelector<Observable<Set<any>>>
-        )
-    {
-    }
-
-    Class(
-        class$: IClassAtom
-        ): Observable<object[]>
-    {
-        if(IsVariable(class$.Individual))
-            return combineLatest(
-                this._previous,
-                class$.ClassExpression.Select(this._classObservableGenerator),
-                (substitutions, individuals) => substitutions.reduce<object[]>(
-                    (substitutions, substitution) =>
-                    {
-                        const substitutionIndividual = substitution[<string>class$.Individual];
-                        if(typeof substitutionIndividual === 'undefined')
-                        {
-                            substitutions.push(...[...individuals]
-                                .map(individual =>
-                                {
-                                    return { ...substitution, [<string>class$.Individual]: individual };
-                                }));
-                            return substitutions;
-                        }
-                        else if(individuals.has(substitutionIndividual))
-                            substitutions.push(substitution);
-
-                        return substitutions;
-                    },
-                []));
-
-        return combineLatest(
-            this._previous,
-            class$.ClassExpression.Select(this._classObservableGenerator),
-            (substitutions, individuals) => individuals.has(class$.Individual) ? substitutions : []);
-    }
-
-    DataRange(
-        dataRange: IDataRangeAtom
-        ): Observable<object[]>
-    {
-        return this._previous.pipe(
-            map(
-                previous => previous.filter(
-                    previous =>
-                    {
-                        if(IsConstant(dataRange.Value))
-                            return dataRange.DataRange.HasMember(dataRange.Value);
-
-                        return dataRange.DataRange.HasMember(previous[dataRange.Value]);
-                    })));
-    }
-
-    ObjectProperty(
-        objectProperty: IObjectPropertyAtom
-        ): Observable<object[]>
-    {
-        return this.Property([objectProperty.Domain, objectProperty.ObjectPropertyExpression.LocalName, objectProperty.Range]);
-    }
-
-    DataProperty(
-        dataProperty: IDataPropertyAtom
-        ): Observable<object[]>
-    {
-        return this.Property([dataProperty.Domain, dataProperty.DataPropertyExpression.LocalName, dataProperty.Range]);
-    }
-
-    private Property(
-        atom: Fact
-        ): Observable<object[]>
-    {
-        const keys = [0, 2];
-        return combineLatest(
-            this._previous,
-            this._store.Observe(atom),
-            (substitutions, facts) => substitutions.reduce<object[]>(
-                (substitutions, substitution) =>
-                {
-                    for(const fact of facts)
-                    {
-                        let merged = { ...substitution };
-                        for(const key of keys)
-                        {
-                            const term = atom[key];
-                            if(IsVariable(term))
-                            {
-                                if(typeof merged[term] === 'undefined')
-                                    merged[term] = fact[key];
-
-                                else if(merged[term] !== fact[key])
-                                {
-                                    // Fact does not match query pattern.
-                                    merged = null;
-                                    break;
-                                }
-                            }
-                        }
-
-                        if(merged)
-                            substitutions.push(merged);
-                    }
-                    return substitutions;
-                },
-                []));
-    }
-
-    LessThan(
-        lessThan: ILessThanAtom
-        ): Observable<object[]>
-    {
-        return this.Comparison(LessThan(lessThan.Lhs, lessThan.Rhs));
-    }
-
-    LessThanOrEqual(
-        lessThanOrEqual: ILessThanOrEqualAtom
-        ): Observable<object[]>
-    {
-
-        return this.Comparison(LessThanOrEqual(lessThanOrEqual.Lhs, lessThanOrEqual.Rhs));
-    }
-
-    Equal(
-        equal: IEqualAtom
-        ): Observable<object[]>
-    {
-        return this.Comparison(Equal(equal.Lhs, equal.Rhs));
-    }
-
-    NotEqual(
-        notEqual: INotEqualAtom
-        ): Observable<object[]>
-    {
-        return this.Comparison(NotEqual(notEqual.Lhs, notEqual.Rhs));
-    }
-
-    GreaterThanOrEqual(
-        greaterThanOrEqual: IGreaterThanOrEqualAtom
-        ): Observable<object[]>
-    {
-        return this.Comparison(GreaterThanOrEqual(greaterThanOrEqual.Lhs, greaterThanOrEqual.Rhs));
-    }
-
-    GreaterThan(
-        greaterThan: IGreaterThanAtom
-        ): Observable<object[]>
-    {
-        return this.Comparison(GreaterThan(greaterThan.Lhs, greaterThan.Rhs));
-    }
-
-    private Comparison(
-        builtIn: BuiltIn
-        ): Observable<object[]>
-    {
-        return this._previous.pipe(map(previous => [...builtIn(previous)]));
-    }
-
-    Atoms(
-        atoms: IAtom[]
-        ): Observable<object[]>
-    {
-        this._previous = new BehaviorSubject<object[]>([{}]).asObservable();
-        let next: Observable<object[]>;
-        for(const atom of atoms)
-        {
-            if(next)
-                this._previous = next;
-            next = atom.Select(this);
-        }
-        return next;
-    }
-}
-
-export class Generator2 implements IAtomSelector<Observable<object[]> | BuiltIn>
+export class Generator implements IAtomSelector<Observable<object[]> | BuiltIn>
 {
     constructor(
         private _store                   : IEavStore,
@@ -636,53 +457,22 @@ export class Generator2 implements IAtomSelector<Observable<object[]> | BuiltIn>
         objectProperty: IObjectPropertyAtom
         ): Observable<object[]>
     {
-        return this.Property([objectProperty.Domain, objectProperty.ObjectPropertyExpression.LocalName, objectProperty.Range]);
+        return this.Property(objectProperty);
     }
 
     DataProperty(
         dataProperty: IDataPropertyAtom
         ): Observable<object[]>
     {
-        return this.Property([dataProperty.Domain, dataProperty.DataPropertyExpression.LocalName, dataProperty.Range]);
+        return this.Property(dataProperty);
     }
 
     private Property(
-        atom: Fact
+        property: IPropertyAtom
         ): Observable<object[]>
     {
-        const keys = [0, 2];
-        return this._store.Observe(atom)
-            .pipe(map(
-                facts =>
-                {
-                    const substitutions = [];
-                    for(const fact of facts)
-                    {
-                        let substitution = {};
-
-                        for(const key of keys)
-                        {
-                            const term = atom[key];
-
-                            if(IsVariable(term))
-                            {
-                                if(typeof substitution[term] === 'undefined')
-                                    substitution[term] = fact[key];
-
-                                else if(substitution[term] !== fact[key])
-                                {
-                                    substitution = null;
-                                    break;
-                                }
-                            }
-                        }
-
-                        if(substitution)
-                            substitutions.push(substitution);
-                    }
-
-                    return substitutions;
-                }));
+        return this._store.Observe(property.PropertyExpression.LocalName)
+            .pipe(map(EavStore.Substitute([property.Domain, property.Range])));
     }
 
     LessThan(
@@ -760,7 +550,7 @@ export class Generator2 implements IAtomSelector<Observable<object[]> | BuiltIn>
 }
 
 function ObserveRuleContradictions(
-    generator: Generator2,
+    generator: Generator,
     rule     : IDLSafeRule
     ): Observable<object[]>
 {
@@ -790,7 +580,7 @@ export function* ObserveContradictions(
     rules                   : Iterable<IDLSafeRule>
     ): Iterable<Observable<[string, IAxiom, Set<any>]>>
 {
-    const generator = new Generator2(
+    const generator = new Generator(
         store,
         observableClassGenerator);
 
