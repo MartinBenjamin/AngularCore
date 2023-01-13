@@ -345,10 +345,20 @@ export class EavStore implements IEavStore, IPublisher
         head: T,
         body: (Fact | BuiltIn)[]): Observable<{ [K in keyof T]: any; }[]>
     {
-        return <Observable<any>>combineLatest(
-            body.map<Observable<any>>(atom =>
-                atom instanceof Function ? new BehaviorSubject(atom) : this.ObserveAtom(<Fact>atom).pipe(map(EavStore.Substitute(atom)))),
-            EavStore.Conjunction(head));
+        //return <Observable<any>>combineLatest(
+        //    body.map<Observable<any>>(atom =>
+        //        atom instanceof Function ? new BehaviorSubject(atom) : this.ObserveAtom(<Fact>atom).pipe(map(EavStore.Substitute(atom)))),
+        //    EavStore.Conjunction(head));
+
+        return new Observable<{ [K in keyof T]: any; }[]>(
+            subscriber =>
+            {
+                const signal =  this.SignalScheduler.AddSignal(
+                    result => subscriber.next(result),
+                    [(<IEavStore>this).Signal(head, body)]);
+
+                subscriber.add(() => this.SignalScheduler.RemoveSignal(signal));
+            });
     }
 
     Observe(
