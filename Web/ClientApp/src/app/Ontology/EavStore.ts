@@ -504,13 +504,16 @@ export class EavStore implements IEavStore, IPublisher
                 if(atom instanceof Function)
                     successors.push(this.SignalScheduler.AddSignal(() => atom));
 
+                else if(IsRuleInvocation(atom))
+                    successors.push(ruleInvocations.get(atom));
+
                 else
                 {
-                    const successor = new Signal(EavStore.Substitute(IsRuleInvocation(atom) ? atom.slice(1) : atom));
+                    const successor = new Signal(EavStore.Substitute(atom));
                     successors.push(successor);
                     signalAdjacencyList.set(
                         successor,
-                        [IsRuleInvocation(atom) ? ruleInvocations.get(atom) : this.SignalAtom(atom)]);
+                        [this.SignalAtom(atom)]);
                 }
         }
 
@@ -553,14 +556,38 @@ export class EavStore implements IEavStore, IPublisher
     public static Conjunction(
         terms: any[],
         invocationTerms?: any[]
-        ): (...inputs: (object[] | BuiltIn)[]) => Tuple[]
+        ): (...inputs: (object[] | BuiltIn)[]) => object[]
     {
-
         const initial = {};
+        let map = (substitution): object => terms.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term);
         if(invocationTerms)
+        {
+            const variableMap = {};
             for(let index = 0; index < terms.length; index++)
-                if(IsVariable(terms[index]) && IsConstant(invocationTerms[index]))
-                    initial[terms[index]] = invocationTerms[index];
+            {
+                const term = terms[index];
+                const invocationTerm = invocationTerms[index];
+
+                if(IsVariable(term))
+                {
+                    if(IsConstant(invocationTerm))
+                        initial[term] = invocationTerm;
+
+                    else if(IsVariable(invocationTerm))
+                        variableMap[term] = invocationTerm;
+                }
+            }
+
+            const variablesToMap = Object.keys(variableMap);
+
+            map = substitution => variablesToMap.reduce<object>(
+                (mapped, variable) =>
+                {
+                    mapped[variableMap[variable]] = substitution[variable];
+                    return mapped;
+                },
+                {});
+        }
 
         return (...inputs: (object[] | Function)[]) => inputs.reduce<object[]>(
             (substitutions, input) =>
@@ -589,7 +616,7 @@ export class EavStore implements IEavStore, IPublisher
 
                 return substitutions;
             },
-            [initial]).map(substitution => terms.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
+            [initial]).map(map);
     }
 
     public static Disjunction(
