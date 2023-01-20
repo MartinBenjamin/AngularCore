@@ -587,14 +587,17 @@ export class EavStore implements IEavStore, IPublisher
                 {
                     let mappedSubstitution = {};
                     for(const variable of variablesToMap)
-                        if(mappedSubstitution[variableMap[variable]] === undefined)
-                            mappedSubstitution[variableMap[variable]] = substitution[variable];
+                    {
+                        const mappedVariable = variableMap[variable];
+                        if(mappedSubstitution[mappedVariable] === undefined)
+                            mappedSubstitution[mappedVariable] = substitution[variable];
 
-                        else if(mappedSubstitution[variableMap[variable]] !== substitution[variable])
+                        else if(mappedSubstitution[mappedVariable] !== substitution[variable])
                         {
                             mappedSubstitution = null;
                             break;
                         }
+                    }
 
                     if(mappedSubstitution)
                         mappedSubstitutions.push(mappedSubstitution);
