@@ -1,11 +1,11 @@
-import { BehaviorSubject, combineLatest, Observable, Subscriber } from 'rxjs';
+import { Observable, Subscriber } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Scheduler, Signal } from '../Signal';
 import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
 import { BuiltIn } from './Atom';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
 import { Group } from './Group';
-import { AttributeSchema, Cardinality, Fact, IEavStore, IsRuleInvocation, IsVariable, Rule, RuleInvocation, Store, StoreSymbol } from './IEavStore';
+import { AttributeSchema, Cardinality, Fact, IEavStore, IsConstant, IsRuleInvocation, IsVariable, Rule, RuleInvocation, Store, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
 import { ArrayCompareFactory } from './SortedSet';
@@ -410,7 +410,8 @@ export class EavStore implements IEavStore, IPublisher
         body: (Fact | BuiltIn | RuleInvocation)[],
         ...rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>
     {
-        rules = [[<[string, any, ...any[]]>['', ...head], body], ...rules];
+        rules = [[<RuleInvocation>['', ...head], body], ...rules];
+
         const rulesGroupedByName = Group(
             rules,
             rule => rule[0][0],
@@ -422,59 +423,84 @@ export class EavStore implements IEavStore, IPublisher
                     rule[0][0],
                     [].concat(...rulesGroupedByName.get(rule[0][0]).map(rule => rule[1].filter(IsRuleInvocation).map(ruleInvocation => ruleInvocation[0])))]));
 
-        const stronglyConnectedComponents = StronglyConnectedComponents(ruleAdjacencyList);
+        type SCC<T> = ReadonlyArray<T>;
+
+        const stronglyConnectedComponents = new Map<string, SCC<string>>([].concat(
+            ...StronglyConnectedComponents(ruleAdjacencyList).map(scc => scc.map(ruleName => <[string, SCC<string>]>[ruleName, scc]))));
 
         const signalAdjacencyList = new Map<Signal, Signal[]>();
-        const signals = new Map<string, Signal>();
-        const conjunctions = new Map<Signal, Rule>();
+        const conjunctions = new Map<Signal, (Fact | BuiltIn | RuleInvocation)[]>();
+        const ruleInvocations = new ArrayKeyedMap<RuleInvocation, Signal>();
+        const signal: Signal<any> = new Signal(EavStore.Conjunction(head))
+        conjunctions.set(
+            signal,
+            body);
 
-        // Transform strong connected components.
-        for(const stronglyConnectedComponent of stronglyConnectedComponents)
-            for(const ruleName of stronglyConnectedComponent)
-                if(stronglyConnectedComponent.length === 1)
+        for(const rule of rules)
+            for(const atom of rule[1])
+                if(IsRuleInvocation(atom))
                 {
-                    const rules = rulesGroupedByName.get(stronglyConnectedComponent[0]);
+                    const ruleName = atom[0];
+
+                    if(!rulesGroupedByName.has(ruleName))
+                        throw new Error(`No Rule defined for Rule Invocation: ${ruleName}`);
+
+                    const rules = rulesGroupedByName.get(atom[0]);
+
                     if(rules.length === 1)
                     {
                         const rule = rules[0];
-                        const signal = new Signal(EavStore.Conjunction(rule[0].slice(1)));
-                        signals.set(
-                            ruleName,
+
+                        if(atom.length !== rule[0].length)
+                            throw new Error(`Rule Invocation term count does not match Rule term count: ${ruleName}`)
+
+                        const signal = new Signal(EavStore.Conjunction(
+                            rule[0].slice(1),
+                            atom.slice(1)));
+
+                        ruleInvocations.set(
+                            atom,
                             signal);
                         conjunctions.set(
                             signal,
-                            rule);
+                            rule[1]);
                     }
                     else
                     {
                         const signal = new Signal(EavStore.Disjunction);
-                        signals.set(
-                            ruleName,
+                        ruleInvocations.set(
+                            atom,
                             signal);
 
-                        const adjacentSignals: Signal[] = [];
+                        const successors: Signal[] = [];
                         signalAdjacencyList.set(
                             signal,
-                            adjacentSignals);
+                            successors);
 
                         for(const rule of rules)
                         {
-                            const signal = this.Signal(EavStore.Conjunction(rule[0].slice(1)));
-                            adjacentSignals.push(signal);
+                            if(atom.length !== rule[0].length)
+                                throw new Error(`Rule Invocation term count does not match Rule term count: ${ruleName}`)
+
+                            const signal = this.Signal(EavStore.Conjunction(
+                                rule[0].slice(1),
+                                atom.slice(1)));
+                            successors.push(signal);
+
                             conjunctions.set(
                                 signal,
-                                rule);                
+                                rule[1]);
                         }
                     }
                 }
 
-        for(const [signal, rule] of conjunctions)
+        for(const [signal, body] of conjunctions)
         {
             const successors: Signal[] = [];
             signalAdjacencyList.set(
                 signal,
                 successors);
-            for(const atom of rule[1])
+            for(const atom of body)
                 if(atom instanceof Function)
                     successors.push(this.SignalScheduler.AddSignal(() => atom));
 
@@ -484,12 +510,12 @@ export class EavStore implements IEavStore, IPublisher
                     successors.push(successor);
                     signalAdjacencyList.set(
                         successor,
-                        [IsRuleInvocation(atom) ? signals.get(atom[0]) : this.SignalAtom(atom)]);
+                        [IsRuleInvocation(atom) ? ruleInvocations.get(atom) : this.SignalAtom(atom)]);
                 }
         }
 
         this.SignalScheduler.AddSignals(signalAdjacencyList);
-        return signals.get('');
+        return signal;
     }
 
     public static Substitute(
@@ -525,10 +551,18 @@ export class EavStore implements IEavStore, IPublisher
     }
 
     public static Conjunction(
-        terms: any[]
+        terms: any[],
+        invocationTerms?: any[]
         ): (...inputs: (object[] | BuiltIn)[]) => Tuple[]
     {
-        return (...inputs: (object[] | Function)[]) => inputs.slice(1).reduce<object[]>(
+
+        const initial = {};
+        if(invocationTerms)
+            for(let index = 0; index < terms.length; index++)
+                if(IsVariable(terms[index]) && IsConstant(invocationTerms[index]))
+                    initial[terms[index]] = invocationTerms[index];
+
+        return (...inputs: (object[] | Function)[]) => inputs.reduce<object[]>(
             (substitutions, input) =>
             {
                 if(typeof input === 'function')
@@ -555,7 +589,7 @@ export class EavStore implements IEavStore, IPublisher
 
                 return substitutions;
             },
-            <object[]>inputs[0]).map(substitution => terms.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
+            [initial]).map(substitution => terms.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
     }
 
     public static Disjunction(
