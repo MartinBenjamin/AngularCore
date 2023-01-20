@@ -558,8 +558,8 @@ export class EavStore implements IEavStore, IPublisher
         invocationTerms?: any[]
         ): (...inputs: (object[] | BuiltIn)[]) => object[]
     {
-        const initial = {};
-        let map = (substitution): object => terms.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term);
+        const initial: object = {};
+        let map: (substitutions: object[]) => object[] = (substitutions: object[]) => substitutions.map(substitution => terms.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
         if(invocationTerms)
         {
             const variableMap = {};
@@ -580,16 +580,30 @@ export class EavStore implements IEavStore, IPublisher
 
             const variablesToMap = Object.keys(variableMap);
 
-            map = substitution => variablesToMap.reduce<object>(
-                (mapped, variable) =>
+            map = (substitutions: object[]) =>
+            {
+                const mappedSubstitutions: object[] = [];
+                for(const substitution of substitutions)
                 {
-                    mapped[variableMap[variable]] = substitution[variable];
-                    return mapped;
-                },
-                {});
+                    let mappedSubstitution = {};
+                    for(const variable of variablesToMap)
+                        if(mappedSubstitution[variableMap[variable]] === undefined)
+                            mappedSubstitution[variableMap[variable]] = substitution[variable];
+
+                        else if(mappedSubstitution[variableMap[variable]] !== substitution[variable])
+                        {
+                            mappedSubstitution = null;
+                            break;
+                        }
+
+                    if(mappedSubstitution)
+                        mappedSubstitutions.push(mappedSubstitution);
+                }
+                return mappedSubstitutions;
+            };
         }
 
-        return (...inputs: (object[] | Function)[]) => inputs.reduce<object[]>(
+        return (...inputs: (object[] | Function)[]) => map(inputs.reduce<object[]>(
             (substitutions, input) =>
             {
                 if(typeof input === 'function')
@@ -616,7 +630,7 @@ export class EavStore implements IEavStore, IPublisher
 
                 return substitutions;
             },
-            [initial]).map(map);
+            [initial]));
     }
 
     public static Disjunction(
