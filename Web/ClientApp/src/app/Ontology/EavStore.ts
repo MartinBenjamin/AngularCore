@@ -558,13 +558,13 @@ export class EavStore implements IEavStore, IPublisher
         invocationTerms?: any[]
         ): (...inputs: (object[] | BuiltIn)[]) => object[]
     {
-        const initial: object = {};
+        let initial: object = {};
         const initialMappedSubstitution = {};
         let map: (substitutions: object[]) => object[] = (substitutions: object[]) => substitutions.map(substitution => terms.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
         if(invocationTerms)
         {
             const variableMap = {};
-            for(let index = 0; index < terms.length; index++)
+            for(let index = 0; index < terms.length && initial; index++)
             {
                 const term = terms[index];
                 const invocationTerm = invocationTerms[index];
@@ -581,6 +581,9 @@ export class EavStore implements IEavStore, IPublisher
                 {
                     if(IsVariable(invocationTerm))
                         initialMappedSubstitution[invocationTerm] = term;
+
+                    else if(IsConstant(invocationTerm) && term !== invocationTerm)
+                        initial = null;
                 }
             }
 
@@ -639,7 +642,7 @@ export class EavStore implements IEavStore, IPublisher
 
                 return substitutions;
             },
-            [initial]));
+            initial ? [initial] : []));
     }
 
     public static Disjunction(
