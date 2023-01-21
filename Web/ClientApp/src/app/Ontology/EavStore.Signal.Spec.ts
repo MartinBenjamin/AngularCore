@@ -702,7 +702,7 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                 describe(
                     `Given
 trace: Set<any[]>[] and
-signal = store.Signal(['?result'], [['rule', e.a1[0], '?result']], [['rule', '?a1', '?result'], [[e, 'a1', '?a1'], ['?a1', 'a2', '?result']]]) and
+signal = store.Signal(['?result'], [['rule', e.a1[0], '?result']], [['rule', '?a1', '?result'], [['?a1', 'a2', '?result']]]) and
 store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                     () =>
                     {
@@ -723,7 +723,7 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                 describe(
                     `Given
 trace: Set<any[]>[] and
-signal = store.Signal(['?result'], [['rule', e.a1[1], '?result']], [['rule', '?a1', '?result'], [[e, 'a1', '?a1'], ['?a1', 'a2', '?result']]]) and
+signal = store.Signal(['?result'], [['rule', e.a1[1], '?result']], [['rule', '?a1', '?result'], [['?a1', 'a2', '?result']]]) and
 store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                     () =>
                     {
@@ -744,7 +744,7 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                 describe(
                     `Given
 trace: Set<any[]>[] and
-signal = store.Signal(['?result'], [['rule', e.a1[0], e.a1[1], '?result']], [['rule', '?a1', '?a1', '?result'], [[e, 'a1', '?a1'], ['?a1', 'a2', '?result']]]) and
+signal = store.Signal(['?result'], [['rule', e.a1[0], e.a1[1], '?result']], [['rule', '?a1', '?a1', '?result'], [['?a1', 'a2', '?result']]]) and
 store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                     () =>
                     {
@@ -758,14 +758,12 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                         store.SignalScheduler.RemoveSignal(traceSignal);
                         assert('trace.length === 1');
                         assert('trace[0].size === 0');
-                        //assert('!trace[0].has([e.a1[0].a2])');
-                        //assert('trace[0].has([e.a1[1].a2])');
                     });
 
                 describe(
                     `Given
 trace: Set<any[]>[] and
-signal = store.Signal(['?result'], [['rule', e.a1[0], e.a1[1], '?result']], [['rule', '?a1', '?a1', '?result'], [[e, 'a1', '?a1'], ['?a1', 'a2', '?result']]]) and
+signal = store.Signal(['?result'], [['rule', e.a1[0], e.a1[0], '?result']], [['rule', '?a1', '?a1', '?result'], [['?a1', 'a2', '?result']]]) and
 store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                     () =>
                     {
@@ -785,7 +783,7 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                 describe(
                     `Given
 trace: Set<any[]>[] and
-signal = store.Signal(['?constant', '?result'], [['rule', '?constant', e.a1[0], '?result']], [['rule', 1, '?a1', '?result'], [[e, 'a1', '?a1'], ['?a1', 'a2', '?result']]]) and
+signal = store.Signal(['?constant', '?result'], [['rule', '?constant', e.a1[0], '?result']], [['rule', 1, '?a1', '?result'], [['?a1', 'a2', '?result']]]) and
 store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                     () =>
                     {
@@ -805,7 +803,7 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                 describe(
                     `Given
 trace: Set<any[]>[] and
-signal = store.Signal(['?constant', '?result'], [['rule', '?constant', '?constant', e.a1[0], '?result']], [['rule', 1, 2, '?a1', '?result'], [[e, 'a1', '?a1'], ['?a1', 'a2', '?result']]]) and
+signal = store.Signal(['?constant', '?result'], [['rule', '?constant', '?constant', e.a1[0], '?result']], [['rule', 1, 2, '?a1', '?result'], [['?a1', 'a2', '?result']]]) and
 store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                     () =>
                     {
@@ -824,7 +822,7 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                 describe(
                     `Given
 trace: Set<any[]>[] and
-signal = store.Signal(['?constant', '?result'], [['rule', '?constant', '?constant', e.a1[0], '?result']], [['rule', 1, 1, '?a1', '?result'], [[e, 'a1', '?a1'], ['?a1', 'a2', '?result']]]) and
+signal = store.Signal(['?constant', '?result'], [['rule', '?constant', '?constant', e.a1[0], '?result']], [['rule', 1, 1, '?a1', '?result'], [['?a1', 'a2', '?result']]]) and
 store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                     () =>
                     {
@@ -844,7 +842,7 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                 describe(
                     `Given
 trace: Set<any[]>[] and
-signal = store.Signal(['?result'], [['rule', 1, e.a1[0], '?result']], [['rule', 2, '?a1', '?result'], [[e, 'a1', '?a1'], ['?a1', 'a2', '?result']]]) and
+signal = store.Signal(['?result'], [['rule', 1, e.a1[0], '?result']], [['rule', 2, '?a1', '?result'], [['?a1', 'a2', '?result']]]) and
 store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                     () =>
                     {
@@ -863,7 +861,7 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                 describe(
                     `Given
 trace: Set<any[]>[] and
-signal = store.Signal(['?result'], [['rule', 1, e.a1[0], '?result']], [['rule', 1, '?a1', '?result'], [[e, 'a1', '?a1'], ['?a1', 'a2', '?result']]]) and
+signal = store.Signal(['?result'], [['rule', 1, e.a1[0], '?result']], [['rule', 1, '?a1', '?result'], [['?a1', 'a2', '?result']]]) and
 store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                     () =>
                     {
