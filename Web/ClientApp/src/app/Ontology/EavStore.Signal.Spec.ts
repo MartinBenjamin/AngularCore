@@ -759,7 +759,6 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                         assert('trace.length === 1');
                         assert('trace[0].size === 1');
                         assert('trace[0].has([1, e.a1[0].a2])');
-                        //assert('!trace[0].has([e.a1[1].a2])');
                     });
             });
     });
