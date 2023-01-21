@@ -740,5 +740,26 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                         assert('!trace[0].has([e.a1[0].a2])');
                         assert('trace[0].has([e.a1[1].a2])');
                     });
+
+                describe(
+                    `Given
+trace: Set<any[]>[] and
+signal = store.Signal(['?constant', '?result'], [['rule', '?constant', e.a1[0], '?result']], [['rule', 1, '?a1', '?result'], [[e, 'a1', '?a1'], ['?a1', 'a2', '?result']]]) and
+store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
+                    () =>
+                    {
+                        const trace: Set<any[]>[] = [];
+                        const assert = assertBuilder('Store', 'store', 'e', 'trace')
+                            (Store, store, e, trace);
+                        const signal = store.Signal(
+                            ['?constant', '?result'], [['rule', '?constant', e.a1[0], '?result']],
+                            [['rule', 1, '?a1', '?result'], [['?a1', 'a2', '?result']]]);
+                        const traceSignal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [signal]);
+                        store.SignalScheduler.RemoveSignal(traceSignal);
+                        assert('trace.length === 1');
+                        assert('trace[0].size === 1');
+                        assert('trace[0].has([1, e.a1[0].a2])');
+                        //assert('!trace[0].has([e.a1[1].a2])');
+                    });
             });
     });

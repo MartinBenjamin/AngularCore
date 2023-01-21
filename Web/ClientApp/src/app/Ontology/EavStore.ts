@@ -559,6 +559,7 @@ export class EavStore implements IEavStore, IPublisher
         ): (...inputs: (object[] | BuiltIn)[]) => object[]
     {
         const initial: object = {};
+        const initialMappedSubstitution = {};
         let map: (substitutions: object[]) => object[] = (substitutions: object[]) => substitutions.map(substitution => terms.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
         if(invocationTerms)
         {
@@ -576,6 +577,11 @@ export class EavStore implements IEavStore, IPublisher
                     else if(IsVariable(invocationTerm))
                         variableMap[term] = invocationTerm;
                 }
+                else if(IsConstant(term))
+                {
+                    if(IsVariable(invocationTerm))
+                        initialMappedSubstitution[invocationTerm] = term;
+                }
             }
 
             const variablesToMap = Object.keys(variableMap);
@@ -585,7 +591,7 @@ export class EavStore implements IEavStore, IPublisher
                 const mappedSubstitutions: object[] = [];
                 for(const substitution of substitutions)
                 {
-                    let mappedSubstitution = {};
+                    let mappedSubstitution = { ...initialMappedSubstitution };
                     for(const variable of variablesToMap)
                     {
                         const mappedVariable = variableMap[variable];
