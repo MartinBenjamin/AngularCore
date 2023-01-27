@@ -577,7 +577,7 @@ export class EavStore implements IEavStore, IPublisher
                             initialSubstitution[term] = invocationTerm;
 
                         else if(initialSubstitution[term] !== invocationTerm)
-                            initialSubstitution = null;
+                            return () => [];
                     }
                     else if(IsVariable(invocationTerm))
                         variableMap.push([term, invocationTerm]);
@@ -590,10 +590,10 @@ export class EavStore implements IEavStore, IPublisher
                             initialMappedSubstitution[invocationTerm] = term;
 
                         else if(initialMappedSubstitution[invocationTerm] !== term)
-                            initialSubstitution = null;
+                            return () => [];
                     }
                     else if(IsConstant(invocationTerm) && term !== invocationTerm)
-                        initialSubstitution = null;
+                        return () => [];
                 }
             }
 
@@ -649,7 +649,7 @@ export class EavStore implements IEavStore, IPublisher
 
                 return substitutions;
             },
-            initialSubstitution ? [initialSubstitution] : []));
+            [initialSubstitution]));
     }
 
     public static Disjunction(
