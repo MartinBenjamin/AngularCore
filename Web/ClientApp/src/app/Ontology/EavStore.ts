@@ -563,7 +563,7 @@ export class EavStore implements IEavStore, IPublisher
         let map: (substitutions: object[]) => object[] = (substitutions: object[]) => substitutions.map(substitution => terms.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
         if(invocationTerms)
         {
-            const variableMap = {};
+            const variableMap: [PropertyKey, PropertyKey][] = [];
             for(let index = 0; index < terms.length && initialSubstitution; index++)
             {
                 const term = terms[index];
@@ -580,7 +580,7 @@ export class EavStore implements IEavStore, IPublisher
                             initialSubstitution = null;
                     }
                     else if(IsVariable(invocationTerm))
-                        variableMap[term] = invocationTerm;
+                        variableMap.push([term, invocationTerm]);
                 }
                 else if(IsConstant(term))
                 {
@@ -597,21 +597,18 @@ export class EavStore implements IEavStore, IPublisher
                 }
             }
 
-            const variablesToMap = Object.keys(variableMap);
-
             map = (substitutions: object[]) =>
             {
                 const mappedSubstitutions: object[] = [];
                 for(const substitution of substitutions)
                 {
                     let mappedSubstitution = { ...initialMappedSubstitution };
-                    for(const variable of variablesToMap)
+                    for(const [source, target] of variableMap)
                     {
-                        const mappedVariable = variableMap[variable];
-                        if(mappedSubstitution[mappedVariable] === undefined)
-                            mappedSubstitution[mappedVariable] = substitution[variable];
+                        if(mappedSubstitution[target] === undefined)
+                            mappedSubstitution[target] = substitution[source];
 
-                        else if(mappedSubstitution[mappedVariable] !== substitution[variable])
+                        else if(mappedSubstitution[target] !== substitution[source])
                         {
                             mappedSubstitution = null;
                             break;
