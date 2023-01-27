@@ -776,8 +776,8 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                         const traceSignal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [signal]);
                         store.SignalScheduler.RemoveSignal(traceSignal);
                         assert('trace.length === 1');
-                        assert('trace[0].size === 0');
-                        assert('!trace[0].has([e.a1[0].a2])');
+                        assert('trace[0].size === 1');
+                        assert('trace[0].has([e.a1[0].a2])');
                     });
 
                 describe(

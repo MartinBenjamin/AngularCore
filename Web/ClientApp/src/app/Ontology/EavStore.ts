@@ -576,7 +576,7 @@ export class EavStore implements IEavStore, IPublisher
                         if(initialSubstitution[term] === undefined)
                             initialSubstitution[term] = invocationTerm;
 
-                        else
+                        else if(initialSubstitution[term] !== invocationTerm)
                             initialSubstitution = null;
                     }
                     else if(IsVariable(invocationTerm))
