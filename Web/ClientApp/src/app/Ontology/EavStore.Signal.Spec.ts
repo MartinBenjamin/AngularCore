@@ -662,7 +662,7 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                     });
             });
 
-        const o1 = { a1: [{ a2: 1 }, { a2: 2 }] };
+        const o1 = { a1: [{ a2: 1, a3: 1 }, { a2: 2, a3: 1 }] };
         describe(
             `Given store = new EavStore() and e = store.Assert(${JSON.stringify(o1)}):`,
             () =>
@@ -877,5 +877,34 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                         assert('trace[0].size === 1');
                         assert('trace[0].has([e.a1[0].a2])');
                     });
+
+                describe(
+                        `Given store = new EavStore() and e = store.Assert(${JSON.stringify(o1)}):`,
+                        () =>
+                        {
+                            const store: IEavStore = new EavStore();
+                            const e = store.Assert(o1);
+
+                            describe(
+                                `Given
+trace: Set<any[]>[] and
+signal = store.Signal(['?a2', '?a3'], [['rule', '?a2', '?a3']], [['rule', '?a2', '?a3'], [['?a1', 'a2', '?a2'], ['?a1', 'a3', '?a3' ]]]) and
+store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
+                                () =>
+                                {
+                                    const trace: Set<any[]>[] = [];
+                                    const assert = assertBuilder('Store', 'store', 'e', 'trace')
+                                        (Store, store, e, trace);
+                                    const signal = store.Signal(
+                                        ['?a2', '?a3'], [['rule', '?a2', '?a3']],
+                                        [['rule', '?a2', '?a3'], [['?a1', 'a2', '?a2'], ['?a1', 'a3', '?a3' ]]]);
+                                    const traceSignal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [signal]);
+                                    store.SignalScheduler.RemoveSignal(traceSignal);
+                                    assert('trace.length === 1');
+                                    assert('trace[0].size === 2');
+                                    assert('trace[0].has([e.a1[0].a2, e.a1[0].a3])');
+                                    assert('trace[0].has([e.a1[1].a2, e.a1[1].a3])');
+                                });
+                        });
             });
     });
