@@ -412,7 +412,7 @@ export class EavStore implements IEavStore, IPublisher
     {
         rules = [[<Edb>['', ...head], body], ...rules];
 
-        const rulesGroupedByName = Group(
+        const rulesGroupedByPredicateSymbol = Group(
             rules,
             rule => rule[0][0],
             rule => rule);
@@ -421,12 +421,12 @@ export class EavStore implements IEavStore, IPublisher
             rules.map<[string, string[]]>(
                 rule => [
                     rule[0][0],
-                    [].concat(...rulesGroupedByName.get(rule[0][0]).map(rule => rule[1].filter(IsEdb).map(edb => edb[0])))]));
+                    [].concat(...rulesGroupedByPredicateSymbol.get(rule[0][0]).map(rule => rule[1].filter(IsEdb).map(edb => edb[0])))]));
 
         type SCC<T> = ReadonlyArray<T>;
 
         const stronglyConnectedComponents = new Map<string, SCC<string>>([].concat(
-            ...StronglyConnectedComponents(ruleAdjacencyList).map(scc => scc.map(ruleName => <[string, SCC<string>]>[ruleName, scc]))));
+            ...StronglyConnectedComponents(ruleAdjacencyList).map(scc => scc.map(predicateSymbol => <[string, SCC<string>]>[predicateSymbol, scc]))));
 
         const signalAdjacencyList = new Map<Signal, Signal[]>();
         const conjunctions = new Map<Signal, Atom[]>();
@@ -440,19 +440,19 @@ export class EavStore implements IEavStore, IPublisher
             for(const atom of rule[1])
                 if(IsEdb(atom))
                 {
-                    const ruleName = atom[0];
+                    const predicateSymbol = atom[0];
 
-                    if(!rulesGroupedByName.has(ruleName))
-                        throw new Error(`No Rule defined for Rule Invocation: ${ruleName}`);
+                    if(!rulesGroupedByPredicateSymbol.has(predicateSymbol))
+                        throw new Error(`No rule defined for predicate symbol: ${predicateSymbol}`);
 
-                    const rules = rulesGroupedByName.get(atom[0]);
+                    const rules = rulesGroupedByPredicateSymbol.get(predicateSymbol);
 
                     if(rules.length === 1)
                     {
                         const rule = rules[0];
 
                         if(atom.length !== rule[0].length)
-                            throw new Error(`Rule Invocation term count does not match Rule term count: ${ruleName}`)
+                            throw new Error(`EDB term count does not match rule term count: ${predicateSymbol}`)
 
                         const signal = new Signal(EavStore.Conjunction(
                             rule[0].slice(1),
@@ -480,7 +480,7 @@ export class EavStore implements IEavStore, IPublisher
                         for(const rule of rules)
                         {
                             if(atom.length !== rule[0].length)
-                                throw new Error(`Rule Invocation term count does not match Rule term count: ${ruleName}`)
+                                throw new Error(`EDB term count does not match rule term count: ${predicateSymbol}`)
 
                             const signal = this.Signal(EavStore.Conjunction(
                                 rule[0].slice(1),
