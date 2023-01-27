@@ -22,10 +22,10 @@ export type Variable = string;
 export const IsVariable = (term): term is string => typeof term === 'string' && term[0] === '?';
 export const IsConstant = term => !(typeof term === 'undefined' || IsVariable(term));
 
-export type RuleInvocation = [string, any, ...any[]];
-export const IsRuleInvocation = (atom): atom is RuleInvocation => atom instanceof Array && typeof atom[0] === 'string' && atom[0][0] !== '?';
+export type Edb = [string, any, ...any[]];
+export const IsEdb = (atom): atom is Edb => atom instanceof Array && typeof atom[0] === 'string' && atom[0][0] !== '?';
 
-export type Atom = Fact | BuiltIn | RuleInvocation;
+export type Atom = Fact | BuiltIn | Edb;
 
 export type Rule = [[string, any, ...any[]], Atom[]];
 

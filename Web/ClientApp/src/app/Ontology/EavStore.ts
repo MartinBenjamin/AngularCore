@@ -5,7 +5,7 @@ import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
 import { BuiltIn } from './Atom';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
 import { Group } from './Group';
-import { Atom, AttributeSchema, Cardinality, Fact, IEavStore, IsConstant, IsRuleInvocation, IsVariable, Rule, RuleInvocation, Store, StoreSymbol } from './IEavStore';
+import { Atom, AttributeSchema, Cardinality, Edb, Fact, IEavStore, IsConstant, IsEdb, IsVariable, Rule, Store, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
 import { ArrayCompareFactory } from './SortedSet';
@@ -410,7 +410,7 @@ export class EavStore implements IEavStore, IPublisher
         body: Atom[],
         ...rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>
     {
-        rules = [[<RuleInvocation>['', ...head], body], ...rules];
+        rules = [[<Edb>['', ...head], body], ...rules];
 
         const rulesGroupedByName = Group(
             rules,
@@ -421,7 +421,7 @@ export class EavStore implements IEavStore, IPublisher
             rules.map<[string, string[]]>(
                 rule => [
                     rule[0][0],
-                    [].concat(...rulesGroupedByName.get(rule[0][0]).map(rule => rule[1].filter(IsRuleInvocation).map(ruleInvocation => ruleInvocation[0])))]));
+                    [].concat(...rulesGroupedByName.get(rule[0][0]).map(rule => rule[1].filter(IsEdb).map(edb => edb[0])))]));
 
         type SCC<T> = ReadonlyArray<T>;
 
@@ -429,8 +429,8 @@ export class EavStore implements IEavStore, IPublisher
             ...StronglyConnectedComponents(ruleAdjacencyList).map(scc => scc.map(ruleName => <[string, SCC<string>]>[ruleName, scc]))));
 
         const signalAdjacencyList = new Map<Signal, Signal[]>();
-        const conjunctions = new Map<Signal, (Fact | BuiltIn | RuleInvocation)[]>();
-        const ruleInvocations = new ArrayKeyedMap<RuleInvocation, Signal>();
+        const conjunctions = new Map<Signal, (Fact | BuiltIn | Edb)[]>();
+        const edbs = new ArrayKeyedMap<Edb, Signal>();
         const signal: Signal<any> = new Signal(EavStore.Conjunction(head))
         conjunctions.set(
             signal,
@@ -438,7 +438,7 @@ export class EavStore implements IEavStore, IPublisher
 
         for(const rule of rules)
             for(const atom of rule[1])
-                if(IsRuleInvocation(atom))
+                if(IsEdb(atom))
                 {
                     const ruleName = atom[0];
 
@@ -458,7 +458,7 @@ export class EavStore implements IEavStore, IPublisher
                             rule[0].slice(1),
                             atom.slice(1)));
 
-                        ruleInvocations.set(
+                        edbs.set(
                             atom,
                             signal);
                         conjunctions.set(
@@ -468,7 +468,7 @@ export class EavStore implements IEavStore, IPublisher
                     else
                     {
                         const signal = new Signal(EavStore.Disjunction);
-                        ruleInvocations.set(
+                        edbs.set(
                             atom,
                             signal);
 
@@ -504,8 +504,8 @@ export class EavStore implements IEavStore, IPublisher
                 if(atom instanceof Function)
                     successors.push(this.SignalScheduler.AddSignal(() => atom));
 
-                else if(IsRuleInvocation(atom))
-                    successors.push(ruleInvocations.get(atom));
+                else if(IsEdb(atom))
+                    successors.push(edbs.get(atom));
 
                 else
                 {
@@ -555,44 +555,44 @@ export class EavStore implements IEavStore, IPublisher
 
     public static Conjunction(
         terms: any[],
-        invocationTerms?: any[]
+        edbTerms?: any[]
         ): (...inputs: (object[] | BuiltIn)[]) => object[]
     {
         let initialSubstitution: object = {};
         const initialMappedSubstitution = {};
         let map: (substitutions: object[]) => object[] = (substitutions: object[]) => substitutions.map(substitution => terms.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
-        if(invocationTerms)
+        if(edbTerms)
         {
             const variableMap: [PropertyKey, PropertyKey][] = [];
             for(let index = 0; index < terms.length && initialSubstitution; index++)
             {
                 const term = terms[index];
-                const invocationTerm = invocationTerms[index];
+                const edbTerm = edbTerms[index];
 
                 if(IsVariable(term))
                 {
-                    if(IsConstant(invocationTerm))
+                    if(IsConstant(edbTerm))
                     {
                         if(initialSubstitution[term] === undefined)
-                            initialSubstitution[term] = invocationTerm;
+                            initialSubstitution[term] = edbTerm;
 
-                        else if(initialSubstitution[term] !== invocationTerm)
+                        else if(initialSubstitution[term] !== edbTerm)
                             return () => [];
                     }
-                    else if(IsVariable(invocationTerm))
-                        variableMap.push([term, invocationTerm]);
+                    else if(IsVariable(edbTerm))
+                        variableMap.push([term, edbTerm]);
                 }
                 else if(IsConstant(term))
                 {
-                    if(IsVariable(invocationTerm))
+                    if(IsVariable(edbTerm))
                     {
-                        if(initialMappedSubstitution[invocationTerm] === undefined)
-                            initialMappedSubstitution[invocationTerm] = term;
+                        if(initialMappedSubstitution[edbTerm] === undefined)
+                            initialMappedSubstitution[edbTerm] = term;
 
-                        else if(initialMappedSubstitution[invocationTerm] !== term)
+                        else if(initialMappedSubstitution[edbTerm] !== term)
                             return () => [];
                     }
-                    else if(IsConstant(invocationTerm) && term !== invocationTerm)
+                    else if(IsConstant(edbTerm) && term !== edbTerm)
                         return () => [];
                 }
             }

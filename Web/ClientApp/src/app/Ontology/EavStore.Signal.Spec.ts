@@ -550,7 +550,7 @@ describe(
     });
 
 describe(
-    'Signal<T extends [any, ...any[]]>(head: T, body: (Fact | BuiltIn | RuleInvocation)[], ...rules: Rule[]): Signal< { [K in keyof T]: any; }[] >',
+    'Signal<T extends [any, ...any[]]>(head: T, body: Atom[], ...rules: Rule[]): Signal< { [K in keyof T]: any; }[] >',
     () =>
     {
         const o = { a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null, [Symbol.toPrimitive]: function() { } };
