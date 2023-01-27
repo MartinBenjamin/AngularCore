@@ -922,7 +922,7 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                 describe(
                     `Given
 trace: Set<any[]>[] and
-signal = store.Signal(['?result'], [['rule', '?result', '?result']], [['rule', '?a2', '?a3'], [['?a1', 'a2', '?a2'], ['?a1', 'a3', '?a3']]]) and
+signal = store.Signal(['?result1', '?result2'], [['rule', '?result1', '?result2']], [['rule', '?a2', '?a2'], [[e.a1[0], 'a2', '?a2']]]) and
 store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                     () =>
                     {
