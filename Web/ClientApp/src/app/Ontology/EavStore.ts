@@ -429,8 +429,8 @@ export class EavStore implements IEavStore, IPublisher
             ...StronglyConnectedComponents(ruleAdjacencyList).map(scc => scc.map(ruleName => <[string, SCC<string>]>[ruleName, scc]))));
 
         const signalAdjacencyList = new Map<Signal, Signal[]>();
-        const conjunctions = new Map<Signal, (Fact | BuiltIn | Edb)[]>();
-        const edbs = new ArrayKeyedMap<Edb, Signal>();
+        const conjunctions = new Map<Signal, Atom[]>();
+        const edbSignals = new ArrayKeyedMap<Edb, Signal>();
         const signal: Signal<any> = new Signal(EavStore.Conjunction(head))
         conjunctions.set(
             signal,
@@ -458,7 +458,7 @@ export class EavStore implements IEavStore, IPublisher
                             rule[0].slice(1),
                             atom.slice(1)));
 
-                        edbs.set(
+                        edbSignals.set(
                             atom,
                             signal);
                         conjunctions.set(
@@ -468,7 +468,7 @@ export class EavStore implements IEavStore, IPublisher
                     else
                     {
                         const signal = new Signal(EavStore.Disjunction);
-                        edbs.set(
+                        edbSignals.set(
                             atom,
                             signal);
 
@@ -505,7 +505,7 @@ export class EavStore implements IEavStore, IPublisher
                     successors.push(this.SignalScheduler.AddSignal(() => atom));
 
                 else if(IsEdb(atom))
-                    successors.push(edbs.get(atom));
+                    successors.push(edbSignals.get(atom));
 
                 else
                 {
