@@ -5,7 +5,7 @@ import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
 import { BuiltIn } from './Atom';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
 import { Group } from './Group';
-import { AttributeSchema, Cardinality, Fact, IEavStore, IsConstant, IsRuleInvocation, IsVariable, Rule, RuleInvocation, Store, StoreSymbol } from './IEavStore';
+import { Atom, AttributeSchema, Cardinality, Fact, IEavStore, IsConstant, IsRuleInvocation, IsVariable, Rule, RuleInvocation, Store, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
 import { ArrayCompareFactory } from './SortedSet';
@@ -407,7 +407,7 @@ export class EavStore implements IEavStore, IPublisher
 
     SignalRule<T extends [any, ...any[]]>(
         head: T,
-        body: (Fact | BuiltIn | RuleInvocation)[],
+        body: Atom[],
         ...rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>
     {
         rules = [[<RuleInvocation>['', ...head], body], ...rules];

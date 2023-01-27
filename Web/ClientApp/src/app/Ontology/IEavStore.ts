@@ -19,13 +19,15 @@ export interface AttributeSchema
 export type Fact = [any, PropertyKey, any];
 
 export type Variable = string;
-export const IsVariable = (element): element is string => typeof element === 'string' && element[0] === '?';
-export const IsConstant = element => !(typeof element === 'undefined' || IsVariable(element));
+export const IsVariable = (term): term is string => typeof term === 'string' && term[0] === '?';
+export const IsConstant = term => !(typeof term === 'undefined' || IsVariable(term));
 
 export type RuleInvocation = [string, any, ...any[]];
 export const IsRuleInvocation = (atom): atom is RuleInvocation => atom instanceof Array && typeof atom[0] === 'string' && atom[0][0] !== '?';
 
-export type Rule = [[string, any, ...any[]], (Fact | BuiltIn | RuleInvocation)[]];
+export type Atom = Fact | BuiltIn | RuleInvocation;
+
+export type Rule = [[string, any, ...any[]], Atom[]];
 
 export interface IEavStore
 {
@@ -48,7 +50,7 @@ export interface IEavStore
     Signal(attribute: PropertyKey): Signal<[any, any][]>;
     Signal<T extends [any, ...any[]]>(
         head: T,
-        body: (Fact | BuiltIn | RuleInvocation)[],
+        body: Atom[],
         ...rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>;
 
     NewEntity(): any;
