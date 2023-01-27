@@ -23,11 +23,11 @@ export const IsVariable = (term): term is string => typeof term === 'string' && 
 export const IsConstant = term => !(typeof term === 'undefined' || IsVariable(term));
 
 export const IsPredicateSymbol = (term): term is string => typeof term === 'string' && term[0] !== '?';
-export type Idb = Fact;
-export type Edb = [string, any, ...any[]];
-export const IsEdb = (atom): atom is Edb => atom instanceof Array && IsPredicateSymbol(atom[0]);
+export type Edb = Fact | BuiltIn;
+export type Idb = [string, any, ...any[]];
+export const IsIdb = (atom): atom is Idb => atom instanceof Array && IsPredicateSymbol(atom[0]);
 
-export type Atom = Idb | Edb | BuiltIn;
+export type Atom = Edb | Idb;
 
 export type Rule = [[string, any, ...any[]], Atom[]];
 
@@ -38,14 +38,14 @@ export interface IEavStore
     Query(atom: Fact): Fact[];
     Query<T extends [any, ...any[]]>(
         head: T,
-        body: (Fact | BuiltIn)[]): { [K in keyof T]: any; }[];
+        body: Edb[]): { [K in keyof T]: any; }[];
 
     ObserveEntities(): Observable<Set<any>>;
     Observe(atom: Fact): Observable<Fact[]>;
     Observe(attribute: PropertyKey): Observable<[any, any][]>;
     Observe<T extends [any, ...any[]]>(
         head: T,
-        body: (Fact | BuiltIn)[]): Observable<{ [K in keyof T]: any; }[]>;
+        body: Edb[]): Observable<{ [K in keyof T]: any; }[]>;
 
     SignalEntities(): Signal<Set<any>>;
     Signal(atom: Fact): Signal<Fact[]>;

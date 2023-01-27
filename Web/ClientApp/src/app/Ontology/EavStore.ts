@@ -5,7 +5,7 @@ import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
 import { BuiltIn } from './Atom';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
 import { Group } from './Group';
-import { Atom, AttributeSchema, Cardinality, Edb, Fact, IEavStore, IsConstant, IsEdb, IsVariable, Rule, Store, StoreSymbol } from './IEavStore';
+import { Atom, AttributeSchema, Cardinality, Edb, Fact, Idb, IEavStore, IsConstant, IsIdb, IsVariable, Rule, Store, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
 import { ArrayCompareFactory } from './SortedSet';
@@ -248,7 +248,7 @@ export class EavStore implements IEavStore, IPublisher
 
     private QueryRule<T extends [any, ...any[]]>(
         head: T,
-        body: (Fact | BuiltIn)[]): { [K in keyof T]: any; }[]
+        body: Edb[]): { [K in keyof T]: any; }[]
     {
         return body.reduce(
             (substitutions, atom) =>
@@ -343,7 +343,7 @@ export class EavStore implements IEavStore, IPublisher
 
     private ObserveRule<T extends [any, ...any[]]>(
         head: T,
-        body: (Fact | BuiltIn)[]): Observable<{ [K in keyof T]: any; }[]>
+        body: Edb[]): Observable<{ [K in keyof T]: any; }[]>
     {
         //return <Observable<any>>combineLatest(
         //    body.map<Observable<any>>(atom =>
@@ -410,7 +410,7 @@ export class EavStore implements IEavStore, IPublisher
         body: Atom[],
         ...rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>
     {
-        rules = [[<Edb>['', ...head], body], ...rules];
+        rules = [[<Idb>['', ...head], body], ...rules];
 
         const rulesGroupedByPredicateSymbol = Group(
             rules,
@@ -421,7 +421,7 @@ export class EavStore implements IEavStore, IPublisher
             rules.map<[string, string[]]>(
                 rule => [
                     rule[0][0],
-                    [].concat(...rulesGroupedByPredicateSymbol.get(rule[0][0]).map(rule => rule[1].filter(IsEdb).map(edb => edb[0])))]));
+                    [].concat(...rulesGroupedByPredicateSymbol.get(rule[0][0]).map(rule => rule[1].filter(IsIdb).map(idb => idb[0])))]));
 
         type SCC<T> = ReadonlyArray<T>;
 
@@ -430,7 +430,7 @@ export class EavStore implements IEavStore, IPublisher
 
         const signalAdjacencyList = new Map<Signal, Signal[]>();
         const conjunctions = new Map<Signal, Atom[]>();
-        const edbSignals = new ArrayKeyedMap<Edb, Signal>();
+        const idbSignals = new ArrayKeyedMap<Idb, Signal>();
         const signal: Signal<any> = new Signal(EavStore.Conjunction(head))
         conjunctions.set(
             signal,
@@ -438,7 +438,7 @@ export class EavStore implements IEavStore, IPublisher
 
         for(const rule of rules)
             for(const atom of rule[1])
-                if(IsEdb(atom))
+                if(IsIdb(atom))
                 {
                     const predicateSymbol = atom[0];
 
@@ -452,13 +452,13 @@ export class EavStore implements IEavStore, IPublisher
                         const rule = rules[0];
 
                         if(atom.length !== rule[0].length)
-                            throw new Error(`EDB term count does not match rule term count: ${predicateSymbol}`)
+                            throw new Error(`IDB term count does not match rule term count: ${predicateSymbol}`)
 
                         const signal = new Signal(EavStore.Conjunction(
                             rule[0].slice(1),
                             atom.slice(1)));
 
-                        edbSignals.set(
+                        idbSignals.set(
                             atom,
                             signal);
                         conjunctions.set(
@@ -468,7 +468,7 @@ export class EavStore implements IEavStore, IPublisher
                     else
                     {
                         const signal = new Signal(EavStore.Disjunction);
-                        edbSignals.set(
+                        idbSignals.set(
                             atom,
                             signal);
 
@@ -480,7 +480,7 @@ export class EavStore implements IEavStore, IPublisher
                         for(const rule of rules)
                         {
                             if(atom.length !== rule[0].length)
-                                throw new Error(`EDB term count does not match rule term count: ${predicateSymbol}`)
+                                throw new Error(`IDB term count does not match rule term count: ${predicateSymbol}`)
 
                             const signal = this.Signal(EavStore.Conjunction(
                                 rule[0].slice(1),
@@ -504,8 +504,8 @@ export class EavStore implements IEavStore, IPublisher
                 if(atom instanceof Function)
                     successors.push(this.SignalScheduler.AddSignal(() => atom));
 
-                else if(IsEdb(atom))
-                    successors.push(edbSignals.get(atom));
+                else if(IsIdb(atom))
+                    successors.push(idbSignals.get(atom));
 
                 else
                 {
@@ -555,44 +555,44 @@ export class EavStore implements IEavStore, IPublisher
 
     public static Conjunction(
         terms: any[],
-        edbTerms?: any[]
+        idbTerms?: any[]
         ): (...inputs: (object[] | BuiltIn)[]) => object[]
     {
         let initialSubstitution: object = {};
         const initialMappedSubstitution = {};
         let map: (substitutions: object[]) => object[] = (substitutions: object[]) => substitutions.map(substitution => terms.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
-        if(edbTerms)
+        if(idbTerms)
         {
             const variableMap: [PropertyKey, PropertyKey][] = [];
             for(let index = 0; index < terms.length && initialSubstitution; index++)
             {
                 const term = terms[index];
-                const edbTerm = edbTerms[index];
+                const idbTerm = idbTerms[index];
 
                 if(IsVariable(term))
                 {
-                    if(IsConstant(edbTerm))
+                    if(IsConstant(idbTerm))
                     {
                         if(initialSubstitution[term] === undefined)
-                            initialSubstitution[term] = edbTerm;
+                            initialSubstitution[term] = idbTerm;
 
-                        else if(initialSubstitution[term] !== edbTerm)
+                        else if(initialSubstitution[term] !== idbTerm)
                             return () => [];
                     }
-                    else if(IsVariable(edbTerm))
-                        variableMap.push([term, edbTerm]);
+                    else if(IsVariable(idbTerm))
+                        variableMap.push([term, idbTerm]);
                 }
                 else if(IsConstant(term))
                 {
-                    if(IsVariable(edbTerm))
+                    if(IsVariable(idbTerm))
                     {
-                        if(initialMappedSubstitution[edbTerm] === undefined)
-                            initialMappedSubstitution[edbTerm] = term;
+                        if(initialMappedSubstitution[idbTerm] === undefined)
+                            initialMappedSubstitution[idbTerm] = term;
 
-                        else if(initialMappedSubstitution[edbTerm] !== term)
+                        else if(initialMappedSubstitution[idbTerm] !== term)
                             return () => [];
                     }
-                    else if(IsConstant(edbTerm) && term !== edbTerm)
+                    else if(IsConstant(idbTerm) && term !== idbTerm)
                         return () => [];
                 }
             }
