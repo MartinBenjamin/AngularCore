@@ -75,7 +75,7 @@ export interface IScheduler
     Observe<TOut>(signal: Signal<TOut>): Observable<TOut>;
 }
 
-type SCC<T> = ReadonlyArray<T> & IVertex;
+type SCC<T> = ReadonlyArray<T> & IVertex & { Recursive?: boolean; };
 
 export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 {
@@ -140,6 +140,9 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                 signal.LongestPath = longestPath;
         }
 
+        for(const scc of this._condensed.keys())
+            scc.Recursive = scc.length > 1 || this._successors.get(scc[0]).includes(scc[0]);
+
         try
         {
             this.Suspend();
@@ -194,6 +197,9 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
             for(const signal of stronglyConnectComponent)
                 signal.LongestPath = longestPath;
         }
+
+        for(const scc of this._condensed.keys())
+            scc.Recursive = scc.length > 1 || this._successors.get(scc[0]).includes(scc[0]);
 
         // Schedule new Signals which do not depend on other Signals or are dependent on existing Signals.
         try
@@ -383,7 +389,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         stronglyConnectedComponent: SCC<Signal>
         )
     {
-        if(stronglyConnectedComponent.length === 1)
+        if(!stronglyConnectedComponent.Recursive)
         {
             const signal = stronglyConnectedComponent[0]
             const value = signal.Function.apply(

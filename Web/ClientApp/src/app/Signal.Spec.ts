@@ -9,6 +9,15 @@ type Tuple = [any, ...any[]];
 
 type Comparer<T> = (a: T, b: T) => number;
 
+function Reduce<T, TCurrent, TParams extends [any, ...any[]]>(
+    reduce: (previous: T, current: TCurrent) => T,
+    func: (...params: TParams) => TCurrent
+    ): (initial: T, previous: T, ...params: TParams) => T
+{
+    return (initial: T, previous: T, ...params: TParams): T =>
+        previous === undefined ? initial : reduce(previous, func(...params));
+}
+
 function TupleComparer(
     elementComparer: Comparer<any>
     ): Comparer<Tuple>
@@ -227,6 +236,9 @@ T(x, y) : - R(x, z), T(z, y)`,
                     setBuilder,
                     ['?x', '?y'],
                     [['?x', '?z'], ['?z', '?y']]);
+                const reduce = Reduce(
+                    (previous: Set<Tuple>, current: Iterable<Tuple>) => setBuilder([...previous, ...current]),
+                    query);
 
                 function AreEqual<T>(
                     lhs: Set<T>,
@@ -286,20 +298,17 @@ T(x, y) : - R(x, z), T(z, y)`,
                 TValues.forEach(values => values.sort(tupleComparer));
 
                 let RValue = RValues[0];
-                const R = new Signal(() => RValue);
-                const T = new Signal(union, AreEqual);
-                const Q = new Signal(query, AreEqual);
+                const R = new Signal(() => setBuilder(RValue));
+                const T = new Signal(reduce, AreEqual);
 
                 const graph = new Map([
                     [<Signal>R, []],
-                    [T, [T.CurrentValue(), R, Q]],
-                    [Q, [R, T]]]
-                );
+                    [T, [R, T, R, T]]]);
 
                 const scheduler = new Scheduler(
                     graph,
                     (signal, value) => trace.push({ Signal: signal, Value: value }));
-                const assert = assertBuilder('trace', 'R', 'T', 'Q')(trace, R, T, Q);
+                const assert = assertBuilder('trace', 'R', 'T')(trace, R, T);
 
                 for(let index = 1; index < RValues.length;++index)
                     scheduler.Update(
@@ -311,10 +320,9 @@ T(x, y) : - R(x, z), T(z, y)`,
 
                 assert('R.LongestPath === 0');
                 assert('T.LongestPath === 1');
-                assert('Q.LongestPath === 1');
 
                 for(const traceItem of trace)
-                    console.log(`${traceItem.Signal === T ? 'T' : traceItem.Signal === Q ? 'Q' : 'R'}: ${JSON.stringify(traceItem.Value ? [...traceItem.Value] : traceItem.Value)}`);
+                    console.log(`${traceItem.Signal === T ? 'T' : 'R'}: ${JSON.stringify(traceItem.Value ? [...traceItem.Value] : traceItem.Value)}`);
 
                 const values = trace.filter(t => t.Signal === T).map(t => t.Value);;
 
