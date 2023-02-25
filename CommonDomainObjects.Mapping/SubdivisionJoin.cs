@@ -10,8 +10,6 @@ namespace CommonDomainObjects.Mapping
                 "Subdivision",
                 joinMapper =>
                 {
-                    DiscriminatorValue("Subdivision");
-
                     joinMapper.Key(
                         keyMapper =>
                         {

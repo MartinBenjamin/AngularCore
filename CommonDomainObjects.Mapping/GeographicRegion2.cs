@@ -2,9 +2,9 @@
 
 namespace CommonDomainObjects.Mapping
 {
-    public class FacilityType: SubclassMapping<FacilityAgreements.FacilityType>
+    public class GeographicRegion2: ClassMapping<Locations2.GeographicRegion>
     {
-        public FacilityType()
+        public GeographicRegion2()
         {
         }
     }

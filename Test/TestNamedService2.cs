@@ -26,11 +26,7 @@ namespace Test
         {
             var builder = new ContainerBuilder();
             builder
-                .RegisterModule<NHibernateIntegration.Module>();
-            builder
-                .RegisterType<CommonDomainObjects.Mapping.ConventionModelMapperFactory>()
-                .As<IModelMapperFactory>()
-                .SingleInstance();
+                .RegisterModule<CommonDomainObjects.Mapping.Module>();
             builder
                 .RegisterModule(new SQLiteModule("Test"));
             builder

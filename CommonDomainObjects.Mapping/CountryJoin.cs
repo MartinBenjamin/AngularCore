@@ -10,8 +10,6 @@ namespace CommonDomainObjects.Mapping
                 "Country",
                 joinMapper =>
                 {
-                    DiscriminatorValue("Country");
-
                     joinMapper.Key(
                         keyMapper =>
                         {

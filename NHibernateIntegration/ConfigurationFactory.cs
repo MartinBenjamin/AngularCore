@@ -5,27 +5,26 @@ namespace NHibernateIntegration
 {
     public class ConfigurationFactory: IConfigurationFactory
     {
-        private readonly IModelMapperFactory         _modelMapperFactory;
-        private readonly IDictionary<string, string> _properties;
+        private readonly IEnumerable<IMappingFactory> _mappingFactories;
+        private readonly IDictionary<string, string>  _properties;
 
         public ConfigurationFactory(
-            IModelMapperFactory         modelMapperFactory,
-            IDictionary<string, string> properties
+            IEnumerable<IMappingFactory> mappingFactories,
+            IDictionary<string, string>  properties
             )
         {
-            _modelMapperFactory = modelMapperFactory;
+            _mappingFactories   = mappingFactories;
             _properties         = properties;
         }
 
         Configuration IConfigurationFactory.Build()
         {
-            var mapper = _modelMapperFactory.Build();
-            var mapping = mapper.CompileMappingForAllExplicitlyAddedEntities();
             var configuration = new Configuration()
                 .SetProperties(_properties);
-            configuration.AddDeserializedMapping(
-                mapping,
-                null);
+            foreach(var mappingFactory in _mappingFactories)
+                configuration.AddDeserializedMapping(
+                    mappingFactory.Build(),
+                    null);
             return configuration;
         }
     }

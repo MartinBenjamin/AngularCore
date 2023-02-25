@@ -1,10 +1,12 @@
 ﻿using Autofac;
 using CommonDomainObjects;
 using NHibernate;
+using NHibernate.Cfg.MappingSchema;
 using NHibernate.Mapping.ByCode;
 using NHibernate.Tool.hbm2ddl;
 using NHibernateIntegration;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -18,29 +20,29 @@ namespace Test
         private const string _listenerName = "TestListener";
         private IContainer _container;
 
-        public class ModelMapperFactory: CommonDomainObjects.Mapping.ConventionModelMapperFactory
-        {
-            protected override void Populate(
-                ConventionModelMapper mapper
-                )
-            {
-                base.Populate(mapper);
-
-                mapper.AddMapping<CommonDomainObjects.Mapping.Taxonomy    <char>>();
-                mapper.AddMapping<CommonDomainObjects.Mapping.TaxonomyTerm<char>>();
-            }
-        }
-
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
             var builder = new ContainerBuilder();
             builder
-                .RegisterModule<NHibernateIntegration.Module>();
+                .RegisterModule<CommonDomainObjects.Mapping.Module>();
             builder
-                .RegisterType<ModelMapperFactory>()
-                .As<IModelMapperFactory>()
-                .SingleInstance();
+                .Register<Action<ConventionModelMapper>>(
+                    c => mapper =>
+                    {
+                        mapper.AddMapping<CommonDomainObjects.Mapping.Taxonomy    <char>>();
+                        mapper.AddMapping<CommonDomainObjects.Mapping.TaxonomyTerm<char>>();
+                    });
+            builder
+                .RegisterType<MappingFactory>()
+                .As<IMappingFactory>()
+                .WithParameter(
+                    "types",
+                    new[]
+                    {
+                        typeof(Taxonomy    <char>),
+                        typeof(TaxonomyTerm<char>)
+                    });
             builder
                 .RegisterModule(new SQLiteInMemoryModule("Test"));
 
@@ -78,15 +80,13 @@ namespace Test
         }
 
         [Test]
-        public void GenerateMapping()
+        public void GenerateMappings()
         {
-            var mapper = (ConventionModelMapper)_container.Resolve<IModelMapperFactory>().Build();
-            var mapping = mapper.CompileMappingForAllExplicitlyAddedEntities();
-            var xmlSerializer = new XmlSerializer(mapping.GetType());
-
-            xmlSerializer.Serialize(
-                TestContext.Out,
-                mapping);
+            var xmlSerializer = new XmlSerializer(typeof(HbmMapping));
+            foreach(var mappingFactory in _container.Resolve<IEnumerable<IMappingFactory>>())
+                xmlSerializer.Serialize(
+                        TestContext.Out,
+                        mappingFactory.Build());
         }
 
         [Test]

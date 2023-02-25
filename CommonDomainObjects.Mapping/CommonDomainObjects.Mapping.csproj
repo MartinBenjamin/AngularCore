@@ -18,6 +18,7 @@
     <ProjectReference Include="..\Iso4217\Iso4217.csproj" />
     <ProjectReference Include="..\LegalEntities\LegalEntities.csproj" />
     <ProjectReference Include="..\LifeCycles\LifeCycles.csproj" />
+    <ProjectReference Include="..\Locations2\Locations2.csproj" />
     <ProjectReference Include="..\Locations\Locations.csproj" />
     <ProjectReference Include="..\Naics\Naics.csproj" />
     <ProjectReference Include="..\NHibernateIntegration\NHibernateIntegration.csproj" />

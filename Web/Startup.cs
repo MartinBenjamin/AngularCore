@@ -59,9 +59,7 @@ namespace Web
                 .RegisterType<ServiceBasedControllerActivator>()
                 .As<IControllerActivator>();
             builder
-                .RegisterType<CommonDomainObjects.Mapping.ConventionModelMapperFactory>()
-                .As<IModelMapperFactory>()
-                .SingleInstance();
+                .RegisterModule<CommonDomainObjects.Mapping.Module>();
             builder
                 .RegisterModule(
                     new SQLiteModule(

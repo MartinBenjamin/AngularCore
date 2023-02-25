@@ -47,8 +47,8 @@ const Union = (
 
 const ConjunctiveQuery = <T extends Tuple> (
     head: T,
-    body: (Tuple | BuiltIn)[]): (...relations: Tuple[][]) => { [K in keyof T]: any; }[] =>
-    (...relations: Tuple[][]): { [K in keyof T]: any; }[] =>
+    body: (Tuple | BuiltIn)[]): (...relations: Iterable<Tuple>[]) => { [K in keyof T]: any; }[] =>
+    (...relations: Iterable<Tuple>[]): { [K in keyof T]: any; }[] =>
     {
         let relationIndex = 0;
         return body.reduce<{}[]>(
@@ -88,18 +88,6 @@ const ConjunctiveQuery = <T extends Tuple> (
             },
             [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
     };
-
-const ConjunctiveQueryDistinct = <T extends Tuple>(
-    setBuilder: (tuple: Iterable<{ [K in keyof T]: any; }>) => Set<{ [K in keyof T]: any; }>,
-    head: T,
-    body: (Tuple | BuiltIn)[]): (thisArg: any, relations: Tuple[][]) => Set<{ [K in keyof T]: any; }> =>
-{
-    const query = ConjunctiveQuery(
-        head,
-        body);
-
-    return (...relations: Tuple[][]): Set<{ [K in keyof T]: any; }> => setBuilder(query(...relations));
-}
 
 describe(
     'Signal2',
@@ -232,8 +220,7 @@ T(x, y) : - R(x, z), T(z, y)`,
                     tupleComparer,
                     tuples);
                 const union = Union(setBuilder);
-                const query = ConjunctiveQueryDistinct(
-                    setBuilder,
+                const query = ConjunctiveQuery(
                     ['?x', '?y'],
                     [['?x', '?z'], ['?z', '?y']]);
                 const reduce = Reduce(

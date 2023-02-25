@@ -38,41 +38,42 @@ namespace Test
             }
         }
 
-        public class ModelMapperFactory: CommonDomainObjects.Mapping.ConventionModelMapperFactory
-        {
-            protected override void Populate(
-                ConventionModelMapper mapper
-                )
-            {
-                base.Populate(mapper);
-
-                mapper.Class<Message>(messageMapper => messageMapper.Table("Message"));
-
-                mapper.Class<MessageQueue>(
-                    messageQueueMapper => messageQueueMapper.Id(
-                            messageQueue => messageQueue.Id,
-                            idMapper     => idMapper.Generator(Generators.Assigned)));
-
-                mapper.Class<MessageSummary>(
-                    messageSummaryMapper =>
-                    {
-                        messageSummaryMapper.Table("Message");
-                        messageSummaryMapper.SchemaAction(SchemaAction.None);
-                    });
-            }
-        }
-
         private ContainerBuilder Builder()
         {
             var builder = new ContainerBuilder();
             builder
                 .RegisterModule<Log4NetIntegration.Module>();
             builder
-                .RegisterModule<NHibernateIntegration.Module>();
+                .RegisterModule<CommonDomainObjects.Mapping.Module>();
             builder
-                .RegisterType<ModelMapperFactory>()
-                .As<IModelMapperFactory>()
-                .SingleInstance();
+                .Register<Action<ConventionModelMapper>>(
+                    c => mapper =>
+                    {
+                        mapper.Class<Message>(messageMapper => messageMapper.Table("Message"));
+
+                        mapper.Class<MessageQueue>(
+                            messageQueueMapper => messageQueueMapper.Id(
+                                    messageQueue => messageQueue.Id,
+                                    idMapper => idMapper.Generator(Generators.Assigned)));
+
+                        mapper.Class<MessageSummary>(
+                            messageSummaryMapper =>
+                            {
+                                messageSummaryMapper.Table("Message");
+                                messageSummaryMapper.SchemaAction(SchemaAction.None);
+                            });
+                    });
+            builder
+                .RegisterType<MappingFactory>()
+                .As<IMappingFactory>()
+                .WithParameter(
+                    "types",
+                    new[]
+                    {
+                        typeof(Message       ),
+                        typeof(MessageQueue  ),
+                        typeof(MessageSummary)
+                    });
             builder
                 .RegisterModule(new LocalDbModule("Test"));
             return builder;
