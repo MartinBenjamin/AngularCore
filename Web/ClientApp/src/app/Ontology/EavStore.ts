@@ -93,7 +93,7 @@ export class EavStore implements IEavStore, IPublisher
     private _atomActions         = new ArrayKeyedMap<Fact, Set<Action>>();
     private _schema              : Map<PropertyKey, AttributeSchema>;
     private _publishSuspended    = 0;
-    private _unsuspendActions    = new Set<Action>();
+    private _unsuspendActions    : Action[] = [];
     private _transactionManager  : ITransactionManager = new TransactionManager();
     private _publishEntities     : Action;
 
@@ -117,7 +117,8 @@ export class EavStore implements IEavStore, IPublisher
 
             if(this._publishSuspended)
             {
-                this._unsuspendActions.add(this._publishEntities);
+                if(!this._unsuspendActions.includes(this._publishEntities))
+                    this._unsuspendActions.push(this._publishEntities);
                 return;
             }
 
@@ -320,7 +321,7 @@ export class EavStore implements IEavStore, IPublisher
                 {
                     if(this._publishSuspended)
                     {
-                        this._unsuspendActions.add(action);
+                        this._unsuspendActions.push(action);
                         return;
                     }
 
@@ -1013,9 +1014,6 @@ export class EavStore implements IEavStore, IPublisher
     SuspendPublish(): void
     {
         this.SignalScheduler.Suspend();
-        if(!this._publishSuspended)
-            this._unsuspendActions.clear();
-
         ++this._publishSuspended;
     }
 
@@ -1024,7 +1022,8 @@ export class EavStore implements IEavStore, IPublisher
         this.SignalScheduler.Unsuspend();
         --this._publishSuspended;
         if(!this._publishSuspended)
-            this._unsuspendActions.forEach(action => action());
+            while(this._unsuspendActions.length)
+                this._unsuspendActions.shift()();
     }
 
     PublishAssert(
