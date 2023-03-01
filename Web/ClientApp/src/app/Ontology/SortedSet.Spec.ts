@@ -3,7 +3,7 @@ import { assertBuilder } from './assertBuilder';
 import { SortedSet } from './SortedSet';
 
 describe(
-    'SortedList',
+    'SortedSet',
     () =>
     {
         describe(
