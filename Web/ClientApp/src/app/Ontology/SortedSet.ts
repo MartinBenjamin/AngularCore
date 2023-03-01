@@ -2,7 +2,7 @@ export type Compare<T = any> = (a: T, b: T) => number;
 export const DefaultCompare = (a, b) => a === b ? 0 : a < b ? -1 : 1;
 
 export function ArrayCompareFactory(
-    elementCompare: Compare
+    elementCompare: Compare = DefaultCompare
     ): Compare<any[]>
 {
     return function(
