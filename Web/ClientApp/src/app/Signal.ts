@@ -64,11 +64,12 @@ export interface IScheduler
     AddSignal<TOut = any, TIn extends any[] = any[]>(
         map: (...parameters: TIn) => TOut,
         inputs: { [Parameter in keyof TIn]: Signal<TIn[Parameter]> | CurrentValue<TIn[Parameter]>; }
-    ): Signal<TOut>
-    AddSignals(predecessors: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>): void
-    RemoveSignal(signal: Signal): void
+    ): Signal<TOut>;
+    AddSignals(predecessors: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>): void;
+    RemoveSignal(signal: Signal): void;
 
-    Schedule(signal: Signal): void
+    Schedule(signal: Signal): void;
+    Inject(signal: Signal, value: any): void;
     Suspend(): void;
     Unsuspend(): void;
     Update(update: (scheduler: IScheduler) => void);
@@ -309,6 +310,33 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 
         if(!this._suspended && this._entryCount === 0)
             this.Flush();
+    }
+
+    Inject(
+        signal: Signal,
+        value : any
+        ): void
+    {
+
+        if(signal.AreEqual(
+            value,
+            this._values.get(signal)))
+            return;
+
+        this._values.set(
+            signal,
+            value);
+        for(const successor of this._successors.get(signal))
+            this.Schedule(successor);
+
+        const subscribers = this._subscribers.get(signal);
+        if(subscribers)
+            subscribers.forEach(subscriber => subscriber.next(value));
+
+        if(this._signalTrace)
+            this._signalTrace(
+                signal,
+                value);
     }
 
     Suspend(): void
