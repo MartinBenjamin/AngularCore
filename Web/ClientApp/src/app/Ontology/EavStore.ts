@@ -983,8 +983,6 @@ export class EavStore implements IEavStore, IPublisher
 
     PublishEntities()
     {
-        if(this._entitiesSignal)
-            this.SignalScheduler.Schedule(this._entitiesSignal);
 
         if(this._publishSuspended)
         {
@@ -992,9 +990,18 @@ export class EavStore implements IEavStore, IPublisher
             return;
         }
 
+        let entities: Set<any>;
+        if(this._entitiesSignal)
+        {
+            entities = this.Entities();
+            this.SignalScheduler.Inject(
+                this._entitiesSignal,
+                entities);
+        }
+
         if(this._entitiesSubscribers.size)
         {
-            const entities = this.Entities();
+            entities = entities || this.Entities();
             this._entitiesSubscribers.forEach(subscriber => subscriber.next(entities));
         }
     }
@@ -1018,25 +1025,31 @@ export class EavStore implements IEavStore, IPublisher
 
     SuspendPublish(): void
     {
-        this.SignalScheduler.Suspend();
         ++this._publishSuspended;
     }
 
     UnsuspendPublish(): void
     {
-        this.SignalScheduler.Unsuspend();
         --this._publishSuspended;
         if(!this._publishSuspended)
         {
-            if(this._publishEntities)
-                this.PublishEntities();
-
-            while(this._scheduled.size)
+            try
             {
-                const [atom, actions] = this._scheduled.shift();
-                this.PublishAtom(
-                    atom,
-                    actions);
+                this.SignalScheduler.Suspend();
+                if(this._publishEntities)
+                    this.PublishEntities();
+
+                while(this._scheduled.size)
+                {
+                    const [atom, actions] = this._scheduled.shift();
+                    this.PublishAtom(
+                        atom,
+                        actions);
+                }
+            }
+            finally
+            {
+                this.SignalScheduler.Unsuspend();
             }
         }
     }
