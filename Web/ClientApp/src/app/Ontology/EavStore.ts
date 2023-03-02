@@ -1049,7 +1049,7 @@ export class EavStore implements IEavStore, IPublisher
             }
             finally
             {
-                this.SignalScheduler.Unsuspend();
+                this.SignalScheduler.Resume();
             }
         }
     }

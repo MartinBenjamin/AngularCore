@@ -71,7 +71,7 @@ export interface IScheduler
     Schedule(signal: Signal): void;
     Inject(signal: Signal, value: any): void;
     Suspend(): void;
-    Unsuspend(): void;
+    Resume(): void;
     Update(update: (scheduler: IScheduler) => void);
     Observe<TOut>(signal: Signal<TOut>): Observable<TOut>;
 }
@@ -151,7 +151,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         }
         finally
         {
-            this.Unsuspend();
+            this.Resume();
         }
 
         return signal;
@@ -210,7 +210,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         }
         finally
         {
-            this.Unsuspend();
+            this.Resume();
         }
     }
 
@@ -344,7 +344,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         ++this._suspended;
     }
 
-    Unsuspend(): void
+    Resume(): void
     {
         --this._suspended;
         if(!this._suspended)
@@ -362,7 +362,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         }
         finally
         {
-            this.Unsuspend();
+            this.Resume();
         }
     }
 
