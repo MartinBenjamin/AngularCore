@@ -1,12 +1,11 @@
 import { } from 'jasmine';
-import { assertBuilder } from './assertBuilder';
 import { ArraySet } from './ArraySet';
-import { SortedSet } from './SortedSet';
+import { assertBuilder } from './assertBuilder';
 
 function compareTuple(
     lhs: any[],
     rhs: any[]
-): number
+    ): number
 {
     const difference = lhs.length - rhs.length;
     if(difference !== 0)

@@ -120,14 +120,4 @@ export class SortedMap<K, V> extends SortedList<[K, V]> implements Map<K, V>
     }
 
     [Symbol.toStringTag]: string;
-
-    shift(): [K, V]
-    {
-        return this._array.shift();
-    }
-
-    pop(): [K, V]
-    {
-        return this._array.pop();
-    }
 }

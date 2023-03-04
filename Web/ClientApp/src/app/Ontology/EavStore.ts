@@ -1,4 +1,4 @@
-import { Observable, Subscriber } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Scheduler, Signal } from '../Signal';
 import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
@@ -8,15 +8,25 @@ import { Group } from './Group';
 import { Atom, AttributeSchema, Cardinality, Edb, Fact, Idb, IEavStore, IsConstant, IsIdb, IsVariable, Rule, Store, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
-import { SortedMap } from './SortedMap';
-import { ArrayCompareFactory } from './SortedSet';
+import { ArrayCompareFactory, SortedSet } from './SortedSet';
 import { StronglyConnectedComponents } from './StronglyConnectedComponents';
 
 type Tuple = any[];
 
-const EntityId = Symbol('EntityId');
+export const EntityId = Symbol('EntityId');
 
-function Compare(
+export const TypeCollation = {
+    'undefined': 0,
+    'object'   : 1,
+    'bigint'   : 2,
+    'boolean'  : 3,
+    'function' : 4,
+    'number'   : 5,
+    'string'   : 6,
+    'symbol'   : 7
+};
+
+export function Compare(
     a: any,
     b: any
     ): number
@@ -28,7 +38,7 @@ function Compare(
     const bType = typeof b;
 
     if(aType !== bType)
-        return aType.localeCompare(bType);
+        return TypeCollation[aType] - TypeCollation[bType];
 
     if(typeof a === 'object')
     {
@@ -39,9 +49,11 @@ function Compare(
             if(typeof bId === 'number')
                 return aId - bId;
         }
+
+        return a - b;
     }
 
-    return a < b ? -1 : 1
+    return a < b ? -1 : 1;
 }
 
 const tupleCompare = ArrayCompareFactory(Compare);
@@ -81,7 +93,25 @@ function Match<TTrieNode extends TrieNode<TTrieNode, V>, V>(
     }
 }
 
-type Action = (facts: Fact[]) => void;
+class Topic<TId = any, T = any>
+{
+    readonly Subscribers = new Set<(t: T) => void>();
+
+    constructor(
+        public readonly Id          : TId,
+        public readonly Publisher   : () => T
+        )
+    {
+    }
+
+    Publish()
+    {
+        let published = this.Publisher();
+        this.Subscribers.forEach(subscriber => subscriber(published))
+    }
+}
+
+const EntitiesTopicId = [];
 
 export class EavStore implements IEavStore, IPublisher
 {
@@ -89,14 +119,14 @@ export class EavStore implements IEavStore, IPublisher
     private _aev                 = new Map<PropertyKey, Map<any, any>>();
     private _ave                 : Map<PropertyKey, Map<any, any>>;
     private _nextEntityId        = 1
-    private _entitiesSubscribers = new Set<Subscriber<Set<any>>>();
+    private _entitiesObservable  : BehaviorSubject<Set<any>>;
     private _entitiesSignal      : Signal<Set<any>>;
-    private _atomActions         = new ArrayKeyedMap<Fact, Set<Action>>();
+    private _atomTopics          = new ArrayKeyedMap<Fact, Topic<Fact, Fact[]>>();
+    private _entitiesTopic       : Topic<any, Set<any>>;
+    private _scheduledTopics     = new SortedSet<Topic>((a, b) => tupleCompare(a.Id, b.Id));
     private _schema              : Map<PropertyKey, AttributeSchema>;
     private _publishSuspended    = 0;
-    private _scheduled           = new SortedMap<Fact, Set<Action>>(tupleCompare);
     private _transactionManager  : ITransactionManager = new TransactionManager();
-    private _publishEntities     : boolean;
 
     readonly SignalScheduler = new Scheduler();
 
@@ -110,6 +140,10 @@ export class EavStore implements IEavStore, IPublisher
             attributeSchema
                 .filter(attributeSchema => attributeSchema.UniqueIdentity)
                 .map(attributeSchema => [attributeSchema.Name, new Map<any, any>()]));
+
+        this._entitiesTopic = new Topic(
+            EntitiesTopicId,
+            () => this.Entities());
     }
 
     public Entities(): Set<any>
@@ -119,13 +153,12 @@ export class EavStore implements IEavStore, IPublisher
 
     ObserveEntities(): Observable<Set<any>>
     {
-        return new Observable<Set<any>>(
-            subscriber =>
-            {
-                this._entitiesSubscribers.add(subscriber);
-                subscriber.add(() => this._entitiesSubscribers.delete(subscriber));
-                subscriber.next(this.Entities());
-            });
+        if(!this._entitiesObservable)
+        {
+            this._entitiesObservable = new BehaviorSubject<Set<any>>(this.Entities());
+            this._entitiesTopic.Subscribers.add(entities => this._entitiesObservable.next(entities))
+        }
+        return this._entitiesObservable;
     }
 
     SignalEntities(): Signal<Set<any>, any[]>
@@ -133,7 +166,18 @@ export class EavStore implements IEavStore, IPublisher
         if(!this._entitiesSignal)
         {
             this._entitiesSignal = this.SignalScheduler.AddSignal(() => this.Entities());
-            this._entitiesSignal.AddRemoveAction(() => this._entitiesSignal = null);
+
+            const subscriber = (entities: Set<any>) => this.SignalScheduler.Inject(
+                this._entitiesSignal,
+                entities);
+
+            this._entitiesTopic.Subscribers.add(subscriber);
+            this._entitiesSignal.AddRemoveAction(
+                () =>
+                {
+                    this._entitiesTopic.Subscribers.delete(subscriber);
+                    this._entitiesSignal = null;
+                });
         }
         return this._entitiesSignal;
     }
@@ -290,27 +334,30 @@ export class EavStore implements IEavStore, IPublisher
         return new Observable<Fact[]>(
             subscriber =>
             {
-                let actions = this._atomActions.get(atom);
-                if(!actions)
+                let topic = this._atomTopics.get(atom);
+                if(!topic)
                 {
-                    actions = new Set<Action>();
-                    this._atomActions.set(
+                    topic = new Topic(
                         atom,
-                        actions);
+                        () => this.QueryAtom(atom));
+
+                    this._atomTopics.set(
+                        atom,
+                        topic);
                 }
 
-                let action: Action = (facts: Fact[]) => subscriber.next(facts);
-                actions.add(action);
+                let topicSubscriber = (facts: Fact[]) => subscriber.next(facts);
+                topic.Subscribers.add(topicSubscriber);
 
                 subscriber.add(
                     () =>
                     {
-                        actions.delete(action);
-                        if(!actions.size)
-                            this._atomActions.delete(atom);
+                        topic.Subscribers.delete(topicSubscriber);
+                        if(!topic.Subscribers.size)
+                            this._atomTopics.delete(topic.Id);
                     });
 
-                action(this.QueryAtom(atom));
+                topicSubscriber(topic.Publisher());
             });
     }
 
@@ -355,29 +402,32 @@ export class EavStore implements IEavStore, IPublisher
         atom = <Fact>atom.map(term => IsVariable(term) ? undefined : term);
         const signal = this.SignalScheduler.AddSignal(() => this.QueryAtom(atom));
 
-        let actions = this._atomActions.get(atom);
-        if(!actions)
+        let topic = this._atomTopics.get(atom);
+        if(!topic)
         {
-            actions = new Set<Action>();
-            this._atomActions.set(
+            topic = new Topic(
                 atom,
-                actions);
+                () => this.QueryAtom(atom));
+
+            this._atomTopics.set(
+                atom,
+                topic);
         }
 
-        let action: Action = (facts: Fact[]) => this.SignalScheduler.Inject(
+        let topicSubscriber = (facts: Fact[]) => this.SignalScheduler.Inject(
             signal,
             facts);
-        actions.add(action);
+        topic.Subscribers.add(topicSubscriber);
 
         signal.AddRemoveAction(
             () =>
             {
-                actions.delete(action);
-                if(!actions.size)
-                    this._atomActions.delete(atom);
+                topic.Subscribers.delete(topicSubscriber);
+                if(!topic.Subscribers.size)
+                    this._atomTopics.delete(topic.Id);
             });
 
-        action(this.QueryAtom(atom));
+        topicSubscriber(topic.Publisher());
         return signal;
     }
 
@@ -676,7 +726,7 @@ export class EavStore implements IEavStore, IPublisher
         entity[StoreSymbol] = this;
         entity[EntityId   ] = this._nextEntityId++;
 
-        this.PublishEntities();
+        this.Publish(this._entitiesTopic);
         return entity;
     }
 
@@ -727,10 +777,10 @@ export class EavStore implements IEavStore, IPublisher
                                 entity,
                                 av);
                             entity[StoreSymbol] = this;
-                            this.PublishEntities();
+                            this.Publish(this._entitiesTopic);
                         }));
 
-            this.PublishEntities();
+            this.Publish(this._entitiesTopic);
             this.UnsuspendPublish();
         }
     }
@@ -981,46 +1031,17 @@ export class EavStore implements IEavStore, IPublisher
         return entity;
     }
 
-    PublishEntities()
-    {
-
-        if(this._publishSuspended)
-        {
-            this._publishEntities = true;
-            return;
-        }
-
-        let entities: Set<any>;
-        if(this._entitiesSignal)
-        {
-            entities = this.Entities();
-            this.SignalScheduler.Inject(
-                this._entitiesSignal,
-                entities);
-        }
-
-        if(this._entitiesSubscribers.size)
-        {
-            entities = entities || this.Entities();
-            this._entitiesSubscribers.forEach(subscriber => subscriber.next(entities));
-        }
-    }
-
-    PublishAtom(
-        atom   : Fact,
-        actions: Set<Action>
+    Publish(
+        topic: Topic
         )
     {
         if(this._publishSuspended)
         {
-            this._scheduled.set(
-                atom,
-                actions);
+            this._scheduledTopics.add(topic);
             return;
         };
 
-        const facts = this.QueryAtom(atom);
-        actions.forEach(action => action(facts));
+        topic.Publish();
     }
 
     SuspendPublish(): void
@@ -1036,16 +1057,8 @@ export class EavStore implements IEavStore, IPublisher
             try
             {
                 this.SignalScheduler.Suspend();
-                if(this._publishEntities)
-                    this.PublishEntities();
-
-                while(this._scheduled.size)
-                {
-                    const [atom, actions] = this._scheduled.shift();
-                    this.PublishAtom(
-                        atom,
-                        actions);
-                }
+                while(this._scheduledTopics.size)
+                    this._scheduledTopics.shift().Publish();
             }
             finally
             {
@@ -1068,9 +1081,9 @@ export class EavStore implements IEavStore, IPublisher
                     value));
 
         Match(
-            this._atomActions,
+            this._atomTopics,
             [entity, attribute, value],
-            (atom, actions: Set<Action>) => this.PublishAtom(atom, actions));
+            (atom, topic: Topic<Fact, Fact[]>) => this.Publish(topic));
     }
 
     PublishRetract(
@@ -1087,9 +1100,9 @@ export class EavStore implements IEavStore, IPublisher
                     value));
 
         Match(
-            this._atomActions,
+            this._atomTopics,
             [entity, attribute, value],
-            (atom, actions: Set<Action>) => this.PublishAtom(atom, actions));
+            (atom, topic: Topic<Fact, Fact[]>) => this.Publish(topic));
     }
 
     PublishAssertRetract(
@@ -1109,13 +1122,13 @@ export class EavStore implements IEavStore, IPublisher
 
         this.SuspendPublish();
         Match(
-            this._atomActions,
+            this._atomTopics,
             [entity, attribute, assertedValue],
-            (atom, actions: Set<Action>) => this.PublishAtom(atom, actions));
+            (atom, topic: Topic<Fact, Fact[]>) => this.Publish(topic));
         Match(
-            this._atomActions,
+            this._atomTopics,
             [entity, attribute, retractedValue],
-            (atom, actions: Set<Action>) => this.PublishAtom(atom, actions));
+            (atom, topic: Topic<Fact, Fact[]>) => this.Publish(topic));
         this.UnsuspendPublish();
     }
 

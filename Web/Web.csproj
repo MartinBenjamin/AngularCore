@@ -175,6 +175,7 @@
     <None Remove="ClientApp\src\app\Ontology\EavStore.Signal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\EavStore.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\EavStore.ts" />
+    <None Remove="ClientApp\src\app\Ontology\EavStoreCompare.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\EavStoreLog.ts" />
     <None Remove="ClientApp\src\app\Ontology\EavStoreQuery.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Entity.ts" />
@@ -425,6 +426,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataSomeValuesFromSignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\EavStore.Observe.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\EavStore.Signal.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\EavStoreCompare.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectAllValuesFromSignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectComplementOfSignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectExactCardinalitySignal.Spec.ts" />

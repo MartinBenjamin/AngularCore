@@ -166,6 +166,16 @@ export class SortedList<T>
             this._array[start],
             t) > 0 ? start : -1;
     }
+
+    shift(): T
+    {
+        return this._array.shift();
+    }
+
+    pop(): T
+    {
+        return this._array.pop();
+    }
 }
 
 export class SortedSet<T> extends SortedList<T> implements Set<T>
