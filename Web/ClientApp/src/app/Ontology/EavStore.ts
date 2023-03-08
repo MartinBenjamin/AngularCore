@@ -400,7 +400,6 @@ export class EavStore implements IEavStore, IPublisher
         ): Signal<Fact[]>
     {
         atom = <Fact>atom.map(term => IsVariable(term) ? undefined : term);
-        const signal = this.SignalScheduler.AddSignal(() => this.QueryAtom(atom));
 
         let topic = this._atomTopics.get(atom);
         if(!topic)
@@ -414,6 +413,7 @@ export class EavStore implements IEavStore, IPublisher
                 topic);
         }
 
+        const signal = this.SignalScheduler.AddSignal();
         let topicSubscriber = (facts: Fact[]) => this.SignalScheduler.Inject(
             signal,
             facts);
