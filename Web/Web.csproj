@@ -134,7 +134,7 @@
     <None Remove="ClientApp\src\app\Ontology\ClassExpressionSignalInterpreter.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassExpressionWriter.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassObservable.Spec.ts" />
-    <None Remove="ClientApp\src\app\Ontology\ClassSignal.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ClassSignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataAllValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataAllValuesFromObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataAllValuesFromSignal.Spec.ts" />
@@ -417,7 +417,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassExpressionInterpreter.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassExpressionObservableInterpreter.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassExpressionSignalInterpreter.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassSignal.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassSignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataAllValuesFromSignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataExactCardinalitySignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\DataHasValueSignal.Spec.ts" />
