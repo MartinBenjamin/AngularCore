@@ -7,10 +7,11 @@ import { IAxiom } from "./IAxiom";
 import { IClassExpression } from "./IClassExpression";
 import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IDataRange } from "./IDataRange";
-import { IEavStore, IsConstant, IsVariable } from './IEavStore';
+import { IsConstant, IsVariable } from './IEavStore';
 import { IIndividual } from "./IIndividual";
 import { IOntology } from './IOntology';
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
+import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 
 // http://www.cs.ox.ac.uk/files/2445/rulesyntaxTR.pdf
 /*
@@ -414,8 +415,8 @@ export function IsDLSafeRule(
 export class Generator implements IAtomSelector<Observable<object[]> | BuiltIn>
 {
     constructor(
-        private _store                   : IEavStore,
-        private _classObservableGenerator: IClassExpressionSelector<Observable<Set<any>>>
+        private _propertyObservableGenerator: IPropertyExpressionSelector<Observable<[any, any][]>>,
+        private _classObservableGenerator   : IClassExpressionSelector<Observable<Set<any>>>
         )
     {
     }
@@ -471,7 +472,7 @@ export class Generator implements IAtomSelector<Observable<object[]> | BuiltIn>
         property: IPropertyAtom
         ): Observable<object[]>
     {
-        return this._store.Observe(property.PropertyExpression.LocalName)
+        return property.PropertyExpression.Select(this._propertyObservableGenerator)
             .pipe(map(EavStore.Substitute([property.Domain, property.Range])));
     }
 
@@ -575,13 +576,13 @@ function ObserveRuleContradictions(
 }
 
 export function* ObserveContradictions(
-    store                   : IEavStore,
-    observableClassGenerator: IClassExpressionSelector<Observable<Set<any>>>,
-    rules                   : Iterable<IDLSafeRule>
+    observablePropertyGenerator: IPropertyExpressionSelector<Observable<[any, any][]>>,
+    observableClassGenerator   : IClassExpressionSelector<Observable<Set<any>>>,
+    rules                      : Iterable<IDLSafeRule>
     ): Iterable<Observable<[string, IAxiom, Set<any>]>>
 {
     const generator = new Generator(
-        store,
+        observablePropertyGenerator,
         observableClassGenerator);
 
     for(const rule of rules)

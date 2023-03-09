@@ -59,7 +59,7 @@ export function ObserveErrors(
     {
         let observables: Observable<[string, Error, Set<any>]>[] = [...dataRangeObservables];
         const ruleContradictions = ObserveContradictions(
-            store,
+            generator,
             generator,
             ontology.Get(IsDLSafeRule));
         observables.push(...ruleContradictions);
