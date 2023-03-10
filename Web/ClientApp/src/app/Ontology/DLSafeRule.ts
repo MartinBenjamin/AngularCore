@@ -443,9 +443,9 @@ export class Generator implements IAtomSelector<Observable<object[]> | BuiltIn>
         dataRange: IDataRangeAtom
         ): BuiltIn
     {
-        return function*(
+        return (
             substitutions: Iterable<object>
-            )
+            ) =>
         {
             if(IsConstant(dataRange.Value))
                 return dataRange.DataRange.HasMember(dataRange.Value) ? substitutions : [];
@@ -487,7 +487,6 @@ export class Generator implements IAtomSelector<Observable<object[]> | BuiltIn>
         lessThanOrEqual: ILessThanOrEqualAtom
         ): BuiltIn
     {
-
         return LessThanOrEqual(lessThanOrEqual.Lhs, lessThanOrEqual.Rhs);
     }
 
@@ -550,14 +549,179 @@ export class Generator implements IAtomSelector<Observable<object[]> | BuiltIn>
     }
 }
 
+export type Wrapped<T> = {};
+
+export interface ICache<TAtom>
+{
+    Set(
+        atom   : IAtom,
+        wrapped: TAtom): void;
+    Get(atom: IAtom): TAtom
+}
+
+export abstract class AtomInterpreter<TAtom, TClass, TProperty> implements IAtomSelector<TAtom>
+{
+    private _classExpressionInterpreter   : IClassExpressionSelector<Wrapped<Set<any>>>;
+    private _propertyExpressionInterpreter: IPropertyExpressionSelector<Wrapped<[any, any][]>>;
+
+    protected abstract Wrap<TIn extends any[], TOut>(
+        map: (...params: TIn) => TOut,
+        ...params: { [Parameter in keyof TIn]: Wrapped<TIn[Parameter]>; }): Wrapped<TOut>;
+
+    constructor(
+        propertyExpressionInterpreter: IPropertyExpressionSelector<TProperty>,
+        classExpressionInterpreter   : IClassExpressionSelector<TClass>
+        )
+    {
+        this._propertyExpressionInterpreter = propertyExpressionInterpreter;
+        this._classExpressionInterpreter    = classExpressionInterpreter;
+    }
+
+    Class(
+        class$: IClassAtom
+        ): TAtom
+    {
+        if(IsVariable(class$.Individual))
+            return <TAtom>this.Wrap(
+                individuals => [...individuals].map(
+                    individual =>
+                    {
+                        return { [<string>class$.Individual]: individual };
+                    }),
+                class$.ClassExpression.Select(this._classExpressionInterpreter));
+
+        return <TAtom>this.Wrap(
+            individuals => individuals.has(class$.Individual) ? [{}] : [],
+            class$.ClassExpression.Select(this._classExpressionInterpreter));
+    }
+
+    DataRange(
+        dataRange: IDataRangeAtom
+        ): TAtom
+    {
+        return <TAtom>this.Wrap(() => (
+            substitutions: Iterable<object>
+            ) =>
+        {
+            if(IsConstant(dataRange.Value))
+                return dataRange.DataRange.HasMember(dataRange.Value) ? substitutions : [];
+
+            return [...substitutions].filter(substitution => dataRange.DataRange.HasMember(substitution[dataRange.Value]));
+        });
+    }
+
+    ObjectProperty(
+        objectProperty: IObjectPropertyAtom
+        ): TAtom
+    {
+        return this.Property(objectProperty);
+    }
+
+    DataProperty(
+        dataProperty: IDataPropertyAtom
+        ): TAtom
+    {
+        return this.Property(dataProperty);
+    }
+
+    private Property(
+        property: IPropertyAtom
+        ): TAtom
+    {
+        return <TAtom>this.Wrap(
+            EavStore.Substitute([property.Domain, property.Range]),
+            property.PropertyExpression.Select(this._propertyExpressionInterpreter));
+    }
+
+    LessThan(
+        lessThan: ILessThanAtom
+        ): TAtom
+    {
+        return <TAtom>this.Wrap(() => LessThan(lessThan.Lhs, lessThan.Rhs));
+    }
+
+    LessThanOrEqual(
+        lessThanOrEqual: ILessThanOrEqualAtom
+        ): TAtom
+    {
+        return <TAtom>this.Wrap(() => LessThanOrEqual(lessThanOrEqual.Lhs, lessThanOrEqual.Rhs));
+    }
+
+    Equal(
+        equal: IEqualAtom
+        ): TAtom
+    {
+        return <TAtom>this.Wrap(() => Equal(equal.Lhs, equal.Rhs));
+    }
+
+    NotEqual(
+        notEqual: INotEqualAtom
+        ): TAtom
+    {
+        return <TAtom>this.Wrap(()=> NotEqual(notEqual.Lhs, notEqual.Rhs));
+    }
+
+    GreaterThanOrEqual(
+        greaterThanOrEqual: IGreaterThanOrEqualAtom
+        ): TAtom
+    {
+        return <TAtom>this.Wrap(() => GreaterThanOrEqual(greaterThanOrEqual.Lhs, greaterThanOrEqual.Rhs));
+    }
+
+    GreaterThan(
+        greaterThan: IGreaterThanAtom
+        ): TAtom
+    {
+        return <TAtom>this.Wrap(() => GreaterThan(greaterThan.Lhs, greaterThan.Rhs));
+    }
+}
+
+type ObservableParams<P> = { [Parameter in keyof P]: Observable<P[Parameter]>; };
+
+export class AtomObservableInterpreter extends AtomInterpreter<Observable<object[] | BuiltIn>, Observable<Set<any>>, Observable<[any, any][]>>
+{
+    constructor(
+        propertyObservableGenerator: IPropertyExpressionSelector<Observable<[any, any][]>>,
+        classObservableGenerator   : IClassExpressionSelector<Observable<Set<any>>>
+        )
+    {
+        super(
+            propertyObservableGenerator,
+            classObservableGenerator);
+    }
+
+    protected Wrap<TIn extends any[], TOut>(
+        map: (...params: TIn) => TOut,
+        ...params: ObservableParams<TIn>
+        ): Observable<TOut>
+    {
+        if(!params.length)
+            return new BehaviorSubject(map(...<TIn>[]));
+
+        else
+            return combineLatest(
+                params,
+                map);
+    }
+
+    Atoms(
+        atoms: IAtom[]
+        ): Observable<object[]>
+    {
+        return combineLatest(
+            atoms.map(atom => atom.Select(this)),
+            EavStore.Conjunction());
+    }
+}
+
 function ObserveRuleContradictions(
-    generator: Generator,
-    rule     : IDLSafeRule
+    interpreter: AtomObservableInterpreter,
+    rule       : IDLSafeRule
     ): Observable<object[]>
 {
     return combineLatest(
-        generator.Atoms(rule.Head),
-        generator.Atoms(rule.Body),
+        interpreter.Atoms(rule.Head),
+        interpreter.Atoms(rule.Body),
         (head, body) => body.reduce<object[]>(
             (failed, x) =>
             {
@@ -581,7 +745,7 @@ export function* ObserveContradictions(
     rules                      : Iterable<IDLSafeRule>
     ): Iterable<Observable<[string, IAxiom, Set<any>]>>
 {
-    const generator = new Generator(
+    const interpreter = new AtomObservableInterpreter(
         observablePropertyGenerator,
         observableClassGenerator);
 
@@ -593,7 +757,7 @@ export function* ObserveContradictions(
         if(comparison && lhsProperty)
         {
             yield ObserveRuleContradictions(
-                generator,
+                interpreter,
                 rule).pipe(map(
                     contraditions => [
                         lhsProperty.PropertyExpression.LocalName,

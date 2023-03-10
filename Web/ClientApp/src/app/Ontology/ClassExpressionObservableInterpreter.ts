@@ -37,7 +37,7 @@ export class ClassExpressionObservableInterpreter extends ClassExpressionInterpr
         ): Observable<TOut>
     {
         if(!params.length)
-            return new BehaviorSubject<TOut>(map(...<TIn>[]));
+            return new BehaviorSubject(map(...<TIn>[]));
 
         else
             return combineLatest(

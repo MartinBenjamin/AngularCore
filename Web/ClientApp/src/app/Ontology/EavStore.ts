@@ -580,72 +580,79 @@ export class EavStore implements IEavStore, IPublisher
     }
 
     public static Conjunction(
-        terms: any[],
+        terms?: any[],
         idbTerms?: any[]
         ): (...inputs: (object[] | BuiltIn)[]) => object[]
     {
         let initialSubstitution: object = {};
         const initialMappedSubstitution = {};
-        let map: (substitutions: object[]) => object[] = (substitutions: object[]) => substitutions.map(substitution => terms.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
-        if(idbTerms)
+
+        let map: (substitutions: object[]) => object[] = substitutions => substitutions;
+        if(terms)
         {
-            const variableMap: [PropertyKey, PropertyKey][] = [];
-            for(let index = 0; index < terms.length && initialSubstitution; index++)
+            if(!idbTerms)
+                map = substitutions => substitutions.map(substitution => terms.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
+
+            else
             {
-                const term = terms[index];
-                const idbTerm = idbTerms[index];
-
-                if(IsVariable(term))
+                const variableMap: [PropertyKey, PropertyKey][] = [];
+                for(let index = 0; index < terms.length && initialSubstitution; index++)
                 {
-                    if(IsConstant(idbTerm))
+                    const term = terms[index];
+                    const idbTerm = idbTerms[index];
+
+                    if(IsVariable(term))
                     {
-                        if(initialSubstitution[term] === undefined)
-                            initialSubstitution[term] = idbTerm;
-
-                        else if(initialSubstitution[term] !== idbTerm)
-                            return () => [];
-                    }
-                    else if(IsVariable(idbTerm))
-                        variableMap.push([term, idbTerm]);
-                }
-                else if(IsConstant(term))
-                {
-                    if(IsVariable(idbTerm))
-                    {
-                        if(initialMappedSubstitution[idbTerm] === undefined)
-                            initialMappedSubstitution[idbTerm] = term;
-
-                        else if(initialMappedSubstitution[idbTerm] !== term)
-                            return () => [];
-                    }
-                    else if(IsConstant(idbTerm) && term !== idbTerm)
-                        return () => [];
-                }
-            }
-
-            map = (substitutions: object[]) =>
-            {
-                const mappedSubstitutions: object[] = [];
-                for(const substitution of substitutions)
-                {
-                    let mappedSubstitution = { ...initialMappedSubstitution };
-                    for(const [source, target] of variableMap)
-                    {
-                        if(mappedSubstitution[target] === undefined)
-                            mappedSubstitution[target] = substitution[source];
-
-                        else if(mappedSubstitution[target] !== substitution[source])
+                        if(IsConstant(idbTerm))
                         {
-                            mappedSubstitution = null;
-                            break;
-                        }
-                    }
+                            if(initialSubstitution[term] === undefined)
+                                initialSubstitution[term] = idbTerm;
 
-                    if(mappedSubstitution)
-                        mappedSubstitutions.push(mappedSubstitution);
+                            else if(initialSubstitution[term] !== idbTerm)
+                                return () => [];
+                        }
+                        else if(IsVariable(idbTerm))
+                            variableMap.push([term, idbTerm]);
+                    }
+                    else if(IsConstant(term))
+                    {
+                        if(IsVariable(idbTerm))
+                        {
+                            if(initialMappedSubstitution[idbTerm] === undefined)
+                                initialMappedSubstitution[idbTerm] = term;
+
+                            else if(initialMappedSubstitution[idbTerm] !== term)
+                                return () => [];
+                        }
+                        else if(IsConstant(idbTerm) && term !== idbTerm)
+                            return () => [];
+                    }
                 }
-                return mappedSubstitutions;
-            };
+
+                map = (substitutions: object[]) =>
+                {
+                    const mappedSubstitutions: object[] = [];
+                    for(const substitution of substitutions)
+                    {
+                        let mappedSubstitution = { ...initialMappedSubstitution };
+                        for(const [source, target] of variableMap)
+                        {
+                            if(mappedSubstitution[target] === undefined)
+                                mappedSubstitution[target] = substitution[source];
+
+                            else if(mappedSubstitution[target] !== substitution[source])
+                            {
+                                mappedSubstitution = null;
+                                break;
+                            }
+                        }
+
+                        if(mappedSubstitution)
+                            mappedSubstitutions.push(mappedSubstitution);
+                    }
+                    return mappedSubstitutions;
+                };
+            }
         }
 
         return (...inputs: (object[] | Function)[]) => map(inputs.reduce<object[]>(
