@@ -29,6 +29,8 @@ describe(
                 assert(`Compare(${a}, ${b}) !== 0 || Compare(${b}, ${a}) === 0`);
                 assert(`Compare(${a}, ${b}) === -Compare(${b}, ${a})`);
                 assert(`typeof ${a} === typeof ${b} || Compare(${a}, ${b}) === TypeCollation[typeof ${a}] - TypeCollation[typeof ${b}]`);
+                assert(`typeof ${a} !== typeof ${b} || Compare(${a}, ${b}) ${a === b ? '===' : a < b ? '<' : '>'} 0`);
+
             }
 
         const numbers = [1, 2, 3];
