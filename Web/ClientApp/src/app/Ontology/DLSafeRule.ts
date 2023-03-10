@@ -561,20 +561,28 @@ export interface ICache<TAtom>
 
 export abstract class AtomInterpreter<TAtom, TClass, TProperty> implements IAtomSelector<TAtom>
 {
+    private _atomInterpreter              : IAtomSelector<Wrapped<object[] | BuiltIn>>;
     private _classExpressionInterpreter   : IClassExpressionSelector<Wrapped<Set<any>>>;
     private _propertyExpressionInterpreter: IPropertyExpressionSelector<Wrapped<[any, any][]>>;
+    private _propertyDefinitions          : Map<IPropertyExpression, IDLSafeRule>;
 
     protected abstract Wrap<TIn extends any[], TOut>(
         map: (...params: TIn) => TOut,
         ...params: { [Parameter in keyof TIn]: Wrapped<TIn[Parameter]>; }): Wrapped<TOut>;
 
     constructor(
+        private _ontology            : IOntology,
         propertyExpressionInterpreter: IPropertyExpressionSelector<TProperty>,
         classExpressionInterpreter   : IClassExpressionSelector<TClass>
         )
     {
+        this._atomInterpreter               = this;
         this._propertyExpressionInterpreter = propertyExpressionInterpreter;
         this._classExpressionInterpreter    = classExpressionInterpreter;
+        this._propertyDefinitions           = new Map(
+            [...this._ontology.Get(IsDLSafeRule)]
+                .filter(rule => rule.Head.length === 1 && rule.Head[0] instanceof PropertyAtom)
+                .map(rule => [(<PropertyAtom>rule.Head[0]).PropertyExpression, rule]));
     }
 
     Class(
@@ -628,6 +636,14 @@ export abstract class AtomInterpreter<TAtom, TClass, TProperty> implements IAtom
         property: IPropertyAtom
         ): TAtom
     {
+        const propertyDefinition = this._propertyDefinitions.get(property.PropertyExpression);
+        if(propertyDefinition)
+            return <TAtom>this.Wrap(
+                EavStore.Conjunction(
+                    [(<IPropertyAtom>propertyDefinition.Head[0]).Domain, (<IPropertyAtom>propertyDefinition.Head[0]).Range],
+                    [property.Domain, property.Range]),
+                propertyDefinition.Body.map(atom => atom.Select(this._atomInterpreter)));
+
         return <TAtom>this.Wrap(
             EavStore.Substitute([property.Domain, property.Range]),
             property.PropertyExpression.Select(this._propertyExpressionInterpreter));
@@ -681,11 +697,13 @@ type ObservableParams<P> = { [Parameter in keyof P]: Observable<P[Parameter]>; }
 export class AtomObservableInterpreter extends AtomInterpreter<Observable<object[] | BuiltIn>, Observable<Set<any>>, Observable<[any, any][]>>
 {
     constructor(
+        ontology                   : IOntology,
         propertyObservableGenerator: IPropertyExpressionSelector<Observable<[any, any][]>>,
         classObservableGenerator   : IClassExpressionSelector<Observable<Set<any>>>
         )
     {
         super(
+            ontology,
             propertyObservableGenerator,
             classObservableGenerator);
     }
@@ -740,12 +758,14 @@ function ObserveRuleContradictions(
 }
 
 export function* ObserveContradictions(
+    ontology                   : IOntology,
     observablePropertyGenerator: IPropertyExpressionSelector<Observable<[any, any][]>>,
     observableClassGenerator   : IClassExpressionSelector<Observable<Set<any>>>,
     rules                      : Iterable<IDLSafeRule>
     ): Iterable<Observable<[string, IAxiom, Set<any>]>>
 {
     const interpreter = new AtomObservableInterpreter(
+        ontology,
         observablePropertyGenerator,
         observableClassGenerator);
 
