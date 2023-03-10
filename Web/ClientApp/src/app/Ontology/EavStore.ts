@@ -40,7 +40,7 @@ export function Compare(
     if(aType !== bType)
         return TypeCollation[aType] - TypeCollation[bType];
 
-    if(typeof a === 'object')
+    if(aType === 'object' && a !== null && b !== null)
     {
         const aId = a[EntityId];
         if(typeof aId === 'number')
@@ -49,11 +49,9 @@ export function Compare(
             if(typeof bId === 'number')
                 return aId - bId;
         }
-
-        return a - b;
     }
 
-    return a < b ? -1 : 1;
+    return a < b ? -1 : a > b ? 1 : 0;
 }
 
 const tupleCompare = ArrayCompareFactory(Compare);

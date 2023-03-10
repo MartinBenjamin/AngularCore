@@ -22,15 +22,19 @@ describe(
 
         const assert = assertBuilder('TypeCollation', 'Compare', 'EntityId', 'symbol')(TypeCollation, Compare, EntityId, symbol);
         assert('Compare(undefined, undefined) === 0');
-        const mixed = ["undefined", "null", "true", "false", "0", "1", "2", "''", "'a'", "'ab'", "symbol"];
+        assert('Compare(null, null) === 0');
+        assert('Compare(null, { [Symbol.toPrimitive]:() => 0 }) === 0');
+        assert('Compare({ [Symbol.toPrimitive]:() => 0 }, null) === 0');
+        assert('Compare({ [Symbol.toPrimitive]:() =>  1 }, null) > 0');
+        assert('Compare({ [Symbol.toPrimitive]:() => -1 }, null) < 0');
+        const mixed = ["undefined", "null", "{ [Symbol.toPrimitive]:() => 1 }", "{ [Symbol.toPrimitive]:() => 2 }", "true", "false", "0", "1", "2", "''", "'a'", "'ab'", "symbol"];
         for(const a of mixed)
             for(const b of mixed)
             {
                 assert(`Compare(${a}, ${b}) !== 0 || Compare(${b}, ${a}) === 0`);
                 assert(`Compare(${a}, ${b}) === -Compare(${b}, ${a})`);
                 assert(`typeof ${a} === typeof ${b} || Compare(${a}, ${b}) === TypeCollation[typeof ${a}] - TypeCollation[typeof ${b}]`);
-                assert(`typeof ${a} !== typeof ${b} || Compare(${a}, ${b}) ${a === b ? '===' : a < b ? '<' : '>'} 0`);
-
+                assert(`typeof ${a} !== typeof ${b} || Compare(${a}, ${b}) ${a < b ? '<' : a > b ? '>' : '==='} 0`);
             }
 
         const numbers = [1, 2, 3];
