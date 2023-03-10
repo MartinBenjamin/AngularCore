@@ -40,18 +40,23 @@ export function Compare(
     if(aType !== bType)
         return TypeCollation[aType] - TypeCollation[bType];
 
-    if(aType === 'object' && a !== null && b !== null)
+    if(aType === 'object')
     {
-        const aId = a[EntityId];
-        if(typeof aId === 'number')
+        if(a !== null && b !== null)
         {
-            const bId = b[EntityId];
-            if(typeof bId === 'number')
-                return aId - bId;
+            const aId = a[EntityId];
+            if(typeof aId === 'number')
+            {
+                const bId = b[EntityId];
+                if(typeof bId === 'number')
+                    return aId - bId;
+            }
         }
+
+        return a - b;
     }
 
-    return a < b ? -1 : a > b ? 1 : 0;
+    return a < b ? -1 : 1;
 }
 
 const tupleCompare = ArrayCompareFactory(Compare);
