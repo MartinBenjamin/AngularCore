@@ -12,6 +12,7 @@ import { IIndividual } from "./IIndividual";
 import { IOntology } from './IOntology';
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
+import { Wrapped, WrapperType } from './Wrapped';
 
 // http://www.cs.ox.ac.uk/files/2445/rulesyntaxTR.pdf
 /*
@@ -549,8 +550,6 @@ export class Generator implements IAtomSelector<Observable<object[]> | BuiltIn>
     }
 }
 
-export type Wrapped<T> = {};
-
 export interface ICache<TAtom>
 {
     Set(
@@ -559,26 +558,20 @@ export interface ICache<TAtom>
     Get(atom: IAtom): TAtom
 }
 
-export abstract class AtomInterpreter<TAtom, TClass, TProperty> implements IAtomSelector<TAtom>
+export abstract class AtomInterpreter<T> implements IAtomSelector<Wrapped<T, object[] | BuiltIn>>
 {
-    private _atomInterpreter              : IAtomSelector<Wrapped<object[] | BuiltIn>>;
-    private _classExpressionInterpreter   : IClassExpressionSelector<Wrapped<Set<any>>>;
-    private _propertyExpressionInterpreter: IPropertyExpressionSelector<Wrapped<[any, any][]>>;
-    private _propertyDefinitions          : Map<IPropertyExpression, IDLSafeRule>;
+    private _propertyDefinitions: Map<IPropertyExpression, IDLSafeRule>;
 
     protected abstract Wrap<TIn extends any[], TOut>(
         map: (...params: TIn) => TOut,
-        ...params: { [Parameter in keyof TIn]: Wrapped<TIn[Parameter]>; }): Wrapped<TOut>;
+        ...params: { [Parameter in keyof TIn]: Wrapped<T, TIn[Parameter]>; }): Wrapped<T, TOut>;
 
     constructor(
-        private _ontology            : IOntology,
-        propertyExpressionInterpreter: IPropertyExpressionSelector<TProperty>,
-        classExpressionInterpreter   : IClassExpressionSelector<TClass>
+        private _ontology                     : IOntology,
+        private _propertyExpressionInterpreter: IPropertyExpressionSelector<Wrapped<T, [any, any][]>>,
+        private _classExpressionInterpreter   : IClassExpressionSelector<Wrapped<T, Set<any>>>
         )
     {
-        this._atomInterpreter               = this;
-        this._propertyExpressionInterpreter = propertyExpressionInterpreter;
-        this._classExpressionInterpreter    = classExpressionInterpreter;
         this._propertyDefinitions           = new Map(
             [...this._ontology.Get(IsDLSafeRule)]
                 .filter(rule => rule.Head.length === 1 && rule.Head[0] instanceof PropertyAtom)
@@ -587,10 +580,10 @@ export abstract class AtomInterpreter<TAtom, TClass, TProperty> implements IAtom
 
     Class(
         class$: IClassAtom
-        ): TAtom
+        ): Wrapped<T, object[] | BuiltIn>
     {
         if(IsVariable(class$.Individual))
-            return <TAtom>this.Wrap(
+            return this.Wrap(
                 individuals => [...individuals].map(
                     individual =>
                     {
@@ -598,16 +591,16 @@ export abstract class AtomInterpreter<TAtom, TClass, TProperty> implements IAtom
                     }),
                 class$.ClassExpression.Select(this._classExpressionInterpreter));
 
-        return <TAtom>this.Wrap(
+        return this.Wrap(
             individuals => individuals.has(class$.Individual) ? [{}] : [],
             class$.ClassExpression.Select(this._classExpressionInterpreter));
     }
 
     DataRange(
         dataRange: IDataRangeAtom
-        ): TAtom
+        ): Wrapped<T, object[] | BuiltIn>
     {
-        return <TAtom>this.Wrap(() => (
+        return this.Wrap(() => (
             substitutions: Iterable<object>
             ) =>
         {
@@ -620,81 +613,81 @@ export abstract class AtomInterpreter<TAtom, TClass, TProperty> implements IAtom
 
     ObjectProperty(
         objectProperty: IObjectPropertyAtom
-        ): TAtom
+        ): Wrapped<T, object[] | BuiltIn>
     {
         return this.Property(objectProperty);
     }
 
     DataProperty(
         dataProperty: IDataPropertyAtom
-        ): TAtom
+        ): Wrapped<T, object[] | BuiltIn>
     {
         return this.Property(dataProperty);
     }
 
     private Property(
         property: IPropertyAtom
-        ): TAtom
+        ): Wrapped<T, object[]>
     {
         const propertyDefinition = this._propertyDefinitions.get(property.PropertyExpression);
         if(propertyDefinition)
-            return <TAtom>this.Wrap(
+            return this.Wrap(
                 EavStore.Conjunction(
                     [(<IPropertyAtom>propertyDefinition.Head[0]).Domain, (<IPropertyAtom>propertyDefinition.Head[0]).Range],
                     [property.Domain, property.Range]),
-                propertyDefinition.Body.map(atom => atom.Select(this._atomInterpreter)));
+                ...propertyDefinition.Body.map(atom => atom.Select(this)));
 
-        return <TAtom>this.Wrap(
+        return this.Wrap(
             EavStore.Substitute([property.Domain, property.Range]),
             property.PropertyExpression.Select(this._propertyExpressionInterpreter));
     }
 
     LessThan(
         lessThan: ILessThanAtom
-        ): TAtom
+        ): Wrapped<T, object[] | BuiltIn>
     {
-        return <TAtom>this.Wrap(() => LessThan(lessThan.Lhs, lessThan.Rhs));
+        return this.Wrap(() => LessThan(lessThan.Lhs, lessThan.Rhs));
     }
 
     LessThanOrEqual(
         lessThanOrEqual: ILessThanOrEqualAtom
-        ): TAtom
+        ): Wrapped<T, object[] | BuiltIn>
     {
-        return <TAtom>this.Wrap(() => LessThanOrEqual(lessThanOrEqual.Lhs, lessThanOrEqual.Rhs));
+        return this.Wrap(() => LessThanOrEqual(lessThanOrEqual.Lhs, lessThanOrEqual.Rhs));
     }
 
     Equal(
         equal: IEqualAtom
-        ): TAtom
+        ): Wrapped<T, object[] | BuiltIn>
     {
-        return <TAtom>this.Wrap(() => Equal(equal.Lhs, equal.Rhs));
+        return this.Wrap(() => Equal(equal.Lhs, equal.Rhs));
     }
 
     NotEqual(
         notEqual: INotEqualAtom
-        ): TAtom
+        ): Wrapped<T, object[] | BuiltIn>
     {
-        return <TAtom>this.Wrap(()=> NotEqual(notEqual.Lhs, notEqual.Rhs));
+        return this.Wrap(()=> NotEqual(notEqual.Lhs, notEqual.Rhs));
     }
 
     GreaterThanOrEqual(
         greaterThanOrEqual: IGreaterThanOrEqualAtom
-        ): TAtom
+        ): Wrapped<T, object[] | BuiltIn>
     {
-        return <TAtom>this.Wrap(() => GreaterThanOrEqual(greaterThanOrEqual.Lhs, greaterThanOrEqual.Rhs));
+        return this.Wrap(() => GreaterThanOrEqual(greaterThanOrEqual.Lhs, greaterThanOrEqual.Rhs));
     }
 
     GreaterThan(
         greaterThan: IGreaterThanAtom
-        ): TAtom
+        ): Wrapped<T, object[] | BuiltIn>
     {
-        return <TAtom>this.Wrap(() => GreaterThan(greaterThan.Lhs, greaterThan.Rhs));
+        return this.Wrap(() => GreaterThan(greaterThan.Lhs, greaterThan.Rhs));
     }
 }
 
 type ObservableParams<P> = { [Parameter in keyof P]: Observable<P[Parameter]>; };
 
-export class AtomObservableInterpreter extends AtomInterpreter<Observable<object[] | BuiltIn>, Observable<Set<any>>, Observable<[any, any][]>>
+export class AtomObservableInterpreter extends AtomInterpreter<WrapperType.Observable>
 {
     constructor(
         ontology                   : IOntology,
