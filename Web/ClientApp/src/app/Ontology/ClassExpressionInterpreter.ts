@@ -1,3 +1,5 @@
+import { Observable } from 'rxjs';
+import { Signal } from '../Signal';
 import { AddIndividuals } from "./AddIndividuals";
 import { EavStore } from './EavStore';
 import { Group, GroupJoin } from './Group';
@@ -28,42 +30,40 @@ import { TransitiveClosure3 } from "./TransitiveClosure";
 
 export { IEavStore, EavStore };
 
-export type Wrapped<TClass> = {};
+type Generic<TGeneric, T> =
+    TGeneric extends Signal<any>     ? Signal<T>     :
+    TGeneric extends Observable<any> ? Observable<T> :
+    unknown;
 
-export interface ICache<TClass>
+export interface ICache<TGeneric>
 {
     Set(
         class$: IClass,
-        wrapped: TClass): void;
-    Get(class$: IClass): TClass
+        wrapped: Generic<TGeneric, Set<any>>): void;
+    Get(class$: IClass): Generic<TGeneric, Set<any>>
 }
 
-export abstract class ClassExpressionInterpreter<TClass, TProperty> implements IClassExpressionSelector<TClass>
+export abstract class ClassExpressionInterpreter<TGeneric> implements IClassExpressionSelector<Generic<TGeneric, Set<any>>>
 {
-    private _equivalentClasses            : Map<IClass, Set<IClass>>;
-    private _classDefinitions             : Map<IClass, IClassExpression[]>;
-    private _functionalObjectProperties   = new Set<IObjectPropertyExpression>();
-    private _functionalDataProperties     = new Set<IDataPropertyExpression>();
-    private _individualInterpretation     : Map<IIndividual, any>;
-    private _classExpressionInterpreter   : IClassExpressionSelector<Wrapped<Set<any>>>;
-    private _propertyExpressionInterpreter: IPropertyExpressionSelector<Wrapped<[any, any][]>>;
+    private _equivalentClasses          : Map<IClass, Set<IClass>>;
+    private _classDefinitions           : Map<IClass, IClassExpression[]>;
+    private _functionalObjectProperties = new Set<IObjectPropertyExpression>();
+    private _functionalDataProperties   = new Set<IDataPropertyExpression>();
+    private _individualInterpretation   : Map<IIndividual, any>;
 
     protected abstract Wrap<TIn extends any[], TOut>(
         map: (...params: TIn) => TOut,
-        ...params: { [Parameter in keyof TIn]: Wrapped<TIn[Parameter]>; }): Wrapped<TOut>;
+        ...params: { [Parameter in keyof TIn]: Generic<TGeneric, TIn[Parameter]>; }): Generic<TGeneric, TOut>;
 
-    protected abstract WrapObjectDomain(): Wrapped<Set<any>>;
+    protected abstract WrapObjectDomain(): Generic<TGeneric, Set<any>>;
 
     constructor(
-        propertyExpressionInterpreter : IPropertyExpressionSelector<TProperty>,
-        private   _ontology           : IOntology,
-        protected _store              : IEavStore,
-        private   _classInterpretation: ICache<TClass>
+        private   _propertyExpressionInterpreter: IPropertyExpressionSelector<Generic<TGeneric, [any, any][]>>,
+        private   _ontology                     : IOntology,
+        protected _store                        : IEavStore,
+        private   _classInterpretation          : ICache<TGeneric>
         )
     {
-        this._classExpressionInterpreter = this;
-        this._propertyExpressionInterpreter = propertyExpressionInterpreter;
-
         for(const functionalObjectProperty of this._ontology.Get(this._ontology.IsAxiom.IFunctionalObjectProperty))
             this._functionalObjectProperties.add(functionalObjectProperty.ObjectPropertyExpression);
 
@@ -113,12 +113,12 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
 
     Class(
         class$: IClass
-        ): TClass
+        ): Generic<TGeneric, Set<any>>
     {
         let interpretation = this._classInterpretation.Get(class$);
         if(!interpretation)
         {
-            let interpretations: Wrapped<Set<any>>[];
+            let interpretations: Generic<TGeneric, Set<any>>[];
             switch(class$)
             {
                 case Thing  : interpretations = [this.WrapObjectDomain()        ]; break;
@@ -126,13 +126,13 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
                 default:
                     let classDefinitions = this._classDefinitions.get(class$) || [];
 
-                    interpretations = classDefinitions.map(classExpression => classExpression.Select(this._classExpressionInterpreter));
+                    interpretations = classDefinitions.map(classExpression => classExpression.Select(this));
 
                     for(const equivalentClass of this._equivalentClasses.get(class$))
                     {
                         interpretations = interpretations.concat([...this._ontology.Get(this._ontology.IsAxiom.ISubClassOf)]
                             .filter(subClassOf => subClassOf.SuperClassExpression === equivalentClass)
-                            .map(subClassOf => subClassOf.SubClassExpression.Select(this._classExpressionInterpreter)));
+                            .map(subClassOf => subClassOf.SubClassExpression.Select(this)));
 
                         interpretations = interpretations.concat(
                             [...this._ontology.Get(this._ontology.IsAxiom.IObjectPropertyDomain)]
@@ -161,15 +161,15 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
             }
 
             if(!interpretations.length)
-                interpretation = <TClass>this.Class(Nothing);
+                interpretation = this.Class(Nothing);
 
             else if(interpretations.length === 1)
-                interpretation = <TClass>interpretations[0];
+                interpretation = interpretations[0];
 
             else
-                interpretation = <TClass>this.Wrap(
+                interpretation = this.Wrap(
                     (...sets: Set<any>[]) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])),
-                    interpretations);
+                    ...interpretations);
 
             this._classInterpretation.Set(
                 class$,
@@ -181,54 +181,54 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
 
     ObjectIntersectionOf(
         objectIntersectionOf: IObjectIntersectionOf
-        ): TClass
+        ): Generic<TGeneric, Set<any>>
     {
-        return <TClass>this.Wrap((...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs].filter(element => rhs.has(element)))),
-            ...objectIntersectionOf.ClassExpressions.map(classExpression => classExpression.Select(this._classExpressionInterpreter)));
+        return this.Wrap((...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs].filter(element => rhs.has(element)))),
+            ...objectIntersectionOf.ClassExpressions.map(classExpression => classExpression.Select(this)));
     }
 
     ObjectUnionOf(
         objectUnionOf: IObjectUnionOf
-        ): TClass
+        ): Generic<TGeneric, Set<any>>
     {
-        return <TClass>this.Wrap((...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])),
-            ...objectUnionOf.ClassExpressions.map(classExpression => classExpression.Select(this._classExpressionInterpreter)));
+        return this.Wrap((...sets) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])),
+            ...objectUnionOf.ClassExpressions.map(classExpression => classExpression.Select(this)));
     }
 
     ObjectComplementOf(
         objectComplementOf: IObjectComplementOf
-        ): TClass
+        ): Generic<TGeneric, Set<any>>
     {
-        return <TClass>this.Wrap(
+        return this.Wrap(
             (objectDomain, classExpression) => new Set<any>([...objectDomain].filter(element => !classExpression.has(element))),
-            this._classExpressionInterpreter.Class(Thing),
-            objectComplementOf.ClassExpression.Select(this._classExpressionInterpreter));
+            this.Class(Thing),
+            objectComplementOf.ClassExpression.Select(this));
     }
 
     ObjectOneOf(
         objectOneOf: IObjectOneOf
-        ): TClass
+        ): Generic<TGeneric, Set<any>>
     {
-        return <TClass>this.Wrap(() => new Set<any>(objectOneOf.Individuals.map(individual => this.InterpretIndividual(individual))));
+        return this.Wrap(() => new Set<any>(objectOneOf.Individuals.map(individual => this.InterpretIndividual(individual))));
     }
 
     ObjectSomeValuesFrom(
         objectSomeValuesFrom: IObjectSomeValuesFrom
-        ): TClass
+        ): Generic<TGeneric, Set<any>>
     {
-        return <TClass>this.Wrap(
+        return this.Wrap(
             (objectPropertyExpression, classExpression) =>
                 new Set<any>(
                     objectPropertyExpression
                         .filter(([, range]) => classExpression.has(range))
                         .map(([domain,]) => domain)),
             objectSomeValuesFrom.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter),
-            objectSomeValuesFrom.ClassExpression.Select(this._classExpressionInterpreter));
+            objectSomeValuesFrom.ClassExpression.Select(this));
     }
 
     ObjectAllValuesFrom(
         objectAllValuesFrom: IObjectAllValuesFrom
-        ): TClass
+        ): Generic<TGeneric, Set<any>>
     {
         const groupedByDomain = this.Wrap(
             (objectDomain, objectPropertyExpression) =>
@@ -237,25 +237,25 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
                     objectPropertyExpression,
                     individual => individual,
                     ([domain,]) => domain),
-            this._classExpressionInterpreter.Class(Thing),
+            this.Class(Thing),
             objectAllValuesFrom.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter));
 
-        return <TClass>this.Wrap(
+        return this.Wrap(
             (groupedByDomain, classExpression) =>
                 new Set<any>(
                     [...groupedByDomain]
                         .filter(([, relations]) => relations.every(([, range]) => classExpression.has(range)))
                         .map(([domain,]) => domain)),
             groupedByDomain,
-            objectAllValuesFrom.ClassExpression.Select(this._classExpressionInterpreter));
+            objectAllValuesFrom.ClassExpression.Select(this));
     }
 
     ObjectHasValue(
         objectHasValue: IObjectHasValue
-        ): TClass
+        ): Generic<TGeneric, Set<any>>
     {
         const individual = this.InterpretIndividual(objectHasValue.Individual);
-        return <TClass>this.Wrap(
+        return this.Wrap(
             objectPropertyExpression =>
                 new Set<any>(objectPropertyExpression
                     .filter(([, range]) => range === individual)
@@ -265,9 +265,9 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
 
     ObjectHasSelf(
         objectHasSelf: IObjectHasSelf
-        ): TClass
+        ): Generic<TGeneric, Set<any>>
     {
-        return <TClass>this.Wrap(
+        return this.Wrap(
             objectPropertyExpression =>
                 new Set<any>(objectPropertyExpression
                     .filter(([domain, range]) => domain === range)
@@ -277,7 +277,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
 
     ObjectMinCardinality(
         objectMinCardinality: IObjectMinCardinality
-        ): TClass
+        ): Generic<TGeneric, Set<any>>
     {
         if(objectMinCardinality.Cardinality === 0)
             return this.Class(Thing);
@@ -287,16 +287,16 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
             objectPropertyExpression = this.Wrap(
                 (objectPropertyExpression, classExpression) => objectPropertyExpression.filter(([, range]) => classExpression.has(range)),
                 objectPropertyExpression,
-                objectMinCardinality.ClassExpression.Select(this._classExpressionInterpreter));
+                objectMinCardinality.ClassExpression.Select(this));
 
         if(objectMinCardinality.Cardinality === 1)
             // Optimise for a minimum cardinality of 1.
-            return <TClass>this.Wrap(
+            return this.Wrap(
                 objectPropertyExpression => new Set<any>(objectPropertyExpression.map(([domain,]) => domain)),
                 objectPropertyExpression);
 
         const groupedByDomain = this.Wrap(this.GroupByDomain, objectPropertyExpression);
-        return <TClass>this.Wrap(
+        return this.Wrap(
             groupedByDomain =>
                 new Set<any>([...groupedByDomain]
                     .filter(([, relations]) => relations.length >= objectMinCardinality.Cardinality)
@@ -306,14 +306,14 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
 
     ObjectMaxCardinality(
         objectMaxCardinality: IObjectMaxCardinality
-        ): TClass
+        ): Generic<TGeneric, Set<any>>
     {
         let objectPropertyExpression = objectMaxCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter);
         if(objectMaxCardinality.ClassExpression)
             objectPropertyExpression = this.Wrap(
                 (objectPropertyExpression, classExpression) => objectPropertyExpression.filter(([, range]) => classExpression.has(range)),
                 objectPropertyExpression,
-                objectMaxCardinality.ClassExpression.Select(this._classExpressionInterpreter));
+                objectMaxCardinality.ClassExpression.Select(this));
 
         const groupedByDomain = this.Wrap(
             (objectDomain, objectPropertyExpression) =>
@@ -322,10 +322,10 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
                     objectPropertyExpression,
                     individual => individual,
                     ([domain,]) => domain),
-            this._classExpressionInterpreter.Class(Thing),
+            this.Class(Thing),
             objectPropertyExpression);
 
-        return <TClass>this.Wrap(
+        return this.Wrap(
             groupedByDomain => new Set<any>([...groupedByDomain]
                 .filter(([, relations]) => relations.length <= objectMaxCardinality.Cardinality)
                 .map(([domain,]) => domain)),
@@ -334,14 +334,14 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
 
     ObjectExactCardinality(
         objectExactCardinality: IObjectExactCardinality
-        ): TClass
+        ): Generic<TGeneric, Set<any>>
     {
         let objectPropertyExpression = objectExactCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter);
         if(objectExactCardinality.ClassExpression)
             objectPropertyExpression = this.Wrap(
                 (objectPropertyExpression, classExpression) => objectPropertyExpression.filter(([, range]) => classExpression.has(range)),
                 objectPropertyExpression,
-                objectExactCardinality.ClassExpression.Select(this._classExpressionInterpreter));
+                objectExactCardinality.ClassExpression.Select(this));
 
         if(objectExactCardinality.Cardinality === 0)
         {
@@ -352,10 +352,10 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
                         objectPropertyExpression,
                         individual => individual,
                         ([domain,]) => domain),
-                this._classExpressionInterpreter.Class(Thing),
+                this.Class(Thing),
                 objectPropertyExpression);
 
-            return <TClass>this.Wrap(
+            return this.Wrap(
                 groupedByDomain =>
                     new Set<any>([...groupedByDomain]
                         .filter(([, relations]) => relations.length === objectExactCardinality.Cardinality)
@@ -365,7 +365,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
 
         if(objectExactCardinality.Cardinality === 1 && this._functionalObjectProperties.has(objectExactCardinality.ObjectPropertyExpression))
             // Optimise for Functional Object Properties.
-            return <TClass>this.Wrap(
+            return this.Wrap(
                 objectPropertyExpression => new Set<any>(objectPropertyExpression.map(([domain,]) => domain)),
                 objectPropertyExpression);
 
@@ -373,7 +373,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
             this.GroupByDomain,
             objectPropertyExpression);
 
-        return <TClass>this.Wrap(
+        return this.Wrap(
             groupedByDomain =>
                 new Set<any>([...groupedByDomain]
                     .filter(([, relations]) => relations.length === objectExactCardinality.Cardinality)
@@ -383,9 +383,9 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
 
     DataSomeValuesFrom(
         dataSomeValuesFrom: IDataSomeValuesFrom
-        ): TClass
+        ): Generic<TGeneric, Set<any>>
     {
-        return <TClass>this.Wrap(
+        return this.Wrap(
             dataPropertyExpression =>
                 new Set<any>(dataPropertyExpression
                     .filter(([, range]) => dataSomeValuesFrom.DataRange.HasMember(range))
@@ -395,7 +395,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
 
     DataAllValuesFrom(
         dataAllValuesFrom: IDataAllValuesFrom
-        ): TClass
+        ): Generic<TGeneric, Set<any>>
     {
         const groupedByDomain = this.Wrap(
             (objectDomain, dataPropertyExpression) =>
@@ -404,10 +404,10 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
                     dataPropertyExpression,
                     individual => individual,
                     ([domain,]) => domain),
-            this._classExpressionInterpreter.Class(Thing),
+            this.Class(Thing),
             dataAllValuesFrom.DataPropertyExpression.Select(this._propertyExpressionInterpreter));
 
-        return <TClass>this.Wrap(
+        return this.Wrap(
             groupedByDomain => new Set<any>(
                 [...groupedByDomain]
                     .filter(([, relations]) => relations.every(([, range]) => dataAllValuesFrom.DataRange.HasMember(range)))
@@ -417,9 +417,9 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
 
     DataHasValue(
         dataHasValue: IDataHasValue
-        ): TClass
+        ): Generic<TGeneric, Set<any>>
     {
-        return <TClass>this.Wrap(
+        return this.Wrap(
             dataPropertyExpression =>
                 new Set<any>(dataPropertyExpression
                     .filter(([, range]) => range === dataHasValue.Value)
@@ -429,7 +429,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
 
     DataMinCardinality(
         dataMinCardinality: IDataMinCardinality
-        ): TClass
+        ): Generic<TGeneric, Set<any>>
     {
         if(dataMinCardinality.Cardinality === 0)
             return this.Class(Thing);
@@ -442,7 +442,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
 
         if(dataMinCardinality.Cardinality === 1)
             // Optimise for a minimum cardinality of 1.
-            return <TClass>this.Wrap(
+            return this.Wrap(
                 dataPropertyExpression => new Set<any>(dataPropertyExpression.map(([domain,]) => domain)),
                 dataPropertyExpression);
 
@@ -450,7 +450,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
             this.GroupByDomain,
             dataPropertyExpression);
 
-        return <TClass>this.Wrap(
+        return this.Wrap(
             groupedByDomain =>
                 new Set<any>([...groupedByDomain]
                     .filter(([, relations]) => relations.length >= dataMinCardinality.Cardinality)
@@ -460,7 +460,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
 
     DataMaxCardinality(
         dataMaxCardinality: IDataMaxCardinality
-        ): TClass
+        ): Generic<TGeneric, Set<any>>
     {
         let dataPropertyExpression = dataMaxCardinality.DataPropertyExpression.Select(this._propertyExpressionInterpreter);
         if(dataMaxCardinality.DataRange)
@@ -475,10 +475,10 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
                     dataPropertyExpression,
                     individual => individual,
                     ([domain,]) => domain),
-            this._classExpressionInterpreter.Class(Thing),
+            this.Class(Thing),
             dataPropertyExpression);
 
-        return <TClass>this.Wrap(
+        return this.Wrap(
             groupedByDomain =>
                 new Set<any>([...groupedByDomain]
                     .filter(([, relations]) => relations.length <= dataMaxCardinality.Cardinality)
@@ -488,7 +488,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
 
     DataExactCardinality(
         dataExactCardinality: IDataExactCardinality
-        ): TClass
+        ): Generic<TGeneric, Set<any>>
     {
         let dataPropertyExpression = dataExactCardinality.DataPropertyExpression.Select(this._propertyExpressionInterpreter);
         if(dataExactCardinality.DataRange)
@@ -505,10 +505,10 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
                         dataPropertyExpression,
                         individual => individual,
                         ([domain,]) => domain),
-                this._classExpressionInterpreter.Class(Thing),
+                this.Class(Thing),
                 dataPropertyExpression);
 
-            return <TClass>this.Wrap(
+            return this.Wrap(
                 groupedByDomain =>
                     new Set<any>([...groupedByDomain]
                         .filter(([, relations]) => relations.length === dataExactCardinality.Cardinality)
@@ -518,7 +518,7 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
 
         if(dataExactCardinality.Cardinality === 1 && this._functionalDataProperties.has(dataExactCardinality.DataPropertyExpression))
             // Optimise for Functional Data Properties.
-            return <TClass>this.Wrap(
+            return this.Wrap(
                 dataPropertyExpression => new Set<any>(dataPropertyExpression.map(([domain,]) => domain)),
                 dataPropertyExpression);
 
@@ -529,10 +529,10 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
                     dataPropertyExpression,
                     individual => individual,
                     ([domain,]) => domain),
-            this._classExpressionInterpreter.Class(Thing),
+            this.Class(Thing),
             dataPropertyExpression);
 
-        return <TClass>this.Wrap(
+        return this.Wrap(
             groupedByDomain =>
                 new Set<any>([...groupedByDomain]
                     .filter(([, relations]) => relations.length === dataExactCardinality.Cardinality)
@@ -540,14 +540,14 @@ export abstract class ClassExpressionInterpreter<TClass, TProperty> implements I
             groupedByDomain);
     }
 
-    get ObjectDomain(): TClass
+    get ObjectDomain(): Generic<TGeneric, Set<any>>
     {
         return this.Class(Thing);
     }
 
     ClassExpression(
         classExpression: IClassExpression
-        ): TClass
+        ): Generic<TGeneric, Set<any>>
     {
         return classExpression.Select(this);
     }

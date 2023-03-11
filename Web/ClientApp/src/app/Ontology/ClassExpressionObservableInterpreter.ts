@@ -1,5 +1,5 @@
 import { BehaviorSubject, combineLatest, Observable } from "rxjs";
-import { ClassExpressionInterpreter, ICache, IEavStore, Wrapped } from "./ClassExpressionInterpreter";
+import { ClassExpressionInterpreter, ICache, IEavStore } from "./ClassExpressionInterpreter";
 import { IClass } from "./IClass";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from './IPropertyExpression';
@@ -29,7 +29,7 @@ class ObservableCache implements ICache<Observable<Set<any>>>
     }
 }
 
-export class ClassExpressionObservableInterpreter extends ClassExpressionInterpreter<Observable<Set<any>>, Observable<[any, any][]>>
+export class ClassExpressionObservableInterpreter extends ClassExpressionInterpreter<Observable<any>>
 {
     protected Wrap<TIn extends any[], TOut>(
         map: (...params: TIn) => TOut,
@@ -57,7 +57,7 @@ export class ClassExpressionObservableInterpreter extends ClassExpressionInterpr
             new ObservableCache());
     }
 
-    protected WrapObjectDomain(): Wrapped<Set<any>>
+    protected WrapObjectDomain(): Observable<Set<any>>
     {
         return this._store.ObserveEntities();
     }

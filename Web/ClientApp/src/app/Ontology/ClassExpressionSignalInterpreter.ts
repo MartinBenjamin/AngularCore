@@ -30,7 +30,7 @@ class SignalCache implements ICache<Signal<Set<any>>>
     }
 }
 
-export class ClassExpressionSignalInterpreter extends ClassExpressionInterpreter<Signal<Set<any>>, Signal<[any, any][]>>
+export class ClassExpressionSignalInterpreter extends ClassExpressionInterpreter<Signal>
 {
     protected Wrap<TIn extends any[], TOut>(
         map: (...params: TIn) => TOut,
