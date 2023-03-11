@@ -12,6 +12,7 @@ import { IOntology } from './IOntology';
 export interface IAxiomSelector<TResult>
 {
     Axiom            (axiom            : IAxiom            ): TResult;
+    Class            (class$           : IClass            ): TResult;
     DataPropertyRange(dataPropertyRange: IDataPropertyRange): TResult;
     SubclassOf       (subClassOf       : ISubClassOf       ): TResult;
     DLSafeRule       (dlSafeRule       : IDLSafeRule       ): TResult;

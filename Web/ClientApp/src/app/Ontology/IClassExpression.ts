@@ -6,7 +6,6 @@ import { IObjectUnionOf } from "./IObjectUnionOf";
 
 export interface IClassExpression
 {
-
     Accept(visitor: IClassExpressionVisitor): void;
     Select<TResult>(selector: IClassExpressionSelector<TResult>): TResult;
 
