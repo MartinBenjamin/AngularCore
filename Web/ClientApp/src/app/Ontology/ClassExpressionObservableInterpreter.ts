@@ -4,10 +4,11 @@ import { IClass } from "./IClass";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from './IPropertyExpression';
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
+import { WrapperType } from './Wrapped';
 
 type ObservableParams<P> = { [Parameter in keyof P]: Observable<P[Parameter]>; };
 
-class ObservableCache implements ICache<Observable<Set<any>>>
+class ObservableCache implements ICache<WrapperType.Observable>
 {
     private readonly _observables = new Map<IClass, Observable<Set<any>>>();
 
@@ -29,7 +30,7 @@ class ObservableCache implements ICache<Observable<Set<any>>>
     }
 }
 
-export class ClassExpressionObservableInterpreter extends ClassExpressionInterpreter<Observable<any>>
+export class ClassExpressionObservableInterpreter extends ClassExpressionInterpreter<WrapperType.Observable>
 {
     protected Wrap<TIn extends any[], TOut>(
         map: (...params: TIn) => TOut,

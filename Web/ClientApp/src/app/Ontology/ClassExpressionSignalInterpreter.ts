@@ -4,10 +4,11 @@ import { IClass } from './IClass';
 import { IOntology } from './IOntology';
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from './IPropertyExpression';
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
+import { WrapperType } from './Wrapped';
 
 type SignalParams<P> = { [Parameter in keyof P]: Signal<P[Parameter]>; };
 
-class SignalCache implements ICache<Signal<Set<any>>>
+class SignalCache implements ICache<WrapperType.Signal>
 {
     private readonly _signals = new Map<IClass, Signal<Set<any>>>();
 
@@ -30,7 +31,7 @@ class SignalCache implements ICache<Signal<Set<any>>>
     }
 }
 
-export class ClassExpressionSignalInterpreter extends ClassExpressionInterpreter<Signal>
+export class ClassExpressionSignalInterpreter extends ClassExpressionInterpreter<WrapperType.Signal>
 {
     protected Wrap<TIn extends any[], TOut>(
         map: (...params: TIn) => TOut,
