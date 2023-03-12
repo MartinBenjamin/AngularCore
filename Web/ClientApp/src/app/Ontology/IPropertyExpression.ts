@@ -3,12 +3,11 @@ import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from 
 import { IDataHasValue } from "./IDataHasValue";
 import { IDataPropertyRange } from "./IDataPropertyRange";
 import { IDataRange } from "./IDataRange";
-import { IEntity } from "./IEntity";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectHasValue } from "./IObjectHasValue";
 import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
 
-export interface IPropertyExpression extends IEntity
+export interface IPropertyExpression
 {
     Select<TResult>(selector: IPropertyExpressionSelector<TResult>): TResult
 }

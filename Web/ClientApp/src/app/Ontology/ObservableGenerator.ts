@@ -22,6 +22,7 @@ import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from './IOntology';
+import { IDataProperty, IObjectProperty } from "./IProperty";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 import { Nothing } from './Nothing';
@@ -479,18 +480,18 @@ export class ObservableGenerator implements
                     .map(([domain,]) => domain))));
     }
 
-    ObjectPropertyExpression(
-        objectPropertyExpression: IObjectPropertyExpression
+    ObjectProperty(
+        objectProperty: IObjectProperty
         ): Observable<[any, any][]>
     {
-        return this._store.Observe(objectPropertyExpression.LocalName);
+        return this._store.Observe(objectProperty.LocalName);
     }
 
-    DataPropertyExpression(
-        dataPropertyExpression: IDataPropertyExpression
+    DataProperty(
+        dataProperty: IDataProperty
         ): Observable<[any, any][]>
     {
-        return this._store.Observe(dataPropertyExpression.LocalName);
+        return this._store.Observe(dataProperty.LocalName);
     }
 
     get ObjectDomain(): Observable<Set<any>>

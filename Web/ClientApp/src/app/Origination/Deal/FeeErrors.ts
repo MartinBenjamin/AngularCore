@@ -5,6 +5,7 @@ import { ErrorsObservableToken, HighlightedPropertySubjectToken, Property } from
 import { Fee } from '../../Fees';
 import { IErrors } from '../../Ontologies/Validate';
 import { ComparisonAtom, GreaterThanAtom, GreaterThanOrEqualAtom, IComparisonAtom, IPropertyAtom, IsDLSafeRule, LessThanAtom, LessThanOrEqualAtom, PropertyAtom } from '../../Ontology/DLSafeRule';
+import { PropertyNameSelector } from '../../Ontology/PropertyNameSelector';
 
 type Error = [Property, string, string];
 
@@ -80,7 +81,7 @@ export class FeeErrors
                                         const rhsProperty = propertyError.Head.find<IPropertyAtom>(
                                             (atom): atom is IPropertyAtom => atom instanceof PropertyAtom && atom.Range === comparison.Rhs);
 
-                                        const rhsPropertyName = rhsProperty.PropertyExpression.LocalName;
+                                        const rhsPropertyName = rhsProperty.PropertyExpression.Select(PropertyNameSelector);
                                         const rhsPropertyDisplayName = rhsPropertyName in FeeErrors._propertyDisplayName ?
                                             FeeErrors._propertyDisplayName[rhsPropertyName] : rhsPropertyName.replace(/\B[A-Z]/g, ' $&');
                                         errors.push([

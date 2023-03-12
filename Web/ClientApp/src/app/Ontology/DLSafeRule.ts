@@ -10,6 +10,7 @@ import { IDataRange } from "./IDataRange";
 import { IsConstant, IsVariable } from './IEavStore';
 import { IIndividual } from "./IIndividual";
 import { IOntology } from './IOntology';
+import { IProperty } from './IProperty';
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 import { Wrapped, WrapperType } from './Wrapped';
@@ -773,7 +774,7 @@ export function* ObserveContradictions(
                 interpreter,
                 rule).pipe(map(
                     contraditions => [
-                        lhsProperty.PropertyExpression.LocalName,
+                        (<IProperty>lhsProperty.PropertyExpression).LocalName,
                         rule,
                         new Set(contraditions.map(o => o[<string>lhsProperty.Domain]))
                     ]));

@@ -2,7 +2,8 @@ import { BehaviorSubject, combineLatest, Observable } from "rxjs";
 import { ClassExpressionInterpreter, ICache, IEavStore } from "./ClassExpressionInterpreter";
 import { IClass } from "./IClass";
 import { IOntology } from "./IOntology";
-import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from './IPropertyExpression';
+import { IDataProperty, IObjectProperty, IProperty } from "./IProperty";
+import { IPropertyExpression } from './IPropertyExpression';
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 import { WrapperType } from './Wrapped';
 
@@ -74,34 +75,34 @@ export class PropertyExpressionObservableGenerator implements IPropertyExpressio
     {
     }   
 
-    PropertyExpression(
-        propertyExpression: IPropertyExpression
+    Property(
+        property: IProperty
         ): Observable<[any, any][]>
     {
-        let interpretation = this._propertyExpressionInterpretation.get(propertyExpression);
+        let interpretation = this._propertyExpressionInterpretation.get(property);
 
         if(!interpretation)
         {
-            interpretation = this._store.Observe(propertyExpression.LocalName);
+            interpretation = this._store.Observe(property.LocalName);
             this._propertyExpressionInterpretation.set(
-                propertyExpression,
+                property,
                 interpretation);
         }
 
         return interpretation;
     }
 
-    ObjectPropertyExpression(
-        objectPropertyExpression: IObjectPropertyExpression
+    ObjectProperty(
+        objectProperty: IObjectProperty
         ): Observable<[any, any][]>
     {
-        return this.PropertyExpression(objectPropertyExpression);
+        return this.Property(objectProperty);
     }
 
-    DataPropertyExpression(
-        dataPropertyExpression: IDataPropertyExpression
+    DataProperty(
+        dataProperty: IDataProperty
         ): Observable<[any, any][]>
     {
-        return this.PropertyExpression(dataPropertyExpression);
+        return this.Property(dataProperty);
     }
 }

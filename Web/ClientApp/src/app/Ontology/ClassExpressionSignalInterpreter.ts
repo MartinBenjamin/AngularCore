@@ -2,7 +2,8 @@ import { Signal } from '../Signal';
 import { ClassExpressionInterpreter, ICache, IEavStore } from './ClassExpressionInterpreter';
 import { IClass } from './IClass';
 import { IOntology } from './IOntology';
-import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from './IPropertyExpression';
+import { IDataProperty, IObjectProperty, IProperty } from './IProperty';
+import { IPropertyExpression } from './IPropertyExpression';
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 import { WrapperType } from './Wrapped';
 
@@ -71,35 +72,35 @@ export class PropertyExpressionObservableGenerator implements IPropertyExpressio
     {
     }   
 
-    PropertyExpression(
-        propertyExpression: IPropertyExpression
+    Property(
+        property: IProperty
         ): Signal<[any, any][]>
     {
-        let interpretation = this._propertyExpressionInterpretation.get(propertyExpression);
+        let interpretation = this._propertyExpressionInterpretation.get(property);
 
         if(!interpretation)
         {
-            interpretation = this._store.Signal(propertyExpression.LocalName);
+            interpretation = this._store.Signal(property.LocalName);
             this._propertyExpressionInterpretation.set(
-                propertyExpression,
+                property,
                 interpretation);
-            interpretation.AddRemoveAction(() => this._propertyExpressionInterpretation.delete(propertyExpression));
+            interpretation.AddRemoveAction(() => this._propertyExpressionInterpretation.delete(property));
         }
 
         return interpretation;
     }
 
-    ObjectPropertyExpression(
-        objectPropertyExpression: IObjectPropertyExpression
+    ObjectProperty(
+        objectProperty: IObjectProperty
         ): Signal<[any, any][]>
     {
-        return this.PropertyExpression(objectPropertyExpression);
+        return this.Property(objectProperty);
     }
 
-    DataPropertyExpression(
-        dataPropertyExpression: IDataPropertyExpression
+    DataProperty(
+        dataProperty: IDataProperty
         ): Signal<[any, any][]>
     {
-        return this.PropertyExpression(dataPropertyExpression);
+        return this.Property(dataProperty);
     }
 }

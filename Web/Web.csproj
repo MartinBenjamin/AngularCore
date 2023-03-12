@@ -238,6 +238,7 @@
     <None Remove="ClientApp\src\app\Ontology\IObjectSomeValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IObjectUnionOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\IOntology.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IProperty.ts" />
     <None Remove="ClientApp\src\app\Ontology\IPropertyExpression.ts" />
     <None Remove="ClientApp\src\app\Ontology\IPropertyExpressionSelector.ts" />
     <None Remove="ClientApp\src\app\Ontology\IPropertyRestriction.ts" />
@@ -293,6 +294,8 @@
     <None Remove="ClientApp\src\app\Ontology\Ontology.ts" />
     <None Remove="ClientApp\src\app\Ontology\PrefixIris.ts" />
     <None Remove="ClientApp\src\app\Ontology\Property.ts" />
+    <None Remove="ClientApp\src\app\Ontology\PropertyExpressionWriter.ts" />
+    <None Remove="ClientApp\src\app\Ontology\PropertyNameSelector.ts" />
     <None Remove="ClientApp\src\app\Ontology\PropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\ReservedVocabulary.ts" />
     <None Remove="ClientApp\src\app\Ontology\SortedList.Spec.ts" />
@@ -428,6 +431,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\EavStore.Observe.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\EavStore.Signal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\EavStoreCompare.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IProperty.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectAllValuesFromSignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectComplementOfSignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectExactCardinalitySignal.Spec.ts" />
@@ -439,6 +443,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectOneOfSignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectSomeValuesFromSignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectUnionOfSignal.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\PropertyExpressionWriter.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\PropertyNameSelector.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\SortedMap.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\SortedMap.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\StronglyConnectedComponents.Spec.ts" />

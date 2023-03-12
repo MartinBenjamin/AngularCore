@@ -6,6 +6,7 @@ import { IAxiom } from "../Ontology/IAxiom";
 import { IEavStore } from "../Ontology/IEavStore";
 import { IOntology } from "../Ontology/IOntology";
 import { ObservableGenerator } from "../Ontology/ObservableGenerator";
+import { PropertyNameSelector } from "../Ontology/PropertyNameSelector";
 import { annotations } from './Annotations';
 import { IErrors } from './Validate';
 
@@ -47,10 +48,10 @@ export function ObserveErrors(
         store);
 
     const dataRangeObservables: Observable<[string, Error, Set<any>]>[] = [...ontology.Get(ontology.IsAxiom.IDataPropertyRange)].map(
-        dataPropertyRange => store.Observe(dataPropertyRange.DataPropertyExpression.LocalName).pipe(
+        dataPropertyRange => store.Observe(dataPropertyRange.DataPropertyExpression.Select(PropertyNameSelector)).pipe(
             map(relations =>
                 [
-                    dataPropertyRange.DataPropertyExpression.LocalName,
+                    dataPropertyRange.DataPropertyExpression.Select(PropertyNameSelector),
                     "Invalid",
                     new Set<any>(relations.filter(([, range]) => !dataPropertyRange.Range.HasMember(range)).map(([domain,]) => domain))
                 ])));
@@ -79,7 +80,7 @@ export function ObserveErrors(
                         }
 
                     if(!propertyName && ontology.IsClassExpression.IPropertyRestriction(subClassOf.SuperClassExpression))
-                        propertyName = subClassOf.SuperClassExpression.PropertyExpression.LocalName;
+                        propertyName = subClassOf.SuperClassExpression.PropertyExpression.Select(PropertyNameSelector);
 
                     let errorAnnotation = annotation.Annotations.find(annotation => annotation.Property === annotations.Error);
                     let error = errorAnnotation ? errorAnnotation.Value : "Mandatory";

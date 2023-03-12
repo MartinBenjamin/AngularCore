@@ -16,11 +16,15 @@ import { IObjectIntersectionOf } from "./IObjectIntersectionOf";
 import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
+import { IDataProperty, IObjectProperty, IProperty } from './IProperty';
+import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 import { IsAxiom } from "./IsAxiom";
 
 const isAxiom = new IsAxiom();
 
-export class ClassExpressionWriter implements IClassExpressionSelector<string>
+export class ClassExpressionWriter implements
+    IClassExpressionSelector<string>,
+    IPropertyExpressionSelector<string>
 {
     private _dataRangeWriter = new DataRangeWriter();
 
@@ -80,14 +84,14 @@ export class ClassExpressionWriter implements IClassExpressionSelector<string>
         objectHasValue: IObjectHasValue
         ): string
     {
-        return `ObjectHasValue(${this.Entity(objectHasValue.ObjectPropertyExpression)} ${this.Individual(objectHasValue.Individual)})`;
+        return `ObjectHasValue(${objectHasValue.ObjectPropertyExpression.Select(this)} ${this.Individual(objectHasValue.Individual)})`;
     }
 
     ObjectHasSelf(
         objectHasSelf: IObjectHasSelf
         ): string
     {
-        return `ObjectHasSelf(${this.Entity(objectHasSelf.ObjectPropertyExpression)})`;
+        return `ObjectHasSelf(${objectHasSelf.ObjectPropertyExpression.Select(this)})`;
     }
 
     ObjectMinCardinality(
@@ -117,7 +121,7 @@ export class ClassExpressionWriter implements IClassExpressionSelector<string>
     {
         return `(\
 ${objectCardinality.Cardinality} \
-${this.Entity(objectCardinality.ObjectPropertyExpression)}\
+${objectCardinality.ObjectPropertyExpression.Select(this)}\
 ${objectCardinality.ClassExpression ? ' ' + objectCardinality.ClassExpression.Select(this) : ''})`;
     }
 
@@ -139,7 +143,7 @@ ${objectCardinality.ClassExpression ? ' ' + objectCardinality.ClassExpression.Se
         dataHasValue: IDataHasValue
         ): string
     {
-        return `DataHasValue(${this.Entity(dataHasValue.DataPropertyExpression)}, ${dataHasValue.Value})`;
+        return `DataHasValue(${dataHasValue.DataPropertyExpression.Select(this)}, ${dataHasValue.Value})`;
     }
 
     DataMinCardinality(
@@ -169,8 +173,29 @@ ${objectCardinality.ClassExpression ? ' ' + objectCardinality.ClassExpression.Se
     {
         return `(\
 ${dataCardinality.Cardinality} \
-${this.Entity(dataCardinality.DataPropertyExpression)}\
+${dataCardinality.DataPropertyExpression.Select(this)}\
 ${dataCardinality.DataRange ? ' ' + dataCardinality.DataRange.Select(this._dataRangeWriter) : ''})`;
+    }
+    
+    ObjectProperty(
+        objectProperty: IObjectProperty
+        ): string
+    {
+        return this.Property(objectProperty);
+    }
+
+    DataProperty(
+        dataProperty: IDataProperty
+        ): string
+    {
+        return this.Property(dataProperty);
+    }
+
+    private Property(
+        property: IProperty
+        )
+    {
+        return property.LocalName;
     }
 
     Individual(

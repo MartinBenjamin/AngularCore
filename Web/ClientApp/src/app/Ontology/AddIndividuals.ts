@@ -1,6 +1,6 @@
 import { IIndividual } from "./IIndividual";
 import { IOntology } from "./IOntology";
-
+import { IDataProperty } from "./IProperty";
 
 export function AddIndividual(
     ontology  : IOntology,
@@ -12,7 +12,7 @@ export function AddIndividual(
         for(const dataPropertyAssertion of ontology.Get(ontology.IsAxiom.IDataPropertyAssertion))
             if(dataPropertyAssertion.SourceIndividual === individual)
             {
-                const propertyName = dataPropertyAssertion.DataPropertyExpression.LocalName;
+                const propertyName = (<IDataProperty>dataPropertyAssertion.DataPropertyExpression).LocalName;
                 if(typeof object[propertyName] === 'undefined')
                 {
                     let functional = false;

@@ -13,7 +13,7 @@ import { IIndividual } from "./IIndividual";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectHasValue } from "./IObjectHasValue";
 import { IOntology } from "./IOntology";
-import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
+import { IDataProperty, IObjectProperty } from "./IProperty";
 import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
 import { ObjectExactCardinality } from "./ObjectExactCardinality";
 import { ObjectHasValue } from "./ObjectHasValue";
@@ -22,7 +22,7 @@ import { ObjectMinCardinality } from "./ObjectMinCardinality";
 
 export class ObjectProperty
     extends Entity
-    implements IObjectPropertyExpression
+    implements IObjectProperty
 {
     constructor(
         ontology : IOntology,
@@ -38,7 +38,7 @@ export class ObjectProperty
         selector: IPropertyExpressionSelector<TResult>
         ): TResult
     {
-        return selector.ObjectPropertyExpression(this);
+        return selector.ObjectProperty(this);
     }
 
     HasValue(
@@ -86,7 +86,7 @@ export class ObjectProperty
 
 export class DataProperty
     extends Entity
-    implements IDataPropertyExpression
+    implements IDataProperty
 {
     constructor(
         ontology : IOntology,
@@ -102,7 +102,7 @@ export class DataProperty
         selector: IPropertyExpressionSelector<TResult>
         ): TResult
     {
-        return selector.DataPropertyExpression(this);
+        return selector.DataProperty(this);
     }
 
     HasValue(

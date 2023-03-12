@@ -10,7 +10,7 @@ import { AddIndividual } from '../Ontology/AddIndividuals';
 import { EavStore } from '../Ontology/EavStore';
 import { AttributeSchema, Cardinality, IEavStore } from '../Ontology/IEavStore';
 import { IIndividual } from '../Ontology/IIndividual';
-import { IDataPropertyExpression, IObjectPropertyExpression } from '../Ontology/IPropertyExpression';
+import { IDataProperty, IObjectProperty } from '../Ontology/IProperty';
 import { Thing } from '../Ontology/Thing';
 import { commonDomainObjects } from './CommonDomainObjects';
 import { deals } from './Deals';
@@ -57,18 +57,19 @@ export class DealBuilder implements IDealBuilder
             SponsorsNA        : false
         };
 
-        const functionalObjectProperties = new Set<IObjectPropertyExpression>(
+        const functionalObjectProperties = new Set<IObjectProperty>(
             [...ontology.Get(ontology.IsAxiom.IFunctionalObjectProperty)]
-                .map(functionalObjectProperty => functionalObjectProperty.ObjectPropertyExpression));
-        const functionalDataProperties = new Set<IDataPropertyExpression>(
+                .map(functionalObjectProperty => functionalObjectProperty.ObjectPropertyExpression)
+                .filter(ontology.IsAxiom.IObjectProperty));
+        const functionalDataProperties = new Set<IDataProperty>(
             [...ontology.Get(ontology.IsAxiom.IFunctionalDataProperty)]
-                .map(functionalDataProperty => functionalDataProperty.DataPropertyExpression));
-        const keyProperties = new Set<IDataPropertyExpression>(
+                .map(functionalDataProperty => <IDataProperty>functionalDataProperty.DataPropertyExpression));
+        const keyProperties = new Set<IDataProperty>(
             [...ontology.Get(ontology.IsAxiom.IHasKey)]
                 .filter(hasKey =>
                     hasKey.ClassExpression                === Thing &&
                     hasKey.DataPropertyExpressions.length === 1)
-                .map(hasKey => hasKey.DataPropertyExpressions[0])
+                .map(hasKey => <IDataProperty>hasKey.DataPropertyExpressions[0])
                 .filter(keyProperty => functionalDataProperties.has(keyProperty)));
 
         const attributeSchema: AttributeSchema[] = [
@@ -100,19 +101,19 @@ export class DealBuilder implements IDealBuilder
                         Cardinality: Cardinality.One
                     });
 
-        for(const objectPropertyExpression of ontology.Get(ontology.IsAxiom.IObjectPropertyExpression))
-            if(!functionalObjectProperties.has(objectPropertyExpression))
+        for(const objectProperty of ontology.Get(ontology.IsAxiom.IObjectProperty))
+            if(!functionalObjectProperties.has(objectProperty))
                 attributeSchema.push(
                     {
-                        Name       : objectPropertyExpression.LocalName,
+                        Name       : objectProperty.LocalName,
                         Cardinality: Cardinality.Many
                     });
 
-        for(const dataPropertyExpression of ontology.Get(ontology.IsAxiom.IDataPropertyExpression))
-            if(!functionalDataProperties.has(dataPropertyExpression))
+        for(const dataProperty of ontology.Get(ontology.IsAxiom.IDataProperty))
+            if(!functionalDataProperties.has(dataProperty))
                 attributeSchema.push(
                     {
-                        Name       : dataPropertyExpression.LocalName,
+                        Name       : dataProperty.LocalName,
                         Cardinality: Cardinality.Many
                     });
 

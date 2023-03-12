@@ -14,7 +14,7 @@ import { IHasKey } from "./IHasKey";
 import { INamedIndividual } from "./INamedIndividual";
 import { IObjectPropertyDomain } from "./IObjectPropertyDomain";
 import { IObjectPropertyRange } from "./IObjectPropertyRange";
-import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
+import { IDataProperty, IObjectProperty } from "./IProperty";
 import { ISubClassOf } from "./ISubClassOf";
 
 type TypeGuard<T extends object> = (o: object) => o is T;
@@ -24,8 +24,8 @@ export interface IIsAxiom
     IAxiom                   : TypeGuard<IAxiom                   >;
     IEntity                  : TypeGuard<IEntity                  >;
     IClass                   : TypeGuard<IClass                   >;
-    IObjectPropertyExpression: TypeGuard<IObjectPropertyExpression>;
-    IDataPropertyExpression  : TypeGuard<IDataPropertyExpression  >;
+    IObjectProperty          : TypeGuard<IObjectProperty          >;
+    IDataProperty            : TypeGuard<IDataProperty            >;
     IAnnotationProperty      : TypeGuard<IAnnotationProperty      >;
     INamedIndividual         : TypeGuard<INamedIndividual         >;
     IHasKey                  : TypeGuard<IHasKey                  >;

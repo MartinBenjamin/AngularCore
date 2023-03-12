@@ -1,7 +1,7 @@
-import { IDataPropertyExpression, IObjectPropertyExpression } from './IPropertyExpression';
+import { IDataProperty, IObjectProperty } from './IProperty';
 
 export interface IPropertyExpressionSelector<TResult>
 {
-    ObjectPropertyExpression(objectPropertyExpression: IObjectPropertyExpression): TResult;
-    DataPropertyExpression  (dataPropertyExpression  : IDataPropertyExpression  ): TResult;
+    ObjectProperty(objectProperty: IObjectProperty): TResult;
+    DataProperty  (dataProperty  : IDataProperty  ): TResult;
 }

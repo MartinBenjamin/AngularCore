@@ -28,7 +28,7 @@ import { IIsAxiom } from "./IIsAxiom";
 import { INamedIndividual } from "./INamedIndividual";
 import { IObjectPropertyDomain } from "./IObjectPropertyDomain";
 import { IObjectPropertyRange } from "./IObjectPropertyRange";
-import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
+import { IDataProperty, IObjectProperty } from "./IProperty";
 import { ISubClassOf } from "./ISubClassOf";
 import { NamedIndividual } from "./NamedIndividual";
 import { ObjectPropertyDomain } from "./ObjectPropertyDomain";
@@ -41,8 +41,8 @@ export class IsAxiom implements IIsAxiom
     IAxiom                   (axiom: object): axiom is IAxiom                    { return axiom instanceof Axiom                   ; }
     IEntity                  (axiom: object): axiom is IEntity                   { return axiom instanceof Entity                  ; }
     IClass                   (axiom: object): axiom is IClass                    { return axiom instanceof Class                   ; }
-    IObjectPropertyExpression(axiom: object): axiom is IObjectPropertyExpression { return axiom instanceof ObjectProperty          ; }
-    IDataPropertyExpression  (axiom: object): axiom is IDataPropertyExpression   { return axiom instanceof DataProperty            ; }
+    IObjectProperty          (axiom: object): axiom is IObjectProperty           { return axiom instanceof ObjectProperty          ; }
+    IDataProperty            (axiom: object): axiom is IDataProperty             { return axiom instanceof DataProperty            ; }
     IAnnotationProperty      (axiom: object): axiom is IAnnotationProperty       { return axiom instanceof AnnotationProperty      ; }
     INamedIndividual         (axiom: object): axiom is INamedIndividual          { return axiom instanceof NamedIndividual         ; }
     IHasKey                  (axiom: object): axiom is IHasKey                   { return axiom instanceof HasKey                  ; }
