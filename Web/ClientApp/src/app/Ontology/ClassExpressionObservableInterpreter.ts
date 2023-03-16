@@ -2,7 +2,7 @@ import { BehaviorSubject, combineLatest, Observable } from "rxjs";
 import { ClassExpressionInterpreter, ICache, IEavStore } from "./ClassExpressionInterpreter";
 import { IClass } from "./IClass";
 import { IOntology } from "./IOntology";
-import { IDataProperty, IObjectProperty, IProperty } from "./IProperty";
+import { IDataProperty, IInverseObjectProperty, IObjectProperty, IProperty } from "./IProperty";
 import { IPropertyExpression } from './IPropertyExpression';
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 import { WrapperType } from './Wrapped';
@@ -104,5 +104,12 @@ export class PropertyExpressionObservableGenerator implements IPropertyExpressio
         ): Observable<[any, any][]>
     {
         return this.Property(dataProperty);
+    }
+
+    InverseObjectProperty(
+        inverseObjectProperty: IInverseObjectProperty
+        ): Observable<[any, any][]>
+    {
+        throw new Error("Method not implemented.");
     }
 }

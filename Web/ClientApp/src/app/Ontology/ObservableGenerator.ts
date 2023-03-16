@@ -22,7 +22,7 @@ import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from './IOntology';
-import { IDataProperty, IObjectProperty } from "./IProperty";
+import { IDataProperty, IInverseObjectProperty, IObjectProperty } from "./IProperty";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 import { Nothing } from './Nothing';
@@ -492,6 +492,13 @@ export class ObservableGenerator implements
         ): Observable<[any, any][]>
     {
         return this._store.Observe(dataProperty.LocalName);
+    }
+
+    InverseObjectProperty(
+        inverseObjectProperty: IInverseObjectProperty
+        ): Observable<[any, any][]>
+    {
+        throw new Error("Method not implemented.");
     }
 
     get ObjectDomain(): Observable<Set<any>>

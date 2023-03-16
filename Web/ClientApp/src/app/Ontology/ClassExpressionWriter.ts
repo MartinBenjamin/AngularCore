@@ -16,7 +16,7 @@ import { IObjectIntersectionOf } from "./IObjectIntersectionOf";
 import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
-import { IDataProperty, IObjectProperty, IProperty } from './IProperty';
+import { IDataProperty, IInverseObjectProperty, IObjectProperty, IProperty } from './IProperty';
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 import { IsAxiom } from "./IsAxiom";
 
@@ -189,6 +189,13 @@ ${dataCardinality.DataRange ? ' ' + dataCardinality.DataRange.Select(this._dataR
         ): string
     {
         return this.Property(dataProperty);
+    }
+
+    InverseObjectProperty(
+        inverseObjectProperty: IInverseObjectProperty
+        ): string
+    {
+        return `InverseObjectProperty(${inverseObjectProperty.ObjectProperty.Select(this)})`;
     }
 
     private Property(

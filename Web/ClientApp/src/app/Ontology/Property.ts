@@ -13,7 +13,7 @@ import { IIndividual } from "./IIndividual";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectHasValue } from "./IObjectHasValue";
 import { IOntology } from "./IOntology";
-import { IDataProperty, IObjectProperty } from "./IProperty";
+import { IDataProperty, IObjectProperty, IInverseObjectProperty } from "./IProperty";
 import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
 import { ObjectExactCardinality } from "./ObjectExactCardinality";
 import { ObjectHasValue } from "./ObjectHasValue";
@@ -155,5 +155,63 @@ export class DataProperty
             this.Ontology,
             this,
             dataRange);
+    }
+}
+
+export class InverseObjectProperty implements IInverseObjectProperty
+{
+    constructor(
+        public ObjectProperty: IObjectProperty
+        )
+    {
+    }
+
+    Select<TResult>(
+        selector: IPropertyExpressionSelector<TResult>
+        ): TResult
+    {
+        return selector.InverseObjectProperty(this);
+    }
+
+    HasValue(
+        individual: IIndividual
+        ): IObjectHasValue
+    {
+        return new ObjectHasValue(
+            this,
+            individual);
+    }
+
+    MinCardinality(
+        cardinality     : number,
+        classExpression?: IClassExpression
+        ): IObjectMinCardinality
+    {
+        return new ObjectMinCardinality(
+            this,
+            cardinality,
+            classExpression);
+    }
+
+    MaxCardinality(
+        cardinality     : number,
+        classExpression?: IClassExpression
+        ): IObjectMaxCardinality
+    {
+        return new ObjectMaxCardinality(
+            this,
+            cardinality,
+            classExpression);
+    }
+
+    ExactCardinality(
+        cardinality     : number,
+        classExpression?: IClassExpression
+        ): IObjectExactCardinality
+    {
+        return new ObjectExactCardinality(
+            this,
+            cardinality,
+            classExpression);
     }
 }

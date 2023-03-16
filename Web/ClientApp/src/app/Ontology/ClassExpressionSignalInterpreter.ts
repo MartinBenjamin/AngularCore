@@ -2,7 +2,7 @@ import { Signal } from '../Signal';
 import { ClassExpressionInterpreter, ICache, IEavStore } from './ClassExpressionInterpreter';
 import { IClass } from './IClass';
 import { IOntology } from './IOntology';
-import { IDataProperty, IObjectProperty, IProperty } from './IProperty';
+import { IDataProperty, IInverseObjectProperty, IObjectProperty, IProperty } from './IProperty';
 import { IPropertyExpression } from './IPropertyExpression';
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 import { WrapperType } from './Wrapped';
@@ -102,5 +102,12 @@ export class PropertyExpressionObservableGenerator implements IPropertyExpressio
         ): Signal<[any, any][]>
     {
         return this.Property(dataProperty);
+    }
+
+    InverseObjectProperty(
+        inverseObjectProperty: IInverseObjectProperty
+        ): Signal<[any, any][]>
+    {
+        throw new Error("Method not implemented.");
     }
 }

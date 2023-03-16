@@ -12,3 +12,8 @@ export interface IObjectProperty extends IProperty, IObjectPropertyExpression
 export interface IDataProperty extends IProperty, IDataPropertyExpression
 {
 }
+
+export interface IInverseObjectProperty extends IObjectPropertyExpression
+{
+    readonly ObjectProperty: IObjectProperty;
+}
