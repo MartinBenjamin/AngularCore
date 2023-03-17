@@ -559,7 +559,7 @@ export interface ICache<TAtom>
     Get(atom: IAtom): TAtom
 }
 
-export abstract class AtomInterpreter<T> implements IAtomSelector<Wrapped<T, object[] | BuiltIn>>
+export abstract class AtomInterpreter<T extends WrapperType> implements IAtomSelector<Wrapped<T, object[] | BuiltIn>>
 {
     private _propertyDefinitions: Map<IPropertyExpression, IDLSafeRule>;
 
