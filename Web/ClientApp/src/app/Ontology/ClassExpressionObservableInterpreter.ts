@@ -9,28 +9,6 @@ import { WrapperType } from './Wrapped';
 
 type ObservableParams<P> = { [Parameter in keyof P]: Observable<P[Parameter]>; };
 
-class ObservableCache implements ICache<WrapperType.Observable>
-{
-    private readonly _observables = new Map<IClass, Observable<Set<any>>>();
-
-    Set(
-        class$: IClass,
-        wrapped: Observable<Set<any>>
-        ): void
-    {
-        this._observables.set(
-            class$,
-            wrapped);
-    }
-
-    Get(
-        class$: IClass
-        ): Observable<Set<any>>
-    {
-        return this._observables.get(class$);
-    }
-}
-
 export class ClassExpressionObservableInterpreter extends ClassExpressionInterpreter<WrapperType.Observable>
 {
     protected Wrap<TIn extends any[], TOut>(
@@ -56,7 +34,7 @@ export class ClassExpressionObservableInterpreter extends ClassExpressionInterpr
             new PropertyExpressionObservableGenerator(store),
             ontology,
             store,
-            new ObservableCache());
+            new Map<IClass, Observable<Set<any>>>());
     }
 
     protected WrapObjectDomain(): Observable<Set<any>>

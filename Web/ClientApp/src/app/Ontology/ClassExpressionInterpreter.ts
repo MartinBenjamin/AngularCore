@@ -31,10 +31,10 @@ export { IEavStore, EavStore };
 
 export interface ICache<T extends WrapperType>
 {
-    Set(
+    set(
         class$: IClass,
         wrapped: Wrapped<T, Set<any>>): void;
-    Get(class$: IClass): Wrapped<T, Set<any>>
+    get(class$: IClass): Wrapped<T, Set<any>>
 }
 
 export abstract class ClassExpressionInterpreter<T extends WrapperType> implements IClassExpressionSelector<Wrapped<T, Set<any>>>
@@ -109,7 +109,7 @@ export abstract class ClassExpressionInterpreter<T extends WrapperType> implemen
         class$: IClass
         ): Wrapped<T, Set<any>>
     {
-        let interpretation = this._classInterpretation.Get(class$);
+        let interpretation = this._classInterpretation.get(class$);
         if(!interpretation)
         {
             let interpretations: Wrapped<T, Set<any>>[];
@@ -165,7 +165,7 @@ export abstract class ClassExpressionInterpreter<T extends WrapperType> implemen
                     (...sets: Set<any>[]) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])),
                     ...interpretations);
 
-            this._classInterpretation.Set(
+            this._classInterpretation.set(
                 class$,
                 interpretation);
         }

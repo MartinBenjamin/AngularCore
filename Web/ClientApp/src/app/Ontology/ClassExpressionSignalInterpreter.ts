@@ -13,7 +13,7 @@ class SignalCache implements ICache<WrapperType.Signal>
 {
     private readonly _signals = new Map<IClass, Signal<Set<any>>>();
 
-    Set(
+    set(
         class$: IClass,
         wrapped: Signal<Set<any>>
         ): void
@@ -24,7 +24,7 @@ class SignalCache implements ICache<WrapperType.Signal>
         wrapped.AddRemoveAction(() => this._signals.delete(class$));
     }
 
-    Get(
+    get(
         class$: IClass
         ): Signal<Set<any>>
     {
