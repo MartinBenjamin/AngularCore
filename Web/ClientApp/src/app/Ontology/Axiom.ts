@@ -1,5 +1,6 @@
 import { Annotated } from "./Annotated";
 import { IAxiom } from "./IAxiom";
+import { IAxiomSelector } from "./IAxiomSelector";
 import { IOntology } from "./IOntology";
 
 export class Axiom
@@ -13,5 +14,12 @@ export class Axiom
         super();
         if(Ontology)
             Ontology.Axioms.push(this);
+    }
+
+    Select<TResult>(
+        selector: IAxiomSelector<TResult>
+        ): TResult
+    {
+        throw new Error("Method not implemented.");
     }
 }

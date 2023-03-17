@@ -1,8 +1,6 @@
-import { IDataProperty, IInverseObjectProperty, IObjectProperty } from './IProperty';
+import { IInverseObjectProperty, IPropertySelector } from "./IProperty";
 
-export interface IPropertyExpressionSelector<TResult>
+export interface IPropertyExpressionSelector<TResult> extends IPropertySelector<TResult>
 {
-    ObjectProperty       (objectProperty       : IObjectProperty       ): TResult;
-    DataProperty         (dataProperty         : IDataProperty         ): TResult;
     InverseObjectProperty(inverseObjectProperty: IInverseObjectProperty): TResult;
 }

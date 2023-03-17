@@ -1,18 +1,21 @@
-import { BehaviorSubject, combineLatest, Observable } from "rxjs";
+import { Observable } from "rxjs";
+import { Deals } from "../Ontologies/Deals";
 import { IDLSafeRule } from "./DLSafeRule";
 import { IAxiom } from "./IAxiom";
+import { IClass, IClassSelector } from './IClass';
 import { IDataPropertyRange } from "./IDataPropertyRange";
-import { ISubClassOf } from "./ISubClassOf";
-import { Deals } from "../Ontologies/Deals";
-import { IClass } from './IClass';
-import { IPropertyExpression } from './IPropertyExpression';
+import { IDatatypeSelector } from "./IDatatype";
 import { IIndividual } from './IIndividual';
-import { IOntology } from './IOntology';
+import { IPropertySelector } from "./IProperty";
+import { IPropertyExpression } from './IPropertyExpression';
+import { ISubClassOf } from "./ISubClassOf";
 
-export interface IAxiomSelector<TResult>
+export interface IAxiomSelector<TResult> extends
+    IClassSelector<TResult>,
+    IPropertySelector<TResult>,
+    IDatatypeSelector<TResult>
 {
     Axiom            (axiom            : IAxiom            ): TResult;
-    Class            (class$           : IClass            ): TResult;
     DataPropertyRange(dataPropertyRange: IDataPropertyRange): TResult;
     SubclassOf       (subClassOf       : ISubClassOf       ): TResult;
     DLSafeRule       (dlSafeRule       : IDLSafeRule       ): TResult;

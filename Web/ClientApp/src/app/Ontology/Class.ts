@@ -2,9 +2,8 @@ import { ClassAssertion } from "./Assertion";
 import { Entity } from "./Entity";
 import { EquivalentClasses } from "./EquivalentClasses";
 import { HasKey } from "./HasKey";
-import { IClass } from "./IClass";
+import { IClass, IClassSelector } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
-import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IEquivalentClasses } from "./IEquivalentClasses";
 import { IHasKey } from "./IHasKey";
@@ -42,7 +41,7 @@ export class Class
     }
 
     Select<TResult>(
-        selector: IClassExpressionSelector<TResult>
+        selector: IClassSelector<TResult>
         ): TResult
     {
         return selector.Class(this);

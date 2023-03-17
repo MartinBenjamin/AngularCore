@@ -6,10 +6,17 @@ import { INamedIndividual } from "./INamedIndividual";
 import { IDataPropertyExpression } from "./IPropertyExpression";
 import { ISubClassOf } from "./ISubClassOf";
 
+export interface IClassSelector<TResult>
+{
+    Class(class$: IClass): TResult;
+}
+
 export interface IClass extends
     IEntity,
     IClassExpression
 {
+    Select<TResult>(selector: IClassSelector<TResult>): TResult;
+
     // Provided to assist construction of ontologies.
     DeclareNamedIndividual(localName: string): INamedIndividual;
     HasKey(dataPropertyExpressions: IDataPropertyExpression[]): IHasKey

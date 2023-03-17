@@ -1,6 +1,5 @@
 import { Entity } from "./Entity";
-import { IDataRangeSelector } from "./IDataRangeSelector";
-import { IDatatype } from "./IDatatype";
+import { IDatatype, IDatatypeSelector } from "./IDatatype";
 import { IOntology } from "./IOntology";
 
 export class Datatype
@@ -25,7 +24,7 @@ export class Datatype
     }
 
     Select<TResult>(
-        selector: IDataRangeSelector<TResult>
+        selector: IDatatypeSelector<TResult>
         ): TResult
     {
         return selector.Datatype(this);

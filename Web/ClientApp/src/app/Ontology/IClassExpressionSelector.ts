@@ -1,4 +1,4 @@
-import { IClass } from "./IClass";
+import { IClassSelector } from "./IClass";
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
 import { IDataHasValue } from "./IDataHasValue";
@@ -13,9 +13,8 @@ import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 
-export interface IClassExpressionSelector<TResult>
+export interface IClassExpressionSelector<TResult> extends IClassSelector<TResult>
 {
-    Class                 (class$                : IClass                 ): TResult;
     ObjectIntersectionOf  (objectIntersectionOf  : IObjectIntersectionOf  ): TResult;
     ObjectUnionOf         (objectUnionOf         : IObjectUnionOf         ): TResult;
     ObjectComplementOf    (objectComplementOf    : IObjectComplementOf    ): TResult;

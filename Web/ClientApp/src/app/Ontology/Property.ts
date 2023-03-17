@@ -13,7 +13,7 @@ import { IIndividual } from "./IIndividual";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectHasValue } from "./IObjectHasValue";
 import { IOntology } from "./IOntology";
-import { IDataProperty, IObjectProperty, IInverseObjectProperty } from "./IProperty";
+import { IDataProperty, IDataPropertySelector, IInverseObjectProperty, IObjectProperty, IObjectPropertySelector } from "./IProperty";
 import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
 import { ObjectExactCardinality } from "./ObjectExactCardinality";
 import { ObjectHasValue } from "./ObjectHasValue";
@@ -35,7 +35,7 @@ export class ObjectProperty
     }
 
     Select<TResult>(
-        selector: IPropertyExpressionSelector<TResult>
+        selector: IObjectPropertySelector<TResult>
         ): TResult
     {
         return selector.ObjectProperty(this);
@@ -99,7 +99,7 @@ export class DataProperty
     }
 
     Select<TResult>(
-        selector: IPropertyExpressionSelector<TResult>
+        selector: IDataPropertySelector<TResult>
         ): TResult
     {
         return selector.DataProperty(this);
