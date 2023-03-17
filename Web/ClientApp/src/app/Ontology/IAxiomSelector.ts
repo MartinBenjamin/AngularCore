@@ -15,8 +15,8 @@ export interface IAxiomSelector<TResult> extends
     IPropertySelector<TResult>,
     IDatatypeSelector<TResult>
 {
-    Axiom            (axiom            : IAxiom            ): TResult;
-    DataPropertyRange(dataPropertyRange: IDataPropertyRange): TResult;
+    //Axiom            (axiom            : IAxiom            ): TResult;
+    //DataPropertyRange(dataPropertyRange: IDataPropertyRange): TResult;
     SubclassOf       (subClassOf       : ISubClassOf       ): TResult;
     DLSafeRule       (dlSafeRule       : IDLSafeRule       ): TResult;
 }
