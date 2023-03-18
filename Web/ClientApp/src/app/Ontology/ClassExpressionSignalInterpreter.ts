@@ -47,7 +47,7 @@ export class ClassExpressionSignalInterpreter extends ClassExpressionInterpreter
         )
     {
         super(
-            new PropertyExpressionObservableGenerator(store),
+            new PropertyExpressionSignalInterpreter(store),
             ontology,
             store,
             new SignalCache());
@@ -59,7 +59,7 @@ export class ClassExpressionSignalInterpreter extends ClassExpressionInterpreter
     }
 }
 
-export class PropertyExpressionObservableGenerator implements IPropertyExpressionSelector<Signal<[any, any][]>>
+export class PropertyExpressionSignalInterpreter implements IPropertyExpressionSelector<Signal<[any, any][]>>
 {
     private _propertyExpressionInterpretation = new Map<IPropertyExpression, Signal<[any, any][]>>();
 
