@@ -13,7 +13,7 @@ import { IOntology } from './IOntology';
 import { IProperty } from './IProperty';
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
-import { Wrapped, WrapperType } from './Wrapped';
+import { Wrap, Wrapped, WrapperType } from './Wrapped';
 
 // http://www.cs.ox.ac.uk/files/2445/rulesyntaxTR.pdf
 /*
@@ -563,9 +563,7 @@ export abstract class AtomInterpreter<T extends WrapperType> implements IAtomSel
 {
     private _propertyDefinitions: Map<IPropertyExpression, IDLSafeRule>;
 
-    protected abstract Wrap<TIn extends any[], TOut>(
-        map: (...params: TIn) => TOut,
-        ...params: { [Parameter in keyof TIn]: Wrapped<T, TIn[Parameter]>; }): Wrapped<T, TOut>;
+    protected abstract Wrap: Wrap<T>;
 
     constructor(
         private _ontology                     : IOntology,
@@ -702,10 +700,10 @@ export class AtomObservableInterpreter extends AtomInterpreter<WrapperType.Obser
             classObservableGenerator);
     }
 
-    protected Wrap<TIn extends any[], TOut>(
+    protected Wrap = <TIn extends any[], TOut>(
         map: (...params: TIn) => TOut,
         ...params: ObservableParams<TIn>
-        ): Observable<TOut>
+        ): Observable<TOut> =>
     {
         if(!params.length)
             return new BehaviorSubject(map(...<TIn>[]));
@@ -714,7 +712,7 @@ export class AtomObservableInterpreter extends AtomInterpreter<WrapperType.Obser
             return combineLatest(
                 params,
                 map);
-    }
+    };
 
     Atoms(
         atoms: IAtom[]

@@ -34,15 +34,12 @@ class SignalCache implements ICache<WrapperType.Signal>
 
 export class ClassExpressionSignalInterpreter extends ClassExpressionInterpreter<WrapperType.Signal>
 {
-    protected Wrap<TIn extends any[], TOut>(
+    protected Wrap = <TIn extends any[], TOut>(
         map: (...params: TIn) => TOut,
         ...params: SignalParams<TIn>
-        ): Signal<TOut>
-    {
-        return this._store.SignalScheduler.AddSignal(
+        ): Signal<TOut> => this._store.SignalScheduler.AddSignal(
             map,
             params);
-    }
 
     constructor(
         ontology: IOntology,

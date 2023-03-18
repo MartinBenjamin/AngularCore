@@ -1,5 +1,5 @@
 import { BehaviorSubject, combineLatest, Observable } from "rxjs";
-import { ClassExpressionInterpreter, ICache, IEavStore } from "./ClassExpressionInterpreter";
+import { ClassExpressionInterpreter, IEavStore } from "./ClassExpressionInterpreter";
 import { IClass } from "./IClass";
 import { IOntology } from "./IOntology";
 import { IDataProperty, IInverseObjectProperty, IObjectProperty, IProperty } from "./IProperty";
@@ -11,10 +11,10 @@ type ObservableParams<P> = { [Parameter in keyof P]: Observable<P[Parameter]>; }
 
 export class ClassExpressionObservableInterpreter extends ClassExpressionInterpreter<WrapperType.Observable>
 {
-    protected Wrap<TIn extends any[], TOut>(
+    protected Wrap = <TIn extends any[], TOut>(
         map: (...params: TIn) => TOut,
         ...params: ObservableParams<TIn>
-        ): Observable<TOut>
+        ): Observable<TOut> =>
     {
         if(!params.length)
             return new BehaviorSubject(map(...<TIn>[]));
@@ -23,7 +23,7 @@ export class ClassExpressionObservableInterpreter extends ClassExpressionInterpr
             return combineLatest(
                 params,
                 map);
-    }
+    };
 
     constructor(
         ontology: IOntology,

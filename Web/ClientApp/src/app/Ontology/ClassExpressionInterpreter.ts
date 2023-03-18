@@ -25,7 +25,7 @@ import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 import { Nothing } from './Nothing';
 import { Thing } from './Thing';
 import { TransitiveClosure3 } from "./TransitiveClosure";
-import { Wrapped, WrapperType } from './Wrapped';
+import { Wrap, Wrapped, WrapperType } from './Wrapped';
 
 export { IEavStore, EavStore };
 
@@ -45,9 +45,7 @@ export abstract class ClassExpressionInterpreter<T extends WrapperType> implemen
     private _functionalDataProperties   = new Set<IDataPropertyExpression>();
     private _individualInterpretation   : Map<IIndividual, any>;
 
-    protected abstract Wrap<TIn extends any[], TOut>(
-        map: (...params: TIn) => TOut,
-        ...params: { [Parameter in keyof TIn]: Wrapped<T, TIn[Parameter]>; }): Wrapped<T, TOut>;
+    protected abstract Wrap: Wrap<T>;
 
     protected abstract WrapObjectDomain(): Wrapped<T, Set<any>>;
 
