@@ -11,26 +11,18 @@ type ObservableParams<P> = { [Parameter in keyof P]: Observable<P[Parameter]>; }
 
 export class ClassExpressionObservableInterpreter extends ClassExpressionInterpreter<WrapperType.Observable>
 {
-    protected Wrap = <TIn extends any[], TOut>(
-        map: (...params: TIn) => TOut,
-        ...params: ObservableParams<TIn>
-        ): Observable<TOut> =>
-    {
-        if(!params.length)
-            return new BehaviorSubject(map(...<TIn>[]));
-
-        else
-            return combineLatest(
-                params,
-                map);
-    };
-
     constructor(
         ontology: IOntology,
         store: IEavStore
         )
     {
         super(
+            <TIn extends any[], TOut>(
+                map: (...params: TIn) => TOut,
+                ...params: ObservableParams<TIn>
+                ): Observable<TOut> => !params.length ? new BehaviorSubject(map(...<TIn>[])) : combineLatest(
+                    params,
+                    map),
             new PropertyExpressionObservableGenerator(store),
             ontology,
             store,

@@ -295,6 +295,7 @@
     <None Remove="ClientApp\src\app\Ontology\Ontology.ts" />
     <None Remove="ClientApp\src\app\Ontology\PrefixIris.ts" />
     <None Remove="ClientApp\src\app\Ontology\Property.ts" />
+    <None Remove="ClientApp\src\app\Ontology\PropertyExpressionInterpreter.ts" />
     <None Remove="ClientApp\src\app\Ontology\PropertyExpressionWriter.ts" />
     <None Remove="ClientApp\src\app\Ontology\PropertyNameSelector.ts" />
     <None Remove="ClientApp\src\app\Ontology\PropertyRestriction.ts" />
@@ -445,6 +446,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectOneOfSignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectSomeValuesFromSignal.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ObjectUnionOfSignal.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\PropertyExpressionInterpreter.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\PropertyExpressionWriter.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\PropertyNameSelector.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\SortedMap.Spec.ts" />
