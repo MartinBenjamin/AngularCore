@@ -559,16 +559,15 @@ export interface ICache<TAtom>
     Get(atom: IAtom): TAtom
 }
 
-export abstract class AtomInterpreter<T extends WrapperType> implements IAtomSelector<Wrapped<T, object[] | BuiltIn>>
+export class AtomInterpreter<T extends WrapperType> implements IAtomSelector<Wrapped<T, object[] | BuiltIn>>
 {
     private _propertyDefinitions: Map<IPropertyExpression, IDLSafeRule>;
 
-    protected abstract Wrap: Wrap<T>;
-
     constructor(
-        private _ontology                     : IOntology,
-        private _propertyExpressionInterpreter: IPropertyExpressionSelector<Wrapped<T, [any, any][]>>,
-        private _classExpressionInterpreter   : IClassExpressionSelector<Wrapped<T, Set<any>>>
+        protected _wrap                         : Wrap<T>,
+        private   _ontology                     : IOntology,
+        private   _propertyExpressionInterpreter: IPropertyExpressionSelector<Wrapped<T, [any, any][]>>,
+        private   _classExpressionInterpreter   : IClassExpressionSelector<Wrapped<T, Set<any>>>
         )
     {
         this._propertyDefinitions           = new Map(
@@ -582,7 +581,7 @@ export abstract class AtomInterpreter<T extends WrapperType> implements IAtomSel
         ): Wrapped<T, object[] | BuiltIn>
     {
         if(IsVariable(class$.Individual))
-            return this.Wrap(
+            return this._wrap(
                 individuals => [...individuals].map(
                     individual =>
                     {
@@ -590,7 +589,7 @@ export abstract class AtomInterpreter<T extends WrapperType> implements IAtomSel
                     }),
                 class$.ClassExpression.Select(this._classExpressionInterpreter));
 
-        return this.Wrap(
+        return this._wrap(
             individuals => individuals.has(class$.Individual) ? [{}] : [],
             class$.ClassExpression.Select(this._classExpressionInterpreter));
     }
@@ -599,7 +598,7 @@ export abstract class AtomInterpreter<T extends WrapperType> implements IAtomSel
         dataRange: IDataRangeAtom
         ): Wrapped<T, object[] | BuiltIn>
     {
-        return this.Wrap(() => (
+        return this._wrap(() => (
             substitutions: Iterable<object>
             ) =>
         {
@@ -630,13 +629,13 @@ export abstract class AtomInterpreter<T extends WrapperType> implements IAtomSel
     {
         const propertyDefinition = this._propertyDefinitions.get(property.PropertyExpression);
         if(propertyDefinition)
-            return this.Wrap(
+            return this._wrap(
                 EavStore.Conjunction(
                     [(<IPropertyAtom>propertyDefinition.Head[0]).Domain, (<IPropertyAtom>propertyDefinition.Head[0]).Range],
                     [property.Domain, property.Range]),
                 ...propertyDefinition.Body.map(atom => atom.Select(this)));
 
-        return this.Wrap(
+        return this._wrap(
             EavStore.Substitute([property.Domain, property.Range]),
             property.PropertyExpression.Select(this._propertyExpressionInterpreter));
     }
@@ -645,93 +644,61 @@ export abstract class AtomInterpreter<T extends WrapperType> implements IAtomSel
         lessThan: ILessThanAtom
         ): Wrapped<T, object[] | BuiltIn>
     {
-        return this.Wrap(() => LessThan(lessThan.Lhs, lessThan.Rhs));
+        return this._wrap(() => LessThan(lessThan.Lhs, lessThan.Rhs));
     }
 
     LessThanOrEqual(
         lessThanOrEqual: ILessThanOrEqualAtom
         ): Wrapped<T, object[] | BuiltIn>
     {
-        return this.Wrap(() => LessThanOrEqual(lessThanOrEqual.Lhs, lessThanOrEqual.Rhs));
+        return this._wrap(() => LessThanOrEqual(lessThanOrEqual.Lhs, lessThanOrEqual.Rhs));
     }
 
     Equal(
         equal: IEqualAtom
         ): Wrapped<T, object[] | BuiltIn>
     {
-        return this.Wrap(() => Equal(equal.Lhs, equal.Rhs));
+        return this._wrap(() => Equal(equal.Lhs, equal.Rhs));
     }
 
     NotEqual(
         notEqual: INotEqualAtom
         ): Wrapped<T, object[] | BuiltIn>
     {
-        return this.Wrap(()=> NotEqual(notEqual.Lhs, notEqual.Rhs));
+        return this._wrap(()=> NotEqual(notEqual.Lhs, notEqual.Rhs));
     }
 
     GreaterThanOrEqual(
         greaterThanOrEqual: IGreaterThanOrEqualAtom
         ): Wrapped<T, object[] | BuiltIn>
     {
-        return this.Wrap(() => GreaterThanOrEqual(greaterThanOrEqual.Lhs, greaterThanOrEqual.Rhs));
+        return this._wrap(() => GreaterThanOrEqual(greaterThanOrEqual.Lhs, greaterThanOrEqual.Rhs));
     }
 
     GreaterThan(
         greaterThan: IGreaterThanAtom
         ): Wrapped<T, object[] | BuiltIn>
     {
-        return this.Wrap(() => GreaterThan(greaterThan.Lhs, greaterThan.Rhs));
+        return this._wrap(() => GreaterThan(greaterThan.Lhs, greaterThan.Rhs));
     }
-}
-
-type ObservableParams<P> = { [Parameter in keyof P]: Observable<P[Parameter]>; };
-
-export class AtomObservableInterpreter extends AtomInterpreter<WrapperType.Observable>
-{
-    constructor(
-        ontology                   : IOntology,
-        propertyObservableGenerator: IPropertyExpressionSelector<Observable<[any, any][]>>,
-        classObservableGenerator   : IClassExpressionSelector<Observable<Set<any>>>
-        )
-    {
-        super(
-            ontology,
-            propertyObservableGenerator,
-            classObservableGenerator);
-    }
-
-    protected Wrap = <TIn extends any[], TOut>(
-        map: (...params: TIn) => TOut,
-        ...params: ObservableParams<TIn>
-        ): Observable<TOut> =>
-    {
-        if(!params.length)
-            return new BehaviorSubject(map(...<TIn>[]));
-
-        else
-            return combineLatest(
-                params,
-                map);
-    };
 
     Atoms(
         atoms: IAtom[]
-        ): Observable<object[]>
+        ): Wrapped<T, object[]>
     {
-        return combineLatest(
-            atoms.map(atom => atom.Select(this)),
-            EavStore.Conjunction());
+        return this._wrap(
+            EavStore.Conjunction(),
+            ...atoms.map(atom => atom.Select(this)));
     }
 }
 
-function ObserveRuleContradictions(
-    interpreter: AtomObservableInterpreter,
+function RuleContradictions<T extends WrapperType>(
+    wrap       : Wrap<T>,
+    interpreter: AtomInterpreter<T>,
     rule       : IDLSafeRule
-    ): Observable<object[]>
+    ): Wrapped<T, object[]>
 {
-    return combineLatest(
-        interpreter.Atoms(rule.Head),
-        interpreter.Atoms(rule.Body),
+    return wrap(
         (head, body) => body.reduce<object[]>(
             (failed, x) =>
             {
@@ -746,8 +713,12 @@ function ObserveRuleContradictions(
 
                 return failed;
             },
-            []));
+            []),
+        interpreter.Atoms(rule.Head),
+        interpreter.Atoms(rule.Body));
 }
+
+type ObservableParams<P> = { [Parameter in keyof P]: Observable<P[Parameter]>; };
 
 export function* ObserveContradictions(
     ontology                   : IOntology,
@@ -756,7 +727,14 @@ export function* ObserveContradictions(
     rules                      : Iterable<IDLSafeRule>
     ): Iterable<Observable<[string, IAxiom, Set<any>]>>
 {
-    const interpreter = new AtomObservableInterpreter(
+    const wrap = <TIn extends any[], TOut>(
+        map: (...params: TIn) => TOut,
+        ...params: ObservableParams<TIn>
+        ): Observable<TOut> => !params.length ? new BehaviorSubject(map(...<TIn>[])) : combineLatest(
+            params,
+            map);
+    const interpreter = new AtomInterpreter<WrapperType.Observable>(
+        wrap,
         ontology,
         observablePropertyGenerator,
         observableClassGenerator);
@@ -768,14 +746,47 @@ export function* ObserveContradictions(
 
         if(comparison && lhsProperty)
         {
-            yield ObserveRuleContradictions(
-                interpreter,
-                rule).pipe(map(
-                    contraditions => [
-                        (<IProperty>lhsProperty.PropertyExpression).LocalName,
-                        rule,
-                        new Set(contraditions.map(o => o[<string>lhsProperty.Domain]))
-                    ]));
+            yield wrap(contraditions => [
+                (<IProperty>lhsProperty.PropertyExpression).LocalName,
+                rule,
+                new Set(contraditions.map(o => o[<string>lhsProperty.Domain]))],
+                RuleContradictions(
+                    wrap,
+                    interpreter,
+                    rule));
+        }
+    }
+}
+
+export function* ObserveContradictions_<T extends WrapperType>(
+    wrap                       : Wrap<T>,
+    ontology                   : IOntology,
+    observablePropertyGenerator: IPropertyExpressionSelector<Wrapped<T, [any, any][]>>,
+    observableClassGenerator   : IClassExpressionSelector<Wrapped<T, Set<any>>>,
+    rules                      : Iterable<IDLSafeRule>
+    ): Iterable<Wrapped<T, [string, IAxiom, Set<any>]>>
+{
+    const interpreter = new AtomInterpreter(
+        wrap,
+        ontology,
+        observablePropertyGenerator,
+        observableClassGenerator);
+
+    for(const rule of rules)
+    {
+        const comparison = rule.Head.find<IComparisonAtom>((atom): atom is IComparisonAtom => atom instanceof ComparisonAtom);
+        const lhsProperty = rule.Head.find<IPropertyAtom>((atom): atom is IPropertyAtom => atom instanceof PropertyAtom && atom.Range === comparison.Lhs);
+
+        if(comparison && lhsProperty)
+        {
+            yield wrap(contraditions => [
+                (<IProperty>lhsProperty.PropertyExpression).LocalName,
+                rule,
+                new Set(contraditions.map(o => o[<string>lhsProperty.Domain]))],
+                RuleContradictions(
+                    wrap,
+                    interpreter,
+                    rule));
         }
     }
 }
