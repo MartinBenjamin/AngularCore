@@ -63,8 +63,7 @@ export interface IScheduler
 {
     AddSignal<TOut = any, TIn extends any[] = any[]>(
         map: (...parameters: TIn) => TOut,
-        inputs: { [Parameter in keyof TIn]: Signal<TIn[Parameter]> | CurrentValue<TIn[Parameter]>; }
-    ): Signal<TOut>;
+        inputs: { [Parameter in keyof TIn]: Signal<TIn[Parameter]> | CurrentValue<TIn[Parameter]>; }): Signal<TOut>;
     AddSignals(predecessors: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>): void;
     RemoveSignal(signal: Signal): void;
 

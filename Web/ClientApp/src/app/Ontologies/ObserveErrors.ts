@@ -1,18 +1,46 @@
-import { asapScheduler, combineLatest, Observable } from "rxjs";
+import { asapScheduler, BehaviorSubject, combineLatest, Observable } from "rxjs";
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { Guid } from "../CommonDomainObjects";
-import { IsDLSafeRule, ObserveContradictions } from "../Ontology/DLSafeRule";
+import { AtomInterpreter, ComparisonAtom, IComparisonAtom, IPropertyAtom, IsDLSafeRule, PropertyAtom, RuleContradictions } from "../Ontology/DLSafeRule";
 import { IAxiom } from "../Ontology/IAxiom";
+import { IClassExpressionSelector } from '../Ontology/IClassExpressionSelector';
 import { IEavStore } from "../Ontology/IEavStore";
 import { IOntology } from "../Ontology/IOntology";
+import { IProperty } from '../Ontology/IProperty';
+import { ISubClassOf } from '../Ontology/ISubClassOf';
 import { ObservableGenerator } from "../Ontology/ObservableGenerator";
 import { PropertyNameSelector } from "../Ontology/PropertyNameSelector";
+import { Wrap, Wrapped, WrapperType } from '../Ontology/Wrapped';
 import { annotations } from './Annotations';
 import { IErrors } from './Validate';
 
 const empty = new Set<any>();
 
 export type Error = keyof IErrors | IAxiom
+
+type ObservableParams<P> = { [Parameter in keyof P]: Observable<P[Parameter]>; };
+const wrap = <TIn extends any[], TOut>(
+    map: (...params: TIn) => TOut,
+    ...params: ObservableParams<TIn>
+    ): Observable<TOut> => !params.length ? new BehaviorSubject(map(...<TIn>[])) : combineLatest(
+        params,
+        map);
+
+function SubClassOfContraditions<T extends WrapperType>(
+    wrap                      : Wrap<T>,
+    classExpressionInterpreter: IClassExpressionSelector<Wrapped<T, Set<any>>>,
+    subclassOf                : ISubClassOf
+    ): Wrapped<T, Set<any>>
+{
+    return wrap(
+        (superClass, subClass) => 
+        {
+            const contradictions = [...subClass].filter(element => !superClass.has(element));
+            return contradictions.length ? new Set<any>(contradictions) : empty;
+        },
+        subclassOf.SuperClassExpression.Select(classExpressionInterpreter),
+        subclassOf.SubClassExpression.Select(classExpressionInterpreter));
+}
 
 function ObserveRestrictedFromStage(
     superClass  : Observable<Set<any>>,
@@ -47,6 +75,12 @@ export function ObserveErrors(
         ontology,
         store);
 
+    const atomInterpreter = new AtomInterpreter<WrapperType.Observable>(
+        wrap,
+        ontology,
+        generator,
+        generator);
+
     const dataRangeObservables: Observable<[string, Error, Set<any>]>[] = [...ontology.Get(ontology.IsAxiom.IDataPropertyRange)].map(
         dataPropertyRange => store.Observe(dataPropertyRange.DataPropertyExpression.Select(PropertyNameSelector)).pipe(
             map(relations =>
@@ -59,12 +93,25 @@ export function ObserveErrors(
     return applicableStages.pipe(switchMap(applicableStages =>
     {
         let observables: Observable<[string, Error, Set<any>]>[] = [...dataRangeObservables];
-        const ruleContradictions = ObserveContradictions(
-            ontology,
-            generator,
-            generator,
-            ontology.Get(IsDLSafeRule));
-        observables.push(...ruleContradictions);
+        for(let rule of ontology.Get(IsDLSafeRule))
+            for(let annotation of rule.Annotations)
+                if(annotation.Property === annotations.RestrictedfromStage &&
+                   applicableStages.has(annotation.Value))
+                {
+                    const comparison = rule.Head.find<IComparisonAtom>((atom): atom is IComparisonAtom => atom instanceof ComparisonAtom);
+                    const lhsProperty = rule.Head.find<IPropertyAtom>((atom): atom is IPropertyAtom => atom instanceof PropertyAtom && atom.Range === comparison.Lhs);
+
+                    if(comparison && lhsProperty)
+                        observables.push(
+                            wrap(contraditions => [
+                                (<IProperty>lhsProperty.PropertyExpression).LocalName,
+                                rule,
+                                new Set(contraditions.map(o => o[<string>lhsProperty.Domain]))],
+                            RuleContradictions(
+                                wrap,
+                                atomInterpreter,
+                                rule)));
+                }
 
         for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
             for(let annotation of subClassOf.Annotations)

@@ -1,5 +1,3 @@
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
 import { BuiltIn, Equal, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, NotEqual } from './Atom';
 import { Axiom } from './Axiom';
 import { EavStore } from './EavStore';
@@ -414,143 +412,6 @@ export function IsDLSafeRule(
     return axiom instanceof DLSafeRule;
 }
 
-export class Generator implements IAtomSelector<Observable<object[]> | BuiltIn>
-{
-    constructor(
-        private _propertyObservableGenerator: IPropertyExpressionSelector<Observable<[any, any][]>>,
-        private _classObservableGenerator   : IClassExpressionSelector<Observable<Set<any>>>
-        )
-    {
-    }
-
-    Class(
-        class$: IClassAtom
-        ): Observable<object[]>
-    {
-        if(IsVariable(class$.Individual))
-            return class$.ClassExpression.Select(this._classObservableGenerator).pipe(
-                map(
-                    individuals => [...individuals].map(
-                        individual =>
-                        {
-                            return { [<string>class$.Individual]: individual };
-                        })));
-
-        return class$.ClassExpression.Select(this._classObservableGenerator).pipe(
-            filter(individuals => individuals.has(class$.Individual)),
-            map(() => [{ }]));
-    }
-
-    DataRange(
-        dataRange: IDataRangeAtom
-        ): BuiltIn
-    {
-        return (
-            substitutions: Iterable<object>
-            ) =>
-        {
-            if(IsConstant(dataRange.Value))
-                return dataRange.DataRange.HasMember(dataRange.Value) ? substitutions : [];
-
-            return [...substitutions].filter(substitution => dataRange.DataRange.HasMember(substitution[dataRange.Value]));
-        };
-    }
-
-    ObjectProperty(
-        objectProperty: IObjectPropertyAtom
-        ): Observable<object[]>
-    {
-        return this.Property(objectProperty);
-    }
-
-    DataProperty(
-        dataProperty: IDataPropertyAtom
-        ): Observable<object[]>
-    {
-        return this.Property(dataProperty);
-    }
-
-    private Property(
-        property: IPropertyAtom
-        ): Observable<object[]>
-    {
-        return property.PropertyExpression.Select(this._propertyObservableGenerator)
-            .pipe(map(EavStore.Substitute([property.Domain, property.Range])));
-    }
-
-    LessThan(
-        lessThan: ILessThanAtom
-        ): BuiltIn
-    {
-        return LessThan(lessThan.Lhs, lessThan.Rhs);
-    }
-
-    LessThanOrEqual(
-        lessThanOrEqual: ILessThanOrEqualAtom
-        ): BuiltIn
-    {
-        return LessThanOrEqual(lessThanOrEqual.Lhs, lessThanOrEqual.Rhs);
-    }
-
-    Equal(
-        equal: IEqualAtom
-        ): BuiltIn
-    {
-        return Equal(equal.Lhs, equal.Rhs);
-    }
-
-    NotEqual(
-        notEqual: INotEqualAtom
-        ): BuiltIn
-    {
-        return NotEqual(notEqual.Lhs, notEqual.Rhs);
-    }
-
-    GreaterThanOrEqual(
-        greaterThanOrEqual: IGreaterThanOrEqualAtom
-        ): BuiltIn
-    {
-        return GreaterThanOrEqual(greaterThanOrEqual.Lhs, greaterThanOrEqual.Rhs);
-    }
-
-    GreaterThan(
-        greaterThan: IGreaterThanAtom
-        ): BuiltIn
-    {
-        return GreaterThan(greaterThan.Lhs, greaterThan.Rhs);
-    }
-
-    Atoms(
-        atoms: IAtom[]
-        ): Observable<object[]>
-    {
-        let current = new BehaviorSubject<object[]>([{}]).asObservable();
-        for(const atom of atoms)
-        {
-            const next = atom.Select(<IAtomSelector<Observable<object[]> | BuiltIn>>this);
-
-            if(typeof next === 'function')
-                current = current.pipe(map(substitutions => [...next(substitutions)]));
-
-            else
-                current = combineLatest(
-                    current,
-                    next,
-                    (current, next) =>
-                    {
-                        const substitutions = [];
-                        for(const lhs of current)
-                            for(const rhs of next)
-                                if(Object.keys(rhs).every(key => typeof lhs[key] === 'undefined' || lhs[key] === rhs[key]))
-                                    substitutions.push({ ...lhs, ...rhs });
-                        return substitutions;
-                    });
-        }
-
-        return current;
-    }
-}
-
 export interface ICache<TAtom>
 {
     Set(
@@ -692,7 +553,7 @@ export class AtomInterpreter<T extends WrapperType> implements IAtomSelector<Wra
     }
 }
 
-function RuleContradictions<T extends WrapperType>(
+export function RuleContradictions<T extends WrapperType>(
     wrap       : Wrap<T>,
     interpreter: AtomInterpreter<T>,
     rule       : IDLSafeRule
@@ -718,47 +579,7 @@ function RuleContradictions<T extends WrapperType>(
         interpreter.Atoms(rule.Body));
 }
 
-type ObservableParams<P> = { [Parameter in keyof P]: Observable<P[Parameter]>; };
-
-export function* ObserveContradictions(
-    ontology                   : IOntology,
-    observablePropertyGenerator: IPropertyExpressionSelector<Observable<[any, any][]>>,
-    observableClassGenerator   : IClassExpressionSelector<Observable<Set<any>>>,
-    rules                      : Iterable<IDLSafeRule>
-    ): Iterable<Observable<[string, IAxiom, Set<any>]>>
-{
-    const wrap = <TIn extends any[], TOut>(
-        map: (...params: TIn) => TOut,
-        ...params: ObservableParams<TIn>
-        ): Observable<TOut> => !params.length ? new BehaviorSubject(map(...<TIn>[])) : combineLatest(
-            params,
-            map);
-    const interpreter = new AtomInterpreter<WrapperType.Observable>(
-        wrap,
-        ontology,
-        observablePropertyGenerator,
-        observableClassGenerator);
-
-    for(const rule of rules)
-    {
-        const comparison = rule.Head.find<IComparisonAtom>((atom): atom is IComparisonAtom => atom instanceof ComparisonAtom);
-        const lhsProperty = rule.Head.find<IPropertyAtom>((atom): atom is IPropertyAtom => atom instanceof PropertyAtom && atom.Range === comparison.Lhs);
-
-        if(comparison && lhsProperty)
-        {
-            yield wrap(contraditions => [
-                (<IProperty>lhsProperty.PropertyExpression).LocalName,
-                rule,
-                new Set(contraditions.map(o => o[<string>lhsProperty.Domain]))],
-                RuleContradictions(
-                    wrap,
-                    interpreter,
-                    rule));
-        }
-    }
-}
-
-export function* ObserveContradictions_<T extends WrapperType>(
+export function* ObserveContradictions<T extends WrapperType>(
     wrap                       : Wrap<T>,
     ontology                   : IOntology,
     observablePropertyGenerator: IPropertyExpressionSelector<Wrapped<T, [any, any][]>>,
