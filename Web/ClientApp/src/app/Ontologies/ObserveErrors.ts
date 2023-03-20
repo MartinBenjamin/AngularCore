@@ -1,7 +1,7 @@
 import { asapScheduler, BehaviorSubject, combineLatest, Observable } from "rxjs";
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { Guid } from "../CommonDomainObjects";
-import { AtomInterpreter, ComparisonAtom, IComparisonAtom, IPropertyAtom, IsDLSafeRule, PropertyAtom, RuleContradictions } from "../Ontology/DLSafeRule";
+import { AtomInterpreter, ComparisonAtom, IComparisonAtom, IPropertyAtom, IsDLSafeRule, PropertyAtom, RuleContradictionInterpreter } from "../Ontology/DLSafeRule";
 import { IAxiom } from "../Ontology/IAxiom";
 import { IClassExpressionSelector } from '../Ontology/IClassExpressionSelector';
 import { IEavStore } from "../Ontology/IEavStore";
@@ -26,13 +26,12 @@ const wrap = <TIn extends any[], TOut>(
         params,
         map);
 
-function SubClassOfContraditions<T extends WrapperType>(
+function SubClassOfContraditionInterpreter<T extends WrapperType>(
     wrap                      : Wrap<T>,
-    classExpressionInterpreter: IClassExpressionSelector<Wrapped<T, Set<any>>>,
-    subclassOf                : ISubClassOf
-    ): Wrapped<T, Set<any>>
+    classExpressionInterpreter: IClassExpressionSelector<Wrapped<T, Set<any>>>
+    ): (subclassOf: ISubClassOf) => Wrapped<T, Set<any>>
 {
-    return wrap(
+    return (subclassOf: ISubClassOf) => wrap(
         (superClass, subClass) => 
         {
             const contradictions = [...subClass].filter(element => !superClass.has(element));
@@ -57,6 +56,14 @@ export function ObserveErrors(
         ontology,
         generator,
         generator);
+
+    const subClassOfContraditionInterpreter = SubClassOfContraditionInterpreter<WrapperType.Observable>(
+        wrap,
+        generator);
+
+    const ruleContradicitionInterpreter = RuleContradictionInterpreter(
+        wrap,
+        atomInterpreter);
 
     const dataRangeObservables: Observable<[string, Error, Set<any>]>[] = [...ontology.Get(ontology.IsAxiom.IDataPropertyRange)].map(
         dataPropertyRange => store.Observe(dataPropertyRange.DataPropertyExpression.Select(PropertyNameSelector)).pipe(
@@ -85,10 +92,7 @@ export function ObserveErrors(
                                     (<IProperty>lhsProperty.PropertyExpression).LocalName,
                                     rule,
                                     new Set(contraditions.map(o => o[<string>lhsProperty.Domain]))],
-                                RuleContradictions(
-                                    wrap,
-                                    atomInterpreter,
-                                    rule)));
+                                ruleContradicitionInterpreter(rule)));
                 }
 
         for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
@@ -111,16 +115,13 @@ export function ObserveErrors(
                     let error = errorAnnotation ? errorAnnotation.Value : "Mandatory";
 
                     observables.push(
-                        SubClassOfContraditions<WrapperType.Observable>(
-                            wrap,
-                            generator,
-                            subClassOf).pipe(
-                                distinctUntilChanged(),
-                                map(
-                                    contradictions => [
-                                        propertyName,
-                                        error,
-                                        contradictions])));
+                        subClassOfContraditionInterpreter(subClassOf).pipe(
+                            distinctUntilChanged(),
+                            map(
+                                contradictions => [
+                                    propertyName,
+                                    error,
+                                    contradictions])));
                 }
 
         return combineLatest(observables).pipe(debounceTime(0, asapScheduler), map(errors =>

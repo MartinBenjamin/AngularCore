@@ -552,13 +552,12 @@ export class AtomInterpreter<T extends WrapperType> implements IAtomSelector<Wra
     }
 }
 
-export function RuleContradictions<T extends WrapperType>(
+export function RuleContradictionInterpreter<T extends WrapperType>(
     wrap       : Wrap<T>,
-    interpreter: AtomInterpreter<T>,
-    rule       : IDLSafeRule
-    ): Wrapped<T, object[]>
+    interpreter: AtomInterpreter<T>
+    ): (rule: IDLSafeRule) => Wrapped<T, object[]>
 {
-    return wrap(
+    return (rule: IDLSafeRule) => wrap(
         (head, body) => body.reduce<object[]>(
             (failed, x) =>
             {
