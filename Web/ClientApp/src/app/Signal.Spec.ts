@@ -90,7 +90,7 @@ const ConjunctiveQuery = <T extends Tuple> (
     };
 
 describe(
-    'Signal2',
+    'Signal',
     () =>
     {
         describe(
@@ -208,7 +208,7 @@ scheduler = new Scheduler(graph):`,
             });
 
         describe(
-            `Recursion:
+            `Linear Recursion (Naïve):
 T(x, y) : - R(x, y),
 T(x, y) : - R(x, z), T(z, y)`,
             () =>
@@ -219,7 +219,6 @@ T(x, y) : - R(x, z), T(z, y)`,
                 const setBuilder = (tuples: Iterable<any>): Set<any> => new SortedSet(
                     tupleComparer,
                     tuples);
-                const union = Union(setBuilder);
                 const query = ConjunctiveQuery(
                     ['?x', '?y'],
                     [['?x', '?z'], ['?z', '?y']]);
