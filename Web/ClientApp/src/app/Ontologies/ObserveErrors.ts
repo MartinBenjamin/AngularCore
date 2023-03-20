@@ -42,29 +42,6 @@ function SubClassOfContraditions<T extends WrapperType>(
         subclassOf.SubClassExpression.Select(classExpressionInterpreter));
 }
 
-function ObserveRestrictedFromStage(
-    superClass  : Observable<Set<any>>,
-    subClass    : Observable<Set<any>>,
-    propertyName: string,
-    error       : Error
-    ): Observable<[string, Error, Set<any>]>
-{
-    return combineLatest(
-        superClass,
-        subClass,
-        (superClass, subClass) =>
-        {
-            const contradictions = [...subClass].filter(element => !superClass.has(element));
-            return contradictions.length ? new Set<any>(contradictions) : empty;
-        }).pipe(
-            distinctUntilChanged(),
-            map(
-                contradictions => [
-                    propertyName,
-                    error,
-                    contradictions]));
-}
-
 export function ObserveErrors(
     ontology        : IOntology,
     store           : IEavStore,
@@ -103,14 +80,15 @@ export function ObserveErrors(
 
                     if(comparison && lhsProperty)
                         observables.push(
-                            wrap(contraditions => [
-                                (<IProperty>lhsProperty.PropertyExpression).LocalName,
-                                rule,
-                                new Set(contraditions.map(o => o[<string>lhsProperty.Domain]))],
-                            RuleContradictions(
-                                wrap,
-                                atomInterpreter,
-                                rule)));
+                            wrap(
+                                contraditions => [
+                                    (<IProperty>lhsProperty.PropertyExpression).LocalName,
+                                    rule,
+                                    new Set(contraditions.map(o => o[<string>lhsProperty.Domain]))],
+                                RuleContradictions(
+                                    wrap,
+                                    atomInterpreter,
+                                    rule)));
                 }
 
         for(let subClassOf of ontology.Get(ontology.IsAxiom.ISubClassOf))
@@ -132,11 +110,17 @@ export function ObserveErrors(
                     let errorAnnotation = annotation.Annotations.find(annotation => annotation.Property === annotations.Error);
                     let error = errorAnnotation ? errorAnnotation.Value : "Mandatory";
 
-                    observables.push(ObserveRestrictedFromStage(
-                        subClassOf.SuperClassExpression.Select(generator),
-                        subClassOf.SubClassExpression.Select(generator),
-                        propertyName,
-                        error));
+                    observables.push(
+                        SubClassOfContraditions<WrapperType.Observable>(
+                            wrap,
+                            generator,
+                            subClassOf).pipe(
+                                distinctUntilChanged(),
+                                map(
+                                    contradictions => [
+                                        propertyName,
+                                        error,
+                                        contradictions])));
                 }
 
         return combineLatest(observables).pipe(debounceTime(0, asapScheduler), map(errors =>
