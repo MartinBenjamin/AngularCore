@@ -8,7 +8,6 @@ import { IDataRange } from "./IDataRange";
 import { IsConstant, IsVariable } from './IEavStore';
 import { IIndividual } from "./IIndividual";
 import { IOntology } from './IOntology';
-import { IProperty } from './IProperty';
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 import { Wrap, Wrapped, WrapperType } from './Wrapped';
@@ -577,37 +576,4 @@ export function RuleContradictions<T extends WrapperType>(
             []),
         interpreter.Atoms(rule.Head),
         interpreter.Atoms(rule.Body));
-}
-
-export function* ObserveContradictions<T extends WrapperType>(
-    wrap                       : Wrap<T>,
-    ontology                   : IOntology,
-    observablePropertyGenerator: IPropertyExpressionSelector<Wrapped<T, [any, any][]>>,
-    observableClassGenerator   : IClassExpressionSelector<Wrapped<T, Set<any>>>,
-    rules                      : Iterable<IDLSafeRule>
-    ): Iterable<Wrapped<T, [string, IAxiom, Set<any>]>>
-{
-    const interpreter = new AtomInterpreter(
-        wrap,
-        ontology,
-        observablePropertyGenerator,
-        observableClassGenerator);
-
-    for(const rule of rules)
-    {
-        const comparison = rule.Head.find<IComparisonAtom>((atom): atom is IComparisonAtom => atom instanceof ComparisonAtom);
-        const lhsProperty = rule.Head.find<IPropertyAtom>((atom): atom is IPropertyAtom => atom instanceof PropertyAtom && atom.Range === comparison.Lhs);
-
-        if(comparison && lhsProperty)
-        {
-            yield wrap(contraditions => [
-                (<IProperty>lhsProperty.PropertyExpression).LocalName,
-                rule,
-                new Set(contraditions.map(o => o[<string>lhsProperty.Domain]))],
-                RuleContradictions(
-                    wrap,
-                    interpreter,
-                    rule));
-        }
-    }
 }
