@@ -213,7 +213,7 @@ T(x, y) : - R(x, y),
 T(x, y) : - R(x, z), T(z, y)`,
             () =>
             {
-                let trace: { Signal: Signal, Value: undefined | Iterable<Tuple> }[] = [];
+                let trace: { Signal: Signal, Value: any }[] = [];
                 const elementComparer = (a: number, b: number) => a - b;
                 const tupleComparer = TupleComparer(elementComparer);
                 const setBuilder = (tuples: Iterable<any>): Set<any> => new SortedSet(
@@ -308,8 +308,9 @@ T(x, y) : - R(x, z), T(z, y)`,
                 assert('T.LongestPath === 1');
 
                 for(const traceItem of trace)
-                    console.log(`${traceItem.Signal === T ? 'T' : 'R'}: ${JSON.stringify(traceItem.Value ? [...traceItem.Value] : traceItem.Value)}`);
-
+                    console.log(`${traceItem.Signal === T ? 'T' : 'R'}: ${JSON.stringify(
+                        traceItem.Value,
+                        (key, value) => value instanceof SortedSet ? value.Array : value)}`);
                 const values = trace.filter(t => t.Signal === T).map(t => t.Value);;
 
                 for(let index = 0; index < RValues.length; ++index)
@@ -320,6 +321,135 @@ T(x, y) : - R(x, z), T(z, y)`,
                             it(
                               `The expected value of T is ${JSON.stringify(TValues[index])}`,
                               () => expect(JSON.stringify([...values[index]])).toBe(JSON.stringify(TValues[index])));
+                        });
+            });
+
+
+
+        describe(
+            `Linear Recursion (Semi-Naïve):
+T(x, y) : - R(x, y),
+T(x, y) : - R(x, z), T(z, y)`,
+            () =>
+            {
+                let trace: { Signal: Signal, Value: any }[] = [];
+                const elementComparer = (a: number, b: number) => a - b;
+                const tupleComparer = TupleComparer(elementComparer);
+                const setBuilder = (tuples?: Iterable<Tuple>): Set<Tuple> => new SortedSet(
+                    tupleComparer,
+                    tuples ? tuples : []);
+                const query = ConjunctiveQuery(
+                    ['?x', '?y'],
+                    [['?x', '?z'], ['?z', '?y']]);
+
+                const RValues: [number, number][][] = [
+                    [
+                        [1, 2],
+                        [2, 1],
+                        [2, 3],
+                        [1, 4],
+                        [3, 4],
+                        [4, 5]
+                    ],
+                    [
+                        [1, 2],
+                        [2, 3]
+                    ],
+                    []
+                ];
+
+                const TValues: [number, number][][] = [
+                    [
+                        [1, 2],
+                        [2, 1],
+                        [2, 3],
+                        [1, 4],
+                        [3, 4],
+                        [4, 5],
+                        [1, 1],
+                        [2, 2],
+                        [1, 3],
+                        [2, 4],
+                        [1, 5],
+                        [3, 5],
+                        [2, 5]
+                    ],
+                    [
+                        [1, 2],
+                        [2, 3],
+                        [1, 3]
+                    ],
+                    []
+                ];
+
+                TValues.forEach(values => values.sort(tupleComparer));
+
+                let RValue = RValues[0];
+                const R = new Signal(() => setBuilder(RValue));
+                const TTransformed = new Signal((r: Set<any>, tTransformed: [Set<any>, Set<any>]) =>
+                {
+                    if(!tTransformed)
+                        tTransformed = [setBuilder(r), r];
+
+                    let [t, deltaMinus1] = tTransformed;
+                    const delta = setBuilder();
+
+                    for(const result of query(r, deltaMinus1))
+                    {
+                        const previous = t.size;
+                        t.add(result);
+                        if(t.size != previous)
+                            delta.add(result);
+                    }
+
+                    if(delta.size === 0)
+                    {
+                        tTransformed[1] = delta;
+                        return tTransformed;
+                    }
+
+                    return [t, delta];
+                });
+
+                const T = new Signal((tTransformed: [Set<any>, Set<any>]) => tTransformed[0])
+
+                const graph = new Map([
+                    [<Signal>R, []],
+                    [TTransformed, [R, TTransformed]],
+                    [T, [TTransformed]]]);
+
+                const scheduler = new Scheduler(
+                    graph,
+                    (signal, value) => trace.push({ Signal: signal, Value: value }));
+                const assert = assertBuilder('trace', 'R', 'T')(trace, R, T);
+
+                for(let index = 1; index < RValues.length; ++index)
+                    scheduler.Update(
+                        s =>
+                        {
+                            RValue = RValues[index];
+                            s.Schedule(R);
+                        });
+
+                assert('R.LongestPath === 0');
+                assert('T.LongestPath === 2');
+
+                for(const traceItem of trace)
+                    console.log(`${traceItem.Signal === T ? 'T' : traceItem.Signal === TTransformed ? 'TTransformed' : 'R'}: ${
+                        JSON.stringify(
+                        traceItem.Value,
+                        (key, value) => value instanceof SortedSet ? value.Array : value)}`);
+
+                const values = trace.filter(t => t.Signal === T).map(t => t.Value);;
+
+                for(let index = 0; index < RValues.length; ++index)
+                    describe(
+                        `Given R: ${JSON.stringify(RValues[index])}`,
+                        () =>
+                        {
+                            it(
+                                `The expected value of T is ${JSON.stringify(TValues[index])}`,
+                                () => expect(JSON.stringify([...values[index]])).toBe(JSON.stringify(TValues[index])));
                         });
             });
     });
