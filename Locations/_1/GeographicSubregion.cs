@@ -17,13 +17,19 @@ namespace Locations._1
         }
 
         protected GeographicSubregion(
-            Guid   id,
-            string name
+            Guid             id,
+            string           name,
+            GeographicRegion region
             ) : base(
                 id,
                 name)
         {
             _regions = new HashSet<GeographicRegion>();
+            if(region != null)
+            {
+                _regions.Add(region);
+                region.AddSubregion(this);
+            }
         }
     }
 }

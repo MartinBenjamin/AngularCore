@@ -28,6 +28,13 @@ namespace Locations._1
             _subregions = new HashSet<GeographicSubregion>();
         }
 
+        protected internal virtual void AddSubregion(
+            GeographicSubregion subregion
+            )
+        {
+            _subregions.Add(subregion);
+        }
+
         public virtual void Visit(
             Action<GeographicRegion> enter,
             Action<GeographicRegion> exit = null

@@ -3,7 +3,7 @@ using System;
 
 namespace Iso3166._1._1
 {
-    public class Country: GeographicRegion
+    public class Country: GeographicSubregion
     {
         public virtual string Alpha2Code  { get; protected set; }
         public virtual string Alpha3Code  { get; protected set; }
@@ -24,7 +24,8 @@ namespace Iso3166._1._1
             string shortName
             ) : base(
                 id,
-                shortName)
+                shortName,
+                null)
         {
             Alpha2Code  = alpha2Code;
             Alpha3Code  = alpha3Code;
