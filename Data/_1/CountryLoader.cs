@@ -24,7 +24,8 @@ namespace Data._1
 
         public CountryLoader(
             ICsvExtractor   csvExtractor,
-            ISessionFactory sessionFactory
+            ISessionFactory sessionFactory,
+            IGuidGenerator  guidGenerator
             )
         {
             _csvExtractor   = csvExtractor;

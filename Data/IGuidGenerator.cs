@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace Data
 {
@@ -9,6 +10,10 @@ namespace Data
         Guid Generate(
             Guid   namespaceId,
             byte[] name);
+
+        Guid Generate(
+            Guid   namespaceId,
+            string name);
     }
 
     public class GuidGenerator: IGuidGenerator
@@ -22,7 +27,7 @@ namespace Data
             _hashAlgorithm = hashAlgorithm;
         }
 
-        Guid IGuidGenerator.Generate(
+        public Guid Generate(
             Guid   namespaceId,
             byte[] name
             )
@@ -47,7 +52,16 @@ namespace Data
             return new Guid(newGuid);
         }
 
-        private static void SwapByteOrder(byte[] guid)
+        Guid IGuidGenerator.Generate(
+            Guid   namespaceId,
+            string name
+            ) => Generate(
+                namespaceId,
+                Encoding.UTF8.GetBytes(name));
+
+        private static void SwapByteOrder(
+            byte[] guid
+            )
         {
             SwapBytes(guid, 0, 3);
             SwapBytes(guid, 1, 2);
@@ -55,7 +69,11 @@ namespace Data
             SwapBytes(guid, 6, 7);
         }
 
-        private static void SwapBytes(byte[] guid, int left, int right)
+        private static void SwapBytes(
+            byte[] guid,
+            int    left,
+            int    right
+            )
         {
             var temp = guid[left];
             guid[left] = guid[right];
