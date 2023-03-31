@@ -56,7 +56,6 @@ namespace NHibernateIntegration
                             ) =>
                         {
                             setMapper.Key(keyMapper => keyMapper.Column(TypeName(member) + "Id"));
-                            setMapper.Inverse(true);
                         };
 
                         mapper.BeforeMapProperty += (
