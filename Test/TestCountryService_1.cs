@@ -1,16 +1,16 @@
 ﻿using Autofac;
+using Iso3166._1._1;
 using NHibernate;
 using NUnit.Framework;
-using Organisations;
 using Service;
 using System;
 
 namespace Test
 {
     [TestFixture]
-    public class TestBranchService: TestNamedService<Guid, Branch, NamedFilters>
+    public class TestCountryService_1: TestNamedService<Guid, Country, NamedFilters>
     {
-        private static Guid _branchId = new Guid("8c3c20d8-427c-4d10-aed5-9e304c0ea044");
+        private static Guid _countryId = new Guid("8c3c20d8-427c-4d10-aed5-9e304c0ea044");
 
         [SetUp]
         public void SetUp()
@@ -18,32 +18,34 @@ namespace Test
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
-                var branch = session.Get<Branch>(_branchId);
-                if(branch != null)
-                    session.Delete(branch);
+                var country = session.Get<Country>(_countryId);
+                if(country != null)
+                    session.Delete(country);
 
                 session.Flush();
             }
         }
 
-        public override Branch Create(
+        public override Country Create(
             string name
             )
         {
-            var branch = new Branch(
-                _branchId,
-                name,
+            var country = new Country(
+                _countryId,
+                "AA",
+                "AAA",
                 null,
-                null);
+                0,
+                name);
 
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
-                session.Save(branch);
+                session.Save(country);
                 session.Flush();
             }
 
-            return branch;
+            return country;
         }
     }
 }
