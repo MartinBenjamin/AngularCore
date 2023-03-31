@@ -135,13 +135,5 @@ namespace Test
                 Assert.That(taxonomy['B'].Contains(taxonomy['C']), Is.True);
             }
         }
-
-        [Test]
-        public void Guid()
-        {
-            var generated = GuidUtility.Create(GuidUtility.UrlNamespace, "https://www.iso.org/obp/ui/#iso:code:3166:GB", 5);
-            Assert.That(generated, Is.EqualTo(new Guid("96ee3ded-9c50-5306-bd73-098b9b96c45f")));
-            TestContext.Out.WriteLine(generated);
-        }
     }
 }

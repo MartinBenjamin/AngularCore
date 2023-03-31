@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Test
@@ -448,6 +449,23 @@ namespace Test
             //await new LegalEntityLoader(
             //    _container.Resolve<ISessionFactory>(),
             //    100).LoadAsync();
+        }
+
+        [Test]
+        public void GuidGenerator()
+        {
+            var generated = GuidUtility.Create(GuidUtility.UrlNamespace, "https://www.iso.org/obp/ui/#iso:code:3166:GB", 5);
+            Assert.That(generated, Is.EqualTo(new Guid("96ee3ded-9c50-5306-bd73-098b9b96c45f")));
+
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                generated = scope.Resolve<IGuidGenerator>().Generate(
+                    GuidUtility.UrlNamespace,
+                    Encoding.UTF8.GetBytes("https://www.iso.org/obp/ui/#iso:code:3166:GB"));
+                Assert.That(generated, Is.EqualTo(new Guid("96ee3ded-9c50-5306-bd73-098b9b96c45f")));
+            }
+
+            TestContext.Out.WriteLine(generated);
         }
 
         private static Range<int> Convert(

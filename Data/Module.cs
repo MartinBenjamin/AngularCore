@@ -7,6 +7,7 @@ using LifeCycles;
 using Locations;
 using Organisations;
 using Roles;
+using System.Security.Cryptography;
 
 namespace Data
 {
@@ -19,6 +20,16 @@ namespace Data
             builder
                 .RegisterType<CsvExtractor>()
                 .As<ICsvExtractor>()
+                .SingleInstance();
+
+            builder
+                .Register(c => SHA1.Create())
+                .As<HashAlgorithm>()
+                .SingleInstance();
+
+            builder
+                .RegisterType<GuidGenerator>()
+                .As<IGuidGenerator>()
                 .SingleInstance();
 
             builder
