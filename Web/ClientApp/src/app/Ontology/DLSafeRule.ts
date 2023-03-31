@@ -421,19 +421,12 @@ export interface ICache<TAtom>
 
 export class AtomInterpreter<T extends WrapperType> implements IAtomSelector<Wrapped<T, object[] | BuiltIn>>
 {
-    private _propertyDefinitions: Map<IPropertyExpression, IDLSafeRule>;
-
     constructor(
         protected _wrap                         : Wrap<T>,
-        private   _ontology                     : IOntology,
         private   _propertyExpressionInterpreter: IPropertyExpressionSelector<Wrapped<T, [any, any][]>>,
         private   _classExpressionInterpreter   : IClassExpressionSelector<Wrapped<T, Set<any>>>
         )
     {
-        this._propertyDefinitions           = new Map(
-            [...this._ontology.Get(IsDLSafeRule)]
-                .filter(rule => rule.Head.length === 1 && rule.Head[0] instanceof PropertyAtom)
-                .map(rule => [(<PropertyAtom>rule.Head[0]).PropertyExpression, rule]));
     }
 
     Class(
@@ -487,14 +480,6 @@ export class AtomInterpreter<T extends WrapperType> implements IAtomSelector<Wra
         property: IPropertyAtom
         ): Wrapped<T, object[]>
     {
-        const propertyDefinition = this._propertyDefinitions.get(property.PropertyExpression);
-        if(propertyDefinition)
-            return this._wrap(
-                EavStore.Conjunction(
-                    [(<IPropertyAtom>propertyDefinition.Head[0]).Domain, (<IPropertyAtom>propertyDefinition.Head[0]).Range],
-                    [property.Domain, property.Range]),
-                ...propertyDefinition.Body.map(atom => atom.Select(this)));
-
         return this._wrap(
             EavStore.Substitute([property.Domain, property.Range]),
             property.PropertyExpression.Select(this._propertyExpressionInterpreter));

@@ -54,7 +54,11 @@ namespace CommonDomainObjects.Mapping
             typeof(Deals.SponsoredClassifier                         )
         };
 
-        private static IList<Type> _notImported;
+        private static IList<Type> _notImported = new List<Type>
+        {
+            typeof(Locations2.GeographicRegion   ),
+            typeof(Locations2.GeographicSubregion)
+        };
 
         protected override void Load(
             ContainerBuilder builder
@@ -108,6 +112,12 @@ namespace CommonDomainObjects.Mapping
                 .RegisterType<MappingFactory>()
                 .As<IMappingFactory>()
                 .WithParameter("types", _types);
+
+            builder
+                .RegisterType<MappingFactory>()
+                .As<IMappingFactory>()
+                .WithParameter("types", _notImported)
+                .WithParameter("autoImport", false);
         }
 
         private static bool IsDomainObject<TId>(

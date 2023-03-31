@@ -53,7 +53,6 @@ export function ObserveErrors(
 
     const atomInterpreter = new AtomInterpreter<WrapperType.Observable>(
         wrap,
-        ontology,
         generator,
         generator);
 

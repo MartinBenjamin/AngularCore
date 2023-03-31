@@ -49,6 +49,16 @@ namespace NHibernateIntegration
                             listMapper.Inverse(true);
                         };
 
+                        mapper.BeforeMapSet += (
+                            IModelInspector      modelInspector,
+                            PropertyPath         member,
+                            ISetPropertiesMapper setMapper
+                            ) =>
+                        {
+                            setMapper.Key(keyMapper => keyMapper.Column(TypeName(member) + "Id"));
+                            setMapper.Inverse(true);
+                        };
+
                         mapper.BeforeMapProperty += (
                             IModelInspector modelInspector,
                             PropertyPath    member,

@@ -2,29 +2,30 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Locations2
 {
-    public abstract class GeographicRegion: Named<string>
+    public abstract class GeographicRegion: Named<Guid>
     {
-        private IList<GeographicSubregion> _subregions;
+        private ISet<GeographicSubregion> _subregions;
 
         public virtual IReadOnlyList<GeographicSubregion> Subregions
-            => new ReadOnlyCollection<GeographicSubregion>(_subregions);
+            => new ReadOnlyCollection<GeographicSubregion>(_subregions.ToList());
 
         protected GeographicRegion() : base()
         {
         }
 
         protected GeographicRegion(
-            string id,
+            Guid   id,
             string name
             ) : base(
                 id,
                 name)
         {
-            _subregions = new List<GeographicSubregion>();
+            _subregions = new HashSet<GeographicSubregion>();
         }
 
         public virtual void Visit(
