@@ -10,8 +10,8 @@ namespace CommonDomainObjects.Mapping._1
                 geographicSubregion => geographicSubregion.Regions,
                 setPropertiesMapper =>
                 {
-                    //setPropertiesMapper.Schema("Locations");
-                    setPropertiesMapper.Table("GeographicRegionSubregion_1");
+                    setPropertiesMapper.Schema("Locations");
+                    setPropertiesMapper.Table("GeographicRegionSubregion");
                     setPropertiesMapper.Key(keyMapper =>
                     {
                         keyMapper.Column("SubregionId");
