@@ -1,47 +1,47 @@
 ﻿using NHibernate.Mapping.ByCode.Conformist;
 
-namespace CommonDomainObjects.Mapping
+namespace CommonDomainObjects.Mapping._1
 {
-    public class GeographicRegion2: ClassMapping<Locations2.GeographicRegion>
+    public class GeographicSubregion: SubclassMapping<Locations._1.GeographicSubregion>
     {
-        public GeographicRegion2()
+        public GeographicSubregion()
         {
-            Schema("Locations");
             Set(
-                geographicRegion => geographicRegion.Subregions,
+                geographicSubregion => geographicSubregion.Regions,
                 setPropertiesMapper =>
                 {
                     //setPropertiesMapper.Schema("Locations");
                     setPropertiesMapper.Table("GeographicRegionSubregion_1");
                     setPropertiesMapper.Key(keyMapper =>
                     {
-                        keyMapper.Column("RegionId");
-                        keyMapper.ForeignKey("FK_GeographicRegionSubregion_Region");
+                        keyMapper.Column("SubregionId");
+                        keyMapper.ForeignKey("FK_GeographicRegionSubregion_Subregion");
                     });
-                    setPropertiesMapper.Inverse(false);
+
                 },
                 collectionElementRelation => collectionElementRelation.ManyToMany(manyToManyMapper =>
                 {
-                    manyToManyMapper.Column("SubregionId");
-                    manyToManyMapper.ForeignKey("FK_GeographicRegionSubregion_Subregion");
-                }));
+                    manyToManyMapper.Column("RegionId");
+                    manyToManyMapper.ForeignKey("FK_GeographicRegionSubregion_Region");
+                })
+            );
             //Bag(
-            //    geographicRegion => geographicRegion.Subregions,
+            //    geographicSubregion => geographicSubregion.Regions,
             //    bagPropertiesMapper =>
             //    {
             //        bagPropertiesMapper.Schema("Locations");
             //        bagPropertiesMapper.Table("GeographicRegionSubregion");
             //        bagPropertiesMapper.Key(keyMapper =>
-            //            {
-            //                keyMapper.Column("RegionId");
-            //                keyMapper.ForeignKey("FK_GeographicRegionSubregion_Region");
-            //            });
+            //        {
+            //            keyMapper.Column("SubregionId");
+            //            keyMapper.ForeignKey("FK_GeographicRegionSubregion_Subregion");
+            //        });
             //        bagPropertiesMapper.Inverse(false);
             //    },
             //    collectionElementRelation => collectionElementRelation.ManyToMany(manyToManyMapper =>
             //        {
-            //            manyToManyMapper.Column("SubregionId");
-            //            manyToManyMapper.ForeignKey("FK_GeographicRegionSubregion_Subregion");
+            //            manyToManyMapper.Column("RegionId");
+            //            manyToManyMapper.ForeignKey("FK_GeographicRegionSubregion_Region");
             //        }));
         }
     }

@@ -1,0 +1,48 @@
+﻿using NHibernate.Mapping.ByCode.Conformist;
+
+namespace CommonDomainObjects.Mapping._1
+{
+    public class GeographicRegion: ClassMapping<Locations._1.GeographicRegion>
+    {
+        public GeographicRegion()
+        {
+            Schema("Locations");
+            Set(
+                geographicRegion => geographicRegion.Subregions,
+                setPropertiesMapper =>
+                {
+                    //setPropertiesMapper.Schema("Locations");
+                    setPropertiesMapper.Table("GeographicRegionSubregion_1");
+                    setPropertiesMapper.Key(keyMapper =>
+                    {
+                        keyMapper.Column("RegionId");
+                        keyMapper.ForeignKey("FK_GeographicRegionSubregion_Region");
+                    });
+                    setPropertiesMapper.Inverse(false);
+                },
+                collectionElementRelation => collectionElementRelation.ManyToMany(manyToManyMapper =>
+                {
+                    manyToManyMapper.Column("SubregionId");
+                    manyToManyMapper.ForeignKey("FK_GeographicRegionSubregion_Subregion");
+                }));
+            //Bag(
+            //    geographicRegion => geographicRegion.Subregions,
+            //    bagPropertiesMapper =>
+            //    {
+            //        bagPropertiesMapper.Schema("Locations");
+            //        bagPropertiesMapper.Table("GeographicRegionSubregion");
+            //        bagPropertiesMapper.Key(keyMapper =>
+            //            {
+            //                keyMapper.Column("RegionId");
+            //                keyMapper.ForeignKey("FK_GeographicRegionSubregion_Region");
+            //            });
+            //        bagPropertiesMapper.Inverse(false);
+            //    },
+            //    collectionElementRelation => collectionElementRelation.ManyToMany(manyToManyMapper =>
+            //        {
+            //            manyToManyMapper.Column("SubregionId");
+            //            manyToManyMapper.ForeignKey("FK_GeographicRegionSubregion_Subregion");
+            //        }));
+        }
+    }
+}

@@ -56,8 +56,8 @@ namespace CommonDomainObjects.Mapping
 
         private static IList<Type> _notImported = new List<Type>
         {
-            typeof(Locations2.GeographicRegion   ),
-            typeof(Locations2.GeographicSubregion)
+            typeof(Locations._1.GeographicRegion   ),
+            typeof(Locations._1.GeographicSubregion)
         };
 
         protected override void Load(
