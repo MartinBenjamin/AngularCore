@@ -6,6 +6,7 @@ namespace CommonDomainObjects.Mapping._1
     {
         public GeographicRegionSubregion()
         {
+            Schema("Locations");
             ComposedId(
                 idPropertiesMapper =>
                 {

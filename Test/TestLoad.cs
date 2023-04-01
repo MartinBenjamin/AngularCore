@@ -266,6 +266,72 @@ namespace Test
             }
         }
 
+        [TestCase("AE")]
+        [TestCase("CA")]
+        [TestCase("GB")]
+        [TestCase("KN")]
+        [TestCase("PT")]
+        [TestCase("US")]
+        public async Task Iso3166_2_1(
+            string alpha2Code
+            )
+        {
+            await _container.ResolveKeyed<IEtl>(typeof(Iso3166._1._1.Country)).ExecuteAsync();
+            var loader = (IEtl)_container.ResolveKeyed<Data._1.SubdivisionLoader>(alpha2Code);
+            Assert.That(loader, Is.Not.Null);
+            await loader.ExecuteAsync();
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var guidGenerator = scope.Resolve<IGuidGenerator>();
+                var namespaceId = Data._1.CountryLoader.NamespaceId;
+                var csvExtractor = scope.Resolve<ICsvExtractor>();
+                var extracted = await csvExtractor.ExtractAsync(loader.FileName);
+                var service = scope.Resolve<INamedService<Guid, Iso3166._2._1.Subdivision, NamedFilters>>();
+                var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(subdivision => subdivision.Id);
+
+                foreach(var record in extracted)
+                {
+                    var id = guidGenerator.Generate(namespaceId, record[1]);
+                    Assert.That(loaded.ContainsKey(id), Is.True);
+                    var subdivision = loaded[id];
+                    Assert.That(subdivision.Code              , Is.EqualTo(record[1]                ));
+                    Assert.That(subdivision.Name              , Is.EqualTo(record[2]                ));
+                    Assert.That(subdivision.Country.Alpha2Code, Is.EqualTo(record[1].Substring(0, 2)));
+                    Assert.That(subdivision.Category          , Is.EqualTo(record[0]                ));
+
+                    if(string.IsNullOrEmpty(record[6]))
+                    {
+                        Assert.That(subdivision.Regions.Contains(subdivision.Country), Is.True);
+                        Assert.That(subdivision.ParentSubdivision                    , Is.Null);
+                    }
+                    else
+                    {
+                        Assert.That(subdivision.Regions.Contains(subdivision.ParentSubdivision), Is.True                                                   );
+                        Assert.That(subdivision.ParentSubdivision.Id                           , Is.EqualTo(guidGenerator.Generate(namespaceId, record[6])));
+                    }
+
+                    foreach(var region in subdivision.Regions)
+                        Assert.That(region.Subregions.Contains(subdivision), Is.True);
+                    foreach(var subregion in subdivision.Subregions)
+                        Assert.That(subregion.Regions.Contains(subdivision), Is.True);
+                }
+
+                //var session = scope.Resolve<ISession>();
+                //var identifiers = await session
+                //    .CreateCriteria<GeographicRegionIdentifier>()
+                //    .CreateCriteria("Scheme")
+                //        .Add(Expression.Eq("Id", new Guid("0eedfbae-fec6-474c-b447-6f30af710e01")))
+                //        .ListAsync<GeographicRegionIdentifier>();
+
+                //var identifierSubdivision = loaded.Values.ToDictionary(subdivision => subdivision.Id);
+                //Assert.That(identifiers.Count, Is.EqualTo(identifierSubdivision.Keys.Count));
+
+                //Assert.That(identifiers.Count, Is.EqualTo(identifierSubdivision.Keys.Count));
+                //foreach(var identifier in identifiers)
+                //    Assert.That(identifier.GeographicRegion, Is.EqualTo(identifierSubdivision[identifier.Tag]));
+            }
+        }
+
         [Test]
         public async Task GeographicRegionHierarchy()
         {

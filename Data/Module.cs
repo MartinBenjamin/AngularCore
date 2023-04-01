@@ -72,6 +72,21 @@ namespace Data
                 .Keyed<IEtl>(typeof(Iso3166._1._1.Country))
                 .SingleInstance();
 
+            new[]
+            {
+                "AE",
+                "CA",
+                "GB",
+                "KN",
+                "PT",
+                "US"
+            }.ForEach(alpha2Code => builder
+                .RegisterType<_1.SubdivisionLoader>()
+                .Keyed<IEtl>(typeof(Iso3166._2._1.Subdivision))
+                .Keyed<_1.SubdivisionLoader>(alpha2Code)
+                .WithParameter("fileName", $"ISO3166-2-{alpha2Code}.csv")
+                .SingleInstance());
+
             builder
                 .RegisterType<BranchLoader>()
                 .Keyed<IEtl>(typeof(Branch))

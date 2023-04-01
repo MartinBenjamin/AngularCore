@@ -52,6 +52,10 @@ namespace Service
                 .As<INamedService<string, Subdivision, NamedFilters>>()
                 .InstancePerLifetimeScope();
             builder
+                .RegisterType<NamedService<Guid, Iso3166._2._1.Subdivision, NamedFilters>>()
+                .As<INamedService<Guid, Iso3166._2._1.Subdivision, NamedFilters>>()
+                .InstancePerLifetimeScope();
+            builder
                 .RegisterType<NamedService<string, Currency, NamedFilters>>()
                 .As<INamedService<string, Currency, NamedFilters>>()
                 .InstancePerLifetimeScope();
