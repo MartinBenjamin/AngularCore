@@ -18,7 +18,6 @@ namespace CommonDomainObjects.Mapping._1
                         keyMapper.Column("RegionId");
                         keyMapper.ForeignKey("FK_GeographicRegionSubregion_Region");
                     });
-                    setPropertiesMapper.Inverse(false);
                 },
                 collectionElementRelation => collectionElementRelation.ManyToMany(manyToManyMapper =>
                 {

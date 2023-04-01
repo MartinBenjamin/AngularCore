@@ -56,10 +56,11 @@ namespace CommonDomainObjects.Mapping
 
         private static IList<Type> _notImported = new List<Type>
         {
-            typeof(Locations._1.GeographicRegion   ),
-            typeof(Locations._1.GeographicSubregion),
-            typeof(Iso3166._1._1.Country           ),
-            typeof(Iso3166._2._1.Subdivision       )
+            typeof(Locations._1.GeographicRegion         ),
+            typeof(Locations._1.GeographicSubregion      ),
+            typeof(Locations._1.GeographicRegionSubregion),
+            typeof(Iso3166._1._1.Country                 ),
+            typeof(Iso3166._2._1.Subdivision             )
         };
 
         protected override void Load(
@@ -78,7 +79,8 @@ namespace CommonDomainObjects.Mapping
                             bool declared
                             ) => IsDomainObject<Guid>(type)
                                 || IsDomainObject<string>(type)
-                                || typeof(Identifiers.Identifier).IsAssignableFrom(type));
+                                || typeof(Identifiers.Identifier).IsAssignableFrom(type)
+                                || typeof(Locations._1.GeographicRegionSubregion).IsAssignableFrom(type));
 
                         mapper.BeforeMapJoinedSubclass += (
                             IModelInspector                 modelInspector,
