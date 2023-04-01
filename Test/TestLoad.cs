@@ -306,8 +306,8 @@ namespace Test
                     }
                     else
                     {
-                        Assert.That(subdivision.Regions.Contains(subdivision.ParentSubdivision), Is.True                                                   );
-                        Assert.That(subdivision.ParentSubdivision.Id                           , Is.EqualTo(guidGenerator.Generate(namespaceId, record[6])));
+                        Assert.That(subdivision.Regions.Contains(subdivision.ParentSubdivision), Is.True                                                           );
+                        Assert.That(subdivision.ParentSubdivision                              , Is.EqualTo(loaded[guidGenerator.Generate(namespaceId, record[6])]));
                     }
 
                     foreach(var region in subdivision.Regions)
