@@ -139,6 +139,70 @@ namespace Test
                     Assert.That(numericIdentifier.GeographicRegion, Is.EqualTo(numericCodeCountry[int.Parse(numericIdentifier.Tag)]));
             }
         }
+        
+
+        [Test]
+        public async Task Iso3166_1_1()
+        {
+            var loader = _container.ResolveKeyed<IEtl>(typeof(Iso3166._1._1.Country));
+            await loader.ExecuteAsync();
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var guidGenerator = scope.Resolve<IGuidGenerator>();
+                var namespaceId = Data._1.CountryLoader.NamespaceId;
+                var csvExtractor = scope.Resolve<ICsvExtractor>();
+                var extracted = await csvExtractor.ExtractAsync(loader.FileName);
+                var service = scope.Resolve<INamedService<Guid, Iso3166._1._1.Country, NamedFilters>>();
+                var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(country => country.Id);
+
+                Assert.That(loaded.Keys.Count, Is.EqualTo(extracted.Count));
+
+                foreach(var record in extracted)
+                {
+                    var id = guidGenerator.Generate(namespaceId, record[2]);
+                    Assert.That(loaded.ContainsKey(id), Is.True);
+                    var country = loaded[id];
+                    Assert.That(country.Name       , Is.EqualTo(record[0]           ));
+                    Assert.That(country.Alpha2Code , Is.EqualTo(record[2]           ));
+                    Assert.That(country.Alpha3Code , Is.EqualTo(record[3]           ));
+                    Assert.That(country.NumericCode, Is.EqualTo(int.Parse(record[4])));
+                }
+
+                //var session = scope.Resolve<ISession>();
+                //var alpha2Identifiers = await session
+                //    .CreateCriteria<GeographicRegionIdentifier>()
+                //    .CreateCriteria("Scheme")
+                //        .Add(Expression.Eq("Id", new Guid("6f8c62fd-b57f-482b-9a3f-5c2ef9bb8882")))
+                //        .ListAsync<GeographicRegionIdentifier>();
+
+                //var alpha2CodeCountry = loaded.Values.ToDictionary(country => country.Alpha2Code);
+                //Assert.That(alpha2Identifiers.Count, Is.EqualTo(alpha2CodeCountry.Keys.Count));
+                //foreach(var alpha2Identifier in alpha2Identifiers)
+                //    Assert.That(alpha2Identifier.GeographicRegion, Is.EqualTo(alpha2CodeCountry[alpha2Identifier.Tag]));
+
+                //var alpha3Identifiers = await session
+                //    .CreateCriteria<GeographicRegionIdentifier>()
+                //    .CreateCriteria("Scheme")
+                //        .Add(Expression.Eq("Id", new Guid("17ffe52a-93f2-4755-835f-f29f1aec41a1")))
+                //        .ListAsync<GeographicRegionIdentifier>();
+
+                //var alpha3CodeCountry = loaded.Values.ToDictionary(country => country.Alpha3Code);
+                //Assert.That(alpha3Identifiers.Count, Is.EqualTo(alpha3CodeCountry.Keys.Count));
+                //foreach(var alpha3Identifier in alpha3Identifiers)
+                //    Assert.That(alpha3Identifier.GeographicRegion, Is.EqualTo(alpha3CodeCountry[alpha3Identifier.Tag]));
+
+                //var numericIdentifiers = await session
+                //    .CreateCriteria<GeographicRegionIdentifier>()
+                //    .CreateCriteria("Scheme")
+                //        .Add(Expression.Eq("Id", new Guid("d8829a3c-f631-40a7-9230-7caae0ad857b")))
+                //        .ListAsync<GeographicRegionIdentifier>();
+
+                //var numericCodeCountry = loaded.Values.ToDictionary(country => country.NumericCode);
+                //Assert.That(numericIdentifiers.Count, Is.EqualTo(numericCodeCountry.Keys.Count));
+                //foreach(var numericIdentifier in numericIdentifiers)
+                //    Assert.That(numericIdentifier.GeographicRegion, Is.EqualTo(numericCodeCountry[int.Parse(numericIdentifier.Tag)]));
+            }
+        }
 
         [TestCase("AE")]
         [TestCase("CA")]

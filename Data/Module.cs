@@ -68,6 +68,11 @@ namespace Data
                 .SingleInstance();
 
             builder
+                .RegisterType<_1.CountryLoader>()
+                .Keyed<IEtl>(typeof(Iso3166._1._1.Country))
+                .SingleInstance();
+
+            builder
                 .RegisterType<BranchLoader>()
                 .Keyed<IEtl>(typeof(Branch))
                 .SingleInstance();
