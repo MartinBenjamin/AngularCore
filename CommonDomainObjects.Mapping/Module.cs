@@ -58,7 +58,8 @@ namespace CommonDomainObjects.Mapping
         {
             typeof(Locations._1.GeographicRegion   ),
             typeof(Locations._1.GeographicSubregion),
-            typeof(Iso3166._1._1.Country           )
+            typeof(Iso3166._1._1.Country           ),
+            typeof(Iso3166._2._1.Subdivision       )
         };
 
         protected override void Load(
