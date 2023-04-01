@@ -25,5 +25,12 @@ namespace Locations._1
         {
             _regions = new HashSet<GeographicRegion>();
         }
+
+        protected internal virtual void AddRegion(
+            GeographicRegion region
+            )
+        {
+            _regions.Add(region);
+        }
     }
 }

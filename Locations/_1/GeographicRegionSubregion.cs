@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Locations._1
 {
@@ -20,6 +18,9 @@ namespace Locations._1
         {
             Region    = region;
             Subregion = subregion;
+
+            Region.AddSubregion(Subregion);
+            Subregion.AddRegion(Region);
         }
 
         public override bool Equals(
