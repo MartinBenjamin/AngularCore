@@ -339,6 +339,20 @@ namespace Test
                         Assert.That(subregion.Regions.Contains(subdivision), Is.True);
                 }
 
+                var regionSubregion = (
+                    from record in extracted.Values
+                    where string.IsNullOrEmpty(record[6])
+                    let parentCode = string.IsNullOrEmpty(record[6]) ? record[1].Substring(0, 2) : record[6]
+                    group record[1] by parentCode into subregionCodesGroupedByRegionCode
+                    select subregionCodesGroupedByRegionCode).ToDictionary(group => group.Key);
+
+                foreach(var regionCode in regionSubregion.Keys)
+                    f2.PreservesStructure(
+                        code => regionSubregion[code],
+                        geographicRegion => geographicRegion.Subregions,
+                        code => session.Get<Locations._1.GeographicSubregion>(guidGenerator.Generate(namespaceId, code)),
+                        regionCode);
+
                 //var session = scope.Resolve<ISession>();
                 //var identifiers = await session
                 //    .CreateCriteria<GeographicRegionIdentifier>()
