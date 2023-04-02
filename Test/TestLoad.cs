@@ -313,6 +313,7 @@ namespace Test
                     Assert.That(recordSubdivision.PreservesStructure(
                         r => string.IsNullOrEmpty(r[6]) ? null : extracted[r[6]],
                         s => s.ParentSubdivision,
+                        recordSubdivision,
                         record), Is.True);
 
                     Assert.That(recordSubdivision.PreservesStructure(
