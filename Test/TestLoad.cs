@@ -282,14 +282,19 @@ namespace Test
             await loader.ExecuteAsync();
             using(var scope = _container.BeginLifetimeScope())
             {
+                var session = scope.Resolve<ISession>();
                 var guidGenerator = scope.Resolve<IGuidGenerator>();
                 var namespaceId = Data._1.CountryLoader.NamespaceId;
                 var csvExtractor = scope.Resolve<ICsvExtractor>();
-                var extracted = await csvExtractor.ExtractAsync(loader.FileName);
+                var extracted = (await csvExtractor.ExtractAsync(loader.FileName)).ToDictionary(record => record[1]);
                 var service = scope.Resolve<INamedService<Guid, Iso3166._2._1.Subdivision, NamedFilters>>();
                 var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(subdivision => subdivision.Id);
 
-                foreach(var record in extracted)
+                Func<IList<string>, Iso3166._2._1.Subdivision> recordSubdivision = record => record == null ? null : loaded[guidGenerator.Generate(namespaceId, record[1])];
+                Func<string, Iso3166._2._1.Subdivision> f1 = code => loaded[guidGenerator.Generate(namespaceId, code)];
+                Func<string, Locations._1.GeographicRegion> f2 = code => session.Get<Locations._1.GeographicRegion>(guidGenerator.Generate(namespaceId, code));
+
+                foreach(var record in extracted.Values)
                 {
                     var id = guidGenerator.Generate(namespaceId, record[1]);
                     Assert.That(loaded.ContainsKey(id), Is.True);
@@ -298,6 +303,17 @@ namespace Test
                     Assert.That(subdivision.Name              , Is.EqualTo(record[2]                ));
                     Assert.That(subdivision.Country.Alpha2Code, Is.EqualTo(record[1].Substring(0, 2)));
                     Assert.That(subdivision.Category          , Is.EqualTo(record[0]                ));
+
+                    Assert.That(recordSubdivision.PreservesStructure(
+                        r => r[1].Substring(0, 2),
+                        s => s.Country,
+                        code => session.Get<Iso3166._1._1.Country>(guidGenerator.Generate(namespaceId, code)),
+                        record), Is.True);
+
+                    Assert.That(recordSubdivision.PreservesStructure(
+                        r => string.IsNullOrEmpty(r[6]) ? null : extracted[r[6]],
+                        s => s.ParentSubdivision,
+                        record), Is.True);
 
                     if(string.IsNullOrEmpty(record[6]))
                     {

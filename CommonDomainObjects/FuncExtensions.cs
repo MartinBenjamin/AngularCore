@@ -13,6 +13,15 @@ namespace CommonDomainObjects
             U               u
             ) => Equals(vMorphism(map(u)), map(uMorphism(u)));
 
+            
+        public static bool PreservesStructure<A, B, C, D>(
+            this Func<A, C> ac,
+            Func<A, B>      ab,
+            Func<C, D>      cd,
+            Func<B, D>      bd,
+            A               a
+            ) => Equals(cd(ac(a)), bd(ab(a)));
+
         public static bool PreservesStructure<U, V>(
             this Func<U, V>         map,
             Func<U, IEnumerable<U>> uMorphism,
