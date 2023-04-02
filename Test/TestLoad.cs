@@ -291,8 +291,7 @@ namespace Test
                 var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(subdivision => subdivision.Id);
 
                 Func<IList<string>, Iso3166._2._1.Subdivision> recordSubdivision = record => record == null ? null : loaded[guidGenerator.Generate(namespaceId, record[1])];
-                Func<string, Iso3166._2._1.Subdivision> f1 = code => loaded[guidGenerator.Generate(namespaceId, code)];
-                Func<string, Locations._1.GeographicRegion> f2 = code => session.Get<Locations._1.GeographicRegion>(guidGenerator.Generate(namespaceId, code));
+                Func<string, Locations._1.GeographicRegion> codeGeographicRegion = code => session.Get<Locations._1.GeographicRegion>(guidGenerator.Generate(namespaceId, code));
 
                 foreach(var record in extracted.Values)
                 {
@@ -347,7 +346,7 @@ namespace Test
                     select subregionCodesGroupedByRegionCode).ToDictionary(group => group.Key);
 
                 foreach(var regionCode in regionSubregion.Keys)
-                    f2.PreservesStructure(
+                    codeGeographicRegion.PreservesStructure(
                         code => regionSubregion[code],
                         geographicRegion => geographicRegion.Subregions,
                         code => session.Get<Locations._1.GeographicSubregion>(guidGenerator.Generate(namespaceId, code)),
