@@ -292,6 +292,7 @@ namespace Test
 
                 Func<IList<string>, Iso3166._2._1.Subdivision> recordSubdivision = record => record == null ? null : loaded[guidGenerator.Generate(namespaceId, record[1])];
                 Func<string, Locations._1.GeographicRegion> codeGeographicRegion = code => session.Get<Locations._1.GeographicRegion>(guidGenerator.Generate(namespaceId, code));
+                Func<string, Locations._1.GeographicSubregion> codeGeographicSubregion = code => session.Get<Locations._1.GeographicSubregion>(guidGenerator.Generate(namespaceId, code));
 
                 foreach(var record in extracted.Values)
                 {
@@ -318,7 +319,7 @@ namespace Test
                     Assert.That(recordSubdivision.PreservesStructure(
                         r => new string[]{ string.IsNullOrEmpty(r[6]) ? r[1].Substring(0, 2) : r[6]},
                         s => s.Regions,
-                        code => session.Get<Locations._1.GeographicRegion>(guidGenerator.Generate(namespaceId, code)),
+                        codeGeographicRegion,
                         record), Is.True);
 
                     if(string.IsNullOrEmpty(record[6]))
@@ -349,7 +350,7 @@ namespace Test
                     codeGeographicRegion.PreservesStructure(
                         code => regionSubregion[code],
                         geographicRegion => geographicRegion.Subregions,
-                        code => session.Get<Locations._1.GeographicSubregion>(guidGenerator.Generate(namespaceId, code)),
+                        codeGeographicSubregion,
                         regionCode);
 
                 //var session = scope.Resolve<ISession>();
