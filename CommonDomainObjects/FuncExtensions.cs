@@ -13,7 +13,6 @@ namespace CommonDomainObjects
             U               u
             ) => Equals(vMorphism(map(u)), map(uMorphism(u)));
 
-            
         public static bool PreservesStructure<A, B, C, D>(
             this Func<A, C> ac,
             Func<A, B>      ab,
@@ -27,6 +26,14 @@ namespace CommonDomainObjects
             Func<U, IEnumerable<U>> uMorphism,
             Func<V, IEnumerable<V>> vMorphism,
             U                       u
-            ) => vMorphism(map(u)).ToHashSet().SetEquals(uMorphism(u).Select(map));
+            ) => vMorphism(map(u)).ToHashSet().SetEquals(uMorphism(u).Select(map));            
+
+        public static bool PreservesStructure<A, B, C, D>(
+            this Func<A, C>         ac,
+            Func<A, IEnumerable<B>> ab,
+            Func<C, IEnumerable<D>> cd,
+            Func<B, D>              bd,
+            A                       a
+            ) => cd(ac(a)).ToHashSet().SetEquals(ab(a).Select(bd));
     }
 }

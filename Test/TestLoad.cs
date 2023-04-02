@@ -315,6 +315,12 @@ namespace Test
                         s => s.ParentSubdivision,
                         record), Is.True);
 
+                    Assert.That(recordSubdivision.PreservesStructure(
+                        r => new string[]{ string.IsNullOrEmpty(r[6]) ? r[1].Substring(0, 2) : r[6]},
+                        s => s.Regions,
+                        code => session.Get<Locations._1.GeographicRegion>(guidGenerator.Generate(namespaceId, code)),
+                        record), Is.True);
+
                     if(string.IsNullOrEmpty(record[6]))
                     {
                         Assert.That(subdivision.Regions.Contains(subdivision.Country), Is.True);
