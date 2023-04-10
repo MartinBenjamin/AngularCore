@@ -234,25 +234,41 @@ export class EavStore implements IEavStore, IPublisher
         }
         else if(typeof attribute !== 'undefined')
         {
-            const ev = this._aev.get(attribute);
-            if(ev)
-                for(const [e, v] of ev)
-                    if(typeof value !== 'undefined')
-                    {
-                        if(v instanceof Array)
-                            facts.push(...v.filter(v => v === value).map<Fact>(v => ([e, attribute, value])));
+            let ve: Map<any, any>;
+            if(typeof value !== 'undefined')
+                ve = this._ave.get(attribute);
 
-                        else if(v === value)
-                            facts.push([e, attribute, value]);
-                    }
-                    else
-                    {
-                        if(v instanceof Array)
-                            facts.push(...v.map<Fact>(v => [e, attribute, v]));
+            if(ve)
+            {
+                const e = ve.get(value);
+                if(e instanceof Array)
+                    facts.push(...e.map<Fact>(e => [e, attribute, value]));
 
-                        else if(typeof v !== 'undefined' && v !== null)
-                            facts.push([e, attribute, v]);
-                    }
+                else if(typeof e !== 'undefined')
+                    facts.push([e, attribute, value]);
+            }
+            else
+            {
+                const ev = this._aev.get(attribute);
+                if(ev)
+                    for(const [e, v] of ev)
+                        if(typeof value !== 'undefined')
+                        {
+                            if(v instanceof Array)
+                                facts.push(...v.filter(v => v === value).map<Fact>(v => ([e, attribute, value])));
+
+                            else if(v === value)
+                                facts.push([e, attribute, value]);
+                        }
+                        else
+                        {
+                            if(v instanceof Array)
+                                facts.push(...v.map<Fact>(v => [e, attribute, v]));
+
+                            else if(typeof v !== 'undefined' && v !== null)
+                                facts.push([e, attribute, v]);
+                        }
+            }
         }
         else for(const [e, av] of this._eav)
             for(const [a, v] of av)
