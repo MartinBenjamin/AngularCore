@@ -12,8 +12,9 @@ namespace Data
             byte[] name);
 
         Guid Generate(
-            Guid   namespaceId,
-            string name);
+            Guid     namespaceId,
+            string   name,
+            Encoding encoding = null);
     }
 
     public class GuidGenerator: IGuidGenerator
@@ -53,11 +54,12 @@ namespace Data
         }
 
         Guid IGuidGenerator.Generate(
-            Guid   namespaceId,
-            string name
+            Guid     namespaceId,
+            string   name,
+            Encoding encoding
             ) => Generate(
                 namespaceId,
-                Encoding.UTF8.GetBytes(name));
+                (encoding ?? Encoding.UTF8).GetBytes(name));
 
         private static void SwapByteOrder(
             byte[] guid
