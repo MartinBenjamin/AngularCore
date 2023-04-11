@@ -65,6 +65,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Naics", "Naics\Naics.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identifiers", "Identifiers\Identifiers.csproj", "{9B2CC17A-4355-4599-BDAC-8CE142D4CE8A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EavStore", "EavStore\EavStore.csproj", "{16CA264D-4700-4E6B-BC3A-110E47AF8914}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -195,6 +197,10 @@ Global
 		{9B2CC17A-4355-4599-BDAC-8CE142D4CE8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B2CC17A-4355-4599-BDAC-8CE142D4CE8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B2CC17A-4355-4599-BDAC-8CE142D4CE8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16CA264D-4700-4E6B-BC3A-110E47AF8914}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16CA264D-4700-4E6B-BC3A-110E47AF8914}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16CA264D-4700-4E6B-BC3A-110E47AF8914}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16CA264D-4700-4E6B-BC3A-110E47AF8914}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

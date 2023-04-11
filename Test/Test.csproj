@@ -20,6 +20,7 @@
     <ProjectReference Include="..\CommonDomainObjects.Mapping\CommonDomainObjects.Mapping.csproj" />
     <ProjectReference Include="..\CommonDomainObjects\CommonDomainObjects.csproj" />
     <ProjectReference Include="..\Data\Data.csproj" />
+    <ProjectReference Include="..\EavStore\EavStore.csproj" />
     <ProjectReference Include="..\Log4NetIntegration\Log4NetIntegration.csproj" />
     <ProjectReference Include="..\MessageBroker\MessageBroker.csproj" />
     <ProjectReference Include="..\NHibernateIntegration\NHibernateIntegration.csproj" />
