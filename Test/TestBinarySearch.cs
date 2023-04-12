@@ -16,13 +16,6 @@ namespace Test
             )
         {
             Assert.That(
-                list.BinarySearchFirst(
-                    value,
-                    0,
-                    list.Count - 1),
-                Is.EqualTo(index));
-
-            Assert.That(
                 list.BinarySearchFirst(value),
                 Is.EqualTo(index));
         }
@@ -35,51 +28,29 @@ namespace Test
             )
         {
             Assert.That(
-                list.BinarySearchLast(
-                    value,
-                    0,
-                    list.Count - 1),
-                Is.EqualTo(index));
-
-            Assert.That(
                 list.BinarySearchLast(value),
                 Is.EqualTo(index));
         }
 
-        [TestCaseSource("BinarySearchFirstGreaterThanTestCases")]
-        public void BinarySearchFirstGreaterThan(
+        [TestCaseSource("BinarySearchFirstAfterTestCases")]
+        public void BinarySearchFirstAfter(
             IList<int> list,
             int        value,
             int        index
             )
         {
-            Assert.That(
-                list.BinarySearchFirstGreaterThan(
-                    value,
-                    0,
-                    list.Count - 1),
-                Is.EqualTo(index));
-
-
             Assert.That(
                 list.BinarySearchFirstAfter(value),
                 Is.EqualTo(index));
         }
 
-        [TestCaseSource("BinarySearchLastLessThanTestCases")]
-        public void BinarySearchLastLessThan(
+        [TestCaseSource("BinarySearchLastBeforeTestCases")]
+        public void BinarySearchLastBefore(
             IList<int> list,
             int        value,
             int        index
             )
         {
-            Assert.That(
-                list.BinarySearchLastLessThan(
-                    value,
-                    0,
-                    list.Count - 1),
-                Is.EqualTo(index));
-
             Assert.That(
                 list.BinarySearchLastBefore(value),
                 Is.EqualTo(index));
@@ -151,7 +122,7 @@ namespace Test
             }
         }
 
-        public static IEnumerable<object[]> BinarySearchFirstGreaterThanTestCases
+        public static IEnumerable<object[]> BinarySearchFirstAfterTestCases
         {
             get
             {
@@ -186,7 +157,7 @@ namespace Test
             }
         }
 
-        public static IEnumerable<object[]> BinarySearchLastLessThanTestCases
+        public static IEnumerable<object[]> BinarySearchLastBeforeTestCases
         {
             get
             {
