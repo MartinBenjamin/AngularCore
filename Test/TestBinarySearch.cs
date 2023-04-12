@@ -21,6 +21,10 @@ namespace Test
                     0,
                     list.Count - 1),
                 Is.EqualTo(index));
+
+            Assert.That(
+                list.BinarySearchFirst(value),
+                Is.EqualTo(index));
         }
 
         [TestCaseSource("BinarySearchLastTestCases")]
@@ -35,6 +39,10 @@ namespace Test
                     value,
                     0,
                     list.Count - 1),
+                Is.EqualTo(index));
+
+            Assert.That(
+                list.BinarySearchLast(value),
                 Is.EqualTo(index));
         }
 
@@ -51,6 +59,11 @@ namespace Test
                     0,
                     list.Count - 1),
                 Is.EqualTo(index));
+
+
+            Assert.That(
+                list.BinarySearchFirstAfter(value),
+                Is.EqualTo(index));
         }
 
         [TestCaseSource("BinarySearchLastLessThanTestCases")]
@@ -65,6 +78,10 @@ namespace Test
                     value,
                     0,
                     list.Count - 1),
+                Is.EqualTo(index));
+
+            Assert.That(
+                list.BinarySearchLastBefore(value),
                 Is.EqualTo(index));
         }
 
