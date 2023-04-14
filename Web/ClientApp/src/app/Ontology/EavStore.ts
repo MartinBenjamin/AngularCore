@@ -296,6 +296,9 @@ export class EavStore implements IEavStore, IPublisher
         head: T,
         body: Edb[]): { [K in keyof T]: any; }[]
     {
+        return this.QueryRuleOptimised(
+            head,
+            body);
         return body.reduce(
             (substitutions, atom) =>
             {
@@ -304,6 +307,98 @@ export class EavStore implements IEavStore, IPublisher
 
                 let count = substitutions.length;
                 while(count--)
+                {
+                    const substitution = substitutions.shift();
+                    // Substitute known variables.
+                    for(const fact of this.QueryAtom(<Fact>atom.map(term => IsVariable(term) ? substitution[term] : term)))
+                    {
+                        let merged = { ...substitution };
+                        for(let index = 0; index < atom.length && merged; ++index)
+                        {
+                            const term = atom[index];
+                            if(IsVariable(term))
+                            {
+                                if(typeof merged[term] === 'undefined')
+                                    merged[term] = fact[index];
+
+                                else if(merged[term] !== fact[index])
+                                    // Fact does not match query pattern.
+                                    merged = null;
+                            }
+                        }
+
+                        if(merged)
+                            substitutions.push(merged);
+                    }
+                }
+
+                return substitutions;
+            },
+            [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
+    }
+
+    private QueryRuleOptimised<T extends [any, ...any[]]>(
+        head: T,
+        body: Edb[]): { [K in keyof T]: any; }[]
+    {
+        return body.reduce(
+            (substitutions, atom) =>
+            {
+                if(typeof atom === 'function')
+                    return [...atom(substitutions)];
+
+                let count = substitutions.length;
+
+                let boundVariables = substitutions.length ? substitutions[0] : {};
+                let [entity, attribute, value] = atom;
+                if(IsVariable(entity) && IsConstant(attribute) && entity in boundVariables && this._aev.has(attribute))
+                {
+                    let ev = this._aev.get(attribute);
+                    while(count--)
+                    {
+                        const substitution = substitutions.shift();
+                        const v = ev.get(substitution[entity])
+                        if(v instanceof Array)
+                            v.forEach(
+                                v =>
+                                {
+                                    if(typeof value === 'undefined')
+                                        substitutions.push(substitution);
+
+                                    else if(IsConstant(value) && v === value)
+                                        substitutions.push(substitution);
+
+                                    else if(IsVariable(value))
+                                    {
+                                        if(typeof substitution[value] === 'undefined')
+                                            substitutions.push({ ...substitution, [value]: v });
+
+                                        else if(substitution[value] === v)
+                                            substitutions.push(substitution);
+                                    }
+
+                                })
+                        else if(typeof v !== 'undefined')
+                        {
+
+                            if(typeof value === 'undefined')
+                                substitutions.push(substitution);
+
+                            else if(IsConstant(value) && v === value)
+                                substitutions.push(substitution);
+
+                            else if(IsVariable(value))
+                            {
+                                if(typeof substitution[value] === 'undefined')
+                                    substitutions.push({ ...substitution, [value]: v });
+
+                                else if(substitution[value] === v)
+                                    substitutions.push(substitution);
+                            }
+                        }
+                    }
+                }
+                else while(count--)
                 {
                     const substitution = substitutions.shift();
                     // Substitute known variables.
