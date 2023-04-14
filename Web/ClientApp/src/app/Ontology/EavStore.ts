@@ -398,6 +398,52 @@ export class EavStore implements IEavStore, IPublisher
                         }
                     }
                 }
+                else if(IsVariable(value) && IsConstant(attribute) && value in boundVariables && this._ave.has(attribute))
+                {
+                    let ve = this._ave.get(attribute);
+                    while(count--)
+                    {
+                        const substitution = substitutions.shift();
+                        const e = ve.get(substitution[entity])
+                        if(e instanceof Array)
+                            e.forEach(
+                                e =>
+                                {
+                                    if(typeof entity === 'undefined')
+                                        substitutions.push(substitution);
+
+                                    else if(IsConstant(entity) && e === entity)
+                                        substitutions.push(substitution);
+
+                                    else if(IsVariable(entity))
+                                    {
+                                        if(typeof substitution[entity] === 'undefined')
+                                            substitutions.push({ ...substitution, [entity]: e });
+
+                                        else if(substitution[entity] === e)
+                                            substitutions.push(substitution);
+                                    }
+
+                                })
+                        else if(typeof e !== 'undefined')
+                        {
+                            if(typeof entity === 'undefined')
+                                substitutions.push(substitution);
+
+                            else if(IsConstant(entity) && e === entity)
+                                substitutions.push(substitution);
+
+                            else if(IsVariable(entity))
+                            {
+                                if(typeof substitution[entity] === 'undefined')
+                                    substitutions.push({ ...substitution, [entity]: e });
+
+                                else if(substitution[entity] === e)
+                                    substitutions.push(substitution);
+                            }
+                        }
+                    }
+                }
                 else while(count--)
                 {
                     const substitution = substitutions.shift();
