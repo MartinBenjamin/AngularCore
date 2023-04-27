@@ -452,121 +452,113 @@ T(x, y) : - R(x, z), T(z, y)`,
             });
 
         describe(
-            `Linear Recursion (Naïve):
-T(x, y) : - R1(x, y),
-T(x, y) : - R2(x, y),
-T(x, y) : - R1(x, z), T(z, y),
-T(x, y) : - R2(x, z), T(z, y)`,
+            `Mututal Recursion (Semi-Naïve):
+T1(x, y) : - R1(x, y),
+T1(x, y) : - R1(x, y), T2,
+T2(x, y) : - R2(x, y),
+T2(x, y) : - R2(x, z), T1(z, y)`,
             () =>
             {
                 let trace: { Signal: Signal, Value: any }[] = [];
                 const elementComparer = (a: number, b: number) => a - b;
                 const tupleComparer = TupleComparer(elementComparer);
-                const setBuilder = (tuples: Iterable<any>): Set<any> => new SortedSet(
+                const setBuilder = (tuples?: Iterable<Tuple>): Set<Tuple> => new SortedSet(
                     tupleComparer,
-                    tuples);
+                    tuples ? tuples : []);
                 const query = ConjunctiveQuery(
                     ['?x', '?y'],
                     [['?x', '?z'], ['?z', '?y']]);
-                const reduce = Reduce(
-                    (previous: Set<Tuple>, current: Iterable<Tuple>) => setBuilder([...previous, ...current]),
-                    query);
 
-                function AreEqual<T>(
-                    lhs: Set<T>,
-                    rhs: Set<T>
-                    )
+                const R1Values: [number, number][] = [
+                    [0, 1],
+                    [2, 3]
+                ];
+
+                const R2Values: [number, number][] = [
+                        [1, 2],
+                        [3, 4]
+                    ];
+
+                const T1Values: [number, number][] = [
+                    [0, 1],
+                    [0, 2],
+                    [0, 3],
+                    [0, 4],
+                    [2, 3],
+                    [2, 4]
+                ];
+
+                T1Values.sort(tupleComparer);
+
+                const R1 = new Signal(() => setBuilder(R1Values));
+                const R2 = new Signal(() => setBuilder(R2Values));
+                function AreEqual(a: [Set<any>, Set<any>], b: [Set<any>, Set<any>])
                 {
-                    if(!(lhs && rhs && lhs.size === rhs.size))
-                        return false;
-
-                    for(const a of lhs)
-                        if(!rhs.has(a))
-                            return false;
-
-                    return true;
+                    return b[1].size === 0;
                 }
 
-                const RValues = [
-                    [
-                        [1, 2],
-                        [2, 1],
-                        [2, 3],
-                        [1, 4],
-                        [3, 4],
-                        [4, 5]
-                    ],
-                    [
-                        [1, 2],
-                        [2, 3]
-                    ],
-                    []
-                ];
+                const TTransformed1 = new Signal((tTransformed: [Set<any>, Set<any>], r: Set<any>, tTransformedOther: [Set<any>, Set<any>]) =>
+                {
+                    if(!tTransformed)
+                        return [setBuilder(r), r];
 
-                const TValues: [number, number][][] = [
-                    [
-                        [1, 2],
-                        [2, 1],
-                        [2, 3],
-                        [1, 4],
-                        [3, 4],
-                        [4, 5],
-                        [1, 1],
-                        [2, 2],
-                        [1, 3],
-                        [2, 4],
-                        [1, 5],
-                        [3, 5],
-                        [2, 5]
-                    ],
-                    [
-                        [1, 2],
-                        [2, 3],
-                        [1, 3]
-                    ],
-                    []
-                ];
+                    let [, deltaMinus1] = tTransformedOther;
+                    let [t, ] = tTransformed;
+                    const delta = setBuilder();
 
-                TValues.forEach(values => values.sort(tupleComparer));
+                    for(const result of query(r, deltaMinus1))
+                    {
+                        const previous = t.size;
+                        t.add(result);
+                        if(t.size != previous)
+                            delta.add(result);
+                    }
 
-                let RValue = RValues[0];
-                const R = new Signal(() => setBuilder(RValue));
-                const T = new Signal(reduce, AreEqual);
+                    return [t, delta];
+                }, AreEqual);
+
+                const TTransformed2 = new Signal(TTransformed1.Function, AreEqual);
+                const T1 = new Signal((tTransformed: [Set<any>, Set<any>]) => tTransformed[0])
 
                 const graph = new Map([
-                    [<Signal>R, []],
-                    [T, [R, T, R, T]]]);
+                    [<Signal>R1, []],
+                    [TTransformed1, [TTransformed1, R1, TTransformed2]],
+                    [<Signal>R2, []],
+                    [TTransformed2, [TTransformed2, R2, TTransformed1]],
+                    [T1, [TTransformed1]]]);
 
                 const scheduler = new Scheduler(
                     graph,
                     (signal, value) => trace.push({ Signal: signal, Value: value }));
-                const assert = assertBuilder('trace', 'R', 'T')(trace, R, T);
+                const assert = assertBuilder('trace', 'R1', 'T1')(trace, R1, T1);
 
-                for(let index = 1; index < RValues.length;++index)
-                    scheduler.Update(
-                        s =>
-                        {
-                            RValue = RValues[index];
-                            s.Schedule(R);
-                        });
+                scheduler.Update(
+                    s =>
+                    {
+                        s.Schedule(R1);
+                        s.Schedule(R2);
+                    });
 
-                assert('R.LongestPath === 0');
-                assert('T.LongestPath === 1');
+                assert('R1.LongestPath === 0');
+                //assert('R2.LongestPath === 0');
+                assert('T1.LongestPath === 2');
+                let result;
+                scheduler.Observe(T1).subscribe(r => result = r);
+                //for(const traceItem of trace)
+                //    console.log(`${traceItem.Signal === T ? 'T' : traceItem.Signal === TTransformed ? 'TTransformed' : 'R'}: ${
+                //        JSON.stringify(
+                //            traceItem.Value,
+                //            (key, value) => value instanceof SortedSet ? value.Array : value)}`);
 
-                for(const traceItem of trace)
-                    console.log(`${traceItem.Signal === T ? 'T' : 'R'}: ${JSON.stringify(
-                        traceItem.Value,
-                        (key, value) => value instanceof SortedSet ? value.Array : value)}`);
-                const values = trace.filter(t => t.Signal === T).map(t => t.Value);;
+                //const values = trace.filter(t => t.Signal === T).map(t => t.Value);;
 
-                for(let index = 0; index < RValues.length; ++index)
-                    describe(
-                        `Given R: ${JSON.stringify(RValues[index])}`,
-                        () =>
-                        {
-                            it(
-                              `The expected value of T is ${JSON.stringify(TValues[index])}`,
-                              () => expect(JSON.stringify([...values[index]])).toBe(JSON.stringify(TValues[index])));
-                        });
+                describe(
+                    `Given R1: ${JSON.stringify(R1Values)} and R2: ${JSON.stringify(R2Values)}`,
+                    () =>
+                    {
+                        it(
+                            `The expected value of T1 is ${JSON.stringify(T1Values)}`,
+                            () => expect(JSON.stringify(result.Array)).toBe(JSON.stringify(T1Values)));
+                    });
             });
     });
