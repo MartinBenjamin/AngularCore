@@ -454,7 +454,7 @@ T(x, y) : - R(x, z), T(z, y)`,
         describe(
             `Mututal Recursion (Semi-Naïve):
 T1(x, y) : - R1(x, y),
-T1(x, y) : - R1(x, y), T2,
+T1(x, y) : - R1(x, z), T2(z, y),
 T2(x, y) : - R2(x, y),
 T2(x, y) : - R2(x, z), T1(z, y)`,
             () =>
@@ -540,17 +540,9 @@ T2(x, y) : - R2(x, z), T1(z, y)`,
                     });
 
                 assert('R1.LongestPath === 0');
-                //assert('R2.LongestPath === 0');
                 assert('T1.LongestPath === 2');
                 let result;
                 scheduler.Observe(T1).subscribe(r => result = r);
-                //for(const traceItem of trace)
-                //    console.log(`${traceItem.Signal === T ? 'T' : traceItem.Signal === TTransformed ? 'TTransformed' : 'R'}: ${
-                //        JSON.stringify(
-                //            traceItem.Value,
-                //            (key, value) => value instanceof SortedSet ? value.Array : value)}`);
-
-                //const values = trace.filter(t => t.Signal === T).map(t => t.Value);;
 
                 describe(
                     `Given R1: ${JSON.stringify(R1Values)} and R2: ${JSON.stringify(R2Values)}`,
