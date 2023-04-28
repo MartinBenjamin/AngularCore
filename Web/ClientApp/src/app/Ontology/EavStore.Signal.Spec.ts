@@ -555,6 +555,52 @@ describe(
     {
         const o = { a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null, [Symbol.toPrimitive]: function() { } };
         describe(
+            `Given store = new EavStore():`,
+            () =>
+            {
+                const store: IEavStore = new EavStore();
+                const e = store.Assert(o);
+
+                describe(
+                    `Given
+trace: Set<any[]>[] and
+signal = store.Signal([1], []) and
+store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
+                    () =>
+                    {
+                        const trace: Set<any[]>[] = [];
+                        const assert = assertBuilder('Store', 'store', 'e', 'trace')
+                            (Store, store, e, trace);
+                        const signal = store.Signal(
+                            [1],
+                            []);
+                        const traceSignal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [signal]);
+                        store.SignalScheduler.RemoveSignal(traceSignal);
+                        assert('trace.length === 1');
+                        assert('trace[0].has([1])');
+                    });
+
+                describe(
+                    `Given
+trace: Set<any[]>[] and
+signal = store.Signal([1, 'a'], []) and
+store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
+                    () =>
+                    {
+                        const trace: Set<any[]>[] = [];
+                        const assert = assertBuilder('Store', 'store', 'e', 'trace')
+                            (Store, store, e, trace);
+                        const signal = store.Signal(
+                            [1, 'a'],
+                            []);
+                        const traceSignal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [signal]);
+                        store.SignalScheduler.RemoveSignal(traceSignal);
+                        assert('trace.length === 1');
+                        assert(`trace[0].has([1, 'a'])`);
+                    });
+            });
+
+        describe(
             `Given store = new EavStore() and e = store.Assert(${JSON.stringify(o)}):`,
             () =>
             {

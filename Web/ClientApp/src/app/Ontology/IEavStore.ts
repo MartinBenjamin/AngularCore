@@ -29,7 +29,7 @@ export const IsIdb = (atom): atom is Idb => atom instanceof Array && IsPredicate
 
 export type Atom = Edb | Idb;
 
-export type Rule = [[string, any, ...any[]], Atom[]];
+export type Rule = [Idb, Atom[]];
 
 export interface IEavStore
 {
