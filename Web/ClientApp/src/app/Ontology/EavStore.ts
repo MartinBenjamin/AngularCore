@@ -8,7 +8,7 @@ import { Group } from './Group';
 import { Atom, AttributeSchema, Cardinality, Edb, Fact, Idb, IEavStore, IsConstant, IsIdb, IsVariable, Rule, Store, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
-import { ArrayCompareFactory, SortedSet } from './SortedSet';
+import { ArrayCompareFactory, SortedList, SortedSet } from './SortedSet';
 import { StronglyConnectedComponents } from './StronglyConnectedComponents';
 
 type Tuple = any[];
@@ -668,7 +668,7 @@ export class EavStore implements IEavStore, IPublisher
                             if(atom.length !== rule[0].length)
                                 throw new Error(`IDB term count does not match rule term count: ${predicateSymbol}`)
 
-                            const signal = this.Signal(EavStore.Conjunction(
+                            const signal = new Signal(EavStore.Conjunction(
                                 rule[0].slice(1),
                                 atom.slice(1)));
                             successors.push(signal);
@@ -847,9 +847,13 @@ export class EavStore implements IEavStore, IPublisher
 
     public static Disjunction(
         ...inputs: Iterable<Tuple>[]
-        ): Tuple[]
+        ): readonly Tuple[]
     {
-        return null;
+        let set = new SortedList(tupleCompare);
+        for(let input of inputs)
+            for(let tuple of input)
+                set.add(tuple)
+        return set.Array;
     }
 
     Signal(
