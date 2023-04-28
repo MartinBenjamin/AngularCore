@@ -299,7 +299,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
             if(!stronglyConnectedComponent)
                 throw new Error("Unknown signal");
 
-            if(this._predecessors.get(signal).length === 1 && !this._suspended)
+            if(this._predecessors.get(signal).length <= 1 && !this._suspended)
                 // Run immediately.
                 this.Run(stronglyConnectedComponent);
 
