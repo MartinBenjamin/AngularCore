@@ -850,8 +850,8 @@ export class EavStore implements IEavStore, IPublisher
         ): Tuple[]
     {
         let set = new SortedList(tupleCompare);
-        for(let input of inputs)
-            for(let tuple of input)
+        for(const input of inputs)
+            for(const tuple of input)
                 set.add(tuple)
         return <Tuple[]>set.Array;
     }
