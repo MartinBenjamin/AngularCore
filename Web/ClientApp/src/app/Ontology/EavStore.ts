@@ -591,7 +591,7 @@ export class EavStore implements IEavStore, IPublisher
         return signal;
     }
 
-    SignalRule<T extends [any, ...any[]]>(
+    private SignalRule<T extends [any, ...any[]]>(
         head: T,
         body: Atom[],
         ...rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>
@@ -847,13 +847,13 @@ export class EavStore implements IEavStore, IPublisher
 
     public static Disjunction(
         ...inputs: Iterable<Tuple>[]
-        ): readonly Tuple[]
+        ): Tuple[]
     {
         let set = new SortedList(tupleCompare);
         for(let input of inputs)
             for(let tuple of input)
                 set.add(tuple)
-        return set.Array;
+        return <Tuple[]>set.Array;
     }
 
     Signal(
