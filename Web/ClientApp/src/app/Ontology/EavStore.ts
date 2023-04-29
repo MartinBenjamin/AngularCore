@@ -603,16 +603,18 @@ export class EavStore implements IEavStore, IPublisher
             rule => rule[0][0],
             rule => rule);
 
-        const ruleAdjacencyList = new Map(
+        const rulePredecessors = new Map(
             rules.map<[string, string[]]>(
                 rule => [
                     rule[0][0],
                     [].concat(...rulesGroupedByPredicateSymbol.get(rule[0][0]).map(rule => rule[1].filter(IsIdb).map(idb => idb[0])))]));
 
-        type SCC<T> = ReadonlyArray<T>;
+        type SCC<T> = ReadonlyArray<T> & { Recursive?: boolean; };
 
         const stronglyConnectedComponents = new Map<string, SCC<string>>([].concat(
-            ...StronglyConnectedComponents(ruleAdjacencyList).map(scc => scc.map(predicateSymbol => <[string, SCC<string>]>[predicateSymbol, scc]))));
+            ...StronglyConnectedComponents(rulePredecessors).map(scc => scc.map(predicateSymbol => <[string, SCC<string>]>[predicateSymbol, scc]))));
+
+        stronglyConnectedComponents.forEach(scc => scc.Recursive = scc.length > 1 || rulePredecessors.get(scc[0]).includes(scc[0]));
 
         const signalAdjacencyList = new Map<Signal, Signal[]>();
         const conjunctions = new Map<Signal, Atom[]>();
@@ -707,7 +709,7 @@ export class EavStore implements IEavStore, IPublisher
         return signal;
     }
 
-    public static Substitute(
+    static Substitute(
         terms: any[]
         ): (tuples: Iterable<Tuple>) => object[]
     {
@@ -739,7 +741,7 @@ export class EavStore implements IEavStore, IPublisher
         };
     }
 
-    public static Conjunction(
+    static Conjunction(
         terms?: any[],
         idbTerms?: any[]
         ): (...inputs: (object[] | BuiltIn)[]) => object[]
@@ -845,7 +847,7 @@ export class EavStore implements IEavStore, IPublisher
             [initialSubstitution]));
     }
 
-    public static Disjunction(
+    static Disjunction(
         ...inputs: Iterable<Tuple>[]
         ): Tuple[]
     {
