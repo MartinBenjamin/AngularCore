@@ -1,6 +1,6 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Scheduler, Signal } from '../Signal';
+import { IScheduler, Scheduler, Signal } from '../Signal';
 import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
 import { BuiltIn } from './Atom';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
@@ -131,7 +131,7 @@ export class EavStore implements IEavStore, IPublisher
     private _publishSuspended    = 0;
     private _transactionManager  : ITransactionManager = new TransactionManager();
 
-    readonly SignalScheduler = new Scheduler();
+    readonly SignalScheduler: IScheduler = new Scheduler();
 
     constructor(
         attributeSchema: AttributeSchema[] = [],
@@ -642,63 +642,67 @@ export class EavStore implements IEavStore, IPublisher
                         if(atom.length !== rule[0].length)
                             throw new Error(`IDB term count does not match rule term count: ${predicateSymbol}`)
 
-                        const signal = new Signal(EavStore.Conjunction(
+                        const conjunction = new Signal(EavStore.Conjunction(
                             rule[0].slice(1),
                             atom.slice(1)));
 
                         idbSignals.set(
                             atom,
-                            signal);
+                            conjunction);
                         conjunctions.set(
-                            signal,
+                            conjunction,
                             rule[1]);
                     }
-                    else
+                    else // Disjunction of conjunctions.
                     {
-                        const signal = new Signal(EavStore.Disjunction);
-                        idbSignals.set(
-                            atom,
-                            signal);
+                        const disjunction = new Signal(EavStore.Disjunction);
 
-                        const successors: Signal[] = [];
+                        const predecessors: Signal[] = [];
                         signalAdjacencyList.set(
-                            signal,
-                            successors);
+                            disjunction,
+                            predecessors);
 
                         for(const rule of rules)
                         {
                             if(atom.length !== rule[0].length)
                                 throw new Error(`IDB term count does not match rule term count: ${predicateSymbol}`)
 
-                            const signal = new Signal(EavStore.Conjunction(
-                                rule[0].slice(1),
-                                atom.slice(1)));
-                            successors.push(signal);
+                            const conjunction = new Signal(EavStore.Conjunction(rule[0].slice(1)));
+                            predecessors.push(conjunction);
 
                             conjunctions.set(
-                                signal,
+                                conjunction,
                                 rule[1]);
                         }
+
+                        const match = new Signal(EavStore.Match(atom.slice(1)));
+                        signalAdjacencyList.set(
+                            match,
+                            [disjunction]);
+
+                        idbSignals.set(
+                            atom,
+                            match);
                     }
                 }
 
         for(const [signal, body] of conjunctions)
         {
-            const successors: Signal[] = [];
+            const predecessors: Signal[] = [];
             signalAdjacencyList.set(
                 signal,
-                successors);
+                predecessors);
             for(const atom of body)
                 if(atom instanceof Function)
-                    successors.push(this.SignalScheduler.AddSignal(() => atom));
+                    predecessors.push(this.SignalScheduler.AddSignal(() => atom));
 
                 else if(IsIdb(atom))
-                    successors.push(idbSignals.get(atom));
+                    predecessors.push(idbSignals.get(atom));
 
                 else
                 {
                     const successor = new Signal(EavStore.Substitute(atom));
-                    successors.push(successor);
+                    predecessors.push(successor);
                     signalAdjacencyList.set(
                         successor,
                         [this.SignalAtom(atom)]);
@@ -741,6 +745,47 @@ export class EavStore implements IEavStore, IPublisher
         };
     }
 
+    static Match(
+        terms: any[]
+        ): (tuples: Iterable<Tuple>) => object[]
+    {
+        return (tuples: Iterable<Tuple>) =>
+        {
+            const substitutions: object[] = [];
+            for(const tuple of tuples)
+            {
+                let substitution = {};
+                for(let index = 0; index < terms.length && substitution; ++index)
+                {
+                    const term = terms[index];
+                    if(IsConstant(term))
+                    {
+                        if(term !== tuple[index])
+                            substitution = null;
+                    }
+                    else if(IsVariable(term))
+                    {
+                        if(substitution[term] === undefined)
+                            substitution[term] = tuple[index];
+
+                        else if(substitution[term] !== tuple[index])
+                            // Tuple does not match query pattern.
+                            substitution = null;
+                    }
+                }
+
+                if(substitution)
+                    substitutions.push(substitution)
+            }
+
+            return substitutions;
+        };
+    }
+
+
+    static Conjunction(): (...inputs: (object[] | BuiltIn)[]) => object[];
+    static Conjunction(terms: any[]): (...inputs: (object[] | BuiltIn)[]) => Tuple[];
+    static Conjunction(terms: any[], idbTerms: any[]): (...inputs: (object[] | BuiltIn)[]) => object[];
     static Conjunction(
         terms?: any[],
         idbTerms?: any[]
@@ -851,11 +896,109 @@ export class EavStore implements IEavStore, IPublisher
         ...inputs: Iterable<Tuple>[]
         ): Tuple[]
     {
-        let set = new SortedList(tupleCompare);
+        let set = new SortedSet(tupleCompare);
         for(const input of inputs)
             for(const tuple of input)
                 set.add(tuple)
         return <Tuple[]>set.Array;
+    }
+
+    static Recursion(
+        rulesGroupedByPredicateSymbol: Map<string, Rule[]>
+        ): (inputs: object[][]) => Map<string, SortedSet<Tuple>>
+    {
+        const empty = new SortedSet(tupleCompare);
+        const resultT0 = new Map([...rulesGroupedByPredicateSymbol.keys()].map(predicateSymbol => [predicateSymbol, empty]));
+        const scheduler: IScheduler = new Scheduler();
+        const resultTMinus1Signal = scheduler.AddSignal<Map<string, SortedSet<Tuple>>>()
+        const resultTMinus1Signals = new Map<string, Signal<SortedSet<Tuple>>>(
+            [...rulesGroupedByPredicateSymbol.keys()].map(
+                predicateSymbol =>
+                    [predicateSymbol, scheduler.AddSignal(
+                        (tMinus1: Map<string, SortedSet<Tuple>>) => tMinus1.get(predicateSymbol),
+                        [resultTMinus1Signal])]));
+        const inputSignals = new ArrayKeyedMap<Fact | Idb, Signal<object[]>>();
+        const inputAtoms: (Fact | Idb)[] = [];
+
+        const predecessors: Signal<[string, SortedSet<Tuple>]>[] = [];
+
+        for(const [predicateSymbol, rules] of rulesGroupedByPredicateSymbol)
+        {
+            const disjunctionPredecessors: Signal<Tuple[]>[] = [];
+
+            for(const rule of rules)
+            {
+                const conjunctionPredecessors: Signal<object[] | BuiltIn>[] = [];
+
+                for(const atom of rule[1])
+                {
+                    if(typeof atom === 'function')
+                        conjunctionPredecessors.push(scheduler.AddSignal(() => atom));
+
+                    else if(IsIdb(atom) && resultTMinus1Signals.has(atom[0]))
+                        conjunctionPredecessors.push(
+                            scheduler.AddSignal(
+                                EavStore.Match(atom),
+                                [resultTMinus1Signals.get(atom[0])]));
+                    else
+                    {
+                        let inputSignal = inputSignals.get(atom);
+                        if(!inputSignal)
+                        {
+                            inputSignal = scheduler.AddSignal();
+                            inputSignals.set(
+                                atom,
+                                inputSignal);
+                            inputAtoms.push(atom);
+                        }
+                        conjunctionPredecessors.push(inputSignal);
+                    }
+                }
+
+                disjunctionPredecessors.push(
+                    scheduler.AddSignal(
+                        EavStore.Conjunction(rule[0]),
+                        conjunctionPredecessors));
+            }
+
+            predecessors.push(scheduler.AddSignal(
+                (resuultTMinus1: SortedSet<Tuple>, ...conjunctions: Tuple[][]): [string, SortedSet<Tuple>] =>
+                {
+                    const resultT = new SortedSet(resuultTMinus1);
+                    for(const conjunction of conjunctions)
+                        for(const tuple of conjunction)
+                            resultT.add(tuple);
+
+                    return [predicateSymbol, resultT];
+
+                }, [resultTMinus1Signals.get(predicateSymbol), ...disjunctionPredecessors]));
+        }
+
+        let resultT: Map<string, SortedSet<Tuple>>;
+        const resultTSignal = scheduler.AddSignal(
+            (...t: [string, SortedSet<Tuple>][]) => resultT = new Map(t),
+            predecessors);
+        return (inputs: object[][]): Map<string, SortedSet<Tuple>> =>
+        {
+            scheduler.Update(
+                scheduler => inputAtoms.forEach((atom, index) => scheduler.Inject(
+                    inputSignals.get(atom),
+                    inputs[index])));
+
+            let resultTMinus1: Map<string, SortedSet<Tuple>> = resultT0;
+            let complete = false;
+            do
+            {
+                scheduler.Update(
+                    scheduler => scheduler.Inject(
+                        resultTMinus1Signal,
+                        resultTMinus1));
+                complete = [...resultT].every(([predicateSymbol, result]) => result.size === resultTMinus1.get(predicateSymbol).size);
+                resultTMinus1 = resultT;
+            }
+            while(!complete)
+            return resultT;
+        };
     }
 
     Signal(

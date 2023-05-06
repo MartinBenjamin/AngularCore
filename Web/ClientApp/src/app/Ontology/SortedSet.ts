@@ -180,14 +180,22 @@ export class SortedList<T>
 
 export class SortedSet<T> extends SortedList<T> implements Set<T>
 {
+    constructor(compare: Compare<T>, values?: Iterable<T>);
+    constructor(sortedSet: SortedSet<T>);
     constructor(
-        compare: Compare<T>,
+        compare: Compare<T> | SortedSet<T>,
         values?: Iterable<T>
         )
     {
-        super(
-            compare,
-            values)
+        if(compare instanceof SortedSet)
+        {
+            super(compare._compare);
+            this._array = [...compare._array];
+        }
+        else
+            super(
+                compare,
+                values);
     }
 
     add(

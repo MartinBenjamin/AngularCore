@@ -602,6 +602,43 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                 describe(
                     `Given
 trace: Set<any[]>[] and
+signal = store.Signal(['?result'], [['rule', '?result']], [['rule', 3], []], [['rule', 3], []]) and
+store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
+                    () =>
+                    {
+                        const trace: any[][][] = [];
+                        const assert = assertBuilder('Store', 'store', 'e', 'trace')
+                            (Store, store, e, trace);
+                        const signal = store.Signal(['?result'], [['rule', '?result']], [['rule', 3], []], [['rule', 3], []]);
+                        const traceSignal = store.SignalScheduler.AddSignal(result => trace.push(result), [signal]);
+                        store.SignalScheduler.RemoveSignal(traceSignal);
+                        assert('trace.length === 1');
+                        assert('trace[0].length === 1');
+                        assert('trace[0][0].length === 1');
+                        assert('trace[0][0][0] === 3');
+                    });
+
+                describe(
+                    `Given
+trace: Set<any[]>[] and
+signal = store.Signal(['?result'], [['rule', 1, '?result']], [['rule', 0, 3], []], [['rule', 1, 4], []]) and
+store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
+                    () =>
+                    {
+                        const trace: Set<any[]>[] = [];
+                        const assert = assertBuilder('Store', 'store', 'e', 'trace')
+                            (Store, store, e, trace);
+                        const signal = store.Signal(['?result'], [['rule', 1, '?result']], [['rule', 0, 3], []], [['rule', 1, 4], []]);
+                        const traceSignal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [signal]);
+                        store.SignalScheduler.RemoveSignal(traceSignal);
+                        assert('trace.length === 1');
+                        assert('trace[0].size === 1');
+                        assert('trace[0].has([4])');
+                    });
+
+                describe(
+                    `Given
+trace: Set<any[]>[] and
 signal = store.Signal(['?result'], [['rule', '?result']], [['rule', 1], []], [['rule', 2], []]) and
 store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                     () =>
