@@ -904,16 +904,16 @@ export class EavStore implements IEavStore, IPublisher
     }
 
     static Recursion(
-        rulesGroupedByPredicateSymbol: Map<string, Rule[]>
-        ): (inputs: object[][]) => Map<string, SortedSet<Tuple>>
+        rulesGroupedByPredicateSymbol: [string, Rule[]][]
+        ): [(inputs: object[][]) => Map<string, SortedSet<Tuple>>, (Fact | Idb)[]]
     {
         const empty = new SortedSet(tupleCompare);
-        const resultT0 = new Map([...rulesGroupedByPredicateSymbol.keys()].map(predicateSymbol => [predicateSymbol, empty]));
+        const resultT0 = new Map(rulesGroupedByPredicateSymbol.map(([predicateSymbol,]) => [predicateSymbol, empty]));
         const scheduler: IScheduler = new Scheduler();
         const resultTMinus1Signal = scheduler.AddSignal<Map<string, SortedSet<Tuple>>>()
         const resultTMinus1Signals = new Map<string, Signal<SortedSet<Tuple>>>(
-            [...rulesGroupedByPredicateSymbol.keys()].map(
-                predicateSymbol =>
+            rulesGroupedByPredicateSymbol.map(
+                ([predicateSymbol,]) =>
                     [predicateSymbol, scheduler.AddSignal(
                         (tMinus1: Map<string, SortedSet<Tuple>>) => tMinus1.get(predicateSymbol),
                         [resultTMinus1Signal])]));
@@ -962,9 +962,9 @@ export class EavStore implements IEavStore, IPublisher
             }
 
             predecessors.push(scheduler.AddSignal(
-                (resuultTMinus1: SortedSet<Tuple>, ...conjunctions: Tuple[][]): [string, SortedSet<Tuple>] =>
+                (resultTMinus1: SortedSet<Tuple>, ...conjunctions: Tuple[][]): [string, SortedSet<Tuple>] =>
                 {
-                    const resultT = new SortedSet(resuultTMinus1);
+                    const resultT = new SortedSet(resultTMinus1);
                     for(const conjunction of conjunctions)
                         for(const tuple of conjunction)
                             resultT.add(tuple);
@@ -978,7 +978,7 @@ export class EavStore implements IEavStore, IPublisher
         const resultTSignal = scheduler.AddSignal(
             (...t: [string, SortedSet<Tuple>][]) => resultT = new Map(t),
             predecessors);
-        return (inputs: object[][]): Map<string, SortedSet<Tuple>> =>
+        return [(inputs: object[][]): Map<string, SortedSet<Tuple>> =>
         {
             scheduler.Update(
                 scheduler => inputAtoms.forEach((atom, index) => scheduler.Inject(
@@ -998,7 +998,7 @@ export class EavStore implements IEavStore, IPublisher
             }
             while(!complete)
             return resultT;
-        };
+        }, inputAtoms];
     }
 
     Signal(

@@ -104,7 +104,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
     }
 
     public AddSignal<TOut = any, TIn extends any[] = any[]>(
-        map: (...parameters: TIn) => TOut = null,
+        map: (...parameters: TIn) => TOut,
         predecessors: SignalParams<TIn> = <SignalParams<TIn>>[]
         ): Signal<TOut>
     {
