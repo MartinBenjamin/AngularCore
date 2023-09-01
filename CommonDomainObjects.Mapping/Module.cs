@@ -60,7 +60,11 @@ namespace CommonDomainObjects.Mapping
             typeof(Locations._1.GeographicSubregion      ),
             typeof(Locations._1.GeographicRegionSubregion),
             typeof(Iso3166._1._1.Country                 ),
-            typeof(Iso3166._2._1.Subdivision             )
+            typeof(Iso3166._2._1.Subdivision             ),
+            typeof(UnsdM49._1.Global                     ),
+            typeof(UnsdM49._1.Region                     ),
+            typeof(UnsdM49._1.SubRegion                  ),
+            typeof(UnsdM49._1.IntermediateRegion         )
         };
 
         protected override void Load(
