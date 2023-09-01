@@ -10,18 +10,10 @@ namespace Identifiers
         }
 
         public IdentificationScheme(
-            Guid id,
+            Guid   id,
             string name
             ) : base(
                 id,
-                name)
-        {
-        }
-
-        public IdentificationScheme(
-            string name
-            ) : this(
-                Guid.NewGuid(),
                 name)
         {
         }

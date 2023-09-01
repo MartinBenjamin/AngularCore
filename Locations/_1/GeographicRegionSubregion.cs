@@ -34,11 +34,9 @@ namespace Locations._1
                 Subregion == rhs.Subregion;
         }
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(
+        public override int GetHashCode() =>
+            HashCode.Combine(
                 Region,
                 Subregion);
-        }
     }
 }
