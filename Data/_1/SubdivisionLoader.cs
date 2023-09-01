@@ -89,7 +89,7 @@ namespace Data._1
                     identificationScheme = new IdentificationScheme(
                         _identificationSchemeId,
                         "ISO3166-2");
-                    session.Save(identificationScheme);
+                    await session.SaveAsync(identificationScheme);
                 }
 
                 //await subdivisions.ForEachAsync(
