@@ -341,9 +341,8 @@ namespace Test
 
                 var regionSubregion = (
                     from record in extracted.Values
-                    where string.IsNullOrEmpty(record[6])
-                    let parentCode = string.IsNullOrEmpty(record[6]) ? record[1].Substring(0, 2) : record[6]
-                    group record[1] by parentCode into subregionCodesGroupedByRegionCode
+                    let regionCode = string.IsNullOrEmpty(record[6]) ? record[1].Substring(0, 2) : record[6]
+                    group record[1] by regionCode into subregionCodesGroupedByRegionCode
                     select subregionCodesGroupedByRegionCode).ToDictionary(group => group.Key);
 
                 foreach(var regionCode in regionSubregion.Keys)
