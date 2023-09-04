@@ -215,7 +215,7 @@ namespace Test
             )
         {
             await _container.ResolveKeyed<IEtl>(typeof(Country)).ExecuteAsync();
-            var loader = (IEtl)_container.ResolveKeyed<SubdivisionLoader>(alpha2Code);
+            IEtl loader = _container.ResolveKeyed<SubdivisionLoader>(alpha2Code);
             Assert.That(loader, Is.Not.Null);
             await loader.ExecuteAsync();
             using(var scope = _container.BeginLifetimeScope())
@@ -277,7 +277,7 @@ namespace Test
             )
         {
             await _container.ResolveKeyed<IEtl>(typeof(Iso3166._1._1.Country)).ExecuteAsync();
-            var loader = (IEtl)_container.ResolveKeyed<Data._1.SubdivisionLoader>(alpha2Code);
+            IEtl loader = _container.ResolveKeyed<Data._1.SubdivisionLoader>(alpha2Code);
             Assert.That(loader, Is.Not.Null);
             await loader.ExecuteAsync();
             using(var scope = _container.BeginLifetimeScope())

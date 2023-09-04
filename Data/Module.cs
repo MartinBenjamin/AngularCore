@@ -88,6 +88,11 @@ namespace Data
                 .SingleInstance());
 
             builder
+                .RegisterType<_1.Unsdm49Loader>()
+                .Keyed<IEtl>(typeof(_1.Unsdm49Loader))
+                .SingleInstance();
+
+            builder
                 .RegisterType<BranchLoader>()
                 .Keyed<IEtl>(typeof(Branch))
                 .SingleInstance();
