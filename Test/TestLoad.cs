@@ -438,6 +438,54 @@ namespace Test
         }
 
         [Test]
+        public async Task UnsdM49()
+        {
+            await _container.ResolveKeyed<IEtl>(typeof(Iso3166._1._1.Country)).ExecuteAsync();
+            IEtl loader = _container.ResolveKeyed<IEtl>(typeof(Data._1.Unsdm49Loader));
+            Assert.That(loader, Is.Not.Null);
+            await loader.ExecuteAsync();
+
+            using(var scope = _container.BeginLifetimeScope())
+            {
+                var session = scope.Resolve<ISession>();
+                var guidGenerator = scope.Resolve<IGuidGenerator>();
+                var namespaceId = Data._1.CountryLoader.NamespaceId;
+                var csvExtractor = scope.Resolve<ICsvExtractor>();
+                var extracted = (await csvExtractor.ExtractAsync(loader.FileName));
+
+                var countries = (await session
+                    .CreateCriteria<Iso3166._1._1.Country>()
+                    .ListAsync<Iso3166._1._1.Country>())
+                    .ToDictionary(
+                        country => country.Alpha3Code,
+                        country => country);
+
+                foreach(var record in extracted)
+                    if(countries.TryGetValue(
+                        record[10],
+                        out var country))
+                    {
+                        Locations._1.GeographicSubregion subregion = country;
+                        var level = 3;
+                        while(level > 0)
+                        {
+                            var code = record[level * 2];
+                            if(code != string.Empty)
+                            {
+                                var region = await session.GetAsync<Locations._1.GeographicRegion>(guidGenerator.Generate(
+                                    Data._1.CountryLoader.NamespaceId,
+                                    code));
+                                Assert.That(subregion.Regions.Contains(region), Is.True);
+                                Assert.That(region.Subregions.Contains(subregion), Is.True);
+                                subregion = region as Locations._1.GeographicSubregion;
+                            }
+                            level -= 1;
+                        }
+                    }
+            }
+        }
+
+        [Test]
         public async Task Iso4217()
         {
             var loader = _container.ResolveKeyed<IEtl>(typeof(Currency));

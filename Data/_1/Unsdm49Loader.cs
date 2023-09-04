@@ -1,4 +1,5 @@
-﻿using Iso3166._1._1;
+﻿using CommonDomainObjects;
+using Iso3166._1._1;
 using Locations._1;
 using NHibernate;
 using System;
@@ -55,7 +56,7 @@ namespace Data._1
 
                 var records = await _csvExtractor.ExtractAsync(_fileName);
                 var geographicRegions = new Dictionary<string, GeographicRegion>();
-                var regionSubregionAssociations = new List<GeographicRegionSubregion>();
+                var regionSubregions = new HashSet<GeographicRegionSubregion>();
                 foreach(var record in records)
                     if(countries.TryGetValue(
                         record[10],
@@ -83,8 +84,7 @@ namespace Data._1
                                     geographicRegions[code] = region;
                                 }
 
-                                await session.SaveAsync(
-                                    new GeographicRegionSubregion(
+                                regionSubregions.Add(new GeographicRegionSubregion(
                                         region,
                                         subregion));
 
@@ -94,6 +94,8 @@ namespace Data._1
                             level -= 1;
                         }
                     }
+
+                await regionSubregions.ForEachAsync(regionSubregion => session.SaveAsync(regionSubregion));
 
                 await transaction.CommitAsync();
             }
