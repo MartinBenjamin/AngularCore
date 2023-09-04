@@ -84,10 +84,14 @@ namespace Data._1
                                     geographicRegions[code] = region;
                                 }
 
-                                regionSubregions.Add(new GeographicRegionSubregion(
-                                        region,
-                                        subregion));
+                                var regionSubregion = new GeographicRegionSubregion(
+                                    region,
+                                    subregion);
 
+                                if(regionSubregions.Contains(regionSubregion))
+                                    break;
+
+                                regionSubregions.Add(regionSubregion);
                                 subregion = region as GeographicSubregion;
                             }
 
