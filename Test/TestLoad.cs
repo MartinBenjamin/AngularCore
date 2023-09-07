@@ -502,6 +502,7 @@ namespace Test
                                     Data._1.CountryLoader.NamespaceId,
                                     code));
                                 Assert.That(region, Is.Not.Null);
+                                Assert.That(region.Name, Is.EqualTo(record[level * 2 + 1]));
                                 ISet<Locations._1.GeographicRegion> regions = null;
                                 if(subregionRegions.TryGetValue(
                                     subregion,
