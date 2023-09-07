@@ -486,34 +486,49 @@ namespace Test
 
                 var subregionRegions = new Dictionary<Locations._1.GeographicSubregion, ISet<Locations._1.GeographicRegion>>();
 
-                //foreach(var record in extracted)
-                //    if(countries.TryGetValue(
-                //        record[10],
-                //        out var country))
-                //    {
-                //        Locations._1.GeographicSubregion subregion = country;
-                //        var level = 3;
-                //        while(level > 0)
-                //        {
-                //            var code = record[level * 2];
-                //            if(code != string.Empty)
-                //            {
-                //                var region = await session.GetAsync<Locations._1.GeographicRegion>(guidGenerator.Generate(
-                //                    Data._1.CountryLoader.NamespaceId,
-                //                    code));
-                //                Assert.That(region, Is.Not.Null);
-                //                ISet<Locations._1.GeographicRegion> regions = null;
-                //                if(!subregionRegions.TryGetValue(
-                //                    subregion,
-                //                    out regions))
-                //                    subregionRegions[subregion] = regions = new HashSet<Locations._1.GeographicRegion>();
-                //                //regions.Add
+                foreach(var record in extracted)
+                    if(countries.TryGetValue(
+                        record[10],
+                        out var country))
+                    {
+                        Locations._1.GeographicSubregion subregion = country;
+                        var level = 3;
+                        while(level >= 0)
+                        {
+                            var code = record[level * 2];
+                            if(code != string.Empty)
+                            {
+                                var region = await session.GetAsync<Locations._1.GeographicRegion>(guidGenerator.Generate(
+                                    Data._1.CountryLoader.NamespaceId,
+                                    code));
+                                Assert.That(region, Is.Not.Null);
+                                ISet<Locations._1.GeographicRegion> regions = null;
+                                if(subregionRegions.TryGetValue(
+                                    subregion,
+                                    out regions))
+                                    break;
 
-                //                subregion = region as Locations._1.GeographicSubregion;
-                //            }
-                //            level -= 1;
-                //        }
-                //    }
+                                subregionRegions[subregion] = regions = new HashSet<Locations._1.GeographicRegion>();
+                                regions.Add(region);
+                                subregion = region as Locations._1.GeographicSubregion;
+                            }
+                            level -= 1;
+                        }
+                    }
+
+                foreach(var subregion in subregionRegions.Keys)
+                    Assert.That(subregionRegions[subregion].SetEquals(subregion.Regions), Is.True);
+
+                var regionSubregions = (
+                    from keyValue in subregionRegions
+                    from value in keyValue.Value
+                    group keyValue.Key by value into keysGroupedByValue
+                    select keysGroupedByValue).ToDictionary(
+                        group => group.Key,
+                        group => (ISet<Locations._1.GeographicSubregion>)group.ToHashSet());
+
+                foreach(var region in regionSubregions.Keys)
+                    Assert.That(regionSubregions[region].SetEquals(region.Subregions), Is.True);
             }
         }
 

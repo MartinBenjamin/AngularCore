@@ -101,6 +101,26 @@ namespace CommonDomainObjects
                     tuple => tuple.Out,
                     tuple => tuple.In);
 
+        public static IDictionary<TVertex, ISet<TVertex>> Transpose<TVertex>(
+            this IDictionary<TVertex, ISet<TVertex>> graph
+            ) => (
+                from vertex in graph.Keys
+                join edge in
+                (
+                    from @out in graph.Keys
+                    from @in in graph[@out]
+                    select (
+                        Out: @out,
+                        In: @in)
+                )
+                on vertex equals edge.In into edgesGroupedByIn
+                select (
+                    Out: vertex,
+                    In: (ISet<TVertex>)edgesGroupedByIn.Select(edge => edge.Out).ToHashSet())
+                ).ToDictionary(
+                    tuple => tuple.Out,
+                    tuple => tuple.In);
+
         public static IDictionary<V, IList<V>> Select<U, V>(
             this IDictionary<U, IList<U>> graph,
             Func<U, V>                    selector
