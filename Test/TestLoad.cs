@@ -460,30 +460,6 @@ namespace Test
                         country => country.Alpha3Code,
                         country => country);
 
-                foreach(var record in extracted)
-                    if(countries.TryGetValue(
-                        record[10],
-                        out var country))
-                    {
-                        Locations._1.GeographicSubregion subregion = country;
-                        var level = 3;
-                        while(level > 0)
-                        {
-                            var code = record[level * 2];
-                            if(code != string.Empty)
-                            {
-                                var region = await session.GetAsync<Locations._1.GeographicRegion>(guidGenerator.Generate(
-                                    Data._1.CountryLoader.NamespaceId,
-                                    code));
-                                Assert.That(region, Is.Not.Null);
-                                Assert.That(subregion.Regions.Contains(region), Is.True);
-                                Assert.That(region.Subregions.Contains(subregion), Is.True);
-                                subregion = region as Locations._1.GeographicSubregion;
-                            }
-                            level -= 1;
-                        }
-                    }
-
                 var subregionRegions = new Dictionary<Locations._1.GeographicSubregion, ISet<Locations._1.GeographicRegion>>();
 
                 foreach(var record in extracted)
@@ -530,6 +506,29 @@ namespace Test
 
                 foreach(var region in regionSubregions.Keys)
                     Assert.That(regionSubregions[region].SetEquals(region.Subregions), Is.True);
+
+                var service = scope.Resolve<IDomainObjectService<Guid, Locations._1.GeographicRegionHierarchy>>();
+                var hierarchy = await service.GetAsync(new Guid("80bd57c5-7f3a-48d6-ba89-ad9ddaf12ebb"));
+                Assert.That(hierarchy, Is.Not.Null);
+
+                Func<Locations._1.GeographicRegion, Locations._1.GeographicRegionHierarchyMember> map = geographicRegion => hierarchy[geographicRegion];
+
+                Assert.That(hierarchy.Members.Count, Is.GreaterThan(0));
+                Assert.That(hierarchy.Members
+                    .Select(hierarchyMember => hierarchyMember.Member)
+                    .All(
+                        gr => map.PreservesStructure(
+                            geographicRegion => geographicRegion is Locations._1.GeographicSubregion geographicSubregion ? geographicSubregion.Regions.Single() : null,
+                            hierarchyMember => hierarchyMember.Parent,
+                            gr)), Is.True);
+
+                Assert.That(hierarchy.Members
+                    .Select(hierarchyMember => hierarchyMember.Member)
+                    .All(
+                        gr => map.PreservesStructure(
+                            geographicRegion => geographicRegion.Subregions,
+                            hierarchyMember => hierarchyMember.Children,
+                            gr)), Is.True);
             }
         }
 
