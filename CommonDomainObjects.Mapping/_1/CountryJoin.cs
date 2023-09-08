@@ -27,6 +27,15 @@ namespace CommonDomainObjects.Mapping._1
                         });
 
                     joinMapper.Property(
+                        country => country.Alpha2Code,
+                        propertyMapper =>
+                        {
+                            propertyMapper.Column(columnMapper => columnMapper.SqlType("NCHAR(2)"));
+                            propertyMapper.Unique(true);
+                            propertyMapper.NotNullable(true);
+                        });
+
+                    joinMapper.Property(
                         country => country.Alpha3Code,
                         propertyMapper =>
                         {
