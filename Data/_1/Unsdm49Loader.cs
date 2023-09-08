@@ -110,10 +110,10 @@ namespace Data._1
 
                 var world = m49Regions["001"];
                 var parent = new Dictionary<GeographicRegion, IList<GeographicRegion>>();
-                await world.VisitAsync(async region =>
+                world.Visit(region =>
                 {
-                    if(region is GeographicSubregion)
-                        parent[region] = ((GeographicSubregion)region).Regions.ToList();
+                    if(region is GeographicSubregion subregion)
+                        parent[region] = subregion.Regions.ToList();
                 });
                 var hierarchy = new GeographicRegionHierarchy(
                     new Guid("80bd57c5-7f3a-48d6-ba89-ad9ddaf12ebb"),
