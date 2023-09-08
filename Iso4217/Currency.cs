@@ -4,8 +4,9 @@ namespace Iso4217
 {
     public class Currency: Named<string>
     {
-        public virtual int  NumericCode { get; protected set; }
-        public virtual int? MinorUnit   { get; protected set; }
+        public virtual string AlphaCode   { get; protected set; }
+        public virtual int    NumericCode { get; protected set; }
+        public virtual int?   MinorUnit   { get; protected set; }
 
         protected Currency() : base()
         {
@@ -20,6 +21,7 @@ namespace Iso4217
                 alphaCode,
                 name)
         {
+            AlphaCode   = alphaCode;
             NumericCode = numericCode;
             MinorUnit   = minorUnit;
         }

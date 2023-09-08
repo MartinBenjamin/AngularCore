@@ -544,7 +544,7 @@ namespace Test
                     .Where(record => !string.IsNullOrEmpty(record[2]))
                     .ToList();
                 var service = scope.Resolve<INamedService<string, Currency, NamedFilters>>();
-                var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(currency => currency.Id);
+                var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(currency => currency.AlphaCode);
 
                 //Assert.That(loaded.Keys.Count, Is.EqualTo(extracted.Count));
 
@@ -553,6 +553,7 @@ namespace Test
                     Assert.That(loaded.ContainsKey(record[2]), Is.True);
                     var currency = loaded[record[2]];
                     Assert.That(currency.Id         , Is.EqualTo(record[2]           ));
+                    Assert.That(currency.AlphaCode  , Is.EqualTo(record[2])          );
                     Assert.That(currency.Name       , Is.EqualTo(record[1]           ));
                     Assert.That(currency.NumericCode, Is.EqualTo(int.Parse(record[3])));
 
