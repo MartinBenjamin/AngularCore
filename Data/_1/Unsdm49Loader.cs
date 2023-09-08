@@ -47,22 +47,29 @@ namespace Data._1
             using(var session = _sessionFactory.OpenSession())
             using(var transaction = session.BeginTransaction())
             {
-                var countries = (await session
-                    .CreateCriteria<Country>()
-                    .ListAsync<Country>())
-                    .ToDictionary(
-                        country => country.Alpha3Code,
-                        country => country);
+                // Populate session.
+                await session
+                    .CreateCriteria<GeographicRegion>()
+                    .Fetch("Subregions")
+                    .ListAsync<GeographicRegion>();
+
+                var geographicRegions = await session
+                    .CreateCriteria<GeographicRegion>()
+                    .ListAsync<GeographicRegion>();
+
+                var countries = geographicRegions.OfType<Country>().ToDictionary(
+                    country => country.Alpha3Code,
+                    country => country);
 
                 var records = await _csvExtractor.ExtractAsync(_fileName);
-                var geographicRegions = new Dictionary<string, GeographicRegion>();
-                var regionSubregions = new HashSet<GeographicRegionSubregion>();
+                var m49Regions = new Dictionary<string, GeographicRegion>();
+                var m49RegionSubregions = new HashSet<GeographicRegionSubregion>();
                 foreach(var record in records)
                     if(countries.TryGetValue(
                         record[10],
                         out var country))
                     {
-                        geographicRegions[record[9]] = country;
+                        m49Regions[record[9]] = country;
                         GeographicSubregion subregion = country;
                         var level = _levels.Length - 1;
                         while(level >= 0)
@@ -70,7 +77,7 @@ namespace Data._1
                             var code = record[level * 2];
                             if(code != string.Empty)
                             {
-                                geographicRegions.TryGetValue(
+                                m49Regions.TryGetValue(
                                     code,
                                     out var region);
 
@@ -81,17 +88,17 @@ namespace Data._1
                                         record[level * 2 + 1]);
                                     await session.SaveAsync(region);
 
-                                    geographicRegions[code] = region;
+                                    m49Regions[code] = region;
                                 }
 
                                 var regionSubregion = new GeographicRegionSubregion(
                                     region,
                                     subregion);
 
-                                if(regionSubregions.Contains(regionSubregion))
+                                if(m49RegionSubregions.Contains(regionSubregion))
                                     break;
 
-                                regionSubregions.Add(regionSubregion);
+                                m49RegionSubregions.Add(regionSubregion);
                                 subregion = region as GeographicSubregion;
                             }
 
@@ -99,7 +106,20 @@ namespace Data._1
                         }
                     }
 
-                await regionSubregions.ForEachAsync(regionSubregion => session.SaveAsync(regionSubregion));
+                await m49RegionSubregions.ForEachAsync(regionSubregion => session.SaveAsync(regionSubregion));
+
+                var world = m49Regions["001"];
+                var parent = new Dictionary<GeographicRegion, IList<GeographicRegion>>();
+                await world.VisitAsync(async region =>
+                {
+                    if(region is GeographicSubregion)
+                        parent[region] = ((GeographicSubregion)region).Regions.ToList();
+                });
+                var hierarchy = new GeographicRegionHierarchy(
+                    new Guid("80bd57c5-7f3a-48d6-ba89-ad9ddaf12ebb"),
+                    parent);
+                await session.SaveAsync(hierarchy);
+                await hierarchy.VisitAsync(async member => await session.SaveAsync(member));
 
                 await transaction.CommitAsync();
             }
