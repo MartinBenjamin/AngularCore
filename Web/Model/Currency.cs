@@ -2,7 +2,8 @@
 {
     public class Currency: Named<string>
     {
-        public int  NumericCode { get; set; }
-        public int? MinorUnit   { get; set; }
+        public string AlphaCode   { get; set; }
+        public int    NumericCode { get; set; }
+        public int?   MinorUnit   { get; set; }
     }
 }
