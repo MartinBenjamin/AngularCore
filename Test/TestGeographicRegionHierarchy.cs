@@ -11,12 +11,12 @@ namespace Test
     [TestFixture]    
     public class TestGeographicRegionHierarchy
     {
-        private static readonly IDictionary<char, IList<char>> _parent = new Dictionary<char, IList<char>>
+        private static readonly IDictionary<char, IList<char>> _child = new Dictionary<char, IList<char>>
         {
             { 'A', new char[]{} },
-            { 'B', new char[]{} },
-            { 'C', new char[]{ 'B' } },
-            { 'D', new char[]{ 'B' } },
+            { 'B', new char[]{ 'C', 'D' } },
+            { 'C', new char[]{} },
+            { 'D', new char[]{} },
         };
 
         [TestCase('A', 'A', true )]
@@ -42,7 +42,7 @@ namespace Test
             )
         {
 
-            var map = _parent.Keys.ToDictionary(
+            var map = _child.Keys.ToDictionary(
                 vertex => vertex,
                 vertex => (GeographicRegion)new Subdivision(
                     Guid.NewGuid(),
@@ -51,14 +51,14 @@ namespace Test
                     null,
                     null,
                     null));
-            var geographicRegionHierarchy = new GeographicRegionHierarchy(_parent.Select(c => map[c]));
+            var geographicRegionHierarchy = new GeographicRegionHierarchy(_child.Select(c => map[c]));
             Assert.That(geographicRegionHierarchy[map[lhs]].Contains(geographicRegionHierarchy[map[rhs]]), Is.EqualTo(contains));
         }
 
         [Test]
-        public void NewClassificationScheme()
+        public void Construction()
         {
-            var parent = _parent.Select(
+            var child = _child.Select(
                 vertex => (GeographicRegion)new Subdivision(
                     Guid.NewGuid(),
                     vertex.ToString(),
@@ -66,10 +66,10 @@ namespace Test
                     null,
                     null,
                     null));
-            var child = parent.Transpose();
+            var parent = child.Transpose();
 
-            var geographicRegionHierarchy = new GeographicRegionHierarchy(parent);
-            Assert.That(geographicRegionHierarchy.Members.Count, Is.EqualTo(parent.Count));
+            var geographicRegionHierarchy = new GeographicRegionHierarchy(child);
+            Assert.That(geographicRegionHierarchy.Members.Count, Is.EqualTo(child.Count));
 
             Func<GeographicRegion, GeographicRegionHierarchyMember> map = geographicRegion => geographicRegionHierarchy[geographicRegion];
             Func<GeographicRegionHierarchyMember, GeographicRegion> inverseMap =

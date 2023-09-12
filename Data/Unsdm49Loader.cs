@@ -121,11 +121,15 @@ namespace Data
                         pair.Value)));
 
                 var world = m49Regions["001"];
-                var parent = new Dictionary<GeographicRegion, IList<GeographicRegion>>();
-                world.Visit(region => parent[region] = region is GeographicSubregion subregion ? subregion.Regions.ToList() : new List<GeographicRegion>());
+                var child = new Dictionary<GeographicRegion, IList<GeographicRegion>>();
+                world.Visit(region =>
+                    child[region] = region.Subregions
+                        .Cast<GeographicRegion>()
+                        .OrderBy(subregion => subregion.Name)
+                        .ToList());
                 var hierarchy = new GeographicRegionHierarchy(
                     new Guid("80bd57c5-7f3a-48d6-ba89-ad9ddaf12ebb"),
-                    parent);
+                    child);
                 await session.SaveAsync(hierarchy);
                 await hierarchy.VisitAsync(member => session.SaveAsync(member));
 

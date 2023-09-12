@@ -21,12 +21,12 @@ namespace CommonDomainObjects
 
         public Hierarchy(
             TId                                  id,
-            IDictionary<TMember, IList<TMember>> parent
+            IDictionary<TMember, IList<TMember>> child
             ) : base(id)
         {
             _members = new List<THierarchyMember>();
 
-            var child = parent.Transpose();
+            var parent = child.Transpose();
 
             var next = 0;
             foreach(var member in parent.Keys.Where(key => parent[key].Count == 0))
