@@ -72,7 +72,7 @@
                               [dtValidatedObject]="facility"
                               dtValidatedProperty="Currency">
                         <option [ngValue]="null"></option>
-                        <option *ngFor="let currency of currencies" [ngValue]="currency">{{currency.Id}}</option>
+                        <option *ngFor="let currency of currencies" [ngValue]="currency">{{currency.AlphabeticCode}}</option>
                       </select>
                     </td>
                     <ng-template #Loading>

@@ -44,8 +44,8 @@ namespace Service
                 .As<INamedService<Guid, Subdivision, NamedFilters>>()
                 .InstancePerLifetimeScope();
             builder
-                .RegisterType<NamedService<string, Currency, NamedFilters>>()
-                .As<INamedService<string, Currency, NamedFilters>>()
+                .RegisterType<NamedService<Guid, Currency, NamedFilters>>()
+                .As<INamedService<Guid, Currency, NamedFilters>>()
                 .InstancePerLifetimeScope();
             builder
                 .RegisterType<NamedService<Guid, Global, NamedFilters>>()

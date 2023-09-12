@@ -1,8 +1,9 @@
 ﻿using CommonDomainObjects;
+using System;
 
 namespace Iso4217
 {
-    public class Currency: Named<string>
+    public class Currency: Named<Guid>
     {
         public virtual string AlphabeticCode { get; protected set; }
         public virtual int    NumericCode    { get; protected set; }
@@ -13,12 +14,13 @@ namespace Iso4217
         }
 
         public Currency(
+            Guid   id,
             string alphabeticCode,
             int    numericCode,
             string name,
             int?   minorUnit
             ): base(
-                alphabeticCode,
+                id,
                 name)
         {
             AlphabeticCode = alphabeticCode;

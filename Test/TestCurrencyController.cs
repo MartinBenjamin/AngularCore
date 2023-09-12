@@ -1,29 +1,25 @@
 ﻿using Autofac;
 using Iso4217;
 using NHibernate;
-using NHibernate.Tool.hbm2ddl;
-using NHibernateIntegration;
 using NUnit.Framework;
 using Service;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using Web;
 using Web.Controllers;
 
 namespace Test
 {
     [TestFixture]
-    public class TestCurrencyController: TestNamedController<string, Currency, NamedFilters, Web.Model.Currency, NamedFilters, CurrencyController>
+    public class TestCurrencyController: TestNamedController<Guid, Currency, NamedFilters, Web.Model.Currency, NamedFilters, CurrencyController>
     {
+        private static Guid _currencyId = new Guid("8c3c20d8-427c-4d10-aed5-9e304c0ea044");
+
         [SetUp]
         public void SetUp()
         {
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
-                var currency = session.Get<Currency>("AAA");
+                var currency = session.Get<Currency>(_currencyId);
                 if(currency != null)
                     session.Delete(currency);
 
@@ -36,6 +32,7 @@ namespace Test
             )
         {
             var currency = new Currency(
+                _currencyId,
                 "AAA",
                 0,
                 name,

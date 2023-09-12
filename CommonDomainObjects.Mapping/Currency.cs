@@ -6,18 +6,14 @@ namespace CommonDomainObjects.Mapping
     {
         public Currency()
         {
-            Id(
-                currency => currency.Id,
-                idMapper => idMapper.Column(columnMapper => columnMapper.SqlType("NCHAR(3)")));
-
             Property(
-                    currency => currency.AlphabeticCode,
-                    propertyMapper =>
-                    {
-                        propertyMapper.Column(columnMapper => columnMapper.SqlType("NCHAR(3)"));
-                        propertyMapper.Unique(true);
-                        propertyMapper.NotNullable(true);
-                    });
+                currency => currency.AlphabeticCode,
+                propertyMapper =>
+                {
+                    propertyMapper.Column(columnMapper => columnMapper.SqlType("NCHAR(3)"));
+                    propertyMapper.Unique(true);
+                    propertyMapper.NotNullable(true);
+                });
         }
     }
 }

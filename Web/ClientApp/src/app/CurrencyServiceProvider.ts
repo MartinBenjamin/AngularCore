@@ -36,6 +36,6 @@ export const CurrenciesOrderedByCode: Provider =
     provide: CurrenciesOrderedByCodeToken,
     useFactory: (
         currencies: Observable<Currency[]>
-        ) => currencies.pipe(map(currencies => [...currencies].sort((lhs, rhs) => lhs.Id.localeCompare(rhs.Id)))),
+        ) => currencies.pipe(map(currencies => [...currencies].sort((lhs, rhs) => lhs.AlphabeticCode.localeCompare(rhs.AlphabeticCode)))),
     deps: [CurrenciesToken]
 };

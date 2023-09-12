@@ -1,7 +1,8 @@
-import { Named } from './CommonDomainObjects';
+import { Named, Guid } from './CommonDomainObjects';
 
-export interface Currency extends Named<string>
+export interface Currency extends Named<Guid>
 {
-    NumericCode: Number;
-    MinorUnit  : Number;
+    AlphabeticCode: string;
+    NumericCode   : number;
+    MinorUnit     : number;
 }

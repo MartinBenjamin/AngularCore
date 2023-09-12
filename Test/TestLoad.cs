@@ -352,10 +352,11 @@ namespace Test
             using(var scope = _container.BeginLifetimeScope())
             {
                 var csvExtractor = scope.Resolve<ICsvExtractor>();
+                var guidGenerator = scope.Resolve<IGuidGenerator>();
                 var extracted = (await csvExtractor.ExtractAsync(loader.FileName))
                     .Where(record => !string.IsNullOrEmpty(record[2]))
                     .ToList();
-                var service = scope.Resolve<INamedService<string, Currency, NamedFilters>>();
+                var service = scope.Resolve<INamedService<Guid, Currency, NamedFilters>>();
                 var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(currency => currency.AlphabeticCode);
 
                 //Assert.That(loaded.Keys.Count, Is.EqualTo(extracted.Count));
@@ -364,7 +365,7 @@ namespace Test
                 {
                     Assert.That(loaded.ContainsKey(record[2]), Is.True);
                     var currency = loaded[record[2]];
-                    Assert.That(currency.Id            , Is.EqualTo(record[2]           ));
+                    Assert.That(currency.Id            , Is.EqualTo(guidGenerator.Generate(CurrencyLoader.NamespaceId, record[2])));
                     Assert.That(currency.AlphabeticCode, Is.EqualTo(record[2])          );
                     Assert.That(currency.Name          , Is.EqualTo(record[1]           ));
                     Assert.That(currency.NumericCode   , Is.EqualTo(int.Parse(record[3])));
