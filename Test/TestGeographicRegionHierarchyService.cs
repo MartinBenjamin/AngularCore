@@ -74,6 +74,7 @@ namespace Test
         {
             var parent = _parent.Select(
                 vertex => (GeographicRegion)new Subdivision(
+                    Guid.NewGuid(),
                     vertex.ToString(),
                     vertex.ToString(),
                     null,

@@ -1,8 +1,9 @@
 ﻿using Locations;
+using System;
 
 namespace Iso3166._1
 {
-    public class Country: GeographicRegion
+    public class Country: GeographicSubregion
     {
         public virtual string Alpha2Code  { get; protected set; }
         public virtual string Alpha3Code  { get; protected set; }
@@ -15,13 +16,14 @@ namespace Iso3166._1
         }
 
         public Country(
+            Guid   id,
             string alpha2Code,
             string alpha3Code,
             string alpha4Code,
             int    numericCode,
             string shortName
             ) : base(
-                alpha2Code,
+                id,
                 shortName)
         {
             Alpha2Code  = alpha2Code;

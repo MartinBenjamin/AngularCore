@@ -1,4 +1,5 @@
 ﻿using CommonDomainObjects;
+using Identifiers;
 using Iso3166._1;
 using Locations;
 using NHibernate;
@@ -12,26 +13,30 @@ namespace Data
 {
     public class Unsdm49Loader: IEtl
     {
-        private static readonly Func<string, string, GeographicRegion, GeographicRegion>[] _levels = new Func<string, string, GeographicRegion, GeographicRegion>[]
+        private static readonly Func<Guid, string, GeographicRegion>[] _levels = new Func<Guid, string, GeographicRegion>[]
             {
-                (string code, string name, GeographicRegion geographicRegion) => new Global            (code, name                  ),
-                (string code, string name, GeographicRegion geographicRegion) => new Region            (code, name, geographicRegion),
-                (string code, string name, GeographicRegion geographicRegion) => new SubRegion         (code, name, geographicRegion),
-                (string code, string name, GeographicRegion geographicRegion) => new IntermediateRegion(code, name, geographicRegion)
+                (Guid id, string name) => new Global            (id, name),
+                (Guid id, string name) => new Region            (id, name),
+                (Guid id, string name) => new SubRegion         (id, name),
+                (Guid id, string name) => new IntermediateRegion(id, name)
             };
 
         private readonly ICsvExtractor   _csvExtractor;
         private readonly ISessionFactory _sessionFactory;
+        private readonly IGuidGenerator  _guidGenerator;
 
+        private static readonly Guid   _identificationSchemeId = new Guid("b7b5b6cd-be4c-4cf7-a715-fe23bb12d6f7");
         private static readonly string _fileName = "UNSDM49.csv";
 
         public Unsdm49Loader(
             ICsvExtractor   csvExtractor,
-            ISessionFactory sessionFactory
+            ISessionFactory sessionFactory,
+            IGuidGenerator  guidGenerator
             )
         {
             _csvExtractor   = csvExtractor;
             _sessionFactory = sessionFactory;
+            _guidGenerator  = guidGenerator;
         }
 
         string IEtl.FileName
@@ -41,7 +46,6 @@ namespace Data
 
         async Task IEtl.ExecuteAsync()
         {
-
             using(var session = _sessionFactory.OpenSession())
             using(var transaction = session.BeginTransaction())
             {
@@ -57,82 +61,76 @@ namespace Data
 
                 var countries = geographicRegions.OfType<Country>().ToDictionary(
                     country => country.Alpha3Code,
-                    country => (GeographicRegion)country);
+                    country => country);
 
-                var countryParent = (await _csvExtractor
-                    .ExtractAsync(_fileName))
-                    .Where(record => countries.ContainsKey(record[10]))
-                    .Select(
-                        record =>
-                        (
-                            Child: countries[record[10]],
-                            Parent: (IList<GeographicRegion>)new List<GeographicRegion>
+                var records = await _csvExtractor.ExtractAsync(_fileName);
+                var m49Regions = new Dictionary<string, GeographicRegion>();
+                var m49RegionSubregions = new HashSet<GeographicRegionSubregion>();
+                foreach(var record in records)
+                    if(countries.TryGetValue(
+                        record[10],
+                        out var country))
+                    {
+                        m49Regions[record[9]] = country;
+                        GeographicSubregion subregion = country;
+                        var level = _levels.Length - 1;
+                        while(level >= 0)
+                        {
+                            var code = record[level * 2];
+                            if(code != string.Empty)
                             {
-                                GetParent(
-                                    session,
-                                    geographicRegions,
-                                    record,
-                                    _levels.Length - 1)
+                                m49Regions.TryGetValue(
+                                    code,
+                                    out var region);
+
+                                if(region == null)
+                                {
+                                    region = _levels[level](
+                                        _guidGenerator.Generate(CountryLoader.NamespaceId, code),
+                                        record[level * 2 + 1]);
+                                    await session.SaveAsync(region);
+
+                                    m49Regions[code] = region;
+                                }
+
+                                var regionSubregion = new GeographicRegionSubregion(
+                                    region,
+                                    subregion);
+
+                                if(m49RegionSubregions.Contains(regionSubregion))
+                                    break;
+
+                                m49RegionSubregions.Add(regionSubregion);
+                                subregion = region as GeographicSubregion;
                             }
-                        )).ToList();
 
-                var parent = (
-                    from region in geographicRegions.Where(geographicRegion => !geographicRegion.Is<Country>())
-                    join subregion in geographicRegions.OfType<GeographicSubregion>() on region equals subregion into subregions
-                    select
-                    (
-                        Child: region,
-                        Parent: (IList<GeographicRegion>)subregions.Select(subregion => subregion.Region).ToList()
-                    )).Concat(countryParent).ToDictionary(
-                        tuple => tuple.Child,
-                        tuple => tuple.Parent);
+                            level -= 1;
+                        }
+                    }
 
+                await m49RegionSubregions.ForEachAsync(regionSubregion => session.SaveAsync(regionSubregion));
+
+                var identificationScheme = new IdentificationScheme(
+                    _identificationSchemeId,
+                    "UN M49");
+                await session.SaveAsync(identificationScheme);
+                await m49Regions.ForEachAsync(pair => session.SaveAsync(
+                    new GeographicRegionIdentifier(
+                        identificationScheme,
+                        pair.Key,
+                        pair.Value)));
+
+                var world = m49Regions["001"];
+                var parent = new Dictionary<GeographicRegion, IList<GeographicRegion>>();
+                world.Visit(region => parent[region] = region is GeographicSubregion subregion ? subregion.Regions.ToList() : new List<GeographicRegion>());
                 var hierarchy = new GeographicRegionHierarchy(
                     new Guid("80bd57c5-7f3a-48d6-ba89-ad9ddaf12ebb"),
                     parent);
-
                 await session.SaveAsync(hierarchy);
-                await hierarchy.VisitAsync(async member => await session.SaveAsync(member));
+                await hierarchy.VisitAsync(member => session.SaveAsync(member));
+
                 await transaction.CommitAsync();
             }
-        }
-
-        private GeographicRegion GetParent(
-            ISession                session,
-            IList<GeographicRegion> geographicRegions,
-            IList<string>           record,
-            int                     level
-            )
-        {
-            var code = record[level * 2];
-            if(code == string.Empty)
-                return GetParent(
-                    session,
-                    geographicRegions,
-                    record,
-                    level - 1);
-
-            var geographicRegion = session.Get<GeographicRegion>(code);
-            if(geographicRegion == null)
-            {
-                GeographicRegion parentGeographicRegion = null;
-                if(level > 0)
-                    parentGeographicRegion = GetParent(
-                        session,
-                        geographicRegions,
-                        record,
-                        level - 1);
-
-                geographicRegion = _levels[level](
-                    code,
-                    record[level * 2 + 1],
-                    parentGeographicRegion);
-
-                session.Save(geographicRegion);
-                geographicRegions.Add(geographicRegion);
-            }
-
-            return geographicRegion;
         }
     }
 }

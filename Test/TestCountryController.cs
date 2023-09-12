@@ -3,20 +3,23 @@ using Iso3166._1;
 using NHibernate;
 using NUnit.Framework;
 using Service;
+using System;
 using Web.Controllers;
 
 namespace Test
 {
     [TestFixture]
-    public class TestCountryController: TestNamedController<string, Country, NamedFilters, Web.Model.Country, NamedFilters, CountryController>
+    public class TestCountryController: TestNamedController<Guid, Country, NamedFilters, Web.Model.Country, NamedFilters, CountryController>
     {
+        private static Guid _countryId = new Guid("8c3c20d8-427c-4d10-aed5-9e304c0ea044");
+
         [SetUp]
         public void SetUp()
         {
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
-                var country = session.Get<Country>("AA");
+                var country = session.Get<Country>(_countryId);
                 if(country != null)
                     session.Delete(country);
 
@@ -29,6 +32,7 @@ namespace Test
             )
         {
             var country = new Country(
+                _countryId,
                 "AA",
                 "AAA",
                 null,

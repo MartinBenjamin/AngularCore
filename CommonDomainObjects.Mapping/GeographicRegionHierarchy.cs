@@ -6,6 +6,7 @@ namespace CommonDomainObjects.Mapping
     {
         public GeographicRegionHierarchy()
         {
+            Schema("Locations");
         }
     }
 }

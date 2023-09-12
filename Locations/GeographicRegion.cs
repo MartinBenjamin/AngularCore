@@ -2,54 +2,33 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Locations
 {
-    public abstract class GeographicRegion: Named<string>
+    public abstract class GeographicRegion: Named<Guid>
     {
-        private IList<GeographicSubregion> _subregions;
-
-        public virtual Range<int> Interval { get; protected set; }
+        private ISet<GeographicSubregion> _subregions;
 
         public virtual IReadOnlyList<GeographicSubregion> Subregions
-            => new ReadOnlyCollection<GeographicSubregion>(_subregions);
+            => new ReadOnlyCollection<GeographicSubregion>(_subregions.ToList());
 
         protected GeographicRegion() : base()
         {
         }
 
         protected GeographicRegion(
-            string id,
+            Guid   id,
             string name
             ) : base(
                 id,
                 name)
         {
-            _subregions = new List<GeographicSubregion>();
+            _subregions = new HashSet<GeographicSubregion>();
         }
 
-        public virtual bool Contains(
-            GeographicRegion geographicalRegion
-            ) => Interval.Contains(geographicalRegion.Interval);
-
-        protected internal virtual int AssignInterval(
-            int next
-            )
-        {
-            var start = next++;
-
-            foreach(var subregion in _subregions)
-                next = subregion.AssignInterval(next);
-
-            Interval = new Range<int>(
-                start,
-                next++);
-
-            return next;
-        }
-
-        protected internal virtual void Add(
+        protected internal virtual void AddSubregion(
             GeographicSubregion subregion
             )
         {

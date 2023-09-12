@@ -15,14 +15,17 @@ namespace Data
         private static readonly string _leiNamespace = "http://www.gleif.org/data/schema/leidata/2016";
 
         private readonly ISessionFactory _sessionfactory;
+        private readonly IGuidGenerator  _guidGenerator;
         private readonly int             _batchSize;
 
         public LegalEntityLoader(
             ISessionFactory sessionFactory,
+            IGuidGenerator  guidGenerator,
             int             batchSize
             )
         {
             _sessionfactory = sessionFactory;
+            _guidGenerator  = guidGenerator;
             _batchSize      = batchSize;
         }
 
@@ -80,7 +83,7 @@ namespace Data
                                                     Guid.NewGuid(),
                                                     legalName,
                                                     null,
-                                                    session.Load<Country>(legalJurisdiction.Substring(0, 2))));
+                                                    session.Load<Country>(_guidGenerator.Generate(CountryLoader.NamespaceId, legalJurisdiction.Substring(0, 2)))));
                                         }
                                     }
 

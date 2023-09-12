@@ -1,8 +1,8 @@
 ﻿using NHibernate.Mapping.ByCode.Conformist;
 
-namespace CommonDomainObjects.Mapping._1
+namespace CommonDomainObjects.Mapping
 {
-    public class GeographicRegionSubregion: ClassMapping<Locations._1.GeographicRegionSubregion>
+    public class GeographicRegionSubregion: ClassMapping<Locations.GeographicRegionSubregion>
     {
         public GeographicRegionSubregion()
         {

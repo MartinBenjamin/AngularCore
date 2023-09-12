@@ -10,34 +10,31 @@ namespace CommonDomainObjects.Mapping
                 "Subdivision",
                 joinMapper =>
                 {
+                    joinMapper.Schema("Iso3166_2");
                     joinMapper.Key(
                         keyMapper =>
                         {
-                            keyMapper.Column(
-                                columnMapper =>
-                                {
-                                    columnMapper.Name("Code");
-                                    columnMapper.SqlType(GeographicRegion.IdSqlType);
-                                });
-
-                            keyMapper.ForeignKey("FK_" + nameof(Subdivision) + "_" + nameof(GeographicRegion));
+                            keyMapper.Column(columnMapper => columnMapper.Name("Id"));
+                            keyMapper.ForeignKey("FK_" + nameof(Iso3166._2.Subdivision) + "_" + nameof(Locations.GeographicRegion));
                         });
 
                     joinMapper.Property(
-                        subdivision => subdivision.Code,
+                        subdivision => subdivision.Id,
                         propertyMapper =>
                         {
                             propertyMapper.Insert(false);
                             propertyMapper.Update(false);
                         });
 
-                    joinMapper.ManyToOne(
-                        subdivision => subdivision.Country,
-                        manyToOneMapper => manyToOneMapper.Column(columnMapper => columnMapper.SqlType(GeographicRegion.IdSqlType)));
+                    joinMapper.Property(
+                        subdivision => subdivision.Code,
+                        propertyMapper => propertyMapper.Unique(true));
 
                     joinMapper.ManyToOne(
-                        subdivision => subdivision.ParentSubdivision,
-                        manyToOneMapper => manyToOneMapper.Column(columnMapper => columnMapper.SqlType(GeographicRegion.IdSqlType)));
+                        subdivision => subdivision.Country);
+
+                    joinMapper.ManyToOne(
+                        subdivision => subdivision.ParentSubdivision);
 
                     joinMapper.Property(
                         subdivision => subdivision.Category);

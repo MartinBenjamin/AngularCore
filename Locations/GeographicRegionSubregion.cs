@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Locations._1
+namespace Locations
 {
     public class GeographicRegionSubregion
     {
@@ -25,14 +25,9 @@ namespace Locations._1
 
         public override bool Equals(
             object obj
-            )
-        {
-            var rhs = obj as GeographicRegionSubregion;
-            return
-                rhs       != null       &&
-                Region    == rhs.Region &&
-                Subregion == rhs.Subregion;
-        }
+            ) => obj is GeographicRegionSubregion geographicRegionSubregion &&
+                Region    == geographicRegionSubregion.Region &&
+                Subregion == geographicRegionSubregion.Subregion;
 
         public override int GetHashCode() =>
             HashCode.Combine(

@@ -1,6 +1,8 @@
-﻿namespace Web.Model
+﻿using System;
+
+namespace Web.Model
 {
-    public class GeographicRegion: Named<string>
+    public class GeographicRegion: Named<Guid>
     {
         public GeographicRegionType Type { get; protected set; }
     }

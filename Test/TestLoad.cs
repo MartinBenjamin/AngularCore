@@ -86,18 +86,20 @@ namespace Test
             await loader.ExecuteAsync();
             using(var scope = _container.BeginLifetimeScope())
             {
+                var guidGenerator = scope.Resolve<IGuidGenerator>();
+                var namespaceId = CountryLoader.NamespaceId;
                 var csvExtractor = scope.Resolve<ICsvExtractor>();
                 var extracted = await csvExtractor.ExtractAsync(loader.FileName);
-                var service = scope.Resolve<INamedService<string, Country, NamedFilters>>();
+                var service = scope.Resolve<INamedService<Guid, Country, NamedFilters>>();
                 var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(country => country.Id);
 
                 Assert.That(loaded.Keys.Count, Is.EqualTo(extracted.Count));
 
                 foreach(var record in extracted)
                 {
-                    Assert.That(loaded.ContainsKey(record[2]), Is.True);
-                    var country = loaded[record[2]];
-                    Assert.That(country.Id         , Is.EqualTo(record[2]           ));
+                    var id = guidGenerator.Generate(namespaceId, record[2]);
+                    Assert.That(loaded.ContainsKey(id), Is.True);
+                    var country = loaded[id];
                     Assert.That(country.Name       , Is.EqualTo(record[0]           ));
                     Assert.That(country.Alpha2Code , Is.EqualTo(record[2]           ));
                     Assert.That(country.Alpha3Code , Is.EqualTo(record[3]           ));
@@ -139,70 +141,6 @@ namespace Test
                     Assert.That(numericIdentifier.GeographicRegion, Is.EqualTo(numericCodeCountry[int.Parse(numericIdentifier.Tag)]));
             }
         }
-        
-
-        [Test]
-        public async Task Iso3166_1_1()
-        {
-            var loader = _container.ResolveKeyed<IEtl>(typeof(Iso3166._1._1.Country));
-            await loader.ExecuteAsync();
-            using(var scope = _container.BeginLifetimeScope())
-            {
-                var guidGenerator = scope.Resolve<IGuidGenerator>();
-                var namespaceId = Data._1.CountryLoader.NamespaceId;
-                var csvExtractor = scope.Resolve<ICsvExtractor>();
-                var extracted = await csvExtractor.ExtractAsync(loader.FileName);
-                var service = scope.Resolve<INamedService<Guid, Iso3166._1._1.Country, NamedFilters>>();
-                var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(country => country.Id);
-
-                Assert.That(loaded.Keys.Count, Is.EqualTo(extracted.Count));
-
-                foreach(var record in extracted)
-                {
-                    var id = guidGenerator.Generate(namespaceId, record[2]);
-                    Assert.That(loaded.ContainsKey(id), Is.True);
-                    var country = loaded[id];
-                    Assert.That(country.Name       , Is.EqualTo(record[0]           ));
-                    Assert.That(country.Alpha2Code , Is.EqualTo(record[2]           ));
-                    Assert.That(country.Alpha3Code , Is.EqualTo(record[3]           ));
-                    Assert.That(country.NumericCode, Is.EqualTo(int.Parse(record[4])));
-                }
-
-                //var session = scope.Resolve<ISession>();
-                //var alpha2Identifiers = await session
-                //    .CreateCriteria<GeographicRegionIdentifier>()
-                //    .CreateCriteria("Scheme")
-                //        .Add(Expression.Eq("Id", new Guid("6f8c62fd-b57f-482b-9a3f-5c2ef9bb8882")))
-                //        .ListAsync<GeographicRegionIdentifier>();
-
-                //var alpha2CodeCountry = loaded.Values.ToDictionary(country => country.Alpha2Code);
-                //Assert.That(alpha2Identifiers.Count, Is.EqualTo(alpha2CodeCountry.Keys.Count));
-                //foreach(var alpha2Identifier in alpha2Identifiers)
-                //    Assert.That(alpha2Identifier.GeographicRegion, Is.EqualTo(alpha2CodeCountry[alpha2Identifier.Tag]));
-
-                //var alpha3Identifiers = await session
-                //    .CreateCriteria<GeographicRegionIdentifier>()
-                //    .CreateCriteria("Scheme")
-                //        .Add(Expression.Eq("Id", new Guid("17ffe52a-93f2-4755-835f-f29f1aec41a1")))
-                //        .ListAsync<GeographicRegionIdentifier>();
-
-                //var alpha3CodeCountry = loaded.Values.ToDictionary(country => country.Alpha3Code);
-                //Assert.That(alpha3Identifiers.Count, Is.EqualTo(alpha3CodeCountry.Keys.Count));
-                //foreach(var alpha3Identifier in alpha3Identifiers)
-                //    Assert.That(alpha3Identifier.GeographicRegion, Is.EqualTo(alpha3CodeCountry[alpha3Identifier.Tag]));
-
-                //var numericIdentifiers = await session
-                //    .CreateCriteria<GeographicRegionIdentifier>()
-                //    .CreateCriteria("Scheme")
-                //        .Add(Expression.Eq("Id", new Guid("d8829a3c-f631-40a7-9230-7caae0ad857b")))
-                //        .ListAsync<GeographicRegionIdentifier>();
-
-                //var numericCodeCountry = loaded.Values.ToDictionary(country => country.NumericCode);
-                //Assert.That(numericIdentifiers.Count, Is.EqualTo(numericCodeCountry.Keys.Count));
-                //foreach(var numericIdentifier in numericIdentifiers)
-                //    Assert.That(numericIdentifier.GeographicRegion, Is.EqualTo(numericCodeCountry[int.Parse(numericIdentifier.Tag)]));
-            }
-        }
 
         [TestCase("AE")]
         [TestCase("CA")]
@@ -220,79 +158,17 @@ namespace Test
             await loader.ExecuteAsync();
             using(var scope = _container.BeginLifetimeScope())
             {
-                var csvExtractor = scope.Resolve<ICsvExtractor>();
-                var extracted = await csvExtractor.ExtractAsync(loader.FileName);
-                var service = scope.Resolve<INamedService<string, Subdivision, NamedFilters>>();
-                var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(subdivision => subdivision.Id);
-
-                foreach(var record in extracted)
-                {
-                    Assert.That(loaded.ContainsKey(record[1]), Is.True);
-                    var subdivision = loaded[record[1]];
-                    Assert.That(subdivision.Id        , Is.EqualTo(record[1]                ));
-                    Assert.That(subdivision.Name      , Is.EqualTo(record[2]                ));
-                    Assert.That(subdivision.Country.Id, Is.EqualTo(record[1].Substring(0, 2)));
-                    Assert.That(subdivision.Category  , Is.EqualTo(record[0]                ));
-
-                    if(string.IsNullOrEmpty(record[6]))
-                    {
-                        Assert.That(subdivision.Region           , Is.EqualTo(subdivision.Country));
-                        Assert.That(subdivision.ParentSubdivision, Is.Null                        );
-                    }
-                    else
-                    {
-                        Assert.That(subdivision.Region              , Is.EqualTo(subdivision.ParentSubdivision));
-                        Assert.That(subdivision.ParentSubdivision.Id, Is.EqualTo(record[6])                    );
-                    }
-
-                    Assert.That(subdivision.Region.Subregions.Contains(subdivision), Is.True);
-                    foreach(var subregion in subdivision.Subregions)
-                        Assert.That(subregion.Region, Is.EqualTo(subdivision));
-                }
-
-                var session = scope.Resolve<ISession>();
-                var identifiers = await session
-                    .CreateCriteria<GeographicRegionIdentifier>()
-                    .CreateCriteria("Scheme")
-                        .Add(Expression.Eq("Id", new Guid("0eedfbae-fec6-474c-b447-6f30af710e01")))
-                        .ListAsync<GeographicRegionIdentifier>();
-
-                var identifierSubdivision = loaded.Values.ToDictionary(subdivision => subdivision.Id);
-                Assert.That(identifiers.Count, Is.EqualTo(identifierSubdivision.Keys.Count));
-
-                Assert.That(identifiers.Count, Is.EqualTo(identifierSubdivision.Keys.Count));
-                foreach(var identifier in identifiers)
-                    Assert.That(identifier.GeographicRegion, Is.EqualTo(identifierSubdivision[identifier.Tag]));
-            }
-        }
-
-        [TestCase("AE")]
-        [TestCase("CA")]
-        [TestCase("GB")]
-        [TestCase("KN")]
-        [TestCase("PT")]
-        [TestCase("US")]
-        public async Task Iso3166_2_1(
-            string alpha2Code
-            )
-        {
-            await _container.ResolveKeyed<IEtl>(typeof(Iso3166._1._1.Country)).ExecuteAsync();
-            IEtl loader = _container.ResolveKeyed<Data._1.SubdivisionLoader>(alpha2Code);
-            Assert.That(loader, Is.Not.Null);
-            await loader.ExecuteAsync();
-            using(var scope = _container.BeginLifetimeScope())
-            {
                 var session = scope.Resolve<ISession>();
                 var guidGenerator = scope.Resolve<IGuidGenerator>();
-                var namespaceId = Data._1.CountryLoader.NamespaceId;
+                var namespaceId = CountryLoader.NamespaceId;
                 var csvExtractor = scope.Resolve<ICsvExtractor>();
                 var extracted = (await csvExtractor.ExtractAsync(loader.FileName)).ToDictionary(record => record[1]);
-                var service = scope.Resolve<INamedService<Guid, Iso3166._2._1.Subdivision, NamedFilters>>();
+                var service = scope.Resolve<INamedService<Guid, Subdivision, NamedFilters>>();
                 var loaded = (await service.FindAsync(new NamedFilters())).ToDictionary(subdivision => subdivision.Id);
 
-                Func<IList<string>, Iso3166._2._1.Subdivision> recordSubdivision = record => record == null ? null : loaded[guidGenerator.Generate(namespaceId, record[1])];
-                Func<string, Locations._1.GeographicRegion> codeGeographicRegion = code => session.Get<Locations._1.GeographicRegion>(guidGenerator.Generate(namespaceId, code));
-                Func<string, Locations._1.GeographicSubregion> codeGeographicSubregion = code => session.Get<Locations._1.GeographicSubregion>(guidGenerator.Generate(namespaceId, code));
+                Func<IList<string>, Subdivision> recordSubdivision = record => record == null ? null : loaded[guidGenerator.Generate(namespaceId, record[1])];
+                Func<string, GeographicRegion> codeGeographicRegion = code => session.Get<GeographicRegion>(guidGenerator.Generate(namespaceId, code));
+                Func<string, GeographicSubregion> codeGeographicSubregion = code => session.Get<GeographicSubregion>(guidGenerator.Generate(namespaceId, code));
 
                 foreach(var record in extracted.Values)
                 {
@@ -307,7 +183,7 @@ namespace Test
                     Assert.That(recordSubdivision.PreservesStructure(
                         r => r[1].Substring(0, 2),
                         s => s.Country,
-                        code => session.Get<Iso3166._1._1.Country>(guidGenerator.Generate(namespaceId, code)),
+                        code => session.Get<Country>(guidGenerator.Generate(namespaceId, code)),
                         record), Is.True);
 
                     Assert.That(recordSubdivision.PreservesStructure(
@@ -352,96 +228,24 @@ namespace Test
                         codeGeographicSubregion,
                         regionCode);
 
-                //var session = scope.Resolve<ISession>();
-                //var identifiers = await session
-                //    .CreateCriteria<GeographicRegionIdentifier>()
-                //    .CreateCriteria("Scheme")
-                //        .Add(Expression.Eq("Id", new Guid("0eedfbae-fec6-474c-b447-6f30af710e01")))
-                //        .ListAsync<GeographicRegionIdentifier>();
+                var identifiers = await session
+                    .CreateCriteria<GeographicRegionIdentifier>()
+                    .CreateCriteria("Scheme")
+                        .Add(Expression.Eq("Id", new Guid("0eedfbae-fec6-474c-b447-6f30af710e01")))
+                        .ListAsync<GeographicRegionIdentifier>();
 
-                //var identifierSubdivision = loaded.Values.ToDictionary(subdivision => subdivision.Id);
-                //Assert.That(identifiers.Count, Is.EqualTo(identifierSubdivision.Keys.Count));
-
-                //Assert.That(identifiers.Count, Is.EqualTo(identifierSubdivision.Keys.Count));
-                //foreach(var identifier in identifiers)
-                //    Assert.That(identifier.GeographicRegion, Is.EqualTo(identifierSubdivision[identifier.Tag]));
-            }
-        }
-
-        [Test]
-        public async Task GeographicRegionHierarchy()
-        {
-            await _container.ResolveKeyed<IEtl>(typeof(Country)).ExecuteAsync();
-            await _container.ResolveKeyed<IEnumerable<IEtl>>(typeof(Subdivision)).ForEachAsync(subdivisionLoader => subdivisionLoader.ExecuteAsync());
-
-            var loader = _container.ResolveKeyed<IEtl>(typeof(GeographicRegionHierarchy));
-            await loader.ExecuteAsync();
-
-            using(var scope = _container.BeginLifetimeScope())
-            {
-                var csvExtractor = scope.Resolve<ICsvExtractor>();
-                var extracted = (await csvExtractor.ExtractAsync(loader.FileName))
-                    .Where(record => !string.IsNullOrEmpty(record[10]))
-                    .ToList();
-                var service = scope.Resolve<IDomainObjectService<Guid, GeographicRegionHierarchy>>();
-                var hierarchy = await service.GetAsync(new Guid("80bd57c5-7f3a-48d6-ba89-ad9ddaf12ebb"));
-                var geographicRegions = hierarchy.Members
-                    .Select(geographicRegionHierarchyMember => geographicRegionHierarchyMember.Member)
-                    .ToDictionary(
-                        geographicRegion => geographicRegion.As<Country>()?.NumericCode.ToString("000") ?? geographicRegion.Id);
-
-                var levels = new GeographicRegion[5];
-                foreach(var record in extracted)
-                    for(var levelIndex = 0;levelIndex < 5;levelIndex++)
-                        if(levelIndex < 4)
-                        {
-                            var code = record[levelIndex * 2];
-                            if(!string.IsNullOrEmpty(code))
-                            {
-                                Assert.That(geographicRegions.ContainsKey(code), Is.True);
-                                var geographicRegion = geographicRegions[code];
-                                levels[levelIndex] = geographicRegion;
-                                if(levelIndex > 0)
-                                {
-                                    Assert.That(geographicRegion, Is.InstanceOf<GeographicSubregion>());
-                                    var geographicSubregion = geographicRegion.As<GeographicSubregion>();
-                                    Assert.That(geographicSubregion.Region, Is.EqualTo(levels[levelIndex - 1]));
-                                }
-                            }
-                        }
-                        else
-                        {
-                            var code = record[9];
-                            Assert.That(geographicRegions.ContainsKey(code), Is.True);
-                        }
-
-                Func<GeographicRegion, GeographicRegionHierarchyMember> map = geographicRegion => hierarchy[geographicRegion];
-
-                Assert.That(hierarchy.Members.Count, Is.GreaterThan(0));
-                Assert.That(hierarchy.Members
-                    .Select(hierarchyMember => hierarchyMember.Member)
-                    .Where(member => !member.Is<Country>())
-                    .All(
-                        gr => map.PreservesStructure(
-                            geographicRegion => geographicRegion is GeographicSubregion geographicSubregion ? geographicSubregion.Region : null,
-                            hierarchyMember  => hierarchyMember.Parent,
-                            gr)), Is.True);
-
-                Assert.That(hierarchy.Members
-                    .Select(hierarchyMember => hierarchyMember.Member)
-                    .All(
-                        gr => map.PreservesStructure(
-                            geographicRegion => geographicRegion.Subregions,
-                            hierarchyMember  => hierarchyMember.Children.Where(child => !child.Member.Is<Country>()),
-                            gr)), Is.True);
+                var identifierSubdivision = loaded.Values.ToDictionary(subdivision => subdivision.Code);
+                Assert.That(identifiers.Count, Is.EqualTo(identifierSubdivision.Keys.Count));
+                foreach(var identifier in identifiers)
+                    Assert.That(identifier.GeographicRegion, Is.EqualTo(identifierSubdivision[identifier.Tag]));
             }
         }
 
         [Test]
         public async Task UnsdM49()
         {
-            await _container.ResolveKeyed<IEtl>(typeof(Iso3166._1._1.Country)).ExecuteAsync();
-            IEtl loader = _container.ResolveKeyed<IEtl>(typeof(Data._1.Unsdm49Loader));
+            await _container.ResolveKeyed<IEtl>(typeof(Country)).ExecuteAsync();
+            IEtl loader = _container.ResolveKeyed<IEtl>(typeof(Unsdm49Loader));
             Assert.That(loader, Is.Not.Null);
             await loader.ExecuteAsync();
 
@@ -449,45 +253,53 @@ namespace Test
             {
                 var session = scope.Resolve<ISession>();
                 var guidGenerator = scope.Resolve<IGuidGenerator>();
-                var namespaceId = Data._1.CountryLoader.NamespaceId;
+                var namespaceId = CountryLoader.NamespaceId;
                 var csvExtractor = scope.Resolve<ICsvExtractor>();
-                var extracted = (await csvExtractor.ExtractAsync(loader.FileName));
+                var extracted = await csvExtractor.ExtractAsync(loader.FileName);
 
                 var countries = (await session
-                    .CreateCriteria<Iso3166._1._1.Country>()
-                    .ListAsync<Iso3166._1._1.Country>())
+                    .CreateCriteria<Country>()
+                    .ListAsync<Country>())
                     .ToDictionary(
                         country => country.Alpha3Code,
                         country => country);
 
-                var subregionRegions = new Dictionary<Locations._1.GeographicSubregion, ISet<Locations._1.GeographicRegion>>();
+                var identifiers = (await session
+                    .CreateCriteria<GeographicRegionIdentifier>()
+                        .Fetch("GeographicRegion")
+                    .CreateCriteria("Scheme")
+                        .Add(Expression.Eq("Id", new Guid("b7b5b6cd-be4c-4cf7-a715-fe23bb12d6f7")))
+                        .ListAsync<GeographicRegionIdentifier>()).ToDictionary(identifier => identifier.Tag);
+
+                var subregionRegions = new Dictionary<GeographicSubregion, ISet<GeographicRegion>>();
 
                 foreach(var record in extracted)
                     if(countries.TryGetValue(
                         record[10],
                         out var country))
                     {
-                        Locations._1.GeographicSubregion subregion = country;
+                        GeographicSubregion subregion = country;
                         var level = 3;
                         while(level >= 0)
                         {
                             var code = record[level * 2];
                             if(code != string.Empty)
                             {
-                                var region = await session.GetAsync<Locations._1.GeographicRegion>(guidGenerator.Generate(
-                                    Data._1.CountryLoader.NamespaceId,
+                                var region = await session.GetAsync<GeographicRegion>(guidGenerator.Generate(
+                                    CountryLoader.NamespaceId,
                                     code));
                                 Assert.That(region, Is.Not.Null);
+                                Assert.That(identifiers[code].GeographicRegion, Is.EqualTo(region));
                                 Assert.That(region.Name, Is.EqualTo(record[level * 2 + 1]));
-                                ISet<Locations._1.GeographicRegion> regions = null;
+                                ISet<GeographicRegion> regions = null;
                                 if(subregionRegions.TryGetValue(
                                     subregion,
                                     out regions))
                                     break;
 
-                                subregionRegions[subregion] = regions = new HashSet<Locations._1.GeographicRegion>();
+                                subregionRegions[subregion] = regions = new HashSet<GeographicRegion>();
                                 regions.Add(region);
-                                subregion = region as Locations._1.GeographicSubregion;
+                                subregion = region as GeographicSubregion;
                             }
                             level -= 1;
                         }
@@ -502,23 +314,23 @@ namespace Test
                     group keyValue.Key by value into keysGroupedByValue
                     select keysGroupedByValue).ToDictionary(
                         group => group.Key,
-                        group => (ISet<Locations._1.GeographicSubregion>)group.ToHashSet());
+                        group => (ISet<GeographicSubregion>)group.ToHashSet());
 
                 foreach(var region in regionSubregions.Keys)
                     Assert.That(regionSubregions[region].SetEquals(region.Subregions), Is.True);
 
-                var service = scope.Resolve<IDomainObjectService<Guid, Locations._1.GeographicRegionHierarchy>>();
+                var service = scope.Resolve<IDomainObjectService<Guid, GeographicRegionHierarchy>>();
                 var hierarchy = await service.GetAsync(new Guid("80bd57c5-7f3a-48d6-ba89-ad9ddaf12ebb"));
                 Assert.That(hierarchy, Is.Not.Null);
 
-                Func<Locations._1.GeographicRegion, Locations._1.GeographicRegionHierarchyMember> map = geographicRegion => hierarchy[geographicRegion];
+                Func<GeographicRegion, GeographicRegionHierarchyMember> map = geographicRegion => hierarchy[geographicRegion];
 
                 Assert.That(hierarchy.Members.Count, Is.GreaterThan(0));
                 Assert.That(hierarchy.Members
                     .Select(hierarchyMember => hierarchyMember.Member)
                     .All(
                         gr => map.PreservesStructure(
-                            geographicRegion => geographicRegion is Locations._1.GeographicSubregion geographicSubregion ? geographicSubregion.Regions.Single() : null,
+                            geographicRegion => geographicRegion is GeographicSubregion geographicSubregion ? geographicSubregion.Regions.Single() : null,
                             hierarchyMember => hierarchyMember.Parent,
                             gr)), Is.True);
 
@@ -694,6 +506,7 @@ namespace Test
             await _container.ResolveKeyed<IEtl>(typeof(Country)).ExecuteAsync();
             await new LegalEntityLoader(
                 _container.Resolve<ISessionFactory>(),
+                _container.Resolve<IGuidGenerator>(),
                 100).LoadAsync();
         }
 
@@ -710,6 +523,7 @@ namespace Test
             await _container.ResolveKeyed<IEtl>(typeof(LifeCycle)).ExecuteAsync();
             //await new LegalEntityLoader(
             //    _container.Resolve<ISessionFactory>(),
+            //    _container.Resolve<IGuidGenerator>(),
             //    100).LoadAsync();
         }
 

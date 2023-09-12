@@ -10,25 +10,29 @@ namespace CommonDomainObjects.Mapping
                 "Country",
                 joinMapper =>
                 {
+                    joinMapper.Schema("Iso3166_1");
                     joinMapper.Key(
                         keyMapper =>
                         {
-                            keyMapper.Column(
-                                columnMapper =>
-                                {
-                                    columnMapper.Name("Alpha2Code");
-                                    columnMapper.SqlType(GeographicRegion.IdSqlType);
-                                });
+                            keyMapper.Column("Id");
+                            keyMapper.ForeignKey("FK_" + nameof(Iso3166._1.Country) + "_" + nameof(Locations.GeographicRegion));
+                        });
 
-                            keyMapper.ForeignKey("FK_" + nameof(Country) + "_" + nameof(GeographicRegion));
+                    joinMapper.Property(
+                        country => country.Id,
+                        propertyMapper =>
+                        {
+                            propertyMapper.Insert(false);
+                            propertyMapper.Update(false);
                         });
 
                     joinMapper.Property(
                         country => country.Alpha2Code,
                         propertyMapper =>
                         {
-                            propertyMapper.Insert(false);
-                            propertyMapper.Update(false);
+                            propertyMapper.Column(columnMapper => columnMapper.SqlType("NCHAR(2)"));
+                            propertyMapper.Unique(true);
+                            propertyMapper.NotNullable(true);
                         });
 
                     joinMapper.Property(

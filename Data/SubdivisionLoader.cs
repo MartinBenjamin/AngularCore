@@ -15,6 +15,7 @@ namespace Data
     {
         private readonly ICsvExtractor   _csvExtractor;
         private readonly ISessionFactory _sessionFactory;
+        private readonly IGuidGenerator  _guidGenerator;
         private readonly string          _fileName;
 
         private static readonly Guid _identificationSchemeId = new Guid("0eedfbae-fec6-474c-b447-6f30af710e01");
@@ -22,11 +23,13 @@ namespace Data
         public SubdivisionLoader(
             ICsvExtractor   csvExtractor,
             ISessionFactory sessionFactory,
+            IGuidGenerator  guidGenerator,
             string          fileName
             )
         {
             _csvExtractor   = csvExtractor;
             _sessionFactory = sessionFactory;
+            _guidGenerator  = guidGenerator;
             _fileName       = fileName;
         }
 
@@ -58,21 +61,27 @@ namespace Data
 
                 var childRecord = parentRecord.Transpose();
 
+                var regionSubregionAssociations = new List<GeographicRegionSubregion>();
+
                 var subdivisions = (
                     from record in parentRecord.Keys
                     where parentRecord[record].Count == 0
                     let countryCode = record[1].Substring(0, 2)
                     from country in countries
-                    where country.Id == countryCode
+                    where country.Alpha2Code == countryCode
                     select CreateSubdivision(
                         childRecord,
                         country,
                         record,
-                        null)
+                        null,
+                        regionSubregionAssociations)
                 ).ToList();
 
                 await subdivisions.ForEachAsync(
                     subdivision => subdivision.VisitAsync(geographicRegion => session.SaveAsync(geographicRegion)));
+
+                await regionSubregionAssociations.ForEachAsync(
+                    regionSubregionAssociation => session.SaveAsync(regionSubregionAssociation));
 
                 var identificationScheme = await session.GetAsync<IdentificationScheme>(_identificationSchemeId);
                 if(identificationScheme == null)
@@ -88,7 +97,7 @@ namespace Data
                         geographicRegion => session.SaveAsync(
                             new GeographicRegionIdentifier(
                                 identificationScheme,
-                                geographicRegion.Id,
+                                ((Subdivision)geographicRegion).Code,
                                 geographicRegion))));
 
                 await transaction.CommitAsync();
@@ -99,22 +108,30 @@ namespace Data
             IDictionary<IList<string>, IList<IList<string>>> childRecord,
             Country                                          country,
             IList<string>                                    record,
-            Subdivision                                      parent
+            Subdivision                                      parent,
+            IList<GeographicRegionSubregion>                 regionSubregionAssociations
             )
         {
             var subdivision = new Subdivision(
+                _guidGenerator.Generate(CountryLoader.NamespaceId, record[1]),
                 record[1],
                 record[2],
                 country,
                 parent,
                 record[0]);
 
+            regionSubregionAssociations.Add(
+                new GeographicRegionSubregion(
+                    (GeographicRegion)parent ?? country,
+                    subdivision));
+
             foreach(var child in childRecord[record])
                 CreateSubdivision(
                     childRecord,
                     country,
                     child,
-                    subdivision);
+                    subdivision,
+                    regionSubregionAssociations);
 
             return subdivision;
         }

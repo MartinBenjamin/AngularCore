@@ -1,23 +1,36 @@
-﻿namespace Locations
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+
+namespace Locations
 {
-    public abstract class GeographicSubregion: GeographicRegion
+    public class GeographicSubregion: GeographicRegion
     {
-        public virtual GeographicRegion Region { get; protected set; }
+        private ISet<GeographicRegion> _regions;
+
+        public virtual IReadOnlyList<GeographicRegion> Regions
+            => new ReadOnlyCollection<GeographicRegion>(_regions.ToList());
 
         protected GeographicSubregion() : base()
         {
         }
 
         protected GeographicSubregion(
-            string           id,
-            string           name,
-            GeographicRegion region
+            Guid             id,
+            string           name
             ) : base(
                 id,
                 name)
         {
-            Region = region;
-            Region?.Add(this);
+            _regions = new HashSet<GeographicRegion>();
+        }
+
+        protected internal virtual void AddRegion(
+            GeographicRegion region
+            )
+        {
+            _regions.Add(region);
         }
     }
 }

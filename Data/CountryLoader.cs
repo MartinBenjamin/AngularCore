@@ -12,6 +12,7 @@ namespace Data
     {
         private readonly ICsvExtractor   _csvExtractor;
         private readonly ISessionFactory _sessionFactory;
+        private readonly IGuidGenerator  _guidGenerator;
 
         private static readonly IList<(IdentificationScheme, Func<IList<string>, string>)> _identificationSchemes = new List<(IdentificationScheme, Func<IList<string>, string>)>
         {
@@ -22,13 +23,17 @@ namespace Data
 
         private static readonly string _fileName = "ISO3166-1.csv";
 
+        public static readonly Guid NamespaceId = new Guid("6044628b-f792-405f-9024-072e3fd50d47");
+
         public CountryLoader(
             ICsvExtractor   csvExtractor,
-            ISessionFactory sessionFactory
+            ISessionFactory sessionFactory,
+            IGuidGenerator  guidGenerator
             )
         {
             _csvExtractor   = csvExtractor;
             _sessionFactory = sessionFactory;
+            _guidGenerator  = guidGenerator;
         }
 
         string IEtl.FileName
@@ -49,6 +54,7 @@ namespace Data
                 foreach(var record in records)
                 {
                     var country = new Country(
+                        _guidGenerator.Generate(NamespaceId, record[2]),
                         record[2],
                         record[3],
                         null,

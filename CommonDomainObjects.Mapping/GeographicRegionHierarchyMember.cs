@@ -10,9 +10,7 @@ namespace CommonDomainObjects.Mapping
     {
         public GeographicRegionHierarchyMember()
         {
-            ManyToOne(
-                geographicRegionHierarchyMember => geographicRegionHierarchyMember.Member,
-                manyToOneMapper => manyToOneMapper.Column(columnMapper => columnMapper.SqlType(GeographicRegion.IdSqlType)));
+            Schema("Locations");
 
             Bag(
                 geographicRegionHierarchyMember => geographicRegionHierarchyMember.Children,

@@ -7,6 +7,7 @@ using NHibernate;
 using NHibernate.Tool.hbm2ddl;
 using NHibernateIntegration;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -82,6 +83,7 @@ namespace Test
         {
             var parent = _parent.Select(
                 vertex => (GeographicRegion)new Subdivision(
+                    Guid.NewGuid(),
                     vertex.ToString(),
                     vertex.ToString(),
                     null,

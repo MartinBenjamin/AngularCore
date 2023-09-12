@@ -1,4 +1,5 @@
 ﻿using Locations;
+using System;
 
 namespace UnsdM49
 {
@@ -9,13 +10,11 @@ namespace UnsdM49
         }
 
         public SubRegion(
-            string           code,
-            string           name,
-            GeographicRegion region
+            Guid   id,
+            string name
             ) : base(
-                code,
-                name,
-                region)
+                id,
+                name)
         {
         }
     }

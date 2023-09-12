@@ -1,6 +1,7 @@
-﻿using Locations;
+﻿using Iso3166._1;
+using Locations;
+using System;
 using System.Globalization;
-using Iso3166._1;
 
 namespace Iso3166._2
 {
@@ -16,15 +17,15 @@ namespace Iso3166._2
         }
 
         public Subdivision(
+            Guid        id,
             string      code,
             string      name,
             Country     country,
             Subdivision parentSubdivision,
             string      category
             ) : base(
-                code,
-                name,
-                (GeographicRegion)parentSubdivision ?? country)
+                id,
+                name)
         {
             Code              = code;
             Country           = country;

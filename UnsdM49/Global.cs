@@ -1,4 +1,5 @@
 ﻿using Locations;
+using System;
 
 namespace UnsdM49
 {
@@ -9,10 +10,10 @@ namespace UnsdM49
         }
 
         public Global(
-            string code,
+            Guid   id,
             string name
             ) : base(
-                code,
+                id,
                 name)
         {
         }

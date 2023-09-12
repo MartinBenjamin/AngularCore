@@ -4,24 +4,44 @@ namespace CommonDomainObjects.Mapping
 {
     public class GeographicRegion: ClassMapping<Locations.GeographicRegion>
     {
-        public static readonly string IdSqlType = "NVARCHAR(6)";
-
         public GeographicRegion()
         {
-            Id(
-                geographicRegion => geographicRegion.Id,
-                idMapper => idMapper.Column(columnMapper => columnMapper.SqlType(IdSqlType)));
-
-            Discriminator(
-                discriminatorMapper =>
-                {
-                    discriminatorMapper.Column("Type");
-                    discriminatorMapper.Length(50);
-                });
-
-            Bag(
+            Schema("Locations");
+            Set(
                 geographicRegion => geographicRegion.Subregions,
-                collectionMapper => collectionMapper.Key(keyMapper => keyMapper.Column("RegionId")));
+                setPropertiesMapper =>
+                {
+                    setPropertiesMapper.Schema("Locations");
+                    setPropertiesMapper.Table("GeographicRegionSubregion");
+                    setPropertiesMapper.Key(keyMapper =>
+                    {
+                        keyMapper.Column("RegionId");
+                        keyMapper.ForeignKey("FK_GeographicRegionSubregion_Region");
+                    });
+                },
+                collectionElementRelation => collectionElementRelation.ManyToMany(manyToManyMapper =>
+                {
+                    manyToManyMapper.Column("SubregionId");
+                    manyToManyMapper.ForeignKey("FK_GeographicRegionSubregion_Subregion");
+                }));
+            //Bag(
+            //    geographicRegion => geographicRegion.Subregions,
+            //    bagPropertiesMapper =>
+            //    {
+            //        bagPropertiesMapper.Schema("Locations");
+            //        bagPropertiesMapper.Table("GeographicRegionSubregion");
+            //        bagPropertiesMapper.Key(keyMapper =>
+            //            {
+            //                keyMapper.Column("RegionId");
+            //                keyMapper.ForeignKey("FK_GeographicRegionSubregion_Region");
+            //            });
+            //        bagPropertiesMapper.Inverse(false);
+            //    },
+            //    collectionElementRelation => collectionElementRelation.ManyToMany(manyToManyMapper =>
+            //        {
+            //            manyToManyMapper.Column("SubregionId");
+            //            manyToManyMapper.ForeignKey("FK_GeographicRegionSubregion_Subregion");
+            //        }));
         }
     }
 }

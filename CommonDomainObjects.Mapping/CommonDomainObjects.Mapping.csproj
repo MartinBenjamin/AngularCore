@@ -5,6 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Country.cs" />
+    <Compile Remove="Subdivision.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Country.cs" />
+    <None Include="Subdivision.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="NHibernate" Version="5.2.5" />
   </ItemGroup>
 

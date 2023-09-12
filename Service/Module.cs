@@ -28,56 +28,40 @@ namespace Service
                 .As<IDomainObjectService<Guid, GeographicRegionHierarchy>>()
                 .InstancePerLifetimeScope();
             builder
-                .RegisterType<_1.GeographicRegionHierarchyService>()
-                .As<IDomainObjectService<Guid, Locations._1.GeographicRegionHierarchy>>()
-                .InstancePerLifetimeScope();
-            builder
                 .RegisterType<DealLifeCycleService>()
                 .As<IDealLifeCycleService>()
                 .InstancePerLifetimeScope();
             builder
-                .RegisterType<NamedService<string, GeographicRegion, NamedFilters>>()
-                .As<INamedService<string, GeographicRegion, NamedFilters>>()
+                .RegisterType<NamedService<Guid, GeographicRegion, NamedFilters>>()
+                .As<INamedService<Guid, GeographicRegion, NamedFilters>>()
                 .InstancePerLifetimeScope();
             builder
-                .RegisterType<NamedService<string, Country, NamedFilters>>()
-                .As<INamedService<string, Country, NamedFilters>>()
+                .RegisterType<NamedService<Guid, Country, NamedFilters>>()
+                .As<INamedService<Guid, Country, NamedFilters>>()
                 .InstancePerLifetimeScope();
             builder
-                .RegisterType<NamedService<Guid, Iso3166._1._1.Country, NamedFilters>>()
-                .As<INamedService<Guid, Iso3166._1._1.Country, NamedFilters>>()
-                .InstancePerLifetimeScope();
-            builder
-                .RegisterType<NamedService2<string, Country, Model.Country, NamedFilters>>()
-                .As<INamedService2<string, Model.Country, NamedFilters>>()
-                .InstancePerLifetimeScope();
-            builder
-                .RegisterType<NamedService<string, Subdivision, NamedFilters>>()
-                .As<INamedService<string, Subdivision, NamedFilters>>()
-                .InstancePerLifetimeScope();
-            builder
-                .RegisterType<NamedService<Guid, Iso3166._2._1.Subdivision, NamedFilters>>()
-                .As<INamedService<Guid, Iso3166._2._1.Subdivision, NamedFilters>>()
+                .RegisterType<NamedService<Guid, Subdivision, NamedFilters>>()
+                .As<INamedService<Guid, Subdivision, NamedFilters>>()
                 .InstancePerLifetimeScope();
             builder
                 .RegisterType<NamedService<string, Currency, NamedFilters>>()
                 .As<INamedService<string, Currency, NamedFilters>>()
                 .InstancePerLifetimeScope();
             builder
-                .RegisterType<NamedService<string, Global, NamedFilters>>()
-                .As<INamedService<string, Global, NamedFilters>>()
+                .RegisterType<NamedService<Guid, Global, NamedFilters>>()
+                .As<INamedService<Guid, Global, NamedFilters>>()
                 .InstancePerLifetimeScope();
             builder
-                .RegisterType<NamedService<string, Region, NamedFilters>>()
-                .As<INamedService<string, Region, NamedFilters>>()
+                .RegisterType<NamedService<Guid, Region, NamedFilters>>()
+                .As<INamedService<Guid, Region, NamedFilters>>()
                 .InstancePerLifetimeScope();
             builder
-                .RegisterType<NamedService<string, SubRegion, NamedFilters>>()
-                .As<INamedService<string, SubRegion, NamedFilters>>()
+                .RegisterType<NamedService<Guid, SubRegion, NamedFilters>>()
+                .As<INamedService<Guid, SubRegion, NamedFilters>>()
                 .InstancePerLifetimeScope();
             builder
-                .RegisterType<NamedService<string, IntermediateRegion, NamedFilters>>()
-                .As<INamedService<string, IntermediateRegion, NamedFilters>>()
+                .RegisterType<NamedService<Guid, IntermediateRegion, NamedFilters>>()
+                .As<INamedService<Guid, IntermediateRegion, NamedFilters>>()
                 .InstancePerLifetimeScope();
             builder
                 .RegisterType<NamedService<Guid, Branch, NamedFilters>>()

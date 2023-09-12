@@ -18,8 +18,9 @@ namespace CommonDomainObjects.Mapping
             typeof(LifeCycles.LifeCycle                              ),
             typeof(LifeCycles.LifeCycleStage                         ),
             typeof(Locations.GeographicRegion                        ),
-            typeof(Locations.GeographicRegionIdentifier              ),
             typeof(Locations.GeographicSubregion                     ),
+            typeof(Locations.GeographicRegionSubregion               ),
+            typeof(Locations.GeographicRegionIdentifier              ),
             typeof(Locations.GeographicRegionHierarchy               ),
             typeof(Locations.GeographicRegionHierarchyMember         ),
             typeof(Naics.NaicsClassifier                             ),
@@ -56,17 +57,6 @@ namespace CommonDomainObjects.Mapping
 
         private static IList<Type> _notImported = new List<Type>
         {
-            typeof(Locations._1.GeographicRegion               ),
-            typeof(Locations._1.GeographicSubregion            ),
-            typeof(Locations._1.GeographicRegionSubregion      ),
-            typeof(Locations._1.GeographicRegionHierarchy      ),
-            typeof(Locations._1.GeographicRegionHierarchyMember),
-            typeof(Iso3166._1._1.Country                       ),
-            typeof(Iso3166._2._1.Subdivision                   ),
-            typeof(UnsdM49._1.Global                           ),
-            typeof(UnsdM49._1.Region                           ),
-            typeof(UnsdM49._1.SubRegion                        ),
-            typeof(UnsdM49._1.IntermediateRegion               )
         };
 
         protected override void Load(
@@ -86,7 +76,7 @@ namespace CommonDomainObjects.Mapping
                             ) => IsDomainObject<Guid>(type)
                                 || IsDomainObject<string>(type)
                                 || typeof(Identifiers.Identifier).IsAssignableFrom(type)
-                                || typeof(Locations._1.GeographicRegionSubregion).IsAssignableFrom(type));
+                                || typeof(Locations.GeographicRegionSubregion).IsAssignableFrom(type));
 
                         mapper.BeforeMapJoinedSubclass += (
                             IModelInspector                 modelInspector,
@@ -110,8 +100,8 @@ namespace CommonDomainObjects.Mapping
                     {
                         var excluded = new Type[]
                         {
-                            typeof(Country    ),
-                            typeof(Subdivision),
+                            //typeof(Country    ),
+                            //typeof(Subdivision),
                         };
 
                         mapper.AddMappings(Assembly.GetExecutingAssembly().GetTypes()
@@ -123,11 +113,11 @@ namespace CommonDomainObjects.Mapping
                 .As<IMappingFactory>()
                 .WithParameter("types", _types);
 
-            builder
-                .RegisterType<MappingFactory>()
-                .As<IMappingFactory>()
-                .WithParameter("types", _notImported)
-                .WithParameter("autoImport", false);
+            //builder
+            //    .RegisterType<MappingFactory>()
+            //    .As<IMappingFactory>()
+            //    .WithParameter("types", _notImported)
+            //    .WithParameter("autoImport", false);
         }
 
         private static bool IsDomainObject<TId>(

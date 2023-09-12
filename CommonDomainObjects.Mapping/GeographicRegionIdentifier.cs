@@ -15,14 +15,14 @@ namespace CommonDomainObjects.Mapping
                         columnMapper => columnMapper.Name("Tag"     ));
                 });
 
-            ManyToOne(
-                identifier => identifier.GeographicRegion,
-                manyToOneMapper => manyToOneMapper.Column(
-                    columnMapper =>
-                    {
-                        columnMapper.Name("IdentifiedId");
-                        columnMapper.SqlType(GeographicRegion.IdSqlType);
-                    }));
+            //ManyToOne(
+            //    identifier => identifier.GeographicRegion,
+            //    manyToOneMapper => manyToOneMapper.Column(
+            //        columnMapper =>
+            //        {
+            //            columnMapper.Name("IdentifiedId");
+            //            columnMapper.SqlType(GeographicRegion.IdSqlType);
+            //        }));
         }
     }
 
@@ -41,14 +41,14 @@ namespace CommonDomainObjects.Mapping
                         columnMapper => columnMapper.Name("Tag"));
                 });
 
-            ManyToOne(
-                identifier => identifier.Identified,
-                manyToOneMapper => manyToOneMapper.Column(
-                    columnMapper =>
-                    {
-                        columnMapper.Name("IdentifiedId");
-                        columnMapper.SqlType(GeographicRegion.IdSqlType);
-                    }));
+            //ManyToOne(
+            //    identifier => identifier.Identified,
+            //    manyToOneMapper => manyToOneMapper.Column(
+            //        columnMapper =>
+            //        {
+            //            columnMapper.Name("IdentifiedId");
+            //            columnMapper.SqlType(GeographicRegion.IdSqlType);
+            //        }));
         }
     }
 }

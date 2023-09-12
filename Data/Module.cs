@@ -3,6 +3,7 @@ using CommonDomainObjects;
 using Iso3166._1;
 using Iso3166._2;
 using Iso4217;
+using LegalEntities;
 using LifeCycles;
 using Locations;
 using Organisations;
@@ -64,38 +65,19 @@ namespace Data
 
             builder
                 .RegisterType<Unsdm49Loader>()
+                .Keyed<IEtl>(typeof(Unsdm49Loader))
                 .Keyed<IEtl>(typeof(GeographicRegionHierarchy))
-                .SingleInstance();
-
-            builder
-                .RegisterType<_1.CountryLoader>()
-                .Keyed<IEtl>(typeof(Iso3166._1._1.Country))
-                .SingleInstance();
-
-            new[]
-            {
-                "AE",
-                "CA",
-                "GB",
-                "KN",
-                "PT",
-                "US"
-            }.ForEach(alpha2Code => builder
-                .RegisterType<_1.SubdivisionLoader>()
-                .Keyed<IEtl>(typeof(Iso3166._2._1.Subdivision))
-                .Keyed<_1.SubdivisionLoader>(alpha2Code)
-                .WithParameter("fileName", $"ISO3166-2-{alpha2Code}.csv")
-                .SingleInstance());
-
-            builder
-                .RegisterType<_1.Unsdm49Loader>()
-                .Keyed<IEtl>(typeof(_1.Unsdm49Loader))
                 .SingleInstance();
 
             builder
                 .RegisterType<BranchLoader>()
                 .Keyed<IEtl>(typeof(Branch))
                 .SingleInstance();
+
+            //builder
+            //    .RegisterType<LegalEntityLoader>()
+            //    .Keyed<IEtl>(typeof(LegalEntity))
+            //    .SingleInstance();
 
             builder
                 .RegisterType<ExclusivityLoader>()
