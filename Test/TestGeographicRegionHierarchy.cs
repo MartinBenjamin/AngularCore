@@ -56,7 +56,7 @@ namespace Test
         }
 
         [Test]
-        public void Construction()
+        public void NewHierarchy()
         {
             var child = _child.Select(
                 vertex => (GeographicRegion)new Subdivision(

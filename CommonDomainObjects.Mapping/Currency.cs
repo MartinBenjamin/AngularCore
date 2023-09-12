@@ -8,7 +8,16 @@ namespace CommonDomainObjects.Mapping
         {
             Id(
                 currency => currency.Id,
-                idMapper => idMapper.Column(columnMapper => columnMapper.SqlType("NVARCHAR(3)")));
+                idMapper => idMapper.Column(columnMapper => columnMapper.SqlType("NCHAR(3)")));
+
+            Property(
+                    currency => currency.AlphabeticCode,
+                    propertyMapper =>
+                    {
+                        propertyMapper.Column(columnMapper => columnMapper.SqlType("NCHAR(3)"));
+                        propertyMapper.Unique(true);
+                        propertyMapper.NotNullable(true);
+                    });
         }
     }
 }

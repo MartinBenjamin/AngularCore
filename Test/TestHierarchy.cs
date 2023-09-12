@@ -9,12 +9,12 @@ namespace Test
     [TestFixture]
     public class TestHierarchy
     {
-        private static readonly IDictionary<char, IList<char>> _parent = new Dictionary<char, IList<char>>
+        private static readonly IDictionary<char, IList<char>> _child = new Dictionary<char, IList<char>>
         {
-            {'A', new char[]{} },
-            {'B', new char[]{} },
-            {'C', new char[]{ 'B' } },
-            {'D', new char[]{ 'B' } },
+            { 'A', new char[]{} },
+            { 'B', new char[]{ 'C', 'D' } },
+            { 'C', new char[]{} },
+            { 'D', new char[]{} },
         };
 
         [TestCase('A', 'A', true )]
@@ -39,29 +39,29 @@ namespace Test
             bool contains
             )
         {
-            var hierarchy = new Hierarchy<char>(_parent);
+            var hierarchy = new Hierarchy<char>(_child);
             Assert.That(hierarchy[lhs].Contains(hierarchy[rhs]), Is.EqualTo(contains));
         }
 
         [Test]
         public void NewHierarchy()
         {
-            var child = _parent.Transpose();
-            var hierarchy = new Hierarchy<char>(_parent);
-            Assert.That(hierarchy.Members.Count, Is.EqualTo(_parent.Count));
+            var parent = _child.Transpose();
+            var hierarchy = new Hierarchy<char>(_child);
+            Assert.That(hierarchy.Members.Count, Is.EqualTo(_child.Count));
 
             Func<char, HierarchyMember<char>> map = member => hierarchy[member];
             Func<HierarchyMember<char>, char> inverseMap =
                 hierarchyMember => hierarchyMember != null ? hierarchyMember.Member : default;
 
-            Assert.That(_parent.Keys.All(
+            Assert.That(parent.Keys.All(
                 c =>
                     map.PreservesStructure(
-                        member          => _parent[member].FirstOrDefault(),
+                        member          => parent[member].FirstOrDefault(),
                         hierarchyMember => hierarchyMember.Parent,
                         c) &&
                     map.PreservesStructure(
-                        member          => child[member],
+                        member          => _child[member],
                         hierarchyMember => hierarchyMember.Children,
                         c)), Is.True);
 
@@ -69,11 +69,11 @@ namespace Test
                 hm =>
                     inverseMap.PreservesStructure(
                         hierarchyMember => hierarchyMember.Parent,
-                        member          => _parent[member].FirstOrDefault(),
+                        member          => parent[member].FirstOrDefault(),
                         hm) &&
                     inverseMap.PreservesStructure(
                         hierarchyMember => hierarchyMember.Children,
-                        member          => child[member],
+                        member          => _child[member],
                         hm)), Is.True);
 
             Assert.That(hierarchy.Members

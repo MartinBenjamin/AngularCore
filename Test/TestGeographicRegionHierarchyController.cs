@@ -16,16 +16,15 @@ using Web.Controllers;
 
 namespace Test
 {
-
     [TestFixture]
     class TestGeographicRegionHierarchyController
     {
-        private static readonly IDictionary<char, IList<char>> _parent = new Dictionary<char, IList<char>>
+        private static readonly IDictionary<char, IList<char>> _child = new Dictionary<char, IList<char>>
         {
             { 'A', new char[]{} },
-            { 'B', new char[]{} },
-            { 'C', new char[]{ 'B' } },
-            { 'D', new char[]{ 'B' } },
+            { 'B', new char[]{ 'C', 'D' } },
+            { 'C', new char[]{} },
+            { 'D', new char[]{} },
         };
 
         private IContainer _container;
@@ -81,16 +80,14 @@ namespace Test
         [Test]
         public async Task Get()
         {
-            var parent = _parent.Select(
+            var geographicRegionHierarchy = new GeographicRegionHierarchy(_child.Select(
                 vertex => (GeographicRegion)new Subdivision(
                     Guid.NewGuid(),
                     vertex.ToString(),
                     vertex.ToString(),
                     null,
                     null,
-                    null));
-
-            var geographicRegionHierarchy = new GeographicRegionHierarchy(parent);
+                    null)));
             using(var scope = _container.BeginLifetimeScope())
             {
                 var session = scope.Resolve<ISession>();
