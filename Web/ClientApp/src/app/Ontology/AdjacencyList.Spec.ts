@@ -1,31 +1,6 @@
 import { } from 'jasmine';
 import { LongestPaths, TopologicalSort, Transpose } from './AdjacencyList';
 
-function Compare(
-    lhs: number[],
-    rhs: number[]
-    ): number
-{
-    let result = lhs.length - rhs.length;
-    if(result !== 0)
-        return result;
-
-    for(let index = 0; index < lhs.length && result === 0; ++index)
-        result = lhs[index] - rhs[index];
-
-    return result;
-}
-
-function Order<TVertex>(
-    graph: Iterable<[TVertex, TVertex[]]>,
-    vertexComparer: (lhs: TVertex, rhs: TVertex) => number
-    ): [TVertex, TVertex[]][]
-{
-    return [...graph]
-        .sort(([lhs,], [rhs,]) => vertexComparer(lhs, rhs))
-        .map(([vertex, adjacent]) => [vertex, adjacent.sort(vertexComparer)]);
-}
-
 describe(
     'Adjacency List',
     () =>

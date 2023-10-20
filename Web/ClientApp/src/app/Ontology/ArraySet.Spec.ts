@@ -2,22 +2,6 @@ import { } from 'jasmine';
 import { ArraySet } from './ArraySet';
 import { assertBuilder } from './assertBuilder';
 
-function compareTuple(
-    lhs: any[],
-    rhs: any[]
-    ): number
-{
-    const difference = lhs.length - rhs.length;
-    if(difference !== 0)
-        return difference;
-
-    for(let index = 0; index < lhs.length; ++index)
-        if(lhs[index] !== rhs[index])
-            return lhs[index] < rhs[index] ? -1 : 1;
-
-    return 0;
-}
-
 describe(
     'ArraySet',
     () =>
