@@ -1,6 +1,7 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IScheduler, Scheduler, Signal } from '../Signal';
+import { Transpose } from './AdjacencyList';
 import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
 import { BuiltIn } from './Atom';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
@@ -8,7 +9,7 @@ import { Group } from './Group';
 import { Atom, AttributeSchema, Cardinality, Edb, Fact, Idb, IEavStore, IsConstant, IsIdb, IsVariable, Rule, Store, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
-import { ArrayCompareFactory, SortedList, SortedSet } from './SortedSet';
+import { ArrayCompareFactory, SortedSet } from './SortedSet';
 import { StronglyConnectedComponents } from './StronglyConnectedComponents';
 
 type Tuple = any[];
@@ -730,20 +731,44 @@ export class EavStore implements IEavStore, IPublisher
                 rule => [
                     rule[0][0],
                     [].concat(...rulesGroupedByPredicateSymbol.get(rule[0][0]).map(rule => rule[1].filter(IsIdb).map(idb => idb[0])))]));
+        const ruleSuccessors = Transpose(rulePredecessors);
 
         type SCC<T> = ReadonlyArray<T> & { Recursive?: boolean; };
         const stronglyConnectedComponents: SCC<string>[] = StronglyConnectedComponents(rulePredecessors);
         stronglyConnectedComponents.forEach(scc => scc.Recursive = scc.length > 1 || rulePredecessors.get(scc[0]).includes(scc[0]));
 
         const signalAdjacencyList = new Map<Signal, Signal[]>();
-        const idbSignals = new Map<string, Signal>();
+        const idbSignals = new Map<string, Signal<Tuple[]>>();
         const signalPredecessorAtoms = new Map<Signal, Atom[]>();
 
         for(const stronglyConnectedComponent of stronglyConnectedComponents.values())
         {
             if(stronglyConnectedComponent.Recursive)
             {
-
+                let recursion: (inputs: object[][]) => Map<string, SortedSet<Tuple>>;
+                let predecessorAtoms: (Fact | Idb)[];
+                [recursion, predecessorAtoms]
+                    = EavStore.Recursion(stronglyConnectedComponent
+                        .map(predicateSymbol =>
+                            <[string, Rule[]]>[predicateSymbol, rulesGroupedByPredicateSymbol
+                                .get(predicateSymbol)
+                                .filter(rule => stronglyConnectedComponent.includes(rule[0][0]))]));
+                const recursionSignal = new Signal(recursion);
+                signalPredecessorAtoms.set(
+                    recursionSignal,
+                    predecessorAtoms);
+                stronglyConnectedComponent
+                    .filter(predicateSymbol => predicateSymbol === '' || ruleSuccessors.get(predicateSymbol).length)
+                    .forEach(predicateSymbol =>
+                    {
+                        const signal = new Signal((recursionOutput: Map<string, SortedSet<Tuple>>) => <Tuple[]>recursionOutput.get(predicateSymbol).Array);
+                        signalAdjacencyList.set(
+                            signal,
+                            [recursionSignal])
+                        idbSignals.set(
+                            predicateSymbol,
+                            signal);
+                    });
             }
             else
             {
@@ -812,7 +837,7 @@ export class EavStore implements IEavStore, IPublisher
         }
 
         this.SignalScheduler.AddSignals(signalAdjacencyList);
-        return idbSignals.get('');
+        return <Signal>idbSignals.get('');
     }
 
     static Substitute(
@@ -1058,7 +1083,7 @@ export class EavStore implements IEavStore, IPublisher
 
                 disjunctionPredecessors.push(
                     scheduler.AddSignal(
-                        EavStore.Conjunction(rule[0]),
+                        EavStore.Conjunction(rule[0].slice(1)),
                         conjunctionPredecessors));
             }
 
