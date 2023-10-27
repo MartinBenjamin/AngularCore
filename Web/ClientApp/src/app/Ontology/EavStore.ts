@@ -1039,10 +1039,10 @@ export class EavStore implements IEavStore, IPublisher
         scheduler.Suspend();
         const resultTMinus1Signal = scheduler.AddSignal<Map<string, SortedSet<Tuple>>>()
         const resultTMinus1Signals = new Map<string, Signal<SortedSet<Tuple>>>(
-            rulesGroupedByPredicateSymbol.map(
-                ([predicateSymbol,]) =>
+            [...new Map(rulesGroupedByPredicateSymbol).keys()].map(
+                predicateSymbol =>
                     [predicateSymbol, scheduler.AddSignal(
-                        (resulttMinus1: Map<string, SortedSet<Tuple>>) => resulttMinus1.get(predicateSymbol),
+                        (resultMinus1: Map<string, SortedSet<Tuple>>) => resultMinus1.get(predicateSymbol),
                         [resultTMinus1Signal])]));
         const inputSignals = new ArrayKeyedMap<Fact | Idb, Signal<object[]>>();
         const inputAtoms: (Fact | Idb)[] = [];
