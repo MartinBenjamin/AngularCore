@@ -1114,7 +1114,7 @@ T(x, y) :- R(x, z), T(z, y)`,
                     tupleCompare,
                     element));
 
-                for(let index = 0; index < 1; ++index)
+                for(let index = 0; index < RValues.length; ++index)
                     describe(
                         `Given R: ${JSON.stringify([...RValues[index]])}`,
                         () =>
@@ -1146,7 +1146,7 @@ T(x, y) :- R(x, z), T(z, y)`,
 
                             it(
                                 `The expected value of T is ${JSON.stringify([...TValues[index]])}`,
-                                () => expect(JSON.stringify([...trace[index]])).toBe(JSON.stringify([...TValues[index]])));
+                                () => expect(JSON.stringify([...trace[0]])).toBe(JSON.stringify([...TValues[index]])));
                         });
             });
     });
