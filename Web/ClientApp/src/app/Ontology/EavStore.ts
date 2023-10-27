@@ -60,7 +60,7 @@ export function Compare(
     return a < b ? -1 : 1;
 }
 
-const tupleCompare = ArrayCompareFactory(Compare);
+export const tupleCompare = ArrayCompareFactory(Compare);
 
 function Match<TTrieNode extends TrieNode<TTrieNode, V>, V>(
     trieNode: TTrieNode,
@@ -1031,17 +1031,18 @@ export class EavStore implements IEavStore, IPublisher
 
     static Recursion(
         rulesGroupedByPredicateSymbol: [string, Rule[]][]
-        ): [(inputs: object[][]) => Map<string, SortedSet<Tuple>>, (Fact | Idb)[]]
+        ): [(...inputs: object[][]) => Map<string, SortedSet<Tuple>>, (Fact | Idb)[]]
     {
         const empty = new SortedSet(tupleCompare);
         const resultT0 = new Map(rulesGroupedByPredicateSymbol.map(([predicateSymbol,]) => [predicateSymbol, empty]));
         const scheduler: IScheduler = new Scheduler();
+        scheduler.Suspend();
         const resultTMinus1Signal = scheduler.AddSignal<Map<string, SortedSet<Tuple>>>()
         const resultTMinus1Signals = new Map<string, Signal<SortedSet<Tuple>>>(
             rulesGroupedByPredicateSymbol.map(
                 ([predicateSymbol,]) =>
                     [predicateSymbol, scheduler.AddSignal(
-                        (tMinus1: Map<string, SortedSet<Tuple>>) => tMinus1.get(predicateSymbol),
+                        (resulttMinus1: Map<string, SortedSet<Tuple>>) => resulttMinus1.get(predicateSymbol),
                         [resultTMinus1Signal])]));
         const inputSignals = new ArrayKeyedMap<Fact | Idb, Signal<object[]>>();
         const inputAtoms: (Fact | Idb)[] = [];
@@ -1064,7 +1065,7 @@ export class EavStore implements IEavStore, IPublisher
                     else if(IsIdb(atom) && resultTMinus1Signals.has(atom[0]))
                         conjunctionPredecessors.push(
                             scheduler.AddSignal(
-                                EavStore.Match(atom),
+                                EavStore.Match(atom.slice(1)),
                                 [resultTMinus1Signals.get(atom[0])]));
                     else
                     {
@@ -1104,25 +1105,30 @@ export class EavStore implements IEavStore, IPublisher
         const resultTSignal = scheduler.AddSignal(
             (...t: [string, SortedSet<Tuple>][]) => resultT = new Map(t),
             predecessors);
-        return [(inputs: object[][]): Map<string, SortedSet<Tuple>> =>
+        return [(...inputs: object[][]): Map<string, SortedSet<Tuple>> =>
         {
-            scheduler.Update(
-                scheduler => inputAtoms.forEach((atom, index) => scheduler.Inject(
-                    inputSignals.get(atom),
-                    inputs[index])));
-
             let resultTMinus1: Map<string, SortedSet<Tuple>> = resultT0;
-            let complete = false;
-            do
+            scheduler.Update(
+                scheduler =>
+                {
+                    inputAtoms.forEach((atom, index) => scheduler.Inject(
+                        inputSignals.get(atom),
+                        inputs[index]));
+                    scheduler.Inject(
+                        resultTMinus1Signal,
+                        resultTMinus1);
+                });
+            scheduler.Resume();
+
+            while([...resultT].some(([predicateSymbol, result]) => result.size !== resultTMinus1.get(predicateSymbol).size))
             {
+                resultTMinus1 = resultT;
                 scheduler.Update(
                     scheduler => scheduler.Inject(
                         resultTMinus1Signal,
                         resultTMinus1));
-                complete = [...resultT].every(([predicateSymbol, result]) => result.size === resultTMinus1.get(predicateSymbol).size);
-                resultTMinus1 = resultT;
             }
-            while(!complete)
+
             return resultT;
         }, inputAtoms];
     }
