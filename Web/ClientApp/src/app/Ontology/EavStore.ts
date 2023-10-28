@@ -626,11 +626,11 @@ export class EavStore implements IEavStore, IPublisher
                 let recursion: (inputs: object[][]) => Map<string, SortedSet<Tuple>>;
                 let predecessorAtoms: (Fact | Idb)[];
                 [recursion, predecessorAtoms]
-                    = EavStore.Recursion(stronglyConnectedComponent
+                    = EavStore.Recursion(new Map(stronglyConnectedComponent
                         .map(predicateSymbol =>
                             <[string, Rule[]]>[predicateSymbol, rulesGroupedByPredicateSymbol
                                 .get(predicateSymbol)
-                                .filter(rule => stronglyConnectedComponent.includes(rule[0][0]))]));
+                                .filter(rule => stronglyConnectedComponent.includes(rule[0][0]))])));
                 const recursionSignal = new Signal(recursion);
                 signalPredecessorAtoms.set(
                     recursionSignal,
@@ -908,16 +908,16 @@ export class EavStore implements IEavStore, IPublisher
     }
 
     static Recursion(
-        rulesGroupedByPredicateSymbol: [string, Rule[]][]
+        rulesGroupedByPredicateSymbol: Map<string, Rule[]>
         ): [(...inputs: object[][]) => Map<string, SortedSet<Tuple>>, (Fact | Idb)[]]
     {
         const empty = new SortedSet(tupleCompare);
-        const resultT0 = new Map(rulesGroupedByPredicateSymbol.map(([predicateSymbol,]) => [predicateSymbol, empty]));
+        const resultT0 = new Map([...rulesGroupedByPredicateSymbol.keys()].map(([predicateSymbol,]) => [predicateSymbol, empty]));
         const scheduler: IScheduler = new Scheduler();
         scheduler.Suspend();
         const resultTMinus1Signal = scheduler.AddSignal<Map<string, SortedSet<Tuple>>>()
         const resultTMinus1Signals = new Map<string, Signal<SortedSet<Tuple>>>(
-            [...new Map(rulesGroupedByPredicateSymbol).keys()].map(
+            [...rulesGroupedByPredicateSymbol.keys()].map(
                 predicateSymbol =>
                     [predicateSymbol, scheduler.AddSignal(
                         (resultMinus1: Map<string, SortedSet<Tuple>>) => resultMinus1.get(predicateSymbol),
