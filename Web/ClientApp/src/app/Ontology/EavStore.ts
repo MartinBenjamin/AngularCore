@@ -911,17 +911,15 @@ export class EavStore implements IEavStore, IPublisher
         rulesGroupedByPredicateSymbol: Map<string, Rule[]>
         ): [(...inputs: object[][]) => Map<string, SortedSet<Tuple>>, (Fact | Idb)[]]
     {
+        const signalAdjacencyList = new Map<Signal, Signal[]>();
         const empty = new SortedSet(tupleCompare);
         const resultT0 = new Map([...rulesGroupedByPredicateSymbol.keys()].map(([predicateSymbol,]) => [predicateSymbol, empty]));
-        const scheduler: IScheduler = new Scheduler();
-        scheduler.Suspend();
-        const resultTMinus1Signal = scheduler.AddSignal<Map<string, SortedSet<Tuple>>>()
+        const resultTMinus1Signal = new Signal<Map<string, SortedSet<Tuple>>>();
+        signalAdjacencyList.set(resultTMinus1Signal, []);
         const resultTMinus1Signals = new Map<string, Signal<SortedSet<Tuple>>>(
             [...rulesGroupedByPredicateSymbol.keys()].map(
-                predicateSymbol =>
-                    [predicateSymbol, scheduler.AddSignal(
-                        (resultMinus1: Map<string, SortedSet<Tuple>>) => resultMinus1.get(predicateSymbol),
-                        [resultTMinus1Signal])]));
+                predicateSymbol => [predicateSymbol, new Signal((resultMinus1: Map<string, SortedSet<Tuple>>) => resultMinus1.get(predicateSymbol))]))
+        resultTMinus1Signals.forEach(signal => signalAdjacencyList.set(signal, [resultTMinus1Signal]));
         const inputSignals = new ArrayKeyedMap<Fact | Idb, Signal<object[]>>();
         const inputAtoms: (Fact | Idb)[] = [];
 
@@ -929,44 +927,7 @@ export class EavStore implements IEavStore, IPublisher
 
         for(const [predicateSymbol, rules] of rulesGroupedByPredicateSymbol)
         {
-            const disjunctionPredecessors: Signal<Tuple[]>[] = [];
-
-            for(const rule of rules)
-            {
-                const conjunctionPredecessors: Signal<object[] | BuiltIn>[] = [];
-
-                for(const atom of rule[1])
-                {
-                    if(typeof atom === 'function')
-                        conjunctionPredecessors.push(scheduler.AddSignal(() => atom));
-
-                    else if(IsIdb(atom) && resultTMinus1Signals.has(atom[0]))
-                        conjunctionPredecessors.push(
-                            scheduler.AddSignal(
-                                EavStore.Match(atom.slice(1)),
-                                [resultTMinus1Signals.get(atom[0])]));
-                    else
-                    {
-                        let inputSignal = inputSignals.get(atom);
-                        if(!inputSignal)
-                        {
-                            inputSignal = scheduler.AddSignal();
-                            inputSignals.set(
-                                atom,
-                                inputSignal);
-                            inputAtoms.push(atom);
-                        }
-                        conjunctionPredecessors.push(inputSignal);
-                    }
-                }
-
-                disjunctionPredecessors.push(
-                    scheduler.AddSignal(
-                        EavStore.Conjunction(rule[0].slice(1)),
-                        conjunctionPredecessors));
-            }
-
-            predecessors.push(scheduler.AddSignal(
+            const disjunction = new Signal(
                 (resultTMinus1: SortedSet<Tuple>, ...conjunctions: Tuple[][]): [string, SortedSet<Tuple>] =>
                 {
                     const resultT = new SortedSet(resultTMinus1);
@@ -976,13 +937,69 @@ export class EavStore implements IEavStore, IPublisher
 
                     return [predicateSymbol, resultT];
 
-                }, [resultTMinus1Signals.get(predicateSymbol), ...disjunctionPredecessors]));
+                });
+
+            predecessors.push(disjunction);
+            const disjunctionPredecessors: Signal<Tuple[]>[] = [];
+
+            for(const rule of rules)
+            {
+                const conjunction = new Signal(EavStore.Conjunction(rule[0].slice(1)));
+                disjunctionPredecessors.push(conjunction);
+                const conjunctionPredecessors: Signal<object[] | BuiltIn>[] = [];
+                signalAdjacencyList.set(
+                    conjunction,
+                    conjunctionPredecessors)
+
+                for(const atom of rule[1])
+                {
+                    if(typeof atom === 'function')
+                    {
+                        const signal = new Signal(() => atom);
+                        signalAdjacencyList.set(
+                            signal,
+                            []);
+                        conjunctionPredecessors.push(signal);
+                    }
+                    else if(IsIdb(atom) && resultTMinus1Signals.has(atom[0]))
+                    {
+                        const match = new Signal(EavStore.Match(atom.slice(1)));
+                        signalAdjacencyList.set(
+                            match,
+                            [resultTMinus1Signals.get(atom[0])]);
+                        conjunctionPredecessors.push(match);
+                    }
+                    else
+                    {
+                        let inputSignal = inputSignals.get(atom);
+                        if(!inputSignal)
+                        {
+                            inputSignal = new Signal();
+                            signalAdjacencyList.set(
+                                inputSignal,
+                                []);
+
+                            inputSignals.set(
+                                atom,
+                                inputSignal);
+                            inputAtoms.push(atom);
+                        }
+                        conjunctionPredecessors.push(inputSignal);
+                    }
+                }
+            }
+
+            signalAdjacencyList.set(
+                disjunction,
+                [resultTMinus1Signals.get(predicateSymbol), ...disjunctionPredecessors]);
         }
 
         let resultT: Map<string, SortedSet<Tuple>>;
-        const resultTSignal = scheduler.AddSignal(
-            (...t: [string, SortedSet<Tuple>][]) => resultT = new Map(t),
+        signalAdjacencyList.set(
+            new Signal((...t: [string, SortedSet<Tuple>][]) => resultT = new Map(t)),
             predecessors);
+
+        const scheduler: IScheduler = new Scheduler(signalAdjacencyList);
         return [(...inputs: object[][]): Map<string, SortedSet<Tuple>> =>
         {
             let resultTMinus1: Map<string, SortedSet<Tuple>> = resultT0;
@@ -996,7 +1013,6 @@ export class EavStore implements IEavStore, IPublisher
                         resultTMinus1Signal,
                         resultTMinus1);
                 });
-            scheduler.Resume();
 
             while([...resultT].some(([predicateSymbol, result]) => result.size !== resultTMinus1.get(predicateSymbol).size))
             {
