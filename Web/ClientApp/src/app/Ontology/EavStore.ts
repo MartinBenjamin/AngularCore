@@ -951,7 +951,7 @@ export class EavStore implements IEavStore, IPublisher
                     let inputFunction = inputFunctions.get(atom);
                     if(!inputFunction)
                     {
-                        const index = inputAtoms.push(atom);
+                        const index = inputAtoms.push(atom) - 1;
                         inputFunction = () => input[index];
 
                         inputFunctions.set(
