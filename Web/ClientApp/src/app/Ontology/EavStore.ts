@@ -1,5 +1,6 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Compose } from '../Compose';
 import { IScheduler, Scheduler, Signal } from '../Signal';
 import { Transpose } from './AdjacencyList';
 import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
@@ -694,8 +695,13 @@ export class EavStore implements IEavStore, IPublisher
                 predecessors);
             for(const atom of predecessorAtoms)
                 if(atom instanceof Function)
-                    predecessors.push(this.SignalScheduler.AddSignal(() => atom));
-
+                {
+                    const signal = new Signal(() => atom);
+                    signalAdjacencyList.set(
+                        signal,
+                        []);
+                    predecessors.push(signal);
+                }
                 else if(IsIdb(atom))
                 {
                     const successor = new Signal(EavStore.Match(atom.slice(1)));
@@ -905,6 +911,79 @@ export class EavStore implements IEavStore, IPublisher
             for(const tuple of input)
                 set.add(tuple)
         return <Tuple[]>set.Array;
+    }
+
+    static RecursionDisjunction(
+        rules: Rule[]
+        ): [(...inputs: object[][]) => SortedSet<Tuple>, (Fact | Idb)[]]
+    {
+        type inputType = [SortedSet<Tuple>, ...Iterable<Tuple>[]];
+        const inputFunctions = new ArrayKeyedMap<Fact | Idb, () => Iterable<Tuple>>();
+        const inputAtoms: (Fact | Idb)[] = [];
+        const input: inputType = [undefined];
+
+        const disjunction = (...params: inputType): SortedSet<Tuple> =>
+        {
+            const [resultTMinus1, ...conjunctions] = params;
+            const resultT = resultTMinus1 ? new SortedSet(resultTMinus1) : new SortedSet(tupleCompare);
+            for(const conjunction of conjunctions)
+                for(const tuple of conjunction)
+                    resultT.add(tuple);
+
+            return resultT;
+        };
+
+        const disjunctionPredecessors: [() => SortedSet<Tuple>, ...(() => Iterable<Tuple>)[]] = [() => input[0]];
+
+        for(const rule of rules)
+        {
+            const conjunction = EavStore.Conjunction(rule[0].slice(1));
+            const conjunctionPredecessors: (() => (object[] | BuiltIn))[] = [];
+
+            for(const atom of rule[1])
+            {
+                if(typeof atom === 'function')
+                    conjunctionPredecessors.push(() => atom);
+
+                else if(IsIdb(atom))
+                {
+                    const match = EavStore.Match(atom.slice(1));
+                    let inputFunction = inputFunctions.get(atom);
+                    if(!inputFunction)
+                    {
+                        const index = inputAtoms.push(atom);
+                        inputFunction = () => input[index];
+
+                        inputFunctions.set(
+                            atom,
+                            inputFunction);
+                        inputAtoms.push(atom);
+                    }
+
+                    conjunctionPredecessors.push(Compose(match, inputFunction));
+                }
+                else
+                {
+                    const substitute = EavStore.Substitute(atom);
+                    let inputFunction = inputFunctions.get(atom);
+                    if(!inputFunction)
+                    {
+                        const index = inputAtoms.push(atom);
+                        inputFunction = () => input[index];
+
+                        inputFunctions.set(
+                            atom,
+                            inputFunction);
+                        inputAtoms.push(atom);
+                    }
+
+                    conjunctionPredecessors.push(Compose(substitute, inputFunction));
+                }
+            }
+
+            disjunctionPredecessors.push(Compose(conjunction, ...conjunctionPredecessors));
+        }
+        return [Compose(disjunction, ...disjunctionPredecessors), inputAtoms];
     }
 
     static Recursion(
