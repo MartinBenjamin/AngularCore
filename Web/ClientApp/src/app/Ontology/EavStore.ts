@@ -617,14 +617,14 @@ export class EavStore implements IEavStore, IPublisher
         stronglyConnectedComponents.forEach(scc => scc.Recursive = scc.length > 1 || rulePredecessors.get(scc[0]).includes(scc[0]));
 
         const signalAdjacencyList = new Map<Signal, Signal[]>();
-        const idbSignals = new Map<string, Signal<Tuple[]>>();
-        const signalPredecessorAtoms = new Map<Signal, Atom[]>();
+        const idbSignals = new Map<string, Signal<Iterable<Tuple>>>();
+        const signalPredecessorAtoms = new Map<Signal, (Fact | Idb)[]>();
 
         for(const stronglyConnectedComponent of stronglyConnectedComponents.values())
         {
             if(stronglyConnectedComponent.Recursive)
             {
-                let recursion: (inputs: object[][]) => Map<string, SortedSet<Tuple>>;
+                let recursion: (...inputs: Iterable<Tuple>[]) => Map<string, SortedSet<Tuple>>;
                 let predecessorAtoms: (Fact | Idb)[];
                 [recursion, predecessorAtoms]
                     = EavStore.Recursion(new Map(stronglyConnectedComponent
@@ -656,13 +656,15 @@ export class EavStore implements IEavStore, IPublisher
                 if(rules.length === 1)
                 {
                     const rule = rules[0];
-                    const conjunction = new Signal(EavStore.Conjunction(rule[0].slice(1)));
+                    const conjunction = new Signal(EavStore.Conjunction1(
+                        rule[0][0] === '' ? rule[0].slice(1) : rule[0],
+                        rule[1]));
                     idbSignals.set(
                         predicateSymbol,
                         conjunction);
                     signalPredecessorAtoms.set(
                         conjunction,
-                        rule[1]);
+                        rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function'));
                 }
                 else // Disjunction of conjunctions.
                 {
@@ -677,11 +679,13 @@ export class EavStore implements IEavStore, IPublisher
 
                     for(const rule of rules)
                     {
-                        const conjunction = new Signal(EavStore.Conjunction(rule[0].slice(1)));
+                        const conjunction = new Signal(EavStore.Conjunction1(
+                            rule[0][0] === '' ? rule[0].slice(1) : rule[0],
+                            rule[1]));
                         predecessors.push(conjunction);
                         signalPredecessorAtoms.set(
                             conjunction,
-                            rule[1]);
+                            rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function'));
                     }
                 }
             }
@@ -694,30 +698,120 @@ export class EavStore implements IEavStore, IPublisher
                 signal,
                 predecessors);
             for(const atom of predecessorAtoms)
-                if(atom instanceof Function)
+                if(IsIdb(atom))
+                    predecessors.push(idbSignals.get(atom[0]));
+
+                else 
+                    predecessors.push(this.SignalAtom(atom));
+        }
+
+        this.SignalScheduler.AddSignals(signalAdjacencyList);
+        return <Signal>idbSignals.get('');
+    }
+
+    private SignalRule1<T extends [any, ...any[]]>(
+        head: T,
+        body: Atom[],
+        ...rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>
+    {
+        rules = [[<Idb>['', ...head], body], ...rules];
+
+        const rulesGroupedByPredicateSymbol = Group(
+            rules,
+            rule => rule[0][0],
+            rule => rule);
+
+        const rulePredecessors = new Map(
+            rules.map<[string, string[]]>(
+                rule => [
+                    rule[0][0],
+                    [].concat(...rulesGroupedByPredicateSymbol.get(rule[0][0]).map(rule => rule[1].filter(IsIdb).map(idb => idb[0])))]));
+
+        type SCC<T> = ReadonlyArray<T> & { Recursive?: boolean; };
+        const stronglyConnectedComponents = new Map<string, SCC<string>>([].concat(
+            ...StronglyConnectedComponents(rulePredecessors).map(scc => scc.map(predicateSymbol => <[string, SCC<string>]>[predicateSymbol, scc]))));
+
+        stronglyConnectedComponents.forEach(scc => scc.Recursive = scc.length > 1 || rulePredecessors.get(scc[0]).includes(scc[0]));
+
+        const signalAdjacencyList = new Map<Signal, Signal[]>();
+        const idbSignals = new Map<string, Signal<Iterable<Tuple>>>();
+        const signalPredecessorAtoms = new Map<Signal, (Fact | Idb)[]>();
+
+        for(const [predicateSymbol, rules] of rulesGroupedByPredicateSymbol)
+        {
+            if(stronglyConnectedComponents.get(predicateSymbol).Recursive)
+            {
+                let recursiveDisjunction: (...inputs: [SortedSet<Tuple>, ...Iterable<Tuple>[]]) => SortedSet<Tuple>;
+                let predecessorAtoms: (Fact | Idb)[];
+                [recursiveDisjunction, predecessorAtoms] = EavStore.RecursiveDisjunction(rules);
+                const recursiveSignal = new Signal(
+                    recursiveDisjunction,
+                    (lhs, rhs) => lhs.size === rhs.size);
+                signalAdjacencyList.set(
+                    recursiveSignal,
+                    [recursiveSignal]);
+                signalPredecessorAtoms.set(
+                    recursiveSignal,
+                    predecessorAtoms);
+                idbSignals.set(
+                    predicateSymbol,
+                    recursiveSignal);
+            }
+            else
+            {
+                if(rules.length === 1)
                 {
-                    const signal = new Signal(() => atom);
+                    const rule = rules[0];
+                    const conjunction = new Signal(EavStore.Conjunction1(
+                        rule[0].slice(1),
+                        rule[1]));
                     signalAdjacencyList.set(
-                        signal,
+                        conjunction,
                         []);
-                    predecessors.push(signal);
+                    signalPredecessorAtoms.set(
+                        conjunction,
+                        rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function'));
+                    idbSignals.set(
+                        predicateSymbol,
+                        conjunction);
                 }
-                else if(IsIdb(atom))
+                else // Disjunction of conjunctions.
                 {
-                    const successor = new Signal(EavStore.Match(atom.slice(1)));
-                    predecessors.push(successor);
+                    const disjunction = new Signal(EavStore.Disjunction);
+                    const predecessors: Signal[] = [];
                     signalAdjacencyList.set(
-                        successor,
-                        [idbSignals.get(atom[0])]);
+                        disjunction,
+                        predecessors);
+                    idbSignals.set(
+                        predicateSymbol,
+                        disjunction);
+
+                    for(const rule of rules)
+                    {
+                        const conjunction = new Signal(EavStore.Conjunction1(
+                            rule[0].slice(1),
+                            rule[1]));
+                        predecessors.push(conjunction);
+                        signalAdjacencyList.set(
+                            conjunction,
+                            []);
+                        signalPredecessorAtoms.set(
+                            conjunction,
+                            rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function'));
+                    }
                 }
+            }
+        }
+
+        for(const [signal, predecessorAtoms] of signalPredecessorAtoms)
+        {
+            const predecessors: Signal[] = signalAdjacencyList.get(signal);
+            for(const atom of predecessorAtoms)
+                if(IsIdb(atom))
+                    predecessors.push(idbSignals.get(atom[0]));
+
                 else
-                {
-                    const successor = new Signal(EavStore.Substitute(atom));
-                    predecessors.push(successor);
-                    signalAdjacencyList.set(
-                        successor,
-                        [this.SignalAtom(atom)]);
-                }
+                    predecessors.push(this.SignalAtom(atom));
         }
 
         this.SignalScheduler.AddSignals(signalAdjacencyList);
@@ -902,27 +996,78 @@ export class EavStore implements IEavStore, IPublisher
             [initialSubstitution]));
     }
 
+    static Conjunction1(
+        head: any[],
+        body: Atom[]): (...inputs: Iterable<Tuple>[]) => Iterable<Tuple>
+    {
+        return (...inputs: Iterable<Tuple>[]): Iterable<Tuple> =>
+        {
+            let inputIndex = 0;
+            return body.reduce(
+                (substitutions, atom) =>
+                {
+                    if(typeof atom === 'function')
+                        return [...atom(substitutions)];
+
+                    let count = substitutions.length;
+                    while(count--)
+                    {
+                        const substitution = substitutions.shift();
+                        for(const tuple of inputs[inputIndex])
+                        {
+                            let merged = { ...substitution };
+                            for(let index = 0; index < atom.length && merged; ++index)
+                            {
+                                const term = atom[index];
+                                if(IsConstant(term))
+                                {
+                                    if(term !== tuple[index])
+                                        merged = null;
+                                }
+                                else if(IsVariable(term))
+                                {
+                                    if(typeof merged[term] === 'undefined')
+                                        merged[term] = tuple[index];
+
+                                    else if(merged[term] !== tuple[index])
+                                        // Fact does not match query pattern.
+                                        merged = null;
+                                }
+                            }
+
+                            if(merged)
+                                substitutions.push(merged);
+                        }
+                    }
+
+                    ++inputIndex;
+                    return substitutions;
+                },
+                [{}]).map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
+        };
+    }
+
     static Disjunction(
         ...inputs: Iterable<Tuple>[]
-        ): Tuple[]
+        ): SortedSet<Tuple>
     {
         let set = new SortedSet(tupleCompare);
         for(const input of inputs)
             for(const tuple of input)
                 set.add(tuple)
-        return <Tuple[]>set.Array;
+        return set;
     }
 
-    static RecursionDisjunction(
+    static RecursiveDisjunction(
         rules: Rule[]
-        ): [(...inputs: object[][]) => SortedSet<Tuple>, (Fact | Idb)[]]
+        ): [(...inputs: [SortedSet<Tuple>, ...Iterable<Tuple>[]]) => SortedSet<Tuple>, (Fact | Idb)[]]
     {
-        type inputType = [SortedSet<Tuple>, ...Iterable<Tuple>[]];
-        const inputFunctions = new ArrayKeyedMap<Fact | Idb, () => Iterable<Tuple>>();
+        type InputType = [SortedSet<Tuple>, ...Iterable<Tuple>[]];
+        const wrappedInputs = new ArrayKeyedMap<Fact | Idb, () => Iterable<Tuple>>();
         const inputAtoms: (Fact | Idb)[] = [];
-        const input: inputType = [undefined];
+        let inputs: InputType;
 
-        const disjunction = (...params: inputType): SortedSet<Tuple> =>
+        const disjunction = (...params: InputType): SortedSet<Tuple> =>
         {
             const [resultTMinus1, ...conjunctions] = params;
             const resultT = resultTMinus1 ? new SortedSet(resultTMinus1) : new SortedSet(tupleCompare);
@@ -933,62 +1078,49 @@ export class EavStore implements IEavStore, IPublisher
             return resultT;
         };
 
-        const disjunctionPredecessors: [() => SortedSet<Tuple>, ...(() => Iterable<Tuple>)[]] = [() => input[0]];
+        const disjunctionPredecessors: [() => SortedSet<Tuple>, ...(() => Iterable<Tuple>)[]] = [() => inputs[0]];
 
         for(const rule of rules)
         {
-            const conjunction = EavStore.Conjunction(rule[0].slice(1));
-            const conjunctionPredecessors: (() => (object[] | BuiltIn))[] = [];
+            const conjunction = EavStore.Conjunction1(
+                rule[0][0] === '' ? rule[0].slice(1) : rule[0],
+                rule[1]);
+            const conjunctionPredecessors: (() => Iterable<Tuple>)[] = [];
 
-            for(const atom of rule[1])
+            for(const atom of rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function'))
             {
-                if(typeof atom === 'function')
-                    conjunctionPredecessors.push(() => atom);
-
-                else if(IsIdb(atom))
+                let wrappedInput = wrappedInputs.get(atom);
+                if(!wrappedInput)
                 {
-                    const match = EavStore.Match(atom.slice(1));
-                    let inputFunction = inputFunctions.get(atom);
-                    if(!inputFunction)
-                    {
-                        const index = inputAtoms.push(atom) - 1;
-                        inputFunction = () => input[index];
+                    const index = inputAtoms.push(atom);
+                    wrappedInput = () => inputs[index];
 
-                        inputFunctions.set(
-                            atom,
-                            inputFunction);
-                        inputAtoms.push(atom);
-                    }
-
-                    conjunctionPredecessors.push(Compose(match, inputFunction));
+                    wrappedInputs.set(
+                        atom,
+                        wrappedInput);
+                    inputAtoms.push(atom);
                 }
-                else
-                {
-                    const substitute = EavStore.Substitute(atom);
-                    let inputFunction = inputFunctions.get(atom);
-                    if(!inputFunction)
-                    {
-                        const index = inputAtoms.push(atom);
-                        inputFunction = () => input[index];
 
-                        inputFunctions.set(
-                            atom,
-                            inputFunction);
-                        inputAtoms.push(atom);
-                    }
-
-                    conjunctionPredecessors.push(Compose(substitute, inputFunction));
-                }
+                conjunctionPredecessors.push(wrappedInput);
             }
 
             disjunctionPredecessors.push(Compose(conjunction, ...conjunctionPredecessors));
         }
-        return [Compose(disjunction, ...disjunctionPredecessors), inputAtoms];
+
+        const wrappedDisjunction = Compose(disjunction, ...disjunctionPredecessors);
+
+        return [
+            (...params: InputType): SortedSet<Tuple> =>
+            {
+                inputs = params;
+                return wrappedDisjunction();
+            },
+            inputAtoms];
     }
 
     static Recursion(
         rulesGroupedByPredicateSymbol: Map<string, Rule[]>
-        ): [(...inputs: object[][]) => Map<string, SortedSet<Tuple>>, (Fact | Idb)[]]
+        ): [(...inputs: Iterable<Tuple>[]) => Map<string, SortedSet<Tuple>>, (Fact | Idb)[]]
     {
         const signalAdjacencyList = new Map<Signal, Signal[]>();
         const empty = new SortedSet(tupleCompare);
@@ -999,7 +1131,7 @@ export class EavStore implements IEavStore, IPublisher
             [...rulesGroupedByPredicateSymbol.keys()].map(
                 predicateSymbol => [predicateSymbol, new Signal((resultMinus1: Map<string, SortedSet<Tuple>>) => resultMinus1.get(predicateSymbol))]))
         resultTMinus1Signals.forEach(signal => signalAdjacencyList.set(signal, [resultTMinus1Signal]));
-        const inputSignals = new ArrayKeyedMap<Fact | Idb, Signal<object[]>>();
+        const inputSignals = new ArrayKeyedMap<Fact | Idb, Signal<Iterable<Tuple>>>();
         const inputAtoms: (Fact | Idb)[] = [];
 
         const predecessors: Signal<[string, SortedSet<Tuple>]>[] = [];
@@ -1007,7 +1139,7 @@ export class EavStore implements IEavStore, IPublisher
         for(const [predicateSymbol, rules] of rulesGroupedByPredicateSymbol)
         {
             const disjunction = new Signal(
-                (resultTMinus1: SortedSet<Tuple>, ...conjunctions: Tuple[][]): [string, SortedSet<Tuple>] =>
+                (resultTMinus1: SortedSet<Tuple>, ...conjunctions: Iterable<Tuple>[]): [string, SortedSet<Tuple>] =>
                 {
                     const resultT = new SortedSet(resultTMinus1);
                     for(const conjunction of conjunctions)
@@ -1019,35 +1151,23 @@ export class EavStore implements IEavStore, IPublisher
                 });
 
             predecessors.push(disjunction);
-            const disjunctionPredecessors: Signal<Tuple[]>[] = [];
+            const disjunctionPredecessors: Signal<Iterable<Tuple>>[] = [];
 
             for(const rule of rules)
             {
-                const conjunction = new Signal(EavStore.Conjunction(rule[0].slice(1)));
+                const conjunction = new Signal(EavStore.Conjunction1(
+                    rule[0][0] === '' ? rule[0].slice(1) : rule[0],
+                    rule[1]));
                 disjunctionPredecessors.push(conjunction);
-                const conjunctionPredecessors: Signal<object[] | BuiltIn>[] = [];
+                const conjunctionPredecessors: Signal<Iterable<Tuple>>[] = [];
                 signalAdjacencyList.set(
                     conjunction,
                     conjunctionPredecessors)
 
-                for(const atom of rule[1])
-                {
-                    if(typeof atom === 'function')
-                    {
-                        const signal = new Signal(() => atom);
-                        signalAdjacencyList.set(
-                            signal,
-                            []);
-                        conjunctionPredecessors.push(signal);
-                    }
-                    else if(IsIdb(atom) && resultTMinus1Signals.has(atom[0]))
-                    {
-                        const match = new Signal(EavStore.Match(atom.slice(1)));
-                        signalAdjacencyList.set(
-                            match,
-                            [resultTMinus1Signals.get(atom[0])]);
-                        conjunctionPredecessors.push(match);
-                    }
+                for(const atom of rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function'))
+                    if(IsIdb(atom) && resultTMinus1Signals.has(atom[0]))
+                        conjunctionPredecessors.push(resultTMinus1Signals.get(atom[0]));
+
                     else
                     {
                         let inputSignal = inputSignals.get(atom);
@@ -1065,7 +1185,6 @@ export class EavStore implements IEavStore, IPublisher
                         }
                         conjunctionPredecessors.push(inputSignal);
                     }
-                }
             }
 
             signalAdjacencyList.set(
@@ -1079,7 +1198,7 @@ export class EavStore implements IEavStore, IPublisher
             predecessors);
 
         const scheduler: IScheduler = new Scheduler(signalAdjacencyList);
-        return [(...inputs: object[][]): Map<string, SortedSet<Tuple>> =>
+        return [(...inputs: Iterable<Tuple>[]): Map<string, SortedSet<Tuple>> =>
         {
             let resultTMinus1: Map<string, SortedSet<Tuple>> = resultT0;
             scheduler.Update(
