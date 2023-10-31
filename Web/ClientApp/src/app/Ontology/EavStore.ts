@@ -1089,6 +1089,9 @@ export class EavStore implements IEavStore, IPublisher
 
             for(const atom of rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function'))
             {
+                if(IsIdb(atom) && atom[0] === rule[0][0])
+                    continue;
+
                 let wrappedInput = wrappedInputs.get(atom);
                 if(!wrappedInput)
                 {
