@@ -763,7 +763,7 @@ export class EavStore implements IEavStore, IPublisher
                 {
                     const rule = rules[0];
                     const conjunction = new Signal(EavStore.Conjunction1(
-                        rule[0].slice(1),
+                        rule[0][0] === '' ? rule[0].slice(1) : rule[0],
                         rule[1]));
                     signalAdjacencyList.set(
                         conjunction,
@@ -789,7 +789,7 @@ export class EavStore implements IEavStore, IPublisher
                     for(const rule of rules)
                     {
                         const conjunction = new Signal(EavStore.Conjunction1(
-                            rule[0].slice(1),
+                            rule[0][0] === '' ? rule[0].slice(1) : rule[0],
                             rule[1]));
                         predecessors.push(conjunction);
                         signalAdjacencyList.set(
