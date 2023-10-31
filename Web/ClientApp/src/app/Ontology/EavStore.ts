@@ -746,7 +746,7 @@ export class EavStore implements IEavStore, IPublisher
                 [recursiveDisjunction, predecessorAtoms] = EavStore.RecursiveDisjunction(rules);
                 const recursiveSignal = new Signal(
                     recursiveDisjunction,
-                    (lhs, rhs) => lhs.size === rhs.size);
+                    (lhs, rhs) => lhs && rhs && lhs.size === rhs.size);
                 signalAdjacencyList.set(
                     recursiveSignal,
                     [recursiveSignal]);
@@ -1094,11 +1094,9 @@ export class EavStore implements IEavStore, IPublisher
                 {
                     const index = inputAtoms.push(atom);
                     wrappedInput = () => inputs[index];
-
                     wrappedInputs.set(
                         atom,
                         wrappedInput);
-                    inputAtoms.push(atom);
                 }
 
                 conjunctionPredecessors.push(wrappedInput);
