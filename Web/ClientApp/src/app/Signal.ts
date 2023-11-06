@@ -423,9 +423,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         if(!stronglyConnectedComponent.Recursive)
         {
             const signal = stronglyConnectedComponent[0]
-            const value = signal.Function.apply(
-                null,
-                this._predecessors.get(signal).map(predecessor => this._values.get(predecessor)));
+            const value = signal.Function(...this._predecessors.get(signal).map(predecessor => this._values.get(predecessor)));
 
             if(!signal.AreEqual(
                 value,
