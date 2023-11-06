@@ -1070,7 +1070,7 @@ export class EavStore implements IEavStore, IPublisher
         const disjunction = (...params: InputType): SortedSet<Tuple> =>
         {
             const [resultTMinus1, ...conjunctions] = params;
-            const resultT = resultTMinus1 ? new SortedSet(resultTMinus1) : new SortedSet(tupleCompare);
+            const resultT = new SortedSet(resultTMinus1);
             for(const conjunction of conjunctions)
                 for(const tuple of conjunction)
                     resultT.add(tuple);
@@ -1078,7 +1078,7 @@ export class EavStore implements IEavStore, IPublisher
             return resultT;
         };
 
-        const disjunctionPredecessors: [() => SortedSet<Tuple>, ...(() => Iterable<Tuple>)[]] = [() => inputs[0]];
+        const disjunctionPredecessors: [() => SortedSet<Tuple>, ...(() => Iterable<Tuple>)[]] = [() => inputs[0] || new SortedSet(tupleCompare)];
 
         for(const rule of rules)
         {
@@ -1089,17 +1089,21 @@ export class EavStore implements IEavStore, IPublisher
 
             for(const atom of rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function'))
             {
+                let wrappedInput: () => Iterable<Tuple>;
                 if(IsIdb(atom) && atom[0] === rule[0][0])
-                    continue;
+                    wrappedInput = disjunctionPredecessors[0];
 
-                let wrappedInput = wrappedInputs.get(atom);
-                if(!wrappedInput)
+                else
                 {
-                    const index = inputAtoms.push(atom);
-                    wrappedInput = () => inputs[index];
-                    wrappedInputs.set(
-                        atom,
-                        wrappedInput);
+                    wrappedInput = wrappedInputs.get(atom);
+                    if(!wrappedInput)
+                    {
+                        const index = inputAtoms.push(atom);
+                        wrappedInput = () => inputs[index];
+                        wrappedInputs.set(
+                            atom,
+                            wrappedInput);
+                    }
                 }
 
                 conjunctionPredecessors.push(wrappedInput);
@@ -1237,7 +1241,7 @@ export class EavStore implements IEavStore, IPublisher
                     (facts: Fact[]) => facts.map(([entity, , value]) => [entity, value]),
                     [this.SignalAtom([undefined, <PropertyKey>params[0], undefined])]);
 
-        return this.SignalRule(
+        return this.SignalRule1(
             params[0],
             params[1],
             ...params.slice(2));
