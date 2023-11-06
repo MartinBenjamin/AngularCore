@@ -1148,5 +1148,75 @@ T(x, y) :- R(x, z), T(z, y)`,
                                 `The expected value of T is ${JSON.stringify([...TValues[index]])}`,
                                 () => expect(JSON.stringify([...trace[0]])).toBe(JSON.stringify([...TValues[index]])));
                         });
+
+                for(let index = 0; index < RValues.length; ++index)
+                    describe(
+                        `Given R: ${JSON.stringify([...RValues[index]])}`,
+                        () =>
+                        {
+                            const store: IEavStore = new EavStore();
+                            const trace: Set<any[]>[] = [];
+
+                            let vertexIds = new Set<number>();
+                            for(const [source, destination] of RValues[index])
+                            {
+                                vertexIds.add(source);
+                                vertexIds.add(destination);
+                            }
+
+                            let vertices = new Map([...vertexIds].map(vertexId => [vertexId, store.Assert({ Id: vertexId, R: [] })]));
+                            for(const [source, destination] of RValues[index])
+                                vertices.get(source).R.push(vertices.get(destination));
+
+                            const signal = store.Signal(
+                                ['?xId', '?yId'], [['T', '?x', '?y'], ['?x', 'Id', '?xId'], ['?y', 'Id', '?yId']],
+                                [['T', '?x', '?y'], [['?x', 'R', '?y']]],
+                                [['T', '?x', '?z'], [['?x', 'R', '?y'], ['T', '?y', '?z']]]);
+
+                            store.SignalScheduler.AddSignal(
+                                (result: [number, number][]) => trace.push(new SortedSet<[number, number]>(
+                                    tupleCompare,
+                                    result)),
+                                [signal]);
+
+                            it(
+                                `The expected value of T is ${JSON.stringify([...TValues[index]])}`,
+                                () => expect(JSON.stringify([...trace[0]])).toBe(JSON.stringify([...TValues[index]])));
+                        });
+
+                for(let index = 0; index < RValues.length; ++index)
+                    describe(
+                        `Given R: ${JSON.stringify([...RValues[index]])}`,
+                        () =>
+                        {
+                            const store: IEavStore = new EavStore();
+                            const trace: Set<any[]>[] = [];
+
+                            let vertexIds = new Set<number>();
+                            for(const [source, destination] of RValues[index])
+                            {
+                                vertexIds.add(source);
+                                vertexIds.add(destination);
+                            }
+
+                            let vertices = new Map([...vertexIds].map(vertexId => [vertexId, store.Assert({ Id: vertexId, R: [] })]));
+                            for(const [source, destination] of RValues[index])
+                                vertices.get(source).R.push(vertices.get(destination));
+
+                            const signal = store.Signal(
+                                ['?xId', '?yId'], [['T', '?x', '?y'], ['?x', 'Id', '?xId'], ['?y', 'Id', '?yId']],
+                                [['T', '?x', '?y'], [['?x', 'R', '?y']]],
+                                [['T', '?x', '?y'], [['T', '?x', '?z'], ['?z', 'R', '?y'], ]]);
+
+                            store.SignalScheduler.AddSignal(
+                                (result: [number, number][]) => trace.push(new SortedSet<[number, number]>(
+                                    tupleCompare,
+                                    result)),
+                                [signal]);
+
+                            it(
+                                `The expected value of T is ${JSON.stringify([...TValues[index]])}`,
+                                () => expect(JSON.stringify([...trace[0]])).toBe(JSON.stringify([...TValues[index]])));
+                        });
             });
     });
