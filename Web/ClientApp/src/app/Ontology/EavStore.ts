@@ -13,7 +13,7 @@ import { ITransaction, ITransactionManager, TransactionManager } from './ITransa
 import { ArrayCompareFactory, SortedSet } from './SortedSet';
 import { StronglyConnectedComponents } from './StronglyConnectedComponents';
 
-type Tuple = any[];
+type Tuple = readonly any[];
 
 export const EntityId = Symbol('EntityId');
 

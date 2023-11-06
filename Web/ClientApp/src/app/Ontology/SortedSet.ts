@@ -3,11 +3,11 @@ export const DefaultCompare = (a, b) => a === b ? 0 : a < b ? -1 : 1;
 
 export function ArrayCompareFactory(
     elementCompare: Compare = DefaultCompare
-    ): Compare<any[]>
+    ): Compare<readonly any[]>
 {
     return function(
-        a: any[],
-        b: any[]
+        a: readonly any[],
+        b: readonly any[]
         ): number
     {
         let result = a.length - b.length;
