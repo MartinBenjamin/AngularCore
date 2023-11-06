@@ -1,4 +1,4 @@
-export function Compose<TIn extends any[], TOut>(
+export function Wrap<TIn extends any[], TOut>(
     map: (...inputs: TIn) => TOut,
     ...wrappedInputs: { [Parameter in keyof TIn]: () => TIn[Parameter]; }): () => TOut
 {

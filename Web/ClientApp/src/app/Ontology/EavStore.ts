@@ -1,7 +1,7 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Compose } from '../Compose';
 import { IScheduler, Scheduler, Signal } from '../Signal';
+import { Wrap } from '../Wrap';
 import { Transpose } from './AdjacencyList';
 import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
 import { BuiltIn } from './Atom';
@@ -1109,10 +1109,11 @@ export class EavStore implements IEavStore, IPublisher
                 conjunctionPredecessors.push(wrappedInput);
             }
 
-            disjunctionPredecessors.push(Compose(conjunction, ...conjunctionPredecessors));
+            const wrappedConjunction = Wrap(conjunction, ...conjunctionPredecessors);
+            disjunctionPredecessors.push(wrappedConjunction);
         }
 
-        const wrappedDisjunction = Compose(disjunction, ...disjunctionPredecessors);
+        const wrappedDisjunction = Wrap(disjunction, ...disjunctionPredecessors);
 
         return [
             (...params: InputType): SortedSet<Tuple> =>

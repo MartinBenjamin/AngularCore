@@ -46,7 +46,6 @@
     <None Remove="ClientApp\src\app\Components\YearModel.ts" />
     <None Remove="ClientApp\src\app\Components\YesNoPipe.ts" />
     <None Remove="ClientApp\src\app\Components\YesNoSelect.ts" />
-    <None Remove="ClientApp\src\app\Compose.ts" />
     <None Remove="ClientApp\src\app\Contracts.ts" />
     <None Remove="ClientApp\src\app\CurrencyAmount.ts" />
     <None Remove="ClientApp\src\app\CurrencyServiceProvider.ts" />
@@ -358,6 +357,7 @@
     <None Remove="ClientApp\src\app\RoleServiceProvider.ts" />
     <None Remove="ClientApp\src\app\Signal.Spec.ts" />
     <None Remove="ClientApp\src\app\Signal.ts" />
+    <None Remove="ClientApp\src\app\Wrap.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -389,7 +389,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Components\YearModel.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Components\YesNoPipe.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Components\YesNoSelect.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Compose.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Wrap.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Contracts.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\CurrencyAmount.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\CurrencyServiceProvider.ts" />
