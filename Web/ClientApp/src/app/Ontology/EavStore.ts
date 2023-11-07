@@ -887,86 +887,11 @@ export class EavStore implements IEavStore, IPublisher
         };
     }
 
-    static Conjunction(): (...inputs: (object[] | BuiltIn)[]) => object[];
-    static Conjunction(terms: any[]): (...inputs: (object[] | BuiltIn)[]) => Tuple[];
-    static Conjunction(terms: any[], idbTerms: any[]): (...inputs: (object[] | BuiltIn)[]) => object[];
-    static Conjunction(
-        terms?: any[],
-        idbTerms?: any[]
-        ): (...inputs: (object[] | BuiltIn)[]) => object[]
+    static Conjunction(): (...inputs: (object[] | BuiltIn)[]) => object[]
     {
         let initialSubstitution: object = {};
-        const initialMappedSubstitution = {};
 
-        let map: (substitutions: object[]) => object[] = substitutions => substitutions;
-        if(terms)
-        {
-            if(!idbTerms)
-                map = substitutions => substitutions.map(substitution => terms.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
-
-            else
-            {
-                const variableMap: [PropertyKey, PropertyKey][] = [];
-                for(let index = 0; index < terms.length && initialSubstitution; index++)
-                {
-                    const term = terms[index];
-                    const idbTerm = idbTerms[index];
-
-                    if(IsVariable(term))
-                    {
-                        if(IsConstant(idbTerm))
-                        {
-                            if(initialSubstitution[term] === undefined)
-                                initialSubstitution[term] = idbTerm;
-
-                            else if(initialSubstitution[term] !== idbTerm)
-                                return () => [];
-                        }
-                        else if(IsVariable(idbTerm))
-                            variableMap.push([term, idbTerm]);
-                    }
-                    else if(IsConstant(term))
-                    {
-                        if(IsVariable(idbTerm))
-                        {
-                            if(initialMappedSubstitution[idbTerm] === undefined)
-                                initialMappedSubstitution[idbTerm] = term;
-
-                            else if(initialMappedSubstitution[idbTerm] !== term)
-                                return () => [];
-                        }
-                        else if(IsConstant(idbTerm) && term !== idbTerm)
-                            return () => [];
-                    }
-                }
-
-                map = (substitutions: object[]) =>
-                {
-                    const mappedSubstitutions: object[] = [];
-                    for(const substitution of substitutions)
-                    {
-                        let mappedSubstitution = { ...initialMappedSubstitution };
-                        for(const [source, target] of variableMap)
-                        {
-                            if(mappedSubstitution[target] === undefined)
-                                mappedSubstitution[target] = substitution[source];
-
-                            else if(mappedSubstitution[target] !== substitution[source])
-                            {
-                                mappedSubstitution = null;
-                                break;
-                            }
-                        }
-
-                        if(mappedSubstitution)
-                            mappedSubstitutions.push(mappedSubstitution);
-                    }
-                    return mappedSubstitutions;
-                };
-            }
-        }
-
-        return (...inputs: (object[] | Function)[]) => map(inputs.reduce<object[]>(
+        return (...inputs: (object[] | Function)[]) => inputs.reduce<object[]>(
             (substitutions, input) =>
             {
                 if(typeof input === 'function')
@@ -993,12 +918,13 @@ export class EavStore implements IEavStore, IPublisher
 
                 return substitutions;
             },
-            [initialSubstitution]));
+            [initialSubstitution]);
     }
 
     static Conjunction1(
         head: any[],
-        body: Atom[]): (...inputs: Iterable<Tuple>[]) => Iterable<Tuple>
+        body: Atom[]
+        ): (...inputs: Iterable<Tuple>[]) => Iterable<Tuple>
     {
         return (...inputs: Iterable<Tuple>[]): Iterable<Tuple> =>
         {
