@@ -406,7 +406,7 @@ export class EavStore implements IEavStore, IPublisher
                     while(count--)
                     {
                         const substitution = substitutions.shift();
-                        const e = ve.get(substitution[entity])
+                        const e = ve.get(substitution[value])
                         if(e instanceof Array)
                             e.forEach(
                                 e =>
