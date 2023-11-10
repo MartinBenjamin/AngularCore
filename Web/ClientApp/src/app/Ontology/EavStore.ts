@@ -3,7 +3,7 @@ import { map } from 'rxjs/operators';
 import { IScheduler, Scheduler, Signal } from '../Signal';
 import { Wrap } from '../Wrap';
 import { Transpose } from './AdjacencyList';
-import { ArrayKeyedMap, TrieNode } from './ArrayKeyedMap';
+import { ArrayKeyedMap, TrieNode } from '../Collections/ArrayKeyedMap';
 import { BuiltIn } from './Atom';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
 import { Group } from './Group';

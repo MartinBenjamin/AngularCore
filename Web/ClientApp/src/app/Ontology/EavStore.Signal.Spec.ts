@@ -1,5 +1,5 @@
 import { } from 'jasmine';
-import { ArraySet } from './ArraySet';
+import { ArraySet } from '../Collections/ArraySet';
 import { assertBuilder } from './assertBuilder';
 import { Add } from './Atom';
 import { EavStore, tupleCompare } from './EavStore';

@@ -32,6 +32,7 @@
   <ItemGroup>
     <None Remove="ClientApp\src\app\Agents.ts" />
     <None Remove="ClientApp\src\app\Agreements.ts" />
+    <None Remove="ClientApp\src\app\assertBuilder.ts" />
     <None Remove="ClientApp\src\app\BranchServiceProvider.ts" />
     <None Remove="ClientApp\src\app\ClassificationScheme.ts" />
     <None Remove="ClientApp\src\app\ClassificationSchemeServiceProvider.ts" />
@@ -370,6 +371,9 @@
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\src\app\Agents.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Agreements.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\assertBuilder.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
     <TypeScriptCompile Include="ClientApp\src\app\BranchServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\ClassificationScheme.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\ClassificationSchemeServiceProvider.ts" />
@@ -494,10 +498,10 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontologies\Time.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AddIndividuals.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AnnotationAssertion.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ArrayKeyedMap.Spec.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ArrayKeyedMap.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ArraySet.Spec.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Ontology\ArraySet.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Collections\ArrayKeyedMap.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Collections\ArrayKeyedMap.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Collections\ArraySet.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Collections\ArraySet.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Assertion.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ClassExpressionWriter.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\AdjacencyList.Spec.ts" />

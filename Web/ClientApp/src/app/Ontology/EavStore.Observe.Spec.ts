@@ -1,5 +1,5 @@
 import { } from 'jasmine';
-import { ArraySet } from './ArraySet';
+import { ArraySet } from '../Collections/ArraySet';
 import { EavStore } from './EavStore';
 import { Fact, IEavStore } from './IEavStore';
 

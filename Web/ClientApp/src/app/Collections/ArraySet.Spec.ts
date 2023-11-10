@@ -1,6 +1,6 @@
 import { } from 'jasmine';
-import { ArraySet } from './ArraySet';
-import { assertBuilder } from './assertBuilder';
+import { ArraySet } from '../Collections/ArraySet';
+import { assertBuilder } from '../assertBuilder';
 
 describe(
     'ArraySet',
