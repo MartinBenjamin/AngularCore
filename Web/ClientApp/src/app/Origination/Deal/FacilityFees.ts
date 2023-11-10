@@ -2,14 +2,14 @@ import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ClassificationScheme } from '../../ClassificationScheme';
 import { ClassificationSchemeServiceToken } from '../../ClassificationSchemeServiceProvider';
+import { Group } from '../../Collections/Group';
 import { Guid } from '../../CommonDomainObjects';
 import { ClassificationSchemeIdentifier } from '../../Deals';
+import { Store } from '../../EavStore/IEavStore';
 import { Facility, LenderParticipation } from '../../FacilityAgreements';
 import { FacilityProvider } from '../../FacilityProvider';
 import { Fee, FeeType } from '../../Fees';
 import { IDomainObjectService } from '../../IDomainObjectService';
-import { Group } from '../../Ontology/Group';
-import { Store } from '../../Ontology/IEavStore';
 import { FacilityFeeEditor } from './FacilityFeeEditor';
 
 @Component(

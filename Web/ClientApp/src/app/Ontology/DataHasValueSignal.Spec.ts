@@ -1,11 +1,11 @@
 import { } from 'jasmine';
+import { EavStore } from '../EavStore/EavStore';
+import { IEavStore } from '../EavStore/IEavStore';
 import { Signal } from '../Signal/Signal';
 import { ClassExpressionSignalInterpreter } from './ClassExpressionSignalInterpreter';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { DataHasValue } from './DataHasValue';
-import { EavStore } from './EavStore';
 import { IClassExpression } from './IClassExpression';
-import { IEavStore } from './IEavStore';
 import { Ontology } from "./Ontology";
 import { DataProperty } from './Property';
 

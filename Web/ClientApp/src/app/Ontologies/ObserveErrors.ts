@@ -1,10 +1,10 @@
 import { asapScheduler, BehaviorSubject, combineLatest, Observable } from "rxjs";
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { Guid } from "../CommonDomainObjects";
+import { IEavStore } from "../EavStore/IEavStore";
 import { AtomInterpreter, ComparisonAtom, IComparisonAtom, IPropertyAtom, IsDLSafeRule, PropertyAtom, RuleContradictionInterpreter } from "../Ontology/DLSafeRule";
 import { IAxiom } from "../Ontology/IAxiom";
 import { IClassExpressionSelector } from '../Ontology/IClassExpressionSelector';
-import { IEavStore } from "../Ontology/IEavStore";
 import { IOntology } from "../Ontology/IOntology";
 import { IProperty } from '../Ontology/IProperty';
 import { ISubClassOf } from '../Ontology/ISubClassOf';

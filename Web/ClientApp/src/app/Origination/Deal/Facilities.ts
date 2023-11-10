@@ -7,9 +7,9 @@ import { Guid } from '../../CommonDomainObjects';
 import { HighlightedPropertyObservableToken, Property } from '../../Components/ValidatedProperty';
 import { DealProvider } from '../../DealProvider';
 import { ClassificationSchemeIdentifier, Deal } from '../../Deals';
+import { Store } from '../../EavStore/IEavStore';
 import { Facility, FacilityType, LenderParticipation } from '../../FacilityAgreements';
 import { IDomainObjectService } from '../../IDomainObjectService';
-import { Store } from '../../Ontology/IEavStore';
 
 @Component(
     {

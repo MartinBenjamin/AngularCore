@@ -1,7 +1,8 @@
+import { Group, GroupJoin } from '../Collections/Group';
+import { EavStore } from '../EavStore/EavStore';
+import { IEavStore } from "../EavStore/IEavStore";
 import { TransitiveClosure3 } from "../Graph/TransitiveClosure";
 import { AddIndividuals } from "./AddIndividuals";
-import { EavStore } from './EavStore';
-import { Group, GroupJoin } from './Group';
 import { IClass } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
 import { IClassExpressionSelector } from './IClassExpressionSelector';
@@ -9,7 +10,6 @@ import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
 import { IDataHasValue } from "./IDataHasValue";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
-import { IEavStore } from "./IEavStore";
 import { IIndividual } from "./IIndividual";
 import { IObjectAllValuesFrom } from "./IObjectAllValuesFrom";
 import { IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";

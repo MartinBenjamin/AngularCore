@@ -1,10 +1,10 @@
 import { } from 'jasmine';
+import { assertBuilder } from '../assertBuilder';
 import { ArraySet } from '../Collections/ArraySet';
-import { assertBuilder } from './assertBuilder';
+import { SortedSet } from '../Collections/SortedSet';
 import { Add } from './Atom';
 import { EavStore, tupleCompare } from './EavStore';
 import { Fact, IEavStore, Store } from './IEavStore';
-import { SortedSet } from '../Collections/SortedSet';
 
 describe(
     'EavStore.Signal(atom: Fact): Signal<Fact[]>',

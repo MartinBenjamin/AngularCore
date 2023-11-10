@@ -5,9 +5,9 @@ import { DomainObject, Guid } from '../../CommonDomainObjects';
 import { CurrenciesToken } from '../../CurrencyServiceProvider';
 import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
+import { Store } from '../../EavStore/IEavStore';
 import { Currency } from '../../Iso4217';
 import { deals } from '../../Ontologies/Deals';
-import { Store } from '../../Ontology/IEavStore';
 import { ObservableGenerator } from '../../Ontology/ObservableGenerator';
 
 @Component(

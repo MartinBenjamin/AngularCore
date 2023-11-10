@@ -1,5 +1,5 @@
 import { } from 'jasmine';
-import { assertBuilder } from './assertBuilder';
+import { assertBuilder } from '../assertBuilder';
 import { Compare, EntityId, TypeCollation } from './EavStore';
 
 const symbol = Symbol('Symbol');

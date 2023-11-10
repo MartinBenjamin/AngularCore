@@ -8,10 +8,10 @@ import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectT
 import { CurrenciesOrderedByCodeToken } from '../../CurrencyServiceProvider';
 import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
+import { Store } from '../../EavStore/IEavStore';
+import { ITransaction } from '../../EavStore/ITransactionManager';
 import { Fee, FeeType } from '../../Fees';
 import { Currency } from '../../Iso4217';
-import { Store } from '../../Ontology/IEavStore';
-import { ITransaction } from '../../Ontology/ITransactionManager';
 import { Alternative, Empty, IExpression, Property, Query2 } from '../../RegularPathExpression';
 
 type ApplyCallback = () => void;

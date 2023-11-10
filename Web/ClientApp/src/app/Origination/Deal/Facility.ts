@@ -8,12 +8,12 @@ import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectT
 import { CurrenciesOrderedByCodeToken } from '../../CurrencyServiceProvider';
 import { DealProvider } from '../../DealProvider';
 import { Deal, DealRoleIdentifier } from '../../Deals';
+import { Store } from '../../EavStore/IEavStore';
+import { ITransaction } from '../../EavStore/ITransactionManager';
 import * as facilityAgreements from '../../FacilityAgreements';
 import { FacilityAgreement, FacilityType, LenderParticipation } from '../../FacilityAgreements';
 import { FacilityProvider } from '../../FacilityProvider';
 import { Currency } from '../../Iso4217';
-import { Store } from '../../Ontology/IEavStore';
-import { ITransaction } from '../../Ontology/ITransactionManager';
 import { Branch } from '../../Organisations';
 import { Alternative, Empty, IExpression, Property, Query2, Sequence, ZeroOrMore } from '../../RegularPathExpression';
 import { Role } from '../../Roles';

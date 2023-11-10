@@ -6,11 +6,11 @@ import { ToPrimitive } from '../../Components/Time';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
 import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
+import { Store } from '../../EavStore/IEavStore';
+import { ITransaction } from '../../EavStore/ITransactionManager';
 import { Facility, LenderParticipation } from '../../FacilityAgreements';
 import { FacilityProvider } from '../../FacilityProvider';
 import { FacilityFeeUnit, Fee, FeeType } from '../../Fees';
-import { Store } from '../../Ontology/IEavStore';
-import { ITransaction } from '../../Ontology/ITransactionManager';
 import { Alternative, Empty, IExpression, Property, Query2 } from '../../RegularPathExpression';
 
 type ApplyCallback = () => void;

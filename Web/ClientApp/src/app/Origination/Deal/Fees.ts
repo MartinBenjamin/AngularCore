@@ -2,13 +2,13 @@ import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ClassificationScheme } from '../../ClassificationScheme';
 import { ClassificationSchemeServiceToken } from '../../ClassificationSchemeServiceProvider';
+import { Group } from '../../Collections/Group';
 import { Guid } from '../../CommonDomainObjects';
 import { DealProvider } from '../../DealProvider';
 import { ClassificationSchemeIdentifier, Deal } from '../../Deals';
+import { Store } from '../../EavStore/IEavStore';
 import { Fee, FeeType } from '../../Fees';
 import { IDomainObjectService } from '../../IDomainObjectService';
-import { Group } from '../../Ontology/Group';
-import { Store } from '../../Ontology/IEavStore';
 import { FeeEditor } from './FeeEditor';
 
 @Component(

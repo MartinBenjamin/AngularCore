@@ -3,8 +3,8 @@ import { NEVER, Observable, Subscription } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
+import { Store } from '../../EavStore/IEavStore';
 import { FacilityAgreement } from '../../FacilityAgreements';
-import { Store } from '../../Ontology/IEavStore';
 
 @Component(
     {

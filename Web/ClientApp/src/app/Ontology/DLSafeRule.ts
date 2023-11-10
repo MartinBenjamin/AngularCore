@@ -1,11 +1,11 @@
-import { BuiltIn, Equal, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, NotEqual } from './Atom';
+import { BuiltIn, Equal, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, NotEqual } from '../EavStore/Atom';
+import { EavStore } from '../EavStore/EavStore';
+import { IsConstant, IsVariable } from '../EavStore/IEavStore';
 import { Axiom } from './Axiom';
-import { EavStore } from './EavStore';
 import { IAxiom } from "./IAxiom";
 import { IClassExpression } from "./IClassExpression";
 import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IDataRange } from "./IDataRange";
-import { IsConstant, IsVariable } from './IEavStore';
 import { IIndividual } from "./IIndividual";
 import { IOntology } from './IOntology';
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";

@@ -1,7 +1,7 @@
 import { } from 'jasmine';
 import { Subscription } from 'rxjs';
+import { assertBuilder } from '../assertBuilder';
 import { ArraySet } from '../Collections/ArraySet';
-import { assertBuilder } from './assertBuilder';
 import { ArrayProxyFactory, EavStore, TargetSymbol } from './EavStore';
 import { Cardinality, Fact, IEavStore, Store } from './IEavStore';
 import { IPublisher } from './IPublisher';

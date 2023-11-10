@@ -1,5 +1,5 @@
 import { } from 'jasmine';
-import { assertBuilder } from './assertBuilder';
+import { assertBuilder } from '../assertBuilder';
 import { Add, Equal, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, NotEqual } from './Atom';
 import { EavStore } from './EavStore';
 import { IEavStore } from './IEavStore';

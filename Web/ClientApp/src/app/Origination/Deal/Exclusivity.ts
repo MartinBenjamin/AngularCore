@@ -5,8 +5,8 @@ import { ClassificationSchemeServiceToken } from '../../ClassificationSchemeServ
 import { Guid } from '../../CommonDomainObjects';
 import { DealProvider } from '../../DealProvider';
 import { ClassificationSchemeIdentifier, Deal, Exclusivity as ExclusivityCommitment, ExclusivityClassifierIdentifier } from '../../Deals';
+import { Store } from '../../EavStore/IEavStore';
 import { IDomainObjectService } from '../../IDomainObjectService';
-import { Store } from '../../Ontology/IEavStore';
 
 @Component(
     {

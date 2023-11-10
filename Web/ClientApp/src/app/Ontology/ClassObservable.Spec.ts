@@ -1,11 +1,11 @@
 import { } from 'jasmine';
 import { Subscription } from 'rxjs';
+import { EavStore } from '../EavStore/EavStore';
+import { IEavStore } from '../EavStore/IEavStore';
 import { Class } from './Class';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
-import { EavStore } from './EavStore';
 import { EquivalentClasses } from './EquivalentClasses';
 import { IClassExpression } from './IClassExpression';
-import { IEavStore } from './IEavStore';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectOneOf } from './ObjectOneOf';
 import { ObservableGenerator } from './ObservableGenerator';

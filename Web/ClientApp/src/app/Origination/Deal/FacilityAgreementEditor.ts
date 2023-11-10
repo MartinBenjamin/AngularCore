@@ -4,9 +4,9 @@ import { distinctUntilChanged, filter, sample, share, switchMap } from 'rxjs/ope
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
 import { DealProvider } from '../../DealProvider';
 import { Deal } from '../../Deals';
+import { Store } from '../../EavStore/IEavStore';
+import { ITransaction } from '../../EavStore/ITransactionManager';
 import { FacilityAgreement } from '../../FacilityAgreements';
-import { Store } from '../../Ontology/IEavStore';
-import { ITransaction } from '../../Ontology/ITransactionManager';
 
 type ApplyCallback = () => void;
 

@@ -6,6 +6,7 @@ import { Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
 import { DealProvider } from '../../DealProvider';
+import { Store } from '../../EavStore/IEavStore';
 import { LifeCycle, LifeCycleStage } from '../../LifeCycles';
 import { annotations } from '../../Ontologies/Annotations';
 import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServiceProvider';
@@ -13,16 +14,15 @@ import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
 import { IDealOntologyService } from '../../Ontologies/IDealOntologyService';
 import { Error, ObserveErrors } from '../../Ontologies/ObserveErrors';
-import { Store } from '../../Ontology/IEavStore';
 import { Origination } from '../Origination';
 import { Facility } from './Facility';
 import { FeesTab } from './FeesTab';
 import { KeyCounterparties } from './KeyCounterparties';
+import { KeyDates } from './KeyDates';
 import { KeyDealData } from './KeyDealData';
 import { MoreTabs } from './MoreTabs';
 import { OriginationTab } from './OriginationTab';
 import { TransactionDetails } from './TransactionDetails';
-import { KeyDates } from './KeyDates';
 
 @Component(
     {
