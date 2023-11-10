@@ -2,12 +2,12 @@ import { } from 'jasmine';
 import { Subscription } from 'rxjs';
 import { EavStore } from '../EavStore/EavStore';
 import { IEavStore } from '../EavStore/IEavStore';
+import { ClassExpressionObservableInterpreter } from './ClassExpressionObservableInterpreter';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { IClassExpression } from './IClassExpression';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectMinCardinality } from './ObjectMinCardinality';
 import { ObjectOneOf } from './ObjectOneOf';
-import { ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { ObjectProperty } from './Property';
 
@@ -25,7 +25,7 @@ describe(
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ces = [0, 1, 2].map(cardinality => new ObjectMinCardinality(op1, cardinality));
                 const store: IEavStore = new EavStore();
-                const generator = new ObservableGenerator(
+                const generator = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
 
@@ -109,7 +109,7 @@ describe(
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ce = new ObjectMinCardinality(op1, 1, new ObjectOneOf([i]));
                 const store: IEavStore = new EavStore();
-                const generator = new ObservableGenerator(
+                const generator = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
                 const iInterpretation = generator.InterpretIndividual(i);

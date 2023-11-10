@@ -2,10 +2,10 @@ import { } from 'jasmine';
 import { Subscription } from 'rxjs';
 import { EavStore } from '../EavStore/EavStore';
 import { IEavStore } from '../EavStore/IEavStore';
+import { ClassExpressionObservableInterpreter } from './ClassExpressionObservableInterpreter';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { IClassExpression } from './IClassExpression';
 import { ObjectHasSelf } from './ObjectHasSelf';
-import { ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { ObjectProperty } from './Property';
 
@@ -23,7 +23,7 @@ describe(
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ce = new ObjectHasSelf(op1);
                 const store: IEavStore = new EavStore();
-                const generator = new ObservableGenerator(
+                const generator = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
 

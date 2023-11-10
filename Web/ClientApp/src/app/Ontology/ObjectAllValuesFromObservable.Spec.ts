@@ -2,12 +2,12 @@ import { } from 'jasmine';
 import { Subscription } from 'rxjs';
 import { EavStore } from '../EavStore/EavStore';
 import { IEavStore } from '../EavStore/IEavStore';
+import { ClassExpressionObservableInterpreter } from './ClassExpressionObservableInterpreter';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { IClassExpression } from './IClassExpression';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectAllValuesFrom } from './ObjectAllValuesFrom';
 import { ObjectOneOf } from './ObjectOneOf';
-import { ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { ObjectProperty } from './Property';
 
@@ -28,7 +28,7 @@ describe(
                 const i3 = new NamedIndividual(o1, 'i3');
                 const ce = new ObjectAllValuesFrom(op1, new ObjectOneOf([i1, i2]));
                 const store: IEavStore = new EavStore();
-                const generator = new ObservableGenerator(
+                const generator = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
                 const i1Interpretation = generator.InterpretIndividual(i1);

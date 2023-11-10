@@ -3,12 +3,12 @@ import { Subscription } from 'rxjs';
 import { EavStore } from '../EavStore/EavStore';
 import { IEavStore } from '../EavStore/IEavStore';
 import { Class } from './Class';
+import { ClassExpressionObservableInterpreter } from './ClassExpressionObservableInterpreter';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { EquivalentClasses } from './EquivalentClasses';
 import { IClassExpression } from './IClassExpression';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectOneOf } from './ObjectOneOf';
-import { ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { SubClassOf } from './SubClassOf';
 
@@ -30,14 +30,14 @@ describe(
                 new EquivalentClasses(o1, [c1, c2]);
                 new EquivalentClasses(o1, [c1, new ObjectOneOf([i1])]);
                 const store: IEavStore = new EavStore();
-                const generator = new ObservableGenerator(
+                const generator = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
                 const i1Interpretation = generator.InterpretIndividual(i1);
                 const i2Interpretation = generator.InterpretIndividual(i2);
 
                 it(
-                    'ObservableGenerator generates same Observable for same class',
+                    'ClassExpressionObservableInterpreter generates same Observable for same class',
                     () => expect(generator.ClassExpression(c1)).toBe(generator.ClassExpression(c1)))
 
                 function elements(
@@ -88,14 +88,14 @@ describe(
                 const i2 = new NamedIndividual(o1, 'i2');
                 new SubClassOf(o1, new ObjectOneOf([i1]), c1);
                 const store: IEavStore = new EavStore();
-                const generator = new ObservableGenerator(
+                const generator = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
                 const i1Interpretation = generator.InterpretIndividual(i1);
                 const i2Interpretation = generator.InterpretIndividual(i2);
 
                 it(
-                    'ObservableGenerator generates same Observable for same class',
+                    'ClassExpressionObservableInterpreter generates same Observable for same class',
                     () => expect(generator.ClassExpression(c1)).toBe(generator.ClassExpression(c1)))
 
                 function elements(
@@ -135,14 +135,14 @@ describe(
                 new EquivalentClasses(o1, [c1, c2]);
                 new SubClassOf(o1, new ObjectOneOf([i1]), c2);
                 const store: IEavStore = new EavStore();
-                const generator = new ObservableGenerator(
+                const generator = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
                 const i1Interpretation = generator.InterpretIndividual(i1);
                 const i2Interpretation = generator.InterpretIndividual(i2);
 
                 it(
-                    'ObservableGenerator generates same Observable for same class',
+                    'ClassExpressionObservableInterpreter generates same Observable for same class',
                     () => expect(generator.ClassExpression(c1)).toBe(generator.ClassExpression(c1)))
 
                 function elements(

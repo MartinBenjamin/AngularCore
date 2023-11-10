@@ -3,11 +3,11 @@ import { Subscription } from 'rxjs';
 import { EavStore } from '../EavStore/EavStore';
 import { IEavStore } from '../EavStore/IEavStore';
 import { ObjectComplementOf } from './ClassExpression';
+import { ClassExpressionObservableInterpreter } from './ClassExpressionObservableInterpreter';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { IClassExpression } from './IClassExpression';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectOneOf } from './ObjectOneOf';
-import { ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 
 describe(
@@ -28,7 +28,7 @@ describe(
                 const ce1Complement = new ObjectComplementOf(ce1);
                 const ce2Complement = new ObjectComplementOf(ce2);
                 const store: IEavStore = new EavStore();
-                const generator = new ObservableGenerator(
+                const generator = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
                 const i1Interpretation = generator.InterpretIndividual(i1);

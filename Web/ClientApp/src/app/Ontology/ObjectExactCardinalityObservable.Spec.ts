@@ -2,13 +2,13 @@ import { } from 'jasmine';
 import { Subscription } from 'rxjs';
 import { EavStore } from '../EavStore/EavStore';
 import { IEavStore } from '../EavStore/IEavStore';
+import { ClassExpressionObservableInterpreter } from './ClassExpressionObservableInterpreter';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { FunctionalObjectProperty } from './FunctionalObjectProperty';
 import { IClassExpression } from './IClassExpression';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectExactCardinality } from './ObjectExactCardinality';
 import { ObjectOneOf } from './ObjectOneOf';
-import { ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { ObjectProperty } from './Property';
 
@@ -26,7 +26,7 @@ describe(
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ces = [0, 1, 2].map(cardinality => new ObjectExactCardinality(op1, cardinality));
                 const store: IEavStore = new EavStore();
-                const generator = new ObservableGenerator(
+                const generator = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
 
@@ -99,7 +99,7 @@ describe(
                 new FunctionalObjectProperty(o1, op1);
                 const ce = new ObjectExactCardinality(op1, 1);
                 const store: IEavStore = new EavStore();
-                const generator = new ObservableGenerator(
+                const generator = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
 
@@ -173,7 +173,7 @@ describe(
                 const i = new NamedIndividual(o1, 'i');
                 const ce = new ObjectExactCardinality(op1, 0, new ObjectOneOf([i]));
                 const store: IEavStore = new EavStore();
-                const generator = new ObservableGenerator(
+                const generator = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
                 const iInterpretation = generator.InterpretIndividual(i);
@@ -229,7 +229,7 @@ describe(
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ce = new ObjectExactCardinality(op1, 1, new ObjectOneOf([i1, i2]));
                 const store: IEavStore = new EavStore();
-                const generator = new ObservableGenerator(
+                const generator = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
                 const i1Interpretation = generator.InterpretIndividual(i1);
