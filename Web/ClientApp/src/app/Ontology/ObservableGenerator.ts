@@ -1,5 +1,6 @@
 import { BehaviorSubject, combineLatest, Observable } from "rxjs";
 import { map } from 'rxjs/operators';
+import { TransitiveClosure3 } from "../Graph/TransitiveClosure";
 import { AddIndividuals } from "./AddIndividuals";
 import { EavStore } from './EavStore';
 import { Group, GroupJoin } from './Group';
@@ -27,7 +28,6 @@ import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyE
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 import { Nothing } from './Nothing';
 import { Thing } from './Thing';
-import { TransitiveClosure3 } from "./TransitiveClosure";
 
 export { IEavStore, EavStore };
 

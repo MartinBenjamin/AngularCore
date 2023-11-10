@@ -663,8 +663,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\SubClassOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Thing.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Thing.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Ontology\TransitiveClosure.Spec.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Ontology\TransitiveClosure.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Graph\TransitiveClosure.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Graph\TransitiveClosure.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Wrapped.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Xsd.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Organisations.ts" />
