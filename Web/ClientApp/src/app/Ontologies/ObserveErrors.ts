@@ -2,13 +2,13 @@ import { asapScheduler, BehaviorSubject, combineLatest, Observable } from "rxjs"
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { Guid } from "../CommonDomainObjects";
 import { IEavStore } from "../EavStore/IEavStore";
+import { ClassExpressionObservableInterpreter, PropertyExpressionObservableGenerator } from "../Ontology/ClassExpressionObservableInterpreter";
 import { AtomInterpreter, ComparisonAtom, IComparisonAtom, IPropertyAtom, IsDLSafeRule, PropertyAtom, RuleContradictionInterpreter } from "../Ontology/DLSafeRule";
 import { IAxiom } from "../Ontology/IAxiom";
 import { IClassExpressionSelector } from '../Ontology/IClassExpressionSelector';
 import { IOntology } from "../Ontology/IOntology";
 import { IProperty } from '../Ontology/IProperty';
 import { ISubClassOf } from '../Ontology/ISubClassOf';
-import { ObservableGenerator } from "../Ontology/ObservableGenerator";
 import { PropertyNameSelector } from "../Ontology/PropertyNameSelector";
 import { Wrap, Wrapped, WrapperType } from '../Ontology/Wrapped';
 import { annotations } from './Annotations';
@@ -47,18 +47,20 @@ export function ObserveErrors(
     applicableStages: Observable<Set<Guid>>
     ): Observable<Map<any, Map<string, Set<Error>>>>
 {
-    const generator = new ObservableGenerator(
+    const classEpressionInterpreter = new ClassExpressionObservableInterpreter(
         ontology,
         store);
 
+    const propertyExpressionInterpreter = new PropertyExpressionObservableGenerator(store);
+
     const atomInterpreter = new AtomInterpreter<WrapperType.Observable>(
         wrap,
-        generator,
-        generator);
+        propertyExpressionInterpreter,
+        classEpressionInterpreter);
 
     const subClassOfContraditionInterpreter = SubClassOfContraditionInterpreter<WrapperType.Observable>(
         wrap,
-        generator);
+        classEpressionInterpreter);
 
     const ruleContradicitionInterpreter = RuleContradictionInterpreter(
         wrap,
