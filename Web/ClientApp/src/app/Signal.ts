@@ -1,6 +1,6 @@
 import { Observable, Subscriber } from 'rxjs';
 import { SortedList } from './Collections/SortedSet';
-import { LongestPaths } from './Ontology/AdjacencyList';
+import { LongestPaths } from './Graph/AdjacencyList';
 import { Condense } from './Ontology/StronglyConnectedComponents';
 
 type AreEqual<T = any> = (lhs: T, rhs: T) => boolean;

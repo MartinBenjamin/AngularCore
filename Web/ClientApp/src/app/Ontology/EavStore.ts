@@ -1,16 +1,16 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ArrayKeyedMap, TrieNode } from '../Collections/ArrayKeyedMap';
+import { ArrayCompareFactory, SortedSet } from '../Collections/SortedSet';
+import { Transpose } from '../Graph/AdjacencyList';
 import { IScheduler, Scheduler, Signal } from '../Signal';
 import { Wrap } from '../Wrap';
-import { Transpose } from './AdjacencyList';
-import { ArrayKeyedMap, TrieNode } from '../Collections/ArrayKeyedMap';
 import { BuiltIn } from './Atom';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
 import { Group } from './Group';
 import { Atom, AttributeSchema, Cardinality, Edb, Fact, Idb, IEavStore, IsConstant, IsIdb, IsVariable, Rule, Store, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
-import { ArrayCompareFactory, SortedSet } from '../Collections/SortedSet';
 import { StronglyConnectedComponents } from './StronglyConnectedComponents';
 
 type Tuple = readonly any[];
