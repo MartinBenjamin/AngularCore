@@ -457,8 +457,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\PropertyNameSelector.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Collections\SortedMap.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Collections\SortedMap.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Ontology\StronglyConnectedComponents.Spec.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Ontology\StronglyConnectedComponents.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Graph\StronglyConnectedComponents.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Graph\StronglyConnectedComponents.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\LegalEntities.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\LegalEntityFinder.Module.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\LegalEntityServiceProvider.ts" />

@@ -3,6 +3,7 @@ import { map } from 'rxjs/operators';
 import { ArrayKeyedMap, TrieNode } from '../Collections/ArrayKeyedMap';
 import { ArrayCompareFactory, SortedSet } from '../Collections/SortedSet';
 import { Transpose } from '../Graph/AdjacencyList';
+import { StronglyConnectedComponents } from '../Graph/StronglyConnectedComponents';
 import { IScheduler, Scheduler, Signal } from '../Signal';
 import { Wrap } from '../Wrap';
 import { BuiltIn } from './Atom';
@@ -11,7 +12,6 @@ import { Group } from './Group';
 import { Atom, AttributeSchema, Cardinality, Edb, Fact, Idb, IEavStore, IsConstant, IsIdb, IsVariable, Rule, Store, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
-import { StronglyConnectedComponents } from './StronglyConnectedComponents';
 
 type Tuple = readonly any[];
 
