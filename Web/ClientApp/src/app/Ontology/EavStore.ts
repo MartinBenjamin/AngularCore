@@ -10,7 +10,7 @@ import { Group } from './Group';
 import { Atom, AttributeSchema, Cardinality, Edb, Fact, Idb, IEavStore, IsConstant, IsIdb, IsVariable, Rule, Store, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
-import { ArrayCompareFactory, SortedSet } from './SortedSet';
+import { ArrayCompareFactory, SortedSet } from '../Collections/SortedSet';
 import { StronglyConnectedComponents } from './StronglyConnectedComponents';
 
 type Tuple = readonly any[];

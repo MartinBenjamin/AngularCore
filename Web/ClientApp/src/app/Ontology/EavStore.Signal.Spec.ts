@@ -4,7 +4,7 @@ import { assertBuilder } from './assertBuilder';
 import { Add } from './Atom';
 import { EavStore, tupleCompare } from './EavStore';
 import { Fact, IEavStore, Store } from './IEavStore';
-import { SortedSet } from './SortedSet';
+import { SortedSet } from '../Collections/SortedSet';
 
 describe(
     'EavStore.Signal(atom: Fact): Signal<Fact[]>',

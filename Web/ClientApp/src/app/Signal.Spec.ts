@@ -1,8 +1,8 @@
 import { } from 'jasmine';
-import { assertBuilder } from './Ontology/assertBuilder';
+import { assertBuilder } from './assertBuilder';
+import { SortedSet } from './Collections/SortedSet';
 import { BuiltIn } from './Ontology/Atom';
 import { IsVariable } from './Ontology/IEavStore';
-import { SortedSet } from './Ontology/SortedSet';
 import { Scheduler, Signal } from './Signal';
 
 type Tuple = [any, ...any[]];

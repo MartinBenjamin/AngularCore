@@ -1,5 +1,5 @@
 import { } from 'jasmine';
-import { assertBuilder } from './assertBuilder';
+import { assertBuilder } from '../assertBuilder';
 import { SortedMap } from './SortedMap';
 import { ArrayCompareFactory } from './SortedSet';
 

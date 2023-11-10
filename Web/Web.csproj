@@ -455,8 +455,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\PropertyExpressionInterpreter.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\PropertyExpressionWriter.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\PropertyNameSelector.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Ontology\SortedMap.Spec.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Ontology\SortedMap.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Collections\SortedMap.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Collections\SortedMap.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\StronglyConnectedComponents.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\StronglyConnectedComponents.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\LegalEntities.ts" />
@@ -657,9 +657,9 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Atom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ReservedVocabulary.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\PrefixIris.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Ontology\SortedList.Spec.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Ontology\SortedSet.Spec.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Ontology\SortedSet.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Collections\SortedList.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Collections\SortedSet.Spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Collections\SortedSet.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\SubClassOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Thing.Spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Thing.ts" />
