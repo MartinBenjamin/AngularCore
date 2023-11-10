@@ -15,6 +15,7 @@ export abstract class PropertyExpressionInterpreter<T extends WrapperType> imple
     protected abstract Wrap: Wrap<T>;
 
     constructor(
+        private _wrap                            : Wrap<T>,
         private _propertyExpressionInterpretation: ICache<T>
         )
     {
@@ -41,6 +42,8 @@ export abstract class PropertyExpressionInterpreter<T extends WrapperType> imple
         inverseObjectProperty: IInverseObjectProperty
         ): Wrapped<T, [any, any][]>
     {
-        throw new Error("Method not implemented.");
+        return this._wrap(
+            objectProperty => objectProperty.map(([domain, range]) => [range, domain]),
+            this.ObjectProperty(inverseObjectProperty.ObjectProperty.Select(this)));
     }
 }
