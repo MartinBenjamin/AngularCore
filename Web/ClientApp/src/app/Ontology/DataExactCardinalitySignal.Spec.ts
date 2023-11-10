@@ -1,5 +1,5 @@
 import { } from 'jasmine';
-import { Signal } from '../Signal';
+import { Signal } from '../Signal/Signal';
 import { ClassExpressionSignalInterpreter } from './ClassExpressionSignalInterpreter';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { DataExactCardinality } from './DataExactCardinality';

@@ -4,7 +4,7 @@ import { ArrayKeyedMap, TrieNode } from '../Collections/ArrayKeyedMap';
 import { ArrayCompareFactory, SortedSet } from '../Collections/SortedSet';
 import { Transpose } from '../Graph/AdjacencyList';
 import { StronglyConnectedComponents } from '../Graph/StronglyConnectedComponents';
-import { IScheduler, Scheduler, Signal } from '../Signal';
+import { IScheduler, Scheduler, Signal } from '../Signal/Signal';
 import { Wrap } from '../Wrap';
 import { BuiltIn } from './Atom';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';

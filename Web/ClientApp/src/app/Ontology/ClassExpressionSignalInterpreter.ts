@@ -1,4 +1,4 @@
-import { Signal } from '../Signal';
+import { Signal } from '../Signal/Signal';
 import { ClassExpressionInterpreter, ICache, IEavStore } from './ClassExpressionInterpreter';
 import { IClass } from './IClass';
 import { IOntology } from './IOntology';

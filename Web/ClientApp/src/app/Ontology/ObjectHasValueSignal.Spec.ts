@@ -1,16 +1,14 @@
 import { } from 'jasmine';
-import { Subscription } from 'rxjs';
+import { Signal } from '../Signal/Signal';
+import { ClassExpressionSignalInterpreter } from './ClassExpressionSignalInterpreter';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { EavStore } from './EavStore';
 import { IClassExpression } from './IClassExpression';
 import { IEavStore } from './IEavStore';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectHasValue } from './ObjectHasValue';
-import { ObservableGenerator } from './ObservableGenerator';
 import { Ontology } from "./Ontology";
 import { ObjectProperty } from './Property';
-import { ClassExpressionSignalInterpreter } from './ClassExpressionSignalInterpreter';
-import { Signal } from '../Signal';
 
 describe(
     'ObjectHasValue( OPE a ) ({ x | ( x , (a)I ) ∈ (OPE)OP })',

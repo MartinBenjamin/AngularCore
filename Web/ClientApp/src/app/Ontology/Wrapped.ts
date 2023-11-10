@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { Signal } from '../Signal';
+import { Signal } from '../Signal/Signal';
 
 export enum WrapperType
 {
