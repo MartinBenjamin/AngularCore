@@ -1,12 +1,10 @@
 import { BehaviorSubject, combineLatest, Observable } from "rxjs";
-import { ClassExpressionInterpreter } from "./ClassExpressionInterpreter";
-import { IClass } from "./IClass";
-import { IOntology } from "./IOntology";
-import { IDataProperty, IInverseObjectProperty, IObjectProperty, IProperty } from "./IProperty";
-import { IPropertyExpression } from './IPropertyExpression';
-import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
-import { WrapperType } from './Wrapped';
 import { IEavStore } from "../EavStore/IEavStore";
+import { ClassExpressionInterpreter, ICache } from "./ClassExpressionInterpreter";
+import { IOntology } from "./IOntology";
+import { IProperty } from "./IProperty";
+import { PropertyExpressionInterpreter } from "./PropertyExpressionInterpreter";
+import { WrapperType } from './Wrapped';
 
 type ObservableParams<P> = { [Parameter in keyof P]: Observable<P[Parameter]>; };
 
@@ -14,20 +12,23 @@ export class ClassExpressionObservableInterpreter extends ClassExpressionInterpr
 {
     constructor(
         ontology: IOntology,
-        store: IEavStore
+        store: IEavStore,
+        cache: ICache<WrapperType.Observable> = new Map()
         )
     {
         super(
             <TIn extends any[], TOut>(
                 map: (...params: TIn) => TOut,
                 ...params: ObservableParams<TIn>
-                ): Observable<TOut> => !params.length ? new BehaviorSubject(map(...<TIn>[])) : combineLatest(
-                    params,
-                    map),
-            new PropertyExpressionObservableGenerator(store),
+            ): Observable<TOut> => !params.length ? new BehaviorSubject(map(...<TIn>[])) : combineLatest(
+                params,
+                map),
+            new PropertyExpressionObservableInterpreter(
+                store,
+                cache),
             ontology,
             store,
-            new Map<IClass, Observable<Set<any>>>());
+            cache);
     }
 
     protected WrapObjectDomain(): Observable<Set<any>>
@@ -36,14 +37,20 @@ export class ClassExpressionObservableInterpreter extends ClassExpressionInterpr
     }
 }
 
-export class PropertyExpressionObservableGenerator implements IPropertyExpressionSelector<Observable<[any, any][]>>
-{
-    private _propertyExpressionInterpretation = new Map<IPropertyExpression, Observable<[any, any][]>>();
 
+export class PropertyExpressionObservableInterpreter extends PropertyExpressionInterpreter<WrapperType.Observable>
+{
     constructor(
-        private _store: IEavStore
-        )
+        private _store: IEavStore,
+        private _propertyExpressionInterpretation: ICache<WrapperType.Observable> = new Map()
+    )
     {
+        super(<TIn extends any[], TOut>(
+            map: (...params: TIn) => TOut,
+            ...params: ObservableParams<TIn>
+        ): Observable<TOut> => !params.length ? new BehaviorSubject(map(...<TIn>[])) : combineLatest(
+            params,
+            map))
     }   
 
     Property(
@@ -61,26 +68,5 @@ export class PropertyExpressionObservableGenerator implements IPropertyExpressio
         }
 
         return interpretation;
-    }
-
-    ObjectProperty(
-        objectProperty: IObjectProperty
-        ): Observable<[any, any][]>
-    {
-        return this.Property(objectProperty);
-    }
-
-    DataProperty(
-        dataProperty: IDataProperty
-        ): Observable<[any, any][]>
-    {
-        return this.Property(dataProperty);
-    }
-
-    InverseObjectProperty(
-        inverseObjectProperty: IInverseObjectProperty
-        ): Observable<[any, any][]>
-    {
-        throw new Error("Method not implemented.");
     }
 }
