@@ -4,9 +4,16 @@ import { ClassExpressionInterpreter, ICache } from "./ClassExpressionInterpreter
 import { IOntology } from "./IOntology";
 import { IProperty } from "./IProperty";
 import { PropertyExpressionInterpreter } from "./PropertyExpressionInterpreter";
-import { WrapperType } from './Wrapped';
+import { Wrap, WrapperType } from './Wrapped';
 
 type ObservableParams<P> = { [Parameter in keyof P]: Observable<P[Parameter]>; };
+
+const wrap: Wrap<WrapperType.Observable> = <TIn extends any[], TOut>(
+    map: (...params: TIn) => TOut,
+    ...params: ObservableParams<TIn>
+    ): Observable<TOut> => !params.length ? new BehaviorSubject(map(...<TIn>[])) : combineLatest(
+    params,
+    map);
 
 export class ClassExpressionObservableInterpreter extends ClassExpressionInterpreter<WrapperType.Observable>
 {
@@ -17,12 +24,7 @@ export class ClassExpressionObservableInterpreter extends ClassExpressionInterpr
         )
     {
         super(
-            <TIn extends any[], TOut>(
-                map: (...params: TIn) => TOut,
-                ...params: ObservableParams<TIn>
-            ): Observable<TOut> => !params.length ? new BehaviorSubject(map(...<TIn>[])) : combineLatest(
-                params,
-                map),
+            wrap,
             new PropertyExpressionObservableInterpreter(
                 store,
                 cache),
@@ -43,14 +45,9 @@ export class PropertyExpressionObservableInterpreter extends PropertyExpressionI
     constructor(
         private _store: IEavStore,
         private _propertyExpressionInterpretation: ICache<WrapperType.Observable> = new Map()
-    )
+        )
     {
-        super(<TIn extends any[], TOut>(
-            map: (...params: TIn) => TOut,
-            ...params: ObservableParams<TIn>
-        ): Observable<TOut> => !params.length ? new BehaviorSubject(map(...<TIn>[])) : combineLatest(
-            params,
-            map))
+        super(wrap);
     }   
 
     Property(
