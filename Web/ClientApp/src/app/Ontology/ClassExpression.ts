@@ -5,7 +5,7 @@ import { IObjectComplementOf } from "./IObjectComplementOf";
 import { IObjectIntersectionOf } from "./IObjectIntersectionOf";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 
-export class ClassExpression implements IClassExpression
+export abstract class ClassExpression implements IClassExpression
 {
     Accept(
         visitor: IClassExpressionVisitor
