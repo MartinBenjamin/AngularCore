@@ -27,8 +27,6 @@ import { Nothing } from './Nothing';
 import { Thing } from './Thing';
 import { Wrap, Wrapped, WrapperType } from './Wrapped';
 
-export { IEavStore, EavStore };
-
 export interface ICache<T extends WrapperType, K = any, V = any>
 {
     set(

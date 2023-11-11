@@ -1,5 +1,6 @@
+import { IEavStore } from '../EavStore/IEavStore';
 import { Signal } from '../Signal/Signal';
-import { ClassExpressionInterpreter, ICache, IEavStore } from './ClassExpressionInterpreter';
+import { ClassExpressionInterpreter, ICache } from './ClassExpressionInterpreter';
 import { IClass } from './IClass';
 import { IOntology } from './IOntology';
 import { IProperty } from './IProperty';

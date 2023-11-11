@@ -1,11 +1,12 @@
 import { BehaviorSubject, combineLatest, Observable } from "rxjs";
-import { ClassExpressionInterpreter, IEavStore } from "./ClassExpressionInterpreter";
+import { ClassExpressionInterpreter } from "./ClassExpressionInterpreter";
 import { IClass } from "./IClass";
 import { IOntology } from "./IOntology";
 import { IDataProperty, IInverseObjectProperty, IObjectProperty, IProperty } from "./IProperty";
 import { IPropertyExpression } from './IPropertyExpression';
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 import { WrapperType } from './Wrapped';
+import { IEavStore } from "../EavStore/IEavStore";
 
 type ObservableParams<P> = { [Parameter in keyof P]: Observable<P[Parameter]>; };
 
