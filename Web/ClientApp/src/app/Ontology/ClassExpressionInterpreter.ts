@@ -29,12 +29,12 @@ import { Wrap, Wrapped, WrapperType } from './Wrapped';
 
 export { IEavStore, EavStore };
 
-export interface ICache<T extends WrapperType>
+export interface ICache<T extends WrapperType, K = any, V = any>
 {
     set(
-        class$: IClass,
-        wrapped: Wrapped<T, Set<any>>): void;
-    get(class$: IClass): Wrapped<T, Set<any>>
+        key: K,
+        wrapped: Wrapped<T, V>): void;
+    get(key: K): Wrapped<T, V>;
 }
 
 export abstract class ClassExpressionInterpreter<T extends WrapperType> implements IClassExpressionSelector<Wrapped<T, Set<any>>>
@@ -52,7 +52,7 @@ export abstract class ClassExpressionInterpreter<T extends WrapperType> implemen
         private   _propertyExpressionInterpreter: IPropertyExpressionSelector<Wrapped<T, [any, any][]>>,
         private   _ontology                     : IOntology,
         protected _store                        : IEavStore,
-        private   _classInterpretation          : ICache<T>
+        private   _classInterpretation          : ICache<T, IClass, Set<any>>
         )
     {
         for(const functionalObjectProperty of this._ontology.Get(this._ontology.IsAxiom.IFunctionalObjectProperty))

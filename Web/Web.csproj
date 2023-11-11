@@ -245,6 +245,7 @@
     <None Remove="ClientApp\src\app\Ontology\IPropertyExpressionSelector.ts" />
     <None Remove="ClientApp\src\app\Ontology\IPropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\IPublisher.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IReasoner.ts" />
     <None Remove="ClientApp\src\app\Ontology\IsAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IsClassExpression.ts" />
     <None Remove="ClientApp\src\app\Ontology\IStore.ts" />
@@ -393,6 +394,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\Components\YearModel.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Components\YesNoPipe.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Components\YesNoSelect.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IReasoner.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Wrap.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Contracts.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\CurrencyAmount.ts" />
