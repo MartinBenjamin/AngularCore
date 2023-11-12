@@ -1,7 +1,7 @@
 import { Guid } from "../CommonDomainObjects";
-import { BuiltIn } from "../Ontology/Atom";
+import { BuiltIn } from "../EavStore/Atom";
+import { EavStore } from "../EavStore/EavStore";
 import { ComparisonAtom, IAtom, IAtomSelector, IComparisonAtom, IDLSafeRule, IPropertyAtom, PropertyAtom } from "../Ontology/DLSafeRule";
-import { EavStore } from "../Ontology/EavStore";
 import { IAxiom } from "../Ontology/IAxiom";
 import { IAxiomSelector } from "../Ontology/IAxiomSelector";
 import { IClass } from "../Ontology/IClass";
