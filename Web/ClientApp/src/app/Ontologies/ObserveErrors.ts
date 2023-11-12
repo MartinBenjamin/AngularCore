@@ -2,7 +2,7 @@ import { asapScheduler, BehaviorSubject, combineLatest, Observable } from "rxjs"
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { Guid } from "../CommonDomainObjects";
 import { IEavStore } from "../EavStore/IEavStore";
-import { ClassExpressionObservableInterpreter, PropertyExpressionObservableGenerator } from "../Ontology/ClassExpressionObservableInterpreter";
+import { ClassExpressionObservableInterpreter } from "../Ontology/ClassExpressionObservableInterpreter";
 import { AtomInterpreter, ComparisonAtom, IComparisonAtom, IPropertyAtom, IsDLSafeRule, PropertyAtom, RuleContradictionInterpreter } from "../Ontology/DLSafeRule";
 import { IAxiom } from "../Ontology/IAxiom";
 import { IClassExpressionSelector } from '../Ontology/IClassExpressionSelector';
@@ -51,11 +51,9 @@ export function ObserveErrors(
         ontology,
         store);
 
-    const propertyExpressionInterpreter = new PropertyExpressionObservableGenerator(store);
-
     const atomInterpreter = new AtomInterpreter<WrapperType.Observable>(
         wrap,
-        propertyExpressionInterpreter,
+        classEpressionInterpreter.PropertyExpressionInterpreter,
         classEpressionInterpreter);
 
     const subClassOfContraditionInterpreter = SubClassOfContraditionInterpreter<WrapperType.Observable>(

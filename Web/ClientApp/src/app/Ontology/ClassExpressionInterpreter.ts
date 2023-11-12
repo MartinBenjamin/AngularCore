@@ -100,6 +100,11 @@ export abstract class ClassExpressionInterpreter<T extends WrapperType> implemen
             this._store);
     }
 
+    get PropertyExpressionInterpreter(): IPropertyExpressionSelector<Wrapped<T, [any, any][]>>
+    {
+        return this._propertyExpressionInterpreter;
+    }
+
     Class(
         class$: IClass
         ): Wrapped<T, Set<any>>

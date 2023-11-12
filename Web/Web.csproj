@@ -248,7 +248,6 @@
     <None Remove="ClientApp\src\app\Ontology\IReasoner.ts" />
     <None Remove="ClientApp\src\app\Ontology\IsAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IsClassExpression.ts" />
-    <None Remove="ClientApp\src\app\Ontology\IStore.ts" />
     <None Remove="ClientApp\src\app\Ontology\ISubClassOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\ITransactionManager.ts" />
     <None Remove="ClientApp\src\app\Ontology\NamedIndividual.ts" />
@@ -618,7 +617,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\EavStore\IPublisher.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IsAxiom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\IsClassExpression.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\Ontology\IStore.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ISubClassOf.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\EavStore\ITransactionManager.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\NamedIndividual.ts" />

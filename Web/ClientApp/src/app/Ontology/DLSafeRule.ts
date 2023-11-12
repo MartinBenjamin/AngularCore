@@ -411,14 +411,6 @@ export function IsDLSafeRule(
     return axiom instanceof DLSafeRule;
 }
 
-export interface ICache<TAtom>
-{
-    Set(
-        atom   : IAtom,
-        wrapped: TAtom): void;
-    Get(atom: IAtom): TAtom
-}
-
 export class AtomInterpreter<T extends WrapperType> implements IAtomSelector<Wrapped<T, object[] | BuiltIn>>
 {
     constructor(
