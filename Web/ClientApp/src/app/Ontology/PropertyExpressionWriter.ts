@@ -1,4 +1,4 @@
-import { IDataProperty, IObjectProperty, IProperty } from "./IProperty";
+import { IDataProperty, IObjectProperty, IProperty, IInverseObjectProperty } from "./IProperty";
 import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
 
 export class PropertyExpressionWriter implements IPropertyExpressionSelector<string>
@@ -15,6 +15,13 @@ export class PropertyExpressionWriter implements IPropertyExpressionSelector<str
         ): string
     {
         return `DataProperty(${this.Property(dataProperty)})`;
+    }
+
+    InverseObjectProperty(
+        inverseObjectProperty: IInverseObjectProperty
+        ): string
+    {
+        return `InverseObjectPropert(${inverseObjectProperty.ObjectProperty.Select(this)})`;
     }
 
     private Property(
