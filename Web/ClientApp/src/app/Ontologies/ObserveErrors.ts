@@ -2,19 +2,18 @@ import { asapScheduler, BehaviorSubject, combineLatest, Observable } from "rxjs"
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { Guid } from "../CommonDomainObjects";
 import { IEavStore } from "../EavStore/IEavStore";
+import { AtomInterpreter } from "../Ontology/AtomInterpreter";
 import { ClassExpressionObservableInterpreter } from "../Ontology/ClassExpressionObservableInterpreter";
-import { AtomInterpreter, ComparisonAtom, IComparisonAtom, IPropertyAtom, IsDLSafeRule, PropertyAtom, RuleContradictionInterpreter } from "../Ontology/DLSafeRule";
+import { ComparisonAtom, IComparisonAtom, IPropertyAtom, IsDLSafeRule, PropertyAtom } from "../Ontology/DLSafeRule";
 import { IAxiom } from "../Ontology/IAxiom";
-import { IClassExpressionSelector } from '../Ontology/IClassExpressionSelector';
 import { IOntology } from "../Ontology/IOntology";
 import { IProperty } from '../Ontology/IProperty';
-import { ISubClassOf } from '../Ontology/ISubClassOf';
 import { PropertyNameSelector } from "../Ontology/PropertyNameSelector";
-import { Wrap, Wrapped, WrapperType } from '../Ontology/Wrapped';
+import { RuleContradictionInterpreter } from "../Ontology/RuleContradictionInterpreter";
+import { SubClassOfContradictionInterpreter } from "../Ontology/SubClassOfContradictionInterpreter";
+import { WrapperType } from '../Ontology/Wrapped';
 import { annotations } from './Annotations';
 import { IErrors } from './Validate';
-
-const empty = new Set<any>();
 
 export type Error = keyof IErrors | IAxiom
 
@@ -26,21 +25,6 @@ const wrap = <TIn extends any[], TOut>(
         params,
         map);
 
-function SubClassOfContraditionInterpreter<T extends WrapperType>(
-    wrap                      : Wrap<T>,
-    classExpressionInterpreter: IClassExpressionSelector<Wrapped<T, Set<any>>>
-    ): (subclassOf: ISubClassOf) => Wrapped<T, Set<any>>
-{
-    return (subclassOf: ISubClassOf) => wrap(
-        (superClass, subClass) => 
-        {
-            const contradictions = [...subClass].filter(element => !superClass.has(element));
-            return contradictions.length ? new Set<any>(contradictions) : empty;
-        },
-        subclassOf.SuperClassExpression.Select(classExpressionInterpreter),
-        subclassOf.SubClassExpression.Select(classExpressionInterpreter));
-}
-
 export function ObserveErrors(
     ontology        : IOntology,
     store           : IEavStore,
@@ -51,12 +35,14 @@ export function ObserveErrors(
         ontology,
         store);
 
+    const propertyExpressionInterpreter = classEpressionInterpreter.PropertyExpressionInterpreter;
+
     const atomInterpreter = new AtomInterpreter<WrapperType.Observable>(
         wrap,
-        classEpressionInterpreter.PropertyExpressionInterpreter,
+        propertyExpressionInterpreter,
         classEpressionInterpreter);
 
-    const subClassOfContraditionInterpreter = SubClassOfContraditionInterpreter<WrapperType.Observable>(
+    const subClassOfContraditionInterpreter = SubClassOfContradictionInterpreter<WrapperType.Observable>(
         wrap,
         classEpressionInterpreter);
 
@@ -65,7 +51,7 @@ export function ObserveErrors(
         atomInterpreter);
 
     const dataRangeObservables: Observable<[string, Error, Set<any>]>[] = [...ontology.Get(ontology.IsAxiom.IDataPropertyRange)].map(
-        dataPropertyRange => store.Observe(dataPropertyRange.DataPropertyExpression.Select(PropertyNameSelector)).pipe(
+        dataPropertyRange => dataPropertyRange.DataPropertyExpression.Select(propertyExpressionInterpreter).pipe(
             map(relations =>
                 [
                     dataPropertyRange.DataPropertyExpression.Select(PropertyNameSelector),
