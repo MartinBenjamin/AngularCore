@@ -68,7 +68,7 @@ export class AtomInterpreter<T extends WrapperType> implements IAtomSelector<Wra
         ): Wrapped<T, object[]>
     {
         return this._wrap(
-            EavStore.Substitute([property.Domain, property.Range]),
+            EavStore.Filter([property.Domain, property.Range]),
             property.PropertyExpression.Select(this._propertyExpressionInterpreter));
     }
 
@@ -114,10 +114,18 @@ export class AtomInterpreter<T extends WrapperType> implements IAtomSelector<Wra
         return this._wrap(() => GreaterThan(greaterThan.Lhs, greaterThan.Rhs));
     }
 
+    Conjunction(atoms: IAtom[], terms: any[]): Wrapped<T, any[][]>;
+    Conjunction(atoms: IAtom[]): Wrapped<T, object[]>;
     Conjunction(
-        atoms: IAtom[]
+        atoms: IAtom[],
+        terms?: any[]
         ): Wrapped<T, object[]>
     {
+        if(terms)
+            return this._wrap(
+                EavStore.Conjunction(terms),
+                ...atoms.map(atom => atom.Select(this)));
+
         return this._wrap(
             EavStore.Conjunction(),
             ...atoms.map(atom => atom.Select(this)));

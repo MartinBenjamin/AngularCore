@@ -850,7 +850,7 @@ export class EavStore implements IEavStore, IPublisher
         };
     }
 
-    static Match(
+    static Filter(
         terms: any[]
         ): (tuples: Iterable<Tuple>) => object[]
     {
@@ -887,11 +887,18 @@ export class EavStore implements IEavStore, IPublisher
         };
     }
 
-    static Conjunction(): (...inputs: (object[] | BuiltIn)[]) => object[]
+    static Conjunction(): (...inputs: (object[] | BuiltIn)[]) => object[];
+    static Conjunction(terms: any[]): (...inputs: (object[] | BuiltIn)[]) => Tuple[];
+    static Conjunction(
+        terms?: any[]
+        ): (...inputs: (object[] | BuiltIn)[]) => object[]
     {
         let initialSubstitution: object = {};
+        let map: (substitutions: object[]) => object[] = substitutions => substitutions;
+        if(terms)
+            map = substitutions => substitutions.map(substitution => terms.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
 
-        return (...inputs: (object[] | Function)[]) => inputs.reduce<object[]>(
+        return (...inputs: (object[] | Function)[]) => map(inputs.reduce<object[]>(
             (substitutions, input) =>
             {
                 if(typeof input === 'function')
@@ -918,7 +925,7 @@ export class EavStore implements IEavStore, IPublisher
 
                 return substitutions;
             },
-            [initialSubstitution]);
+            [initialSubstitution]));
     }
 
     static Conjunction1(
