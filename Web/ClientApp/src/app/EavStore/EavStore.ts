@@ -1458,7 +1458,7 @@ export class EavStore implements IEavStore, IPublisher
             object instanceof Date)
             return object;
 
-        if(Store(object) === this)
+        if(this._eav.has(this))
             return object;
 
         let entity = added.get(object);
