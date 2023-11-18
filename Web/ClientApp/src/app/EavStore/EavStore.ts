@@ -1472,7 +1472,7 @@ export class EavStore implements IEavStore, IPublisher
                 if(typeof entity === 'undefined')
                     entity = ve.get(object[attribute]);
 
-                else if(entity != ve[object[attribute]])
+                else if(entity != ve.get(object[attribute]))
                     throw 'Unique Identity Conflict';
             });
 
