@@ -4,7 +4,6 @@ import { Contract, ContractualCommitment } from "./Contracts";
 import { MonetaryAmount } from "./CurrencyAmount";
 import { QuantityValue } from './Fees';
 import { PartyInRole } from './Parties';
-import { PartWhole } from './PartWhole';
 
 export interface FacilityAgreement extends Contract
 {
@@ -40,6 +39,6 @@ export interface ExternalFunding extends ContractualCommitment, QuantityValue
 {
 }
 
-export interface BookingOffice extends PartyInRole, PartWhole<BookingOffice>
+export interface BookingOffice extends PartyInRole
 {
 }

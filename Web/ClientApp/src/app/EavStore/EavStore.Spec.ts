@@ -47,11 +47,11 @@ describe(
     () =>
     {
         describe(
-            'Given array = [] and arrayProxy = ArrayProxyFactory(null, null, array):',
+            'Given array = [] and arrayProxy = ArrayProxyFactory(null, null, null, array):',
             () =>
             {
                 const array = [];
-                const arrayProxy = ArrayProxyFactory(new DummyPublisher(), null, null, array)
+                const arrayProxy = ArrayProxyFactory(new DummyPublisher(), null, null, array);
                 const x = {};
                 let assert = assertBuilder('array', 'arrayProxy', 'x', 'TargetSymbol')
                     (array, arrayProxy, x, TargetSymbol);

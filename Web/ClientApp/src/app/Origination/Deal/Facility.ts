@@ -199,52 +199,18 @@ export class Facility
             this._lenderParticipation.Obligors.splice(
                 this._lenderParticipation.Obligors.indexOf(this._bookingOffice),
                 1);
-
-            const dealBookingOffice = this._bookingOffice.PartOf;
-            dealBookingOffice.Parts.splice(
-                dealBookingOffice.Parts.indexOf(this._bookingOffice),
-                1);
-
-            if(!dealBookingOffice.Parts.length)
-            {
-                this._deal.Parties.splice(
-                    this._deal.Parties.indexOf(dealBookingOffice),
-                    1);
-
-                store.DeleteEntity(this._bookingOffice.PartOf);
-            }
-
             store.DeleteEntity(this._bookingOffice);
         }
 
         if(branch)
         {
-            let dealBookingOffice = <facilityAgreements.BookingOffice>this._deal.Parties.find(
-                party => party.Organisation.Id === branch.Id && party.Role.Id === DealRoleIdentifier.BookingOffice);
-
-            if(!dealBookingOffice)
-            {
-                dealBookingOffice = <facilityAgreements.BookingOffice>store.Assert(
-                    {
-                        //AutonomousAgent: branch,
-                        Organisation   : branch,
-                        Role           : this._bookingOfficeRole,
-                        Period         : null,
-                        Parts          : []
-                    });
-                this._deal.Parties.push(dealBookingOffice);
-            }
-
             const bookingOffice = <facilityAgreements.BookingOffice>store.Assert(
                 {
-                    //AutonomousAgent: branch,
-                    Organisation   : branch,
-                    Role           : this._bookingOfficeRole,
-                    Period         : null,
-                    PartOf         : dealBookingOffice
+                    Organisation: branch,
+                    Role        : this._bookingOfficeRole,
+                    Period      : null
                 });
 
-            dealBookingOffice.Parts.push(bookingOffice);
             this._lenderParticipation.Obligors.push(bookingOffice);
         }
 
