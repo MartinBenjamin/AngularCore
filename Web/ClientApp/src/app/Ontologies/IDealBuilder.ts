@@ -40,21 +40,12 @@ export class DealBuilder implements IDealBuilder
         ): Deal
     {
         let deal: Deal = {
-            Name              : null,
-            Parties           : [],
-            Commitments       : [],
-            ClassIri          : ontology.Deal.Iri,
-            Type              : null,
-            Agreements        : [],
-            Stage             : null,
-            ProjectName       : null,
-            Classifiers       : [],
-            GeographicRegion  : null,
-            Currency          : null,
-            Introducer        : null,
-            TransactionDetails: null,
-            CurrentStatus     : null,
-            SponsorsNA        : false
+            Parties    : [],
+            Commitments: [],
+            ClassIri   : ontology.Deal.Iri,
+            Agreements : [],
+            Classifiers: [],
+            SponsorsNA : false
         };
 
         const functionalObjectProperties = new Set<IObjectProperty>(

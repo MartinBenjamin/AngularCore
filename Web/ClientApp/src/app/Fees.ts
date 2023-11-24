@@ -9,15 +9,15 @@ export interface FeeType extends Classifier
 export interface QuantityValue
 {
     MeasurementUnit?: any;
-    NumericValue    : number;
+    NumericValue   ?: number;
 }
 
 export interface Fee extends QuantityValue, ContractualCommitment
 {
-    Type                : FeeType;
-    ExpectedReceivedDate: Date;
-    Received            : boolean;
-    AccrualDate         : AccrualDate;
+    Type                 : FeeType;
+    ExpectedReceivedDate?: Date;
+    Received             : boolean;
+    AccrualDate         ?: AccrualDate;
 }
 
 export enum FacilityFeeUnit

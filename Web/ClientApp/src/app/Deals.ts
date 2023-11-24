@@ -99,21 +99,21 @@ export interface Deal extends Named<Guid>
 {
     Parties            : PartyInRole[];
     Commitments        : Commitment[];
-    ClassIri           : string;
-    Type               : DealType;
+    ClassIri          ?: string;
+    Type              ?: DealType;
     Agreements         : Agreement[];
-    Stage              : LifeCycleStage;
-    ProjectName        : string;
+    Stage             ?: LifeCycleStage;
+    ProjectName       ?: string;
     Classifiers        : Classifier[];
-    GeographicRegion   : GeographicRegion;
-    Currency           : Currency;
-    Introducer         : string;
-    SponsorsNA         : boolean;
-    TransactionDetails : string;
+    GeographicRegion  ?: GeographicRegion;
+    Currency          ?: Currency;
+    Introducer        ?: string;
+    SponsorsNA        ?: boolean;
+    TransactionDetails?: string;
     TotalSponsorEquity?: number;
-    CurrentStatus      : string;
-    Ontology?          : IDealOntology;
-    LifeCycle?         : LifeCycle;
+    CurrentStatus     ?: string;
+    Ontology          ?: IDealOntology;
+    LifeCycle         ?: LifeCycle;
 }
 
 export interface Sponsor extends PartyInRole

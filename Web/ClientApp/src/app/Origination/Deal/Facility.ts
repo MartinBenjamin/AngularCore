@@ -234,35 +234,18 @@ export class Facility
 
         let facility = <facilityAgreements.Facility>
         {
-            Type                     : facilityType,
-            Name                     : '',
-            Obligors                 : [],
-            ConferredBy              : null,
-            PartOf                   : null,
-            Parts                    : [],
-            Currency                 : null,
-            Amount                   : null,
-            AvailabilityPeriodEndDate: null,
-            MaturityDate             : null,
-            Expected1StDrawdownDate  : null,
-            MultiCurrency            : null,
-            Committed                : null
+            Type    : facilityType,
+            Obligors: [],
+            Parts   : []
         };
 
         (<any>facility).$type = 'Web.Model.Facility, Web';
 
         let lenderParticipation = <LenderParticipation>
         {
-            Obligors             : [],
-            ConferredBy          : null,
-            PartOf               : facility,
-            Parts                : [],
-            Lender               : null,
-            Amount               : null,
-            UnderwriteAmount     : null,
-            CreditSoughtLimit    : null,
-            AnticipatedHoldAmount: null,
-            ActualAllocation     : null
+            Obligors: [],
+            PartOf  : facility,
+            Parts   : []
         };
         (<any>lenderParticipation).$type = 'Web.Model.LenderParticipation, Web';
         lenderParticipation.PartOf.Parts.push(lenderParticipation);

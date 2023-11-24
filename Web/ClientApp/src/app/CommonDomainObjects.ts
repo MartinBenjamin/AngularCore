@@ -9,7 +9,7 @@ export interface DomainObject<TId>
 
 export interface Named<TId> extends DomainObject<TId>
 {
-    Name: string;
+    Name?: string;
 }
 
 export interface Range<T>

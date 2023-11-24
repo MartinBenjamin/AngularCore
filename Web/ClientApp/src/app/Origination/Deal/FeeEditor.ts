@@ -112,7 +112,7 @@ export class FeeEditor
 
     get Accrued(): boolean
     {
-        return this._fee && this._fee.AccrualDate !== null;
+        return this._fee && typeof this._fee.AccrualDate !== 'undefined';
     }
 
     set Accrued(
@@ -150,11 +150,9 @@ export class FeeEditor
         store.SuspendPublish();
         this._fee = <Fee>store.Assert(
             {
-                MeasurementUnit: null,
-                Type           : feeType,
-                Received       : false,
-                AccrualDate    : null,
-                $type          : 'Web.Model.Fee, Web'
+                Type    : feeType,
+                Received: false,
+                $type   : 'Web.Model.Fee, Web'
             });
         this._deal.Commitments.push(this._fee);
         store.UnsuspendPublish();

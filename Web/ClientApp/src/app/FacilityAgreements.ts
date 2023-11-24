@@ -15,24 +15,24 @@ export interface FacilityType extends Classifier
 
 export interface Facility extends Named<Guid>, ContractualCommitment, MonetaryAmount
 {
-    Type                     : FacilityType;
-    AvailabilityPeriodEndDate: Date;
-    MaturityDate             : Date;
-    Expected1StDrawdownDate  : Date;
-    SameDayFacility          : boolean;
-    MultiCurrency            : boolean;
-    Bilateral                : boolean;
-    Committed                : boolean;
-    OnBalanceSheet           : boolean;
+    Type                      : FacilityType;
+    AvailabilityPeriodEndDate?: Date;
+    MaturityDate             ?: Date;
+    Expected1StDrawdownDate  ?: Date;
+    SameDayFacility          ?: boolean;
+    MultiCurrency            ?: boolean;
+    Bilateral                ?: boolean;
+    Committed                ?: boolean;
+    OnBalanceSheet           ?: boolean;
 }
 
 export interface LenderParticipation extends ContractualCommitment
 {
-    Amount               : number;
-    UnderwriteAmount     : number;
-    CreditSoughtLimit    : number;
-    AnticipatedHoldAmount: number;
-    ActualAllocation     : number;
+    Amount               ?: number;
+    UnderwriteAmount     ?: number;
+    CreditSoughtLimit    ?: number;
+    AnticipatedHoldAmount?: number;
+    ActualAllocation     ?: number;
 }
 
 export interface ExternalFunding extends ContractualCommitment, QuantityValue

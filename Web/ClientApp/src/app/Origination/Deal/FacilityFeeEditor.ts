@@ -144,7 +144,7 @@ export class FacilityFeeEditor
 
     get Accrued(): boolean
     {
-        return this._fee && this._fee.AccrualDate !== null;
+        return this._fee && typeof this._fee.AccrualDate !== 'undefined';
     }
 
     set Accrued(
@@ -182,12 +182,10 @@ export class FacilityFeeEditor
         store.SuspendPublish();
         this._fee = <Fee>store.Assert(
             {
-                MeasurementUnit: null,
-                PartOf         : this._facility,
-                Type           : feeType,
-                Received       : false,
-                AccrualDate    : null,
-                $type          : 'Web.Model.FacilityFee, Web'
+                PartOf  : this._facility,
+                Type    : feeType,
+                Received: false,
+                $type   : 'Web.Model.FacilityFee, Web'
             });
         this._fee.PartOf.Parts.push(this._fee);
         store.UnsuspendPublish();
