@@ -235,6 +235,7 @@ export class Facility
         let facility = <facilityAgreements.Facility>
         {
             Type    : facilityType,
+            Name    : '',
             Obligors: [],
             Parts   : []
         };

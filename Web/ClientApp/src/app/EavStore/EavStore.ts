@@ -1,6 +1,7 @@
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ArrayKeyedMap, TrieNode } from '../Collections/ArrayKeyedMap';
+import { Group } from '../Collections/Group';
 import { ArrayCompareFactory, SortedSet } from '../Collections/SortedSet';
 import { Transpose } from '../Graph/AdjacencyList';
 import { StronglyConnectedComponents } from '../Graph/StronglyConnectedComponents';
@@ -8,8 +9,7 @@ import { IScheduler, Scheduler, Signal } from '../Signal/Signal';
 import { Wrap } from '../Wrap';
 import { BuiltIn } from './Atom';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
-import { Group } from '../Collections/Group';
-import { Atom, AttributeSchema, Cardinality, Edb, Fact, Idb, IEavStore, IsConstant, IsIdb, IsVariable, Rule, Store, StoreSymbol } from './IEavStore';
+import { Atom, AttributeSchema, Cardinality, Edb, Fact, Idb, IEavStore, IsConstant, IsIdb, IsVariable, Rule, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
 
@@ -212,7 +212,7 @@ export class EavStore implements IEavStore, IPublisher
                         if(v instanceof Array)
                             facts.push(...v.map<Fact>(v => [entity, attribute, v]));
 
-                        else if(typeof v !== 'undefined' && v !== null)
+                        else if(typeof v !== 'undefined')
                             facts.push([entity, attribute, v]);
                     }
                 }
@@ -230,7 +230,7 @@ export class EavStore implements IEavStore, IPublisher
                         if(v instanceof Array)
                             facts.push(...v.map<Fact>(v => [entity, a, v]));
 
-                        else if(typeof v !== 'undefined' && v !== null)
+                        else if(typeof v !== 'undefined')
                             facts.push([entity, a, v]);
                     }
         }
@@ -267,7 +267,7 @@ export class EavStore implements IEavStore, IPublisher
                             if(v instanceof Array)
                                 facts.push(...v.map<Fact>(v => [e, attribute, v]));
 
-                            else if(typeof v !== 'undefined' && v !== null)
+                            else if(typeof v !== 'undefined')
                                 facts.push([e, attribute, v]);
                         }
             }
@@ -287,7 +287,7 @@ export class EavStore implements IEavStore, IPublisher
                     if(v instanceof Array)
                         facts.push(...v.map<Fact>(v => [e, a, v]));
 
-                    else if(typeof v !== 'undefined' && v !== null)
+                    else if(typeof v !== 'undefined')
                         facts.push([e, a, v]);
                 }
 
