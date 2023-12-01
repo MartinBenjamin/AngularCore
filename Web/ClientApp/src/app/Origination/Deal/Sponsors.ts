@@ -4,7 +4,7 @@ import { first, map, switchMap } from 'rxjs/operators';
 import { Classifier } from '../../ClassificationScheme';
 import { Guid } from "../../CommonDomainObjects";
 import { DealProvider } from '../../DealProvider';
-import { Deal, NotSponsoredClassifierIdentifier, Sponsor } from '../../Deals';
+import { Deal, Sponsor } from '../../Deals';
 import { Store } from '../../EavStore/IEavStore';
 import { IDomainObjectService } from "../../IDomainObjectService";
 import { LegalEntityFinder } from '../../LegalEntityFinder';
