@@ -66,6 +66,8 @@ export class RestrictedClassifierIdentifier
     static readonly Yes = '5cd2b680-cb36-49e1-8d3d-62ada643a389';
 }
 
+export let NotSponsoredClassifierIdentifier = '881457a6-aa88-4a73-95e7-b347caf828fb';;
+
 export class DealStageIdentifier
 {
     static readonly OriginationPhase        = '7a08488a-40b9-41c8-ba72-96daadccca25';
@@ -108,7 +110,6 @@ export interface Deal extends Named<Guid>
     GeographicRegion  ?: GeographicRegion;
     Currency          ?: Currency;
     Introducer        ?: string;
-    SponsorsNA        ?: boolean;
     TransactionDetails?: string;
     TotalSponsorEquity?: number;
     CurrentStatus     ?: string;

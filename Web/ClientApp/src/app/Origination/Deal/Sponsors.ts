@@ -1,9 +1,10 @@
 import { Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { NEVER, Observable, Subscription } from 'rxjs';
 import { first, map, switchMap } from 'rxjs/operators';
+import { Classifier } from '../../ClassificationScheme';
 import { Guid } from "../../CommonDomainObjects";
 import { DealProvider } from '../../DealProvider';
-import { Deal, Sponsor } from '../../Deals';
+import { Deal, NotSponsoredClassifierIdentifier, Sponsor } from '../../Deals';
 import { Store } from '../../EavStore/IEavStore';
 import { IDomainObjectService } from "../../IDomainObjectService";
 import { LegalEntityFinder } from '../../LegalEntityFinder';
@@ -27,6 +28,7 @@ export class Sponsors implements OnDestroy
     private _naEnabled    = false;
     private _subscriptions: Subscription[] = [];
     private _sponsorRole  : Role;
+    private _notSponsored : Classifier;
     private _deal         : Deal;
     private _sponsors     : Observable<Sponsor[]>;
 
@@ -50,6 +52,10 @@ export class Sponsors implements OnDestroy
                         this._sponsorRole = <Role>AddIndividual(
                             deal.Ontology,
                             roleIndividuals.Sponsor,
+                            store);
+                        this._notSponsored = <Classifier>AddIndividual(
+                            deal.Ontology,
+                            deals.NotSponsoredClassifier,
                             store);
                         roleService.Get(this._sponsorRole.Id).subscribe(sponsorRole => store.Assert(sponsorRole));
                         this.Build(deal.Ontology);
@@ -94,14 +100,21 @@ export class Sponsors implements OnDestroy
 
     get NA(): boolean
     {
-        return this._deal.SponsorsNA;
+        return this._deal.Classifiers.indexOf(this._notSponsored) !== -1;
     }
 
     set NA(
         na: boolean
         )
     {
-        this._deal.SponsorsNA = na;
+        const index = this._deal.Classifiers.indexOf(this._notSponsored);
+        if(index === -1 && na)
+            this._deal.Classifiers.push(this._notSponsored);
+
+        else if(index !== -1 && !na)
+            this._deal.Classifiers.splice(
+                index,
+                1);
     }
 
     Add(): void
@@ -140,7 +153,7 @@ export class Sponsors implements OnDestroy
 
                     sponsor.Role = this._sponsorRole;
                     this._deal.Parties.push(<Sponsor>store.Assert(sponsor));
-                    this._deal.SponsorsNA = false;
+                    this.NA = false;
                 }
                 finally
                 {

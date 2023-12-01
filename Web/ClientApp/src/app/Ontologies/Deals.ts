@@ -1,4 +1,4 @@
-import { DealLifeCycleIdentifier, DealStageIdentifier, RestrictedClassifierIdentifier } from "../Deals";
+import { DealLifeCycleIdentifier, DealStageIdentifier, NotSponsoredClassifierIdentifier, RestrictedClassifierIdentifier } from "../Deals";
 import { LegalEntityIdentifier } from "../LegalEntities";
 import { DataAllValuesFrom } from "../Ontology/DataAllValuesFrom";
 import { DataComplementOf } from "../Ontology/DataComplementOf";
@@ -7,6 +7,7 @@ import { DisjointClasses } from "../Ontology/DisjointClasses";
 import { IClass } from "../Ontology/IClass";
 import { INamedIndividual } from "../Ontology/INamedIndividual";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "../Ontology/IPropertyExpression";
+import { NamedIndividual } from '../Ontology/NamedIndividual';
 import { ObjectOneOf } from "../Ontology/ObjectOneOf";
 import { ObjectSomeValuesFrom } from "../Ontology/ObjectSomeValuesFrom";
 import { Ontology } from "../Ontology/Ontology";
@@ -33,7 +34,6 @@ export class Deals extends Ontology
     readonly Type                   : IObjectPropertyExpression;
     readonly LifeCycle              : IObjectPropertyExpression;
     readonly Classifiers            : IObjectPropertyExpression;
-    readonly SponsorsNA             : IDataPropertyExpression;
     readonly LenderParty            : IClass;
     readonly AdvisorParty           : IClass;
     readonly SponsorParty           : IClass;
@@ -50,6 +50,7 @@ export class Deals extends Ontology
     readonly KeyCounterparty        : IClass;
     readonly DebtLifeCycle          : INamedIndividual;
     readonly NotRestricted          : INamedIndividual;
+    readonly NotSponsoredClassifier : INamedIndividual;
 
     constructor()
     {
@@ -72,11 +73,10 @@ export class Deals extends Ontology
         this.Deal = this.DeclareClass("Deal");
         this.Deal.SubClassOf(commonDomainObjects.Named);
 
-        this.Class = this.DeclareFunctionalDataProperty("ClassIri");
+        this.Class       = this.DeclareFunctionalDataProperty("ClassIri");
         this.Classifiers = this.DeclareObjectProperty("Classifiers");
         this.LifeCycle   = this.DeclareFunctionalObjectProperty("LifeCycle");
         this.Type        = this.DeclareFunctionalObjectProperty("Type");
-        this.SponsorsNA  = this.DeclareFunctionalDataProperty("SponsorsNA");
 
         this.Deal.SubClassOf(this.Type.ExactCardinality(1));
 
@@ -98,14 +98,15 @@ export class Deals extends Ontology
         let restrictedClassifier = this.DeclareClass("RestrictedClassifier");
         restrictedClassifier.SubClassOf(commonDomainObjects.Classifier);
         restrictedClassifier.Define(commonDomainObjects.$type.HasValue('Web.Model.RestrictedClassifier, Web'));
-        let notRestricted = restrictedClassifier.DeclareNamedIndividual("Not Restricted");
-        notRestricted.DataPropertyValue(
-            commonDomainObjects.Id,
-            RestrictedClassifierIdentifier.No);
+
+        this.NotRestricted = this.DeclareNamedIndividual("NotRestricted");
+        this.NotRestricted.DataPropertyValue(commonDomainObjects.Id, RestrictedClassifierIdentifier.No);
+        this.NotRestricted.DataPropertyValue(commonDomainObjects.$type, 'Web.Model.RestrictedClassifier, Web');
+
         this.Restricted = this.DeclareClass("RestrictedDeal");
         this.Restricted.Define(new ObjectSomeValuesFrom(
             this.Classifiers,
-            restrictedClassifier.Intersect(new ObjectOneOf([notRestricted]).Complement())));
+            restrictedClassifier.Intersect(new ObjectOneOf([this.NotRestricted]).Complement())));
         this.Restricted.SubClassOf(this.DeclareFunctionalDataProperty("ProjectName").MinCardinality(1, nonEmptyString))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
 
@@ -161,12 +162,17 @@ export class Deals extends Ontology
         this.Sponsored.SubClassOf(new ObjectSomeValuesFrom(agreements.Parties, this.SponsorParty))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect)
             .Annotate(annotations.NominalProperty, "Sponsors");
-        this.Sponsored.SubClassOf(this.SponsorsNA.ExactCardinality(0));
         this.Sponsored.Annotate(annotations.ComponentBuildAction, "AddSponsors");
+
+        this.NotSponsoredClassifier = new NamedIndividual(
+            this,
+            "NotSponsoredClassifier");
+        this.NotSponsoredClassifier.DataPropertyValue(commonDomainObjects.Id, NotSponsoredClassifierIdentifier);
+        this.NotSponsoredClassifier.DataPropertyValue(commonDomainObjects.$type, 'Web.Model.NotSponsoredClassifier, Web');
 
         this.SponsoredWhenApplicable = this.DeclareClass("SponsoredWhenApplicable");
         this.SponsoredWhenApplicable.SubClassOf(this.Deal);
-        this.SponsoredWhenApplicable.SubClassOf(new ObjectSomeValuesFrom(agreements.Parties, this.SponsorParty).Union(this.SponsorsNA.HasValue(true)))
+        this.SponsoredWhenApplicable.SubClassOf(new ObjectSomeValuesFrom(agreements.Parties, this.SponsorParty).Union(this.Classifiers.HasValue(this.NotSponsoredClassifier)))
             .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect)
             .Annotate(annotations.NominalProperty, "Sponsors");
         this.SponsoredWhenApplicable.Annotate(annotations.ComponentBuildAction, "AddSponsors");
@@ -175,7 +181,6 @@ export class Deals extends Ontology
         this.NotSponsored = this.DeclareClass("NotSponsored");
         this.NotSponsored.SubClassOf(this.Deal);
         this.NotSponsored.SubClassOf(agreements.Parties.ExactCardinality(0, this.SponsorParty));
-        this.NotSponsored.SubClassOf(this.SponsorsNA.ExactCardinality(0));
 
         let sponsoredDeal = this.DeclareClass("SponsoredDeal");
         sponsoredDeal.Define(new ObjectSomeValuesFrom(agreements.Parties, this.SponsorParty));
@@ -194,10 +199,6 @@ export class Deals extends Ontology
         this.DebtLifeCycle = lifeCycles.LifeCycle.DeclareNamedIndividual("DebtLifeCycle");
         this.DebtLifeCycle.DataPropertyValue(commonDomainObjects.Id, DealLifeCycleIdentifier.Debt);
         this.Debt.SubClassOf(this.LifeCycle.HasValue(this.DebtLifeCycle));
-
-        this.NotRestricted = this.DeclareNamedIndividual("NotRestricted");
-        this.NotRestricted.DataPropertyValue(commonDomainObjects.Id, RestrictedClassifierIdentifier.No);
-        this.NotRestricted.DataPropertyValue(commonDomainObjects.$type, 'Web.Model.RestrictedClassifier, Web');
 
         const fee = this.DeclareClass("Fee");
         fee.Define(commonDomainObjects.$type.HasValue("Web.Model.Fee, Web"));

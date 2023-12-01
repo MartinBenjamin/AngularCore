@@ -44,8 +44,7 @@ export class DealBuilder implements IDealBuilder
             Commitments: [],
             ClassIri   : ontology.Deal.Iri,
             Agreements : [],
-            Classifiers: [],
-            SponsorsNA : false
+            Classifiers: []
         };
 
         const functionalObjectProperties = new Set<IObjectProperty>(
