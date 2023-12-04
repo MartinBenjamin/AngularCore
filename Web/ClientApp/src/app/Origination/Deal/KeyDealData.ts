@@ -8,7 +8,7 @@ import { Deal } from '../../Deals';
 import { Store } from '../../EavStore/IEavStore';
 import { Currency } from '../../Iso4217';
 import { deals } from '../../Ontologies/Deals';
-import { ObservableGenerator } from '../../Ontology/ObservableGenerator';
+import { ClassExpressionObservableInterpreter } from '../../Ontology/ClassExpressionObservableInterpreter';
 
 @Component(
     {
@@ -33,7 +33,7 @@ export class KeyDealData
 
                 const store = Store(deal);
 
-                const interpreter = new ObservableGenerator(
+                const interpreter = new ClassExpressionObservableInterpreter(
                     deals,
                     store);
 

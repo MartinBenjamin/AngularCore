@@ -13,7 +13,7 @@ import { deals } from '../../Ontologies/Deals';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
 import { roleIndividuals } from '../../Ontologies/RoleIndividuals';
 import { AddIndividual } from '../../Ontology/AddIndividuals';
-import { ObservableGenerator } from '../../Ontology/ObservableGenerator';
+import { ClassExpressionObservableInterpreter } from '../../Ontology/ClassExpressionObservableInterpreter';
 import { Sort } from '../../Parties';
 import { Role } from '../../Roles';
 import { RoleServiceToken } from "../../RoleServiceProvider";
@@ -70,7 +70,7 @@ export class Sponsors implements OnDestroy
                         return NEVER;
 
                     const store = Store(deal);
-                    const interpreter = new ObservableGenerator(
+                    const interpreter = new ClassExpressionObservableInterpreter(
                         deals,
                         store);
 

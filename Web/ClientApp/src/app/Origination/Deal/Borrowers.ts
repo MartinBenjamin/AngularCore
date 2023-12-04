@@ -10,7 +10,7 @@ import { LegalEntityFinder } from '../../LegalEntityFinder';
 import { deals } from '../../Ontologies/Deals';
 import { roleIndividuals } from '../../Ontologies/RoleIndividuals';
 import { AddIndividual } from '../../Ontology/AddIndividuals';
-import { ObservableGenerator } from '../../Ontology/ObservableGenerator';
+import { ClassExpressionObservableInterpreter } from '../../Ontology/ClassExpressionObservableInterpreter';
 import { PartyInRole, Sort } from '../../Parties';
 import { Role } from '../../Roles';
 import { RoleServiceToken } from '../../RoleServiceProvider';
@@ -60,7 +60,7 @@ export class Borrowers implements OnDestroy
                         return NEVER;
 
                     const store = Store(deal);
-                    const interpreter = new ObservableGenerator(
+                    const interpreter = new ClassExpressionObservableInterpreter(
                         deals,
                         store);
 
