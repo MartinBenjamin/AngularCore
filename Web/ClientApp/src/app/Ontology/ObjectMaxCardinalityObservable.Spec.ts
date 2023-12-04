@@ -25,7 +25,7 @@ describe(
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ces = [0, 1, 2].map(cardinality => new ObjectMaxCardinality(op1, cardinality));
                 const store: IEavStore = new EavStore();
-                const generator = new ClassExpressionObservableInterpreter(
+                const interpreter = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
 
@@ -37,7 +37,7 @@ describe(
                     try
                     {
                         let elements: Set<any> = null;
-                        subscription = generator.ClassExpression(ce).subscribe(m => elements = m);
+                        subscription = interpreter.ClassExpression(ce).subscribe(m => elements = m);
                         return elements;
                     }
                     finally
@@ -106,11 +106,11 @@ describe(
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ce = new ObjectMaxCardinality(op1, 1, new ObjectOneOf([i1, i2]));
                 const store: IEavStore = new EavStore();
-                const generator = new ClassExpressionObservableInterpreter(
+                const interpreter = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
-                const i1Interpretation = generator.InterpretIndividual(i1);
-                const i2Interpretation = generator.InterpretIndividual(i2);
+                const i1Interpretation = interpreter.InterpretIndividual(i1);
+                const i2Interpretation = interpreter.InterpretIndividual(i2);
 
                 function elements(
                     ce: IClassExpression
@@ -120,7 +120,7 @@ describe(
                     try
                     {
                         let elements: Set<any> = null;
-                        subscription = generator.ClassExpression(ce).subscribe(m => elements = m);
+                        subscription = interpreter.ClassExpression(ce).subscribe(m => elements = m);
                         return elements;
                     }
                     finally

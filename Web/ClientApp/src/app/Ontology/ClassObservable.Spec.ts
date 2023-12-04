@@ -30,15 +30,15 @@ describe(
                 new EquivalentClasses(o1, [c1, c2]);
                 new EquivalentClasses(o1, [c1, new ObjectOneOf([i1])]);
                 const store: IEavStore = new EavStore();
-                const generator = new ClassExpressionObservableInterpreter(
+                const interpreter = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
-                const i1Interpretation = generator.InterpretIndividual(i1);
-                const i2Interpretation = generator.InterpretIndividual(i2);
+                const i1Interpretation = interpreter.InterpretIndividual(i1);
+                const i2Interpretation = interpreter.InterpretIndividual(i2);
 
                 it(
                     'ClassExpressionObservableInterpreter generates same Observable for same class',
-                    () => expect(generator.ClassExpression(c1)).toBe(generator.ClassExpression(c1)))
+                    () => expect(interpreter.ClassExpression(c1)).toBe(interpreter.ClassExpression(c1)))
 
                 function elements(
                     ce: IClassExpression
@@ -48,7 +48,7 @@ describe(
                     try
                     {
                         let elements: Set<any> = null;
-                        subscription = generator.ClassExpression(ce).subscribe(m => elements = m);
+                        subscription = interpreter.ClassExpression(ce).subscribe(m => elements = m);
                         return elements;
                     }
                     finally
@@ -88,15 +88,15 @@ describe(
                 const i2 = new NamedIndividual(o1, 'i2');
                 new SubClassOf(o1, new ObjectOneOf([i1]), c1);
                 const store: IEavStore = new EavStore();
-                const generator = new ClassExpressionObservableInterpreter(
+                const interpreter = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
-                const i1Interpretation = generator.InterpretIndividual(i1);
-                const i2Interpretation = generator.InterpretIndividual(i2);
+                const i1Interpretation = interpreter.InterpretIndividual(i1);
+                const i2Interpretation = interpreter.InterpretIndividual(i2);
 
                 it(
                     'ClassExpressionObservableInterpreter generates same Observable for same class',
-                    () => expect(generator.ClassExpression(c1)).toBe(generator.ClassExpression(c1)))
+                    () => expect(interpreter.ClassExpression(c1)).toBe(interpreter.ClassExpression(c1)))
 
                 function elements(
                     ce: IClassExpression
@@ -106,7 +106,7 @@ describe(
                     try
                     {
                         let elements: Set<any> = null;
-                        subscription = generator.ClassExpression(ce).subscribe(m => elements = m);
+                        subscription = interpreter.ClassExpression(ce).subscribe(m => elements = m);
                         return elements;
                     }
                     finally
@@ -135,15 +135,15 @@ describe(
                 new EquivalentClasses(o1, [c1, c2]);
                 new SubClassOf(o1, new ObjectOneOf([i1]), c2);
                 const store: IEavStore = new EavStore();
-                const generator = new ClassExpressionObservableInterpreter(
+                const interpreter = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
-                const i1Interpretation = generator.InterpretIndividual(i1);
-                const i2Interpretation = generator.InterpretIndividual(i2);
+                const i1Interpretation = interpreter.InterpretIndividual(i1);
+                const i2Interpretation = interpreter.InterpretIndividual(i2);
 
                 it(
                     'ClassExpressionObservableInterpreter generates same Observable for same class',
-                    () => expect(generator.ClassExpression(c1)).toBe(generator.ClassExpression(c1)))
+                    () => expect(interpreter.ClassExpression(c1)).toBe(interpreter.ClassExpression(c1)))
 
                 function elements(
                     ce: IClassExpression
@@ -153,7 +153,7 @@ describe(
                     try
                     {
                         let elements: Set<any> = null;
-                        subscription = generator.ClassExpression(ce).subscribe(m => elements = m);
+                        subscription = interpreter.ClassExpression(ce).subscribe(m => elements = m);
                         return elements;
                     }
                     finally

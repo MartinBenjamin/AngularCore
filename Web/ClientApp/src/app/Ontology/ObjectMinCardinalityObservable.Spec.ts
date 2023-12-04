@@ -25,7 +25,7 @@ describe(
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ces = [0, 1, 2].map(cardinality => new ObjectMinCardinality(op1, cardinality));
                 const store: IEavStore = new EavStore();
-                const generator = new ClassExpressionObservableInterpreter(
+                const interpreter = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
 
@@ -37,7 +37,7 @@ describe(
                     try
                     {
                         let elements: Set<any> = null;
-                        subscription = generator.ClassExpression(ce).subscribe(m => elements = m);
+                        subscription = interpreter.ClassExpression(ce).subscribe(m => elements = m);
                         return elements;
                     }
                     finally
@@ -48,7 +48,7 @@ describe(
 
                 it(
                     `(${classExpressionWriter.Write(ces[0])})C = ΔI`,
-                    () => expect(generator.ClassExpression(ces[0])).toBe(generator.ObjectDomain));
+                    () => expect(interpreter.ClassExpression(ces[0])).toBe(interpreter.ObjectDomain));
 
                 describe(
                     'Given x ∈ ΔI:',
@@ -109,10 +109,10 @@ describe(
                 const op1 = new ObjectProperty(o1, 'op1');
                 const ce = new ObjectMinCardinality(op1, 1, new ObjectOneOf([i]));
                 const store: IEavStore = new EavStore();
-                const generator = new ClassExpressionObservableInterpreter(
+                const interpreter = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
-                const iInterpretation = generator.InterpretIndividual(i);
+                const iInterpretation = interpreter.InterpretIndividual(i);
 
                 function elements(
                     ce: IClassExpression
@@ -122,7 +122,7 @@ describe(
                     try
                     {
                         let elements: Set<any> = null;
-                        subscription = generator.ClassExpression(ce).subscribe(m => elements = m);
+                        subscription = interpreter.ClassExpression(ce).subscribe(m => elements = m);
                         return elements;
                     }
                     finally

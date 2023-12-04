@@ -28,11 +28,11 @@ describe(
                 const ce1Complement = new ObjectComplementOf(ce1);
                 const ce2Complement = new ObjectComplementOf(ce2);
                 const store: IEavStore = new EavStore();
-                const generator = new ClassExpressionObservableInterpreter(
+                const interpreter = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
-                const i1Interpretation = generator.InterpretIndividual(i1);
-                const i2Interpretation = generator.InterpretIndividual(i2);
+                const i1Interpretation = interpreter.InterpretIndividual(i1);
+                const i2Interpretation = interpreter.InterpretIndividual(i2);
 
                 function elements(
                     ce: IClassExpression
@@ -42,7 +42,7 @@ describe(
                     try
                     {
                         let elements: Set<any> = null;
-                        subscription = generator.ClassExpression(ce).subscribe(m => elements = m);
+                        subscription = interpreter.ClassExpression(ce).subscribe(m => elements = m);
                         return elements;
                     }
                     finally

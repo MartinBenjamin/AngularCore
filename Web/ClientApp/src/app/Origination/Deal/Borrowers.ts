@@ -60,11 +60,11 @@ export class Borrowers implements OnDestroy
                         return NEVER;
 
                     const store = Store(deal);
-                    const generator = new ObservableGenerator(
+                    const interpreter = new ObservableGenerator(
                         deals,
                         store);
 
-                    return deals.BorrowerParty.Select(generator).pipe(map(borrowers => [...borrowers].sort(Sort)));
+                    return deals.BorrowerParty.Select(interpreter).pipe(map(borrowers => [...borrowers].sort(Sort)));
                 }));
     }
 

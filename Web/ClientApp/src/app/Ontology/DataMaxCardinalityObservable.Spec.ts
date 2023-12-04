@@ -24,7 +24,7 @@ describe(
                 const dp1 = new DataProperty(o1, 'dp1');
                 const ces = [0, 1, 2].map(cardinality => new DataMaxCardinality(dp1, cardinality));
                 const store: IEavStore = new EavStore();
-                const generator = new ClassExpressionObservableInterpreter(
+                const interpreter = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
 
@@ -36,7 +36,7 @@ describe(
                     try
                     {
                         let elements: Set<any> = null;
-                        subscription = generator.ClassExpression(ce).subscribe(m => elements = m);
+                        subscription = interpreter.ClassExpression(ce).subscribe(m => elements = m);
                         return elements;
                     }
                     finally
@@ -100,7 +100,7 @@ describe(
                 const dp1 = new DataProperty(o1, 'dp1');
                 const ce = new DataMaxCardinality(dp1, 1, new DataOneOf([1, 2]));
                 const store: IEavStore = new EavStore();
-                const generator = new ClassExpressionObservableInterpreter(
+                const interpreter = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
 
@@ -112,7 +112,7 @@ describe(
                     try
                     {
                         let elements: Set<any> = null;
-                        subscription = generator.ClassExpression(ce).subscribe(m => elements = m);
+                        subscription = interpreter.ClassExpression(ce).subscribe(m => elements = m);
                         return elements;
                     }
                     finally

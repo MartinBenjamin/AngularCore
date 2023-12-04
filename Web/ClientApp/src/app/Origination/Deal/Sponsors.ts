@@ -70,11 +70,11 @@ export class Sponsors implements OnDestroy
                         return NEVER;
 
                     const store = Store(deal);
-                    const generator = new ObservableGenerator(
+                    const interpreter = new ObservableGenerator(
                         deals,
                         store);
 
-                    return deals.SponsorParty.Select(generator).pipe(map(sponsors => [...sponsors].sort(Sort)));
+                    return deals.SponsorParty.Select(interpreter).pipe(map(sponsors => [...sponsors].sort(Sort)));
                 }));
     }
 

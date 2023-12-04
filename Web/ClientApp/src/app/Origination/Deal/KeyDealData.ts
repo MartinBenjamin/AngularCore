@@ -33,11 +33,11 @@ export class KeyDealData
 
                 const store = Store(deal);
 
-                const generator = new ObservableGenerator(
+                const interpreter = new ObservableGenerator(
                     deals,
                     store);
 
-                return deals.Restricted.Select(generator).pipe(map(restricted => restricted.has(deal)));
+                return deals.Restricted.Select(interpreter).pipe(map(restricted => restricted.has(deal)));
             }));
     }
 
