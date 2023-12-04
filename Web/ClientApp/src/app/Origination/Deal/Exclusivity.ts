@@ -146,8 +146,7 @@ export class Exclusivity implements OnDestroy
             if(exclusive && !this._exclusivity)
             {
                 this._exclusivity = store.Assert({
-                    EndDate: null,
-                    $type  : 'Web.Model.Exclusivity, Web'
+                    $type: 'Web.Model.Exclusivity, Web'
                 });
                 this._deal.Commitments.push(this._exclusivity);
             }
