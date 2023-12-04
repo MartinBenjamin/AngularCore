@@ -2,7 +2,7 @@ import { IDataProperty, IInverseObjectProperty, IObjectProperty, IProperty } fro
 import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
 import { Wrap, Wrapped, WrapperType } from "./Wrapped";
 
-export abstract class PropertyExpressionInterpreter<T extends WrapperType> implements IPropertyExpressionSelector<Wrapped<T, [any, any][]>>
+export abstract class PropertyExpressionInterpreter<T extends WrapperType> implements IPropertyExpressionSelector<Wrapped<T, readonly [any, any][]>>
 {
     constructor(
         private _wrap: Wrap<T>
@@ -14,21 +14,21 @@ export abstract class PropertyExpressionInterpreter<T extends WrapperType> imple
 
     ObjectProperty(
         objectProperty: IObjectProperty
-        ): Wrapped<T, [any, any][]>
+        ): Wrapped<T, readonly [any, any][]>
     {
         return this.Property(objectProperty);
     }
 
     DataProperty(
         dataProperty: IDataProperty
-        ): Wrapped<T, [any, any][]>
+        ): Wrapped<T, readonly [any, any][]>
     {
         return this.Property(dataProperty);
     }
 
     InverseObjectProperty(
         inverseObjectProperty: IInverseObjectProperty
-        ): Wrapped<T, [any, any][]>
+        ): Wrapped<T, readonly [any, any][]>
     {
         return this._wrap(
             objectProperty => objectProperty.map(([domain, range]) => [range, domain]),

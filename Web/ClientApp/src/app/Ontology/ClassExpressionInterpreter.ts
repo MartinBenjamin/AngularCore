@@ -47,7 +47,7 @@ export abstract class ClassExpressionInterpreter<T extends WrapperType> implemen
 
     constructor(
         private   _wrap                         : Wrap<T>,
-        private   _propertyExpressionInterpreter: IPropertyExpressionSelector<Wrapped<T, [any, any][]>>,
+        private   _propertyExpressionInterpreter: IPropertyExpressionSelector<Wrapped<T, readonly [any, any][]>>,
         private   _ontology                     : IOntology,
         protected _store                        : IEavStore,
         private   _classInterpretation          : ICache<T, IClass, Set<any>>
@@ -100,7 +100,7 @@ export abstract class ClassExpressionInterpreter<T extends WrapperType> implemen
             this._store);
     }
 
-    get PropertyExpressionInterpreter(): IPropertyExpressionSelector<Wrapped<T, [any, any][]>>
+    get PropertyExpressionInterpreter(): IPropertyExpressionSelector<Wrapped<T, readonly [any, any][]>>
     {
         return this._propertyExpressionInterpreter;
     }
@@ -554,7 +554,7 @@ export abstract class ClassExpressionInterpreter<T extends WrapperType> implemen
     }
 
     private GroupByDomain(
-        relations: [any, any][]
+        relations: readonly [any, any][]
         ): Map<any, any[]>
     {
         return Group(

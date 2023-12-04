@@ -10,7 +10,7 @@ export class AtomInterpreter<T extends WrapperType> implements IAtomSelector<Wra
 {
     constructor(
         protected _wrap                         : Wrap<T>,
-        private   _propertyExpressionInterpreter: IPropertyExpressionSelector<Wrapped<T, [any, any][]>>,
+        private   _propertyExpressionInterpreter: IPropertyExpressionSelector<Wrapped<T, readonly [any, any][]>>,
         private   _classExpressionInterpreter   : IClassExpressionSelector<Wrapped<T, Set<any>>>
         )
     {

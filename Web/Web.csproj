@@ -36,6 +36,7 @@
     <None Remove="ClientApp\src\app\BranchServiceProvider.ts" />
     <None Remove="ClientApp\src\app\ClassificationScheme.ts" />
     <None Remove="ClientApp\src\app\ClassificationSchemeServiceProvider.ts" />
+    <None Remove="ClientApp\src\app\Collections\Iterable.ts" />
     <None Remove="ClientApp\src\app\CommonDomainObjects.ts" />
     <None Remove="ClientApp\src\app\Components\AccrualDate.ts" />
     <None Remove="ClientApp\src\app\Components\AccrualDateEditor.ts" />
@@ -379,6 +380,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\BranchServiceProvider.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\ClassificationScheme.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\ClassificationSchemeServiceProvider.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\Collections\Iterable.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Components\AccrualDate.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
