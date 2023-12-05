@@ -26,6 +26,7 @@ export class ClassExpressionObservableInterpreter extends ClassExpressionInterpr
         super(
             wrap,
             new PropertyExpressionObservableInterpreter(
+                ontology,
                 store,
                 cache),
             ontology,
@@ -43,11 +44,14 @@ export class ClassExpressionObservableInterpreter extends ClassExpressionInterpr
 export class PropertyExpressionObservableInterpreter extends PropertyExpressionInterpreter<WrapperType.Observable>
 {
     constructor(
+        ontology: IOntology,
         private _store: IEavStore,
         private _propertyExpressionInterpretation: ICache<WrapperType.Observable> = new Map()
         )
     {
-        super(wrap);
+        super(
+            wrap,
+            ontology);
     }   
 
     Property(

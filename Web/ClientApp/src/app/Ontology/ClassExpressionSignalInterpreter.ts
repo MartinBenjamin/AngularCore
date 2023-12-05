@@ -48,6 +48,7 @@ export class ClassExpressionSignalInterpreter extends ClassExpressionInterpreter
                 map,
                 params),
             new PropertyExpressionSignalInterpreter(
+                ontology,
                 store,
                 cache),
             ontology,
@@ -64,16 +65,19 @@ export class ClassExpressionSignalInterpreter extends ClassExpressionInterpreter
 export class PropertyExpressionSignalInterpreter extends PropertyExpressionInterpreter<WrapperType.Signal>
 {
     constructor(
+        ontology: IOntology,
         private _store: IEavStore,
         private _propertyExpressionInterpretation: ICache<WrapperType.Signal> = new SignalCache()
         )
     {
-        super(<TIn extends any[], TOut>(
-            map: (...params: TIn) => TOut,
-            ...params: SignalParams<TIn>
-        ): Signal<TOut> => _store.SignalScheduler.AddSignal(
-            map,
-            params))
+        super(
+            <TIn extends any[], TOut>(
+                map: (...params: TIn) => TOut,
+                ...params: SignalParams<TIn>
+            ): Signal<TOut> => _store.SignalScheduler.AddSignal(
+                map,
+                params),
+            ontology)
     }   
 
     Property(

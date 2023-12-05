@@ -37,11 +37,11 @@ export interface ICache<T extends WrapperType, K = any, V = any>
 
 export abstract class ClassExpressionInterpreter<T extends WrapperType> implements IClassExpressionSelector<Wrapped<T, Set<any>>>
 {
-    private _equivalentClasses          : Map<IClass, Set<IClass>>;
-    private _classDefinitions           : Map<IClass, IClassExpression[]>;
+    private _equivalentClasses          : ReadonlyMap<IClass, Set<IClass>>;
+    private _classDefinitions           : ReadonlyMap<IClass, IClassExpression[]>;
     private _functionalObjectProperties = new Set<IObjectPropertyExpression>();
     private _functionalDataProperties   = new Set<IDataPropertyExpression>();
-    private _individualInterpretation   : Map<IIndividual, any>;
+    private _individualInterpretation   : ReadonlyMap<IIndividual, any>;
 
     protected abstract WrapObjectDomain(): Wrapped<T, Set<any>>;
 
@@ -555,7 +555,7 @@ export abstract class ClassExpressionInterpreter<T extends WrapperType> implemen
 
     private GroupByDomain(
         relations: readonly [any, any][]
-        ): Map<any, any[]>
+        ): ReadonlyMap<any, any[]>
     {
         return Group(
             relations,

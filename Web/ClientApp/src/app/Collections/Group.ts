@@ -2,7 +2,7 @@ export function Group<T, TKey, TValue>(
     iterable     : Iterable<T>,
     keyAccessor  : (t: T) => TKey,
     valueAccessor: (t: T) => TValue
-    ): Map<TKey, TValue[]>
+    ): ReadonlyMap<TKey, TValue[]>
 {
     let map = new Map<TKey, TValue[]>();
     for(let t of iterable)
@@ -26,7 +26,7 @@ export function GroupJoin<TLeft, TRight, TKey>(
     rightIterable   : Iterable<TRight>,
     leftKeySelector : (left: TLeft) => TKey,
     rightKeySelector: (right: TRight) => TKey
-    ): Map<TLeft, TRight[]>
+    ): ReadonlyMap<TLeft, TRight[]>
 {
     const map = Group(
         rightIterable,
