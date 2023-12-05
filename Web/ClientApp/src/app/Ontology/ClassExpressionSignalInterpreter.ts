@@ -6,6 +6,7 @@ import { IOntology } from './IOntology';
 import { IProperty } from './IProperty';
 import { PropertyExpressionInterpreter } from './PropertyExpressionInterpreter';
 import { WrapperType } from './Wrapped';
+import { AtomInterpreter } from './AtomInterpreter';
 
 type SignalParams<P> = { [Parameter in keyof P]: Signal<P[Parameter]>; };
 
@@ -54,6 +55,16 @@ export class ClassExpressionSignalInterpreter extends ClassExpressionInterpreter
             ontology,
             store,
             cache);
+
+        new AtomInterpreter<WrapperType.Signal>(
+            <TIn extends any[], TOut>(
+                map: (...params: TIn) => TOut,
+                ...params: SignalParams<TIn>
+            ): Signal<TOut> => store.SignalScheduler.AddSignal(
+                map,
+                params),
+            this.PropertyExpressionInterpreter,
+            this);
     }
 
     protected WrapObjectDomain(): Signal<Set<any>>

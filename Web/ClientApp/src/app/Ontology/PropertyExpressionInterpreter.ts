@@ -1,10 +1,13 @@
+import { AtomInterpreter } from "./AtomInterpreter";
+import { IOntology } from "./IOntology";
 import { IDataProperty, IInverseObjectProperty, IObjectProperty, IProperty } from "./IProperty";
 import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
 import { Wrap, Wrapped, WrapperType } from "./Wrapped";
-import { IOntology } from "./IOntology";
 
 export abstract class PropertyExpressionInterpreter<T extends WrapperType> implements IPropertyExpressionSelector<Wrapped<T, readonly [any, any][]>>
 {
+    AtomInterpreter: AtomInterpreter<T>;
+
     constructor(
         private _wrap    : Wrap<T>,
         private _ontology: IOntology,

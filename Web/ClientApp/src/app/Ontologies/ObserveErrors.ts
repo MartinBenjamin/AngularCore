@@ -36,11 +36,7 @@ export function ObserveErrors(
         store);
 
     const propertyExpressionInterpreter = classEpressionInterpreter.PropertyExpressionInterpreter;
-
-    const atomInterpreter = new AtomInterpreter<WrapperType.Observable>(
-        wrap,
-        propertyExpressionInterpreter,
-        classEpressionInterpreter);
+    const atomInterpreter = propertyExpressionInterpreter.AtomInterpreter;
 
     const subClassOfContraditionInterpreter = SubClassOfContradictionInterpreter<WrapperType.Observable>(
         wrap,

@@ -1,19 +1,20 @@
 import { BuiltIn, Equal, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, NotEqual } from '../EavStore/Atom';
 import { EavStore } from '../EavStore/EavStore';
 import { IsConstant, IsVariable } from '../EavStore/IEavStore';
+import { ClassExpressionInterpreter } from './ClassExpressionInterpreter';
 import { IAtom, IAtomSelector, IClassAtom, IDataPropertyAtom, IDataRangeAtom, IEqualAtom, IGreaterThanAtom, IGreaterThanOrEqualAtom, ILessThanAtom, ILessThanOrEqualAtom, INotEqualAtom, IObjectPropertyAtom, IPropertyAtom } from './DLSafeRule';
-import { IClassExpressionSelector } from './IClassExpressionSelector';
-import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
+import { PropertyExpressionInterpreter } from './PropertyExpressionInterpreter';
 import { Wrap, Wrapped, WrapperType } from './Wrapped';
 
 export class AtomInterpreter<T extends WrapperType> implements IAtomSelector<Wrapped<T, object[] | BuiltIn>>
 {
     constructor(
         protected _wrap                         : Wrap<T>,
-        private   _propertyExpressionInterpreter: IPropertyExpressionSelector<Wrapped<T, readonly [any, any][]>>,
-        private   _classExpressionInterpreter   : IClassExpressionSelector<Wrapped<T, Set<any>>>
+        private   _propertyExpressionInterpreter: PropertyExpressionInterpreter<T>,
+        private   _classExpressionInterpreter   : ClassExpressionInterpreter<T>
         )
     {
+        _propertyExpressionInterpreter.AtomInterpreter = this;
     }
 
     Class(

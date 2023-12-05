@@ -1,5 +1,4 @@
 import { Group, GroupJoin } from '../Collections/Group';
-import { EavStore } from '../EavStore/EavStore';
 import { IEavStore } from "../EavStore/IEavStore";
 import { TransitiveClosure3 } from "../Graph/TransitiveClosure";
 import { AddIndividuals } from "./AddIndividuals";
@@ -22,8 +21,8 @@ import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IOntology } from './IOntology';
 import { IDataPropertyExpression, IObjectPropertyExpression } from "./IPropertyExpression";
-import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 import { Nothing } from './Nothing';
+import { PropertyExpressionInterpreter } from './PropertyExpressionInterpreter';
 import { Thing } from './Thing';
 import { Wrap, Wrapped, WrapperType } from './Wrapped';
 
@@ -47,7 +46,7 @@ export abstract class ClassExpressionInterpreter<T extends WrapperType> implemen
 
     constructor(
         private   _wrap                         : Wrap<T>,
-        private   _propertyExpressionInterpreter: IPropertyExpressionSelector<Wrapped<T, readonly [any, any][]>>,
+        private   _propertyExpressionInterpreter: PropertyExpressionInterpreter<T>,
         private   _ontology                     : IOntology,
         protected _store                        : IEavStore,
         private   _classInterpretation          : ICache<T, IClass, Set<any>>
@@ -100,7 +99,7 @@ export abstract class ClassExpressionInterpreter<T extends WrapperType> implemen
             this._store);
     }
 
-    get PropertyExpressionInterpreter(): IPropertyExpressionSelector<Wrapped<T, readonly [any, any][]>>
+    get PropertyExpressionInterpreter(): PropertyExpressionInterpreter<T>
     {
         return this._propertyExpressionInterpreter;
     }

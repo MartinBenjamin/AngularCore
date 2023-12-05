@@ -1,4 +1,4 @@
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ArrayKeyedMap, TrieNode } from '../Collections/ArrayKeyedMap';
 import { Group } from '../Collections/Group';
@@ -212,7 +212,7 @@ export class EavStore implements IEavStore, IPublisher
                         if(v instanceof Array)
                             facts.push(...v.map<Fact>(v => [entity, attribute, v]));
 
-                        else if(typeof v !== 'undefined')
+                        else if(typeof v !== 'undefined' && v !== null)
                             facts.push([entity, attribute, v]);
                     }
                 }
@@ -230,7 +230,7 @@ export class EavStore implements IEavStore, IPublisher
                         if(v instanceof Array)
                             facts.push(...v.map<Fact>(v => [entity, a, v]));
 
-                        else if(typeof v !== 'undefined')
+                        else if(typeof v !== 'undefined' && v !== null)
                             facts.push([entity, a, v]);
                     }
         }
@@ -267,7 +267,7 @@ export class EavStore implements IEavStore, IPublisher
                             if(v instanceof Array)
                                 facts.push(...v.map<Fact>(v => [e, attribute, v]));
 
-                            else if(typeof v !== 'undefined')
+                            else if(typeof v !== 'undefined' && v !== null)
                                 facts.push([e, attribute, v]);
                         }
             }
@@ -287,7 +287,7 @@ export class EavStore implements IEavStore, IPublisher
                     if(v instanceof Array)
                         facts.push(...v.map<Fact>(v => [e, a, v]));
 
-                    else if(typeof v !== 'undefined')
+                    else if(typeof v !== 'undefined' && v !== null)
                         facts.push([e, a, v]);
                 }
 

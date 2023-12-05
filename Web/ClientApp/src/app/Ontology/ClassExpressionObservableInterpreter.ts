@@ -1,5 +1,6 @@
 import { BehaviorSubject, combineLatest, Observable } from "rxjs";
 import { IEavStore } from "../EavStore/IEavStore";
+import { AtomInterpreter } from "./AtomInterpreter";
 import { ClassExpressionInterpreter, ICache } from "./ClassExpressionInterpreter";
 import { IOntology } from "./IOntology";
 import { IProperty } from "./IProperty";
@@ -32,6 +33,11 @@ export class ClassExpressionObservableInterpreter extends ClassExpressionInterpr
             ontology,
             store,
             cache);
+
+        new AtomInterpreter<WrapperType.Observable>(
+            wrap,
+            this.PropertyExpressionInterpreter,
+            this);
     }
 
     protected WrapObjectDomain(): Observable<Set<any>>
