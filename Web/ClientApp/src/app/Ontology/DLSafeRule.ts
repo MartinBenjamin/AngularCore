@@ -386,6 +386,40 @@ export class NotEqualAtom           extends ComparisonAtom implements INotEqualA
 export class GreaterThanOrEqualAtom extends ComparisonAtom implements IGreaterThanOrEqualAtom { constructor(lhs: Arg, rhs: Arg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.GreaterThanOrEqual(this);}};
 export class GreaterThanAtom        extends ComparisonAtom implements IGreaterThanAtom        { constructor(lhs: Arg, rhs: Arg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.GreaterThan       (this);}};
 
+type TypeGuard<T extends object> = (o: object) => o is T;
+
+export interface IIsAtom
+{
+    IClassAtom             : TypeGuard<IClassAtom             >;
+    IDataRangeAtom         : TypeGuard<IDataRangeAtom         >;
+    IPropertyAtom          : TypeGuard<IPropertyAtom          >;
+    IObjectPropertyAtom    : TypeGuard<IObjectPropertyAtom    >;
+    IDataPropertyAtom      : TypeGuard<IDataPropertyAtom      >;
+    IComparisonAtom        : TypeGuard<IComparisonAtom        >;
+    ILessThanAtom          : TypeGuard<ILessThanAtom          >;
+    ILessThanOrEqualAtom   : TypeGuard<ILessThanOrEqualAtom   >;
+    IEqualAtom             : TypeGuard<IEqualAtom             >;
+    INotEqualAtom          : TypeGuard<INotEqualAtom          >;
+    IGreaterThanOrEqualAtom: TypeGuard<IGreaterThanOrEqualAtom>;
+    IGreaterThanAtom       : TypeGuard<IGreaterThanAtom       >;
+}
+
+export class IsAtom implements IIsAtom
+{
+    IClassAtom             (a: object): a is IClassAtom              { return a instanceof ClassAtom             ; };
+    IDataRangeAtom         (a: object): a is IDataRangeAtom          { return a instanceof DataRangeAtom         ; };
+    IPropertyAtom          (a: object): a is IPropertyAtom           { return a instanceof PropertyAtom          ; };
+    IObjectPropertyAtom    (a: object): a is IObjectPropertyAtom     { return a instanceof ObjectPropertyAtom    ; };
+    IDataPropertyAtom      (a: object): a is IDataPropertyAtom       { return a instanceof DataPropertyAtom      ; };
+    IComparisonAtom        (a: object): a is IComparisonAtom         { return a instanceof ComparisonAtom        ; };
+    ILessThanAtom          (a: object): a is ILessThanAtom           { return a instanceof LessThanAtom          ; };
+    ILessThanOrEqualAtom   (a: object): a is ILessThanOrEqualAtom    { return a instanceof LessThanOrEqualAtom   ; };
+    IEqualAtom             (a: object): a is IEqualAtom              { return a instanceof EqualAtom             ; };
+    INotEqualAtom          (a: object): a is INotEqualAtom           { return a instanceof NotEqualAtom          ; };
+    IGreaterThanOrEqualAtom(a: object): a is IGreaterThanOrEqualAtom { return a instanceof GreaterThanOrEqualAtom; };
+    IGreaterThanAtom       (a: object): a is IGreaterThanAtom        { return a instanceof GreaterThanAtom       ; };
+}
+
 export class DLSafeRule extends Axiom implements IDLSafeRule
 {
     constructor(
