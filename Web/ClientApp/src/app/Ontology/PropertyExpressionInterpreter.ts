@@ -38,7 +38,12 @@ export abstract class PropertyExpressionInterpreter<T extends WrapperType> imple
                         rules.push(rule);
                 }
 
-            interpretation = this.Input(property);
+            if(rules.length)
+                interpretation = this.Rules(rules);
+
+            else
+                interpretation = this.Input(property);
+
             this._propertyInterpretation.set(
                 property,
                 interpretation);
@@ -68,5 +73,15 @@ export abstract class PropertyExpressionInterpreter<T extends WrapperType> imple
         return this._wrap(
             objectProperty => objectProperty.map(([domain, range]) => [range, domain]),
             inverseObjectProperty.ObjectProperty.Select(this));
+    }
+
+    private Rules(rules: IDLSafeRule[]): Wrapped<T, readonly [any, any][]>
+    {
+        return null;
+    }
+
+    private Rule(rule: IDLSafeRule): Wrapped<T, readonly [any, any][]>
+    {
+        return null;
     }
 }
