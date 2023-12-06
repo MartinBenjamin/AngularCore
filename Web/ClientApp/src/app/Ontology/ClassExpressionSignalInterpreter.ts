@@ -1,12 +1,12 @@
 import { IEavStore } from '../EavStore/IEavStore';
 import { Signal } from '../Signal/Signal';
+import { AtomInterpreter } from './AtomInterpreter';
 import { ClassExpressionInterpreter, ICache } from './ClassExpressionInterpreter';
 import { IClass } from './IClass';
 import { IOntology } from './IOntology';
 import { IProperty } from './IProperty';
 import { PropertyExpressionInterpreter } from './PropertyExpressionInterpreter';
 import { WrapperType } from './Wrapped';
-import { AtomInterpreter } from './AtomInterpreter';
 
 type SignalParams<P> = { [Parameter in keyof P]: Signal<P[Parameter]>; };
 
@@ -78,7 +78,7 @@ export class PropertyExpressionSignalInterpreter extends PropertyExpressionInter
     constructor(
         ontology: IOntology,
         private _store: IEavStore,
-        private _propertyExpressionInterpretation: ICache<WrapperType.Signal> = new SignalCache()
+        propertyInterpretation: ICache<WrapperType.Signal> = new SignalCache()
         )
     {
         super(
@@ -88,23 +88,14 @@ export class PropertyExpressionSignalInterpreter extends PropertyExpressionInter
             ): Signal<TOut> => _store.SignalScheduler.AddSignal(
                 map,
                 params),
-            ontology)
+            ontology,
+            propertyInterpretation);
     }   
 
-    Property(
+    Input(
         property: IProperty
         ): Signal<[any, any][]>
     {
-        let interpretation = this._propertyExpressionInterpretation.get(property);
-
-        if(!interpretation)
-        {
-            interpretation = this._store.Signal(property.LocalName);
-            this._propertyExpressionInterpretation.set(
-                property,
-                interpretation);
-        }
-
-        return interpretation;
+        return this._store.Signal(property.LocalName);
     }
 }

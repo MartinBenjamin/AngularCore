@@ -1,4 +1,5 @@
 import { AtomInterpreter } from "./AtomInterpreter";
+import { ICache } from "./ClassExpressionInterpreter";
 import { IOntology } from "./IOntology";
 import { IDataProperty, IInverseObjectProperty, IObjectProperty, IProperty } from "./IProperty";
 import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
@@ -9,13 +10,31 @@ export abstract class PropertyExpressionInterpreter<T extends WrapperType> imple
     AtomInterpreter: AtomInterpreter<T>;
 
     constructor(
-        private _wrap    : Wrap<T>,
-        private _ontology: IOntology,
+        private _wrap                  : Wrap<T>,
+        private _ontology              : IOntology,
+        private _propertyInterpretation: ICache<T>
         )
     {
     }
 
-    abstract Property(property: IProperty): Wrapped<T, [any, any][]>
+    abstract Input(property: IProperty): Wrapped<T, [any, any][]>
+
+    private Property(
+        property: IProperty
+        ): Wrapped<T, readonly [any, any][]>
+    {
+        let interpretation = this._propertyInterpretation.get(property);
+
+        if(!interpretation)
+        {
+            interpretation = this.Input(property);
+            this._propertyInterpretation.set(
+                property,
+                interpretation);
+        }
+
+        return interpretation;
+    }
 
     ObjectProperty(
         objectProperty: IObjectProperty

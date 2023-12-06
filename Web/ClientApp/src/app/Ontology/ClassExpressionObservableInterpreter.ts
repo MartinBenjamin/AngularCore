@@ -46,34 +46,24 @@ export class ClassExpressionObservableInterpreter extends ClassExpressionInterpr
     }
 }
 
-
 export class PropertyExpressionObservableInterpreter extends PropertyExpressionInterpreter<WrapperType.Observable>
 {
     constructor(
         ontology: IOntology,
         private _store: IEavStore,
-        private _propertyExpressionInterpretation: ICache<WrapperType.Observable> = new Map()
+        propertyInterpretation: ICache<WrapperType.Observable> = new Map()
         )
     {
         super(
             wrap,
-            ontology);
+            ontology,
+            propertyInterpretation);
     }   
 
-    Property(
+    Input(
         property: IProperty
         ): Observable<[any, any][]>
     {
-        let interpretation = this._propertyExpressionInterpretation.get(property);
-
-        if(!interpretation)
-        {
-            interpretation = this._store.Observe(property.LocalName);
-            this._propertyExpressionInterpretation.set(
-                property,
-                interpretation);
-        }
-
-        return interpretation;
+        return this._store.Observe(property.LocalName);
     }
 }
