@@ -1,6 +1,6 @@
 import { AtomInterpreter } from "./AtomInterpreter";
 import { ICache } from "./ClassExpressionInterpreter";
-import { IDLSafeRule, IIsAtom, IsAtom, IsDLSafeRule } from "./DLSafeRule";
+import { IDLSafeRule, IIsAtom, IPropertyAtom, IsAtom, IsDLSafeRule } from "./DLSafeRule";
 import { IOntology } from "./IOntology";
 import { IDataProperty, IInverseObjectProperty, IObjectProperty, IProperty } from "./IProperty";
 import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
@@ -75,13 +75,21 @@ export abstract class PropertyExpressionInterpreter<T extends WrapperType> imple
             inverseObjectProperty.ObjectProperty.Select(this));
     }
 
-    private Rules(rules: IDLSafeRule[]): Wrapped<T, readonly [any, any][]>
+    private Rules(
+        rules: IDLSafeRule[]
+        ): Wrapped<T, readonly [any, any][]>
     {
-        return null;
+        const wrapped = rules.map(rule => this.Rule(rule));
+        return wrapped.length === 1 ? wrapped[0] : null;
     }
 
-    private Rule(rule: IDLSafeRule): Wrapped<T, readonly [any, any][]>
+    private Rule(
+        rule: IDLSafeRule
+        ): Wrapped<T, readonly [any, any][]>
     {
-        return null;
+        const propertyAtom = <IPropertyAtom>rule.Head[0];
+        return this.AtomInterpreter.Conjunction(
+            rule.Body,
+            [propertyAtom.Domain, propertyAtom.Range]);
     }
 }

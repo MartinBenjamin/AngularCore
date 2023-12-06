@@ -115,8 +115,8 @@ export class AtomInterpreter<T extends WrapperType> implements IAtomSelector<Wra
         return this._wrap(() => GreaterThan(greaterThan.Lhs, greaterThan.Rhs));
     }
 
-    Conjunction(atoms: IAtom[], terms: any[]): Wrapped<T, any[][]>;
-    Conjunction(atoms: IAtom[]): Wrapped<T, object[]>;
+    Conjunction<TTerms extends any[]>(atoms: IAtom[], terms: TTerms): Wrapped<T, readonly { [K in keyof TTerms]: any; }[]>;
+    Conjunction(atoms: IAtom[]): Wrapped<T, readonly object[]>;
     Conjunction(
         atoms: IAtom[],
         terms?: any[]
