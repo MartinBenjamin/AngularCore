@@ -117,11 +117,11 @@ export interface IAtomSelector<TResult>
 export interface IDLSafeRuleBuilder
 {
     IndividualVariable(name: string): IndividualVariable;
-    LiteralVariable(name: string): LiteralVariable;
-    ClassAtom(ce: IClassExpression, individual: IArg): IClassAtom;
-    DataRangeAtom(dr: IDataRange, value: DArg): IDataRangeAtom;
+    LiteralVariable   (name: string): LiteralVariable;
+    ClassAtom         (ce: IClassExpression, individual: IArg): IClassAtom;
+    DataRangeAtom     (dr: IDataRange, value: DArg): IDataRangeAtom;
     ObjectPropertyAtom(ope: IObjectPropertyExpression, domain: IArg, range: IArg): IObjectPropertyAtom;
-    DataPropertyAtom(dpe: IDataPropertyExpression, domain: IArg, range: DArg): IDataPropertyAtom;
+    DataPropertyAtom  (dpe: IDataPropertyExpression  , domain: IArg, range: DArg): IDataPropertyAtom;
 
     LessThan          (lhs: Arg, rhs: Arg): ILessThanAtom          ;
     LessThanOrEqual   (lhs: Arg, rhs: Arg): ILessThanOrEqualAtom   ;
