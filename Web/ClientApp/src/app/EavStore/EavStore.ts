@@ -980,11 +980,11 @@ export class EavStore implements IEavStore, IPublisher
         };
     }
 
-    static Disjunction(
-        ...inputs: Iterable<Tuple>[]
-        ): SortedSet<Tuple>
+    static Disjunction<T extends Tuple>(
+        ...inputs: Iterable<T>[]
+        ): SortedSet<T>
     {
-        let set = new SortedSet(tupleCompare);
+        let set = new SortedSet<T>(tupleCompare);
         for(const input of inputs)
             for(const tuple of input)
                 set.add(tuple)
