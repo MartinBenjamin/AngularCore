@@ -294,8 +294,8 @@ export class EavStore implements IEavStore, IPublisher
         return facts;
     }
 
-    private QueryRule<T extends [any, ...any[]]>(
-        head: T,
+    private QueryRule<T extends any[]>(
+        head: [...T],
         body: Edb[]): { [K in keyof T]: any; }[]
     {
         return this.QueryRuleOptimised(
@@ -336,11 +336,11 @@ export class EavStore implements IEavStore, IPublisher
 
                 return substitutions;
             },
-            [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
+            [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[<string>term] : term));
     }
 
-    private QueryRuleOptimised<T extends [any, ...any[]]>(
-        head: T,
+    private QueryRuleOptimised<T extends any[]>(
+        head: [...T],
         body: Edb[]): { [K in keyof T]: any; }[]
     {
         return body.reduce(
@@ -474,7 +474,7 @@ export class EavStore implements IEavStore, IPublisher
 
                 return substitutions;
             },
-            [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
+            [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[<string>term] : term));
     }
 
     Query(
