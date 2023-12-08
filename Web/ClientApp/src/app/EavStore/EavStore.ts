@@ -523,8 +523,8 @@ export class EavStore implements IEavStore, IPublisher
             });
     }
 
-    private ObserveRule<T extends [any, ...any[]]>(
-        head: T,
+    private ObserveRule<T extends any[]>(
+        head: [...T],
         body: Edb[]): Observable<{ [K in keyof T]: any; }[]>
     {
         //return <Observable<any>>combineLatest(
@@ -593,12 +593,12 @@ export class EavStore implements IEavStore, IPublisher
         return signal;
     }
 
-    private SignalRule<T extends [any, ...any[]]>(
-        head: T,
+    private SignalRule<T extends any[]>(
+        head: [...T],
         body: Atom[],
         ...rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>
     {
-        rules = [[<Idb>['', ...head], body], ...rules];
+        rules = [[['', ...head], body], ...rules];
 
         const rulesGroupedByPredicateSymbol = Group(
             rules,
@@ -709,12 +709,12 @@ export class EavStore implements IEavStore, IPublisher
         return <Signal>idbSignals.get('');
     }
 
-    private SignalRule1<T extends [any, ...any[]]>(
-        head: T,
+    private SignalRule1<T extends any[]>(
+        head: [...T],
         body: Atom[],
         ...rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>
     {
-        rules = [[<Idb>['', ...head], body], ...rules];
+        rules = [[['', ...head], body], ...rules];
 
         const rulesGroupedByPredicateSymbol = Group(
             rules,

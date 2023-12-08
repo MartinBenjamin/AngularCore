@@ -24,7 +24,7 @@ export const IsConstant = term => !(typeof term === 'undefined' || IsVariable(te
 
 export const IsPredicateSymbol = (term): term is string => typeof term === 'string' && term[0] !== '?';
 export type Edb = Fact | BuiltIn;
-export type Idb = [string, any, ...any[]];
+export type Idb = [string, ...any[]];
 export const IsIdb = (atom): atom is Idb => atom instanceof Array && IsPredicateSymbol(atom[0]);
 
 export type Atom = Edb | Idb;
@@ -36,22 +36,22 @@ export interface IEavStore
     readonly SignalScheduler: IScheduler;
     Entities(): Set<any>;
     Query(atom: Fact): Fact[];
-    Query<T extends [any, ...any[]]>(
-        head: T,
+    Query<T extends any[]>(
+        head: [...T],
         body: Edb[]): { [K in keyof T]: any; }[];
 
     ObserveEntities(): Observable<Set<any>>;
     Observe(atom: Fact): Observable<Fact[]>;
     Observe(attribute: PropertyKey): Observable<[any, any][]>;
-    Observe<T extends [any, ...any[]]>(
-        head: T,
+    Observe<T extends any[]>(
+        head: [...T],
         body: Edb[]): Observable<{ [K in keyof T]: any; }[]>;
 
     SignalEntities(): Signal<Set<any>>;
     Signal(atom: Fact): Signal<Fact[]>;
     Signal(attribute: PropertyKey): Signal<[any, any][]>;
-    Signal<T extends [any, ...any[]]>(
-        head: T,
+    Signal<T extends any[]>(
+        head: [...T],
         body: Atom[],
         ...rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>;
 
