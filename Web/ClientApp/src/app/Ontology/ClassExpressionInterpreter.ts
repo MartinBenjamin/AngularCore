@@ -63,14 +63,9 @@ export abstract class ClassExpressionInterpreter<T extends WrapperType> implemen
         for(const equivalentClassExpressions of this._ontology.Get(this._ontology.IsAxiom.IEquivalentClasses))
         {
             const equivalentClasses = equivalentClassExpressions.ClassExpressions.filter(this._ontology.IsAxiom.IClass);
-            for(let index1 = 0; index1 < equivalentClasses.length; ++index1)
-                for(let index2 = index1; index2 < equivalentClasses.length; ++index2)
-                {
-                    const class1 = equivalentClasses[index1];
-                    const class2 = equivalentClasses[index2];
+            for(const class1 of equivalentClasses)
+                for(const class2 of equivalentClasses)
                     adjacencyList.get(class1).add(class2);
-                    adjacencyList.get(class2).add(class1);
-                }
         }
 
         this._equivalentClasses = TransitiveClosure3(adjacencyList);
