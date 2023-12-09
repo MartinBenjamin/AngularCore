@@ -58,7 +58,7 @@ export abstract class ClassExpressionInterpreter<T extends WrapperType> implemen
         for(const functionalDataProperty of this._ontology.Get(this._ontology.IsAxiom.IFunctionalDataProperty))
             this._functionalDataProperties.add(functionalDataProperty.DataPropertyExpression);
 
-        const classes = [...this._ontology.Get(this._ontology.IsAxiom.IClass)];
+        const classes = [...this._ontology.Get(this._ontology.IsAxiom.IClass), Thing, Nothing];
         const adjacencyList = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, new Set<IClass>([class$])]));
         for(const equivalentClassExpressions of this._ontology.Get(this._ontology.IsAxiom.IEquivalentClasses))
         {
@@ -164,9 +164,10 @@ export abstract class ClassExpressionInterpreter<T extends WrapperType> implemen
                     (...sets: Set<any>[]) => sets.reduce((lhs, rhs) => new Set<any>([...lhs, ...rhs])),
                     ...interpretations);
 
-            this._classInterpretation.set(
-                class$,
-                interpretation);
+            this._equivalentClasses.get(class$).forEach(
+                class$ => this._classInterpretation.set(
+                    class$,
+                    interpretation));
         }
 
         return interpretation;

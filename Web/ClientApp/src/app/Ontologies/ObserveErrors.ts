@@ -2,7 +2,6 @@ import { asapScheduler, BehaviorSubject, combineLatest, Observable } from "rxjs"
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { Guid } from "../CommonDomainObjects";
 import { IEavStore } from "../EavStore/IEavStore";
-import { AtomInterpreter } from "../Ontology/AtomInterpreter";
 import { ClassExpressionObservableInterpreter } from "../Ontology/ClassExpressionObservableInterpreter";
 import { ComparisonAtom, IComparisonAtom, IPropertyAtom, IsDLSafeRule, PropertyAtom } from "../Ontology/DLSafeRule";
 import { IAxiom } from "../Ontology/IAxiom";
