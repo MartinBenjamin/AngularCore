@@ -2,7 +2,6 @@ import { AfterViewInit, Component, forwardRef, Inject, OnDestroy, TemplateRef, V
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, NEVER, Subject, Subscription } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
-import { Guid } from '../../CommonDomainObjects';
 import { ChangeDetector, Tab } from '../../Components/TabbedView';
 import { Errors, ErrorsObservableProvider, ErrorsSubjectProvider, ErrorsSubjectToken, HighlightedPropertyObservableProvider, HighlightedPropertySubjectProvider } from '../../Components/ValidatedProperty';
 import { DealProvider } from '../../DealProvider';
@@ -72,26 +71,17 @@ export class Deal
                     return NEVER;
 
                 const store = Store(deal);
-                const applicableStages = store.Observe(
-                    ['?Stage', '?LifeCycle'],
-                    [[deal, 'Stage', '?Stage'], [deal, 'LifeCycle', '?LifeCycle']]).pipe(map(
-                        (result: [LifeCycleStage, LifeCycle][]) =>
-                        {
-                            const applicableStages = new Set<Guid>();
-
-                            if(result.length)
-                            {
-                                const [stage, lifeCycle] = result[0]
-                                for(let lifeCycleStage of lifeCycle.Stages)
-                                {
-                                    applicableStages.add(lifeCycleStage.Id);
-                                    if(lifeCycleStage.Id === stage.Id)
-                                        break;
-                                }
-                            }
-
-                            return applicableStages;
-                        }));
+                const applicableStages = combineLatest(
+                    store.Observe(
+                        ['?LifeCycle'],
+                        [[deal, 'LifeCycle', '?LifeCycle']]
+                        ).pipe(map(result => result[0][0])),
+                    store.Observe(
+                        ['?Stage'],
+                        [[deal, 'Stage', '?Stage']]
+                        ).pipe(map(result => result[0][0])),
+                    (lifeCycle: LifeCycle, stage: LifeCycleStage) => new Set(
+                        lifeCycle.Stages.slice(0, lifeCycle.Stages.findIndex(element => element.Id === stage.Id) + 1).map(stage => stage.Id)));
 
                 return ObserveErrors(
                     deal.Ontology,
