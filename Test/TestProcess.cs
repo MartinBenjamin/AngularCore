@@ -1,11 +1,10 @@
 ﻿using CommonDomainObjects;
-using Process;
 using NUnit.Framework;
+using Process;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using Definition = Process.Definition;
 
 namespace Test
@@ -13,52 +12,6 @@ namespace Test
     [TestFixture]
     public class TestProcess
     {
-        private class LabelledInput<TLabel>: Input
-        {
-            public TLabel Label { get; protected set; }
-
-            public LabelledInput(
-                LabelledInputDefinition<TLabel> definition,
-                Process.Process                 parent
-                )
-                : base(definition, parent)
-            {
-                Label = definition.Label;
-            }
-
-            protected override void ExecuteInput()
-            {
-            }
-        }
-
-        private class LabelledInputDefinition<TLabel>: Definition.Input
-        {
-            public TLabel Label { get; protected set; }
-
-            public LabelledInputDefinition(
-                TLabel label
-                )
-            {
-                Label = label;
-            }
-
-            public override Process.Process New(
-                Process.Process parent
-                )
-            {
-                return new LabelledInput<TLabel>(
-                    this,
-                    parent);
-            }
-
-            public override void ToString(
-                StringBuilder builder
-                )
-            {
-                builder.Append(Label.ToString() + '?');
-            }
-        }
-
         [TestCaseSource("ProcessTestCases")]
         public void Process(
             Definition.Process definition,
@@ -74,10 +27,10 @@ namespace Test
             foreach(var c in trace)
             {
                 var input = process
-                    .OfType<LabelledInput<char>>()
+                    .OfType<Input>()
                     .FirstOrDefault(
                         i =>
-                            i.Label  == c &&
+                            ((Definition.Input)i.Definition).Channel == c.ToString() &&
                             i.Status == Status.AwaitIO);
 
                 if(index == trace.Length - 1 && !pass)
@@ -102,15 +55,15 @@ namespace Test
                 var processes = new List<Definition.Process>
                 {
                     new Definition.Sequence(
-                        sequence.Select(c => new LabelledInputDefinition<char>(c)).ToArray()),
+                        sequence.Select(c => new Definition.Input(c.ToString())).ToArray()),
                     new Definition.Sequence(
                         new Definition.Sequence(
-                            "AB".Select(c => new LabelledInputDefinition<char>(c)).ToArray()),
-                        new LabelledInputDefinition<char>('C')),
+                            "AB".Select(c => new Definition.Input(c.ToString())).ToArray()),
+                        new Definition.Input("C")),
                     new Definition.Sequence(
-                        new LabelledInputDefinition<char>('A'),
+                        new Definition.Input("A"),
                         new Definition.Sequence(
-                            "BC".Select(c => new LabelledInputDefinition<char>(c)).ToArray()))
+                            "BC".Select(c => new Definition.Input(c.ToString())).ToArray()))
                 };
 
                 testCases.AddRange(
@@ -129,20 +82,20 @@ namespace Test
                 processes = new []
                 {
                     new Definition.Parallel(
-                        set.Select(c => new LabelledInputDefinition<char>(c)).ToArray()),
+                        set.Select(c => new Definition.Input(c.ToString())).ToArray()),
                     new Definition.Parallel(
                         new Definition.Parallel(
-                            "AB".Select(c => new LabelledInputDefinition<char>(c)).ToArray()),
-                        new LabelledInputDefinition<char>('C')),
+                            "AB".Select(c => new Definition.Input(c.ToString())).ToArray()),
+                        new Definition.Input("C")),
                     new Definition.Parallel(
-                        new LabelledInputDefinition<char>('A'),
+                        new Definition.Input("A"),
                         new Definition.Parallel(
-                            "BC".Select(c => new LabelledInputDefinition<char>(c)).ToArray()))
+                            "BC".Select(c => new Definition.Input(c.ToString())).ToArray()))
                 }.Select(
                     parallel => (Definition.Process)new Definition.Sequence
                     (
                         parallel,
-                        new LabelledInputDefinition<char>('D')
+                        new Definition.Input("D")
                     )).ToList();
 
                 var permutations = set.Permute().Select(p => new string(p.ToArray()));
@@ -163,20 +116,20 @@ namespace Test
                 {
                     new Definition.Choice(
                         set.Select(
-                            c => new Definition.GuardedProcess(new LabelledInputDefinition<char>(c))).ToArray()),
+                            c => new Definition.GuardedProcess(new Definition.Input(c.ToString()))).ToArray()),
                     new Definition.Choice(
                         new Definition.Choice(
-                            "AB".Select(c => new Definition.GuardedProcess(new LabelledInputDefinition<char>(c))).ToArray()),
-                        new Definition.GuardedProcess(new LabelledInputDefinition<char>('C'))),
+                            "AB".Select(c => new Definition.GuardedProcess(new Definition.Input(c.ToString()))).ToArray()),
+                        new Definition.GuardedProcess(new Definition.Input("C"))),
                     new Definition.Choice(
-                        new Definition.GuardedProcess(new LabelledInputDefinition<char>('A')),
+                        new Definition.GuardedProcess(new Definition.Input("A")),
                         new Definition.Choice(
-                            "BC".Select(c => new Definition.GuardedProcess(new LabelledInputDefinition<char>(c))).ToArray()))
+                            "BC".Select(c => new Definition.GuardedProcess(new Definition.Input(c.ToString()))).ToArray()))
                 }.Select(
                     c => (Definition.Process)new Definition.Sequence
                     (
                         c,
-                        new LabelledInputDefinition<char>('D')
+                        new Definition.Input("D")
                     )).ToList();
 
                 testCases.AddRange(
@@ -200,17 +153,17 @@ namespace Test
                         second == 'D'
                     });
 
-                var next = new Dictionary<char, char>
+                var next = new Dictionary<string, string>
                 {
-                    {'A', 'X'},
-                    {'B', 'Y'}
+                    {"A", "X"},
+                    {"B", "Y"}
                 };
 
                 var choice = new Definition.Choice(
                     next.Select(
                         pair => new Definition.GuardedProcess(
-                            new LabelledInputDefinition<char>(pair.Key),
-                            new LabelledInputDefinition<char>(pair.Value))).ToArray());
+                            new Definition.Input(pair.Key),
+                            new Definition.Input(pair.Value))).ToArray());
 
                 var allowedTraces = next.Keys
                     .Select(key => key.ToString())
@@ -232,18 +185,18 @@ namespace Test
                         allowedTraces.Contains(trace)
                     });
 
-                var allowed = new Dictionary<char, Expression<Func<Process.Process, bool>>>
+                var allowed = new Dictionary<string, Expression<Func<Process.Process, bool>>>
                 {
-                    {'A', p => true },
-                    {'B', p => false},
+                    {"A", p => true },
+                    {"B", p => false},
                 };
 
                 choice = new Definition.Choice(
                     next.Select(
                         pair => new Definition.GuardedProcess(
                             allowed[pair.Key],
-                            new LabelledInputDefinition<char>(pair.Key),
-                            new LabelledInputDefinition<char>(pair.Value))).ToArray());
+                            new Definition.Input(pair.Key),
+                            new Definition.Input(pair.Value))).ToArray());
 
                 testCases.AddRange(
                     new List<object[]>

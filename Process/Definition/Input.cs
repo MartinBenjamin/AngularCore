@@ -2,10 +2,12 @@
 
 namespace Process.Definition
 {
-    public abstract class Input: IO
+    public class Input: IO
     {
-        protected Input()
-            : base()
+        public Input(
+            string channel
+            )
+            : base(channel)
         {
         }
 
@@ -19,5 +21,11 @@ namespace Process.Definition
         public override bool Accept(
             IVisitor visitor
             ) => visitor.Enter(this);
+
+        public override global::Process.Process New(
+            global::Process.Process parent
+            ) => new global::Process.Input(
+                this,
+                parent);
     }
 }

@@ -1,13 +1,13 @@
 ﻿namespace Process
 {
-    public abstract class Input: IO
+    public class Input: IO
     {
         protected Input()
             : base()
         {
         }
 
-        protected Input(
+        public Input(
             Definition.Input definition,
             Process          parent
             )
@@ -24,14 +24,10 @@
             if(Status != Status.AwaitIO)
                 throw new InvalidStateException();
 
-            ExecuteInput();
-
             ChangeStatus(
                 executionService,
                 Status.Executed);
         }
-
-        protected abstract void ExecuteInput();
     }
 
     public abstract class Input<TInput>: IO
@@ -60,7 +56,8 @@
                 throw new InvalidStateException();
 
             Executelnput(input);
-                ChangeStatus(
+
+            ChangeStatus(
                 executionService,
                 Status.Executed);
         }

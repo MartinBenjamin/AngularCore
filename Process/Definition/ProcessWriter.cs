@@ -62,7 +62,8 @@ namespace Process.Definition
             Input input
             )
         {
-            input.ToString(_builder);
+            _builder.Append(input.Channel);
+            _builder.Append('?');
             return true;
         }
 

@@ -4,9 +4,14 @@ namespace Process.Definition
 {
     public abstract class IO: Process
     {
-        protected IO()
+        public virtual string Channel { get; protected set; }
+
+        protected IO(
+            string channel
+            )
             : base()
         {
+            Channel = channel;
         }
 
         protected IO(
