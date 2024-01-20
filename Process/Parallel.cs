@@ -1,13 +1,10 @@
 ﻿using CommonDomainObjects;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Process
 {
     public class Parallel: Process
     {
-        public virtual IList<Process> Children { get; protected set; }
-
         protected Parallel()
             : base()
         {
@@ -33,10 +30,9 @@ namespace Process
                     executionService,
                     Status.Executing);
 
-                var children = Definition.As<Definition.ParallelBase>().NewChildren(this).ToList();
-                Children = children;
-                children.ForEach(executionService.Save);
-                children.ForEach(executionService.Execute);
+                Definition.As<Definition.ParallelBase>().NewChildren(this).ToList();
+                Children.ForEach(executionService.Save);
+                Children.ForEach(executionService.Execute);
             }
 
             if(Status == Status.Executing &&
