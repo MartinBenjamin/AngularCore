@@ -1,18 +1,19 @@
 ﻿using CommonDomainObjects;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Process
 {
     public abstract class Process:
         DomainObject<Guid>,
-        IExecutable
+        IExecutable,
+        IEnumerable<Process>
     {
-        public virtual Status             Status         { get; protected set; }
-        public virtual Definition.Process Definition     { get; protected set; }
-        public virtual Process            Parent         { get; protected set; }
-        public virtual Process            UltimateParent { get; protected set; }
-        public virtual IList<Process>     Processes      { get; protected set; }
+        public virtual Status             Status     { get; protected set; }
+        public virtual Definition.Process Definition { get; protected set; }
+        public virtual Process            Parent     { get; protected set; }
+        public virtual IList<Process>     Children   { get; protected set; }
 
         protected Process()
             : base()
@@ -25,18 +26,10 @@ namespace Process
             )
             : base(Guid.NewGuid())
         {
+            Children   = new List<Process>();
             Definition = definition;
             Parent     = parent;
-
-            if(Parent == null)
-            {
-                Processes = new List<Process>();
-                UltimateParent = this;
-            }
-            else
-                UltimateParent = Parent.UltimateParent;
-
-            UltimateParent.Processes.Add(this);
+            Parent?.Children.Add(this);
         }
 
         public virtual IEnumerable<Process> Scopes
@@ -86,13 +79,10 @@ namespace Process
         {
         }
 
-        public override string ToString()
-        {
-            return string.Format(
+        public override string ToString() => string.Format(
                 "{0}: {1}",
                 GetType().Name,
                 Status);
-        }
 
         void IExecutable.Execute(
             IExecutionService executionService
@@ -102,5 +92,17 @@ namespace Process
         }
 
         protected abstract void Execute(IExecutionService executionService);
+
+        private IEnumerator<Process> GetEnumerator()
+        {
+            yield return this;
+            foreach(var child in Children)
+                foreach(var process in child)
+                    yield return process;
+        }
+
+        IEnumerator<Process> IEnumerable<Process>.GetEnumerator() => GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

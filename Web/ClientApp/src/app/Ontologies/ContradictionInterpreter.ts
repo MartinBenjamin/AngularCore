@@ -1,10 +1,10 @@
 import { Guid } from "../CommonDomainObjects";
 import { AtomInterpreter } from "../Ontology/AtomInterpreter";
+import { ClassExpressionInterpreter } from "../Ontology/ClassExpressionInterpreter";
 import { IDLSafeRule } from "../Ontology/DLSafeRule";
 import { IAxiom } from "../Ontology/IAxiom";
 import { IAxiomSelector } from "../Ontology/IAxiomSelector";
 import { IClass } from "../Ontology/IClass";
-import { IClassExpressionSelector } from "../Ontology/IClassExpressionSelector";
 import { IDataPropertyRange } from "../Ontology/IDataPropertyRange";
 import { IDatatype } from "../Ontology/IDatatype";
 import { IDataProperty, IObjectProperty } from "../Ontology/IProperty";
@@ -19,7 +19,7 @@ export class ContradictionInterpreter<T extends WrapperType> implements IAxiomSe
     constructor(
         private _wrap                      : Wrap<T>,
         private _applicableStages          : Wrapped<T, Set<Guid>>,
-        private _classExpressionInterpreter: IClassExpressionSelector<Wrapped<T, Set<any>>>,
+        private _classExpressionInterpreter: ClassExpressionInterpreter<T>,
         private _atomInterpreter           : AtomInterpreter<T>
         )
     {
@@ -57,7 +57,7 @@ export class ContradictionInterpreter<T extends WrapperType> implements IAxiomSe
     {
         let restrictedFromStage = dlSafeRule.Annotations.find(annotation => annotation.Property === annotations.RestrictedfromStage);
         if(!restrictedFromStage)
-            return undefined;                
+            return undefined;
 
         return this._wrap(
             (applicableStages, head, body) =>
@@ -97,7 +97,9 @@ export class ContradictionInterpreter<T extends WrapperType> implements IAxiomSe
         dataPropertyRange: IDataPropertyRange
         ): Wrapped<T, [IDataPropertyRange, Set<any>]>
     {
-        throw new Error("Method not implemented.");
+        return this._wrap(
+            relations => [dataPropertyRange, new Set<any>(relations.filter(([, range]) => !dataPropertyRange.Range.HasMember(range)).map(([domain,]) => domain))],
+            dataPropertyRange.DataPropertyExpression.Select(this._classExpressionInterpreter.PropertyExpressionInterpreter));
     }
 
     Class(

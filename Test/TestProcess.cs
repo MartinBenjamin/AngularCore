@@ -73,7 +73,7 @@ namespace Test
             var index = 0;
             foreach(var c in trace)
             {
-                var input = process.Processes
+                var input = process
                     .OfType<LabelledInput<char>>()
                     .FirstOrDefault(
                         i =>
