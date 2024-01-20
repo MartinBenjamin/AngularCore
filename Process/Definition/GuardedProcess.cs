@@ -6,9 +6,9 @@ namespace Process.Definition
     public class GuardedProcess: Alternative
     {
         public Func<global::Process.Process, bool>
-                       GuardExpression { get; set; }
-        public IO      Guard           { get; set; }
-        public Process Guarded         { get; set; }
+                       GuardExpression { get; protected set; }
+        public IO      Guard           { get; protected set; }
+        public Process Guarded         { get; protected set; }
 
         private Expression<Func<global::Process.Process, bool>> _guardExpressionExpression;
 

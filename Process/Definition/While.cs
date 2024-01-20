@@ -4,8 +4,8 @@ namespace Process.Definition
 {
     public class While: Process
     {
-        public Func<global::Process.Process, bool> BooleanExpression { get; set; }
-        public Process                             Embedded          { get; set; }
+        public Func<global::Process.Process, bool> BooleanExpression { get; protected set; }
+        public Process                             Embedded          { get; protected set; }
 
         public While()
             : base()
