@@ -62,8 +62,20 @@ namespace Process.Definition
             Input input
             )
         {
-            _builder.Append(input.Channel);
-            _builder.Append('?');
+            _builder
+                .Append(input.Channel)
+                .Append('?');
+            return true;
+        }
+
+        bool IVisitor.Enter<TInput>(
+            Input<TInput> input
+            )
+        {
+            _builder
+                .Append(input.Channel)
+                .Append('?')
+                .Append(input.Key);
             return true;
         }
 

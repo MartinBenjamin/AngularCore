@@ -30,16 +30,16 @@
         }
     }
 
-    public abstract class Input<TInput>: IO
+    public class Input<TInput>: IO
     {
         protected Input()
             : base()
         {
         }
 
-        protected Input(
-            Definition.Input definition,
-            Process parent
+        public Input(
+            Definition.Input<TInput> definition,
+            Process                  parent
             )
             : base(
                 definition,
@@ -55,13 +55,9 @@
             if(Status != Status.AwaitIO)
                 throw new InvalidStateException();
 
-            Executelnput(input);
-
             ChangeStatus(
                 executionService,
                 Status.Executed);
         }
-
-        protected abstract void Executelnput(TInput input);
     }
 }
