@@ -20,12 +20,9 @@ namespace Process.Definition
 
         public override global::Process.Process New(
             global::Process.Process parent
-            )
-        {
-            return new global::Process.Choice(
+            ) => new global::Process.Choice(
                 this,
                 parent);
-        }
 
         public abstract IEnumerable<global::Process.Alternative> NewAlternatives(
             global::Process.Process parent);

@@ -20,12 +20,9 @@ namespace Process.Definition
 
         public override global::Process.Process New(
             global::Process.Process parent
-            )
-        {
-            return new global::Process.Parallel(
+            ) => new global::Process.Parallel(
                 this,
                 parent);
-        }
     }
 
     public class Parallel: ParallelBase

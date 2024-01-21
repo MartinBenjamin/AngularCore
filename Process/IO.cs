@@ -9,7 +9,7 @@ namespace Process
         {
         }
 
-        protected IO(
+        public IO(
             Definition.Process definition,
             Process            parent
             )
@@ -62,6 +62,18 @@ namespace Process
             base.ChangeStatus(
                 executionService,
                 Status.NotChosen);
+        }
+
+        public virtual void ExecuteIO(
+            IExecutionService executionService
+            )
+        {
+            if(Status != Status.AwaitIO)
+                throw new InvalidStateException();
+
+            ChangeStatus(
+                executionService,
+                Status.Executed);
         }
     }
 }

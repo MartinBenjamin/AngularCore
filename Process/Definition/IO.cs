@@ -2,19 +2,16 @@
 
 namespace Process.Definition
 {
-    public abstract class IO: Process
+    public class IO: Process
     {
         public virtual string Channel { get; protected set; }
-        public virtual string Key     { get; protected set; }
 
-        protected IO(
-            string channel,
-            string key = null
+        public IO(
+            string channel
             )
             : base()
         {
             Channel = channel;
-            Key     = key;
         }
 
         protected IO(
@@ -23,5 +20,15 @@ namespace Process.Definition
             : base(id)
         {
         }
+
+        public override bool Accept(
+            IVisitor visitor
+            ) => visitor.Enter(this);
+
+        public override global::Process.Process New(
+            global::Process.Process parent
+            ) => new global::Process.IO(
+                this,
+                parent);
     }
 }

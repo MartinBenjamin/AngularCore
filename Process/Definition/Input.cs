@@ -2,43 +2,17 @@
 
 namespace Process.Definition
 {
-    public class Input: IO
+    public class Input<TInput>: IO
     {
+        public string Target { get; protected set; }
+
         public Input(
-            string channel
+            string channel,
+            string target
             )
             : base(channel)
         {
-        }
-
-        protected Input(
-            Guid id
-            )
-            : base(id)
-        {
-        }
-
-        public override bool Accept(
-            IVisitor visitor
-            ) => visitor.Enter(this);
-
-        public override global::Process.Process New(
-            global::Process.Process parent
-            ) => new global::Process.Input(
-                this,
-                parent);
-    }
-
-    public class Input<TInput>: IO
-    {
-        public Input(
-            string channel,
-            string key
-            )
-            : base(
-                channel,
-                key)
-        {
+            Target = target;
         }
 
         protected Input(

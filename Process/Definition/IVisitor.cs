@@ -5,7 +5,7 @@
         bool Enter(Sequence       sequence      );
         bool Enter(Parallel       parallel      );
         bool Enter(Choice         choice        );
-        bool Enter(Input          input         );
+        bool Enter(IO             io            );
         bool Enter<TInput>(Input<TInput>           input          );
         bool Enter(GuardedProcess guardedProcess);
         bool Enter(While          @while        );

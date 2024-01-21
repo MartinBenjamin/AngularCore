@@ -20,12 +20,9 @@ namespace Process.Definition
 
         public override global::Process.Process New(
             global::Process.Process parent
-            )
-        {
-            return new global::Process.Sequence(
+            ) => new global::Process.Sequence(
                 this,
                 parent);
-        }
     }
 
     public class Sequence: SequenceBase

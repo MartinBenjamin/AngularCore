@@ -59,12 +59,10 @@ namespace Process.Definition
         }
 
         bool IVisitor.Enter(
-            Input input
+            IO io
             )
         {
-            _builder
-                .Append(input.Channel)
-                .Append('?');
+            _builder.Append(io.Channel);
             return true;
         }
 
@@ -75,7 +73,7 @@ namespace Process.Definition
             _builder
                 .Append(input.Channel)
                 .Append('?')
-                .Append(input.Key);
+                .Append(input.Target);
             return true;
         }
 

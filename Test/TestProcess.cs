@@ -27,10 +27,10 @@ namespace Test
             foreach(var c in trace)
             {
                 var input = process
-                    .OfType<Input>()
+                    .OfType<IO>()
                     .FirstOrDefault(
                         i =>
-                            ((Definition.Input)i.Definition).Channel == c.ToString() &&
+                            ((Definition.IO)i.Definition).Channel == c.ToString() &&
                             i.Status == Status.AwaitIO);
 
                 if(index == trace.Length - 1 && !pass)
@@ -39,7 +39,7 @@ namespace Test
                 else
                 {
                     Assert.That(input, Is.Not.Null);
-                    input.ExecuteInput(service);
+                    input.ExecuteIO(service);
                 }
                 index++;
             }
@@ -55,15 +55,15 @@ namespace Test
                 var processes = new List<Definition.Process>
                 {
                     new Definition.Sequence(
-                        sequence.Select(c => new Definition.Input(c.ToString())).ToArray()),
+                        sequence.Select(c => new Definition.IO(c.ToString())).ToArray()),
                     new Definition.Sequence(
                         new Definition.Sequence(
-                            "AB".Select(c => new Definition.Input(c.ToString())).ToArray()),
-                        new Definition.Input("C")),
+                            "AB".Select(c => new Definition.IO(c.ToString())).ToArray()),
+                        new Definition.IO("C")),
                     new Definition.Sequence(
-                        new Definition.Input("A"),
+                        new Definition.IO("A"),
                         new Definition.Sequence(
-                            "BC".Select(c => new Definition.Input(c.ToString())).ToArray()))
+                            "BC".Select(c => new Definition.IO(c.ToString())).ToArray()))
                 };
 
                 testCases.AddRange(
@@ -82,20 +82,20 @@ namespace Test
                 processes = new []
                 {
                     new Definition.Parallel(
-                        set.Select(c => new Definition.Input(c.ToString())).ToArray()),
+                        set.Select(c => new Definition.IO(c.ToString())).ToArray()),
                     new Definition.Parallel(
                         new Definition.Parallel(
-                            "AB".Select(c => new Definition.Input(c.ToString())).ToArray()),
-                        new Definition.Input("C")),
+                            "AB".Select(c => new Definition.IO(c.ToString())).ToArray()),
+                        new Definition.IO("C")),
                     new Definition.Parallel(
-                        new Definition.Input("A"),
+                        new Definition.IO("A"),
                         new Definition.Parallel(
-                            "BC".Select(c => new Definition.Input(c.ToString())).ToArray()))
+                            "BC".Select(c => new Definition.IO(c.ToString())).ToArray()))
                 }.Select(
                     parallel => (Definition.Process)new Definition.Sequence
                     (
                         parallel,
-                        new Definition.Input("D")
+                        new Definition.IO("D")
                     )).ToList();
 
                 var permutations = set.Permute().Select(p => new string(p.ToArray()));
@@ -116,20 +116,20 @@ namespace Test
                 {
                     new Definition.Choice(
                         set.Select(
-                            c => new Definition.GuardedProcess(new Definition.Input(c.ToString()))).ToArray()),
+                            c => new Definition.GuardedProcess(new Definition.IO(c.ToString()))).ToArray()),
                     new Definition.Choice(
                         new Definition.Choice(
-                            "AB".Select(c => new Definition.GuardedProcess(new Definition.Input(c.ToString()))).ToArray()),
-                        new Definition.GuardedProcess(new Definition.Input("C"))),
+                            "AB".Select(c => new Definition.GuardedProcess(new Definition.IO(c.ToString()))).ToArray()),
+                        new Definition.GuardedProcess(new Definition.IO("C"))),
                     new Definition.Choice(
-                        new Definition.GuardedProcess(new Definition.Input("A")),
+                        new Definition.GuardedProcess(new Definition.IO("A")),
                         new Definition.Choice(
-                            "BC".Select(c => new Definition.GuardedProcess(new Definition.Input(c.ToString()))).ToArray()))
+                            "BC".Select(c => new Definition.GuardedProcess(new Definition.IO(c.ToString()))).ToArray()))
                 }.Select(
                     c => (Definition.Process)new Definition.Sequence
                     (
                         c,
-                        new Definition.Input("D")
+                        new Definition.IO("D")
                     )).ToList();
 
                 testCases.AddRange(
@@ -162,8 +162,8 @@ namespace Test
                 var choice = new Definition.Choice(
                     next.Select(
                         pair => new Definition.GuardedProcess(
-                            new Definition.Input(pair.Key),
-                            new Definition.Input(pair.Value))).ToArray());
+                            new Definition.IO(pair.Key),
+                            new Definition.IO(pair.Value))).ToArray());
 
                 var allowedTraces = next.Keys
                     .Select(key => key.ToString())
@@ -195,8 +195,8 @@ namespace Test
                     next.Select(
                         pair => new Definition.GuardedProcess(
                             allowed[pair.Key],
-                            new Definition.Input(pair.Key),
-                            new Definition.Input(pair.Value))).ToArray());
+                            new Definition.IO(pair.Key),
+                            new Definition.IO(pair.Value))).ToArray());
 
                 testCases.AddRange(
                     new List<object[]>
