@@ -24,22 +24,22 @@ namespace Test
             service.Execute(process);
 
             var index = 0;
-            foreach(var c in trace)
+            foreach(var c in trace.Select(c => c.ToString()))
             {
-                var input = process
+                var io = process
                     .OfType<IO>()
                     .FirstOrDefault(
                         i =>
-                            ((Definition.IO)i.Definition).Channel == c.ToString() &&
+                            ((Definition.IO)i.Definition).Channel == c &&
                             i.Status == Status.AwaitIO);
 
                 if(index == trace.Length - 1 && !pass)
-                    Assert.That(input, Is.Null);
+                    Assert.That(io, Is.Null);
 
                 else
                 {
-                    Assert.That(input, Is.Not.Null);
-                    input.ExecuteIO(service);
+                    Assert.That(io, Is.Not.Null);
+                    io.ExecuteIO(service);
                 }
                 index++;
             }

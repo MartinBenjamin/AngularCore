@@ -15,6 +15,16 @@ namespace Process.Definition
             Target = target;
         }
 
+        public Input(
+            Func<global::Process.Process, string>
+                   channelExpression,
+            string target
+            )
+            : base(channelExpression)
+        {
+            Target = target;
+        }
+
         protected Input(
             Guid id
             )

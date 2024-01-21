@@ -6,11 +6,12 @@ namespace Process.Definition
     public class GuardedProcess: Alternative
     {
         public Func<global::Process.Process, bool>
-                       GuardExpression { get; protected set; }
-        public IO      Guard           { get; protected set; }
-        public Process Guarded         { get; protected set; }
+                       GuardExpression           { get; protected set; }
+        public Expression<Func<global::Process.Process, bool>>
+                       GuardExpressionExpression { get; protected set; }
+        public IO      Guard                     { get; protected set; }
+        public Process Guarded                   { get; protected set; }
 
-        private Expression<Func<global::Process.Process, bool>> _guardExpressionExpression;
 
         public GuardedProcess()
             : base()
@@ -42,15 +43,7 @@ namespace Process.Definition
                 guarded
             )
         {
-            _guardExpressionExpression = guardExpression;
-        }
-
-        public Expression<Func<global::Process.Process, bool>> GuardExpressionExpression
-        {
-            get
-            {
-                return _guardExpressionExpression;
-            }
+            GuardExpressionExpression = guardExpression;
         }
 
         public GuardedProcess(
