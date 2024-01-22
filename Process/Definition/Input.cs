@@ -1,28 +1,19 @@
-﻿using System;
+﻿using Process.Expression;
+using System;
 
 namespace Process.Definition
 {
     public class Input<TInput>: IO
     {
-        public string Target { get; protected set; }
+        public string TargetVariable { get; protected set; }
 
         public Input(
-            string channel,
-            string target
+            IExpression<string> channel,
+            string              targetVariable
             )
             : base(channel)
         {
-            Target = target;
-        }
-
-        public Input(
-            Func<global::Process.Process, string>
-                   channelExpression,
-            string target
-            )
-            : base(channelExpression)
-        {
-            Target = target;
+            TargetVariable = targetVariable;
         }
 
         protected Input(

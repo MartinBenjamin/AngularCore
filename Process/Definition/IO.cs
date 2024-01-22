@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Process.Expression;
+using System;
 
 namespace Process.Definition
 {
     public class IO: Process
     {
-        public virtual string                                Channel           { get; protected set; }
-        public virtual Func<global::Process.Process, string> ChannelExpression { get; protected set; }
+        public virtual IExpression<string> Channel { get; protected set; }
 
         public IO(
-            string channel
+            IExpression<string> channel
             )
             : base()
         {
@@ -16,11 +16,11 @@ namespace Process.Definition
         }
 
         public IO(
-            Func<global::Process.Process, string> channelExpression
+            string channel
             )
             : base()
         {
-            ChannelExpression = channelExpression;
+            Channel = new ConstantExpression<string>(channel);
         }
 
         protected IO(
@@ -29,10 +29,6 @@ namespace Process.Definition
             : base(id)
         {
         }
-
-        public string GetChannel(
-            global::Process.Process process
-            ) => Channel ?? ChannelExpression(process);
 
         public override bool Accept(
             IVisitor visitor

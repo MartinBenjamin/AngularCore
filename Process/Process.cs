@@ -1,4 +1,5 @@
 ﻿using CommonDomainObjects;
+using Process.Expression;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ namespace Process
     public abstract class Process:
         DomainObject<Guid>,
         IExecutable,
+        IScope,
         IEnumerable<Process>
     {
         public virtual Status             Status     { get; protected set; }
@@ -89,6 +91,14 @@ namespace Process
             )
         {
             Execute(executionService);
+        }
+
+        public object this[
+            string variable
+            ]
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
         }
 
         protected abstract void Execute(IExecutionService executionService);

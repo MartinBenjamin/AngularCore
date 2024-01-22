@@ -30,7 +30,7 @@ namespace Test
                     .OfType<IO>()
                     .FirstOrDefault(
                         i =>
-                            ((Definition.IO)i.Definition).Channel == c &&
+                            ((Definition.IO)i.Definition).Channel.Evaluate(i) == c &&
                             i.Status == Status.AwaitIO);
 
                 if(index == trace.Length - 1 && !pass)

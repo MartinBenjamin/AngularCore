@@ -7,13 +7,15 @@ namespace Process.Definition
 {
     public class ProcessWriter: IVisitor
     {
-        private readonly StringBuilder _builder;
+        private readonly StringBuilder       _builder;
+        private readonly Expression.IVisitor _expressionWriter;
 
         public ProcessWriter(
             StringBuilder builder
             )
         {
-            _builder = builder;
+            _builder          = builder;
+            _expressionWriter = new Expression.ExpressionWriter(builder);
         }
 
         bool IVisitor.Enter(
@@ -62,7 +64,7 @@ namespace Process.Definition
             IO io
             )
         {
-            _builder.Append(io.Channel);
+            io.Channel.Accept(_expressionWriter);
             return true;
         }
 
@@ -73,7 +75,7 @@ namespace Process.Definition
             _builder
                 .Append(input.Channel)
                 .Append('?')
-                .Append(input.Target);
+                .Append(input.TargetVariable);
             return true;
         }
 
