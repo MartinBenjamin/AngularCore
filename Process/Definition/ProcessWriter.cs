@@ -68,12 +68,12 @@ namespace Process.Definition
             return true;
         }
 
-        bool IVisitor.Enter<TInput>(
-            Input<TInput> input
+        bool IVisitor.Enter(
+            Input input
             )
         {
+            input.Channel.Accept(_expressionWriter);
             _builder
-                .Append(input.Channel)
                 .Append('?')
                 .Append(input.TargetVariable);
             return true;

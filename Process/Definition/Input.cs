@@ -3,16 +3,19 @@ using System;
 
 namespace Process.Definition
 {
-    public class Input<TInput>: IO
+    public class Input: IO
     {
+        public Type   Type           { get; protected set; }
         public string TargetVariable { get; protected set; }
 
         public Input(
             IExpression<string> channel,
+            Type                type,
             string              targetVariable
             )
             : base(channel)
         {
+            Type           = type;
             TargetVariable = targetVariable;
         }
 
@@ -29,7 +32,7 @@ namespace Process.Definition
 
         public override global::Process.Process New(
             global::Process.Process parent
-            ) => new global::Process.Input<TInput>(
+            ) => new global::Process.Input(
                 this,
                 parent);
     }

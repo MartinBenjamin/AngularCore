@@ -1,6 +1,6 @@
 ﻿namespace Process
 {
-    public class Input<TInput>: IO
+    public class Input: IO
     {
         protected Input()
             : base()
@@ -8,8 +8,8 @@
         }
 
         public Input(
-            Definition.Input<TInput> definition,
-            Process                  parent
+            Definition.Input definition,
+            Process          parent
             )
             : base(
                 definition,
@@ -19,11 +19,13 @@
 
         public virtual void Executelnput(
             IExecutionService executionService,
-            TInput            input
+            object            input
             )
         {
             if(Status != Status.AwaitIO)
                 throw new InvalidStateException();
+
+            Parent[((Definition.Input)Definition).TargetVariable] = input;
 
             ChangeStatus(
                 executionService,
