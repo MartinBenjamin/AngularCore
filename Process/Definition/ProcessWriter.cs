@@ -83,11 +83,11 @@ namespace Process.Definition
             GuardedProcess guardedProcess
             )
         {
-            var guardExpression = (object)guardedProcess.GuardExpressionExpression ?? guardedProcess.GuardExpression;
-            if(guardExpression != null)
-                _builder.AppendFormat(
-                    "({0})&",
-                    guardExpression);
+            if(guardedProcess.GuardExpression != null)
+            {
+                guardedProcess.GuardExpression.Accept(_expressionWriter);
+                _builder.Append('&');
+            }
 
             guardedProcess.Guard.Accept(this);
 

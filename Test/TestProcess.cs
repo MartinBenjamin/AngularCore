@@ -1,10 +1,10 @@
 ﻿using CommonDomainObjects;
 using NUnit.Framework;
 using Process;
+using Process.Expression;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using Definition = Process.Definition;
 
 namespace Test
@@ -185,10 +185,10 @@ namespace Test
                         allowedTraces.Contains(trace)
                     });
 
-                var allowed = new Dictionary<string, Expression<Func<Process.Process, bool>>>
+                var allowed = new Dictionary<string, IExpression<bool>>
                 {
-                    {"A", p => true },
-                    {"B", p => false},
+                    {"A", new ConstantExpression<bool>(true) },
+                    {"B", new ConstantExpression<bool>(false)},
                 };
 
                 choice = new Definition.Choice(

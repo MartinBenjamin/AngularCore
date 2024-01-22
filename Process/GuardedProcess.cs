@@ -31,7 +31,7 @@ namespace Process
             if(Status == Status.NotExecuted)
             {
                 if(definition.GuardExpression == null ||
-                   definition.GuardExpression(this))
+                   definition.GuardExpression.Evaluate(this))
                 {
                     ChangeStatus(
                         executionService,

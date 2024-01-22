@@ -1,16 +1,12 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using Process.Expression;
 
 namespace Process.Definition
 {
     public class GuardedProcess: Alternative
     {
-        public Func<global::Process.Process, bool>
-                       GuardExpression           { get; protected set; }
-        public Expression<Func<global::Process.Process, bool>>
-                       GuardExpressionExpression { get; protected set; }
-        public IO      Guard                     { get; protected set; }
-        public Process Guarded                   { get; protected set; }
+        public IExpression<bool> GuardExpression { get; protected set; }
+        public IO                Guard           { get; protected set; }
+        public Process           Guarded         { get; protected set; }
 
 
         public GuardedProcess()
@@ -19,10 +15,9 @@ namespace Process.Definition
         }
 
         public GuardedProcess(
-            Func<global::Process.Process, bool>
-                    guardExpression,
-            IO      guard,
-            Process guarded
+            IExpression<bool> guardExpression,
+            IO                guard,
+            Process           guarded
             )
             : base()
         {
@@ -32,26 +27,11 @@ namespace Process.Definition
         }
 
         public GuardedProcess(
-            Expression<Func<global::Process.Process, bool>>
-                    guardExpression,
-            IO      guard,
-            Process guarded
-            )
-            : this(
-                guardExpression.Compile(),
-                guard,
-                guarded
-            )
-        {
-            GuardExpressionExpression = guardExpression;
-        }
-
-        public GuardedProcess(
             IO      guard,
             Process guarded = null
             )
             : this(
-                (Func<global::Process.Process, bool>)null,
+                null,
                 guard,
                 guarded)
         {
