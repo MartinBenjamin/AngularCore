@@ -25,7 +25,7 @@
             if(Status != Status.AwaitIO)
                 throw new InvalidStateException();
 
-            Parent[((Definition.Input)Definition).TargetVariable] = input;
+            (Parent??this)[((Definition.Input)Definition).TargetVariable] = input;
 
             ChangeStatus(
                 executionService,
