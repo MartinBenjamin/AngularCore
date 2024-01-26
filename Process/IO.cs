@@ -34,6 +34,13 @@ namespace Process
             Status            status
             )
         {
+            if(status != Status)
+                if(status == Status.AwaitIO)
+                    Register();
+
+                else if(Status == Status.AwaitIO)
+                    Deregister();
+
             if(status == Status.Executed)
             {
                 var guardedProcess = Parent.As<GuardedProcess>();
@@ -74,6 +81,16 @@ namespace Process
             ChangeStatus(
                 executionService,
                 Status.Executed);
+        }
+
+        protected virtual void Register()
+        {
+
+        }
+
+        protected virtual void Deregister()
+        {
+
         }
     }
 }
