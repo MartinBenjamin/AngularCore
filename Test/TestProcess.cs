@@ -45,6 +45,30 @@ namespace Test
             }
         }
 
+        [Test]
+        public void Input()
+        {
+            const string channel  = "channel";
+            const string variable = "target";
+            const string value    = "value";
+            var inputDefinition = new Definition.Input(
+                 new ConstantExpression<string>(channel),
+                 typeof(int),
+                 variable);
+
+            IExecutionService service = new ExecutionService();
+            var input = (Input)inputDefinition.New(null);
+            service.Execute(input);
+            Assert.That(input.Status, Is.EqualTo(Status.AwaitIO));
+            Assert.That(input[variable], Is.Null);
+            input.Executelnput(
+                service,
+                value);
+            Assert.That(input.Status, Is.EqualTo(Status.Executed));
+            Assert.That(input[variable], Is.EqualTo(value));
+
+        }
+
         public static IEnumerable<object[]> ProcessTestCases
         {
             get

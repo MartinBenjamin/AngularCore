@@ -7,17 +7,17 @@ namespace CommonDomainObjects
         public static T Cast<T>(
             this DomainObject domainObject
             ) where T: class
-            => (T)domainObject.Object;
+            => (T)domainObject?.Object;
 
         public static T As<T>(
             this DomainObject domainObject
             ) where T: class
-            => domainObject.Object as T;
+            => domainObject?.Object as T;
 
         public static bool Is<T>(
             this DomainObject domainObject
             ) where T: class
-            => domainObject.Object is T;
+            => domainObject?.Object is T;
     }
 
     public abstract class DomainObject
