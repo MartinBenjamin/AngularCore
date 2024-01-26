@@ -106,15 +106,13 @@ namespace Process
 
         protected abstract void Execute(IExecutionService executionService);
 
-        private IEnumerator<Process> GetEnumerator()
+        public IEnumerator<Process> GetEnumerator()
         {
             yield return this;
             foreach(var child in Children)
                 foreach(var process in child)
                     yield return process;
         }
-
-        IEnumerator<Process> IEnumerable<Process>.GetEnumerator() => GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
