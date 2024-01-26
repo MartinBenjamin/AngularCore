@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Process.Expression;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -65,8 +66,8 @@ namespace Process.Definition
 
     public class ParallelForEach<TValue>: ParallelBase
     {
-        public Func<global::Process.Process, IEnumerable<TValue>> Values     { get; set; }
-        public IReplicated<TValue>                                Replicated { get; set; }
+        public IExpression<IEnumerable<IDictionary<string, object>>> Variables  { get; set; }
+        public Process                                               Replicated { get; set; }
 
         public ParallelForEach()
             : base()
@@ -86,9 +87,13 @@ namespace Process.Definition
 
         public override IEnumerable<global::Process.Process> NewChildren(
             global::Process.Process parent
-            ) => Values(parent).Select(
-                value => Replicated.Replicate(
-                    parent,
-                    value));
+            ) => Variables.Evaluate(parent).Select(
+                variables =>
+                {
+                    var replicated = Replicated.New(parent);
+                    foreach(var pair in variables)
+                        replicated[pair.Key] = pair.Value;
+                    return replicated;
+                });
     }
 }
