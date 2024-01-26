@@ -17,6 +17,8 @@ namespace Process
         public virtual Process            Parent     { get; protected set; }
         public virtual IList<Process>     Children   { get; protected set; }
 
+        private IDictionary<string, object> _variables;
+
         protected Process()
             : base()
         {
@@ -32,19 +34,6 @@ namespace Process
             Definition = definition;
             Parent     = parent;
             Parent?.Children.Add(this);
-        }
-
-        public virtual IEnumerable<Process> Scopes
-        {
-            get
-            {
-                var current = this;
-                while(current != null)
-                {
-                    yield return current;
-                    current = current.Parent;
-                }
-            }
         }
 
         protected virtual void ChangeStatus(
@@ -97,8 +86,22 @@ namespace Process
             string variable
             ]
         {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
+            get
+            {
+                if(_variables != null && _variables.TryGetValue(
+                    variable, 
+                    out var value))
+                    return value;
+
+                return Parent?[variable];
+            }
+            set
+            {
+                if(_variables == null)
+                    _variables = new Dictionary<string, object>();
+
+                _variables[variable] = value;
+            }
         }
 
         protected abstract void Execute(IExecutionService executionService);
