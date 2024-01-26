@@ -86,15 +86,7 @@ namespace Process
             string variable
             ]
         {
-            get
-            {
-                if(_variables != null && _variables.TryGetValue(
-                    variable, 
-                    out var value))
-                    return value;
-
-                return Parent?[variable];
-            }
+            get => _variables != null && _variables.TryGetValue(variable, out var value) ? value : Parent?[variable];
             set
             {
                 if(_variables == null)
