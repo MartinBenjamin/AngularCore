@@ -1,6 +1,6 @@
 ﻿namespace Process.Expression
 {
-    public interface IExpression<T>
+    public interface IExpression<out T>
     {
         T Evaluate(IScope scope);
 
