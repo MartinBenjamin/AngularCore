@@ -1,25 +1,25 @@
 ﻿using CommonDomainObjects;
 using NUnit.Framework;
-using Process;
 using Process.Expression;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Definition = Process.Definition;
 
 namespace Test
 {
+    using Process.Definition;
+
     [TestFixture]
     public class TestProcess
     {
         [TestCaseSource("ProcessTestCases")]
         public void Process(
-            Definition.Process definition,
-            string             trace,
-            bool               pass
+            Process definition,
+            string  trace,
+            bool    pass
             )  
         {
-            IExecutionService service = new ExecutionService();
+            global::Process.IExecutionService service = new global::Process.ExecutionService();
             var process = definition.New(null);
             service.Execute(process);
 
@@ -27,11 +27,11 @@ namespace Test
             foreach(var c in trace.Select(c => c.ToString()))
             {
                 var io = process
-                    .OfType<IO>()
+                    .OfType<global::Process.IO>()
                     .FirstOrDefault(
                         i =>
-                            ((Definition.IO)i.Definition).Channel.Evaluate(i).Name == c &&
-                            i.Status == Status.AwaitIO);
+                            ((IO)i.Definition).Channel.Evaluate(i).Name == c &&
+                            i.Status == global::Process.Status.AwaitIO);
 
                 if(index == trace.Length - 1 && !pass)
                     Assert.That(io, Is.Null);
@@ -48,40 +48,40 @@ namespace Test
         [Test]
         public void Input()
         {
-            var channel  = new Definition.Channel("channel", typeof(string));
+            var channel  = new Channel("channel", typeof(string));
             const string variable = "target";
             const string value    = "value";
-            var inputDefinition = new Definition.Input(
-                 new ConstantExpression<Definition.Channel>(channel),
+            var inputDefinition = new Input(
+                 new ConstantExpression<Channel>(channel),
                  variable);
 
-            IExecutionService service = new ExecutionService();
-            var input = (Input)inputDefinition.New(null);
+            global::Process.IExecutionService service = new global::Process.ExecutionService();
+            var input = (global::Process.Input)inputDefinition.New(null);
             service.Execute(input);
-            Assert.That(input.Status, Is.EqualTo(Status.AwaitIO));
+            Assert.That(input.Status, Is.EqualTo(global::Process.Status.AwaitIO));
             Assert.That(input[variable], Is.Null);
             input.Executelnput(
                 service,
                 value);
-            Assert.That(input.Status, Is.EqualTo(Status.Executed));
+            Assert.That(input.Status, Is.EqualTo(global::Process.Status.Executed));
             Assert.That(input[variable], Is.EqualTo(value));
         }
 
         [Test]
         public void Output()
         {
-            var channel = new Definition.Channel("channel", typeof(string));
+            var channel = new Channel("channel", typeof(string));
             const string value = "value";
-            var outputDefinition = new Definition.Output(
-                 new ConstantExpression<Definition.Channel>(channel),
+            var outputDefinition = new Output(
+                 new ConstantExpression<Channel>(channel),
                  new ConstantExpression<string>(value));
 
-            IExecutionService service = new ExecutionService();
-            var output = (Output)outputDefinition.New(null);
+            global::Process.IExecutionService service = new global::Process.ExecutionService();
+            var output = (global::Process.Output)outputDefinition.New(null);
             service.Execute(output);
-            Assert.That(output.Status, Is.EqualTo(Status.AwaitIO));
+            Assert.That(output.Status, Is.EqualTo(global::Process.Status.AwaitIO));
             var outputValue = output.ExecuteOutput(service);
-            Assert.That(output.Status, Is.EqualTo(Status.Executed));
+            Assert.That(output.Status, Is.EqualTo(global::Process.Status.Executed));
             Assert.That(outputValue, Is.EqualTo(value));
         }
 
@@ -92,18 +92,18 @@ namespace Test
                 var testCases = new List<object[]>();
 
                 var sequence = "ABC";
-                var processes = new List<Definition.Process>
+                var processes = new List<Process>
                 {
-                    new Definition.Sequence(
-                        sequence.Select(c => new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(c.ToString())))).ToArray()),
-                    new Definition.Sequence(
-                        new Definition.Sequence(
-                            "AB".Select(c => new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(c.ToString())))).ToArray()),
-                        new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel("C")))),
-                    new Definition.Sequence(
-                        new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel("A"))),
-                        new Definition.Sequence(
-                            "BC".Select(c => new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(c.ToString())))).ToArray()))
+                    new Sequence(
+                        sequence.Select(c => new IO(new ConstantExpression<Channel>(new Channel(c.ToString())))).ToArray()),
+                    new Sequence(
+                        new Sequence(
+                            "AB".Select(c => new IO(new ConstantExpression<Channel>(new Channel(c.ToString())))).ToArray()),
+                        new IO(new ConstantExpression<Channel>(new Channel("C")))),
+                    new Sequence(
+                        new IO(new ConstantExpression<Channel>(new Channel("A"))),
+                        new Sequence(
+                            "BC".Select(c => new IO(new ConstantExpression<Channel>(new Channel(c.ToString())))).ToArray()))
                 };
 
                 testCases.AddRange(
@@ -121,21 +121,21 @@ namespace Test
                 var set = "ABC";
                 processes = new []
                 {
-                    new Definition.Parallel(
-                        set.Select(c => new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(c.ToString())))).ToArray()),
-                    new Definition.Parallel(
-                        new Definition.Parallel(
-                            "AB".Select(c => new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(c.ToString())))).ToArray()),
-                        new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel("C")))),
-                    new Definition.Parallel(
-                        new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel("A"))),
-                        new Definition.Parallel(
-                            "BC".Select(c => new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(c.ToString())))).ToArray()))
+                    new Parallel(
+                        set.Select(c => new IO(new ConstantExpression<Channel>(new Channel(c.ToString())))).ToArray()),
+                    new Parallel(
+                        new Parallel(
+                            "AB".Select(c => new IO(new ConstantExpression<Channel>(new Channel(c.ToString())))).ToArray()),
+                        new IO(new ConstantExpression<Channel>(new Channel("C")))),
+                    new Parallel(
+                        new IO(new ConstantExpression<Channel>(new Channel("A"))),
+                        new Parallel(
+                            "BC".Select(c => new IO(new ConstantExpression<Channel>(new Channel(c.ToString())))).ToArray()))
                 }.Select(
-                    parallel => (Definition.Process)new Definition.Sequence
+                    parallel => (Process)new Sequence
                     (
                         parallel,
-                        new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel("D")))
+                        new IO(new ConstantExpression<Channel>(new Channel("D")))
                     )).ToList();
 
                 var permutations = set.Permute().Select(p => new string(p.ToArray()));
@@ -152,24 +152,24 @@ namespace Test
                         permutation.Length == set.Length
                     });
 
-                processes = new List<Definition.Process>
+                processes = new List<Process>
                 {
-                    new Definition.Choice(
+                    new Choice(
                         set.Select(
-                            c => new Definition.GuardedProcess(new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(c.ToString()))))).ToArray()),
-                    new Definition.Choice(
-                        new Definition.Choice(
-                            "AB".Select(c => new Definition.GuardedProcess(new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(c.ToString()))))).ToArray()),
-                        new Definition.GuardedProcess(new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel("C"))))),
-                    new Definition.Choice(
-                        new Definition.GuardedProcess(new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel("A")))),
-                        new Definition.Choice(
-                            "BC".Select(c => new Definition.GuardedProcess(new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(c.ToString()))))).ToArray()))
+                            c => new GuardedProcess(new IO(new ConstantExpression<Channel>(new Channel(c.ToString()))))).ToArray()),
+                    new Choice(
+                        new Choice(
+                            "AB".Select(c => new GuardedProcess(new IO(new ConstantExpression<Channel>(new Channel(c.ToString()))))).ToArray()),
+                        new GuardedProcess(new IO(new ConstantExpression<Channel>(new Channel("C"))))),
+                    new Choice(
+                        new GuardedProcess(new IO(new ConstantExpression<Channel>(new Channel("A")))),
+                        new Choice(
+                            "BC".Select(c => new GuardedProcess(new IO(new ConstantExpression<Channel>(new Channel(c.ToString()))))).ToArray()))
                 }.Select(
-                    c => (Definition.Process)new Definition.Sequence
+                    c => (Process)new Sequence
                     (
                         c,
-                        new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel("D")))
+                        new IO(new ConstantExpression<Channel>(new Channel("D")))
                     )).ToList();
 
                 testCases.AddRange(
@@ -199,11 +199,11 @@ namespace Test
                     {"B", "Y"}
                 };
 
-                var choice = new Definition.Choice(
+                var choice = new Choice(
                     next.Select(
-                        pair => new Definition.GuardedProcess(
-                            new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(pair.Key))),
-                            new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(pair.Value))))).ToArray());
+                        pair => new GuardedProcess(
+                            new IO(new ConstantExpression<Channel>(new Channel(pair.Key))),
+                            new IO(new ConstantExpression<Channel>(new Channel(pair.Value))))).ToArray());
 
                 var allowedTraces = next.Keys
                     .Select(key => key.ToString())
@@ -231,12 +231,12 @@ namespace Test
                     {"B", new ConstantExpression<bool>(false)},
                 };
 
-                choice = new Definition.Choice(
+                choice = new Choice(
                     next.Select(
-                        pair => new Definition.GuardedProcess(
+                        pair => new GuardedProcess(
                             allowed[pair.Key],
-                            new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(pair.Key))),
-                            new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(pair.Value))))).ToArray());
+                            new IO(new ConstantExpression<Channel>(new Channel(pair.Key))),
+                            new IO(new ConstantExpression<Channel>(new Channel(pair.Value))))).ToArray());
 
                 testCases.AddRange(
                     new List<object[]>
