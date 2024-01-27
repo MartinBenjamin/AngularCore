@@ -30,7 +30,7 @@ namespace Test
                     .OfType<IO>()
                     .FirstOrDefault(
                         i =>
-                            ((Definition.IO)i.Definition).Channel.Evaluate(i) == c &&
+                            ((Definition.IO)i.Definition).Channel.Evaluate(i).Name == c &&
                             i.Status == Status.AwaitIO);
 
                 if(index == trace.Length - 1 && !pass)
@@ -48,12 +48,11 @@ namespace Test
         [Test]
         public void Input()
         {
-            const string channel  = "channel";
+            var channel  = new Definition.Channel("channel", typeof(string));
             const string variable = "target";
             const string value    = "value";
             var inputDefinition = new Definition.Input(
-                 new ConstantExpression<string>(channel),
-                 typeof(int),
+                 new ConstantExpression<Definition.Channel>(channel),
                  variable);
 
             IExecutionService service = new ExecutionService();
@@ -71,11 +70,10 @@ namespace Test
         [Test]
         public void Output()
         {
-            const string channel  = "channel";
-            const string value    = "value";
+            var channel = new Definition.Channel("channel", typeof(string));
+            const string value = "value";
             var outputDefinition = new Definition.Output(
-                 new ConstantExpression<string>(channel),
-                 typeof(int),
+                 new ConstantExpression<Definition.Channel>(channel),
                  new ConstantExpression<string>(value));
 
             IExecutionService service = new ExecutionService();
@@ -97,15 +95,15 @@ namespace Test
                 var processes = new List<Definition.Process>
                 {
                     new Definition.Sequence(
-                        sequence.Select(c => new Definition.IO(c.ToString())).ToArray()),
+                        sequence.Select(c => new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(c.ToString())))).ToArray()),
                     new Definition.Sequence(
                         new Definition.Sequence(
-                            "AB".Select(c => new Definition.IO(c.ToString())).ToArray()),
-                        new Definition.IO("C")),
+                            "AB".Select(c => new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(c.ToString())))).ToArray()),
+                        new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel("C")))),
                     new Definition.Sequence(
-                        new Definition.IO("A"),
+                        new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel("A"))),
                         new Definition.Sequence(
-                            "BC".Select(c => new Definition.IO(c.ToString())).ToArray()))
+                            "BC".Select(c => new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(c.ToString())))).ToArray()))
                 };
 
                 testCases.AddRange(
@@ -124,20 +122,20 @@ namespace Test
                 processes = new []
                 {
                     new Definition.Parallel(
-                        set.Select(c => new Definition.IO(c.ToString())).ToArray()),
+                        set.Select(c => new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(c.ToString())))).ToArray()),
                     new Definition.Parallel(
                         new Definition.Parallel(
-                            "AB".Select(c => new Definition.IO(c.ToString())).ToArray()),
-                        new Definition.IO("C")),
+                            "AB".Select(c => new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(c.ToString())))).ToArray()),
+                        new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel("C")))),
                     new Definition.Parallel(
-                        new Definition.IO("A"),
+                        new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel("A"))),
                         new Definition.Parallel(
-                            "BC".Select(c => new Definition.IO(c.ToString())).ToArray()))
+                            "BC".Select(c => new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(c.ToString())))).ToArray()))
                 }.Select(
                     parallel => (Definition.Process)new Definition.Sequence
                     (
                         parallel,
-                        new Definition.IO("D")
+                        new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel("D")))
                     )).ToList();
 
                 var permutations = set.Permute().Select(p => new string(p.ToArray()));
@@ -158,20 +156,20 @@ namespace Test
                 {
                     new Definition.Choice(
                         set.Select(
-                            c => new Definition.GuardedProcess(new Definition.IO(c.ToString()))).ToArray()),
+                            c => new Definition.GuardedProcess(new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(c.ToString()))))).ToArray()),
                     new Definition.Choice(
                         new Definition.Choice(
-                            "AB".Select(c => new Definition.GuardedProcess(new Definition.IO(c.ToString()))).ToArray()),
-                        new Definition.GuardedProcess(new Definition.IO("C"))),
+                            "AB".Select(c => new Definition.GuardedProcess(new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(c.ToString()))))).ToArray()),
+                        new Definition.GuardedProcess(new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel("C"))))),
                     new Definition.Choice(
-                        new Definition.GuardedProcess(new Definition.IO("A")),
+                        new Definition.GuardedProcess(new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel("A")))),
                         new Definition.Choice(
-                            "BC".Select(c => new Definition.GuardedProcess(new Definition.IO(c.ToString()))).ToArray()))
+                            "BC".Select(c => new Definition.GuardedProcess(new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(c.ToString()))))).ToArray()))
                 }.Select(
                     c => (Definition.Process)new Definition.Sequence
                     (
                         c,
-                        new Definition.IO("D")
+                        new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel("D")))
                     )).ToList();
 
                 testCases.AddRange(
@@ -204,8 +202,8 @@ namespace Test
                 var choice = new Definition.Choice(
                     next.Select(
                         pair => new Definition.GuardedProcess(
-                            new Definition.IO(pair.Key),
-                            new Definition.IO(pair.Value))).ToArray());
+                            new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(pair.Key))),
+                            new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(pair.Value))))).ToArray());
 
                 var allowedTraces = next.Keys
                     .Select(key => key.ToString())
@@ -217,8 +215,8 @@ namespace Test
                                 pair.Value)));
 
                 testCases.AddRange(
-                    from first in next.Keys.Select(c => c.ToString())
-                    from second in next.Values.Select(c => c.ToString()).Prepend(string.Empty)
+                    from first in next.Keys
+                    from second in next.Values.Prepend(string.Empty)
                     let trace = first + second
                     select new object[]
                     {
@@ -229,7 +227,7 @@ namespace Test
 
                 var allowed = new Dictionary<string, IExpression<bool>>
                 {
-                    {"A", new ConstantExpression<bool>(true) },
+                    {"A", new ConstantExpression<bool>(true )},
                     {"B", new ConstantExpression<bool>(false)},
                 };
 
@@ -237,8 +235,8 @@ namespace Test
                     next.Select(
                         pair => new Definition.GuardedProcess(
                             allowed[pair.Key],
-                            new Definition.IO(pair.Key),
-                            new Definition.IO(pair.Value))).ToArray());
+                            new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(pair.Key))),
+                            new Definition.IO(new ConstantExpression<Definition.Channel>(new Definition.Channel(pair.Value))))).ToArray());
 
                 testCases.AddRange(
                     new List<object[]>

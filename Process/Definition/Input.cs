@@ -5,17 +5,14 @@ namespace Process.Definition
 {
     public class Input: IO
     {
-        public Type   Type           { get; protected set; }
         public string TargetVariable { get; protected set; }
 
         public Input(
-            IExpression<string> channel,
-            Type                type,
-            string              targetVariable
+            IExpression<Channel> channel,
+            string               targetVariable
             )
             : base(channel)
         {
-            Type           = type;
             TargetVariable = targetVariable;
         }
 

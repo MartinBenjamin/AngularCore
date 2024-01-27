@@ -9,7 +9,7 @@ namespace Process.Definition
 
         public Channel(
             string name,
-            Type  type
+            Type   type = null
             )
         {
             Name = name;

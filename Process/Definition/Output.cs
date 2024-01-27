@@ -5,17 +5,14 @@ namespace Process.Definition
 {
     public class Output: IO
     {
-        public Type                Type   { get; protected set; }
         public IExpression<object> Source { get; protected set; }
 
         public Output(
-            IExpression<string> channel,
-            Type                type,
-            IExpression<object> source
+            IExpression<Channel> channel,
+            IExpression<object>  source
             )
             : base(channel)
         {
-            Type   = type;
             Source = source;
         }
 
