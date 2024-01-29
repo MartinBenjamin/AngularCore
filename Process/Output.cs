@@ -24,5 +24,15 @@
             base.ExecuteIO(executionService);
             return ((Definition.Output)Definition).Source.Evaluate(this);
         }
+
+        protected override void Register(
+            IExecutionService executionService
+            ) => executionService.SynchronisationService.Resolve(Channel).Register(
+            executionService,
+            this);
+
+        protected override void Deregister(
+            IExecutionService executionService
+            ) => executionService.SynchronisationService.Resolve(Channel).Deregister(this);
     }
 }

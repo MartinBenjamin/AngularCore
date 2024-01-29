@@ -14,7 +14,7 @@ namespace Process
             get => Math.Min(_inputs.Count, _outputs.Count);
         }
 
-        void Register(
+        public void Register(
             IExecutionService executionService,
             Input             input
             )
@@ -26,7 +26,7 @@ namespace Process
                 executionService.Execute(this);
         }
 
-        void Register(
+        public void Register(
             IExecutionService executionService,
             Output            output
             )
@@ -38,11 +38,11 @@ namespace Process
                 executionService.Execute(this);
         }
 
-        void Deregister(
+        public void Deregister(
             Input input
             ) => _inputs.Remove(input);
 
-        void Deregister(
+        public void Deregister(
             Output output
             ) => _outputs.Remove(output);
 

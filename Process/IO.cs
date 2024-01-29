@@ -43,7 +43,7 @@ namespace Process
                     Register(executionService);
 
                 else if(Status == Status.AwaitIO)
-                    Deregister();
+                    Deregister(executionService);
 
             if(status == Status.Executed)
             {
@@ -91,12 +91,12 @@ namespace Process
             IExecutionService executionService
             )
         {
-
         }
 
-        protected virtual void Deregister()
+        protected virtual void Deregister(
+            IExecutionService executionService
+            )
         {
-
         }
     }
 }

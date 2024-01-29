@@ -31,5 +31,15 @@
                 executionService,
                 Status.Executed);
         }
+
+        protected override void Register(
+            IExecutionService executionService
+            ) => executionService.SynchronisationService.Resolve(Channel).Register(
+            executionService,
+            this);
+
+        protected override void Deregister(
+            IExecutionService executionService
+            ) => executionService.SynchronisationService.Resolve(Channel).Deregister(this);
     }
 }

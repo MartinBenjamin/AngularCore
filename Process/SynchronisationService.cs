@@ -6,6 +6,8 @@ namespace Process
     {
         private IDictionary<Channel, Synchronisation> _synchronisations = new Dictionary<Channel, Synchronisation>();
 
+        ICollection<Channel> ISynchronisationService.AwaitIO => _synchronisations.Keys;
+
         Synchronisation ISynchronisationService.Resolve(
             Channel channel
             )
