@@ -40,7 +40,7 @@ namespace Process
         {
             if(status != Status)
                 if(status == Status.AwaitIO)
-                    Register();
+                    Register(executionService);
 
                 else if(Status == Status.AwaitIO)
                     Deregister();
@@ -87,7 +87,9 @@ namespace Process
                 Status.Executed);
         }
 
-        protected virtual void Register()
+        protected virtual void Register(
+            IExecutionService executionService
+            )
         {
 
         }
