@@ -8,8 +8,8 @@ namespace Process.Definition
         public IExpression<object> Source { get; protected set; }
 
         public Output(
-            IExpression<Channel> channel,
-            IExpression<object>  source
+            Channel             channel,
+            IExpression<object> source
             )
             : base(channel)
         {

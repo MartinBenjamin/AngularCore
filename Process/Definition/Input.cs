@@ -8,8 +8,8 @@ namespace Process.Definition
         public string TargetVariable { get; protected set; }
 
         public Input(
-            IExpression<Channel> channel,
-            string               targetVariable
+            Channel channel,
+            string  targetVariable
             )
             : base(channel)
         {

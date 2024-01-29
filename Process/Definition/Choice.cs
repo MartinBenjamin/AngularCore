@@ -69,7 +69,7 @@ namespace Process.Definition
                 .Cast<global::Process.Alternative>();
     }
 
-    public class ChoiceForEach<TValue>: ChoiceBase
+    public class ChoiceForEach: ChoiceBase
     {
         public IExpression<IEnumerable<IDictionary<string, object>>> Variables  { get; set; }
         public Process                                               Replicated { get; set; }

@@ -4,6 +4,8 @@ namespace Process
 {
     public class IO: Process
     {
+        public virtual Channel Channel { get; protected set; }
+
         protected IO()
             : base()
         {
@@ -17,6 +19,8 @@ namespace Process
                 definition,
                 parent)
         {
+            var channelDefinition = ((Definition.IO)definition).Channel;
+            Channel = channelDefinition.New(this);
         }
 
         protected override void Execute(

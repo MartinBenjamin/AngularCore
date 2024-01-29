@@ -64,7 +64,7 @@ namespace Process.Definition
             ) => Children.Select(child => child.New(parent));
     }
 
-    public class SequenceForEach<TValue>: SequenceBase
+    public class SequenceForEach: SequenceBase
     {
         public IExpression<IEnumerable<IDictionary<string, object>>> Variables  { get; set; }
         public Process                                               Replicated { get; set; }

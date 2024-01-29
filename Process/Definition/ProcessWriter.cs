@@ -64,7 +64,7 @@ namespace Process.Definition
             IO io
             )
         {
-            io.Channel.Accept(_expressionWriter);
+            io.Channel.Name.Accept(_expressionWriter);
             return true;
         }
 
@@ -72,7 +72,7 @@ namespace Process.Definition
             Input input
             )
         {
-            input.Channel.Accept(_expressionWriter);
+            input.Channel.Name.Accept(_expressionWriter);
             _builder
                 .Append('?')
                 .Append(input.TargetVariable);
@@ -108,22 +108,22 @@ namespace Process.Definition
             return true;
         }
 
-        bool IVisitor.Enter<TValue>(
-            SequenceForEach<TValue> sequenceForEach
+        bool IVisitor.Enter(
+            SequenceForEach sequenceForEach
             )
         {
             throw new NotImplementedException();
         }
 
-        bool IVisitor.Enter<TValue>(
-            ParallelForEach<TValue> parallelForEach
+        bool IVisitor.Enter(
+            ParallelForEach parallelForEach
             )
         {
             throw new NotImplementedException();
         }
 
-        bool IVisitor.Enter<TValue>(
-            ChoiceForEach<TValue> choiceForEach
+        bool IVisitor.Enter(
+            ChoiceForEach choiceForEach
             )
         {
             throw new NotImplementedException();

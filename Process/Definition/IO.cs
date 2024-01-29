@@ -5,10 +5,10 @@ namespace Process.Definition
 {
     public class IO: Process
     {
-        public virtual IExpression<Channel> Channel { get; protected set; }
+        public virtual Channel Channel { get; protected set; }
 
         public IO(
-            IExpression<Channel> channel
+            Channel channel
             )
             : base()
         {
