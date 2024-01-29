@@ -4,20 +4,11 @@ namespace Process
 {
     public class ExecutionService: IExecutionService
     {
-        private Queue<IExecutable> _queue = new Queue<IExecutable>();
-        private int                _entered;
+        private ISynchronisationService _synchronisationService = new SynchronisationService();
+        private Queue<IExecutable>      _queue = new Queue<IExecutable>();
+        private int                     _entered;
 
-        void IExecutionService.Save(
-            IExecutable executable
-            )
-        {
-        }
-
-        void IExecutionService.Delete(
-            IExecutable executabLe
-            )
-        {
-        }
+        ISynchronisationService IExecutionService.SynchronisationService => _synchronisationService;
 
         void IExecutionService.Execute(
             IExecutable executable
@@ -38,6 +29,18 @@ namespace Process
             {
                 _entered -= 1;
             }
+        }
+
+        void IExecutionService.Save(
+            IExecutable executable
+            )
+        {
+        }
+
+        void IExecutionService.Delete(
+            IExecutable executabLe
+            )
+        {
         }
     }
 }
