@@ -85,6 +85,33 @@ namespace Test
             Assert.That(outputValue, Is.EqualTo(value));
         }
 
+        [Test]
+        public void IO()
+        {
+            var channel = new Channel(new ConstantExpression<string>("channel"), typeof(string));
+            const string variable = "target";
+            const string value = "value";
+            var outputDefinition = new Output(
+                 channel,
+                 new ConstantExpression<string>(value));
+            var inputDefinition = new Input(
+                 channel,
+                 variable);
+
+            global::Process.IExecutionService service = new global::Process.ExecutionService();
+            var input = inputDefinition.New(null);
+            service.Execute(input);
+            Assert.That(input.Status, Is.EqualTo(global::Process.Status.AwaitIO));
+            Assert.That(input[variable], Is.Null);
+            Assert.That(service.SynchronisationService.AwaitIO.Any(c => c.Name == "channel"), Is.True);
+
+            var output = outputDefinition.New(null);
+            service.Execute(output);
+            Assert.That(output.Status, Is.EqualTo(global::Process.Status.Executed));
+            Assert.That(input.Status, Is.EqualTo(global::Process.Status.Executed));
+            Assert.That(input[variable], Is.EqualTo(value));
+        }
+
         public static IEnumerable<object[]> ProcessTestCases
         {
             get
