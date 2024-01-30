@@ -448,7 +448,7 @@ namespace Test
                 var choice = new Choice(
                     next.Select(
                         pair => new GuardedProcess(
-                            new Input(new Channel(new ConstantExpression<string>(pair.Key)), targetVariable),
+                            new Input(new Channel(new ConstantExpression<string>(pair.Key  )), targetVariable),
                             new Input(new Channel(new ConstantExpression<string>(pair.Value)), targetVariable))).ToArray());
 
                 var allowedTraces = next.Keys
@@ -471,26 +471,26 @@ namespace Test
                         allowedTraces.Contains(trace)
                     });
 
-                //var allowed = new Dictionary<string, IExpression<bool>>
-                //{
-                //    {"A", new ConstantExpression<bool>(true )},
-                //    {"B", new ConstantExpression<bool>(false)},
-                //};
+                var allowed = new Dictionary<string, bool>
+                {
+                    {"A", true },
+                    {"B", false},
+                };
 
-                //choice = new Choice(
-                //    next.Select(
-                //        pair => new GuardedProcess(
-                //            allowed[pair.Key],
-                //            new IO(new Channel(new ConstantExpression<string>(pair.Key))),
-                //            new IO(new Channel(new ConstantExpression<string>(pair.Value))))).ToArray());
+                choice = new Choice(
+                    next.Select(
+                        pair => new GuardedProcess(
+                            new ConstantExpression<bool>(allowed[pair.Key]),
+                            new Input(new Channel(new ConstantExpression<string>(pair.Key  )), targetVariable),
+                            new Input(new Channel(new ConstantExpression<string>(pair.Value)), targetVariable))).ToArray());
 
-                //testCases.AddRange(
-                //    new List<object[]>
-                //    {
-                //        new object[]{choice, "A" , true },
-                //        new object[]{choice, "AX", true },
-                //        new object[]{choice, "B" , false}
-                //    });
+                testCases.AddRange(
+                    new List<object[]>
+                    {
+                        new object[]{choice, "A" , true },
+                        new object[]{choice, "AX", true },
+                        new object[]{choice, "B" , false}
+                    });
 
                 return testCases;
             }
