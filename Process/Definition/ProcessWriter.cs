@@ -42,7 +42,7 @@ namespace Process.Definition
             Choice choice
             )
         {
-            _builder.Append('(');
+            _builder.Append('[');
 
             if(choice.Alternatives.Any())
             {
@@ -55,7 +55,7 @@ namespace Process.Definition
                 }
             }
 
-            _builder.Append(')');
+            _builder.Append(']');
 
             return false;
         }
@@ -162,7 +162,7 @@ namespace Process.Definition
             string         separator
             )
         {
-            _builder.Append('(');
+            _builder.Append('[');
 
             if(processes.Any())
             {
@@ -175,7 +175,7 @@ namespace Process.Definition
                 }
             }
 
-            _builder.Append(')');
+            _builder.Append(']');
         }
     }
 }
