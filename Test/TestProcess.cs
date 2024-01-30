@@ -31,7 +31,7 @@ namespace Test
                     .FirstOrDefault(
                         i =>
                             i.Channel.Name == c &&
-                            i.Status == global::Process.Status.AwaitIO);
+                            i.Status == global::Process.Status.Waiting);
 
                 if(index == trace.Length - 1 && !pass)
                     Assert.That(io, Is.Null);
@@ -96,7 +96,7 @@ namespace Test
             global::Process.IExecutionService service = new global::Process.ExecutionService();
             var input = (global::Process.Input)inputDefinition.New(null);
             service.Execute(input);
-            Assert.That(input.Status, Is.EqualTo(global::Process.Status.AwaitIO));
+            Assert.That(input.Status, Is.EqualTo(global::Process.Status.Waiting));
             Assert.That(service.SynchronisationService.AwaitIO.Any(c => c.Name == channel.Name.Evaluate(input)), Is.True);
             Assert.That(input[variable], Is.Null);
             input.Executelnput(
@@ -118,7 +118,7 @@ namespace Test
             global::Process.IExecutionService service = new global::Process.ExecutionService();
             var output = (global::Process.Output)outputDefinition.New(null);
             service.Execute(output);
-            Assert.That(output.Status, Is.EqualTo(global::Process.Status.AwaitIO));
+            Assert.That(output.Status, Is.EqualTo(global::Process.Status.Waiting));
             Assert.That(service.SynchronisationService.AwaitIO.Any(c => c.Name == channel.Name.Evaluate(output)), Is.True);
             var outputValue = output.ExecuteOutput(service);
             Assert.That(output.Status, Is.EqualTo(global::Process.Status.Executed));
@@ -141,7 +141,7 @@ namespace Test
             global::Process.IExecutionService service = new global::Process.ExecutionService();
             var input = inputDefinition.New(null);
             service.Execute(input);
-            Assert.That(input.Status, Is.EqualTo(global::Process.Status.AwaitIO));
+            Assert.That(input.Status, Is.EqualTo(global::Process.Status.Waiting));
             Assert.That(input[variable], Is.Null);
             Assert.That(service.SynchronisationService.AwaitIO.Any(c => c.Name == channel.Name.Evaluate(input)), Is.True);
 

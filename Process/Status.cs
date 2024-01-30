@@ -4,8 +4,7 @@
     {
         NotExecuted,
         Executing,
-        AwaitChoice,
-        AwaitIO,
+        Waiting,
         Executed,
         Skipped
     }

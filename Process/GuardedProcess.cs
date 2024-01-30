@@ -38,7 +38,7 @@ namespace Process
                 {
                     ChangeStatus(
                         executionService,
-                        Status.AwaitChoice);
+                        Status.Waiting);
 
                     Guard = (IO)definition.Guard.New(this);
                     executionService.Save(Guard);

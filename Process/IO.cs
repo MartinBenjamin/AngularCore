@@ -33,7 +33,7 @@ namespace Process
             if(Status == Status.NotExecuted)
                 ChangeStatus(
                     executionService,
-                    Status.AwaitIO);
+                    Status.Waiting);
         }
 
         protected override void ChangeStatus(
@@ -42,10 +42,10 @@ namespace Process
             )
         {
             if(status != Status)
-                if(status == Status.AwaitIO)
+                if(status == Status.Waiting)
                     Register(executionService);
 
-                else if(Status == Status.AwaitIO)
+                else if(Status == Status.Waiting)
                     Deregister(executionService);
 
             if(status == Status.Executed)
@@ -82,7 +82,7 @@ namespace Process
             IExecutionService executionService
             )
         {
-            if(Status != Status.AwaitIO)
+            if(Status != Status.Waiting)
                 throw new InvalidStateException();
 
             ChangeStatus(

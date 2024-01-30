@@ -38,7 +38,7 @@ namespace Process
 
                 ChangeStatus(
                     executionService,
-                    alternatives.Any(alternative => alternative.Status == Status.AwaitChoice) ? Status.AwaitChoice : Status.Skipped);
+                    alternatives.Any(alternative => alternative.Status == Status.Waiting) ? Status.Waiting : Status.Skipped);
             }
 
             if(Status == Status.Executing &&

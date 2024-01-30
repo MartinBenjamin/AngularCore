@@ -26,7 +26,7 @@ namespace Process
             object            input
             )
         {
-            if(Status != Status.AwaitIO)
+            if(Status != Status.Waiting)
                 throw new InvalidStateException();
 
             (Parent??this)[((Definition.Input)Definition).TargetVariable] = input;
