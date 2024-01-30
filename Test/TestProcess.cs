@@ -439,37 +439,37 @@ namespace Test
                         second == 'D'
                     });
 
-                //var next = new Dictionary<string, string>
-                //{
-                //    {"A", "X"},
-                //    {"B", "Y"}
-                //};
+                var next = new Dictionary<string, string>
+                {
+                    {"A", "X"},
+                    {"B", "Y"}
+                };
 
-                //var choice = new Choice(
-                //    next.Select(
-                //        pair => new GuardedProcess(
-                //            new IO(new Channel(new ConstantExpression<string>(pair.Key))),
-                //            new IO(new Channel(new ConstantExpression<string>(pair.Value))))).ToArray());
+                var choice = new Choice(
+                    next.Select(
+                        pair => new GuardedProcess(
+                            new Input(new Channel(new ConstantExpression<string>(pair.Key)), targetVariable),
+                            new Input(new Channel(new ConstantExpression<string>(pair.Value)), targetVariable))).ToArray());
 
-                //var allowedTraces = next.Keys
-                //    .Select(key => key.ToString())
-                //    .Concat(
-                //        next.Select(
-                //            pair => string.Format(
-                //                "{0}{1}",
-                //                pair.Key,
-                //                pair.Value)));
+                var allowedTraces = next.Keys
+                    .Select(key => key.ToString())
+                    .Concat(
+                        next.Select(
+                            pair => string.Format(
+                                "{0}{1}",
+                                pair.Key,
+                                pair.Value)));
 
-                //testCases.AddRange(
-                //    from first in next.Keys
-                //    from second in next.Values.Prepend(string.Empty)
-                //    let trace = first + second
-                //    select new object[]
-                //    {
-                //        choice,
-                //        trace,
-                //        allowedTraces.Contains(trace)
-                //    });
+                testCases.AddRange(
+                    from first in next.Keys
+                    from second in next.Values.Prepend(string.Empty)
+                    let trace = first + second
+                    select new object[]
+                    {
+                        choice,
+                        trace,
+                        allowedTraces.Contains(trace)
+                    });
 
                 //var allowed = new Dictionary<string, IExpression<bool>>
                 //{
