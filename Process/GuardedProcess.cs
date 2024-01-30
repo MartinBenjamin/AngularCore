@@ -47,7 +47,7 @@ namespace Process
                 else
                     ChangeStatus(
                         executionService,
-                        Status.NotChosen);
+                        Status.Skipped);
             }
 
             if(Status == Status.Executing)
@@ -82,7 +82,7 @@ namespace Process
             {
                 ChangeStatus(
                     executionService,
-                    Status.NotChosen);
+                    Status.Skipped);
 
                 if(Guard != null)
                     Guard.NotChosen(executionService);

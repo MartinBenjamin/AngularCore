@@ -75,7 +75,7 @@ namespace Process
         {
             ChangeStatus(
                 executionService,
-                Status.NotChosen);
+                Status.Skipped);
         }
 
         public virtual void ExecuteIO(

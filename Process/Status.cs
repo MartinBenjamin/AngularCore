@@ -7,6 +7,6 @@
         AwaitChoice,
         AwaitIO,
         Executed,
-        NotChosen
+        Skipped
     }
 }
