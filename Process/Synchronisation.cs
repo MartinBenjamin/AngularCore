@@ -9,9 +9,13 @@ namespace Process
         private ISet<Input > _inputs  = new HashSet<Input >();
         private ISet<Output> _outputs = new HashSet<Output>();
 
+        public int InputCount => _inputs.Count;
+
+        public int OutputCount => _outputs.Count;
+
         public int SyncCount
         {
-            get => Math.Min(_inputs.Count, _outputs.Count);
+            get => Math.Min(InputCount, OutputCount);
         }
 
         public void Register(
