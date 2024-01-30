@@ -329,14 +329,16 @@ namespace Test
                             .Select(c => new Input(new Channel(new ConstantExpression<string>(c)), targetVariable)).ToArray()),
                     new Sequence(
                         new Sequence(
-                            sequence.Take(sequence.Length - 1).Select(c => c.ToString())
-                            .Select(c => new Input(new Channel(new ConstantExpression<string>(c)), targetVariable)).ToArray()),
+                            sequence
+                                .Take(sequence.Length - 1).Select(c => c.ToString())
+                                .Select(c => new Input(new Channel(new ConstantExpression<string>(c)), targetVariable)).ToArray()),
                         new Input(new Channel(new ConstantExpression<string>(sequence.Last().ToString())), targetVariable)),
                     new Sequence(
                         new Input(new Channel(new ConstantExpression<string>(sequence.First().ToString())), targetVariable),
                         new Sequence(
-                            sequence.Skip(1).Select(c => c.ToString())
-                            .Select(c => new Input(new Channel(new ConstantExpression<string>(c)), targetVariable)).ToArray()))
+                            sequence
+                                .Skip(1).Select(c => c.ToString())
+                                .Select(c => new Input(new Channel(new ConstantExpression<string>(c)), targetVariable)).ToArray()))
                 };
 
                 testCases.AddRange(
@@ -352,38 +354,44 @@ namespace Test
                     });
 
                 var set = "ABC";
-                //processes = new []
-                //{
-                //    new Parallel(
-                //        set.Select(c => new IO(new Channel(new ConstantExpression<string>(c.ToString())))).ToArray()),
-                //    new Parallel(
-                //        new Parallel(
-                //            "AB".Select(c => new IO(new Channel(new ConstantExpression<string>(c.ToString())))).ToArray()),
-                //        new IO(new Channel(new ConstantExpression<string>("C")))),
-                //    new Parallel(
-                //        new IO(new Channel(new ConstantExpression<string>("A"))),
-                //        new Parallel(
-                //            "BC".Select(c => new IO(new Channel(new ConstantExpression<string>(c.ToString())))).ToArray()))
-                //}.Select(
-                //    parallel => (Process)new Sequence
-                //    (
-                //        parallel,
-                //        new IO(new Channel(new ConstantExpression<string>("D")))
-                //    )).ToList();
+                processes = new[]
+                {
+                    new Parallel(
+                        set
+                            .Select(c => c.ToString())
+                            .Select(c => new Input(new Channel(new ConstantExpression<string>(c)), targetVariable)).ToArray()),
+                    new Parallel(
+                        new Parallel(
+                            set
+                                .Take(2).Select(c => c.ToString())
+                                .Select(c => c.ToString()).Select(c => new Input(new Channel(new ConstantExpression<string>(c)), targetVariable)).ToArray()),
+                        new Input(new Channel(new ConstantExpression<string>(set.Last().ToString())), targetVariable)),
+                    new Parallel(
+                        new Input(new Channel(new ConstantExpression<string>(set.First().ToString())), targetVariable),
+                        new Parallel(
+                            set
+                                .Skip(1).Select(c => c.ToString())
+                                .Select(c => new Input(new Channel(new ConstantExpression<string>(c)), targetVariable)).ToArray()))
+                }.Select(
+                    parallel => (Process)new Sequence
+                    (
+                        parallel,
+                        new Input(new Channel(new ConstantExpression<string>("D")), targetVariable)
+                    )).ToList();
 
-                //var permutations = set.Permute().Select(p => new string(p.ToArray()));
+                var permutations = set.Permute().Select(p => new string(p.ToArray()));
 
-                //testCases.AddRange(
-                //    from process in processes
-                //    from length in Enumerable.Range(0, set.Length + 1)
-                //    from permutation in permutations.Select(p => p.Substring(0, length)).Distinct()
-                //    let trace = permutation + 'D'
-                //    select new object[]
-                //    {
-                //        process,
-                //        trace,
-                //        permutation.Length == set.Length
-                //    });
+                testCases.AddRange(
+                    from process in processes
+                    from length in Enumerable.Range(0, set.Length + 1)
+                    from permutation in permutations.Select(p => p.Substring(0, length)).Distinct()
+                    let trace = permutation + 'D'
+                    select new object[]
+                    {
+                        process,
+                        trace,
+                        permutation.Length == set.Length
+                    });
 
                 //processes = new List<Process>
                 //{
