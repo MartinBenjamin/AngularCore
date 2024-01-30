@@ -59,6 +59,7 @@ namespace Test
             var input = (global::Process.Input)inputDefinition.New(null);
             service.Execute(input);
             Assert.That(input.Status, Is.EqualTo(global::Process.Status.AwaitIO));
+            Assert.That(service.SynchronisationService.AwaitIO.Any(c => c.Name == channel.Name.Evaluate(input)), Is.True);
             Assert.That(input[variable], Is.Null);
             input.Executelnput(
                 service,
@@ -80,6 +81,7 @@ namespace Test
             var output = (global::Process.Output)outputDefinition.New(null);
             service.Execute(output);
             Assert.That(output.Status, Is.EqualTo(global::Process.Status.AwaitIO));
+            Assert.That(service.SynchronisationService.AwaitIO.Any(c => c.Name == channel.Name.Evaluate(output)), Is.True);
             var outputValue = output.ExecuteOutput(service);
             Assert.That(output.Status, Is.EqualTo(global::Process.Status.Executed));
             Assert.That(outputValue, Is.EqualTo(value));
@@ -103,7 +105,7 @@ namespace Test
             service.Execute(input);
             Assert.That(input.Status, Is.EqualTo(global::Process.Status.AwaitIO));
             Assert.That(input[variable], Is.Null);
-            Assert.That(service.SynchronisationService.AwaitIO.Any(c => c.Name == "channel"), Is.True);
+            Assert.That(service.SynchronisationService.AwaitIO.Any(c => c.Name == channel.Name.Evaluate(input)), Is.True);
 
             var output = outputDefinition.New(null);
             service.Execute(output);
