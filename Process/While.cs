@@ -1,4 +1,5 @@
 using CommonDomainObjects;
+using System.Collections.Generic;
 
 namespace Process
 {
@@ -12,12 +13,14 @@ namespace Process
         }
 
         internal protected While(
-            Definition.While definition,
-            Process          parent
+            Definition.While            definition,
+            Process                     parent,
+            IDictionary<string, object> variables
             )
             : base(
                 definition,
-                parent)
+                parent,
+                variables)
         {
         }
 

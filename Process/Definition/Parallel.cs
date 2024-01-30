@@ -20,10 +20,12 @@ namespace Process.Definition
         }
 
         public override global::Process.Process New(
-            global::Process.Process parent
+            global::Process.Process     parent,
+            IDictionary<string, object> variables = null
             ) => new global::Process.Parallel(
                 this,
-                parent);
+                parent,
+                variables);
     }
 
     public class Parallel: ParallelBase

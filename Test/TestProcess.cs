@@ -56,6 +56,10 @@ namespace Test
             var process = definition.New(null);
             service.Execute(process);
 
+            var outputDefinition = new Output(
+                new Channel(new VariableExpression<string>("channel")),
+                new ConstantExpression<object>(null));
+
             var index = 0;
             foreach(var c in trace.Select(c => c.ToString()))
             {
@@ -70,10 +74,10 @@ namespace Test
                 else
                 {
                     Assert.That(synchronisation.InputCount, Is.GreaterThanOrEqualTo(0));
-                    var outputDefinition = new Output(
-                        new Channel(new ConstantExpression<string>(c), channel.Type),
-                        new ConstantExpression<object>(null));
-                    service.Execute(outputDefinition.New(null));
+                    var output = outputDefinition.New(
+                        null,
+                        new Dictionary<string, object> { { "channel", c } });
+                    service.Execute(output);
                 }
                 index++;
             }

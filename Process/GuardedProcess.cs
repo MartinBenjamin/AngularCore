@@ -1,4 +1,5 @@
 ﻿using CommonDomainObjects;
+using System.Collections.Generic;
 
 namespace Process
 {
@@ -13,12 +14,14 @@ namespace Process
         }
 
         internal protected GuardedProcess(
-            Definition.GuardedProcess definition,
-            Choice                    parent
+            Definition.GuardedProcess   definition,
+            Choice                      parent,
+            IDictionary<string, object> variables
             )
             : base(
                 definition,
-                parent)
+                parent,
+                variables)
         {
         }
 

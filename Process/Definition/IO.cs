@@ -1,5 +1,5 @@
-﻿using Process.Expression;
-using System;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Process.Definition
 {
@@ -27,9 +27,11 @@ namespace Process.Definition
             ) => visitor.Enter(this);
 
         public override global::Process.Process New(
-            global::Process.Process parent
+            global::Process.Process     parent,
+            IDictionary<string, object> variables = null
             ) => new global::Process.IO(
                 this,
-                parent);
+                parent,
+                variables);
     }
 }

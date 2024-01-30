@@ -1,4 +1,5 @@
 ﻿using CommonDomainObjects;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Process
@@ -11,12 +12,14 @@ namespace Process
         }
 
         internal protected Parallel(
-            Definition.ParallelBase definition,
-            Process                 parent
+            Definition.ParallelBase     definition,
+            Process                     parent,
+            IDictionary<string, object> variables
             )
             : base(
                 definition,
-                parent)
+                parent,
+                variables)
         {
         }
 

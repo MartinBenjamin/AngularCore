@@ -1,4 +1,5 @@
 ﻿using CommonDomainObjects;
+using System.Collections.Generic;
 
 namespace Process
 {
@@ -12,12 +13,14 @@ namespace Process
         }
 
         public IO(
-            Definition.Process definition,
-            Process            parent
+            Definition.Process          definition,
+            Process                     parent,
+            IDictionary<string, object> variables
             )
             : base(
                 definition,
-                parent)
+                parent,
+                variables)
         {
             var channelDefinition = ((Definition.IO)definition).Channel;
             Channel = channelDefinition.New(this);

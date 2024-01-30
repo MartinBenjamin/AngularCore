@@ -14,12 +14,14 @@ namespace Process
         }
 
         internal protected Choice(
-            Definition.ChoiceBase definition,
-            Process               parent
+            Definition.ChoiceBase       definition,
+            Process                     parent,
+            IDictionary<string, object> variables
             )
             : base(
                 definition,
-                parent)
+                parent,
+                variables)
         {
         }
 

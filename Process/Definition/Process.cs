@@ -1,5 +1,6 @@
 ﻿using CommonDomainObjects;
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Process.Definition
@@ -18,7 +19,9 @@ namespace Process.Definition
         {
         }
 
-        public abstract global::Process.Process New(global::Process.Process parent);
+        public abstract global::Process.Process New(
+            global::Process.Process     parent,
+            IDictionary<string, object> variables = null);
 
         public abstract bool Accept(IVisitor visitor);
 

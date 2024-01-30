@@ -1,4 +1,6 @@
-﻿namespace Process
+﻿using System.Collections.Generic;
+
+namespace Process
 {
     public class Output: IO
     {
@@ -8,12 +10,14 @@
         }
 
         public Output(
-            Definition.Output definition,
-            Process           parent
+            Definition.Output           definition,
+            Process                     parent,
+            IDictionary<string, object> variables
             )
             : base(
                 definition,
-                parent)
+                parent,
+                variables)
         {
         }
 

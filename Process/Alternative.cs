@@ -1,4 +1,6 @@
-﻿namespace Process
+﻿using System.Collections.Generic;
+
+namespace Process
 {
     public abstract class Alternative: Process
     {
@@ -8,12 +10,14 @@
         }
 
         protected Alternative(
-            Definition.Alternative definition,
-            Process                parent
+            Definition.Alternative      definition,
+            Process                     parent,
+            IDictionary<string, object> variables
             )
             : base(
                 definition,
-                parent)
+                parent,
+                variables)
         {
         }
 

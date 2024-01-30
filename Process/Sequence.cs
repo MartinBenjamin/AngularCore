@@ -1,4 +1,5 @@
 ﻿using CommonDomainObjects;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Process
@@ -11,12 +12,14 @@ namespace Process
         }
 
         internal protected Sequence(
-            Definition.SequenceBase definition,
-            Process                 parent
+            Definition.SequenceBase     definition,
+            Process                     parent,
+            IDictionary<string, object> variables
             )
             : base(
                 definition,
-                parent)
+                parent,
+                variables)
         {
         }
 

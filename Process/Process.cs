@@ -25,14 +25,16 @@ namespace Process
         }
 
         protected Process(
-            Definition.Process definition,
-            Process            parent
+            Definition.Process          definition,
+            Process                     parent,
+            IDictionary<string, object> variables
             )
             : base(Guid.NewGuid())
         {
             Children   = new List<Process>();
             Definition = definition;
             Parent     = parent;
+            _variables = variables;
             Parent?.Children.Add(this);
         }
 
