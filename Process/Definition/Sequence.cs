@@ -89,13 +89,6 @@ namespace Process.Definition
 
         public override IEnumerable<global::Process.Process> NewChildren(
             global::Process.Process parent
-            ) => Variables.Evaluate(parent).Select(
-                variables =>
-                {
-                    var replicated = Replicated.New(parent);
-                    foreach(var pair in variables)
-                        replicated[pair.Key] = pair.Value;
-                    return replicated;
-                });
+            ) => Variables.Evaluate(parent).Select(variables => Replicated.New(parent, variables));
     }
 }
