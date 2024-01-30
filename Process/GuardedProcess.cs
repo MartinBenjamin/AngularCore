@@ -84,8 +84,7 @@ namespace Process
                     executionService,
                     Status.Skipped);
 
-                if(Guard != null)
-                    Guard.NotChosen(executionService);
+                Guard?.Skipped(executionService);
 
                 return false;
             }
