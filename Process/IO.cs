@@ -69,7 +69,7 @@ namespace Process
                 status);
         }
 
-        internal void Skipped(
+        internal void Skip(
             IExecutionService executionService
             )
         {
