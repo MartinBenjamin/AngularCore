@@ -42,21 +42,9 @@ namespace Process.Definition
             Choice choice
             )
         {
-            _builder.Append('[');
-
-            if(choice.Alternatives.Any())
-            {
-                choice.Alternatives.First().Accept(this);
-
-                foreach(var alternative in choice.Alternatives.Skip(1))
-                {
-                    _builder.Append("|");
-                    alternative.Accept(this);
-                }
-            }
-
-            _builder.Append(']');
-
+            Append(
+                choice.Alternatives,
+                "|");
             return false;
         }
 
@@ -158,8 +146,8 @@ namespace Process.Definition
         }
 
         private void Append(
-            IList<Process> processes,
-            string         separator
+            IEnumerable<Process> processes,
+            string               separator
             )
         {
             _builder.Append('[');
