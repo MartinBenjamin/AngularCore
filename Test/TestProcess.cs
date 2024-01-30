@@ -393,46 +393,51 @@ namespace Test
                         permutation.Length == set.Length
                     });
 
-                //processes = new List<Process>
-                //{
-                //    new Choice(
-                //        set.Select(
-                //            c => new GuardedProcess(new IO(new Channel(new ConstantExpression<string>(c.ToString()))))).ToArray()),
-                //    new Choice(
-                //        new Choice(
-                //            "AB".Select(c => new GuardedProcess(new IO(new Channel(new ConstantExpression<string>(c.ToString()))))).ToArray()),
-                //        new GuardedProcess(new IO(new Channel(new ConstantExpression<string>("C"))))),
-                //    new Choice(
-                //        new GuardedProcess(new IO(new Channel(new ConstantExpression<string>("A")))),
-                //        new Choice(
-                //            "BC".Select(c => new GuardedProcess(new IO(new Channel(new ConstantExpression<string>(c.ToString()))))).ToArray()))
-                //}.Select(
-                //    c => (Process)new Sequence
-                //    (
-                //        c,
-                //        new IO(new Channel(new ConstantExpression<string>("D")))
-                //    )).ToList();
+                processes = new List<Process>
+                {
+                    new Choice(
+                        set
+                            .Select(c => c.ToString())
+                            .Select(c => new GuardedProcess(new Input(new Channel(new ConstantExpression<string>(c)), targetVariable))).ToArray()),
+                    new Choice(
+                        new Choice(
+                            set
+                                .Take(2).Select(c => c.ToString())
+                                .Select(c => new GuardedProcess(new Input(new Channel(new ConstantExpression<string>(c)), targetVariable))).ToArray()),
+                        new GuardedProcess(new Input(new Channel(new ConstantExpression<string>(set.Last().ToString())), targetVariable))),
+                    new Choice(
+                        new GuardedProcess(new Input(new Channel(new ConstantExpression<string>(set.First().ToString())), targetVariable)),
+                        new Choice(
+                            set
+                                .Skip(1).Select(c => c.ToString())
+                                .Select(c => new GuardedProcess(new Input(new Channel(new ConstantExpression<string>(c)), targetVariable))).ToArray()))
+                }.Select(
+                    c => (Process)new Sequence
+                    (
+                        c,
+                        new Input(new Channel(new ConstantExpression<string>("D")), targetVariable)
+                    )).ToList();
 
-                //testCases.AddRange(
-                //    from process in processes
-                //    from first in set.Append('D')
-                //    select new object[]
-                //    {
-                //        process,
-                //        first.ToString(),
-                //        first != 'D'
-                //    });
+                testCases.AddRange(
+                    from process in processes
+                    from first in set.Append('D')
+                    select new object[]
+                    {
+                        process,
+                        first.ToString(),
+                        first != 'D'
+                    });
 
-                //testCases.AddRange(
-                //    from process in processes
-                //    from first in set
-                //    from second in set.Append('D')
-                //    select new object[]
-                //    {
-                //        process,
-                //        first.ToString() + second,
-                //        second == 'D'
-                //    });
+                testCases.AddRange(
+                    from process in processes
+                    from first in set
+                    from second in set.Append('D')
+                    select new object[]
+                    {
+                        process,
+                        first.ToString() + second,
+                        second == 'D'
+                    });
 
                 //var next = new Dictionary<string, string>
                 //{

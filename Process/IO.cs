@@ -70,7 +70,7 @@ namespace Process
             IExecutionService executionService
             )
         {
-            base.ChangeStatus(
+            ChangeStatus(
                 executionService,
                 Status.NotChosen);
         }
