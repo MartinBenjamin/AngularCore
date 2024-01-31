@@ -5,8 +5,8 @@ namespace Process.Definition
 {
     public class While: Process
     {
-        public IExpression<bool> BooleanExpression { get; protected set; }
-        public Process           Replicated        { get; protected set; }
+        public IExpression<bool> Condition  { get; protected set; }
+        public Process           Replicated { get; protected set; }
 
         public While()
             : base()
@@ -14,13 +14,13 @@ namespace Process.Definition
         }
 
         public While(
-            IExpression<bool> booleanExpression,
+            IExpression<bool> condition,
             Process           replicated
             )
             : base()
         {
-            BooleanExpression = booleanExpression;
-            Replicated        = replicated;
+            Condition  = condition;
+            Replicated = replicated;
         }
 
         public override global::Process.Process New(

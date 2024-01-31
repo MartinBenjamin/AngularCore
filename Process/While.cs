@@ -42,7 +42,7 @@ namespace Process
                 var definition = Definition.As<Definition.While>();
 
                 if(Replicated == null &&
-                   definition.BooleanExpression.Evaluate(this))
+                   definition.Condition.Evaluate(this))
                 {
                     Replicated = definition.Replicated.New(this);
                     executionService.Execute(Replicated);
