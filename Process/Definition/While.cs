@@ -1,12 +1,12 @@
-using System;
+using Process.Expression;
 using System.Collections.Generic;
 
 namespace Process.Definition
 {
     public class While: Process
     {
-        public Func<global::Process.Process, bool> BooleanExpression { get; protected set; }
-        public Process                             Embedded          { get; protected set; }
+        public IExpression<bool> BooleanExpression { get; protected set; }
+        public Process           Replicated        { get; protected set; }
 
         public While()
             : base()
@@ -14,13 +14,13 @@ namespace Process.Definition
         }
 
         public While(
-            Func<global::Process.Process, bool> booleanExpression,
-            Process                             embedded
+            IExpression<bool> booleanExpression,
+            Process           replicated
             )
             : base()
         {
             BooleanExpression = booleanExpression;
-            Embedded          = embedded;
+            Replicated        = replicated;
         }
 
         public override global::Process.Process New(

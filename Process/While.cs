@@ -5,7 +5,7 @@ namespace Process
 {
     public class While: Process
     {
-        public Process Embedded { get; protected set; }
+        public Process Replicated { get; protected set; }
 
         protected While()
             : base()
@@ -35,20 +35,20 @@ namespace Process
 
             if(Status == Status.Executing)
             {
-                if(Embedded != null &&
-                   Embedded.Status == Status.Executed)
-                        Embedded = null;
+                if(Replicated != null &&
+                   Replicated.Status == Status.Executed)
+                        Replicated = null;
 
                 var definition = Definition.As<Definition.While>();
 
-                if(Embedded == null &&
-                   definition.BooleanExpression(this))
+                if(Replicated == null &&
+                   definition.BooleanExpression.Evaluate(this))
                 {
-                    Embedded = definition.Embedded.New(this);
-                    executionService.Execute(Embedded);
+                    Replicated = definition.Replicated.New(this);
+                    executionService.Execute(Replicated);
                 }
 
-                if(Embedded == null)
+                if(Replicated == null)
                     ChangeStatus(
                         executionService,
                         Status.Executed);
