@@ -10,7 +10,6 @@ using LifeCycles;
 using Locations;
 using Organisations;
 using Roles;
-using System;
 
 namespace Web
 {
@@ -37,12 +36,6 @@ namespace Web
     {
         public Profile()
         {
-            CreateMap<DomainObject<Guid>             , Model.DomainObject<Guid>             >()
-                .ForMember(
-                    domainObject => domainObject.Class,
-                    memberOptions => memberOptions.MapFrom(
-                            (source, destination) => $"{destination.GetType().FullName}, {destination.GetType().Assembly.GetName().Name}" )).IncludeAllDerived()
-                                                                                               .PreserveReferences();
             CreateMap<Range<int>                     , Model.Range<int>                     >().PreserveReferences();
             CreateMap<ClassificationScheme           , Model.ClassificationScheme           >().PreserveReferences();
             CreateMap<ClassificationSchemeClassifier , Model.ClassificationSchemeClassifier >().PreserveReferences();

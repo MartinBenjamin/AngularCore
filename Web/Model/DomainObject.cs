@@ -7,6 +7,6 @@ namespace Web.Model
         public TId Id { get; set; }
 
         [JsonPropertyName("$type")]
-        public string Class { get; set; }
+        public string Class => $"{GetType().FullName}, {GetType().Assembly.GetName().Name}";
     }
 }
