@@ -13,8 +13,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="4.9.4" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.4.0" />
+    <PackageReference Include="Autofac" Version="8.0.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="AutoMapper" Version="13.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.1" />
     <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.0.6">
