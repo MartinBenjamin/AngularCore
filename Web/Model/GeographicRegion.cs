@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Web.Model
 {
+    [JsonDerivedType(typeof(GeographicSubregion))]
+    [JsonDerivedType(typeof(Country))]
+    [JsonDerivedType(typeof(Subdivision))]
     public class GeographicRegion: Named<Guid>
     {
         public GeographicRegionType Type { get; protected set; }

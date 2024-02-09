@@ -10,6 +10,7 @@ using LifeCycles;
 using Locations;
 using Organisations;
 using Roles;
+using System;
 
 namespace Web
 {
@@ -21,8 +22,8 @@ namespace Web
         {
             switch(geographicRegion.Object)
             {
-                case Iso3166._1.Country         country           : return Model.GeographicRegionType.Iso3166_1Country;
-                case Iso3166._2.Subdivision     subdivision       : return Model.GeographicRegionType.Iso3166_2Subdivision;
+                case Country                    country           : return Model.GeographicRegionType.Iso3166_1Country;
+                case Subdivision                subdivision       : return Model.GeographicRegionType.Iso3166_2Subdivision;
                 case UnsdM49.Global             global            : return Model.GeographicRegionType.UnsdM49Global;
                 case UnsdM49.Region             region            : return Model.GeographicRegionType.UnsdM49Region;
                 case UnsdM49.SubRegion          subRegion         : return Model.GeographicRegionType.UnsdM49SubRegion;
@@ -36,6 +37,12 @@ namespace Web
     {
         public Profile()
         {
+            CreateMap<DomainObject<Guid>             , Model.DomainObject<Guid>             >()
+                .ForMember(
+                    domainObject => domainObject.Class,
+                    memberOptions => memberOptions.MapFrom(
+                            (source, destination) => $"{destination.GetType().FullName}, {destination.GetType().Assembly.GetName().Name}" )).IncludeAllDerived()
+                                                                                               .PreserveReferences();
             CreateMap<Range<int>                     , Model.Range<int>                     >().PreserveReferences();
             CreateMap<ClassificationScheme           , Model.ClassificationScheme           >().PreserveReferences();
             CreateMap<ClassificationSchemeClassifier , Model.ClassificationSchemeClassifier >().PreserveReferences();

@@ -8,7 +8,7 @@ namespace Test
     {
         private static readonly IDictionary<string, string> _properties = new Dictionary<string, string>
         {
-            { "connection.driver_class"     , "NHibernate.Driver.SqlClientDriver"                                                 },
+            { "connection.driver_class"     , "NHibernate.Driver.MicrosoftDataSqlClientDriver"                                    },
             { "connection.connection_string", "Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=Test;Integrated Security=SSPI" },
             { "dialect"                     , "NHibernate.Dialect.MsSql2012Dialect"                                               },
             { "show_sql"                    , "false"                                                                             }

@@ -30,6 +30,12 @@ export function newReferenceDeserialiser()
 
         if('$id' in object)
         {
+            if('$values' in object)
+            {
+                objectMap[object.$id] = object.$values;
+                object.$values.forEach((element, index, array) => array[index] = deserialiser(element));
+                return object.$values;
+            }
             objectMap[object.$id] = object;
             delete object.$id;
         }

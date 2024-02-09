@@ -6,11 +6,9 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using NHibernateIntegration;
 using System;
 using System.IO;
+using System.Text.Json.Serialization;
 
 namespace Web
 {
@@ -38,10 +36,8 @@ namespace Web
                 .AddMvc()
                 .AddJsonOptions(options =>
                 {
-                    var serializerSettings = options.SerializerSettings;
-                    serializerSettings.ContractResolver           = new DefaultContractResolver();
-                    serializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
-                    serializerSettings.TypeNameHandling           = TypeNameHandling.Auto;
+                    options.JsonSerializerOptions.ReferenceHandler     = ReferenceHandler.Preserve;
+                    options.JsonSerializerOptions.PropertyNamingPolicy = null;
                 });
 
             // In production, the Angular files will be served from this directory
@@ -104,12 +100,12 @@ namespace Web
                     ServeUnknownFileTypes = true,
                 });
             app.UseSpaStaticFiles();
-
-            app.UseMvc(routes =>
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
 
             app.UseSpa(spa =>
