@@ -10,9 +10,9 @@ namespace Log4NetIntegration
 {
     public class Log4NetMiddleware: IResolveMiddleware
     {
-        public PipelinePhase Phase => PipelinePhase.ParameterSelection;
+        PipelinePhase IResolveMiddleware.Phase => PipelinePhase.ParameterSelection;
 
-        public void Execute(
+        void IResolveMiddleware.Execute(
             ResolveRequestContext         context,
             Action<ResolveRequestContext> next
             )
@@ -21,10 +21,9 @@ namespace Log4NetIntegration
             context.ChangeParameters(context.Parameters.Union(
                 new[]
                 {
-                      new ResolvedParameter(
-                          (p, i) => p.ParameterType == typeof(ILog),
-                          (p, i) => LogManager.GetLogger(p.Member.DeclaringType)
-                      )
+                    new ResolvedParameter(
+                        (p, i) => p.ParameterType == typeof(ILog),
+                        (p, i) => LogManager.GetLogger(p.Member.DeclaringType))
                 }));
 
             // Continue the resolve.
@@ -44,12 +43,14 @@ namespace Log4NetIntegration
 
                 // Set the properties located.
                 foreach(var propToSet in properties)
-                {
-                    propToSet.SetValue(context.Instance, LogManager.GetLogger(instanceType), null);
-                }
+                    propToSet.SetValue(
+                        context.Instance,
+                        LogManager.GetLogger(instanceType),
+                        null);
             }
         }
     }
+
     public class Module: Autofac.Module
     {
         private readonly IResolveMiddleware _middleware = new Log4NetMiddleware();
