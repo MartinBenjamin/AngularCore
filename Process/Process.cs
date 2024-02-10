@@ -25,11 +25,12 @@ namespace Process
         }
 
         protected Process(
+            Guid                        id,
             Definition.Process          definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
-            : base(Guid.NewGuid())
+            : base(id)
         {
             Children   = new List<Process>();
             Definition = definition;

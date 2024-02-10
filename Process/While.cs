@@ -1,4 +1,5 @@
 using CommonDomainObjects;
+using System;
 using System.Collections.Generic;
 
 namespace Process
@@ -13,11 +14,13 @@ namespace Process
         }
 
         internal protected While(
+            Guid                        id,
             Definition.While            definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
             : base(
+                id,
                 definition,
                 parent,
                 variables)
@@ -44,7 +47,9 @@ namespace Process
                 if(Replicated == null &&
                    definition.Condition.Evaluate(this))
                 {
-                    Replicated = definition.Replicated.New(this);
+                    Replicated = definition.Replicated.New(
+                        executionService.NewId(),
+                        this);
                     executionService.Execute(Replicated);
                 }
 

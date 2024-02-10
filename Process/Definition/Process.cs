@@ -20,6 +20,7 @@ namespace Process.Definition
         }
 
         public abstract global::Process.Process New(
+            Guid                        id,
             global::Process.Process     parent,
             IDictionary<string, object> variables = null);
 

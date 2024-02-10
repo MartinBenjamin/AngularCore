@@ -1,4 +1,5 @@
 ﻿using CommonDomainObjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,11 +15,13 @@ namespace Process
         }
 
         internal protected Choice(
+            Guid                        id,
             Definition.ChoiceBase       definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
             : base(
+                id,
                 definition,
                 parent,
                 variables)
@@ -31,7 +34,9 @@ namespace Process
         {
             if(Status == Status.NotExecuted)
             {
-                var alternatives = Definition.As<Definition.ChoiceBase>().NewAlternatives(this).ToList();
+                var alternatives = Definition.As<Definition.ChoiceBase>().NewAlternatives(
+                    executionService,
+                    this).ToList();
                 Alternatives = alternatives;
                 alternatives.ForEach(alternative => ((IExecutable)alternative).Execute(executionService));
 

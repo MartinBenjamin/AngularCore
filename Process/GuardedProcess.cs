@@ -1,4 +1,5 @@
 ﻿using CommonDomainObjects;
+using System;
 using System.Collections.Generic;
 
 namespace Process
@@ -14,11 +15,13 @@ namespace Process
         }
 
         internal protected GuardedProcess(
+            Guid                        id,
             Definition.GuardedProcess   definition,
             Choice                      parent,
             IDictionary<string, object> variables
             )
             : base(
+                id,
                 definition,
                 parent,
                 variables)
@@ -40,7 +43,9 @@ namespace Process
                         executionService,
                         Status.Waiting);
 
-                    Guard = (IO)definition.Guard.New(this);
+                    Guard = (IO)definition.Guard.New(
+                        executionService.NewId(),
+                        this);
                     ((IExecutable)Guard).Execute(executionService);
                 }
                 else
@@ -55,7 +60,9 @@ namespace Process
                 {
                     if(Guarded == null)
                     {
-                        Guarded = definition.Guarded.New(this);
+                        Guarded = definition.Guarded.New(
+                            executionService.NewId(),
+                            this);
                         executionService.Execute(Guarded);
                     }
 

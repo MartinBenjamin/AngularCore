@@ -1,4 +1,5 @@
 ﻿using CommonDomainObjects;
+using System;
 using System.Collections.Generic;
 
 namespace Process
@@ -13,16 +14,17 @@ namespace Process
         }
 
         protected IO(
-            Definition.Process          definition,
+            Guid                        id,
+            Definition.IO               definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
-            : base(
+            : base(id,
                 definition,
                 parent,
                 variables)
         {
-            var channelDefinition = ((Definition.IO)definition).Channel;
+            var channelDefinition = definition.Channel;
             Channel = channelDefinition.New(this);
         }
 

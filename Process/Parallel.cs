@@ -1,4 +1,5 @@
 ﻿using CommonDomainObjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,11 +13,13 @@ namespace Process
         }
 
         internal protected Parallel(
+            Guid                        id,
             Definition.ParallelBase     definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
             : base(
+                id,
                 definition,
                 parent,
                 variables)
@@ -33,7 +36,9 @@ namespace Process
                     executionService,
                     Status.Executing);
 
-                _ = Definition.As<Definition.ParallelBase>().NewChildren(this);
+                _ = Definition.As<Definition.ParallelBase>().NewChildren(
+                    executionService,
+                    this);
                 Children.ForEach(executionService.Execute);
             }
 

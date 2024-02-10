@@ -20,14 +20,17 @@ namespace Process.Definition
         }
 
         public override global::Process.Process New(
+            Guid                        id,
             global::Process.Process     parent,
             IDictionary<string, object> variables = null
             ) => new global::Process.Choice(
+                id,
                 this,
                 parent,
                 variables);
 
         public abstract IEnumerable<global::Process.Alternative> NewAlternatives(
+            IIdService<Guid>        idService,
             global::Process.Process parent);
     }
 
@@ -65,9 +68,12 @@ namespace Process.Definition
         }
 
         public override IEnumerable<global::Process.Alternative> NewAlternatives(
+            IIdService<Guid>        idService,
             global::Process.Process parent
             ) => Alternatives
-                .Select(alternative => alternative.New(parent))
+                .Select(alternative => alternative.New(
+                    idService.NewId(),
+                    parent))
                 .Cast<global::Process.Alternative>();
     }
 
@@ -93,7 +99,11 @@ namespace Process.Definition
             ) => visitor.Enter(this);
 
         public override IEnumerable<global::Process.Alternative> NewAlternatives(
+            IIdService<Guid>        idService,
             global::Process.Process parent
-            ) => Variables.Evaluate(parent).Select(variables => Replicated.New(parent, variables)).Cast<global::Process.Alternative>();
+            ) => Variables.Evaluate(parent).Select(variables => Replicated.New(
+                idService.NewId(),
+                parent,
+                variables)).Cast<global::Process.Alternative>();
     }
 }

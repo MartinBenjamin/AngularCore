@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Process
 {
@@ -10,11 +11,13 @@ namespace Process
         }
 
         public Input(
+            Guid                        id,
             Definition.Input            definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
             : base(
+                id,
                 definition,
                 parent,
                 variables)

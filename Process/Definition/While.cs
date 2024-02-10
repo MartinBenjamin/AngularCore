@@ -1,4 +1,5 @@
 using Process.Expression;
+using System;
 using System.Collections.Generic;
 
 namespace Process.Definition
@@ -24,9 +25,11 @@ namespace Process.Definition
         }
 
         public override global::Process.Process New(
+            Guid                        id,
             global::Process.Process     parent,
             IDictionary<string, object> variables = null
             ) => new global::Process.While(
+                id,
                 this,
                 parent,
                 variables);

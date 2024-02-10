@@ -20,9 +20,11 @@ namespace Process.Definition
         }
 
         public override global::Process.Process New(
+            Guid                        id,
             global::Process.Process     parent,
             IDictionary<string, object> variables = null
             ) => new global::Process.Parallel(
+                id,
                 this,
                 parent,
                 variables);
@@ -62,8 +64,12 @@ namespace Process.Definition
         }
 
         public override IList<global::Process.Process> NewChildren(
+            IIdService<Guid>        idService,
             global::Process.Process parent
-            ) => Children.Select(child => child.New(parent)).ToList();
+            ) => Children.Select(
+                child => child.New(
+                    idService.NewId(),
+                    parent)).ToList();
     }
 
     public class ParallelForEach: ParallelBase
@@ -88,7 +94,11 @@ namespace Process.Definition
             ) => visitor.Enter(this);
 
         public override IList<global::Process.Process> NewChildren(
+            IIdService<Guid>        idService,
             global::Process.Process parent
-            ) => Variables.Evaluate(parent).Select(variables => Replicated.New(parent, variables)).ToList();
+            ) => Variables.Evaluate(parent).Select(variables => Replicated.New(
+                idService.NewId(),  
+                parent,
+                variables)).ToList();
     }
 }

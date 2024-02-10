@@ -28,9 +28,11 @@ namespace Process.Definition
             ) => visitor.Enter(this);
 
         public override global::Process.Process New(
+            Guid                        id,
             global::Process.Process     parent,
             IDictionary<string, object> variables = null
             ) => new global::Process.Input(
+                id,
                 this,
                 parent,
                 variables);

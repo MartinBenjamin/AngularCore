@@ -18,6 +18,7 @@ namespace Process.Definition
         }
 
         public abstract IList<global::Process.Process> NewChildren(
+            IIdService<Guid>        idService,
             global::Process.Process parent);
     }
 }

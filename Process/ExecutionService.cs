@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Process
 {
@@ -7,6 +8,8 @@ namespace Process
         private readonly ISynchronisationService _synchronisationService = new SynchronisationService();
         private readonly Queue<IExecutable>      _queue = new();
         private          int                     _entered;
+
+        Guid Definition.IIdService<Guid>.NewId() => Guid.NewGuid();
 
         ISynchronisationService IExecutionService.SynchronisationService => _synchronisationService;
 
