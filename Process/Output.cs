@@ -5,7 +5,7 @@ namespace Process
 {
     public class Output: IO
     {
-        public Output(
+        internal protected Output(
             Guid                        id,
             Definition.Output           definition,
             Process                     parent,

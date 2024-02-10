@@ -5,7 +5,7 @@ namespace Process
 {
     public class Input: IO
     {
-        public Input(
+        internal protected Input(
             Guid                        id,
             Definition.Input            definition,
             Process                     parent,
