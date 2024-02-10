@@ -17,7 +17,7 @@ namespace Process.Definition
         {
         }
 
-        public abstract IEnumerable<global::Process.Process> NewChildren(
+        public abstract IList<global::Process.Process> NewChildren(
             global::Process.Process parent);
     }
 }

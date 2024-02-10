@@ -61,9 +61,9 @@ namespace Process.Definition
             return visitor.Exit(this);
         }
 
-        public override IEnumerable<global::Process.Process> NewChildren(
+        public override IList<global::Process.Process> NewChildren(
             global::Process.Process parent
-            ) => Children.Select(child => child.New(parent));
+            ) => Children.Select(child => child.New(parent)).ToList();
     }
 
     public class SequenceForEach: SequenceBase
@@ -87,8 +87,8 @@ namespace Process.Definition
             IVisitor visitor
             ) => visitor.Enter(this);
 
-        public override IEnumerable<global::Process.Process> NewChildren(
+        public override IList<global::Process.Process> NewChildren(
             global::Process.Process parent
-            ) => Variables.Evaluate(parent).Select(variables => Replicated.New(parent, variables));
+            ) => Variables.Evaluate(parent).Select(variables => Replicated.New(parent, variables)).ToList();
     }
 }
