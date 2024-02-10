@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.IO;
 using System.Text.Json.Serialization;
@@ -15,12 +16,12 @@ namespace Web
     public class Startup
     {
         public IConfiguration      Configuration        { get; }
-        public IHostingEnvironment HostingEnvironment   { get; }
+        public IWebHostEnvironment HostingEnvironment   { get; }
         public IContainer          ApplicationContainer { get; private set; }
 
         public Startup(
             IConfiguration      configuration,
-            IHostingEnvironment hostingEnvironment
+            IWebHostEnvironment hostingEnvironment
             )
         {
             Configuration      = configuration;
@@ -80,7 +81,7 @@ namespace Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(
             IApplicationBuilder app,
-            IHostingEnvironment env
+            IWebHostEnvironment env
             )
         {
             if(env.IsDevelopment())
