@@ -5,11 +5,6 @@ namespace Process
 {
     public class Input: IO
     {
-        protected Input()
-            : base()
-        {
-        }
-
         public Input(
             Guid                        id,
             Definition.Input            definition,

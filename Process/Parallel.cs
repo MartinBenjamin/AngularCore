@@ -7,11 +7,6 @@ namespace Process
 {
     public class Parallel: Process
     {
-        protected Parallel()
-            : base()
-        {
-        }
-
         internal protected Parallel(
             Guid                        id,
             Definition.ParallelBase     definition,

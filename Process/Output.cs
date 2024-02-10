@@ -5,11 +5,6 @@ namespace Process
 {
     public class Output: IO
     {
-        protected Output()
-            : base()
-        {
-        }
-
         public Output(
             Guid                        id,
             Definition.Output           definition,

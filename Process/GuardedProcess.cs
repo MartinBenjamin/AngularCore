@@ -9,11 +9,6 @@ namespace Process
         public virtual IO      Guard   { get; protected set; }
         public virtual Process Guarded { get; protected set; }
 
-        protected GuardedProcess()
-            : base()
-        {
-        }
-
         internal protected GuardedProcess(
             Guid                        id,
             Definition.GuardedProcess   definition,

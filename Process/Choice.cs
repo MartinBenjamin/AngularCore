@@ -9,11 +9,6 @@ namespace Process
     {
         public virtual IList<Alternative> Alternatives { get; protected set; }
 
-        protected Choice()
-            : base()
-        {
-        }
-
         internal protected Choice(
             Guid                        id,
             Definition.ChoiceBase       definition,

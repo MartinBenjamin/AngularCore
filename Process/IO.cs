@@ -8,11 +8,6 @@ namespace Process
     {
         public virtual Channel Channel { get; protected set; }
 
-        protected IO()
-            : base()
-        {
-        }
-
         protected IO(
             Guid                        id,
             Definition.IO               definition,

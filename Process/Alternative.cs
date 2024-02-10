@@ -5,11 +5,6 @@ namespace Process
 {
     public abstract class Alternative: Process
     {
-        protected Alternative()
-            : base()
-        {
-        }
-
         protected Alternative(
             Guid                        id,
             Definition.Alternative      definition,

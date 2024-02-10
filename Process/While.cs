@@ -8,11 +8,6 @@ namespace Process
     {
         public Process Replicated { get; protected set; }
 
-        protected While()
-            : base()
-        {
-        }
-
         internal protected While(
             Guid                        id,
             Definition.While            definition,

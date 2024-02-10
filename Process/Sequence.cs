@@ -7,11 +7,6 @@ namespace Process
 {
     public class Sequence: Process
     {
-        protected Sequence()
-            : base()
-        {
-        }
-
         internal protected Sequence(
             Guid                        id,
             Definition.SequenceBase     definition,
