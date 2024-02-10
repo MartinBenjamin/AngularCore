@@ -91,9 +91,7 @@ namespace Process
             get => _variables != null && _variables.TryGetValue(variable, out var value) ? value : Parent?[variable];
             set
             {
-                if(_variables == null)
-                    _variables = new Dictionary<string, object>();
-
+                _variables ??= new Dictionary<string, object>();
                 _variables[variable] = value;
             }
         }

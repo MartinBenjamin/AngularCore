@@ -33,7 +33,6 @@ namespace Process
             {
                 var alternatives = Definition.As<Definition.ChoiceBase>().NewAlternatives(this).ToList();
                 Alternatives = alternatives;
-                alternatives.ForEach(executionService.Save);
                 alternatives.ForEach(alternative => ((IExecutable)alternative).Execute(executionService));
 
                 ChangeStatus(

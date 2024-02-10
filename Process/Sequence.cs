@@ -33,8 +33,7 @@ namespace Process
                     executionService,
                     Status.Executing);
 
-                Definition.As<Definition.SequenceBase>().NewChildren(this).ToList();
-                Children.ForEach(executionService.Save);
+                _ = Definition.As<Definition.SequenceBase>().NewChildren(this).ToList();
             }
 
             if(Status == Status.Executing)

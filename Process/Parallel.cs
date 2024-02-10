@@ -33,8 +33,7 @@ namespace Process
                     executionService,
                     Status.Executing);
 
-                Definition.As<Definition.ParallelBase>().NewChildren(this).ToList();
-                Children.ForEach(executionService.Save);
+                _ = Definition.As<Definition.ParallelBase>().NewChildren(this).ToList();
                 Children.ForEach(executionService.Execute);
             }
 

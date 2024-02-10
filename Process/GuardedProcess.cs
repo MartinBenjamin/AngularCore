@@ -41,7 +41,6 @@ namespace Process
                         Status.Waiting);
 
                     Guard = (IO)definition.Guard.New(this);
-                    executionService.Save(Guard);
                     ((IExecutable)Guard).Execute(executionService);
                 }
                 else
@@ -57,7 +56,6 @@ namespace Process
                     if(Guarded == null)
                     {
                         Guarded = definition.Guarded.New(this);
-                        executionService.Save(Guarded);
                         executionService.Execute(Guarded);
                     }
 
