@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Process
 {
-    public class IO: Process
+    public abstract class IO: Process
     {
         public virtual Channel Channel { get; protected set; }
 
@@ -12,7 +12,7 @@ namespace Process
         {
         }
 
-        public IO(
+        protected IO(
             Definition.Process          definition,
             Process                     parent,
             IDictionary<string, object> variables
@@ -78,28 +78,7 @@ namespace Process
                 Status.Skipped);
         }
 
-        public virtual void ExecuteIO(
-            IExecutionService executionService
-            )
-        {
-            if(Status != Status.Waiting)
-                throw new InvalidStateException();
-
-            ChangeStatus(
-                executionService,
-                Status.Executed);
-        }
-
-        protected virtual void Register(
-            IExecutionService executionService
-            )
-        {
-        }
-
-        protected virtual void Deregister(
-            IExecutionService executionService
-            )
-        {
-        }
+        protected abstract void Register  (IExecutionService executionService);
+        protected abstract void Deregister(IExecutionService executionService);
     }
 }

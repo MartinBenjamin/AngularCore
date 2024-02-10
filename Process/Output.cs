@@ -25,7 +25,13 @@ namespace Process
             IExecutionService executionService
             )
         {
-            base.ExecuteIO(executionService);
+            if(Status != Status.Waiting)
+                throw new InvalidStateException();
+
+            ChangeStatus(
+                executionService,
+                Status.Executed);
+
             return ((Definition.Output)Definition).Source.Evaluate(this);
         }
 
