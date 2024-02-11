@@ -26,6 +26,8 @@ namespace Process.Definition
 
         public abstract void Accept(IVisitor visitor);
 
+        public abstract TResult Select<TResult>(ISelector<TResult> selector);
+
         public override string ToString()
         {
             var builder = new StringBuilder();
