@@ -82,7 +82,8 @@ namespace Process.Definition
             While @while
             )
         {
-            @while.ToString(_builder);
+            _builder.Append('*');
+            @while.Replicated.Accept(this);
         }
 
         void IVisitor.Visit(

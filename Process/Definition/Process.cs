@@ -32,11 +32,5 @@ namespace Process.Definition
             Accept(new ProcessWriter(builder));
             return builder.ToString();
         }
-
-        public virtual void ToString(
-            StringBuilder builder
-            )
-        {
-        }
     }
 }
