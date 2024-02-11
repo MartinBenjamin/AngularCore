@@ -18,45 +18,29 @@ namespace Process.Definition
             _expressionWriter = new Expression.ExpressionWriter(builder);
         }
 
-        bool IVisitor.Enter(
+        void IVisitor.Visit(
             Sequence sequence
-            )
-        {
-            Append(
+            ) => Append(
                 sequence.Children,
                 ";");
-            return false;
-        }
 
-        bool IVisitor.Enter(
+        void IVisitor.Visit(
             Parallel parallel
-            )
-        {
-            Append(
+            ) => Append(
                 parallel.Children,
                 "||");
-            return false;
-        }
 
-        bool IVisitor.Enter(
+        void IVisitor.Visit(
             Choice choice
-            )
-        {
-            Append(
+            ) => Append(
                 choice.Alternatives,
                 "|");
-            return false;
-        }
 
-        bool IVisitor.Enter(
+        void IVisitor.Visit(
             IO io
-            )
-        {
-            io.Channel.Name.Accept(_expressionWriter);
-            return true;
-        }
+            ) => io.Channel.Name.Accept(_expressionWriter);
 
-        bool IVisitor.Enter(
+        void IVisitor.Visit(
             Input input
             )
         {
@@ -64,10 +48,18 @@ namespace Process.Definition
             _builder
                 .Append('?')
                 .Append(input.TargetVariable);
-            return true;
         }
 
-        bool IVisitor.Enter(
+        void IVisitor.Visit(
+            Output output
+            )
+        {
+            output.Channel.Name.Accept(_expressionWriter);
+            _builder.Append('!');
+            output.Source.Accept(_expressionWriter);
+        }
+
+        void IVisitor.Visit(
             GuardedProcess guardedProcess
             )
         {
@@ -84,65 +76,34 @@ namespace Process.Definition
                 _builder.Append("->");
                 guardedProcess.Guarded.Accept(this);
             }
-
-            return false;
         }
 
-        bool IVisitor.Enter(
+        void IVisitor.Visit(
             While @while
             )
         {
             @while.ToString(_builder);
-            return true;
         }
 
-        bool IVisitor.Enter(
+        void IVisitor.Visit(
             SequenceForEach sequenceForEach
             )
         {
             throw new NotImplementedException();
         }
 
-        bool IVisitor.Enter(
+        void IVisitor.Visit(
             ParallelForEach parallelForEach
             )
         {
             throw new NotImplementedException();
         }
 
-        bool IVisitor.Enter(
+        void IVisitor.Visit(
             ChoiceForEach choiceForEach
             )
         {
             throw new NotImplementedException();
-        }
-
-        bool IVisitor.Exit(
-            Sequence sequence
-            )
-        {
-            return true;
-        }
-
-        bool IVisitor.Exit(
-            Parallel parallel
-            )
-        {
-            return true;
-        }
-
-        bool IVisitor.Exit(
-            Choice choice
-            )
-        {
-            return true;
-        }
-
-        bool IVisitor.Exit(
-            GuardedProcess guardedProcess
-            )
-        {
-            return true;
         }
 
         private void Append(

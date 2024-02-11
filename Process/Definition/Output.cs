@@ -17,10 +17,6 @@ namespace Process.Definition
             Source = source;
         }
 
-        public override bool Accept(
-            IVisitor visitor
-            ) => visitor.Enter(this);
-
         public override global::Process.Process New(
             Guid                        id,
             global::Process.Process     parent,
@@ -30,5 +26,9 @@ namespace Process.Definition
                 this,
                 parent,
                 variables);
+
+        public override void Accept(
+            IVisitor visitor
+            ) => visitor.Visit(this);
     }
 }

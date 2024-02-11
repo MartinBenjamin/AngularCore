@@ -49,12 +49,8 @@ namespace Process.Definition
                 (global::Process.Choice)parent,
                 variables);
 
-        public override bool Accept(
+        public override void Accept(
             IVisitor visitor
-            ) =>
-                visitor.Enter(this) &&
-                Guard.Accept(visitor) &&
-                (Guarded == null || Guarded.Accept(visitor)) &&
-                visitor.Exit(this);
+            ) => visitor.Visit(this);
     }
 }

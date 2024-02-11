@@ -24,7 +24,7 @@ namespace Process.Definition
             global::Process.Process     parent,
             IDictionary<string, object> variables = null);
 
-        public abstract bool Accept(IVisitor visitor);
+        public abstract void Accept(IVisitor visitor);
 
         public override string ToString()
         {

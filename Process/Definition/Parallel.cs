@@ -49,19 +49,9 @@ namespace Process.Definition
         {
         }
 
-        public override bool Accept(
+        public override void Accept(
             IVisitor visitor
-            )
-        {
-            if(!visitor.Enter(this))
-                return false;
-
-            foreach(var child in Children)
-                if(!child.Accept(visitor))
-                    return false;
-
-            return visitor.Exit(this);
-        }
+            ) => visitor.Visit(this);
 
         public override IList<global::Process.Process> NewChildren(
             IIdService<Guid>        idService,
@@ -89,9 +79,9 @@ namespace Process.Definition
         {
         }
 
-        public override bool Accept(
+        public override void Accept(
             IVisitor visitor
-            ) => visitor.Enter(this);
+            ) => visitor.Visit(this);
 
         public override IList<global::Process.Process> NewChildren(
             IIdService<Guid>        idService,

@@ -34,8 +34,8 @@ namespace Process.Definition
                 parent,
                 variables);
 
-        public override bool Accept(
+        public override void Accept(
             IVisitor visitor
-            ) => visitor.Enter(this);
+            ) => visitor.Visit(this);
     }
 }

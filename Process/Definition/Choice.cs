@@ -53,19 +53,9 @@ namespace Process.Definition
         {
         }
 
-        public override bool Accept(
+        public override void Accept(
             IVisitor visitor
-            )
-        {
-            if(!visitor.Enter(this))
-                return false;
-
-            foreach(var alternative in Alternatives)
-                if(!alternative.Accept(visitor))
-                    return false;
-
-            return visitor.Exit(this);
-        }
+            ) => visitor.Visit(this);
 
         public override IEnumerable<global::Process.Alternative> NewAlternatives(
             IIdService<Guid>        idService,
@@ -94,9 +84,9 @@ namespace Process.Definition
         {
         }
 
-        public override bool Accept(
+        public override void Accept(
             IVisitor visitor
-            ) => visitor.Enter(this);
+            ) => visitor.Visit(this);
 
         public override IEnumerable<global::Process.Alternative> NewAlternatives(
             IIdService<Guid>        idService,
