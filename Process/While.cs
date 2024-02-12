@@ -1,4 +1,3 @@
-using CommonDomainObjects;
 using System;
 using System.Collections.Generic;
 
@@ -6,6 +5,8 @@ namespace Process
 {
     public class While: Process
     {
+        private readonly Definition.While _definition;
+
         public Process Replicated { get; protected set; }
 
         internal protected While(
@@ -20,6 +21,7 @@ namespace Process
                 parent,
                 variables)
         {
+            _definition = definition;
         }
 
         protected override void Execute(
@@ -37,12 +39,10 @@ namespace Process
                    Replicated.Status == Status.Executed)
                         Replicated = null;
 
-                var definition = Definition.As<Definition.While>();
-
                 if(Replicated == null &&
-                   definition.Condition.Evaluate(this))
+                   _definition.Condition.Evaluate(this))
                 {
-                    Replicated = definition.Replicated.Select(executionService.Constructor)(
+                    Replicated = _definition.Replicated.Select(executionService.Constructor)(
                         this,
                         null);
                     executionService.Execute(Replicated);

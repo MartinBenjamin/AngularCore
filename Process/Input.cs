@@ -5,6 +5,8 @@ namespace Process
 {
     public class Input: IO
     {
+        private readonly Definition.Input _definition;
+
         internal protected Input(
             Guid                        id,
             Definition.Input            definition,
@@ -17,6 +19,7 @@ namespace Process
                 parent,
                 variables)
         {
+            _definition = definition;
         }
 
         public virtual void Executelnput(
@@ -27,7 +30,7 @@ namespace Process
             if(Status != Status.Waiting)
                 throw new InvalidStateException();
 
-            (Parent??this)[((Definition.Input)Definition).TargetVariable] = input;
+            (Parent??this)[_definition.TargetVariable] = input;
 
             ChangeStatus(
                 executionService,

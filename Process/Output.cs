@@ -5,6 +5,8 @@ namespace Process
 {
     public class Output: IO
     {
+        private readonly Definition.Output _definition;
+
         internal protected Output(
             Guid                        id,
             Definition.Output           definition,
@@ -17,6 +19,7 @@ namespace Process
                 parent,
                 variables)
         {
+            _definition = definition;
         }
 
         public virtual object ExecuteOutput(
@@ -30,7 +33,7 @@ namespace Process
                 executionService,
                 Status.Executed);
 
-            return ((Definition.Output)Definition).Source.Evaluate(this);
+            return _definition.Source.Evaluate(this);
         }
 
         protected override void Register(
