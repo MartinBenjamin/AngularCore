@@ -1,4 +1,4 @@
-﻿namespace Process.Definition
+﻿namespace Process
 {
     public interface IIdService<TId>
     {

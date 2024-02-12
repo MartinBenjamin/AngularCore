@@ -9,7 +9,7 @@ namespace Process
         private readonly Queue<IExecutable>      _queue = new();
         private          int                     _entered;
 
-        Guid Definition.IIdService<Guid>.NewId() => Guid.NewGuid();
+        Guid IIdService<Guid>.NewId() => Guid.NewGuid();
 
         Definition.ISelector<Func<Process, IDictionary<string, object>, Process>> IExecutionService.Constructor => new Constructor(this);
 
