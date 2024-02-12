@@ -71,7 +71,7 @@ namespace Process
 
         public Choice(
             Guid                        id,
-            Definition.Choice         definition,
+            Definition.Choice           definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
