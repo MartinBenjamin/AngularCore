@@ -68,6 +68,7 @@ namespace Process.Definition
             ) => visitor.Visit(this);
 
         public override TResult Select<TResult>(
-            ISelector<TResult> selector) => selector.Select(this);
+            ISelector<TResult> selector
+            ) => selector.Select(this);
     }
 }

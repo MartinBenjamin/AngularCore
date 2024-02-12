@@ -21,7 +21,7 @@ namespace Process.Definition
 
     public class Parallel: ParallelBase
     {
-        public IList<Process> Children { get; set; }
+        public IList<Process> Children { get; protected set; }
 
         public Parallel(
             params Process[] children
@@ -68,6 +68,7 @@ namespace Process.Definition
             ) => visitor.Visit(this);
 
         public override TResult Select<TResult>(
-            ISelector<TResult> selector) => selector.Select(this);
+            ISelector<TResult> selector
+            ) => selector.Select(this);
     }
 }
