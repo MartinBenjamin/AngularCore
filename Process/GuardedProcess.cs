@@ -6,6 +6,8 @@ namespace Process
 {
     public class GuardedProcess: Alternative
     {
+        private readonly Definition.GuardedProcess _definition;
+
         public virtual IO      Guard   { get; protected set; }
         public virtual Process Guarded { get; protected set; }
 
@@ -21,24 +23,23 @@ namespace Process
                 parent,
                 variables)
         {
+            _definition = definition;
         }
 
         protected override void Execute(
             IExecutionService executionService
             )
         {
-            var definition = Definition.As<Definition.GuardedProcess>();
-
             if(Status == Status.NotExecuted)
             {
-                if(definition.GuardExpression == null ||
-                   definition.GuardExpression.Evaluate(this))
+                if(_definition.GuardExpression == null ||
+                   _definition.GuardExpression.Evaluate(this))
                 {
                     ChangeStatus(
                         executionService,
                         Status.Waiting);
 
-                    Guard = (IO)definition.Guard.Select(executionService.Constructor)(
+                    Guard = (IO)_definition.Guard.Select(executionService.Constructor)(
                         this,
                         null);
                     ((IExecutable)Guard).Execute(executionService);
@@ -51,11 +52,11 @@ namespace Process
 
             if(Status == Status.Executing)
             {
-                if(definition.Guarded != null)
+                if(_definition.Guarded != null)
                 {
                     if(Guarded == null)
                     {
-                        Guarded = definition.Guarded.Select(executionService.Constructor)(
+                        Guarded = _definition.Guarded.Select(executionService.Constructor)(
                             this,
                             null);
                         executionService.Execute(Guarded);
