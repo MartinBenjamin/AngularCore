@@ -5,7 +5,6 @@
         void Visit(Sequence        sequence       );
         void Visit(Parallel        parallel       );
         void Visit(Choice          choice         );
-        void Visit(IO              io             );
         void Visit(Input           input          );
         void Visit(Output          output         );
         void Visit(GuardedProcess  guardedProcess );

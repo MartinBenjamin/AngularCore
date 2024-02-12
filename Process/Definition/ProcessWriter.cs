@@ -37,10 +37,6 @@ namespace Process.Definition
                 "|");
 
         void IVisitor.Visit(
-            IO io
-            ) => io.Channel.Name.Accept(_expressionWriter);
-
-        void IVisitor.Visit(
             Input input
             )
         {

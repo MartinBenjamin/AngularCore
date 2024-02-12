@@ -5,7 +5,6 @@
         TResult Select(Sequence        sequence       );
         TResult Select(Parallel        parallel       );
         TResult Select(Choice          choice         );
-        TResult Select(IO              io             );
         TResult Select(Input           input          );
         TResult Select(Output          output         );
         TResult Select(GuardedProcess  guardedProcess );
