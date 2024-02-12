@@ -1,130 +1,126 @@
 ﻿using Process.Definition;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Process
 {
-    internal class Constructor: ISelector<Func<Guid, Process, IDictionary<string, object>, Process>>
+    public class Constructor: ISelector<Func<Process, IDictionary<string, object>, Process>>
     {
-        Func<Guid, Process, IDictionary<string, object>, Process> ISelector<Func<Guid, Process, IDictionary<string, object>, Process>>.Select(
+        private readonly IIdService<Guid> _idService;
+
+        public Constructor(
+            IIdService<Guid> idService
+            )
+        {
+            _idService = idService;
+        }
+
+        Func<Process, IDictionary<string, object>, Process> ISelector<Func<Process, IDictionary<string, object>, Process>>.Select(
             Definition.Sequence definition
             ) => (
-                Guid                        id,
                 Process                     parent,
                 IDictionary<string, object> variables
                 ) => new Sequence(
-                    id,
+                    _idService.NewId(),
                     definition,
                     parent,
                     variables);
 
-        Func<Guid, Process, IDictionary<string, object>, Process> ISelector<Func<Guid, Process, IDictionary<string, object>, Process>>.Select(
+        Func<Process, IDictionary<string, object>, Process> ISelector<Func<Process, IDictionary<string, object>, Process>>.Select(
             Definition.Parallel definition
             ) => (
-                Guid                        id,
                 Process                     parent,
                 IDictionary<string, object> variables
                 ) => new Parallel(
-                    id,
+                    _idService.NewId(),
                     definition,
                     parent,
                     variables);
 
-        Func<Guid, Process, IDictionary<string, object>, Process> ISelector<Func<Guid, Process, IDictionary<string, object>, Process>>.Select(
+        Func<Process, IDictionary<string, object>, Process> ISelector<Func<Process, IDictionary<string, object>, Process>>.Select(
             Definition.Choice definition
             ) => (
-                Guid                        id,
                 Process                     parent,
                 IDictionary<string, object> variables
                 ) => new Choice(
-                    id,
+                    _idService.NewId(),
                     definition,
                     parent,
                     variables);
 
-        Func<Guid, Process, IDictionary<string, object>, Process> ISelector<Func<Guid, Process, IDictionary<string, object>, Process>>.Select(
+        Func<Process, IDictionary<string, object>, Process> ISelector<Func<Process, IDictionary<string, object>, Process>>.Select(
             Definition.Input definition
             ) => (
-                Guid                        id,
                 Process                     parent,
                 IDictionary<string, object> variables
                 ) => new Input(
-                    id,
+                    _idService.NewId(),
                     definition,
                     parent,
                     variables);
 
-        Func<Guid, Process, IDictionary<string, object>, Process> ISelector<Func<Guid, Process, IDictionary<string, object>, Process>>.Select(
+        Func<Process, IDictionary<string, object>, Process> ISelector<Func<Process, IDictionary<string, object>, Process>>.Select(
             Definition.Output definition
             ) => (
-                Guid                        id,
                 Process                     parent,
                 IDictionary<string, object> variables
                 ) => new Output(
-                    id,
+                    _idService.NewId(),
                     definition,
                     parent,
                     variables);
 
-        Func<Guid, Process, IDictionary<string, object>, Process> ISelector<Func<Guid, Process, IDictionary<string, object>, Process>>.Select(
+        Func<Process, IDictionary<string, object>, Process> ISelector<Func<Process, IDictionary<string, object>, Process>>.Select(
             Definition.GuardedProcess definition
             ) => (
-                Guid                        id,
                 Process                     parent,
                 IDictionary<string, object> variables
                 ) => new GuardedProcess(
-                    id,
+                    _idService.NewId(),
                     definition,
                     (Choice)parent,
                     variables);
 
-        Func<Guid, Process, IDictionary<string, object>, Process> ISelector<Func<Guid, Process, IDictionary<string, object>, Process>>.Select(
+        Func<Process, IDictionary<string, object>, Process> ISelector<Func<Process, IDictionary<string, object>, Process>>.Select(
             Definition.While definition
             ) => (
-                Guid                        id,
                 Process                     parent,
                 IDictionary<string, object> variables
                 ) => new While(
-                    id,
+                    _idService.NewId(),
                     definition,
                     parent,
                     variables);
 
-        Func<Guid, Process, IDictionary<string, object>, Process> ISelector<Func<Guid, Process, IDictionary<string, object>, Process>>.Select(
+        Func<Process, IDictionary<string, object>, Process> ISelector<Func<Process, IDictionary<string, object>, Process>>.Select(
             SequenceForEach definition
             ) => (
-                Guid                        id,
                 Process                     parent,
                 IDictionary<string, object> variables
                 ) => new Sequence(
-                    id,
+                    _idService.NewId(),
                     definition,
                     parent,
                     variables);
 
-        Func<Guid, Process, IDictionary<string, object>, Process> ISelector<Func<Guid, Process, IDictionary<string, object>, Process>>.Select(
+        Func<Process, IDictionary<string, object>, Process> ISelector<Func<Process, IDictionary<string, object>, Process>>.Select(
             ParallelForEach definition
             ) => (
-                Guid                        id,
                 Process                     parent,
                 IDictionary<string, object> variables
                 ) => new Parallel(
-                    id,
+                    _idService.NewId(),
                     definition,
                     parent,
                     variables);
 
-        Func<Guid, Process, IDictionary<string, object>, Process> ISelector<Func<Guid, Process, IDictionary<string, object>, Process>>.Select(
+        Func<Process, IDictionary<string, object>, Process> ISelector<Func<Process, IDictionary<string, object>, Process>>.Select(
             ChoiceForEach definition
             ) => (
-                Guid id,
                 Process parent,
                 IDictionary<string, object> variables
                 ) => new Choice(
-                    id,
+                    _idService.NewId(),
                     definition,
                     parent,
                     variables);
