@@ -19,11 +19,6 @@ namespace Process.Definition
         {
         }
 
-        public abstract global::Process.Process New(
-            Guid                        id,
-            global::Process.Process     parent,
-            IDictionary<string, object> variables = null);
-
         public abstract void Accept(IVisitor visitor);
 
         public abstract TResult Select<TResult>(ISelector<TResult> selector);

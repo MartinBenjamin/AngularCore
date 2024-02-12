@@ -1,6 +1,4 @@
 ﻿using Process.Expression;
-using System;
-using System.Collections.Generic;
 
 namespace Process.Definition
 {
@@ -38,16 +36,6 @@ namespace Process.Definition
                 guarded)
         {
         }
-
-        public override global::Process.Process New(
-            Guid                        id,
-            global::Process.Process     parent,
-            IDictionary<string, object> variables = null
-            ) => new global::Process.GuardedProcess(
-                id,
-                this,
-                (global::Process.Choice)parent,
-                variables);
 
         public override void Accept(
             IVisitor visitor

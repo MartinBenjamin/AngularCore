@@ -42,9 +42,9 @@ namespace Process
                 if(Replicated == null &&
                    definition.Condition.Evaluate(this))
                 {
-                    Replicated = definition.Replicated.New(
-                        executionService.NewId(),
-                        this);
+                    Replicated = definition.Replicated.Select(executionService.Constructor)(
+                        this,
+                        null);
                     executionService.Execute(Replicated);
                 }
 

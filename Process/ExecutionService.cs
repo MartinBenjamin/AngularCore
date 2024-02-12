@@ -11,7 +11,7 @@ namespace Process
 
         Guid Definition.IIdService<Guid>.NewId() => Guid.NewGuid();
 
-        Definition.ISelector<Func<Guid, Process, IDictionary<string, object>, Process>> IExecutionService.Constructor => (Definition.ISelector<Func<Guid, Process, IDictionary<string, object>, Process>>)new Constructor(this);
+        Definition.ISelector<Func<Process, IDictionary<string, object>, Process>> IExecutionService.Constructor => new Constructor(this);
 
         ISynchronisationService IExecutionService.SynchronisationService => _synchronisationService;
 

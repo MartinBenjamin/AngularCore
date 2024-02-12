@@ -1,7 +1,6 @@
 ﻿using Process.Expression;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Process.Definition
 {
@@ -18,20 +17,6 @@ namespace Process.Definition
             : base(id)
         {
         }
-
-        public override global::Process.Process New(
-            Guid                        id,
-            global::Process.Process     parent,
-            IDictionary<string, object> variables = null
-            ) => new global::Process.Choice(
-                id,
-                this,
-                parent,
-                variables);
-
-        public abstract IEnumerable<global::Process.Alternative> NewAlternatives(
-            IIdService<Guid>        idService,
-            global::Process.Process parent);
     }
 
     public class Choice: ChoiceBase
@@ -59,15 +44,6 @@ namespace Process.Definition
 
         public override TResult Select<TResult>(
             ISelector<TResult> selector) => selector.Select(this);
-
-        public override IEnumerable<global::Process.Alternative> NewAlternatives(
-            IIdService<Guid>        idService,
-            global::Process.Process parent
-            ) => Alternatives
-                .Select(alternative => alternative.New(
-                    idService.NewId(),
-                    parent))
-                .Cast<global::Process.Alternative>();
     }
 
     public class ChoiceForEach: ChoiceBase
@@ -93,13 +69,5 @@ namespace Process.Definition
 
         public override TResult Select<TResult>(
             ISelector<TResult> selector) => selector.Select(this);
-
-        public override IEnumerable<global::Process.Alternative> NewAlternatives(
-            IIdService<Guid>        idService,
-            global::Process.Process parent
-            ) => Variables.Evaluate(parent).Select(variables => Replicated.New(
-                idService.NewId(),
-                parent,
-                variables)).Cast<global::Process.Alternative>();
     }
 }

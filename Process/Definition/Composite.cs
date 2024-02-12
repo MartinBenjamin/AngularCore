@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Process.Definition
 {
@@ -16,9 +15,5 @@ namespace Process.Definition
             : base(id)
         {
         }
-
-        public abstract IList<global::Process.Process> NewChildren(
-            IIdService<Guid>        idService,
-            global::Process.Process parent);
     }
 }

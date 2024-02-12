@@ -5,11 +5,11 @@ using System.Linq;
 
 namespace Process
 {
-    public class Choice: Alternative
+    public abstract class ChoiceBase: Alternative
     {
         public virtual IList<Alternative> Alternatives { get; protected set; }
 
-        internal protected Choice(
+        internal protected ChoiceBase(
             Guid                        id,
             Definition.ChoiceBase       definition,
             Process                     parent,
@@ -29,15 +29,12 @@ namespace Process
         {
             if(Status == Status.NotExecuted)
             {
-                var alternatives = Definition.As<Definition.ChoiceBase>().NewAlternatives(
-                    executionService,
-                    this).ToList();
-                Alternatives = alternatives;
-                alternatives.ForEach(alternative => ((IExecutable)alternative).Execute(executionService));
+                Alternatives = NewAlternatives(executionService);
+                Alternatives.ForEach(alternative => ((IExecutable)alternative).Execute(executionService));
 
                 ChangeStatus(
                     executionService,
-                    alternatives.Any(alternative => alternative.Status == Status.Waiting) ? Status.Waiting : Status.Skipped);
+                    Alternatives.Any(alternative => alternative.Status == Status.Waiting) ? Status.Waiting : Status.Skipped);
             }
 
             if(Status == Status.Executing &&
@@ -64,5 +61,59 @@ namespace Process
 
             return chosen;
         }
+
+        protected abstract IList<Alternative> NewAlternatives(IExecutionService executionService);
+    }
+
+    public class Choice: ChoiceBase
+    {
+        private readonly Definition.Choice _definition;
+
+        public Choice(
+            Guid                        id,
+            Definition.Choice         definition,
+            Process                     parent,
+            IDictionary<string, object> variables
+            )
+            : base(
+                id,
+                definition,
+                parent,
+                variables)
+        {
+            _definition = definition;
+        }
+
+        protected override IList<Alternative> NewAlternatives(
+            IExecutionService executionService
+            ) => _definition.Alternatives.Select(alternative => alternative.Select(executionService.Constructor)(
+                this,
+                null)).Cast<Alternative>().ToList();
+    }
+
+    public class ChoiceForEach: ChoiceBase
+    {
+        private readonly Definition.ChoiceForEach _definition;
+
+        public ChoiceForEach(
+            Guid                        id,
+            Definition.ChoiceForEach  definition,
+            Process                     parent,
+            IDictionary<string, object> variables
+            )
+            : base(
+                id,
+                definition,
+                parent,
+                variables)
+        {
+            _definition = definition;
+        }
+
+        protected override IList<Alternative> NewAlternatives(
+            IExecutionService executionService
+            ) => _definition.Variables.Evaluate(this).Select(variables => _definition.Replicated.Select(executionService.Constructor)(
+                this,
+                variables)).Cast<Alternative>().ToList();
     }
 }

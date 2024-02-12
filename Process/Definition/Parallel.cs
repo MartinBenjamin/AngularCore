@@ -1,7 +1,6 @@
 ﻿using Process.Expression;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Process.Definition
 {
@@ -18,16 +17,6 @@ namespace Process.Definition
             : base(id)
         {
         }
-
-        public override global::Process.Process New(
-            Guid                        id,
-            global::Process.Process     parent,
-            IDictionary<string, object> variables = null
-            ) => new global::Process.Parallel(
-                id,
-                this,
-                parent,
-                variables);
     }
 
     public class Parallel: ParallelBase
@@ -55,14 +44,6 @@ namespace Process.Definition
 
         public override TResult Select<TResult>(
             ISelector<TResult> selector) => selector.Select(this);
-
-        public override IList<global::Process.Process> NewChildren(
-            IIdService<Guid>        idService,
-            global::Process.Process parent
-            ) => Children.Select(
-                child => child.New(
-                    idService.NewId(),
-                    parent)).ToList();
     }
 
     public class ParallelForEach: ParallelBase
@@ -88,13 +69,5 @@ namespace Process.Definition
 
         public override TResult Select<TResult>(
             ISelector<TResult> selector) => selector.Select(this);
-
-        public override IList<global::Process.Process> NewChildren(
-            IIdService<Guid>        idService,
-            global::Process.Process parent
-            ) => Variables.Evaluate(parent).Select(variables => Replicated.New(
-                idService.NewId(),  
-                parent,
-                variables)).ToList();
     }
 }

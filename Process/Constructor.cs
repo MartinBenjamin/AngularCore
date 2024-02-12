@@ -93,33 +93,33 @@ namespace Process
                     variables);
 
         Func<Process, IDictionary<string, object>, Process> ISelector<Func<Process, IDictionary<string, object>, Process>>.Select(
-            SequenceForEach definition
+             Definition.SequenceForEach definition
             ) => (
                 Process                     parent,
                 IDictionary<string, object> variables
-                ) => new Sequence(
+                ) => new SequenceForEach(
                     _idService.NewId(),
                     definition,
                     parent,
                     variables);
 
         Func<Process, IDictionary<string, object>, Process> ISelector<Func<Process, IDictionary<string, object>, Process>>.Select(
-            ParallelForEach definition
+            Definition.ParallelForEach definition
             ) => (
                 Process                     parent,
                 IDictionary<string, object> variables
-                ) => new Parallel(
+                ) => new ParallelForEach(
                     _idService.NewId(),
                     definition,
                     parent,
                     variables);
 
         Func<Process, IDictionary<string, object>, Process> ISelector<Func<Process, IDictionary<string, object>, Process>>.Select(
-            ChoiceForEach definition
+            Definition.ChoiceForEach definition
             ) => (
                 Process parent,
                 IDictionary<string, object> variables
-                ) => new Choice(
+                ) => new ChoiceForEach(
                     _idService.NewId(),
                     definition,
                     parent,

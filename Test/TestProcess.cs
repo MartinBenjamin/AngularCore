@@ -20,8 +20,8 @@ namespace Test
             )  
         {
             global::Process.IExecutionService service = new global::Process.ExecutionService();
-            var process = definition.New(
-                Guid.Empty,
+            var process = definition.Select(service.Constructor)(
+                null,
                 null);
             service.Execute(process);
 
@@ -43,8 +43,7 @@ namespace Test
                 else
                 {
                     Assert.That(synchronisation.InputCount, Is.GreaterThanOrEqualTo(0));
-                    var output = outputDefinition.New(
-                        Guid.Empty,
+                    var output = outputDefinition.Select(service.Constructor)(
                         null,
                         new Dictionary<string, object> { { "channel", c } });
                     service.Execute(output);
@@ -64,8 +63,8 @@ namespace Test
                  variable);
 
             global::Process.IExecutionService service = new global::Process.ExecutionService();
-            var input = (global::Process.Input)inputDefinition.New(
-                Guid.Empty,
+            var input = (global::Process.Input)inputDefinition.Select(service.Constructor)(
+                null,
                 null);
             service.Execute(input);
             Assert.That(input.Status, Is.EqualTo(global::Process.Status.Waiting));
@@ -88,8 +87,8 @@ namespace Test
                  new ConstantExpression<string>(value));
 
             global::Process.IExecutionService service = new global::Process.ExecutionService();
-            var output = (global::Process.Output)outputDefinition.New(
-                Guid.Empty,
+            var output = (global::Process.Output)outputDefinition.Select(service.Constructor)(
+                null,
                 null);
             service.Execute(output);
             Assert.That(output.Status, Is.EqualTo(global::Process.Status.Waiting));
@@ -113,16 +112,16 @@ namespace Test
                  variable);
 
             global::Process.IExecutionService service = new global::Process.ExecutionService();
-            var input = inputDefinition.New(
-                Guid.Empty,
+            var input = inputDefinition.Select(service.Constructor)(
+                null,
                 null);
             service.Execute(input);
             Assert.That(input.Status, Is.EqualTo(global::Process.Status.Waiting));
             Assert.That(input[variable], Is.Null);
             Assert.That(service.SynchronisationService.AwaitIO.Any(c => c.Name == channel.Name.Evaluate(input)), Is.True);
 
-            var output = outputDefinition.New(
-                Guid.Empty,
+            var output = outputDefinition.Select(service.Constructor)(
+                null,
                 null);
             service.Execute(output);
             Assert.That(output.Status, Is.EqualTo(global::Process.Status.Executed));
