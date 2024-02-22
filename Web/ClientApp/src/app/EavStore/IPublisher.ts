@@ -1,3 +1,5 @@
+import { PropertyKey } from './IEavStore';
+
 export interface IPublisher
 {
     SuspendPublish(): void;

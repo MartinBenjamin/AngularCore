@@ -3,6 +3,8 @@ import { IScheduler, Signal } from '../Signal/Signal';
 import { BuiltIn } from './Atom';
 import { ITransaction } from './ITransactionManager';
 
+export type PropertyKey = string | symbol;
+
 export enum Cardinality
 {
     One = 1,
@@ -18,8 +20,8 @@ export interface AttributeSchema
 
 export type Fact = [any, PropertyKey, any];
 
-export type Variable = string;
-export const IsVariable = (term): term is string => typeof term === 'string' && term[0] === '?';
+export type Variable = `?${string}`;
+export const IsVariable = (term): term is Variable => typeof term === 'string' && term[0] === '?';
 export const IsConstant = term => !(typeof term === 'undefined' || IsVariable(term));
 
 export const IsPredicateSymbol = (term): term is string => typeof term === 'string' && term[0] !== '?';

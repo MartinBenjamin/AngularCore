@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { assertBuilder } from '../assertBuilder';
 import { ArraySet } from '../Collections/ArraySet';
 import { ArrayProxyFactory, EavStore, TargetSymbol } from './EavStore';
-import { Cardinality, Fact, IEavStore, Store } from './IEavStore';
+import { Cardinality, Fact, IEavStore, PropertyKey, Store } from './IEavStore';
 import { IPublisher } from './IPublisher';
 
 class DummyPublisher implements IPublisher

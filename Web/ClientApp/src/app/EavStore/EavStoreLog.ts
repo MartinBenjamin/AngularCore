@@ -1,5 +1,5 @@
-import { ILogEntry} from './ITransactionManager';
-import { Store } from './IEavStore';
+import { PropertyKey, Store } from './IEavStore';
+import { ILogEntry } from './ITransactionManager';
 
 export abstract class LogEntry implements ILogEntry
 {
