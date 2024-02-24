@@ -56,7 +56,7 @@ export function Conjunction(
 
 export function Disjunction<T extends Tuple>(
     tupleCompare: Compare<T>
-    )
+    ): (...inputs: Iterable<T>[]) => SortedSet<T>
 {
     return (...inputs: Iterable<T>[]): SortedSet<T> =>
     {
