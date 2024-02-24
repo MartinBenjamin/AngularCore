@@ -1,6 +1,6 @@
 import { BuiltIn, Equal, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, NotEqual } from '../EavStore/Atom';
-import { EavStore } from '../EavStore/EavStore';
 import { IsConstant, IsVariable } from '../EavStore/IEavStore';
+import { Tuple } from '../EavStore/Tuple';
 import { ClassExpressionInterpreter } from './ClassExpressionInterpreter';
 import { IAtom, IAtomSelector, IClassAtom, IDataPropertyAtom, IDataRangeAtom, IEqualAtom, IGreaterThanAtom, IGreaterThanOrEqualAtom, ILessThanAtom, ILessThanOrEqualAtom, INotEqualAtom, IObjectPropertyAtom, IPropertyAtom } from './DLSafeRule';
 import { PropertyExpressionInterpreter } from './PropertyExpressionInterpreter';
@@ -69,7 +69,7 @@ export class AtomInterpreter<T extends WrapperType> implements IAtomSelector<Wra
         ): Wrapped<T, object[]>
     {
         return this._wrap(
-            EavStore.Filter([property.Domain, property.Range]),
+            AtomInterpreter.Filter([property.Domain, property.Range]),
             property.PropertyExpression.Select(this._propertyExpressionInterpreter));
     }
 
@@ -124,11 +124,89 @@ export class AtomInterpreter<T extends WrapperType> implements IAtomSelector<Wra
     {
         if(terms)
             return this._wrap(
-                EavStore.Conjunction(terms),
+                AtomInterpreter.Conjunction(terms),
                 ...atoms.map(atom => atom.Select(this)));
 
         return this._wrap(
-            EavStore.Conjunction(),
+            AtomInterpreter.Conjunction(),
             ...atoms.map(atom => atom.Select(this)));
+    }
+
+    static Filter(
+        terms: any[]
+        ): (tuples: Iterable<Tuple>) => object[]
+    {
+        return (tuples: Iterable<Tuple>) =>
+        {
+            const substitutions: object[] = [];
+            for(const tuple of tuples)
+            {
+                let substitution = {};
+                for(let index = 0; index < terms.length && substitution; ++index)
+                {
+                    const term = terms[index];
+                    if(IsConstant(term))
+                    {
+                        if(term !== tuple[index])
+                            substitution = null;
+                    }
+                    else if(IsVariable(term))
+                    {
+                        if(substitution[term] === undefined)
+                            substitution[term] = tuple[index];
+
+                        else if(substitution[term] !== tuple[index])
+                            // Tuple does not match query pattern.
+                            substitution = null;
+                    }
+                }
+
+                if(substitution)
+                    substitutions.push(substitution)
+            }
+
+            return substitutions;
+        };
+    }
+
+    static Conjunction(): (...inputs: (object[] | BuiltIn)[]) => object[];
+    static Conjunction(terms: any[]): (...inputs: (object[] | BuiltIn)[]) => Tuple[];
+    static Conjunction(
+        terms?: any[]
+        ): (...inputs: (object[] | BuiltIn)[]) => object[]
+    {
+        let initialSubstitution: object = {};
+        let map: (substitutions: object[]) => object[] = substitutions => substitutions;
+        if(terms)
+            map = substitutions => substitutions.map(substitution => terms.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
+
+        return (...inputs: (object[] | Function)[]) => map(inputs.reduce<object[]>(
+            (substitutions, input) =>
+            {
+                if(typeof input === 'function')
+                    return [...input(substitutions)];
+
+                let count = substitutions.length;
+                while(count--)
+                {
+                    const outer = substitutions.shift();
+                    for(const inner of input)
+                    {
+                        let match = true;
+                        for(const variable in inner)
+                            if(!(outer[variable] === undefined || outer[variable] === inner[variable]))
+                            {
+                                match = false;
+                                break;
+                            }
+
+                        if(match)
+                            substitutions.push({ ...outer, ...inner });
+                    }
+                }
+
+                return substitutions;
+            },
+            [initialSubstitution]));
     }
 }

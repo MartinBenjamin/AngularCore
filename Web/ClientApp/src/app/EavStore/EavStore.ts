@@ -4,14 +4,13 @@ import { ArrayKeyedMap, TrieNode } from '../Collections/ArrayKeyedMap';
 import { SortedSet } from '../Collections/SortedSet';
 import { WrapperType } from '../Ontology/Wrapped';
 import { IScheduler, Scheduler, Signal } from '../Signal/Signal';
-import { BuiltIn } from './Atom';
 import { DatalogSignalInterpreter } from './DatalogSignalInterpreter1';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
 import { IDatalogInterpreter } from './IDatalogInterpreter';
 import { AttributeSchema, Cardinality, Edb, Fact, IEavStore, IsConstant, IsVariable, PropertyKey, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
-import { Tuple, TupleCompareFactory } from './Tuple';
+import { TupleCompareFactory } from './Tuple';
 
 export const EntityId = Symbol('EntityId');
 
@@ -594,116 +593,6 @@ export class EavStore implements IEavStore, IPublisher
 
         topicSubscriber(topic.Publisher());
         return signal;
-    }
-
-    static Substitute(
-        terms: any[]
-        ): (tuples: Iterable<Tuple>) => object[]
-    {
-        return (tuples: Iterable<Tuple>) =>
-        {
-            const substitutions: object[] = [];
-            for(const tuple of tuples)
-            {
-                let substitution = {};
-                for(let index = 0; index < terms.length && substitution; ++index)
-                {
-                    const term = terms[index];
-                    if(IsVariable(term))
-                    {
-                        if(substitution[term] === undefined)
-                            substitution[term] = tuple[index];
-
-                        else if(substitution[term] !== tuple[index])
-                            // Tuple does not match query pattern.
-                            substitution = null;
-                    }
-                }
-
-                if(substitution)
-                    substitutions.push(substitution)
-            }
-
-            return substitutions;
-        };
-    }
-
-    static Filter(
-        terms: any[]
-        ): (tuples: Iterable<Tuple>) => object[]
-    {
-        return (tuples: Iterable<Tuple>) =>
-        {
-            const substitutions: object[] = [];
-            for(const tuple of tuples)
-            {
-                let substitution = {};
-                for(let index = 0; index < terms.length && substitution; ++index)
-                {
-                    const term = terms[index];
-                    if(IsConstant(term))
-                    {
-                        if(term !== tuple[index])
-                            substitution = null;
-                    }
-                    else if(IsVariable(term))
-                    {
-                        if(substitution[term] === undefined)
-                            substitution[term] = tuple[index];
-
-                        else if(substitution[term] !== tuple[index])
-                            // Tuple does not match query pattern.
-                            substitution = null;
-                    }
-                }
-
-                if(substitution)
-                    substitutions.push(substitution)
-            }
-
-            return substitutions;
-        };
-    }
-
-    static Conjunction(): (...inputs: (object[] | BuiltIn)[]) => object[];
-    static Conjunction(terms: any[]): (...inputs: (object[] | BuiltIn)[]) => Tuple[];
-    static Conjunction(
-        terms?: any[]
-        ): (...inputs: (object[] | BuiltIn)[]) => object[]
-    {
-        let initialSubstitution: object = {};
-        let map: (substitutions: object[]) => object[] = substitutions => substitutions;
-        if(terms)
-            map = substitutions => substitutions.map(substitution => terms.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
-
-        return (...inputs: (object[] | Function)[]) => map(inputs.reduce<object[]>(
-            (substitutions, input) =>
-            {
-                if(typeof input === 'function')
-                    return [...input(substitutions)];
-
-                let count = substitutions.length;
-                while(count--)
-                {
-                    const outer = substitutions.shift();
-                    for(const inner of input)
-                    {
-                        let match = true;
-                        for(const variable in inner)
-                            if(!(outer[variable] === undefined || outer[variable] === inner[variable]))
-                            {
-                                match = false;
-                                break;
-                            }
-
-                        if(match)
-                            substitutions.push({ ...outer, ...inner });
-                    }
-                }
-
-                return substitutions;
-            },
-            [initialSubstitution]));
     }
 
     Signal(
