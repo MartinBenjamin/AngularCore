@@ -1,0 +1,11 @@
+import { Wrapped, WrapperType } from "../Ontology/Wrapped";
+import { Atom, Rule } from "./IEavStore";
+import { Tuple } from "./Tuple";
+
+export interface IDatalogInterpreter<TWrapperType extends WrapperType>
+{
+    Query<T extends Tuple>(
+        head: [...T],
+        body: Atom[],
+        ...rules: Rule[]): Wrapped<TWrapperType, {[K in keyof T]: any;}[]>;
+}

@@ -1,3 +1,5 @@
+import { Disjunction } from "../EavStore/Datalog";
+import { tupleCompare } from "../EavStore/EavStore";
 import { AtomInterpreter } from "./AtomInterpreter";
 import { ICache } from "./ClassExpressionInterpreter";
 import { IDLSafeRule, IIsAtom, IPropertyAtom, IsAtom, IsDLSafeRule } from "./DLSafeRule";
@@ -5,7 +7,6 @@ import { IOntology } from "./IOntology";
 import { IDataProperty, IInverseObjectProperty, IObjectProperty, IProperty } from "./IProperty";
 import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
 import { Wrap, Wrapped, WrapperType } from "./Wrapped";
-import { EavStore } from "../EavStore/EavStore";
 
 export abstract class PropertyExpressionInterpreter<T extends WrapperType> implements IPropertyExpressionSelector<Wrapped<T, readonly [any, any][]>>
 {
@@ -82,7 +83,7 @@ export abstract class PropertyExpressionInterpreter<T extends WrapperType> imple
     {
         const wrapped = rules.map(rule => this.Rule(rule));
         return wrapped.length === 1 ? wrapped[0] : this._wrap(
-            (...inputs) => EavStore.Disjunction(...inputs).Array,
+            (...inputs) => <readonly [any, any][]>Disjunction<readonly [any, any]>(tupleCompare)(...inputs).Array,
             ...wrapped);
     }
 

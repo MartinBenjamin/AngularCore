@@ -2,18 +2,18 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ArrayKeyedMap, TrieNode } from '../Collections/ArrayKeyedMap';
 import { Group } from '../Collections/Group';
-import { ArrayCompareFactory, SortedSet } from '../Collections/SortedSet';
+import { SortedSet } from '../Collections/SortedSet';
 import { Transpose } from '../Graph/AdjacencyList';
 import { StronglyConnectedComponents } from '../Graph/StronglyConnectedComponents';
 import { IScheduler, Scheduler, Signal } from '../Signal/Signal';
 import { Wrap } from '../Wrap';
 import { BuiltIn } from './Atom';
+import { Conjunction, Disjunction } from './Datalog';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
 import { Atom, AttributeSchema, Cardinality, Edb, Fact, Idb, IEavStore, IsConstant, IsIdb, IsVariable, PropertyKey, Rule, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
-
-type Tuple = readonly any[];
+import { Tuple, TupleCompareFactory } from './Tuple';
 
 export const EntityId = Symbol('EntityId');
 
@@ -61,7 +61,7 @@ export function Compare(
     return a < b ? -1 : 1;
 }
 
-export const tupleCompare = ArrayCompareFactory(Compare);
+export const tupleCompare = TupleCompareFactory(Compare);
 
 function Match<TTrieNode extends TrieNode<TTrieNode, V>, V>(
     trieNode: TTrieNode,
@@ -656,7 +656,7 @@ export class EavStore implements IEavStore, IPublisher
                 if(rules.length === 1)
                 {
                     const rule = rules[0];
-                    const conjunction = new Signal(EavStore.Conjunction1(
+                    const conjunction = new Signal(Conjunction(
                         rule[0][0] === '' ? rule[0].slice(1) : rule[0],
                         rule[1]));
                     idbSignals.set(
@@ -668,7 +668,7 @@ export class EavStore implements IEavStore, IPublisher
                 }
                 else // Disjunction of conjunctions.
                 {
-                    const disjunction = new Signal(EavStore.Disjunction);
+                    const disjunction = new Signal(Disjunction(tupleCompare));
                     idbSignals.set(
                         predicateSymbol,
                         disjunction);
@@ -679,7 +679,7 @@ export class EavStore implements IEavStore, IPublisher
 
                     for(const rule of rules)
                     {
-                        const conjunction = new Signal(EavStore.Conjunction1(
+                        const conjunction = new Signal(Conjunction(
                             rule[0][0] === '' ? rule[0].slice(1) : rule[0],
                             rule[1]));
                         predecessors.push(conjunction);
@@ -762,7 +762,7 @@ export class EavStore implements IEavStore, IPublisher
                 if(rules.length === 1)
                 {
                     const rule = rules[0];
-                    const conjunction = new Signal(EavStore.Conjunction1(
+                    const conjunction = new Signal(Conjunction(
                         rule[0][0] === '' ? rule[0].slice(1) : rule[0],
                         rule[1]));
                     signalAdjacencyList.set(
@@ -777,7 +777,7 @@ export class EavStore implements IEavStore, IPublisher
                 }
                 else // Disjunction of conjunctions.
                 {
-                    const disjunction = new Signal(EavStore.Disjunction);
+                    const disjunction = new Signal(Disjunction(tupleCompare));
                     const predecessors: Signal[] = [];
                     signalAdjacencyList.set(
                         disjunction,
@@ -788,7 +788,7 @@ export class EavStore implements IEavStore, IPublisher
 
                     for(const rule of rules)
                     {
-                        const conjunction = new Signal(EavStore.Conjunction1(
+                        const conjunction = new Signal(Conjunction(
                             rule[0][0] === '' ? rule[0].slice(1) : rule[0],
                             rule[1]));
                         predecessors.push(conjunction);
@@ -928,69 +928,6 @@ export class EavStore implements IEavStore, IPublisher
             [initialSubstitution]));
     }
 
-    static Conjunction1(
-        head: any[],
-        body: Atom[]
-        ): (...inputs: Iterable<Tuple>[]) => Iterable<Tuple>
-    {
-        return (...inputs: Iterable<Tuple>[]): Iterable<Tuple> =>
-        {
-            let inputIndex = 0;
-            return body.reduce(
-                (substitutions, atom) =>
-                {
-                    if(typeof atom === 'function')
-                        return [...atom(substitutions)];
-
-                    let count = substitutions.length;
-                    while(count--)
-                    {
-                        const substitution = substitutions.shift();
-                        for(const tuple of inputs[inputIndex])
-                        {
-                            let merged = { ...substitution };
-                            for(let index = 0; index < atom.length && merged; ++index)
-                            {
-                                const term = atom[index];
-                                if(IsConstant(term))
-                                {
-                                    if(term !== tuple[index])
-                                        merged = null;
-                                }
-                                else if(IsVariable(term))
-                                {
-                                    if(typeof merged[term] === 'undefined')
-                                        merged[term] = tuple[index];
-
-                                    else if(merged[term] !== tuple[index])
-                                        // Fact does not match query pattern.
-                                        merged = null;
-                                }
-                            }
-
-                            if(merged)
-                                substitutions.push(merged);
-                        }
-                    }
-
-                    ++inputIndex;
-                    return substitutions;
-                },
-                [{}]).map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
-        };
-    }
-
-    static Disjunction<T extends Tuple>(
-        ...inputs: Iterable<T>[]
-        ): SortedSet<T>
-    {
-        let set = new SortedSet<T>(tupleCompare);
-        for(const input of inputs)
-            for(const tuple of input)
-                set.add(tuple)
-        return set;
-    }
-
     static RecursiveDisjunction(
         rules: Rule[]
         ): [(...inputs: [SortedSet<Tuple>, ...Iterable<Tuple>[]]) => SortedSet<Tuple>, (Fact | Idb)[]]
@@ -1015,7 +952,7 @@ export class EavStore implements IEavStore, IPublisher
 
         for(const rule of rules)
         {
-            const conjunction = EavStore.Conjunction1(
+            const conjunction = Conjunction(
                 rule[0][0] === '' ? rule[0].slice(1) : rule[0],
                 rule[1]);
             const conjunctionPredecessors: (() => Iterable<Tuple>)[] = [];
@@ -1094,7 +1031,7 @@ export class EavStore implements IEavStore, IPublisher
 
             for(const rule of rules)
             {
-                const conjunction = new Signal(EavStore.Conjunction1(
+                const conjunction = new Signal(Conjunction(
                     rule[0][0] === '' ? rule[0].slice(1) : rule[0],
                     rule[1]));
                 disjunctionPredecessors.push(conjunction);
