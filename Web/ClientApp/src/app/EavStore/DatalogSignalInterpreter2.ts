@@ -1,12 +1,10 @@
-import { ArrayKeyedMap } from "../Collections/ArrayKeyedMap";
 import { Group } from "../Collections/Group";
 import { Compare, SortedSet } from "../Collections/SortedSet";
 import { Transpose } from "../Graph/AdjacencyList";
 import { StronglyConnectedComponents } from "../Graph/StronglyConnectedComponents";
 import { WrapperType } from "../Ontology/Wrapped";
 import { Signal } from "../Signal/Signal";
-import { Wrap, Wrapped } from "../Wrap";
-import { Conjunction, Disjunction } from "./Datalog";
+import { Conjunction, Disjunction, Recursion } from "./Datalog";
 import { IDatalogInterpreter } from "./IDatalogInterpreter";
 import { Atom, Fact, Idb, IEavStore, IsIdb, Rule } from "./IEavStore";
 import { Tuple } from "./Tuple";
@@ -57,7 +55,9 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
                 let recursion: (...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>[];
                 let predecessorAtoms: (Fact | Idb)[];
                 [recursion, predecessorAtoms]
-                    = this.Recursion(stronglyConnectedComponent.map(predicateSymbol => [predicateSymbol, rulesGroupedByPredicateSymbol.get(predicateSymbol)]));
+                    = Recursion(
+                        this._tupleCompare,
+                        stronglyConnectedComponent.map(predicateSymbol => [predicateSymbol, rulesGroupedByPredicateSymbol.get(predicateSymbol)]));
                 const recursionSignal = new Signal(recursion);
                 signalPredecessorAtoms.set(
                     recursionSignal,
@@ -135,94 +135,5 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
 
         this._eavStore.SignalScheduler.AddSignals(signalAdjacencyList);
         return <Signal>idbSignals.get('');
-    }
-
-    private Recursion(
-        rulesGroupedByPredicateSymbol: [string, Rule[]][]
-        ): [(...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>[], (Fact | Idb)[]]
-    {
-        type Result = SortedSet<Tuple>[];
-        const empty = new SortedSet(this._tupleCompare);
-        const resultT0: Result = rulesGroupedByPredicateSymbol.map(() => empty);
-        let resultTMinus1: Result;
-        let inputs: Iterable<Tuple>[];
-
-        const wrappedDisjunctions: Wrapped<SortedSet<Tuple>>[] = [];
-        const wrappedInputs = new ArrayKeyedMap<Fact | Idb, Wrapped<Iterable<Tuple>>>();
-        const inputAtoms: (Fact | Idb)[] = [];
-
-        rulesGroupedByPredicateSymbol.forEach(
-            ([predicateSymbol, rules], index) =>
-            {
-                const disjunction = (...params: [SortedSet<Tuple>, ...Iterable<Tuple>[]]): SortedSet<Tuple> =>
-                {
-                    const [resultTMinus1, ...conjunctions] = params;
-                    const resultT = new SortedSet(resultTMinus1);
-                    for(const conjunction of conjunctions)
-                        for(const tuple of conjunction)
-                            resultT.add(tuple);
-
-                    return resultT;
-                };
-
-                const wrappedDisjunctionPredecessors: [() => SortedSet<Tuple>, ...Wrapped<Iterable<Tuple>>[]] = [() => resultTMinus1[index] || new SortedSet(this._tupleCompare)];
-
-                for(const rule of rules)
-                {
-                    const conjunction = Conjunction(
-                        rule[0][0] === '' ? rule[0].slice(1) : rule[0],
-                        rule[1]);
-                    const wrappedConjunctionPredecessors: Wrapped<Iterable<Tuple>>[] = [];
-
-                    for(const atom of rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function'))
-                    {
-                        let wrappedInput: Wrapped<Iterable<Tuple>>;
-                        const resultTMinus1Index = IsIdb(atom) ? rulesGroupedByPredicateSymbol.findIndex(element => element[0] === atom[0]) : -1;
-                        if(resultTMinus1Index !== -1)
-                            wrappedInput = () => resultTMinus1[resultTMinus1Index];
-
-                        else
-                        {
-                            wrappedInput = wrappedInputs.get(atom);
-                            if(!wrappedInput)
-                            {
-                                const inputIndex = inputAtoms.push(atom) - 1;
-                                wrappedInput = () => inputs[inputIndex];
-                                wrappedInputs.set(
-                                    atom,
-                                    wrappedInput);
-                            }
-                        }
-
-                        wrappedConjunctionPredecessors.push(wrappedInput);
-                    }
-
-                    const wrappedConjunction = Wrap(conjunction, ...wrappedConjunctionPredecessors);
-                    wrappedDisjunctionPredecessors.push(wrappedConjunction);
-                }
-
-                const wrappedDisjunction = Wrap(disjunction, ...wrappedDisjunctionPredecessors);
-                wrappedDisjunctions.push(wrappedDisjunction);
-            });
-
-        const wrapped = Wrap(
-            (...wrappedDisjunctions: SortedSet<Tuple>[]) => wrappedDisjunctions,
-            ...wrappedDisjunctions);
-
-
-        return [(...params: Iterable<Tuple>[]): SortedSet<Tuple>[] =>
-        {
-            inputs = params;
-            resultTMinus1 = resultT0;
-            let resultT = wrapped();
-
-            while([...resultT].some((result, index) => result.size !== resultTMinus1[index].size))
-            {
-                resultTMinus1 = resultT;
-                resultT = wrapped();
-            }
-
-            return resultT;
-        }, inputAtoms];
     }
 }
