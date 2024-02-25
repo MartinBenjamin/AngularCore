@@ -48,7 +48,8 @@ export interface IEavStore
     Observe(attribute: PropertyKey): Observable<[any, any][]>;
     Observe<T extends Tuple>(
         head: [...T],
-        body: Edb[]): Observable<{ [K in keyof T]: any; }[]>;
+        body: Atom[],
+        ...rules: Rule[]): Observable<{ [K in keyof T]: any; }[]>;
 
     SignalEntities(): Signal<Set<any>>;
     Signal(atom: Fact): Signal<Fact[]>;

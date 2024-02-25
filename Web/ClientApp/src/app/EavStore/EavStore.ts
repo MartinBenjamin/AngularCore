@@ -11,7 +11,7 @@ import { IDatalogInterpreter } from './IDatalogInterpreter';
 import { AttributeSchema, Cardinality, Edb, Fact, IEavStore, IsConstant, IsVariable, PropertyKey, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
-import { Tuple, TupleCompareFactory } from './Tuple';
+import { TupleCompareFactory } from './Tuple';
 
 export const EntityId = Symbol('EntityId');
 
@@ -529,26 +529,6 @@ export class EavStore implements IEavStore, IPublisher
             });
     }
 
-    private ObserveRule<T extends any[]>(
-        head: [...T],
-        body: Edb[]): Observable<{ [K in keyof T]: any; }[]>
-    {
-        //return <Observable<any>>combineLatest(
-        //    body.map<Observable<any>>(atom =>
-        //        atom instanceof Function ? new BehaviorSubject(atom) : this.ObserveAtom(<Fact>atom).pipe(map(EavStore.Substitute(atom)))),
-        //    EavStore.Conjunction(head));
-
-        return new Observable<{ [K in keyof T]: any; }[]>(
-            subscriber =>
-            {
-                const signal =  this.SignalScheduler.AddSignal(
-                    result => subscriber.next(result),
-                    [(<IEavStore>this).Signal(head, body)]);
-
-                subscriber.add(() => this.SignalScheduler.RemoveSignal(signal));
-            });
-    }
-
     Observe(
         ...params
         ): any
@@ -558,9 +538,10 @@ export class EavStore implements IEavStore, IPublisher
                 this.ObserveAtom(<Fact>params[0]) :
                 this.ObserveAtom([undefined, <PropertyKey>params[0], undefined]).pipe(map(facts => facts.map(([entity, , value]) => [entity, value])));
 
-        return this.ObserveRule(
+        return this._datalogObservableInterpreter.Query(
             params[0],
-            params[1]);
+            params[1],
+            ...params.slice(2));
     }
 
     private SignalAtom(
