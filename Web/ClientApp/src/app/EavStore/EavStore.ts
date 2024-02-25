@@ -4,13 +4,14 @@ import { ArrayKeyedMap, TrieNode } from '../Collections/ArrayKeyedMap';
 import { SortedSet } from '../Collections/SortedSet';
 import { WrapperType } from '../Ontology/Wrapped';
 import { IScheduler, Scheduler, Signal } from '../Signal/Signal';
+import { DatalogObservableInterpreter } from './DatalogObservableInterpreter';
 import { DatalogSignalInterpreter } from './DatalogSignalInterpreter1';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
 import { IDatalogInterpreter } from './IDatalogInterpreter';
 import { AttributeSchema, Cardinality, Edb, Fact, IEavStore, IsConstant, IsVariable, PropertyKey, StoreSymbol } from './IEavStore';
 import { IPublisher } from './IPublisher';
 import { ITransaction, ITransactionManager, TransactionManager } from './ITransactionManager';
-import { TupleCompareFactory } from './Tuple';
+import { Tuple, TupleCompareFactory } from './Tuple';
 
 export const EntityId = Symbol('EntityId');
 
@@ -117,19 +118,20 @@ const EntitiesTopicId = [];
 
 export class EavStore implements IEavStore, IPublisher
 {
-    private _eav                     = new Map<any, Map<PropertyKey, any>>();
-    private _aev                     = new Map<PropertyKey, Map<any, any>>();
-    private _ave                     : Map<PropertyKey, Map<any, any>>;
-    private _nextEntityId            = 1
-    private _entitiesObservable      : BehaviorSubject<Set<any>>;
-    private _entitiesSignal          : Signal<Set<any>>;
-    private _atomTopics              = new ArrayKeyedMap<Fact, Topic<Fact, Fact[]>>();
-    private _entitiesTopic           : Topic<any, Set<any>>;
-    private _scheduledTopics         = new SortedSet<Topic>((a, b) => tupleCompare(a.Id, b.Id));
-    private _schema                  : Map<PropertyKey, AttributeSchema>;
-    private _publishSuspended        = 0;
-    private _transactionManager      : ITransactionManager = new TransactionManager();
-    private _datalogSignalInterpreter: IDatalogInterpreter<WrapperType.Signal>;
+    private _eav                         = new Map<any, Map<PropertyKey, any>>();
+    private _aev                         = new Map<PropertyKey, Map<any, any>>();
+    private _ave                         : Map<PropertyKey, Map<any, any>>;
+    private _nextEntityId                = 1
+    private _entitiesObservable          : BehaviorSubject<Set<any>>;
+    private _entitiesSignal              : Signal<Set<any>>;
+    private _atomTopics                  = new ArrayKeyedMap<Fact, Topic<Fact, Fact[]>>();
+    private _entitiesTopic               : Topic<any, Set<any>>;
+    private _scheduledTopics             = new SortedSet<Topic>((a, b) => tupleCompare(a.Id, b.Id));
+    private _schema                      : Map<PropertyKey, AttributeSchema>;
+    private _publishSuspended            = 0;
+    private _transactionManager          : ITransactionManager = new TransactionManager();
+    private _datalogSignalInterpreter    : IDatalogInterpreter<WrapperType.Signal>;
+    private _datalogObservableInterpreter: IDatalogInterpreter<WrapperType.Observable>;
 
     readonly SignalScheduler: IScheduler = new Scheduler();
 
@@ -147,6 +149,8 @@ export class EavStore implements IEavStore, IPublisher
         this._datalogSignalInterpreter = new DatalogSignalInterpreter(
             this,
             tupleCompare);
+
+        this._datalogObservableInterpreter = new DatalogObservableInterpreter(this);
 
         this._entitiesTopic = new Topic(
             EntitiesTopicId,

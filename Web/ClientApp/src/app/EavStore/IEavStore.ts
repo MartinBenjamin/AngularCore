@@ -2,6 +2,7 @@ import { Observable } from 'rxjs';
 import { IScheduler, Signal } from '../Signal/Signal';
 import { BuiltIn } from './Atom';
 import { ITransaction } from './ITransactionManager';
+import { Tuple } from './Tuple';
 
 export type PropertyKey = string | symbol;
 
@@ -45,14 +46,14 @@ export interface IEavStore
     ObserveEntities(): Observable<Set<any>>;
     Observe(atom: Fact): Observable<Fact[]>;
     Observe(attribute: PropertyKey): Observable<[any, any][]>;
-    Observe<T extends any[]>(
+    Observe<T extends Tuple>(
         head: [...T],
         body: Edb[]): Observable<{ [K in keyof T]: any; }[]>;
 
     SignalEntities(): Signal<Set<any>>;
     Signal(atom: Fact): Signal<Fact[]>;
     Signal(attribute: PropertyKey): Signal<[any, any][]>;
-    Signal<T extends any[]>(
+    Signal<T extends Tuple>(
         head: [...T],
         body: Atom[],
         ...rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>;
