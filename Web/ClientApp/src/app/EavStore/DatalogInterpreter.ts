@@ -55,7 +55,6 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
         const sorted = [...condensed.keys()].sort((a, b) => a.LongestPath - b.LongestPath);
 
         const wrappedIdbs = new Map<string, Wrapped<T, Iterable<Tuple>>>();
-        const wrappedEdbs = new ArrayKeyedMap<Fact, Wrapped<T, Iterable<Tuple>>>();
 
         for(const stronglyConnectedComponent of sorted)
         {
@@ -68,21 +67,7 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
                         this._tupleCompare,
                         stronglyConnectedComponent.map(predicateSymbol => [predicateSymbol, rulesGroupedByPredicateSymbol.get(predicateSymbol)]));
                 const wrappedPredecessors: Wrapped<T, Iterable<Tuple>>[] = predecessorAtoms.map(
-                    atom =>
-                    {
-                        if(IsIdb(atom))
-                            return wrappedIdbs.get(atom[0]);
-
-                        let wrappedEdb = wrappedEdbs.get(atom);
-                        if(!wrappedEdb)
-                        {
-                            wrappedEdb = this.WrapEdb(atom);
-                            wrappedEdbs.set(
-                                atom,
-                                wrappedEdb);
-                        }
-                        return wrappedEdb;
-                    });
+                    atom => IsIdb(atom) ? wrappedIdbs.get(atom[0]) : this.WrapEdb(atom));
 
                 let wrappedRecursion = this.Wrap(
                     recursion,
@@ -106,22 +91,9 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
                         rule[0][0] === '' ? rule[0].slice(1) : rule[0],
                         rule[1]);
                     const wrappedPredecessors: Wrapped<T, Iterable<Tuple>>[] = rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function').map(
-                        atom =>
-                        {
-                            if(IsIdb(atom))
-                                return wrappedIdbs.get(atom[0]);
+                        atom => IsIdb(atom) ? wrappedIdbs.get(atom[0]) : this.WrapEdb(atom));
 
-                            let wrappedEdb = wrappedEdbs.get(atom);
-                            if(!wrappedEdb)
-                            {
-                                wrappedEdb = this.WrapEdb(atom);
-                                wrappedEdbs.set(
-                                    atom,
-                                    wrappedEdb);
-                            }
-                            return wrappedEdb;
-                        });
-                    let wrappedConjunction = this.Wrap(
+                    const wrappedConjunction = this.Wrap(
                         conjunction,
                         ...wrappedPredecessors);
                     wrappedIdbs.set(
@@ -137,27 +109,14 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
                                 rule[0][0] === '' ? rule[0].slice(1) : rule[0],
                                 rule[1]);
                             const wrappedPredecessors: Wrapped<T, Iterable<Tuple>>[] = rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function').map(
-                                atom =>
-                                {
-                                    if(IsIdb(atom))
-                                        return wrappedIdbs.get(atom[0]);
+                                atom => IsIdb(atom) ? wrappedIdbs.get(atom[0]) : this.WrapEdb(atom));
 
-                                    let wrappedEdb = wrappedEdbs.get(atom);
-                                    if(!wrappedEdb)
-                                    {
-                                        wrappedEdb = this.WrapEdb(atom);
-                                        wrappedEdbs.set(
-                                            atom,
-                                            wrappedEdb);
-                                    }
-                                    return wrappedEdb;
-                                });
-                            let wrappedConjunction = this.Wrap(
+                            const wrappedConjunction = this.Wrap(
                                 conjunction,
                                 ...wrappedPredecessors);
-
                             return wrappedConjunction;
                         });
+
                     const wrappedDisjunction = this.Wrap(
                         this._disjunction,
                         ...wrappedPredecessors);
