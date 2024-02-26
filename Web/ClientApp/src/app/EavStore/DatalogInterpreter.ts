@@ -14,7 +14,6 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
     private _disjunction: (...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>;
 
     constructor(
-        private _wrap        : Wrap<T>,
         private _tupleCompare: Compare<Tuple>
         )
     {
@@ -38,7 +37,6 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
                 rule => [
                     rule[0][0],
                     [].concat(...rulesGroupedByPredicateSymbol.get(rule[0][0]).map(rule => rule[1].filter(IsIdb).map(idb => idb[0])))]));
-        const ruleSuccessors = Transpose(rulePredecessors);
 
         type SCC<T> = ReadonlyArray<T> & { LongestPath?: number; } & { Recursive?: boolean; };
 
@@ -78,14 +76,13 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
                         let wrappedEdb = wrappedEdbs.get(atom);
                         if(!wrappedEdb)
                         {
-                            wrappedEdb = this.Input(atom);
+                            wrappedEdb = this.WrapEdb(atom);
                             wrappedEdbs.set(
                                 atom,
                                 wrappedEdb);
                         }
                         return wrappedEdb;
-                    }
-                );
+                    });
 
                 let wrappedRecursion = this.Wrap(
                     recursion,
@@ -117,7 +114,7 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
                             let wrappedEdb = wrappedEdbs.get(atom);
                             if(!wrappedEdb)
                             {
-                                wrappedEdb = this.Input(atom);
+                                wrappedEdb = this.WrapEdb(atom);
                                 wrappedEdbs.set(
                                     atom,
                                     wrappedEdb);
@@ -148,7 +145,7 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
                                     let wrappedEdb = wrappedEdbs.get(atom);
                                     if(!wrappedEdb)
                                     {
-                                        wrappedEdb = this.Input(atom);
+                                        wrappedEdb = this.WrapEdb(atom);
                                         wrappedEdbs.set(
                                             atom,
                                             wrappedEdb);
@@ -174,6 +171,6 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
         return <Wrapped<T, {[K in keyof THead]: any;}[]>>wrappedIdbs.get('');
     }
 
-    abstract Input(atom: Fact): Wrapped<T, Iterable<Double>>
+    abstract WrapEdb(atom: Fact): Wrapped<T, Iterable<Double>>
     abstract Wrap: Wrap<T>;
 }
