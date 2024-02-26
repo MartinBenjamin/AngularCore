@@ -187,7 +187,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
             .map(stronglyConnectedComponent => stronglyConnectedComponent
                 .map<[Signal, SCC<Signal>]>(signal => [signal, stronglyConnectedComponent]))));
 
-        // Determine longest path for each strongly connect component in condensed graph.
+        // Determine longest path for each strongly connected component in the condensed graph.
         const longestPaths = LongestPaths(this._condensed);
 
         for(const [stronglyConnectComponent, longestPath] of longestPaths)

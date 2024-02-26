@@ -1,6 +1,7 @@
 import { Compare, DefaultCompare } from "../Collections/SortedSet";
 
-export type Tuple = readonly any[];
+export type Tuple  = readonly any[];
+export type Double = readonly [any, any];
 
 export function TupleCompareFactory<T extends Tuple>(
     elementCompare: Compare = DefaultCompare
