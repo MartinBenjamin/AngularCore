@@ -1,4 +1,4 @@
-import { BuiltIn, Equal, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, NotEqual } from '../EavStore/Atom';
+import { BuiltIn, Equal, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, NotEqual } from '../EavStore/BuiltIn';
 import { IsConstant, IsVariable } from '../EavStore/IEavStore';
 import { Tuple } from '../EavStore/Tuple';
 import { ClassExpressionInterpreter } from './ClassExpressionInterpreter';

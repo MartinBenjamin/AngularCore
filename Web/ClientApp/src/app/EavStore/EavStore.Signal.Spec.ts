@@ -2,7 +2,7 @@ import { } from 'jasmine';
 import { assertBuilder } from '../assertBuilder';
 import { ArraySet } from '../Collections/ArraySet';
 import { SortedSet } from '../Collections/SortedSet';
-import { Add } from './Atom';
+import { Add } from './BuiltIn';
 import { EavStore, tupleCompare } from './EavStore';
 import { Fact, IEavStore, Store } from './IEavStore';
 

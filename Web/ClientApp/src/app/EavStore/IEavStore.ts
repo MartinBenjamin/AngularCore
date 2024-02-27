@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { IScheduler, Signal } from '../Signal/Signal';
-import { BuiltIn } from './Atom';
+import { BuiltIn } from './BuiltIn';
 import { ITransaction } from './ITransactionManager';
 import { Tuple } from './Tuple';
 

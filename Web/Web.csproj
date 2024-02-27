@@ -671,7 +671,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Ontology.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\Property.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\PropertyRestriction.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\EavStore\Atom.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\ReservedVocabulary.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Ontology\PrefixIris.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Collections\SortedList.Spec.ts" />

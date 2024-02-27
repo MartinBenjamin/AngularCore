@@ -1,7 +1,7 @@
 import { } from 'jasmine';
 import { assertBuilder } from '../assertBuilder';
 import { SortedSet } from '../Collections/SortedSet';
-import { BuiltIn } from '../EavStore/Atom';
+import { BuiltIn } from '../EavStore/BuiltIn';
 import { IsVariable } from '../EavStore/IEavStore';
 import { Scheduler, Signal } from './Signal';
 
