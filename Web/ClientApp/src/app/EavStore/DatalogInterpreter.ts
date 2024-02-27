@@ -130,6 +130,9 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
         return <Wrapped<T, {[K in keyof THead]: any;}[]>>wrappedIdbs.get('');
     }
 
-    abstract WrapEdb(atom: Fact): Wrapped<T, Iterable<Double>>
-    abstract Wrap: Wrap<T>;
+    abstract Wrap<TIn extends any[], TOut>(
+        map: (...params: TIn) => TOut,
+        ...params: {[Parameter in keyof TIn]: Wrapped<T, TIn[Parameter]>;}): Wrapped<T, TOut>
+
+    abstract WrapEdb(atom: Fact): Wrapped<T, Iterable<Fact>>
 }
