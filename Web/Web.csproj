@@ -61,6 +61,7 @@
     <None Remove="ClientApp\src\app\DealTrackerLayout.ts" />
     <None Remove="ClientApp\src\app\Components\TestTab.ts" />
     <None Remove="ClientApp\src\app\Deal\DealComponents.Module.ts" />
+    <None Remove="ClientApp\src\app\EavStore\Aggregation.ts" />
     <None Remove="ClientApp\src\app\EavStore\Datalog.ts" />
     <None Remove="ClientApp\src\app\EavStore\DatalogInterpreter.ts" />
     <None Remove="ClientApp\src\app\EavStore\DatalogObservableInterpreter.ts" />
