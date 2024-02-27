@@ -10,11 +10,11 @@ import { Tuple } from "./Tuple";
 
 export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType.Signal>
 {
-    private _disjunction: (...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>;
+    private readonly _disjunction: (...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>;
 
     constructor(
-        private _eavStore    : IEavStore,
-        private _tupleCompare: Compare<Tuple>
+        private readonly _eavStore    : IEavStore,
+        private readonly _tupleCompare: Compare<Tuple>
         )
     {
         this._disjunction = Disjunction(_tupleCompare);

@@ -7,7 +7,7 @@ import { Tuple } from "./Tuple";
 export class DatalogObservableInterpreter implements IDatalogInterpreter<WrapperType.Observable>
 {
     constructor(
-        private _eavStore: IEavStore
+        private readonly _eavStore: IEavStore
         )
     {
     }

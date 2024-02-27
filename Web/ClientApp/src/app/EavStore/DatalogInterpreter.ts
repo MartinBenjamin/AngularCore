@@ -1,20 +1,19 @@
-import { ArrayKeyedMap } from "../Collections/ArrayKeyedMap";
 import { Group } from "../Collections/Group";
 import { Compare, SortedSet } from "../Collections/SortedSet";
-import { LongestPaths, Transpose } from "../Graph/AdjacencyList";
+import { LongestPaths } from "../Graph/AdjacencyList";
 import { Condense } from "../Graph/StronglyConnectedComponents";
-import { Wrap, Wrapped, WrapperType } from "../Ontology/Wrapped";
+import { Wrapped, WrapperType } from "../Ontology/Wrapped";
 import { Conjunction, Disjunction, Recursion } from "./Datalog";
 import { IDatalogInterpreter } from "./IDatalogInterpreter";
 import { Atom, Fact, Idb, IsIdb, Rule } from "./IEavStore";
-import { Double, Tuple } from "./Tuple";
+import { Tuple } from "./Tuple";
 
 export abstract class DatalogInterpreter<T extends WrapperType> implements IDatalogInterpreter<T>
 {
-    private _disjunction: (...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>;
+    private readonly _disjunction: (...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>;
 
     constructor(
-        private _tupleCompare: Compare<Tuple>
+        private readonly _tupleCompare: Compare<Tuple>
         )
     {
         this._disjunction = Disjunction(_tupleCompare);

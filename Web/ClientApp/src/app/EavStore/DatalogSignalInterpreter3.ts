@@ -10,7 +10,7 @@ type SignalParams<P> = {[Parameter in keyof P]: Signal<P[Parameter]>;};
 export class DatalogSignalInterpreter extends DatalogInterpreter<WrapperType.Signal>
 {
     constructor(
-        private _eavStore: IEavStore,
+        private readonly _eavStore: IEavStore,
         tupleCompare: Compare<Tuple>
         )
     {
