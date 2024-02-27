@@ -5,9 +5,9 @@ import { Transpose } from "../Graph/AdjacencyList";
 import { StronglyConnectedComponents } from "../Graph/StronglyConnectedComponents";
 import { WrapperType } from "../Ontology/Wrapped";
 import { IScheduler, Scheduler, Signal } from "../Signal/Signal";
-import { Conjunction, Disjunction } from "./Datalog";
+import { Atom, Conjunction, Disjunction, Idb, IsIdb, Rule } from "./Datalog";
 import { IDatalogInterpreter } from "./IDatalogInterpreter";
-import { Atom, Fact, Idb, IEavStore, IsIdb, Rule } from "./IEavStore";
+import { Fact, IEavStore } from "./IEavStore";
 import { Tuple } from "./Tuple";
 
 export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType.Signal>
