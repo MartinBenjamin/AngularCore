@@ -1,4 +1,4 @@
-import { IsVariable } from './IEavStore';
+import { IsVariable, Variable } from './IEavStore';
 
 export type BuiltIn = (substitutions: Iterable<object>) => Iterable<object>;
 
@@ -32,8 +32,8 @@ export const GreaterThanOrEqual = ComparisonAtom((lhs, rhs) => lhs >=  rhs);
 export const GreaterThan        = ComparisonAtom((lhs, rhs) => lhs >   rhs);
 
 
-function Wrap<T1, TResult>(func: (t1: T1) => TResult): (t1: string | T1, result: string | TResult) => BuiltIn
-function Wrap<T1, T2, TResult>(func: (t1: T1, t2: T2) => TResult): (t1: string | T1, t2: string | T2, result: string | TResult) => BuiltIn
+function Wrap<T1, TResult>(func: (t1: T1) => TResult): (t1: Variable | T1, result: Variable | TResult) => BuiltIn
+function Wrap<T1, T2, TResult>(func: (t1: T1, t2: T2) => TResult): (t1: Variable | T1, t2: Variable | T2, result: Variable | TResult) => BuiltIn
 function Wrap<TResult>(func:(...params) => TResult): () => BuiltIn
 {
     return function(): BuiltIn
