@@ -1,4 +1,4 @@
-import { IsVariable, Variable } from './IEavStore';
+import { IsVariable, Variable } from "./Datalog";
 
 export type BuiltIn = (substitutions: Iterable<object>) => Iterable<object>;
 

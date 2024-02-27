@@ -2,7 +2,7 @@ import { } from 'jasmine';
 import { assertBuilder } from '../assertBuilder';
 import { SortedSet } from '../Collections/SortedSet';
 import { BuiltIn } from '../EavStore/BuiltIn';
-import { IsVariable } from '../EavStore/IEavStore';
+import { IsVariable } from '../EavStore/Datalog';
 import { Scheduler, Signal } from './Signal';
 
 type Tuple = [any, ...any[]];

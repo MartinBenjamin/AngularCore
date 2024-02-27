@@ -1,10 +1,9 @@
 import { Observable } from 'rxjs';
 import { IScheduler, Signal } from '../Signal/Signal';
-import { BuiltIn } from './BuiltIn';
+import { Atom, Edb, Rule } from './Datalog';
+import { Fact, PropertyKey } from './Fact';
 import { ITransaction } from './ITransactionManager';
 import { Tuple } from './Tuple';
-
-export type PropertyKey = string | symbol;
 
 export enum Cardinality
 {
@@ -19,20 +18,10 @@ export interface AttributeSchema
     Cardinality   ?: Cardinality
 }
 
-export type Fact = [any, PropertyKey, any];
-
-export type Variable = `?${string}`;
-export const IsVariable = (term): term is Variable => typeof term === 'string' && term[0] === '?';
-export const IsConstant = term => !(typeof term === 'undefined' || IsVariable(term));
-
-export const IsPredicateSymbol = (term): term is string => typeof term === 'string' && term[0] !== '?';
-export type Edb = Fact | BuiltIn;
-export type Idb = [string, ...any[]];
-export const IsIdb = (atom): atom is Idb => atom instanceof Array && IsPredicateSymbol(atom[0]);
-
-export type Atom = Edb | Idb;
-
-export type Rule = [Idb, Atom[]];
+export {
+    PropertyKey,
+    Fact
+};
 
 export interface IEavStore
 {

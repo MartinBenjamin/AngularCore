@@ -1,7 +1,8 @@
 import { Observable } from 'rxjs';
 import { WrapperType } from "../Ontology/Wrapped";
+import { Atom, Rule } from './Datalog';
 import { IDatalogInterpreter } from "./IDatalogInterpreter";
-import { Atom, IEavStore, Rule } from "./IEavStore";
+import { IEavStore } from './IEavStore';
 import { Tuple } from "./Tuple";
 
 export class DatalogObservableInterpreter implements IDatalogInterpreter<WrapperType.Observable>

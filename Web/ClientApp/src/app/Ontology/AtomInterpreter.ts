@@ -1,5 +1,5 @@
 import { BuiltIn, Equal, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, NotEqual } from '../EavStore/BuiltIn';
-import { IsConstant, IsVariable } from '../EavStore/IEavStore';
+import { IsConstant, IsVariable } from '../EavStore/Datalog';
 import { Tuple } from '../EavStore/Tuple';
 import { ClassExpressionInterpreter } from './ClassExpressionInterpreter';
 import { IAtom, IAtomSelector, IClassAtom, IDataPropertyAtom, IDataRangeAtom, IEqualAtom, IGreaterThanAtom, IGreaterThanOrEqualAtom, ILessThanAtom, ILessThanOrEqualAtom, INotEqualAtom, IObjectPropertyAtom, IPropertyAtom } from './DLSafeRule';

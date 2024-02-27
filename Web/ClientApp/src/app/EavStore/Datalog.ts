@@ -1,8 +1,22 @@
 import { ArrayKeyedMap } from "../Collections/ArrayKeyedMap";
 import { Compare, SortedSet } from "../Collections/SortedSet";
 import { Wrap, Wrapped } from "../Wrap";
-import { Atom, Fact, Idb, IsConstant, IsIdb, IsVariable, Rule } from "./IEavStore";
+import { BuiltIn } from "./BuiltIn";
+import { Fact } from "./Fact";
 import { Tuple } from "./Tuple";
+
+export type Variable = `?${string}`;
+export const IsVariable = (term): term is Variable => typeof term === 'string' && term[0] === '?';
+export const IsConstant = term => !(typeof term === 'undefined' || IsVariable(term));
+
+export const IsPredicateSymbol = (term): term is string => typeof term === 'string' && term[0] !== '?';
+export type Edb = Fact | BuiltIn;
+export type Idb = [string, ...any[]];
+export const IsIdb = (atom): atom is Idb => atom instanceof Array && IsPredicateSymbol(atom[0]);
+
+export type Atom = Edb | Idb;
+
+export type Rule = [Idb, Atom[]];
 
 export function Conjunction(
     head: any[],

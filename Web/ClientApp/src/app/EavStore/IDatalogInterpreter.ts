@@ -1,5 +1,5 @@
 import { Wrapped, WrapperType } from "../Ontology/Wrapped";
-import { Atom, Rule } from "./IEavStore";
+import { Atom, Rule } from "./Datalog";
 import { Tuple } from "./Tuple";
 
 export interface IDatalogInterpreter<TWrapperType extends WrapperType>

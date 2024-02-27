@@ -3,9 +3,9 @@ import { Compare, SortedSet } from "../Collections/SortedSet";
 import { LongestPaths } from "../Graph/AdjacencyList";
 import { Condense } from "../Graph/StronglyConnectedComponents";
 import { Wrapped, WrapperType } from "../Ontology/Wrapped";
-import { Conjunction, Disjunction, Recursion } from "./Datalog";
+import { Atom, Conjunction, Disjunction, Idb, IsIdb, Recursion, Rule } from "./Datalog";
+import { Fact } from "./Fact";
 import { IDatalogInterpreter } from "./IDatalogInterpreter";
-import { Atom, Fact, Idb, IsIdb, Rule } from "./IEavStore";
 import { Tuple } from "./Tuple";
 
 export abstract class DatalogInterpreter<T extends WrapperType> implements IDatalogInterpreter<T>
