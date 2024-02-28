@@ -12,6 +12,7 @@ import { Tuple } from "./Tuple";
 export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType.Signal>
 {
     private readonly _disjunction: (...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>;
+    private readonly _recursion  : (rulesGroupedByPredicateSymbol: [string, Rule[]][]) => [(...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>[], (Fact | Idb)[]];
 
     constructor(
         private readonly _eavStore    : IEavStore,
@@ -19,6 +20,7 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
         )
     {
         this._disjunction = Disjunction(_tupleCompare);
+        this._recursion   = Recursion(_tupleCompare);
     }
 
     Query<T extends Tuple>(
@@ -55,9 +57,7 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
                 let recursion: (...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>[];
                 let predecessorAtoms: (Fact | Idb)[];
                 [recursion, predecessorAtoms]
-                    = Recursion(
-                        this._tupleCompare,
-                        stronglyConnectedComponent.map(predicateSymbol => [predicateSymbol, rulesGroupedByPredicateSymbol.get(predicateSymbol)]));
+                    = this._recursion(stronglyConnectedComponent.map(predicateSymbol => [predicateSymbol, rulesGroupedByPredicateSymbol.get(predicateSymbol)]));
                 const recursionSignal = new Signal(recursion);
                 signalPredecessorAtoms.set(
                     recursionSignal,

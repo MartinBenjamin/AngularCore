@@ -1,7 +1,10 @@
 import { ArrayKeyedMap } from "../Collections/ArrayKeyedMap";
+import { SortedMap } from "../Collections/SortedMap";
 import { Compare, SortedSet } from "../Collections/SortedSet";
 import { Wrap, Wrapped } from "../Wrap";
+import { Aggregation } from "./Aggregation";
 import { BuiltIn } from "./BuiltIn";
+import { tupleCompare } from "./EavStore";
 import { Fact } from "./Fact";
 import { Tuple } from "./Tuple";
 
@@ -23,6 +26,69 @@ export function Conjunction(
     body: Atom[]
     ): (...inputs: Iterable<Tuple>[]) => Iterable<Tuple>
 {
+    if(head.some(term => term instanceof Aggregation))
+        return (...inputs: Iterable<Tuple>[]): Iterable<Tuple> =>
+        {
+            let inputIndex = 0;
+            const substitutions = body.reduce(
+                (substitutions, atom) =>
+                {
+                    if(typeof atom === 'function')
+                        return [...atom(substitutions)];
+
+                    let count = substitutions.length;
+                    while(count--)
+                    {
+                        const substitution = substitutions.shift();
+                        for(const tuple of inputs[inputIndex])
+                        {
+                            let merged = {...substitution};
+                            for(let index = 0; index < atom.length && merged; ++index)
+                            {
+                                const term = atom[index];
+                                if(IsConstant(term))
+                                {
+                                    if(term !== tuple[index])
+                                        merged = null;
+                                }
+                                else if(IsVariable(term))
+                                {
+                                    if(typeof merged[term] === 'undefined')
+                                        merged[term] = tuple[index];
+
+                                    else if(merged[term] !== tuple[index])
+                                        // Fact does not match query pattern.
+                                        merged = null;
+                                }
+                            }
+
+                            if(merged)
+                                substitutions.push(merged);
+                        }
+                    }
+
+                    ++inputIndex;
+                    return substitutions;
+                },
+                [{}]);
+
+
+            let grouped = new SortedMap<any[], object[]>(tupleCompare);
+            substitutions.forEach(substitution =>
+            {
+                const key = head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term);
+                let group = grouped.get(key);
+                if(group)
+                    group.push(substitution);
+
+                else
+                    grouped.set(
+                        key,
+                        [substitution])
+            });
+
+            return [...grouped.keys()].map(key => key.map(element => element instanceof Aggregation ? element.Aggregate(grouped.get(key)) : element));
+        };
     return (...inputs: Iterable<Tuple>[]): Iterable<Tuple> =>
     {
         let inputIndex = 0;
@@ -85,157 +151,161 @@ export function Disjunction<T extends Tuple>(
 }
 
 export function RecursiveDisjunction(
-    tupleCompare: Compare<Tuple>,
-    rules       : Rule[]
-    ): [(...inputs: [SortedSet<Tuple>, ...Iterable<Tuple>[]]) => SortedSet<Tuple>, (Fact | Idb)[]]
+    tupleCompare: Compare<Tuple>
+    ): (rules: Rule[]) => [(...inputs: [SortedSet<Tuple>, ...Iterable<Tuple>[]]) => SortedSet<Tuple>, (Fact | Idb)[]]
 {
-    type InputType = [SortedSet<Tuple>, ...Iterable<Tuple>[]];
-    const wrappedInputs = new ArrayKeyedMap<Fact | Idb, Wrapped<Iterable<Tuple>>>();
-    const inputAtoms: (Fact | Idb)[] = [];
-    let inputs: InputType;
-
-    const disjunction = (...params: InputType): SortedSet<Tuple> =>
+    return (rules: Rule[]): [(...inputs: [SortedSet<Tuple>, ...Iterable<Tuple>[]]) => SortedSet<Tuple>, (Fact | Idb)[]] =>
     {
-        const [resultTMinus1, ...conjunctions] = params;
-        const resultT = new SortedSet(resultTMinus1);
-        for(const conjunction of conjunctions)
-            for(const tuple of conjunction)
-                resultT.add(tuple);
+        type InputType = [SortedSet<Tuple>, ...Iterable<Tuple>[]];
+        const wrappedInputs = new ArrayKeyedMap<Fact | Idb, Wrapped<Iterable<Tuple>>>();
+        const inputAtoms: (Fact | Idb)[] = [];
+        let inputs: InputType;
 
-        return resultT;
-    };
-
-    const wrappedDisjunctionPredecessors: [() => SortedSet<Tuple>, ...Wrapped<Iterable<Tuple>>[]] = [() => inputs[0] || new SortedSet(tupleCompare)];
-
-    for(const rule of rules)
-    {
-        const conjunction = Conjunction(
-            rule[0][0] === '' ? rule[0].slice(1) : rule[0],
-            rule[1]);
-        const wrappedConjunctionPredecessors: Wrapped<Iterable<Tuple>>[] = [];
-
-        for(const atom of rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function'))
+        const disjunction = (...params: InputType): SortedSet<Tuple> =>
         {
-            let wrappedInput: Wrapped<Iterable<Tuple>>;
-            if(IsIdb(atom) && atom[0] === rule[0][0])
-                wrappedInput = wrappedDisjunctionPredecessors[0];
+            const [resultTMinus1, ...conjunctions] = params;
+            const resultT = new SortedSet(resultTMinus1);
+            for(const conjunction of conjunctions)
+                for(const tuple of conjunction)
+                    resultT.add(tuple);
 
-            else
+            return resultT;
+        };
+
+        const wrappedDisjunctionPredecessors: [() => SortedSet<Tuple>, ...Wrapped<Iterable<Tuple>>[]] = [() => inputs[0] || new SortedSet(tupleCompare)];
+
+        for(const rule of rules)
+        {
+            const conjunction = Conjunction(
+                rule[0][0] === '' ? rule[0].slice(1) : rule[0],
+                rule[1]);
+            const wrappedConjunctionPredecessors: Wrapped<Iterable<Tuple>>[] = [];
+
+            for(const atom of rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function'))
             {
-                wrappedInput = wrappedInputs.get(atom);
-                if(!wrappedInput)
+                let wrappedInput: Wrapped<Iterable<Tuple>>;
+                if(IsIdb(atom) && atom[0] === rule[0][0])
+                    wrappedInput = wrappedDisjunctionPredecessors[0];
+
+                else
                 {
-                    const index = inputAtoms.push(atom);
-                    wrappedInput = () => inputs[index];
-                    wrappedInputs.set(
-                        atom,
-                        wrappedInput);
+                    wrappedInput = wrappedInputs.get(atom);
+                    if(!wrappedInput)
+                    {
+                        const index = inputAtoms.push(atom);
+                        wrappedInput = () => inputs[index];
+                        wrappedInputs.set(
+                            atom,
+                            wrappedInput);
+                    }
                 }
+
+                wrappedConjunctionPredecessors.push(wrappedInput);
             }
 
-            wrappedConjunctionPredecessors.push(wrappedInput);
+            const wrappedConjunction = Wrap(conjunction, ...wrappedConjunctionPredecessors);
+            wrappedDisjunctionPredecessors.push(wrappedConjunction);
         }
 
-        const wrappedConjunction = Wrap(conjunction, ...wrappedConjunctionPredecessors);
-        wrappedDisjunctionPredecessors.push(wrappedConjunction);
-    }
+        const wrappedDisjunction = Wrap(disjunction, ...wrappedDisjunctionPredecessors);
 
-    const wrappedDisjunction = Wrap(disjunction, ...wrappedDisjunctionPredecessors);
-
-    return [
-        (...params: InputType): SortedSet<Tuple> =>
-        {
-            inputs = params;
-            return wrappedDisjunction();
-        },
-        inputAtoms];
+        return [
+            (...params: InputType): SortedSet<Tuple> =>
+            {
+                inputs = params;
+                return wrappedDisjunction();
+            },
+            inputAtoms];
+    };
 }
 
 export function Recursion(
-    tupleCompare                 : Compare<Tuple>,
-    rulesGroupedByPredicateSymbol: [string, Rule[]][]
-    ): [(...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>[], (Fact | Idb)[]]
+    tupleCompare: Compare<Tuple>
+    ): (rulesGroupedByPredicateSymbol: [string, Rule[]][]) => [(...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>[], (Fact | Idb)[]]
 {
-    type Result = SortedSet<Tuple>[];
-    const empty = new SortedSet(tupleCompare);
-    const resultT0: Result = rulesGroupedByPredicateSymbol.map(() => empty);
-    let resultTMinus1: Result;
-    let inputs: Iterable<Tuple>[];
-
-    const wrappedDisjunctions: Wrapped<SortedSet<Tuple>>[] = [];
-    const wrappedInputs = new ArrayKeyedMap<Fact | Idb, Wrapped<Iterable<Tuple>>>();
-    const inputAtoms: (Fact | Idb)[] = [];
-
-    rulesGroupedByPredicateSymbol.forEach(
-        ([, rules], index) =>
+    return (rulesGroupedByPredicateSymbol: [string, Rule[]][]): [(...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>[], (Fact | Idb)[]] =>
         {
-            const disjunction = (...params: [SortedSet<Tuple>, ...Iterable<Tuple>[]]): SortedSet<Tuple> =>
+        type Result = SortedSet<Tuple>[];
+        const empty = new SortedSet(tupleCompare);
+        const resultT0: Result = rulesGroupedByPredicateSymbol.map(() => empty);
+        let resultTMinus1: Result;
+        let inputs: Iterable<Tuple>[];
+
+        const wrappedDisjunctions: Wrapped<SortedSet<Tuple>>[] = [];
+        const wrappedInputs = new ArrayKeyedMap<Fact | Idb, Wrapped<Iterable<Tuple>>>();
+        const inputAtoms: (Fact | Idb)[] = [];
+
+        rulesGroupedByPredicateSymbol.forEach(
+            ([, rules], index) =>
             {
-                const [resultTMinus1, ...conjunctions] = params;
-                const resultT = new SortedSet(resultTMinus1);
-                for(const conjunction of conjunctions)
-                    for(const tuple of conjunction)
-                        resultT.add(tuple);
-
-                return resultT;
-            };
-
-            const wrappedDisjunctionPredecessors: [() => SortedSet<Tuple>, ...Wrapped<Iterable<Tuple>>[]] = [() => resultTMinus1[index] || new SortedSet(this._tupleCompare)];
-
-            for(const rule of rules)
-            {
-                const conjunction = Conjunction(
-                    rule[0][0] === '' ? rule[0].slice(1) : rule[0],
-                    rule[1]);
-                const wrappedConjunctionPredecessors: Wrapped<Iterable<Tuple>>[] = [];
-
-                for(const atom of rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function'))
+                const disjunction = (...params: [SortedSet<Tuple>, ...Iterable<Tuple>[]]): SortedSet<Tuple> =>
                 {
-                    let wrappedInput: Wrapped<Iterable<Tuple>>;
-                    const resultTMinus1Index = IsIdb(atom) ? rulesGroupedByPredicateSymbol.findIndex(element => element[0] === atom[0]) : -1;
-                    if(resultTMinus1Index !== -1)
-                        wrappedInput = () => resultTMinus1[resultTMinus1Index];
+                    const [resultTMinus1, ...conjunctions] = params;
+                    const resultT = new SortedSet(resultTMinus1);
+                    for(const conjunction of conjunctions)
+                        for(const tuple of conjunction)
+                            resultT.add(tuple);
 
-                    else
+                    return resultT;
+                };
+
+                const wrappedDisjunctionPredecessors: [() => SortedSet<Tuple>, ...Wrapped<Iterable<Tuple>>[]] = [() => resultTMinus1[index] || new SortedSet(this._tupleCompare)];
+
+                for(const rule of rules)
+                {
+                    const conjunction = Conjunction(
+                        rule[0][0] === '' ? rule[0].slice(1) : rule[0],
+                        rule[1]);
+                    const wrappedConjunctionPredecessors: Wrapped<Iterable<Tuple>>[] = [];
+
+                    for(const atom of rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function'))
                     {
-                        wrappedInput = wrappedInputs.get(atom);
-                        if(!wrappedInput)
+                        let wrappedInput: Wrapped<Iterable<Tuple>>;
+                        const resultTMinus1Index = IsIdb(atom) ? rulesGroupedByPredicateSymbol.findIndex(element => element[0] === atom[0]) : -1;
+                        if(resultTMinus1Index !== -1)
+                            wrappedInput = () => resultTMinus1[resultTMinus1Index];
+
+                        else
                         {
-                            const inputIndex = inputAtoms.push(atom) - 1;
-                            wrappedInput = () => inputs[inputIndex];
-                            wrappedInputs.set(
-                                atom,
-                                wrappedInput);
+                            wrappedInput = wrappedInputs.get(atom);
+                            if(!wrappedInput)
+                            {
+                                const inputIndex = inputAtoms.push(atom) - 1;
+                                wrappedInput = () => inputs[inputIndex];
+                                wrappedInputs.set(
+                                    atom,
+                                    wrappedInput);
+                            }
                         }
+
+                        wrappedConjunctionPredecessors.push(wrappedInput);
                     }
 
-                    wrappedConjunctionPredecessors.push(wrappedInput);
+                    const wrappedConjunction = Wrap(conjunction, ...wrappedConjunctionPredecessors);
+                    wrappedDisjunctionPredecessors.push(wrappedConjunction);
                 }
 
-                const wrappedConjunction = Wrap(conjunction, ...wrappedConjunctionPredecessors);
-                wrappedDisjunctionPredecessors.push(wrappedConjunction);
+                const wrappedDisjunction = Wrap(disjunction, ...wrappedDisjunctionPredecessors);
+                wrappedDisjunctions.push(wrappedDisjunction);
+            });
+
+        const wrapped = Wrap(
+            (...wrappedDisjunctions: SortedSet<Tuple>[]) => wrappedDisjunctions,
+            ...wrappedDisjunctions);
+
+        return [(...params: Iterable<Tuple>[]): SortedSet<Tuple>[] =>
+        {
+            inputs = params;
+            resultTMinus1 = resultT0;
+            let resultT = wrapped();
+
+            while([...resultT].some((result, index) => result.size !== resultTMinus1[index].size))
+            {
+                resultTMinus1 = resultT;
+                resultT = wrapped();
             }
 
-            const wrappedDisjunction = Wrap(disjunction, ...wrappedDisjunctionPredecessors);
-            wrappedDisjunctions.push(wrappedDisjunction);
-        });
-
-    const wrapped = Wrap(
-        (...wrappedDisjunctions: SortedSet<Tuple>[]) => wrappedDisjunctions,
-        ...wrappedDisjunctions);
-
-    return [(...params: Iterable<Tuple>[]): SortedSet<Tuple>[] =>
-    {
-        inputs = params;
-        resultTMinus1 = resultT0;
-        let resultT = wrapped();
-
-        while([...resultT].some((result, index) => result.size !== resultTMinus1[index].size))
-        {
-            resultTMinus1 = resultT;
-            resultT = wrapped();
-        }
-
-        return resultT;
-    }, inputAtoms];
+            return resultT;
+        }, inputAtoms];
+    };
 }

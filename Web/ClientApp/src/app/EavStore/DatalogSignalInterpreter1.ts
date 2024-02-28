@@ -4,20 +4,23 @@ import { StronglyConnectedComponents } from "../Graph/StronglyConnectedComponent
 import { WrapperType } from "../Ontology/Wrapped";
 import { Signal } from "../Signal/Signal";
 import { Atom, Conjunction, Disjunction, Idb, IsIdb, RecursiveDisjunction, Rule } from "./Datalog";
+import { tupleCompare } from "./EavStore";
 import { IDatalogInterpreter } from "./IDatalogInterpreter";
 import { Fact, IEavStore } from "./IEavStore";
 import { Tuple } from "./Tuple";
 
 export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType.Signal>
 {
-    private readonly _disjunction: (...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>;
+    private readonly _disjunction         : (...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>;
+    private readonly _recursiveDisjunction: (rules: Rule[]) => [(...inputs: [SortedSet<Tuple>, ...Iterable<Tuple>[]]) => SortedSet<Tuple>, (Fact | Idb)[]];
 
     constructor(
         private readonly _eavStore    : IEavStore,
         private readonly _tupleCompare: Compare<Tuple>
         )
     {
-        this._disjunction = Disjunction(_tupleCompare);
+        this._disjunction          = Disjunction(_tupleCompare);
+        this._recursiveDisjunction = RecursiveDisjunction(tupleCompare);
     }
 
     Query<T extends Tuple>(
@@ -54,9 +57,7 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
             {
                 let recursiveDisjunction: (...inputs: [SortedSet<Tuple>, ...Iterable<Tuple>[]]) => SortedSet<Tuple>;
                 let predecessorAtoms: (Fact | Idb)[];
-                [recursiveDisjunction, predecessorAtoms] = RecursiveDisjunction(
-                    this._tupleCompare,
-                    rules);
+                [recursiveDisjunction, predecessorAtoms] = this._recursiveDisjunction(rules);
                 const recursiveSignal = new Signal(
                     recursiveDisjunction,
                     (lhs, rhs) => lhs && rhs && lhs.size === rhs.size);

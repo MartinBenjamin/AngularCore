@@ -11,12 +11,14 @@ import { Tuple } from "./Tuple";
 export abstract class DatalogInterpreter<T extends WrapperType> implements IDatalogInterpreter<T>
 {
     private readonly _disjunction: (...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>;
+    private readonly _recursion  : (rulesGroupedByPredicateSymbol: [string, Rule[]][]) => [(...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>[], (Fact | Idb)[]];
 
     constructor(
         private readonly _tupleCompare: Compare<Tuple>
         )
     {
         this._disjunction = Disjunction(_tupleCompare);
+        this._recursion   = Recursion(_tupleCompare);
     }
 
     Query<THead extends Tuple>(
@@ -62,9 +64,7 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
                 let recursion: (...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>[];
                 let predecessorAtoms: (Fact | Idb)[];
                 [recursion, predecessorAtoms]
-                    = Recursion(
-                        this._tupleCompare,
-                        stronglyConnectedComponent.map(predicateSymbol => [predicateSymbol, rulesGroupedByPredicateSymbol.get(predicateSymbol)]));
+                    = this._recursion(stronglyConnectedComponent.map(predicateSymbol => [predicateSymbol, rulesGroupedByPredicateSymbol.get(predicateSymbol)]));
                 const wrappedPredecessors: Wrapped<T, Iterable<Tuple>>[] = predecessorAtoms.map(
                     atom => IsIdb(atom) ? wrappedIdbs.get(atom[0]) : this.WrapEdb(atom));
 
@@ -76,7 +76,7 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
                     .forEach((predicateSymbol, index) => wrappedIdbs.set(
                         predicateSymbol,
                         this.Wrap(
-                            (recursionOutput: SortedSet<Tuple>[]) => <Tuple[]>recursionOutput[index].Array,
+                            (recursionOutput: SortedSet<Tuple>[]) => recursionOutput[index].Array,
                             wrappedRecursion)));
             }
             else

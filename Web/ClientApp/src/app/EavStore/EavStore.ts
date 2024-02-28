@@ -6,7 +6,7 @@ import { WrapperType } from '../Ontology/Wrapped';
 import { IScheduler, Scheduler, Signal } from '../Signal/Signal';
 import { Edb, IsConstant, IsVariable } from './Datalog';
 import { DatalogObservableInterpreter } from './DatalogObservableInterpreter';
-import { DatalogSignalInterpreter } from './DatalogSignalInterpreter1';
+import { DatalogSignalInterpreter } from './DatalogSignalInterpreter3';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
 import { IDatalogInterpreter } from './IDatalogInterpreter';
 import { AttributeSchema, Cardinality, Fact, IEavStore, PropertyKey, StoreSymbol } from './IEavStore';
