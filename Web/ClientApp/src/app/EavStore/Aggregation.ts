@@ -1,27 +1,27 @@
 import { Variable } from "./Datalog";
 
-export abstract class Aggregation
+export class Aggregation
 {
     constructor(
+        public readonly Aggregate: (substitutions: object[]) => number,
         public readonly Variable?: Variable
         )
     {
-    }
-
-    abstract Aggregate(substitutions: object[]): number
-}
-
-class CountAggregation extends Aggregation
-{
-    Aggregate(
-        substitutions: object[]
-        ): number
-    {
-        return substitutions.length;
     }
 }
 
 export function Count(): Aggregation
 {
-    return new CountAggregation();
+    return new Aggregation(substitutions => substitutions.length);
+}
+
+export function Sum(
+    variable: Variable
+    ): Aggregation
+{
+    return new Aggregation(
+        substitutions => substitutions.reduce(
+            (total, substitution) => total + substitution[variable],
+            0),
+        variable);
 }

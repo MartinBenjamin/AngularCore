@@ -1,7 +1,7 @@
 import { } from 'jasmine';
 import { assertBuilder } from '../assertBuilder';
 import { ArraySet } from '../Collections/ArraySet';
-import { Count } from './Aggregation';
+import { Count, Sum } from './Aggregation';
 import { EavStore } from './EavStore';
 import { IEavStore, Store } from './IEavStore';
 
@@ -32,5 +32,25 @@ store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [sig
                 assert('trace[0].has([2, 1])');
                 assert('trace[0].has([3, 2])');
                 assert('trace[0].has([4, 3])');
+            });
+
+        describe(
+            `Given
+trace: Set<any[]>[] and
+signal = store.Signal(['?value', Count()], [[e, 'a1', '?value']]) and
+store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [signal])`,
+            () =>
+            {
+                const trace: Set<any[]>[] = [];
+                const assert = assertBuilder('Store', 'store', 'e', 'trace', 'Count')
+                    (Store, store, e, trace, Sum);
+                const signal = store.Signal(['?value', Sum('?value')], [[e, 'a1', '?value']]);
+                const traceSignal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [signal]);
+                store.SignalScheduler.RemoveSignal(traceSignal);
+                assert('trace.length === 1');
+                assert('trace[0].size === 3');
+                assert('trace[0].has([2,  2])');
+                assert('trace[0].has([3,  6])');
+                assert('trace[0].has([4, 12])');
             });
     });
