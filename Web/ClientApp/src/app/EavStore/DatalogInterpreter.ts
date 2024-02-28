@@ -10,6 +10,7 @@ import { Tuple } from "./Tuple";
 
 export abstract class DatalogInterpreter<T extends WrapperType> implements IDatalogInterpreter<T>
 {
+    private readonly _conjunction: (head: Tuple, body: Atom[]) => (...inputs: Iterable<Tuple>[]) => Iterable<Tuple>;
     private readonly _disjunction: (...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>;
     private readonly _recursion  : (rulesGroupedByPredicateSymbol: [string, Rule[]][]) => [(...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>[], (Fact | Idb)[]];
 
@@ -17,6 +18,7 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
         private readonly _tupleCompare: Compare<Tuple>
         )
     {
+        this._conjunction = Conjunction(_tupleCompare);
         this._disjunction = Disjunction(_tupleCompare);
         this._recursion   = Recursion(_tupleCompare);
     }
@@ -86,7 +88,7 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
                 if(rules.length === 1)
                 {
                     const rule = rules[0];
-                    const conjunction = Conjunction(
+                    const conjunction = this._conjunction(
                         rule[0][0] === '' ? rule[0].slice(1) : rule[0],
                         rule[1]);
                     const wrappedPredecessors: Wrapped<T, Iterable<Tuple>>[] = rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function').map(
@@ -104,7 +106,7 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
                     const wrappedPredecessors: Wrapped<T, Iterable<Tuple>>[] = rules.map(
                         rule =>
                         {
-                            const conjunction = Conjunction(
+                            const conjunction = this._conjunction(
                                 rule[0][0] === '' ? rule[0].slice(1) : rule[0],
                                 rule[1]);
                             const wrappedPredecessors: Wrapped<T, Iterable<Tuple>>[] = rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function').map(

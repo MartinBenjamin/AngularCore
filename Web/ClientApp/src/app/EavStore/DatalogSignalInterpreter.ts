@@ -12,6 +12,7 @@ import { Tuple } from "./Tuple";
 
 export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType.Signal>
 {
+    private readonly _conjunction: (head: Tuple, body: Atom[]) => (...inputs: Iterable<Tuple>[]) => Iterable<Tuple>;
     private readonly _disjunction: (...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>;
 
     constructor(
@@ -19,6 +20,7 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
         private readonly _tupleCompare: Compare<Tuple>
         )
     {
+        this._conjunction = Conjunction(_tupleCompare);
         this._disjunction = Disjunction(_tupleCompare);
     }
 
@@ -85,7 +87,7 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
                 if(rules.length === 1)
                 {
                     const rule = rules[0];
-                    const conjunction = new Signal(Conjunction(
+                    const conjunction = new Signal(this._conjunction(
                         rule[0][0] === '' ? rule[0].slice(1) : rule[0],
                         rule[1]));
                     idbSignals.set(
@@ -108,7 +110,7 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
 
                     for(const rule of rules)
                     {
-                        const conjunction = new Signal(Conjunction(
+                        const conjunction = new Signal(this._conjunction(
                             rule[0][0] === '' ? rule[0].slice(1) : rule[0],
                             rule[1]));
                         predecessors.push(conjunction);
@@ -175,7 +177,7 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
 
             for(const rule of rules)
             {
-                const conjunction = new Signal(Conjunction(
+                const conjunction = new Signal(this._conjunction(
                     rule[0][0] === '' ? rule[0].slice(1) : rule[0],
                     rule[1]));
                 disjunctionPredecessors.push(conjunction);

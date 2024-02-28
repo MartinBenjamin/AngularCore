@@ -22,11 +22,11 @@ export type Atom = Edb | Idb;
 export type Rule = [Idb, Atom[]];
 
 export function Conjunction(
-    head: any[],
-    body: Atom[]
-    ): (...inputs: Iterable<Tuple>[]) => Iterable<Tuple>
+    tupleCompare: Compare<Tuple>
+    ): (head: Tuple, body: Atom[]) => (...inputs: Iterable<Tuple>[]) => Iterable<Tuple>
 {
-    if(head.some(term => term instanceof Aggregation))
+    return (head: Tuple, body: Atom[]): (...inputs: Iterable<Tuple>[]) => Iterable<Tuple> =>
+    {
         return (...inputs: Iterable<Tuple>[]): Iterable<Tuple> =>
         {
             let inputIndex = 0;
@@ -72,68 +72,33 @@ export function Conjunction(
                 },
                 [{}]);
 
-
-            let grouped = new SortedMap<any[], object[]>(tupleCompare);
-            substitutions.forEach(substitution =>
+            if(head.some(term => term instanceof Aggregation))
             {
-                const key = head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term);
-                let group = grouped.get(key);
-                if(group)
-                    group.push(substitution);
-
-                else
-                    grouped.set(
-                        key,
-                        [substitution])
-            });
-
-            return [...grouped.keys()].map(key => key.map(element => element instanceof Aggregation ? element.Aggregate(grouped.get(key)) : element));
-        };
-    return (...inputs: Iterable<Tuple>[]): Iterable<Tuple> =>
-    {
-        let inputIndex = 0;
-        return body.reduce(
-            (substitutions, atom) =>
-            {
-                if(typeof atom === 'function')
-                    return [...atom(substitutions)];
-
-                let count = substitutions.length;
-                while(count--)
-                {
-                    const substitution = substitutions.shift();
-                    for(const tuple of inputs[inputIndex])
+                const grouped = substitutions.reduce<Map<Tuple, object[]>>(
+                    (grouped, substitution) =>
                     {
-                        let merged = {...substitution};
-                        for(let index = 0; index < atom.length && merged; ++index)
-                        {
-                            const term = atom[index];
-                            if(IsConstant(term))
-                            {
-                                if(term !== tuple[index])
-                                    merged = null;
-                            }
-                            else if(IsVariable(term))
-                            {
-                                if(typeof merged[term] === 'undefined')
-                                    merged[term] = tuple[index];
+                        const key = head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term);
+                        let group = grouped.get(key);
+                        if(group)
+                            group.push(substitution);
 
-                                else if(merged[term] !== tuple[index])
-                                    // Fact does not match query pattern.
-                                    merged = null;
-                            }
-                        }
+                        else
+                            grouped.set(
+                                key,
+                                [substitution])
 
-                        if(merged)
-                            substitutions.push(merged);
-                    }
-                }
+                        return grouped;
 
-                ++inputIndex;
-                return substitutions;
-            },
-            [{}]).map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
-    };
+                    },
+                    new SortedMap<Tuple, object[]>(tupleCompare));
+
+                return [...grouped.keys()].map(key => key.map(element => element instanceof Aggregation ? element.Aggregate(grouped.get(key)) : element));
+
+            }
+
+            return substitutions.map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
+        }
+    }
 }
 
 export function Disjunction<T extends Tuple>(
@@ -176,7 +141,7 @@ export function RecursiveDisjunction(
 
         for(const rule of rules)
         {
-            const conjunction = Conjunction(
+            const conjunction = Conjunction(tupleCompare)(
                 rule[0][0] === '' ? rule[0].slice(1) : rule[0],
                 rule[1]);
             const wrappedConjunctionPredecessors: Wrapped<Iterable<Tuple>>[] = [];
@@ -224,7 +189,7 @@ export function Recursion(
     ): (rulesGroupedByPredicateSymbol: [string, Rule[]][]) => [(...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>[], (Fact | Idb)[]]
 {
     return (rulesGroupedByPredicateSymbol: [string, Rule[]][]): [(...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>[], (Fact | Idb)[]] =>
-        {
+    {
         type Result = SortedSet<Tuple>[];
         const empty = new SortedSet(tupleCompare);
         const resultT0: Result = rulesGroupedByPredicateSymbol.map(() => empty);
@@ -253,7 +218,7 @@ export function Recursion(
 
                 for(const rule of rules)
                 {
-                    const conjunction = Conjunction(
+                    const conjunction = Conjunction(tupleCompare)(
                         rule[0][0] === '' ? rule[0].slice(1) : rule[0],
                         rule[1]);
                     const wrappedConjunctionPredecessors: Wrapped<Iterable<Tuple>>[] = [];
