@@ -21,7 +21,11 @@ export function Sum(
 {
     return new Aggregation(
         substitutions => substitutions.reduce(
-            (total, substitution) => total + substitution[variable],
+            (total, substitution) =>
+            {
+                let current = substitution[variable];
+                return total + (typeof current === 'number' ? current : NaN);
+            },
             0),
         variable);
 }
