@@ -8,12 +8,10 @@ export class FunctionalObjectProperty
     implements IFunctionalObjectProperty
 {
     constructor(
-        ontology                : IOntology,
-        objectPropertyExpression: IObjectPropertyExpression
+        ontology                       : IOntology,
+        public ObjectPropertyExpression: IObjectPropertyExpression
         )
     {
-        super(
-            ontology,
-            objectPropertyExpression);
+        super(ontology);
     }
 }

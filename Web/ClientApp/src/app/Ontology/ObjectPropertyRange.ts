@@ -9,13 +9,11 @@ export class ObjectPropertyRange
     implements IObjectPropertyRange
 {
     constructor(
-        ontology                : IOntology,
-        objectPropertyExpression: IObjectPropertyExpression,
-        public Range            : IClassExpression
+        ontology                       : IOntology,
+        public ObjectPropertyExpression: IObjectPropertyExpression,
+        public Range                   : IClassExpression
         )
     {
-        super(
-            ontology,
-            objectPropertyExpression);
+        super(ontology);
     }
 }

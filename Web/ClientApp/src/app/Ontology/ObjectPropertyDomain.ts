@@ -9,13 +9,11 @@ export class ObjectPropertyDomain
     implements IObjectPropertyDomain
 {
     constructor(
-        ontology                : IOntology,
-        objectPropertyExpression: IObjectPropertyExpression,
-        public Domain           : IClassExpression
+        ontology                       : IOntology,
+        public ObjectPropertyExpression: IObjectPropertyExpression,
+        public Domain                  : IClassExpression
         )
     {
-        super(
-            ontology,
-            objectPropertyExpression);
+        super(ontology);
     }
 }
