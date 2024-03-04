@@ -321,6 +321,7 @@
     <None Remove="ClientApp\src\app\Ontology\PropertyExpressionWriter.ts" />
     <None Remove="ClientApp\src\app\Ontology\PropertyNameSelector.ts" />
     <None Remove="ClientApp\src\app\Ontology\PropertyRestriction.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ReflexiveObjectProperty.ts" />
     <None Remove="ClientApp\src\app\Ontology\ReservedVocabulary.ts" />
     <None Remove="ClientApp\src\app\Ontology\RuleContradictionInterpreter.ts" />
     <None Remove="ClientApp\src\app\Ontology\SortedList.Spec.ts" />
@@ -332,10 +333,12 @@
     <None Remove="ClientApp\src\app\Ontology\StronglyConnectedComponents.ts" />
     <None Remove="ClientApp\src\app\Ontology\SubClassOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\SubClassOfContradictionInterpreter.ts" />
+    <None Remove="ClientApp\src\app\Ontology\SymmetricObjectProperty.ts" />
     <None Remove="ClientApp\src\app\Ontology\Thing.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Thing.ts" />
     <None Remove="ClientApp\src\app\Ontology\TransitiveClosure.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\TransitiveClosure.ts" />
+    <None Remove="ClientApp\src\app\Ontology\TransitiveObjectProperty.ts" />
     <None Remove="ClientApp\src\app\Ontology\Wrapped.ts" />
     <None Remove="ClientApp\src\app\Ontology\Xsd.ts" />
     <None Remove="ClientApp\src\app\Organisations.ts" />
