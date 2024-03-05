@@ -236,6 +236,7 @@
     <None Remove="ClientApp\src\app\Ontology\IEavStore.ts" />
     <None Remove="ClientApp\src\app\Ontology\IEntity.ts" />
     <None Remove="ClientApp\src\app\Ontology\IEquivalentClasses.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IEquivalentDataProperties.ts" />
     <None Remove="ClientApp\src\app\Ontology\IEquivalentObjectProperties.ts" />
     <None Remove="ClientApp\src\app\Ontology\IFunctionalDataProperty.ts" />
     <None Remove="ClientApp\src\app\Ontology\IFunctionalObjectProperty.ts" />
@@ -270,6 +271,7 @@
     <None Remove="ClientApp\src\app\Ontology\IsAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IsClassExpression.ts" />
     <None Remove="ClientApp\src\app\Ontology\ISubClassOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ISubDataPropertyOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\ISubObjectPropertyOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\ISymmetricObjectProperty.ts" />
     <None Remove="ClientApp\src\app\Ontology\ITransactionManager.ts" />
