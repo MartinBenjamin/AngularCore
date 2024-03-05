@@ -9,13 +9,11 @@ export class DataPropertyDomain
     implements IDataPropertyDomain
 {
     constructor(
-        ontology              : IOntology,
-        dataPropertyExpression: IDataPropertyExpression,
-        public Domain         : IClassExpression
+        ontology                     : IOntology,
+        public DataPropertyExpression: IDataPropertyExpression,
+        public Domain                : IClassExpression
         )
     {
-        super(
-            ontology,
-            dataPropertyExpression);
+        super(ontology);
     }
 }

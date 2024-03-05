@@ -9,13 +9,11 @@ export class DataPropertyRange
     implements IDataPropertyRange
 {
     constructor(
-        ontology              : IOntology,
-        dataPropertyExpression: IDataPropertyExpression,
-        public Range          : IDataRange
+        ontology                     : IOntology,
+        public DataPropertyExpression: IDataPropertyExpression,
+        public Range                 : IDataRange
         )
     {
-        super(
-            ontology,
-            dataPropertyExpression);
+        super(ontology);
     }
 }

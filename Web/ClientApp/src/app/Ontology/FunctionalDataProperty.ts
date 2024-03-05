@@ -8,12 +8,10 @@ export class FunctionalDataProperty
     implements IFunctionalDataProperty
 {
     constructor(
-        ontology              : IOntology,
-        dataPropertyExpression: IDataPropertyExpression
+        ontology                     : IOntology,
+        public DataPropertyExpression: IDataPropertyExpression,
         )
     {
-        super(
-            ontology,
-            dataPropertyExpression);
+        super(ontology);
     }
 }
