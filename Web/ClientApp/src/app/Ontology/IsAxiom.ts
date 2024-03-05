@@ -8,6 +8,7 @@ import { DataPropertyRange } from "./DataPropertyRange";
 import { DisjointClasses } from "./DisjointClasses";
 import { Entity } from "./Entity";
 import { EquivalentClasses } from "./EquivalentClasses";
+import { EquivalentDataProperties } from "./EquivalentDataProperties";
 import { EquivalentObjectProperties } from "./EquivalentObjectProperties";
 import { FunctionalDataProperty } from "./FunctionalDataProperty";
 import { FunctionalObjectProperty } from "./FunctionalObjectProperty";
@@ -22,6 +23,7 @@ import { IDataPropertyRange } from "./IDataPropertyRange";
 import { IDisjointClasses } from "./IDisjointClasses";
 import { IEntity } from "./IEntity";
 import { IEquivalentClasses } from "./IEquivalentClasses";
+import { IEquivalentDataProperties } from "./IEquivalentDataProperties";
 import { IEquivalentObjectProperties } from "./IEquivalentObjectProperties";
 import { IFunctionalDataProperty } from "./IFunctionalDataProperty";
 import { IFunctionalObjectProperty } from "./IFunctionalObjectProperty";
@@ -33,14 +35,22 @@ import { InverseObjectProperties } from "./InverseObjectProperties";
 import { IObjectPropertyDomain } from "./IObjectPropertyDomain";
 import { IObjectPropertyRange } from "./IObjectPropertyRange";
 import { IDataProperty, IObjectProperty } from "./IProperty";
+import { IReflexiveObjectProperty } from "./IReflexiveObjectProperty";
 import { ISubClassOf } from "./ISubClassOf";
+import { ISubDataPropertyOf } from "./ISubDataPropertyOf";
 import { ISubObjectPropertyOf } from "./ISubObjectPropertyOf";
+import { ISymmetricObjectProperty } from "./ISymmetricObjectProperty";
+import { ITransitiveObjectProperty } from "./ITransitiveObjectProperty";
 import { NamedIndividual } from "./NamedIndividual";
 import { ObjectPropertyDomain } from "./ObjectPropertyDomain";
 import { ObjectPropertyRange } from "./ObjectPropertyRange";
 import { DataProperty, ObjectProperty } from "./Property";
+import { ReflexiveObjectProperty } from "./ReflexiveObjectProperty";
 import { SubClassOf } from "./SubClassOf";
+import { SubDataPropertyOf } from "./SubDataPropertyOf";
 import { SubObjectPropertyOf } from "./SubObjectPropertyOf";
+import { SymmetricObjectProperty } from "./SymmetricObjectProperty";
+import { TransitiveObjectProperty } from "./TransitiveObjectProperty";
 
 export class IsAxiom implements IIsAxiom
 {
@@ -63,9 +73,14 @@ export class IsAxiom implements IIsAxiom
     IInverseObjectProperties   (axiom: object): axiom is IInverseObjectProperties    { return axiom instanceof InverseObjectProperties   ; }
     IObjectPropertyDomain      (axiom: object): axiom is IObjectPropertyDomain       { return axiom instanceof ObjectPropertyDomain      ; }
     IObjectPropertyRange       (axiom: object): axiom is IObjectPropertyRange        { return axiom instanceof ObjectPropertyRange       ; }
+    IFunctionalObjectProperty  (axiom: object): axiom is IFunctionalObjectProperty   { return axiom instanceof FunctionalObjectProperty  ; }
+    IReflexiveObjectProperty   (axiom: object): axiom is IReflexiveObjectProperty    { return axiom instanceof ReflexiveObjectProperty   ; }
+    ISymmetricObjectProperty   (axiom: object): axiom is ISymmetricObjectProperty    { return axiom instanceof SymmetricObjectProperty   ; }
+    ITransitiveObjectProperty  (axiom: object): axiom is ITransitiveObjectProperty   { return axiom instanceof TransitiveObjectProperty  ; }
+    ISubDataPropertyOf         (axiom: object): axiom is ISubDataPropertyOf          { return axiom instanceof SubDataPropertyOf         ; }
+    IEquivalentDataProperties  (axiom: object): axiom is IEquivalentDataProperties   { return axiom instanceof EquivalentDataProperties  ; }
     IDataPropertyDomain        (axiom: object): axiom is IDataPropertyDomain         { return axiom instanceof DataPropertyDomain        ; }
     IDataPropertyRange         (axiom: object): axiom is IDataPropertyRange          { return axiom instanceof DataPropertyRange         ; }
-    IFunctionalObjectProperty  (axiom: object): axiom is IFunctionalObjectProperty   { return axiom instanceof FunctionalObjectProperty  ; }
     IFunctionalDataProperty    (axiom: object): axiom is IFunctionalDataProperty     { return axiom instanceof FunctionalDataProperty    ; }
     IAnnotationAssertion       (axiom: object): axiom is IAnnotationAssertion        { return axiom instanceof AnnotationAssertion       ; }
 }

@@ -8,6 +8,7 @@ import { IDataPropertyRange } from "./IDataPropertyRange";
 import { IDisjointClasses } from "./IDisjointClasses";
 import { IEntity } from "./IEntity";
 import { IEquivalentClasses } from "./IEquivalentClasses";
+import { IEquivalentDataProperties } from "./IEquivalentDataProperties";
 import { IEquivalentObjectProperties } from "./IEquivalentObjectProperties";
 import { IFunctionalDataProperty } from "./IFunctionalDataProperty";
 import { IFunctionalObjectProperty } from "./IFunctionalObjectProperty";
@@ -17,8 +18,12 @@ import { INamedIndividual } from "./INamedIndividual";
 import { IObjectPropertyDomain } from "./IObjectPropertyDomain";
 import { IObjectPropertyRange } from "./IObjectPropertyRange";
 import { IDataProperty, IObjectProperty } from "./IProperty";
+import { IReflexiveObjectProperty } from "./IReflexiveObjectProperty";
 import { ISubClassOf } from "./ISubClassOf";
+import { ISubDataPropertyOf } from "./ISubDataPropertyOf";
 import { ISubObjectPropertyOf } from "./ISubObjectPropertyOf";
+import { ISymmetricObjectProperty } from "./ISymmetricObjectProperty";
+import { ITransitiveObjectProperty } from "./ITransitiveObjectProperty";
 
 type TypeGuard<T extends object> = (o: object) => o is T;
 
@@ -43,9 +48,14 @@ export interface IIsAxiom
     IInverseObjectProperties   : TypeGuard<IInverseObjectProperties   >;
     IObjectPropertyDomain      : TypeGuard<IObjectPropertyDomain      >;
     IObjectPropertyRange       : TypeGuard<IObjectPropertyRange       >;
+    IFunctionalObjectProperty  : TypeGuard<IFunctionalObjectProperty  >;
+    IReflexiveObjectProperty   : TypeGuard<IReflexiveObjectProperty   >;
+    ISymmetricObjectProperty   : TypeGuard<ISymmetricObjectProperty   >;
+    ITransitiveObjectProperty  : TypeGuard<ITransitiveObjectProperty  >;
+    ISubDataPropertyOf         : TypeGuard<ISubDataPropertyOf         >;
+    IEquivalentDataProperties  : TypeGuard<IEquivalentDataProperties  >;
     IDataPropertyDomain        : TypeGuard<IDataPropertyDomain        >;
     IDataPropertyRange         : TypeGuard<IDataPropertyRange         >;
-    IFunctionalObjectProperty  : TypeGuard<IFunctionalObjectProperty  >;
     IFunctionalDataProperty    : TypeGuard<IFunctionalDataProperty    >;
     IAnnotationAssertion       : TypeGuard<IAnnotationAssertion       >;
 }
