@@ -198,6 +198,7 @@
     <None Remove="ClientApp\src\app\Ontology\EavStoreQuery.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Entity.ts" />
     <None Remove="ClientApp\src\app\Ontology\EquivalentClasses.ts" />
+    <None Remove="ClientApp\src\app\Ontology\EquivalentDataProperties.ts" />
     <None Remove="ClientApp\src\app\Ontology\EquivalentObjectProperties.ts" />
     <None Remove="ClientApp\src\app\Ontology\FunctionalDataProperty.ts" />
     <None Remove="ClientApp\src\app\Ontology\FunctionalObjectProperty.ts" />
@@ -337,6 +338,7 @@
     <None Remove="ClientApp\src\app\Ontology\StronglyConnectedComponents.ts" />
     <None Remove="ClientApp\src\app\Ontology\SubClassOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\SubClassOfContradictionInterpreter.ts" />
+    <None Remove="ClientApp\src\app\Ontology\SubDataPropertyOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\SubObjectPropertyOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\SymmetricObjectProperty.ts" />
     <None Remove="ClientApp\src\app\Ontology\Thing.Spec.ts" />

@@ -9,7 +9,7 @@ export class FunctionalDataProperty
 {
     constructor(
         ontology                     : IOntology,
-        public DataPropertyExpression: IDataPropertyExpression,
+        public DataPropertyExpression: IDataPropertyExpression
         )
     {
         super(ontology);

@@ -3,6 +3,6 @@ import { IDataPropertyExpression } from "./IPropertyExpression";
 
 export interface ISubDataPropertyOf extends IDataPropertyAxiom
 {
-    readonly SubDataPropertyExpression   : IDataPropertyExpression;
-    readonly SupeprDataPropertyExpression: IDataPropertyExpression;
+    readonly SubDataPropertyExpression  : IDataPropertyExpression;
+    readonly SuperDataPropertyExpression: IDataPropertyExpression;
 }
