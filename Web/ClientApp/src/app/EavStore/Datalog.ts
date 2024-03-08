@@ -4,7 +4,6 @@ import { Compare, SortedSet } from "../Collections/SortedSet";
 import { Wrap, Wrapped } from "../Wrap";
 import { Aggregation } from "./Aggregation";
 import { BuiltIn } from "./BuiltIn";
-import { tupleCompare } from "./EavStore";
 import { Fact } from "./Fact";
 import { Tuple } from "./Tuple";
 
