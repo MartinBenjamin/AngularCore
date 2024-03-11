@@ -1,14 +1,30 @@
 import { IEntity } from "./IEntity";
 import { IDataPropertyExpression, IObjectPropertyExpression, IPropertyExpression } from "./IPropertyExpression";
 
+export interface IObjectPropertyVisitor
+{
+    ObjectProperty(objectProperty: IObjectProperty): void;
+}
+
 export interface IObjectPropertySelector<TResult>
 {
     ObjectProperty(objectProperty: IObjectProperty): TResult;
 }
 
+export interface IDataPropertyVisitor
+{
+    DataProperty(dataProperty: IDataProperty): void;
+}
+
 export interface IDataPropertySelector<TResult>
 {
     DataProperty(dataProperty: IDataProperty): TResult;
+}
+
+export interface IPropertyVisitor extends
+    IObjectPropertyVisitor,
+    IDataPropertyVisitor
+{
 }
 
 export interface IPropertySelector<TResult> extends

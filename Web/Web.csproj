@@ -212,6 +212,7 @@
     <None Remove="ClientApp\src\app\Ontology\IAssertion.ts" />
     <None Remove="ClientApp\src\app\Ontology\IAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IAxiomSelector.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IAxiomVisitor.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClass.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClassAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClassExpression.ts" />
@@ -323,6 +324,7 @@
     <None Remove="ClientApp\src\app\Ontology\PrefixIris.ts" />
     <None Remove="ClientApp\src\app\Ontology\Property.ts" />
     <None Remove="ClientApp\src\app\Ontology\PropertyExpressionInterpreter.ts" />
+    <None Remove="ClientApp\src\app\Ontology\PropertyExpressionInterpreterDatalog.ts" />
     <None Remove="ClientApp\src\app\Ontology\PropertyExpressionWriter.ts" />
     <None Remove="ClientApp\src\app\Ontology\PropertyNameSelector.ts" />
     <None Remove="ClientApp\src\app\Ontology\PropertyRestriction.ts" />

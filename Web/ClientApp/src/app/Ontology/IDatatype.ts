@@ -1,6 +1,11 @@
 import { IDataRange } from "./IDataRange";
 import { IEntity } from "./IEntity";
 
+export interface IDatatypeVisitor
+{
+    Datatype(datatype: IDatatype): void;
+}
+
 export interface IDatatypeSelector<TResult>
 {
     Datatype(datatype: IDatatype): TResult;

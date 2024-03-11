@@ -6,6 +6,11 @@ import { INamedIndividual } from "./INamedIndividual";
 import { IDataPropertyExpression } from "./IPropertyExpression";
 import { ISubClassOf } from "./ISubClassOf";
 
+export interface IClassVisitor
+{
+    Class(class$: IClass): void;
+}
+
 export interface IClassSelector<TResult>
 {
     Class(class$: IClass): TResult;
