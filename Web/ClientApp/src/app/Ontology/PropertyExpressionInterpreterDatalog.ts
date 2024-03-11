@@ -57,7 +57,7 @@ export class PropertyExpressionInterpreter implements IPropertyExpressionSelecto
         inverseObjectProperty: IInverseObjectProperty
         ): Atom
     {
-        return [inverseObjectProperty.ObjectProperty.LocalName, '?range', '?domain'];
+        return [inverseObjectProperty.ObjectProperty.LocalName, '?y', '?x'];
     }
 
     ObjectProperty(
@@ -78,6 +78,6 @@ export class PropertyExpressionInterpreter implements IPropertyExpressionSelecto
         property: IProperty
         ): Atom
     {
-        return [property.LocalName, '?domain', '?range'];
+        return [property.LocalName, '?x', '?y'];
     }
 }

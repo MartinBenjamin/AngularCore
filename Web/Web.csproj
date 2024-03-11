@@ -143,6 +143,7 @@
     <None Remove="ClientApp\src\app\Ontology\Atom.ts" />
     <None Remove="ClientApp\src\app\Ontology\AtomInterpreter.ts" />
     <None Remove="ClientApp\src\app\Ontology\Axiom.ts" />
+    <None Remove="ClientApp\src\app\Ontology\AxiomInterpreterDatalog.ts" />
     <None Remove="ClientApp\src\app\Ontology\BuiltIn.ts" />
     <None Remove="ClientApp\src\app\Ontology\Class.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassExpression.ts" />
