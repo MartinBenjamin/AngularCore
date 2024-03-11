@@ -1,3 +1,4 @@
+import { IAxiomVisitor } from "./IAxiomVisitor";
 import { IOntology } from "./IOntology";
 import { IObjectPropertyExpression } from "./IPropertyExpression";
 import { IReflexiveObjectProperty } from "./IReflexiveObjectProperty";
@@ -13,5 +14,12 @@ export class ReflexiveObjectProperty
         )
     {
         super(ontology);
+    }
+
+    Accept(
+        visitor: IAxiomVisitor
+        )
+    {
+        visitor.ReflexiveObjectProperty(this);
     }
 }

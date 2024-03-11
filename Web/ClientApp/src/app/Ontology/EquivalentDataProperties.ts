@@ -1,4 +1,5 @@
 import { DataPropertyAxiom } from "./DataPropertyAxiom";
+import { IAxiomVisitor } from "./IAxiomVisitor";
 import { IEquivalentDataProperties } from "./IEquivalentDataProperties";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression } from "./IPropertyExpression";
@@ -13,5 +14,12 @@ export class EquivalentDataProperties
         )
     {
         super(ontology);
+    }
+
+    Accept(
+        visitor: IAxiomVisitor
+        )
+    {
+        visitor.EquivalentDataProperties(this);
     }
 }

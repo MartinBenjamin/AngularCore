@@ -1,3 +1,4 @@
+import { IAxiomVisitor } from "./IAxiomVisitor";
 import { IOntology } from "./IOntology";
 import { IObjectPropertyExpression } from "./IPropertyExpression";
 import { ISubObjectPropertyOf } from "./ISubObjectPropertyOf";
@@ -14,5 +15,12 @@ export class SubObjectPropertyOf
         )
     {
         super(ontology);
+    }
+
+    Accept(
+        visitor: IAxiomVisitor
+        )
+    {
+        visitor.SubObjectPropertyOf(this);
     }
 }

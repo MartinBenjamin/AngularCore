@@ -1,7 +1,8 @@
 import { Axiom } from "./Axiom";
-import { ISubClassOf } from "./ISubClassOf";
+import { IAxiomVisitor } from "./IAxiomVisitor";
 import { IClassExpression } from "./IClassExpression";
 import { IOntology } from "./IOntology";
+import { ISubClassOf } from "./ISubClassOf";
 
 export class SubClassOf
     extends Axiom
@@ -14,5 +15,12 @@ export class SubClassOf
         )
     {
         super(ontology);
+    }
+
+    Accept(
+        visitor: IAxiomVisitor
+        )
+    {
+        visitor.SubClassOf(this);
     }
 }

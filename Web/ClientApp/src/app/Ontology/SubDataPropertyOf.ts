@@ -1,4 +1,5 @@
 import { DataPropertyAxiom } from "./DataPropertyAxiom";
+import { IAxiomVisitor } from "./IAxiomVisitor";
 import { IOntology } from "./IOntology";
 import { IDataPropertyExpression } from "./IPropertyExpression";
 import { ISubDataPropertyOf } from "./ISubDataPropertyOf";
@@ -14,5 +15,12 @@ export class SubDataPropertyOf
         )
     {
         super(ontology);
+    }
+
+    Accept(
+        visitor: IAxiomVisitor
+        )
+    {
+        visitor.SubDataPropertyOf(this);
     }
 }

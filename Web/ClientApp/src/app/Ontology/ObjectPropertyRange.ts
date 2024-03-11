@@ -1,3 +1,4 @@
+import { IAxiomVisitor } from "./IAxiomVisitor";
 import { IClassExpression } from "./IClassExpression";
 import { IObjectPropertyRange } from "./IObjectPropertyRange";
 import { IOntology } from "./IOntology";
@@ -15,5 +16,12 @@ export class ObjectPropertyRange
         )
     {
         super(ontology);
+    }
+
+    Accept(
+        visitor: IAxiomVisitor
+        )
+    {
+        visitor.ObjectPropertyRange(this);
     }
 }

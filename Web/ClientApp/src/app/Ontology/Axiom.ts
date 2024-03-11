@@ -21,7 +21,8 @@ export abstract class Axiom
         visitor: IAxiomVisitor
         ): void
     {
-        throw new Error("Method not implemented.");
+        visitor.Axiom(this);
+        //throw new Error("Method not implemented.");
     }
 
     Select<TResult>(

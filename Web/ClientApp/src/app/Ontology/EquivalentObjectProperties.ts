@@ -1,3 +1,4 @@
+import { IAxiomVisitor } from "./IAxiomVisitor";
 import { IEquivalentObjectProperties } from "./IEquivalentObjectProperties";
 import { IOntology } from "./IOntology";
 import { IObjectPropertyExpression } from "./IPropertyExpression";
@@ -14,5 +15,12 @@ export class EquivalentObjectProperties
         )
     {
         super(ontology);
+    }
+
+    Accept(
+        visitor: IAxiomVisitor
+        )
+    {
+        visitor.EquivalentObjectProperties(this);
     }
 }

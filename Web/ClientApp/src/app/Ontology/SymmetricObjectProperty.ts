@@ -1,3 +1,4 @@
+import { IAxiomVisitor } from "./IAxiomVisitor";
 import { IOntology } from "./IOntology";
 import { IObjectPropertyExpression } from "./IPropertyExpression";
 import { ISymmetricObjectProperty } from "./ISymmetricObjectProperty";
@@ -13,5 +14,12 @@ export class SymmetricObjectProperty
         )
     {
         super(ontology);
+    }
+
+    Accept(
+        visitor: IAxiomVisitor
+        )
+    {
+        visitor.SymmetricObjectProperty(this);
     }
 }

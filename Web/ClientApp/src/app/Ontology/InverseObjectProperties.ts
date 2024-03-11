@@ -1,3 +1,4 @@
+import { IAxiomVisitor } from "./IAxiomVisitor";
 import { IInverseObjectProperties } from "./IInverseObjectProperties";
 import { IOntology } from "./IOntology";
 import { IObjectPropertyExpression } from "./IPropertyExpression";
@@ -14,5 +15,12 @@ export class InverseObjectProperties
         )
     {
         super(ontology);
+    }
+
+    Accept(
+        visitor: IAxiomVisitor
+        )
+    {
+        visitor.InverseObjectProperties(this);
     }
 }

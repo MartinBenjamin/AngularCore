@@ -1,3 +1,4 @@
+import { IAxiomVisitor } from "./IAxiomVisitor";
 import { IOntology } from "./IOntology";
 import { IObjectPropertyExpression } from "./IPropertyExpression";
 import { ITransitiveObjectProperty } from "./ITransitiveObjectProperty";
@@ -13,5 +14,12 @@ export class TransitiveObjectProperty
         )
     {
         super(ontology);
+    }
+
+    Accept(
+        visitor: IAxiomVisitor
+        )
+    {
+        visitor.TransitiveObjectProperty(this);
     }
 }

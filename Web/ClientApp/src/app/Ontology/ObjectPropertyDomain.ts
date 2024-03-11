@@ -1,3 +1,4 @@
+import { IAxiomVisitor } from "./IAxiomVisitor";
 import { IClassExpression } from "./IClassExpression";
 import { IObjectPropertyDomain } from "./IObjectPropertyDomain";
 import { IOntology } from "./IOntology";
@@ -15,5 +16,12 @@ export class ObjectPropertyDomain
         )
     {
         super(ontology);
+    }
+
+    Accept(
+        visitor: IAxiomVisitor
+        )
+    {
+        visitor.ObjectPropertyDomain(this);
     }
 }

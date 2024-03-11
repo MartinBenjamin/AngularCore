@@ -1,3 +1,4 @@
+import { IAxiomVisitor } from "./IAxiomVisitor";
 import { IFunctionalObjectProperty } from "./IFunctionalObjectProperty";
 import { IOntology } from "./IOntology";
 import { IObjectPropertyExpression } from "./IPropertyExpression";
@@ -13,5 +14,12 @@ export class FunctionalObjectProperty
         )
     {
         super(ontology);
+    }
+
+    Accept(
+        visitor: IAxiomVisitor
+        )
+    {
+        visitor.FunctionalObjectProperty(this);
     }
 }
