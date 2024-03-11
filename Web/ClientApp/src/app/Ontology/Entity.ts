@@ -2,7 +2,7 @@ import { Axiom } from "./Axiom";
 import { IEntity } from "./IEntity";
 import { IOntology } from "./IOntology";
 
-export class Entity
+export abstract class Entity
     extends Axiom
     implements IEntity
 {

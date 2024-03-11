@@ -20,6 +20,7 @@ export interface IClass extends
     IEntity,
     IClassExpression
 {
+    Accept(visitor: IClassVisitor): void;
     Select<TResult>(selector: IClassSelector<TResult>): TResult;
 
     // Provided to assist construction of ontologies.

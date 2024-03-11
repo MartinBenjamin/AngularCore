@@ -2,9 +2,8 @@ import { ClassAssertion } from "./Assertion";
 import { Entity } from "./Entity";
 import { EquivalentClasses } from "./EquivalentClasses";
 import { HasKey } from "./HasKey";
-import { IClass, IClassSelector } from "./IClass";
+import { IClass, IClassSelector, IClassVisitor } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
-import { IClassExpressionVisitor } from "./IClassExpressionVisitor";
 import { IEquivalentClasses } from "./IEquivalentClasses";
 import { IHasKey } from "./IHasKey";
 import { INamedIndividual } from "./INamedIndividual";
@@ -34,7 +33,7 @@ export class Class
     }
 
     Accept(
-        visitor: IClassExpressionVisitor
+        visitor: IClassVisitor
         ): void
     {
         visitor.Class(this);
