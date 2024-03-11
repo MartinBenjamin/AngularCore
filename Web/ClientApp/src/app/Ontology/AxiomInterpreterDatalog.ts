@@ -34,11 +34,11 @@ import { PropertyExpressionInterpreter } from "./PropertyExpressionInterpreterDa
 
 export class AxiomInterpreter implements IAxiomVisitor
 {
-    private _propertyExpressionInterpreter: IPropertyExpressionSelector<Atom> = new PropertyExpressionInterpreter()
+    private _propertyExpressionInterpreter: IPropertyExpressionSelector<Atom> = new PropertyExpressionInterpreter('?x', '?y')
 
     constructor(
-        private _ontology              : IOntology,
-        private _rules                 : Rule[]
+        private _ontology: IOntology,
+        private _rules   : Rule[]
         )
     {
     }
