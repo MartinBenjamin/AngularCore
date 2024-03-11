@@ -6,6 +6,7 @@ import { IClassAssertion, IDataPropertyAssertion, IObjectPropertyAssertion } fro
 import { IAxiom } from "./IAxiom";
 import { IAxiomVisitor } from "./IAxiomVisitor";
 import { IClass } from "./IClass";
+import { IClassExpressionSelector } from "./IClassExpressionSelector";
 import { IDataPropertyDomain } from "./IDataPropertyDomain";
 import { IDataPropertyRange } from "./IDataPropertyRange";
 import { IDatatype } from "./IDatatype";
@@ -34,6 +35,7 @@ import { PropertyExpressionInterpreter } from "./PropertyExpressionInterpreterDa
 
 export class AxiomInterpreter implements IAxiomVisitor
 {
+    private _classExpressionInterpreter   : IClassExpressionSelector<Atom[]>;
     private _propertyExpressionInterpreter: IPropertyExpressionSelector<Atom> = new PropertyExpressionInterpreter('?x', '?y')
 
     constructor(
@@ -77,12 +79,19 @@ export class AxiomInterpreter implements IAxiomVisitor
         subClassOf: ISubClassOf
         ): void
     {
+        const superClassExpression = subClassOf.SuperClassExpression;
+        if(this._ontology.IsAxiom.IClass(superClassExpression))
+            this._rules.push([[superClassExpression.Iri, '?x'], subClassOf.SubClassExpression.Select(this._classExpressionInterpreter)])
     }
 
     EquivalentClasses(
         equivalentClasses: IEquivalentClasses
         ): void
     {
+        for(const superClassExpression of equivalentClasses.ClassExpressions)
+            for(const subClassExpression of equivalentClasses.ClassExpressions)
+                if(superClassExpression !== subClassExpression && this._ontology.IsAxiom.IClass(superClassExpression))
+                    this._rules.push([[superClassExpression.Iri, '?x'], subClassExpression.Select(this._classExpressionInterpreter)]);
     }
 
     DisjointClasses(
@@ -98,12 +107,14 @@ export class AxiomInterpreter implements IAxiomVisitor
     }
 
     ObjectPropertyAssertion(
-        objectPropertyAssertion: IObjectPropertyAssertion): void
+        objectPropertyAssertion: IObjectPropertyAssertion
+        ): void
     {
     }
 
     DataPropertyAssertion(
-        dataPropertyAssertion: IDataPropertyAssertion): void
+        dataPropertyAssertion: IDataPropertyAssertion
+        ): void
     {
     }
 
@@ -112,7 +123,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
         const superObjectPropertyExpression = subObjectPropertyOf.SuperObjectPropertyExpression;
-        if(this._ontology.IsAxiom.IObjectProperty(superObjectPropertyExpression))
+        if(this._ontology.IsAxiom.IObjectProperty(superObjectPropertyExpression) )
             this._rules.push([[superObjectPropertyExpression.Iri, '?x', '?y'], [subObjectPropertyOf.SubObjectPropertyExpression.Select(this._propertyExpressionInterpreter)]])
     }
 
@@ -233,21 +244,18 @@ export class AxiomInterpreter implements IAxiomVisitor
         functionalDataProperty: IFunctionalDataProperty
         ): void
     {
-        throw new Error("Method not implemented.");
     }
 
     AnnotationAssertion(
         annotationAssertion: IAnnotationAssertion
         ): void
     {
-        throw new Error("Method not implemented.");
     }
 
     DLSafeRule(
         dlSafeRule: IDLSafeRule
         ): void
     {
-        throw new Error("Method not implemented.");
     }
 
     Class(
@@ -275,7 +283,6 @@ export class AxiomInterpreter implements IAxiomVisitor
         datatype: IDatatype
         ): void
     {
-        throw new Error("Method not implemented.");
     }
 
     private Property(
