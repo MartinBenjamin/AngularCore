@@ -187,7 +187,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         if(this._ontology.IsAxiom.IObjectProperty(objectPropertyExpression))
         {
             const iri = objectPropertyExpression.Iri;
-            this._rules.push([[iri, '?x', '?y'], [[iri, '?y', '?z']]]);
+            this._rules.push([[iri, '?x', '?y'], [[iri, '?y', '?x']]]);
         }
     }
 
