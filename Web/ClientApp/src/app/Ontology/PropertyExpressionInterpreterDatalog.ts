@@ -1,8 +1,8 @@
-import { Atom, Variable } from "../EavStore/Datalog";
+import { Idb, Variable } from "../EavStore/Datalog";
 import { IDataProperty, IInverseObjectProperty, IObjectProperty, IProperty } from "./IProperty";
 import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
 
-export class PropertyExpressionInterpreter implements IPropertyExpressionSelector<Atom>
+export class PropertyExpressionInterpreter implements IPropertyExpressionSelector<Idb>
 {
     constructor(
         private _domain: Variable,
@@ -13,29 +13,29 @@ export class PropertyExpressionInterpreter implements IPropertyExpressionSelecto
 
     InverseObjectProperty(
         inverseObjectProperty: IInverseObjectProperty
-        ): Atom
+        ): Idb
     {
         return [inverseObjectProperty.ObjectProperty.Iri, this._range, this._domain];
     }
 
     ObjectProperty(
         objectProperty: IObjectProperty
-        ): Atom
+        ): Idb
     {
         return this.Property(objectProperty);
     }
 
     DataProperty(
         dataProperty: IDataProperty
-        ): Atom
+        ): Idb
     {
         return this.Property(dataProperty);
     }
 
     private Property(
         property: IProperty
-        ): Atom
+        ): Idb
     {
-        return [property.LocalName, this._domain, this._range];
+        return [property.Iri, this._domain, this._range];
     }
 }
