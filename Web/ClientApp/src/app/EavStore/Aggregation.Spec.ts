@@ -37,7 +37,7 @@ store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [sig
         describe(
             `Given
 trace: Set<any[]>[] and
-signal = store.Signal(['?value', Count()], [[e, 'a1', '?value']]) and
+signal = store.Signal(['?value', Sum('?value')], [[e, 'a1', '?value']]) and
 store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [signal])`,
             () =>
             {

@@ -1,5 +1,7 @@
-import { Atom, Idb } from "../EavStore/Datalog";
+import { Count } from "../EavStore/Aggregation";
+import { Atom, Idb, Rule } from "../EavStore/Datalog";
 import { IClass } from "./IClass";
+import { IClassExpression } from "./IClassExpression";
 import { IClassExpressionSelector } from "./IClassExpressionSelector";
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
@@ -15,13 +17,21 @@ import { IObjectIntersectionOf } from "./IObjectIntersectionOf";
 import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
+import { IObjectPropertyExpression } from "./IPropertyExpression";
 import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
 import { PropertyExpressionInterpreter } from "./PropertyExpressionInterpreterDatalog";
 
 export class ClassExpressionInterpreter implements IClassExpressionSelector<Atom[]>
 {
     private _individualInterpretation     : ReadonlyMap<IIndividual, any>;
-    private _propertyExpressionInterpreter: IPropertyExpressionSelector<Idb> = new PropertyExpressionInterpreter('?x', '?y')
+    private _propertyExpressionInterpreter: IPropertyExpressionSelector<Idb> = new PropertyExpressionInterpreter('?x', '?y');
+    private _qualifiedCardinalityPredicateSymbol: IPropertyExpressionSelector<string>;
+
+    constructor(
+        private _rules: Rule[]
+        )
+    {
+    }
 
     ObjectIntersectionOf(
         objectIntersectionOf: IObjectIntersectionOf
@@ -92,5 +102,17 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Atom
     }
     Class(class$: IClass): Atom[] {
         throw new Error("Method not implemented.");
+    }
+
+    private QualifiedCardinality(
+        objectPropertyExpression: IObjectPropertyExpression,
+        classExpression         : IClassExpression
+        )
+    {
+        const cardinalityPredicateSymbol = objectPropertyExpression.Select(this._qualifiedCardinalityPredicateSymbol);
+        if(!this._rules.find(rule => rule[0][0] === cardinalityPredicateSymbol))
+            this._rules.push([[cardinalityPredicateSymbol, '?x', Count()], [objectPropertyExpression.Select(this._propertyExpressionInterpreter), ...classExpression.Select(this)]]);
+
+        return [[cardinalityPredicateSymbol, '?x', '?y']]
     }
 }
