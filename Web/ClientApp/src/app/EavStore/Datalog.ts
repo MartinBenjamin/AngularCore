@@ -18,7 +18,7 @@ export const IsIdb = (atom): atom is Idb => atom instanceof Array && IsPredicate
 
 export type Atom = Edb | Idb;
 
-export type Rule = [Idb, Atom[]];
+export type Rule = [Head: Idb, Body: Atom[]];
 
 export function Conjunction(
     tupleCompare: Compare<Tuple>
