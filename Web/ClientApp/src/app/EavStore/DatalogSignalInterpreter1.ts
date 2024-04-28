@@ -4,7 +4,6 @@ import { StronglyConnectedComponents } from "../Graph/StronglyConnectedComponent
 import { WrapperType } from "../Ontology/Wrapped";
 import { Signal } from "../Signal/Signal";
 import { Atom, Conjunction, Disjunction, Idb, IsIdb, RecursiveDisjunction, Rule } from "./Datalog";
-import { tupleCompare } from "./EavStore";
 import { IDatalogInterpreter } from "./IDatalogInterpreter";
 import { Fact, IEavStore } from "./IEavStore";
 import { Tuple } from "./Tuple";
@@ -16,12 +15,12 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
     private readonly _recursiveDisjunction: (rules: Rule[]) => [(...inputs: [SortedSet<Tuple>, ...Iterable<Tuple>[]]) => SortedSet<Tuple>, (Fact | Idb)[]];
 
     constructor(
-        private readonly _eavStore    : IEavStore,
-        private readonly _tupleCompare: Compare<Tuple>
+        private readonly _eavStore: IEavStore,
+        tupleCompare              : Compare<Tuple>
         )
     {
-        this._conjunction          = Conjunction(_tupleCompare);
-        this._disjunction          = Disjunction(_tupleCompare);
+        this._conjunction          = Conjunction(tupleCompare);
+        this._disjunction          = Disjunction(tupleCompare);
         this._recursiveDisjunction = RecursiveDisjunction(tupleCompare);
     }
 

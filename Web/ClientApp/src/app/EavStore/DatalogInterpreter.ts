@@ -15,12 +15,12 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
     private readonly _recursion  : (rulesGroupedByPredicateSymbol: [string, Rule[]][]) => [(...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>[], (Fact | Idb)[]];
 
     constructor(
-        private readonly _tupleCompare: Compare<Tuple>
+        tupleCompare: Compare<Tuple>
         )
     {
-        this._conjunction = Conjunction(_tupleCompare);
-        this._disjunction = Disjunction(_tupleCompare);
-        this._recursion   = Recursion(_tupleCompare);
+        this._conjunction = Conjunction(tupleCompare);
+        this._disjunction = Disjunction(tupleCompare);
+        this._recursion   = Recursion(tupleCompare);
     }
 
     Query<THead extends Tuple>(

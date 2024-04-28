@@ -16,13 +16,13 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
     private readonly _recursion  : (rulesGroupedByPredicateSymbol: [string, Rule[]][]) => [(...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>[], (Fact | Idb)[]];
 
     constructor(
-        private readonly _eavStore    : IEavStore,
-        private readonly _tupleCompare: Compare<Tuple>
+        private readonly _eavStore: IEavStore,
+        tupleCompare              : Compare<Tuple>
         )
     {
-        this._conjunction = Conjunction(_tupleCompare);
-        this._disjunction = Disjunction(_tupleCompare);
-        this._recursion   = Recursion(_tupleCompare);
+        this._conjunction = Conjunction(tupleCompare);
+        this._disjunction = Disjunction(tupleCompare);
+        this._recursion   = Recursion(tupleCompare);
     }
 
     Query<T extends Tuple>(

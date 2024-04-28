@@ -11,7 +11,7 @@ export class DatalogSignalInterpreter extends DatalogInterpreter<WrapperType.Sig
 {
     constructor(
         private readonly _eavStore: IEavStore,
-        tupleCompare: Compare<Tuple>
+        tupleCompare              : Compare<Tuple>
         )
     {
         super(tupleCompare);
