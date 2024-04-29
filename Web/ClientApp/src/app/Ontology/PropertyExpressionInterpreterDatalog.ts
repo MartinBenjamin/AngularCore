@@ -4,8 +4,41 @@ import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
 
 export type PropertyAtom = [PredicateSymbol: string, Domain: any, Range: any];
 
+class PredicateSymbolGenerator implements IPropertyExpressionSelector<string>
+{
+    InverseObjectProperty(
+        inverseObjectProperty: IInverseObjectProperty
+        ): string
+    {
+        return 'Inverse' + inverseObjectProperty.ObjectProperty.Select(this);
+    }
+
+    ObjectProperty(
+        objectProperty: IObjectProperty
+        ): string
+    {
+        return this.Property(objectProperty);
+    }
+
+    DataProperty(
+        dataProperty: IDataProperty
+        ): string
+    {
+        return this.Property(dataProperty);
+    }
+
+    Property(
+        property: IProperty
+        ): string
+    {
+        return property.Iri;
+    }
+}
+
 export class PropertyExpressionInterpreter implements IPropertyExpressionSelector<PropertyAtom>
 {
+    private _predicateSymbolGenerator: IPropertyExpressionSelector<string> = new PredicateSymbolGenerator();
+
     constructor(
         public readonly Domain: Variable,
         public readonly Range : Variable,
@@ -18,7 +51,7 @@ export class PropertyExpressionInterpreter implements IPropertyExpressionSelecto
         inverseObjectProperty: IInverseObjectProperty
         ): PropertyAtom
     {
-        const predicateSymbol = this.InversePredicateSymbol(inverseObjectProperty.ObjectProperty);
+        const predicateSymbol = inverseObjectProperty.Select(this._predicateSymbolGenerator);
         if(!this._rules.find(([head,]) => head[0] === predicateSymbol))
             this._rules.push([[predicateSymbol, this.Range, this.Domain], [inverseObjectProperty.ObjectProperty.Select(this)]]);
         return [predicateSymbol, this.Domain, this.Range];
@@ -28,27 +61,13 @@ export class PropertyExpressionInterpreter implements IPropertyExpressionSelecto
         objectProperty: IObjectProperty
         ): PropertyAtom
     {
-        return this.Property(objectProperty);
+        return [objectProperty.Select(this._predicateSymbolGenerator), this.Domain, this.Range];
     }
 
     DataProperty(
         dataProperty: IDataProperty
         ): PropertyAtom
     {
-        return this.Property(dataProperty);
-    }
-
-    private Property(
-        property: IProperty
-        ): PropertyAtom
-    {
-        return [property.Iri, this.Domain, this.Range];
-    }
-
-    private InversePredicateSymbol(
-        objectProperty: IObjectProperty
-        ): string
-    {
-        return null;
+        return [dataProperty.Select(this._predicateSymbolGenerator), this.Domain, this.Range];
     }
 }
