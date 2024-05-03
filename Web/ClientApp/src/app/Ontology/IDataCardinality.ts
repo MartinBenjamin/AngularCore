@@ -1,11 +1,10 @@
+import { ICardinality } from "./ICardinality";
 import { IDataPropertyRestriction } from "./IDataPropertyRestriction";
 import { IDataRange } from "./IDataRange";
 
-export interface IDataCardinality extends IDataPropertyRestriction
+export interface IDataCardinality extends ICardinality, IDataPropertyRestriction
 {
-
-    readonly Cardinality: number;
-    readonly DataRange  : IDataRange;
+    readonly DataRange: IDataRange;
 }
 
 export interface IDataMinCardinality extends IDataCardinality

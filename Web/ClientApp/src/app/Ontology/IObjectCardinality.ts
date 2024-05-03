@@ -1,10 +1,9 @@
+import { ICardinality } from "./ICardinality";
 import { IClassExpression } from "./IClassExpression";
 import { IObjectPropertyRestriction } from "./IObjectPropertyRestriction";
 
-export interface IObjectCardinality extends IObjectPropertyRestriction
+export interface IObjectCardinality extends ICardinality, IObjectPropertyRestriction
 {
-
-    readonly Cardinality    : number;
     readonly ClassExpression: IClassExpression;
 }
 

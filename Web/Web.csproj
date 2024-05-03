@@ -215,6 +215,7 @@
     <None Remove="ClientApp\src\app\Ontology\IAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IAxiomSelector.ts" />
     <None Remove="ClientApp\src\app\Ontology\IAxiomVisitor.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ICardinality.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClass.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClassAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClassExpression.ts" />
