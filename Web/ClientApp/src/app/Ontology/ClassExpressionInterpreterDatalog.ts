@@ -1,6 +1,7 @@
 import { Count } from "../EavStore/Aggregation";
 import { GreaterThanOrEqual } from "../EavStore/BuiltIn";
 import { Rule, Variable } from "../EavStore/Datalog";
+import { ICardinality } from "./ICardinality";
 import { IClass } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
 import { IClassExpressionSelector } from "./IClassExpressionSelector";
@@ -37,21 +38,23 @@ class PredicateSymbolGenerator implements IClassExpressionSelector<string>
     ObjectAllValuesFrom   (objectAllValuesFrom   : IObjectAllValuesFrom   ): string { return this.NextPredicateSymbol("ObjectAllValuesFrom"     ); }
     ObjectHasValue        (objectHasValue        : IObjectHasValue        ): string { return this.NextPredicateSymbol("ObjectHasValue"          ); }
     ObjectHasSelf         (objectHasSelf         : IObjectHasSelf         ): string { return this.NextPredicateSymbol("ObjectHasSelf"           ); }
-    ObjectMinCardinality  (objectMinCardinality  : IObjectMinCardinality  ): string { return objectMinCardinality.ClassExpression   ? this.NextPredicateSymbol("ObjectMinCardinality"  ) : this.UnqualifiedObjectMinCardinality  (objectMinCardinality  ); }
-    ObjectMaxCardinality  (objectMaxCardinality  : IObjectMaxCardinality  ): string { return objectMaxCardinality.ClassExpression   ? this.NextPredicateSymbol("ObjectMaxCardinality"  ) : this.UnqualifiedObjectMaxCardinality  (objectMaxCardinality  ); }
-    ObjectExactCardinality(objectExactCardinality: IObjectExactCardinality): string { return objectExactCardinality.ClassExpression ? this.NextPredicateSymbol("ObjectExactCardinality") : this.UnqualifiedObjectExactCardinality(objectExactCardinality); }
+    ObjectMinCardinality  (objectMinCardinality  : IObjectMinCardinality  ): string { return objectMinCardinality.ClassExpression   ? this.NextPredicateSymbol("ObjectMinCardinality"  ) : "ObjectMinCardinality"   +  this.Cardinality(objectMinCardinality  ); }
+    ObjectMaxCardinality  (objectMaxCardinality  : IObjectMaxCardinality  ): string { return objectMaxCardinality.ClassExpression   ? this.NextPredicateSymbol("ObjectMaxCardinality"  ) : "ObjectMaxCardinality"   +  this.Cardinality(objectMaxCardinality  ); }
+    ObjectExactCardinality(objectExactCardinality: IObjectExactCardinality): string { return objectExactCardinality.ClassExpression ? this.NextPredicateSymbol("ObjectExactCardinality") : "ObjectExactCardinality" +  this.Cardinality(objectExactCardinality); }
     DataSomeValuesFrom    (dataSomeValuesFrom    : IDataSomeValuesFrom    ): string { return this.NextPredicateSymbol("DataSomeValuesFrom"      ); }
     DataAllValuesFrom     (dataAllValuesFrom     : IDataAllValuesFrom     ): string { return this.NextPredicateSymbol("DataAllValuesFrom"       ); }
     DataHasValue          (dataHasValue          : IDataHasValue          ): string { return this.NextPredicateSymbol("DataHasValue"            ); }
-    DataMinCardinality    (dataMinCardinality    : IDataMinCardinality    ): string { return this.NextPredicateSymbol("DataMinCardinality"      ); }
-    DataMaxCardinality    (dataMaxCardinality    : IDataMaxCardinality    ): string { return this.NextPredicateSymbol("DataMaxCardinality"      ); }
-    DataExactCardinality  (dataExactCardinality  : IDataExactCardinality  ): string { return this.NextPredicateSymbol("DataExactCardinality"    ); }
-    Class                 (class$                : IClass                 ): string { return this.NextPredicateSymbol("Class"                   ); }
+    DataMinCardinality    (dataMinCardinality    : IDataMinCardinality    ): string { return dataMinCardinality.DataRange   ? this.NextPredicateSymbol("ObjectMinCardinality"  ) : "ObjectMinCardinality"   +  this.Cardinality(dataMinCardinality  ); }
+    DataMaxCardinality    (dataMaxCardinality    : IDataMaxCardinality    ): string { return dataMaxCardinality.DataRange   ? this.NextPredicateSymbol("ObjectMaxCardinality"  ) : "ObjectMaxCardinality"   +  this.Cardinality(dataMaxCardinality  ); }
+    DataExactCardinality  (dataExactCardinality  : IDataExactCardinality  ): string { return dataExactCardinality.DataRange ? this.NextPredicateSymbol("ObjectExactCardinality") : "ObjectExactCardinality" +  this.Cardinality(dataExactCardinality); }
+    Class                 (class$                : IClass                 ): string { return class$.Iri;                                           }
 
-    UnqualifiedObjectMinCardinality  (objectCardinality: IObjectMinCardinality  ): string { return "ObjectMinCardinality"   + objectCardinality.Cardinality + objectCardinality.PropertyExpression.Select(this._propertyPredicateSymbolGenerator); }
-    UnqualifiedObjectMaxCardinality  (objectCardinality: IObjectMaxCardinality  ): string { return "ObjectMaxCardinality"   + objectCardinality.Cardinality + objectCardinality.PropertyExpression.Select(this._propertyPredicateSymbolGenerator); }
-    UnqualifiedObjectExactCardinality(objectCardinality: IObjectExactCardinality): string { return "ObjectExactCardinality" + objectCardinality.Cardinality + objectCardinality.PropertyExpression.Select(this._propertyPredicateSymbolGenerator); }
-
+    Cardinality(
+        cardinality: ICardinality
+        ): string
+    {
+        return cardinality.Cardinality + cardinality.PropertyExpression.Select(this._propertyPredicateSymbolGenerator);
+    }
 
     private NextPredicateSymbol(
         expressionType: string
@@ -162,7 +165,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Clas
         objectCardinality: IObjectCardinality
         ): PropertyAtom
     {
-        const predicateSymbol = objectCardinality.Select(this._predicateSymbolSelector);
+        const predicateSymbol = objectCardinality.Select(this._predicateSymbolSelector) + "Multiplicity";
         if(!this._rules.find(([head,]) => head[0] === predicateSymbol))
         {
             const rule: Rule = [[predicateSymbol, this._propertyExpressionInterpreter.Domain, Count()], [objectCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter)]]

@@ -1,3 +1,4 @@
+import { Class } from "./Class";
 import { ClassExpression, ObjectComplementOf, ObjectIntersectionOf, ObjectUnionOf } from "./ClassExpression";
 import { DataAllValuesFrom } from "./DataAllValuesFrom";
 import { DataExactCardinality } from "./DataExactCardinality";
@@ -6,6 +7,7 @@ import { DataMaxCardinality } from "./DataMaxCardinality";
 import { DataMinCardinality } from "./DataMinCardinality";
 import { DataPropertyRestriction } from "./DataPropertyRestriction";
 import { DataSomeValuesFrom } from "./DataSomeValuesFrom";
+import { IClass } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
@@ -38,6 +40,7 @@ import { PropertyRestriction } from "./PropertyRestriction";
 export class IsClassExpression implements IIsClassExpression
 {
     IClassExpression          (ce: object): ce is IClassExpression           { return ce instanceof ClassExpression          ; }
+    IClass                    (ce: object): ce is IClass                     { return ce instanceof Class                    ; }
     IObjectIntersectionOf     (ce: object): ce is IObjectIntersectionOf      { return ce instanceof ObjectIntersectionOf     ; }
     IObjectUnionOf            (ce: object): ce is IObjectUnionOf             { return ce instanceof ObjectUnionOf            ; }
     IObjectComplementOf       (ce: object): ce is IObjectComplementOf        { return ce instanceof ObjectComplementOf       ; }

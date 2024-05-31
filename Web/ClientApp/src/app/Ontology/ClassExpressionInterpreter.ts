@@ -62,7 +62,7 @@ export abstract class ClassExpressionInterpreter<T extends WrapperType> implemen
         const adjacencyList = new Map<IClass, Set<IClass>>(classes.map(class$ => [class$, new Set<IClass>([class$])]));
         for(const equivalentClassExpressions of this._ontology.Get(this._ontology.IsAxiom.IEquivalentClasses))
         {
-            const equivalentClasses = equivalentClassExpressions.ClassExpressions.filter(this._ontology.IsAxiom.IClass);
+            const equivalentClasses = equivalentClassExpressions.ClassExpressions.filter(this._ontology.IsClassExpression.IClass);
             for(const class1 of equivalentClasses)
                 for(const class2 of equivalentClasses)
                     adjacencyList.get(class1).add(class2);
@@ -72,9 +72,9 @@ export abstract class ClassExpressionInterpreter<T extends WrapperType> implemen
 
         const definitions: [IClass, IClassExpression][] = [];
         for(const equivalentClasses of this._ontology.Get(this._ontology.IsAxiom.IEquivalentClasses))
-            for(const class$ of equivalentClasses.ClassExpressions.filter(this._ontology.IsAxiom.IClass))
+            for(const class$ of equivalentClasses.ClassExpressions.filter(this._ontology.IsClassExpression.IClass))
             {
-                for(const classExpression of equivalentClasses.ClassExpressions.filter(classExpression => !this._ontology.IsAxiom.IClass(classExpression)))
+                for(const classExpression of equivalentClasses.ClassExpressions.filter(classExpression => !this._ontology.IsClassExpression.IClass(classExpression)))
                     for(const equivalentClass of this._equivalentClasses.get(class$))
                         definitions.push(
                             [

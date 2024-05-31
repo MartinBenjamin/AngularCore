@@ -140,7 +140,7 @@ export class Deal
 
                     let superClasses = this._ontology.SuperClasses(this._ontology.Deal);
                     for(let superClass of superClasses)
-                        if(this._ontology.IsAxiom.IClass(superClass))
+                        if(this._ontology.IsClassExpression.IClass(superClass))
                             for(let annotation of superClass.Annotations)
                                 if(annotation.Property == annotations.ComponentBuildAction &&
                                     annotation.Value in this)

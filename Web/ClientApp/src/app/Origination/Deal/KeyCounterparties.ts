@@ -43,7 +43,7 @@ export class KeyCounterparties implements OnDestroy
 
         let superClasses = ontology.SuperClasses(ontology.Deal);
         for(let superClass of superClasses)
-            if(ontology.IsAxiom.IClass(superClass))
+            if(ontology.IsClassExpression.IClass(superClass))
                 for(let annotation of superClass.Annotations)
                     if(annotation.Property == annotations.ComponentBuildAction &&
                         annotation.Value in this)

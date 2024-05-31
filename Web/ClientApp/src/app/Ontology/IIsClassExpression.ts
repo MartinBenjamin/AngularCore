@@ -1,3 +1,4 @@
+import { IClass } from "./IClass";
 import { IClassExpression } from "./IClassExpression";
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
@@ -21,6 +22,7 @@ type TypeGuard<T extends object> = (o: object) => o is T;
 export interface IIsClassExpression
 {
     IClassExpression          : TypeGuard<IClassExpression          >;
+    IClass                    : TypeGuard<IClass                    >;
     IObjectIntersectionOf     : TypeGuard<IObjectIntersectionOf     >;
     IObjectUnionOf            : TypeGuard<IObjectUnionOf            >;
     IObjectComplementOf       : TypeGuard<IObjectComplementOf       >;
