@@ -26,10 +26,16 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
     Query<THead extends Tuple>(
         head: [...THead],
         body: Atom[],
-        ...rules: Rule[]): Wrapped<T, {[K in keyof THead]: any;}[]>
+        ...rules: Rule[]
+        ): Wrapped<T, {[K in keyof THead]: any;}[]>
     {
-        rules = [[['', ...head], body], ...rules];
+        return <Wrapped<T, {[K in keyof THead]: any;}[]>>this.Rules([[['', ...head], body], ...rules]).get('');
+    }
 
+    Rules(
+        rules: Rule[]
+        ): Map<string, Wrapped<T, Iterable<Tuple>>>
+    {
         const rulesGroupedByPredicateSymbol = Group(
             rules,
             rule => rule[0][0],
@@ -128,7 +134,7 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
             }
         }
 
-        return <Wrapped<T, {[K in keyof THead]: any;}[]>>wrappedIdbs.get('');
+        return wrappedIdbs;
     }
 
     abstract Wrap<TIn extends any[], TOut>(

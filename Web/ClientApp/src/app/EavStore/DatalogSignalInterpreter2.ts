@@ -28,10 +28,16 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
     Query<T extends Tuple>(
         head: [...T],
         body: Atom[],
-        ...rules: Rule[]): Signal<{[K in keyof T]: any;}[]>
+        ...rules: Rule[]
+        ): Signal<{[K in keyof T]: any;}[]>
     {
-        rules = [[['', ...head], body], ...rules];
+        return <Signal>this.Rules([[['', ...head], body], ...rules]).get('');
+    }
 
+    Rules(
+        rules: Rule[]
+        ): Map<string, Signal<Iterable<Tuple>>>
+    {
         const rulesGroupedByPredicateSymbol = Group(
             rules,
             rule => rule[0][0],
@@ -136,6 +142,6 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
         }
 
         this._eavStore.SignalScheduler.AddSignals(signalAdjacencyList);
-        return <Signal>idbSignals.get('');
+        return idbSignals;
     }
 }
