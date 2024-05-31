@@ -72,6 +72,7 @@ export interface IScheduler
     Suspend(): void;
     Resume(): void;
     Update(update: (scheduler: IScheduler) => void);
+    Sample<TOut>(signal: Signal<TOut>): TOut;
     Observe<TOut>(signal: Signal<TOut>): Observable<TOut>;
 }
 
@@ -367,6 +368,13 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         {
             this.Resume();
         }
+    }
+
+    Sample<TOut>(
+        signal: Signal<TOut>
+        ): TOut
+    {
+        return this._values.get(signal);
     }
 
     Observe<TOut>(

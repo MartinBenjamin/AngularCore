@@ -1,14 +1,19 @@
 import { } from 'jasmine';
 import { Rule } from "../EavStore/Datalog";
-import { EavStore } from '../EavStore/EavStore';
+import { DatalogSignalInterpreter } from '../EavStore/DatalogSignalInterpreter';
+import { EavStore, tupleCompare } from '../EavStore/EavStore';
+import { IDatalogInterpreter } from '../EavStore/IDatalogInterpreter';
 import { IEavStore } from '../EavStore/IEavStore';
+import { Signal } from '../Signal/Signal';
 import { ClassAssertion } from './Assertion';
 import { AxiomInterpreter } from './AxiomInterpreterDatalog';
 import { Class } from './Class';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
+import { IClassExpression } from './IClassExpression';
 import { IOntology } from './IOntology';
 import { NamedIndividual } from './NamedIndividual';
 import { Ontology } from "./Ontology";
+import { WrapperType } from './Wrapped';
 
 describe(
     'Declare( Class( C ) )',
@@ -33,5 +38,13 @@ describe(
                 const iInterpretation = interpreter.InterpretIndividual(i);
                 for(var axiom of o.Axioms)
                     axiom.Accept(interpreter);
+
+                const datalogInterpreter: IDatalogInterpreter<WrapperType.Signal> = new DatalogSignalInterpreter(
+                    store,
+                    tupleCompare);
+
+                const signals = datalogInterpreter.Rules(rules);
+                const signal = signals.get(c.Iri);
+
             });
     });
