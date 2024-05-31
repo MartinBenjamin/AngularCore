@@ -8,4 +8,6 @@ export interface IDatalogInterpreter<TWrapperType extends WrapperType>
         head: [...T],
         body: Atom[],
         ...rules: Rule[]): Wrapped<TWrapperType, {[K in keyof T]: any;}[]>;
+
+    Rules(rules: Rule[]): Map<string, Wrapped<TWrapperType, Iterable<Tuple>>>
 }

@@ -29,4 +29,11 @@ export class DatalogObservableInterpreter implements IDatalogInterpreter<Wrapper
                 subscriber.add(() => this._eavStore.SignalScheduler.RemoveSignal(signal));
             });
     }
+
+    Rules(
+        rules: Rule[]
+        ): Map<string, any>
+    {
+        throw new Error('Method not implemented.');
+    }
 }
