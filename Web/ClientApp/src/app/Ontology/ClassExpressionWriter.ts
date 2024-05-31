@@ -32,7 +32,7 @@ export class ClassExpressionWriter implements
         class$: IClass
         ): string
     {
-        return `Class(${this.Entity(class$)})`;
+        return this.Entity(class$);
     }
 
     ObjectIntersectionOf(
@@ -202,7 +202,7 @@ ${dataCardinality.DataRange ? ' ' + dataCardinality.DataRange.Select(this._dataR
         property: IProperty
         )
     {
-        return property.LocalName;
+        return this.Entity(property);
     }
 
     Individual(
