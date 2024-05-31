@@ -1,4 +1,6 @@
 import { Rule, Variable } from "../EavStore/Datalog";
+import { IEavStore } from "../EavStore/IEavStore";
+import { AddIndividuals } from "./AddIndividuals";
 import { ClassAtom } from "./ClassExpressionInterpreterDatalog";
 import { IDLSafeRule } from "./DLSafeRule";
 import { IAnnotationAssertion } from "./IAnnotationAssertion";
@@ -19,6 +21,7 @@ import { IEquivalentObjectProperties } from "./IEquivalentObjectProperties";
 import { IFunctionalDataProperty } from "./IFunctionalDataProperty";
 import { IFunctionalObjectProperty } from "./IFunctionalObjectProperty";
 import { IHasKey } from "./IHasKey";
+import { IIndividual } from "./IIndividual";
 import { IInverseObjectProperties } from "./IInverseObjectProperties";
 import { INamedIndividual } from "./INamedIndividual";
 import { IObjectPropertyDomain } from "./IObjectPropertyDomain";
@@ -39,14 +42,20 @@ export class AxiomInterpreter implements IAxiomVisitor
     private readonly _domain    : Variable = '?x';
     private readonly _range     : Variable = '?y';
     private readonly _individual: Variable = '?x';
-    private _classExpressionInterpreter   : IClassExpressionSelector<ClassAtom>;
+
+    private _individualInterpretation: ReadonlyMap<IIndividual, any>;
+    private _classExpressionInterpreter: IClassExpressionSelector<ClassAtom>;
     private _propertyExpressionInterpreter: IPropertyExpressionSelector<PropertyAtom>;// = new PropertyExpressionInterpreter('?x', '?y')
 
     constructor(
         private _ontology: IOntology,
+        private _store   : IEavStore,
         private _rules   : Rule[]
         )
     {
+        this._individualInterpretation = AddIndividuals(
+            this._ontology,
+            this._store);
     }
 
     Axiom(
@@ -287,6 +296,13 @@ export class AxiomInterpreter implements IAxiomVisitor
         datatype: IDatatype
         ): void
     {
+    }
+
+    InterpretIndividual(
+        individual: IIndividual
+        ): any
+    {
+        return this._individualInterpretation.get(individual);
     }
 
     private Property(
