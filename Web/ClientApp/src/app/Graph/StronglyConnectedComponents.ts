@@ -93,18 +93,18 @@ export function Condense<TVertex>(
     ): Map<TVertex[], TVertex[][]>
 {
     const stronglyConnectedComponents = StronglyConnectedComponents(graph);
-    const map = new Map<TVertex, TVertex[]>([].concat(...stronglyConnectedComponents.map(
+    const map = new Map<TVertex, TVertex[]>(stronglyConnectedComponents.flatMap(
         stronglyConnectedComponent => stronglyConnectedComponent.map<[TVertex, TVertex[]]>(
-            vertex => [vertex, stronglyConnectedComponent]))));
+            vertex => [vertex, stronglyConnectedComponent])));
 
     return new Map(stronglyConnectedComponents.map(
         stronglyConnectedComponent =>
             [
                 stronglyConnectedComponent,
-                [...new Set<TVertex[]>([].concat(
-                    ...stronglyConnectedComponent.map(
+                [...new Set<TVertex[]>(
+                    stronglyConnectedComponent.flatMap(
                         vertex => [...graph.get(vertex)]
                             .map(adjacent => map.get(adjacent))
-                            .filter(adjacentStronglyConnectedComponent => adjacentStronglyConnectedComponent !== stronglyConnectedComponent))))]
+                            .filter(adjacentStronglyConnectedComponent => adjacentStronglyConnectedComponent !== stronglyConnectedComponent)))]
             ]));
 }
