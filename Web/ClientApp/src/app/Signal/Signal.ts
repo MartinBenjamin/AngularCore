@@ -5,7 +5,7 @@ import { Condense } from '../Graph/StronglyConnectedComponents';
 
 type AreEqual<T = any> = (lhs: T, rhs: T) => boolean;
 
-type SignalParams<P> = { [Parameter in keyof P]: Signal<P[Parameter]> | CurrentValue<P[Parameter]>; };
+type SignalParams<P> = { [Parameter in keyof P]: Signal<P[Parameter]>; };
 
 const ReferenceEquality: AreEqual = (lhs: any, rhs: any) => lhs === rhs;
 
@@ -43,28 +43,14 @@ export class Signal<TOut = any, TIn extends any[] = any[]> implements IVertex
             while(this._removeActions.length)
                 this._removeActions.pop()(this);
     }
-
-    CurrentValue(): CurrentValue<TOut>
-    {
-        return new CurrentValue<TOut>(this);
-    }
-}
-
-export class CurrentValue<TOut = any>
-{
-    constructor(
-        public readonly Signal: Signal<TOut, any[]>
-        )
-    {
-    }
 }
 
 export interface IScheduler
 {
     AddSignal<TOut = any, TIn extends any[] = any[]>(
         map?: (...parameters: TIn) => TOut,
-        inputs?: { [Parameter in keyof TIn]: Signal<TIn[Parameter]> | CurrentValue<TIn[Parameter]>; }): Signal<TOut>;
-    AddSignals(predecessors: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>): void;
+        inputs?: SignalParams<TIn>): Signal<TOut>;
+    AddSignals(predecessors: ReadonlyMap<Signal, ReadonlyArray<Signal>>): void;
     RemoveSignal(signal: Signal): void;
 
     Suspend(): void;
@@ -90,7 +76,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
     private _flushing                   = false;
 
     constructor(
-        predecessors?: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>,
+        predecessors?: ReadonlyMap<Signal, ReadonlyArray<Signal>>,
         private _signalTrace?: (signal: Signal, value: any) => void
         )
     {
@@ -110,24 +96,21 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
     {
         const signal = new Signal(map);
 
-        (<Map<Signal, Signal[]>>this._predecessors).set(
+        (<Map<Signal, ReadonlyArray<Signal>>>this._predecessors).set(
             signal,
-            predecessors.map(predecessor => predecessor instanceof CurrentValue ? predecessor.Signal : predecessor));
+            predecessors);
 
-        (<Map<Signal, Signal[]>>this._successors).set(
+        (<Map<Signal, ReadonlyArray<Signal>>>this._successors).set(
             signal,
             []);
 
         predecessors
-            .filter((predecessor): predecessor is Signal => predecessor instanceof Signal)
             .forEach(predecessor => (<Signal[]>this._successors.get(predecessor)).push(signal));
 
         // Condense the signal graph.
         this._condensed = Condense(this._predecessors);
 
-        this._stronglyConnectedComponents = new Map<Signal, SCC<Signal>>([].concat(...[...this._condensed.keys()]
-            .map(stronglyConnectedComponent => stronglyConnectedComponent
-                .map<[Signal, SCC<Signal>]>(signal => [signal, stronglyConnectedComponent]))));
+        this._stronglyConnectedComponents = new Map<Signal, SCC<Signal>>([...this._condensed.keys()].flatMap(scc => scc.map(component => [component, scc])));
 
         // Determine longest path for each strongly connect component in condensed graph.
         const longestPaths = LongestPaths(this._condensed);
@@ -143,49 +126,39 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         for(const scc of this._condensed.keys())
             scc.Recursive = scc.length > 1 || this._successors.get(scc[0]).includes(scc[0]);
 
-        try
-        {
-            this.Suspend();
-            this.Schedule(signal);
-        }
-        finally
-        {
-            this.Resume();
-        }
+        this.Schedule(signal);
 
         return signal;
     }
 
     public AddSignals(
-        predecessors: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>
+        predecessors: ReadonlyMap<Signal, ReadonlyArray<Signal>>
         ): void
     {
         const signalsToBeScheduled: Signal[] = [...predecessors].filter(
             ([, predecessors]) =>
                 !predecessors.length ||
-                predecessors.filter((predecessor): predecessor is Signal => predecessor instanceof Signal).some(predecessor => this._predecessors.has(predecessor))).map(([signal,]) => signal);
+                predecessors.some(predecessor => this._predecessors.has(predecessor))).map(([signal,]) => signal);
 
         for(const [signal, signalPredecessors] of predecessors)
-            (<Map<Signal, Signal[]>>this._predecessors).set(
+        {
+            (<Map<Signal, ReadonlyArray<Signal>>>this._predecessors).set(
                 signal,
-                signalPredecessors.map(predecessor => predecessor instanceof CurrentValue ? predecessor.Signal : predecessor));
+                signalPredecessors);
 
-        for(const signal of predecessors.keys())
-            (<Map<Signal, Signal[]>>this._successors).set(
+            (<Map<Signal, ReadonlyArray<Signal>>>this._successors).set(
                 signal,
                 []);
+        }
 
-        new Array<[Signal, Signal]>().concat(...[...predecessors]
-            .map<[Signal, Signal[]]>(([signal, predecessors]) => [signal, predecessors.filter((predecessor): predecessor is Signal => predecessor instanceof Signal)])
-            .map(([signal, predecessors]) => predecessors.map<[Signal, Signal]>(predecessor => [signal, predecessor])))
-            .forEach(([signal, predecessor]) => (<Signal[]>this._successors.get(predecessor)).push(signal));
+        for(const [signal, signalPredecessors] of predecessors)
+            for(const signalPredecessor of signalPredecessors)
+                (<Signal[]>this._successors.get(signalPredecessor)).push(signal);
 
         // Condense the signal graph.
         this._condensed = Condense(this._predecessors);
 
-        this._stronglyConnectedComponents = new Map<Signal, SCC<Signal>>([].concat(...[...this._condensed.keys()]
-            .map(stronglyConnectedComponent => stronglyConnectedComponent
-                .map<[Signal, SCC<Signal>]>(signal => [signal, stronglyConnectedComponent]))));
+        this._stronglyConnectedComponents = new Map<Signal, SCC<Signal>>([...this._condensed.keys()].flatMap(scc => scc.map(component => [component, scc])));
 
         // Determine longest path for each strongly connected component in the condensed graph.
         const longestPaths = LongestPaths(this._condensed);
