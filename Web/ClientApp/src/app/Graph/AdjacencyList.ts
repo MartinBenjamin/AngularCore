@@ -47,7 +47,7 @@ export function Transpose<TVertex>(
     graph: ReadonlyMap<TVertex, Iterable<TVertex>>
     ): Map<TVertex, TVertex[]>
 {
-    return new Array<[TVertex, TVertex]>().concat(...[...graph].map(([vertex, adjacent]) => [...adjacent].map(adjacent => <[TVertex, TVertex]>[adjacent, vertex]))).reduce(
+    return [...graph].flatMap(([vertex, adjacent]) => [...adjacent].map(adjacent => <[TVertex, TVertex]>[adjacent, vertex])).reduce(
         (transpose, [vertex, adjacentVertex]) =>
         {
             transpose.get(vertex).push(adjacentVertex);
