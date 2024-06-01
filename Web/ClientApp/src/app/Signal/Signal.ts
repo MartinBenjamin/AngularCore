@@ -67,11 +67,10 @@ export interface IScheduler
     AddSignals(predecessors: ReadonlyMap<Signal, ReadonlyArray<Signal | CurrentValue>>): void;
     RemoveSignal(signal: Signal): void;
 
-    Schedule(signal: Signal): void;
-    Inject(signal: Signal, value: any): void;
     Suspend(): void;
     Resume(): void;
     Update(update: (scheduler: IScheduler) => void);
+    Inject(signal: Signal, value: any): void;
     Sample<TOut>(signal: Signal<TOut>): TOut;
     Observe<TOut>(signal: Signal<TOut>): Observable<TOut>;
 }
@@ -203,15 +202,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
             scc.Recursive = scc.length > 1 || this._successors.get(scc[0]).includes(scc[0]);
 
         // Schedule new Signals which do not depend on other Signals or are dependent on existing Signals.
-        try
-        {
-            this.Suspend();
-            signalsToBeScheduled.forEach(signal => this.Schedule(signal));
-        }
-        finally
-        {
-            this.Resume();
-        }
+        this.Schedule(...signalsToBeScheduled);
     }
 
     RemoveSignal(
@@ -284,65 +275,6 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         return this;
     }
 
-    Schedule(
-        signal: Signal
-        ): void
-    {
-        if(!signal.Function)
-            // Source signal - value injected.
-            return;
-
-        try
-        {
-            this._entryCount += 1;
-            const stronglyConnectedComponent = this._stronglyConnectedComponents.get(signal);
-
-            if(!stronglyConnectedComponent)
-                throw new Error("Unknown signal");
-
-            if(this._predecessors.get(signal).length <= 1 && !this._suspended)
-                // Run immediately.
-                this.Run(stronglyConnectedComponent);
-
-            else
-                this.add(stronglyConnectedComponent);
-        }
-        finally
-        {
-            this._entryCount -= 1;
-        }
-
-        if(!this._suspended && this._entryCount === 0)
-            this.Flush();
-    }
-
-    Inject(
-        signal: Signal,
-        value : any
-        ): void
-    {
-
-        if(signal.AreEqual(
-            value,
-            this._values.get(signal)))
-            return;
-
-        this._values.set(
-            signal,
-            value);
-        for(const successor of this._successors.get(signal))
-            this.Schedule(successor);
-
-        const subscribers = this._subscribers.get(signal);
-        if(subscribers)
-            subscribers.forEach(subscriber => subscriber.next(value));
-
-        if(this._signalTrace)
-            this._signalTrace(
-                signal,
-                value);
-    }
-
     Suspend(): void
     {
         ++this._suspended;
@@ -368,6 +300,32 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         {
             this.Resume();
         }
+    }
+
+    Inject(
+        signal: Signal,
+        value : any
+        ): void
+    {
+        if(signal.AreEqual(
+            value,
+            this._values.get(signal)))
+            return;
+
+        this._values.set(
+            signal,
+            value);
+
+        if(this._signalTrace)
+            this._signalTrace(
+                signal,
+                value);
+
+        const subscribers = this._subscribers.get(signal);
+        if(subscribers)
+            subscribers.forEach(subscriber => subscriber.next(value));
+
+        this.Schedule(...this._successors.get(signal));
     }
 
     Sample<TOut>(
@@ -407,6 +365,33 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
             });
     }
 
+    private Schedule(
+        ...signals: Signal[]
+        ): void
+    {
+        try
+        {
+            this._entryCount += 1;
+            for(const signal of signals)
+                if(signal.Function)
+                {
+                    const stronglyConnectedComponent = this._stronglyConnectedComponents.get(signal);
+
+                    if(!stronglyConnectedComponent)
+                        throw new Error("Unknown signal");
+
+                    this.add(stronglyConnectedComponent);
+                }
+        }
+        finally
+        {
+            this._entryCount -= 1;
+        }
+
+        if(!this._suspended && this._entryCount === 0)
+            this.Flush();
+    }
+
     private Flush(): void
     {
         if(this._flushing)
@@ -440,17 +425,17 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                 this._values.set(
                     signal,
                     value);
-                for(const successor of this._successors.get(signal))
-                    this.Schedule(successor);
-
-                const subscribers = this._subscribers.get(signal);
-                if(subscribers)
-                    subscribers.forEach(subscriber => subscriber.next(value));
 
                 if(this._signalTrace)
                     this._signalTrace(
                         signal,
                         value);
+
+                const subscribers = this._subscribers.get(signal);
+                if(subscribers)
+                    subscribers.forEach(subscriber => subscriber.next(value));
+
+                this.Schedule(...this._successors.get(signal));
             }
         }
         else
@@ -492,19 +477,22 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 
             for(const signal of stronglyConnectedComponent)
             {
-                for(const successor of this._successors.get(signal))
-                    if(successor.LongestPath > signal.LongestPath) // Do not schedule signals within the strongly connected component.
-                        this.Schedule(successor);
-
-                const subscribers = this._subscribers.get(signal);
-                if(subscribers)
-                    subscribers.forEach(subscriber => subscriber.next(this._values.get(signal)));
-
                 if(this._signalTrace)
                     this._signalTrace(
                         signal,
                         this._values.get(signal));
+
+                const subscribers = this._subscribers.get(signal);
+                if(subscribers)
+                    subscribers.forEach(subscriber => subscriber.next(this._values.get(signal)));
             }
+
+            this.Schedule(
+                ...stronglyConnectedComponent
+                    .flatMap(component => this._successors.get(component))
+                    .filter(successor => successor.LongestPath > stronglyConnectedComponent.LongestPath));
+        //    for(const signal of stronglyConnectedComponent)
+        //        this.Schedule(...this._successors.get(signal).filter(successor => successor.LongestPath > signal.LongestPath));
         }
     }
 }
