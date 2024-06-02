@@ -423,35 +423,29 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                 this._values.delete(signal);
 
             const nextValues = new Map<Signal, any>();
-            const schedule: Signal[] = [...stronglyConnectedComponent];
-            while(schedule.length)
+            for(const signal of stronglyConnectedComponent)
+                nextValues.set(
+                    signal,
+                    signal.Function.apply(
+                        null,
+                        this._predecessors.get(signal).map(predecessor => this._values.get(predecessor))));
+
+            while(stronglyConnectedComponent.some(signal => !signal.AreEqual(
+                this._values.get(signal),
+                nextValues.get(signal))))
             {
-                for(const signal of schedule)
+                stronglyConnectedComponent.forEach(
+                    signal => this._values.set(
+                        signal,
+                        nextValues.get(signal)));
+
+                for(const signal of stronglyConnectedComponent)
                     nextValues.set(
                         signal,
                         signal.Function.apply(
                             null,
                             this._predecessors.get(signal).map(predecessor => this._values.get(predecessor))));
 
-                let count = schedule.length;
-                while(count--)
-                {
-                    const signal = schedule.shift();
-                    const nextValue = nextValues.get(signal);
-                    if(!signal.AreEqual(
-                        this._values.get(signal),
-                        nextValue))
-                    {
-                        for(const successor of this._successors.get(signal))
-                            if(successor.LongestPath === signal.LongestPath &&
-                               !schedule.includes(successor))
-                                schedule.push(successor);
-
-                        this._values.set(
-                            signal,
-                            nextValue);
-                    }
-                }
             }
 
             for(const signal of stronglyConnectedComponent)
