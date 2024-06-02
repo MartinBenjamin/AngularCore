@@ -423,10 +423,10 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                 this._values.delete(signal);
 
             const nextValues = new Map<Signal, any>();
-            for(const signal of stronglyConnectedComponent)
-                nextValues.set(
+            stronglyConnectedComponent.forEach(
+                signal => nextValues.set(
                     signal,
-                    signal.Function(...this._predecessors.get(signal).map(predecessor => this._values.get(predecessor))));
+                    signal.Function(...this._predecessors.get(signal).map(predecessor => this._values.get(predecessor)))));
 
             while(stronglyConnectedComponent.some(signal => !signal.AreEqual(
                 this._values.get(signal),
@@ -437,11 +437,10 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                         signal,
                         nextValues.get(signal)));
 
-                for(const signal of stronglyConnectedComponent)
-                    nextValues.set(
+                stronglyConnectedComponent.forEach(
+                    signal => nextValues.set(
                         signal,
-                        signal.Function(...this._predecessors.get(signal).map(predecessor => this._values.get(predecessor))));
-
+                        signal.Function(...this._predecessors.get(signal).map(predecessor => this._values.get(predecessor)))));
             }
 
             for(const signal of stronglyConnectedComponent)
