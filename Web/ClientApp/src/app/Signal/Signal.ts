@@ -1,6 +1,6 @@
 import { Observable, Subscriber } from 'rxjs';
 import { SortedList } from '../Collections/SortedSet';
-import { LongestPaths } from '../Graph/AdjacencyList';
+import { LongestPaths, Transpose } from '../Graph/AdjacencyList';
 import { Condense } from '../Graph/StronglyConnectedComponents';
 
 type AreEqual<T = any> = (lhs: T, rhs: T) => boolean;
@@ -67,7 +67,8 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
 {
     private _predecessors               : ReadonlyMap<Signal, ReadonlyArray<Signal>>;
     private _successors                 : ReadonlyMap<Signal, ReadonlyArray<Signal>>;
-    private _condensed                  : ReadonlyMap<SCC<Signal>, ReadonlyArray<SCC<Signal>>>;
+    private _sccPredecessors            : ReadonlyMap<SCC<Signal>, ReadonlyArray<SCC<Signal>>>;
+    private _sccSuccessors              : ReadonlyMap<SCC<Signal>, ReadonlyArray<SCC<Signal>>>;
     private _stronglyConnectedComponents: ReadonlyMap<Signal, SCC<Signal>>;
     private _values                     = new Map<Signal, any>();
     private _subscribers                = new Map<Signal, Set<Subscriber<any>>>();
@@ -108,12 +109,13 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
             .forEach(predecessor => (<Signal[]>this._successors.get(predecessor)).push(signal));
 
         // Condense the signal graph.
-        this._condensed = Condense(this._predecessors);
+        this._sccPredecessors = Condense(this._predecessors);
+        this._sccSuccessors   = Transpose(this._sccPredecessors);
 
-        this._stronglyConnectedComponents = new Map<Signal, SCC<Signal>>([...this._condensed.keys()].flatMap(scc => scc.map(component => [component, scc])));
+        this._stronglyConnectedComponents = new Map<Signal, SCC<Signal>>([...this._sccPredecessors.keys()].flatMap(scc => scc.map(component => [component, scc])));
 
         // Determine longest path for each strongly connect component in condensed graph.
-        const longestPaths = LongestPaths(this._condensed);
+        const longestPaths = LongestPaths(this._sccPredecessors);
 
         for(const [stronglyConnectComponent, longestPath] of longestPaths)
         {
@@ -123,10 +125,10 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                 signal.LongestPath = longestPath;
         }
 
-        for(const scc of this._condensed.keys())
+        for(const scc of this._sccPredecessors.keys())
             scc.Recursive = scc.length > 1 || this._successors.get(scc[0]).includes(scc[0]);
 
-        this.Schedule(signal);
+        this.Schedule(this._stronglyConnectedComponents.get(signal));
 
         return signal;
     }
@@ -156,12 +158,13 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                 (<Signal[]>this._successors.get(signalPredecessor)).push(signal);
 
         // Condense the signal graph.
-        this._condensed = Condense(this._predecessors);
+        this._sccPredecessors = Condense(this._predecessors);
+        this._sccSuccessors   = Transpose(this._sccPredecessors);
 
-        this._stronglyConnectedComponents = new Map<Signal, SCC<Signal>>([...this._condensed.keys()].flatMap(scc => scc.map(component => [component, scc])));
+        this._stronglyConnectedComponents = new Map<Signal, SCC<Signal>>([...this._sccPredecessors.keys()].flatMap(scc => scc.map(component => [component, scc])));
 
         // Determine longest path for each strongly connected component in the condensed graph.
-        const longestPaths = LongestPaths(this._condensed);
+        const longestPaths = LongestPaths(this._sccPredecessors);
 
         for(const [stronglyConnectComponent, longestPath] of longestPaths)
         {
@@ -171,11 +174,11 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                 signal.LongestPath = longestPath;
         }
 
-        for(const scc of this._condensed.keys())
+        for(const scc of this._sccPredecessors.keys())
             scc.Recursive = scc.length > 1 || this._successors.get(scc[0]).includes(scc[0]);
 
         // Schedule new Signals which do not depend on other Signals or are dependent on existing Signals.
-        this.Schedule(...signalsToBeScheduled);
+        this.Schedule(...signalsToBeScheduled.map(signal => this._stronglyConnectedComponents.get(signal)));
     }
 
     RemoveSignal(
@@ -193,14 +196,24 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         ): void
     {
         // Check for successors.
-        if([...this._condensed.values()].some(predecessors => predecessors.includes(stronglyConnectedComponent)))
+        if(this._sccSuccessors.get(stronglyConnectedComponent).length)
             // Strongly connected component has successors.
             return;
 
-        const predecessors = this._condensed.get(stronglyConnectedComponent);
+        const predecessors = this._sccPredecessors.get(stronglyConnectedComponent);
 
         //  Delete strongly connected component.
-        (<Map<SCC<Signal>, ReadonlyArray<SCC<Signal>>>>this._condensed).delete(stronglyConnectedComponent);
+        for(const predecessor of predecessors)
+        {
+            const successors = <SCC<Signal>[]>this._sccSuccessors.get(predecessor);
+            const index = successors.indexOf(stronglyConnectedComponent);
+            if(index !== -1)
+                successors.splice(
+                    index,
+                    1);
+        }
+
+        (<Map<SCC<Signal>, ReadonlyArray<SCC<Signal>>>>this._sccPredecessors).delete(stronglyConnectedComponent);
 
         // Delete components of strongly connected component.
         for(const signal of stronglyConnectedComponent)
@@ -298,7 +311,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         if(subscribers)
             subscribers.forEach(subscriber => subscriber.next(value));
 
-        this.Schedule(...this._successors.get(signal));
+        this.Schedule(...this._sccSuccessors.get(this._stronglyConnectedComponents.get(signal)));
     }
 
     Sample<TOut>(
@@ -339,22 +352,15 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
     }
 
     private Schedule(
-        ...signals: Signal[]
+        ...stronglyConnectedComponents: SCC<Signal>[]
         ): void
     {
         try
         {
             this._entryCount += 1;
-            for(const signal of signals)
-                if(signal.Function)
-                {
-                    const stronglyConnectedComponent = this._stronglyConnectedComponents.get(signal);
-
-                    if(!stronglyConnectedComponent)
-                        throw new Error("Unknown signal");
-
+            for(const stronglyConnectedComponent of stronglyConnectedComponents)
+                if(!(stronglyConnectedComponent.length === 1 && !stronglyConnectedComponent[0].Function)) // Do not schedule input signals.
                     this.add(stronglyConnectedComponent);
-                }
         }
         finally
         {
@@ -408,7 +414,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                 if(subscribers)
                     subscribers.forEach(subscriber => subscriber.next(value));
 
-                this.Schedule(...this._successors.get(signal));
+                this.Schedule(...this._sccSuccessors.get(stronglyConnectedComponent));
             }
         }
         else
@@ -460,12 +466,7 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                     subscribers.forEach(subscriber => subscriber.next(this._values.get(signal)));
             }
 
-            this.Schedule(
-                ...stronglyConnectedComponent
-                    .flatMap(component => this._successors.get(component))
-                    .filter(successor => successor.LongestPath > stronglyConnectedComponent.LongestPath));
-        //    for(const signal of stronglyConnectedComponent)
-        //        this.Schedule(...this._successors.get(signal).filter(successor => successor.LongestPath > signal.LongestPath));
+            this.Schedule(...this._sccSuccessors.get(stronglyConnectedComponent));
         }
     }
 }
