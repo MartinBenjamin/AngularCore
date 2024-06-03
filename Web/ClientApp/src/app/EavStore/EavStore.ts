@@ -681,29 +681,6 @@ export class EavStore implements IEavStore, IPublisher
         }
     }
 
-    //Assert(
-    //    entity   : any,
-    //    attribute: PropertyKey,
-    //    value    : any
-    //    ): void
-    //{
-    //    let currentValue = entity[attribute];
-
-    //    if(typeof currentValue === 'undefined' && this.Cardinality(attribute) === Cardinality.Many)
-    //        currentValue = entity[attribute] = ArrayProxyFactory(
-    //            this,
-    //            entity,
-    //            attribute,
-    //            []);
-
-    //    if(currentValue instanceof Array)
-    //        currentValue.push(value);
-
-    //    else
-    //        entity[attribute] = value;
-
-    //}
-
     Assert(
         entity   : any,
         attribute: PropertyKey,
@@ -760,11 +737,14 @@ export class EavStore implements IEavStore, IPublisher
 
         if(previousValue instanceof Array)
         {
-            previousValue[TargetSymbol].push(value);
-            this.PublishAssert(
-                entity,
-                attribute,
-                value);
+            if(!previousValue.includes(value))
+            {
+                previousValue[TargetSymbol].push(value);
+                this.PublishAssert(
+                    entity,
+                    attribute,
+                    value);
+            }
         }
         else
         {
