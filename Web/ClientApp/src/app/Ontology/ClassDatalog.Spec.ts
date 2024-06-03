@@ -38,10 +38,6 @@ describe(
                     store,
                     rules);
                 const iInterpretation = interpreter.InterpretIndividual(i);
-                store.Assert(
-                    iInterpretation,
-                    'rdf:type',
-                    c.Iri);
                 for(const axiom of o.Axioms)
                     axiom.Accept(interpreter);
 
