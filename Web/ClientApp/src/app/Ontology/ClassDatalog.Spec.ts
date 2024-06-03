@@ -1,4 +1,5 @@
 import { } from 'jasmine';
+import { ArraySet } from '../Collections/ArraySet';
 import { Rule } from "../EavStore/Datalog";
 import { DatalogSignalInterpreter } from '../EavStore/DatalogSignalInterpreter';
 import { EavStore, tupleCompare } from '../EavStore/EavStore';
@@ -36,6 +37,10 @@ describe(
                     store,
                     rules);
                 const iInterpretation = interpreter.InterpretIndividual(i);
+                store.Assert(
+                    iInterpretation,
+                    'rdf:type',
+                    c.Iri);
                 for(var axiom of o.Axioms)
                     axiom.Accept(interpreter);
 
@@ -43,8 +48,14 @@ describe(
                     store,
                     tupleCompare);
 
-                const signals = datalogInterpreter.Rules(rules);
-                const signal = signals.get(c.Iri);
+                const x = store.Signal(['?x'], [['o.c', '?x']], ...rules);
+                //const x = store.Signal(['?x'], [['o.c', '?x']], [['o.c', '?x'], [['?x', 'rdf:type', 'o.c']]]);
+                //const signals = datalogInterpreter.Rules(rules);
+                //const signal = signals.get(c.Iri);
+                const value = new ArraySet([...store.SignalScheduler.Sample(x)]);
 
+                it(
+                    `(i)I ∈ (${classExpressionWriter.Write(c)})C`,
+                    () => expect(value.has([iInterpretation])).toBe(true));
             });
     });
