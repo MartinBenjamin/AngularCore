@@ -103,7 +103,7 @@ export class AxiomInterpreter implements IAxiomVisitor
     {
         for(const classExpression1 of equivalentClasses.ClassExpressions)
             for(const classExpression2 of equivalentClasses.ClassExpressions)
-                if(classExpression1 !== classExpression2 && this._ontology.IsAxiom.IClass(classExpression1))
+                if(classExpression1 !== classExpression2 && this._ontology.IsClassExpression.IClass(classExpression1))
                     this._rules.push([[classExpression1.Iri, this._individual], classExpression2.Select(this._classExpressionInterpreter)]);
     }
 
@@ -157,9 +157,9 @@ export class AxiomInterpreter implements IAxiomVisitor
         const objectPropertyExpression1 = inverseObjectProperties.ObjectPropertyExpression1;
         const objectPropertyExpression2 = inverseObjectProperties.ObjectPropertyExpression2;
         if(this._ontology.IsAxiom.IObjectProperty(objectPropertyExpression1))
-            this._rules.push([[objectPropertyExpression1.Iri, this._domain, this._range], [objectPropertyExpression2.Select(this._propertyExpressionInterpreter)]])
+            this._rules.push([[objectPropertyExpression1.Iri, this._range, this._domain], [objectPropertyExpression2.Select(this._propertyExpressionInterpreter)]])
         if(this._ontology.IsAxiom.IObjectProperty(objectPropertyExpression2))
-            this._rules.push([[objectPropertyExpression2.Iri, this._domain, this._range], [objectPropertyExpression1.Select(this._propertyExpressionInterpreter)]])
+            this._rules.push([[objectPropertyExpression2.Iri, this._range, this._domain], [objectPropertyExpression1.Select(this._propertyExpressionInterpreter)]])
     }
 
     ObjectPropertyDomain(
