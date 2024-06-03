@@ -18,7 +18,7 @@ import { Ontology } from "./Ontology";
 import { WrapperType } from './Wrapped';
 
 describe(
-    'Declare( Class( C ) )',
+    'ClassAssertion( CE a ) ((a)I ∈ (CE)C)',
     () =>
     {
         const classExpressionWriter = new ClassExpressionWriter();

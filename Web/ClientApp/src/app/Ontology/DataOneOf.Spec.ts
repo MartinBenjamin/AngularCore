@@ -3,7 +3,7 @@ import { assertBuilder } from './assertBuilder';
 import { DataOneOf } from './DataOneOf';
 
 describe(
-    'DataOneOf',
+    'DataOneOf( lt1 ... ltn ) ({ (lt1)LT , ... , (ltn)LT })',
     () =>
     {
         let assert = assertBuilder('DataOneOf')(DataOneOf);
