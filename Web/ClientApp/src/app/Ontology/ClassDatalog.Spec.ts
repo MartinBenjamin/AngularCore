@@ -1,5 +1,6 @@
 import { } from 'jasmine';
 import { ArraySet } from '../Collections/ArraySet';
+import { SortedSet } from '../Collections/SortedSet';
 import { Rule } from "../EavStore/Datalog";
 import { DatalogSignalInterpreter } from '../EavStore/DatalogSignalInterpreter';
 import { EavStore, tupleCompare } from '../EavStore/EavStore';
@@ -41,21 +42,27 @@ describe(
                     iInterpretation,
                     'rdf:type',
                     c.Iri);
-                for(var axiom of o.Axioms)
+                for(const axiom of o.Axioms)
                     axiom.Accept(interpreter);
 
                 const datalogInterpreter: IDatalogInterpreter<WrapperType.Signal> = new DatalogSignalInterpreter(
                     store,
                     tupleCompare);
 
-                const x = store.Signal(['?x'], [['o.c', '?x']], ...rules);
-                //const x = store.Signal(['?x'], [['o.c', '?x']], [['o.c', '?x'], [['?x', 'rdf:type', 'o.c']]]);
-                //const signals = datalogInterpreter.Rules(rules);
-                //const signal = signals.get(c.Iri);
-                const value = new ArraySet([...store.SignalScheduler.Sample(x)]);
+                const signal = store.Signal(['?x'], [['o.c', '?x']], ...rules);
+                const value = new ArraySet([...store.SignalScheduler.Sample(signal)]);
 
                 it(
                     `(i)I ∈ (${classExpressionWriter.Write(c)})C`,
                     () => expect(value.has([iInterpretation])).toBe(true));
+
+                const signals = datalogInterpreter.Rules(rules);
+                const signal1 = signals.get(c.Iri);
+
+                const value1 = new SortedSet(tupleCompare, [...store.SignalScheduler.Sample(signal1)]);
+
+                it(
+                    `(i)I ∈ (${classExpressionWriter.Write(c)})C`,
+                    () => expect(value1.has(['o.c', iInterpretation])).toBe(true));
             });
     });
