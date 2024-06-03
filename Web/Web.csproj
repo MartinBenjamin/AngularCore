@@ -146,7 +146,7 @@
     <None Remove="ClientApp\src\app\Ontology\AxiomInterpreterDatalog.ts" />
     <None Remove="ClientApp\src\app\Ontology\BuiltIn.ts" />
     <None Remove="ClientApp\src\app\Ontology\Class.ts" />
-    <None Remove="ClientApp\src\app\Ontology\ClassDatalog.Spec.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ClassAssertionDatalog.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassExpression.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassExpressionInterpreter.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassExpressionInterpreterDatalog.ts" />

@@ -1,17 +1,14 @@
 import { } from 'jasmine';
-import { ArraySet } from '../Collections/ArraySet';
 import { SortedSet } from '../Collections/SortedSet';
 import { Rule } from "../EavStore/Datalog";
 import { DatalogSignalInterpreter } from '../EavStore/DatalogSignalInterpreter';
 import { EavStore, tupleCompare } from '../EavStore/EavStore';
 import { IDatalogInterpreter } from '../EavStore/IDatalogInterpreter';
 import { IEavStore } from '../EavStore/IEavStore';
-import { Signal } from '../Signal/Signal';
 import { ClassAssertion } from './Assertion';
 import { AxiomInterpreter } from './AxiomInterpreterDatalog';
 import { Class } from './Class';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
-import { IClassExpression } from './IClassExpression';
 import { IOntology } from './IOntology';
 import { NamedIndividual } from './NamedIndividual';
 import { Ontology } from "./Ontology";
@@ -46,7 +43,7 @@ describe(
                     tupleCompare);
 
                 const signal = store.Signal(['?x'], [['o.c', '?x']], ...rules);
-                const value = new ArraySet([...store.SignalScheduler.Sample(signal)]);
+                const value = new SortedSet(tupleCompare, [...store.SignalScheduler.Sample(signal)]);
 
                 it(
                     `(i)I ∈ (${classExpressionWriter.Write(c)})C`,
