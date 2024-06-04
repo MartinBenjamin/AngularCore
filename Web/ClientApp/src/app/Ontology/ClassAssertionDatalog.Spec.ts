@@ -43,7 +43,7 @@ describe(
                     tupleCompare);
 
                 const signal = store.Signal(['?x'], [['o.c', '?x']], ...rules);
-                const value = new SortedSet(tupleCompare, [...store.SignalScheduler.Sample(signal)]);
+                const value = new SortedSet(tupleCompare, store.SignalScheduler.Sample(signal));
 
                 it(
                     `(i)I ∈ (${classExpressionWriter.Write(c)})C`,
@@ -52,7 +52,7 @@ describe(
                 const signals = datalogInterpreter.Rules(rules);
                 const signal1 = signals.get(c.Iri);
 
-                const value1 = new SortedSet(tupleCompare, [...store.SignalScheduler.Sample(signal1)]);
+                const value1 = new SortedSet(tupleCompare, store.SignalScheduler.Sample(signal1));
 
                 it(
                     `(i)I ∈ (${classExpressionWriter.Write(c)})C`,

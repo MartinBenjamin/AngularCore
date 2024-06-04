@@ -192,6 +192,11 @@ export class SortedSet<T> extends SortedList<T> implements Set<T>
             super(compare._compare);
             this._array = [...compare._array];
         }
+        else if(values instanceof SortedSet && compare === values._compare)
+        {
+            super(compare);
+            this._array = [...values._array];
+        }
         else
             super(
                 compare,
