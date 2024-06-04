@@ -21,12 +21,13 @@ describe(
         const classExpressionWriter = new ClassExpressionWriter();
 
         describe(
-            'Given an Ontology o1 with axioms Class(c1), NamedIndividual(i1) and ClassAssertion(c1, i1):',
+            'Given an Ontology o1 with axioms Class(c1), NamedIndividual(i1), NamedIndividual(i1) and ClassAssertion(c1, i1):',
             () =>
             {
                 const o1: IOntology = new Ontology('o1');
                 const c1 = new Class(o1, 'c1');
                 const i1 = new NamedIndividual(o1, 'i1');
+                const i2 = new NamedIndividual(o1, 'i2');
                 new ClassAssertion(o1, c1, i1);
                 const store: IEavStore = new EavStore();
                 const rules: Rule[] = [];
@@ -35,6 +36,7 @@ describe(
                     store,
                     rules);
                 const i1Interpretation = interpreter.InterpretIndividual(i1);
+                const i2Interpretation = interpreter.InterpretIndividual(i2);
                 for(const axiom of o1.Axioms)
                     axiom.Accept(interpreter);
 
@@ -47,6 +49,9 @@ describe(
                     it(
                         `(i1)I ∈ (${classExpressionWriter.Write(c1)})C`,
                         () => expect(value.has([i1Interpretation])).toBe(true));
+                    it(
+                        `¬((i2)I ∈ (${classExpressionWriter.Write(c1)})C)`,
+                        () => expect(value.has([i2Interpretation])).toBe(false));
                 }
                 {
                     const datalogInterpreter: IDatalogInterpreter<WrapperType.Signal> = new DatalogSignalInterpreter(
@@ -59,6 +64,9 @@ describe(
                     it(
                         `(i1)I ∈ (${classExpressionWriter.Write(c1)})C`,
                         () => expect(value.has([c1.Iri, i1Interpretation])).toBe(true));
+                    it(
+                        `¬((i2)I ∈ (${classExpressionWriter.Write(c1)})C)`,
+                        () => expect(value.has([i2Interpretation])).toBe(false));
                 }
             });
     });
