@@ -1,5 +1,7 @@
 import { Axiom } from "./Axiom";
 import { IClassAssertion, IDataPropertyAssertion, IObjectPropertyAssertion, IPropertyAssertion } from "./IAssertion";
+import { IAxiomSelector } from "./IAxiomSelector";
+import { IAxiomVisitor } from "./IAxiomVisitor";
 import { IClassExpression } from "./IClassExpression";
 import { IIndividual } from "./IIndividual";
 import { INamedIndividual } from "./INamedIndividual";
@@ -17,6 +19,20 @@ export class ClassAssertion
         )
     {
         super(ontology);
+    }
+
+    Accept(
+        visitor: IAxiomVisitor
+        ): void
+    {
+        visitor.ClassAssertion(this);
+    }
+
+    Select<TResult>(
+        selector: IAxiomSelector<TResult>
+        ): TResult
+    {
+        return selector.ClassAssertion(this);
     }
 }
 

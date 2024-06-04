@@ -38,11 +38,12 @@ describe(
                 for(const axiom of o.Axioms)
                     axiom.Accept(interpreter);
 
+                console.log(JSON.stringify(rules));
                 const datalogInterpreter: IDatalogInterpreter<WrapperType.Signal> = new DatalogSignalInterpreter(
                     store,
                     tupleCompare);
 
-                const signal = store.Signal(['?x'], [['o.c', '?x']], ...rules);
+                const signal = store.Signal(['?x'], [[c.Iri, '?x']], ...rules);
                 const value = new SortedSet(tupleCompare, store.SignalScheduler.Sample(signal));
 
                 it(
@@ -56,6 +57,6 @@ describe(
 
                 it(
                     `(i)I ∈ (${classExpressionWriter.Write(c)})C`,
-                    () => expect(value1.has(['o.c', iInterpretation])).toBe(true));
+                    () => expect(value1.has([c.Iri, iInterpretation])).toBe(true));
             });
     });

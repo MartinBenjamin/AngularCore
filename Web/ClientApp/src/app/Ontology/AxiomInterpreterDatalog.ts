@@ -1,3 +1,4 @@
+import { classExpression } from "../../../node_modules/@babel/types/lib/index-legacy";
 import { Rule, Variable } from "../EavStore/Datalog";
 import { IEavStore } from "../EavStore/IEavStore";
 import { AddIndividuals } from "./AddIndividuals";
@@ -117,6 +118,8 @@ export class AxiomInterpreter implements IAxiomVisitor
         classAssertion: IClassAssertion
         ): void
     {
+        if(this._ontology.IsClassExpression.IClass(classAssertion.ClassExpression))
+            this._rules.push([[classAssertion.ClassExpression.Iri, this._individualInterpretation.get(classAssertion.Individual)], []]);
     }
 
     ObjectPropertyAssertion(
