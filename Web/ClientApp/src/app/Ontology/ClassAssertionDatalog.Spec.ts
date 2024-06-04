@@ -1,7 +1,7 @@
 import { } from 'jasmine';
 import { SortedSet } from '../Collections/SortedSet';
 import { Rule } from "../EavStore/Datalog";
-import { DatalogSignalInterpreter } from '../EavStore/DatalogSignalInterpreter';
+import { DatalogSignalInterpreter } from '../EavStore/DatalogSignalInterpreter1';
 import { EavStore, tupleCompare } from '../EavStore/EavStore';
 import { IDatalogInterpreter } from '../EavStore/IDatalogInterpreter';
 import { IEavStore } from '../EavStore/IEavStore';
@@ -43,20 +43,22 @@ describe(
                     store,
                     tupleCompare);
 
-                const signal = store.Signal(['?x'], [[c1.Iri, '?x']], ...rules);
-                const value = new SortedSet(tupleCompare, store.SignalScheduler.Sample(signal));
-
-                it(
-                    `(i1)I ∈ (${classExpressionWriter.Write(c1)})C`,
-                    () => expect(value.has([i1Interpretation])).toBe(true));
-
-                const signals = datalogInterpreter.Rules(rules);
-                const signal1 = signals.get(c1.Iri);
-
-                const value1 = new SortedSet(tupleCompare, store.SignalScheduler.Sample(signal1));
-
-                it(
-                    `(i1)I ∈ (${classExpressionWriter.Write(c1)})C`,
-                    () => expect(value1.has([c1.Iri, i1Interpretation])).toBe(true));
+                {
+                    const signal = store.Signal(['?x'], [[c1.Iri, '?x']], ...rules);
+                    const value = new SortedSet(tupleCompare, store.SignalScheduler.Sample(signal));
+                    store.SignalScheduler.RemoveSignal(signal);
+                    it(
+                        `(i1)I ∈ (${classExpressionWriter.Write(c1)})C`,
+                        () => expect(value.has([i1Interpretation])).toBe(true));
+                }
+                {
+                    const signals = datalogInterpreter.Rules(rules);
+                    const signal = signals.get(c1.Iri);
+                    const value = new SortedSet(tupleCompare, store.SignalScheduler.Sample(signal));
+                    store.SignalScheduler.RemoveSignal(signal);
+                    it(
+                        `(i1)I ∈ (${classExpressionWriter.Write(c1)})C`,
+                        () => expect(value.has([c1.Iri, i1Interpretation])).toBe(true));
+                }
             });
     });
