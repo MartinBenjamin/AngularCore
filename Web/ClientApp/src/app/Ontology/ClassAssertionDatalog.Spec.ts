@@ -39,9 +39,6 @@ describe(
                     axiom.Accept(interpreter);
 
                 console.log(JSON.stringify(rules));
-                const datalogInterpreter: IDatalogInterpreter<WrapperType.Signal> = new DatalogSignalInterpreter(
-                    store,
-                    tupleCompare);
 
                 {
                     const signal = store.Signal(['?x'], [[c1.Iri, '?x']], ...rules);
@@ -52,6 +49,9 @@ describe(
                         () => expect(value.has([i1Interpretation])).toBe(true));
                 }
                 {
+                    const datalogInterpreter: IDatalogInterpreter<WrapperType.Signal> = new DatalogSignalInterpreter(
+                        store,
+                        tupleCompare);
                     const signals = datalogInterpreter.Rules(rules);
                     const signal = signals.get(c1.Iri);
                     const value = new SortedSet(tupleCompare, store.SignalScheduler.Sample(signal));
