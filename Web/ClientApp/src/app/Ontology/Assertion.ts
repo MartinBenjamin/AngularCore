@@ -66,6 +66,20 @@ export class ObjectPropertyAssertion
             ObjectPropertyExpression,
             SourceIndividual);
     }
+
+    Accept(
+        visitor: IAxiomVisitor
+        ): void
+    {
+        visitor.ObjectPropertyAssertion(this);
+    }
+
+    Select<TResult>(
+        selector: IAxiomSelector<TResult>
+        ): TResult
+    {
+        return selector.ObjectPropertyAssertion(this);
+    }
 }
 
 export class DataPropertyAssertion
@@ -83,5 +97,19 @@ export class DataPropertyAssertion
             ontology,
             DataPropertyExpression,
             SourceIndividual);
+    }
+
+    Accept(
+        visitor: IAxiomVisitor
+        ): void
+    {
+        visitor.DataPropertyAssertion(this);
+    }
+
+    Select<TResult>(
+        selector: IAxiomSelector<TResult>
+        ): TResult
+    {
+        return selector.DataPropertyAssertion(this);
     }
 }
