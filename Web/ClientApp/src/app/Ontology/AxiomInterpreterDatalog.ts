@@ -1,9 +1,7 @@
-import { classExpression } from "../../../node_modules/@babel/types/lib/index-legacy";
 import { Rule, Variable } from "../EavStore/Datalog";
 import { IEavStore } from "../EavStore/IEavStore";
 import { AddIndividuals } from "./AddIndividuals";
-import { ClassExpressionInterpreter } from "./ClassExpressionInterpreterDatalog";
-import { ClassAtom } from "./ClassExpressionInterpreterDatalog";
+import { ClassAtom, ClassExpressionInterpreter } from "./ClassExpressionInterpreterDatalog";
 import { IDLSafeRule } from "./DLSafeRule";
 import { IAnnotationAssertion } from "./IAnnotationAssertion";
 import { IAnnotationProperty } from "./IAnnotationProperty";
