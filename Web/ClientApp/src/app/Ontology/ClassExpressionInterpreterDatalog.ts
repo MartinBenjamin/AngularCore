@@ -156,8 +156,12 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Clas
     DataExactCardinality(dataExactCardinality: IDataExactCardinality): ClassAtom {
         throw new Error("Method not implemented.");
     }
-    Class(class$: IClass): ClassAtom {
-        throw new Error("Method not implemented.");
+
+    Class(
+        class$: IClass
+        ): ClassAtom
+    {
+        return [class$.Iri, this.Individual];
     }
 
 

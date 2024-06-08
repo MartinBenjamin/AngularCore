@@ -2,6 +2,7 @@ import { classExpression } from "../../../node_modules/@babel/types/lib/index-le
 import { Rule, Variable } from "../EavStore/Datalog";
 import { IEavStore } from "../EavStore/IEavStore";
 import { AddIndividuals } from "./AddIndividuals";
+import { ClassExpressionInterpreter } from "./ClassExpressionInterpreterDatalog";
 import { ClassAtom } from "./ClassExpressionInterpreterDatalog";
 import { IDLSafeRule } from "./DLSafeRule";
 import { IAnnotationAssertion } from "./IAnnotationAssertion";
@@ -45,7 +46,9 @@ export class AxiomInterpreter implements IAxiomVisitor
     private readonly _individual: Variable = '?x';
 
     private _individualInterpretation: ReadonlyMap<IIndividual, any>;
-    private _classExpressionInterpreter: IClassExpressionSelector<ClassAtom>;
+    private _classExpressionInterpreter: IClassExpressionSelector<ClassAtom> = new ClassExpressionInterpreter(
+        this._individual,
+        this._rules);
     private _propertyExpressionInterpreter: IPropertyExpressionSelector<PropertyAtom>;// = new PropertyExpressionInterpreter('?x', '?y')
 
     constructor(
@@ -94,8 +97,8 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
         const superClassExpression = subClassOf.SuperClassExpression;
-        if(this._ontology.IsAxiom.IClass(superClassExpression))
-            this._rules.push([[superClassExpression.Iri, this._individual], subClassOf.SubClassExpression.Select(this._classExpressionInterpreter)])
+        if(this._ontology.IsClassExpression.IClass(superClassExpression))
+            this._rules.push([[superClassExpression.Iri, this._individual], [subClassOf.SubClassExpression.Select(this._classExpressionInterpreter)]])
     }
 
     EquivalentClasses(
@@ -105,7 +108,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         for(const classExpression1 of equivalentClasses.ClassExpressions)
             for(const classExpression2 of equivalentClasses.ClassExpressions)
                 if(classExpression1 !== classExpression2 && this._ontology.IsClassExpression.IClass(classExpression1))
-                    this._rules.push([[classExpression1.Iri, this._individual], classExpression2.Select(this._classExpressionInterpreter)]);
+                    this._rules.push([[classExpression1.Iri, this._individual], [classExpression2.Select(this._classExpressionInterpreter)]]);
     }
 
     DisjointClasses(
