@@ -171,7 +171,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
         const domain = objectPropertyDomain.Domain;
-        if(this._ontology.IsAxiom.IClass(domain))
+        if(this._ontology.IsClassExpression.IClass(domain))
             this._rules.push([[domain.Iri, this._domain], [objectPropertyDomain.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter)]])
     }
 
@@ -180,7 +180,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
         const range = objectPropertyRange.Range;
-        if(this._ontology.IsAxiom.IClass(range))
+        if(this._ontology.IsClassExpression.IClass(range))
             this._rules.push([[range.Iri, this._range], [objectPropertyRange.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter)]])
     }
 
@@ -244,7 +244,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
         const domain = dataPropertyDomain.Domain;
-        if(this._ontology.IsAxiom.IClass(domain))
+        if(this._ontology.IsClassExpression.IClass(domain))
             this._rules.push([[domain.Iri, this._domain], [dataPropertyDomain.DataPropertyExpression.Select(this._propertyExpressionInterpreter)]])
     }
 
@@ -253,7 +253,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
         const range = dataPropertyRange.Range;
-        if(this._ontology.IsAxiom.IClass(range))
+        if(this._ontology.IsClassExpression.IClass(range))
             this._rules.push([[range.Iri, this._range], [dataPropertyRange.DataPropertyExpression.Select(this._propertyExpressionInterpreter)]])
     }
 
