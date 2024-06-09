@@ -5,6 +5,7 @@ import { EavStore, tupleCompare } from '../EavStore/EavStore';
 import { IEavStore } from '../EavStore/IEavStore';
 import { ClassAssertion } from './Assertion';
 import { AxiomInterpreter } from './AxiomInterpreterDatalog';
+import { AxiomWriter } from './AxiomWriter';
 import { Class } from './Class';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { NamedIndividual } from './NamedIndividual';
@@ -15,18 +16,19 @@ describe(
     'SubClassOf( CE1 CE2 ) ((CE1)C ⊆ (CE2)C)',
     () =>
     {
-        const classExpressionWriter = new ClassExpressionWriter();
+        const axiomWriter = new AxiomWriter();
+        const classExpressionWriter = axiomWriter.ClassExpressionWriter;
+        const o1 = new Ontology('o1');
+        const c1 = new Class(o1, 'c1');
+        const c2 = new Class(o1, 'c2');
+        const i1 = new NamedIndividual(o1, 'i1');
+        new ClassAssertion(o1, c1, i1);
+        new SubClassOf(o1, c1, c2);
 
         describe(
-            'Given an Ontology o1 with axioms Class(c1), Class(c2), NamedIndividual(i1), ClassAssertion(c1, i1) and SubClassOf(c1, c2):',
+            `Given an Ontology o1 with axioms ${o1.Axioms.map(axiom => axiom.Select(axiomWriter)).join(', ')}:`,
             () =>
             {
-                const o1 = new Ontology('o1');
-                const c1 = new Class(o1, 'c1');
-                const c2 = new Class(o1, 'c2');
-                const i1 = new NamedIndividual(o1, 'i1');
-                new ClassAssertion(o1, c1, i1);
-                new SubClassOf(o1, c1, c2);
                 const store: IEavStore = new EavStore();
                 const rules: Rule[] = [];
                 const interpreter = new AxiomInterpreter(

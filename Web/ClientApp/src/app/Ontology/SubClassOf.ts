@@ -1,4 +1,5 @@
 import { Axiom } from "./Axiom";
+import { IAxiomSelector } from "./IAxiomSelector";
 import { IAxiomVisitor } from "./IAxiomVisitor";
 import { IClassExpression } from "./IClassExpression";
 import { IOntology } from "./IOntology";
@@ -22,5 +23,12 @@ export class SubClassOf
         )
     {
         visitor.SubClassOf(this);
+    }
+
+    Select<TResult>(
+        selector: IAxiomSelector<TResult>
+        ): TResult
+    {
+        return selector.SubClassOf(this);
     }
 }

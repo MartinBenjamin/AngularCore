@@ -67,12 +67,20 @@ export class AxiomWriter implements IAxiomSelector<string>
         return `Declaration(NamedIndividual(${namedIndividual.Select(this.IndividualWriter)}))`;
     }
 
-    HasKey(hasKey: IHasKey): string {
+    HasKey(
+        hasKey: IHasKey
+        ): string
+    {
         throw new Error("Method not implemented.");
     }
-    SubClassOf(subClassOf: ISubClassOf): string {
-        throw new Error("Method not implemented.");
+
+    SubClassOf(
+        subClassOf: ISubClassOf
+        ): string
+    {
+        return `SubClassOf(${subClassOf.SubClassExpression.Select(this.ClassExpressionWriter)} ${subClassOf.SuperClassExpression.Select(this.ClassExpressionWriter)})`;
     }
+
     EquivalentClasses(equivalentClasses: IEquivalentClasses): string {
         throw new Error("Method not implemented.");
     }
@@ -84,7 +92,7 @@ export class AxiomWriter implements IAxiomSelector<string>
         classAssertion: IClassAssertion
         ): string
     {
-        return `ClassAssertion(${classAssertion.ClassExpression.Select(this.ClassExpressionWriter)} ${classAssertion.Individual.Select(this.IndividualWriter)}))`;
+        return `ClassAssertion(${classAssertion.ClassExpression.Select(this.ClassExpressionWriter)} ${classAssertion.Individual.Select(this.IndividualWriter)})`;
     }
 
     ObjectPropertyAssertion(objectPropertyAssertion: IObjectPropertyAssertion): string {
