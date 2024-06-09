@@ -9,7 +9,6 @@ import { ClassAssertion } from './Assertion';
 import { AxiomInterpreter } from './AxiomInterpreterDatalog';
 import { AxiomWriter } from './AxiomWriter';
 import { Class } from './Class';
-import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { IOntology } from './IOntology';
 import { NamedIndividual } from './NamedIndividual';
 import { Ontology } from "./Ontology";
@@ -20,7 +19,7 @@ describe(
     () =>
     {
         const axiomWriter = new AxiomWriter();
-        const classExpressionWriter = new ClassExpressionWriter();
+        const classExpressionWriter = axiomWriter.ClassExpressionWriter;
         const o1: IOntology = new Ontology('o1');
         const c1 = new Class(o1, 'c1');
         const i1 = new NamedIndividual(o1, 'i1');

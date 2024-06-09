@@ -32,8 +32,8 @@ import { ITransitiveObjectProperty } from "./ITransitiveObjectProperty";
 
 export class AxiomWriter implements IAxiomSelector<string>
 {
-    private _classExpressionWriter = new ClassExpressionWriter();
-    private _individualWriter      = new IndividualWriter();
+    public readonly ClassExpressionWriter = new ClassExpressionWriter();
+    public readonly IndividualWriter      = new IndividualWriter();
 
     constructor()
     {
@@ -64,7 +64,7 @@ export class AxiomWriter implements IAxiomSelector<string>
         namedIndividual: INamedIndividual
         ): string
     {
-        return `Declaration(NamedIndividual(${namedIndividual.Select(this._individualWriter)}))`;
+        return `Declaration(NamedIndividual(${namedIndividual.Select(this.IndividualWriter)}))`;
     }
 
     HasKey(hasKey: IHasKey): string {
@@ -84,7 +84,7 @@ export class AxiomWriter implements IAxiomSelector<string>
         classAssertion: IClassAssertion
         ): string
     {
-        return `ClassAssertion(${classAssertion.ClassExpression.Select(this._classExpressionWriter)} ${classAssertion.Individual.Select(this._individualWriter)}))`;
+        return `ClassAssertion(${classAssertion.ClassExpression.Select(this.ClassExpressionWriter)} ${classAssertion.Individual.Select(this.IndividualWriter)}))`;
     }
 
     ObjectPropertyAssertion(objectPropertyAssertion: IObjectPropertyAssertion): string {
