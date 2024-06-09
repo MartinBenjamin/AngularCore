@@ -144,6 +144,7 @@
     <None Remove="ClientApp\src\app\Ontology\AtomInterpreter.ts" />
     <None Remove="ClientApp\src\app\Ontology\Axiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\AxiomInterpreterDatalog.ts" />
+    <None Remove="ClientApp\src\app\Ontology\AxiomWriter.ts" />
     <None Remove="ClientApp\src\app\Ontology\BuiltIn.ts" />
     <None Remove="ClientApp\src\app\Ontology\Class.ts" />
     <None Remove="ClientApp\src\app\Ontology\ClassAssertionDatalog.Spec.ts" />
@@ -248,10 +249,12 @@
     <None Remove="ClientApp\src\app\Ontology\IFunctionalObjectProperty.ts" />
     <None Remove="ClientApp\src\app\Ontology\IHasKey.ts" />
     <None Remove="ClientApp\src\app\Ontology\IIndividual.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IIndividualSelector.ts" />
     <None Remove="ClientApp\src\app\Ontology\IInverseObjectProperties.ts" />
     <None Remove="ClientApp\src\app\Ontology\IIsAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IIsClassExpression.ts" />
     <None Remove="ClientApp\src\app\Ontology\INamedIndividual.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IndividualWriter.ts" />
     <None Remove="ClientApp\src\app\Ontology\InverseObjectProperties.ts" />
     <None Remove="ClientApp\src\app\Ontology\IObjectAllValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IObjectCardinality.ts" />

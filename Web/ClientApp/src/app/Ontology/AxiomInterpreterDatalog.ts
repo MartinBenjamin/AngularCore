@@ -252,9 +252,6 @@ export class AxiomInterpreter implements IAxiomVisitor
         dataPropertyRange: IDataPropertyRange
         ): void
     {
-        const range = dataPropertyRange.Range;
-        if(this._ontology.IsClassExpression.IClass(range))
-            this._rules.push([[range.Iri, this._range], [dataPropertyRange.DataPropertyExpression.Select(this._propertyExpressionInterpreter)]])
     }
 
     FunctionalDataProperty(

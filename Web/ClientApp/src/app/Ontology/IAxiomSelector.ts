@@ -16,7 +16,7 @@ import { IFunctionalDataProperty } from "./IFunctionalDataProperty";
 import { IFunctionalObjectProperty } from "./IFunctionalObjectProperty";
 import { IHasKey } from "./IHasKey";
 import { IInverseObjectProperties } from "./IInverseObjectProperties";
-import { INamedIndividual } from "./INamedIndividual";
+import { INamedIndividualSelector } from "./INamedIndividual";
 import { IObjectPropertyDomain } from "./IObjectPropertyDomain";
 import { IObjectPropertyRange } from "./IObjectPropertyRange";
 import { IPropertySelector } from "./IProperty";
@@ -30,12 +30,12 @@ import { ITransitiveObjectProperty } from "./ITransitiveObjectProperty";
 export interface IAxiomSelector<TResult> extends
     IClassSelector<TResult>,
     IPropertySelector<TResult>,
-    IDatatypeSelector<TResult>
+    IDatatypeSelector<TResult>,
+    INamedIndividualSelector<TResult>
 {
     Axiom                      (axiom                     : IAxiom                     ): TResult;
     Entity                     (entity                    : IEntity                    ): TResult;
     AnnotationProperty         (annotationProperty        : IAnnotationProperty        ): TResult;
-    NamedIndividual            (namedIndividual           : INamedIndividual           ): TResult;
     HasKey                     (hasKey                    : IHasKey                    ): TResult;
     SubClassOf                 (subClassOf                : ISubClassOf                ): TResult;
     EquivalentClasses          (equivalentClasses         : IEquivalentClasses         ): TResult;

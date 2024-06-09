@@ -7,6 +7,7 @@ import { IDataCardinality, IDataExactCardinality, IDataMaxCardinality, IDataMinC
 import { IDataHasValue } from "./IDataHasValue";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
 import { IEntity } from './IEntity';
+import { IndividualWriter } from "./IndividualWriter";
 import { IObjectAllValuesFrom } from "./IObjectAllValuesFrom";
 import { IObjectCardinality, IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
 import { IObjectComplementOf } from "./IObjectComplementOf";
@@ -26,7 +27,8 @@ export class ClassExpressionWriter implements
     IClassExpressionSelector<string>,
     IPropertyExpressionSelector<string>
 {
-    private _dataRangeWriter = new DataRangeWriter();
+    private _dataRangeWriter  = new DataRangeWriter();
+    private _individualWriter = new IndividualWriter();
 
     Class(
         class$: IClass
@@ -61,7 +63,7 @@ export class ClassExpressionWriter implements
         ): string
     {
         const individuals = objectOneOf.Individuals
-            .map(individual => this.Individual(individual))
+            .map(individual => individual.Select(this._individualWriter))
             .join(' ');
         return `ObjectOneOf(${individuals})`;
     }
@@ -84,7 +86,7 @@ export class ClassExpressionWriter implements
         objectHasValue: IObjectHasValue
         ): string
     {
-        return `ObjectHasValue(${objectHasValue.ObjectPropertyExpression.Select(this)} ${this.Individual(objectHasValue.Individual)})`;
+        return `ObjectHasValue(${objectHasValue.ObjectPropertyExpression.Select(this)} ${objectHasValue.Individual.Select(this._individualWriter)})`;
     }
 
     ObjectHasSelf(
@@ -203,13 +205,6 @@ ${dataCardinality.DataRange ? ' ' + dataCardinality.DataRange.Select(this._dataR
         )
     {
         return this.Entity(property);
-    }
-
-    Individual(
-        individual: object
-        )
-    {
-        return isAxiom.INamedIndividual(individual) ? this.Entity(individual) : individual;
     }
 
     Entity(
