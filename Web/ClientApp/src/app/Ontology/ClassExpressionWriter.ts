@@ -211,7 +211,7 @@ ${dataCardinality.DataRange ? ' ' + dataCardinality.DataRange.Select(this._dataR
         entity: IEntity
         ): string
     {
-        return entity.LocalName;
+        return entity.Iri;
     }
 
     Write(

@@ -7,6 +7,7 @@ import { IDatalogInterpreter } from '../EavStore/IDatalogInterpreter';
 import { IEavStore } from '../EavStore/IEavStore';
 import { ClassAssertion } from './Assertion';
 import { AxiomInterpreter } from './AxiomInterpreterDatalog';
+import { AxiomWriter } from './AxiomWriter';
 import { Class } from './Class';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { IOntology } from './IOntology';
@@ -18,17 +19,18 @@ describe(
     'ClassAssertion( CE a ) ((a)I ∈ (CE)C)',
     () =>
     {
+        const axiomWriter = new AxiomWriter();
         const classExpressionWriter = new ClassExpressionWriter();
+        const o1: IOntology = new Ontology('o1');
+        const c1 = new Class(o1, 'c1');
+        const i1 = new NamedIndividual(o1, 'i1');
+        const i2 = new NamedIndividual(o1, 'i2');
+        new ClassAssertion(o1, c1, i1);
 
         describe(
-            'Given an Ontology o1 with axioms Class(c1), NamedIndividual(i1), NamedIndividual(i2) and ClassAssertion(c1, i1):',
+            `Given an Ontology o1 with axioms ${o1.Axioms.map(axiom => axiom.Select(axiomWriter)).join(', ')}:`,
             () =>
             {
-                const o1: IOntology = new Ontology('o1');
-                const c1 = new Class(o1, 'c1');
-                const i1 = new NamedIndividual(o1, 'i1');
-                const i2 = new NamedIndividual(o1, 'i2');
-                new ClassAssertion(o1, c1, i1);
                 const store: IEavStore = new EavStore();
                 const rules: Rule[] = [];
                 const interpreter = new AxiomInterpreter(

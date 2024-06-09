@@ -1,13 +1,11 @@
-import { DataRangeWriter } from "./DataRangeWriter";
+import { ClassExpressionWriter } from "./ClassExpressionWriter";
 import { IDLSafeRule } from "./DLSafeRule";
 import { IAnnotationAssertion } from "./IAnnotationAssertion";
 import { IAnnotationProperty } from "./IAnnotationProperty";
-import { IClassAssertion, IObjectPropertyAssertion, IDataPropertyAssertion } from "./IAssertion";
+import { IClassAssertion, IDataPropertyAssertion, IObjectPropertyAssertion } from "./IAssertion";
 import { IAxiom } from "./IAxiom";
 import { IAxiomSelector } from "./IAxiomSelector";
-import { IAxiomVisitor } from "./IAxiomVisitor";
 import { IClass } from "./IClass";
-import { IClassExpressionSelector } from "./IClassExpressionSelector";
 import { IDataPropertyDomain } from "./IDataPropertyDomain";
 import { IDataPropertyRange } from "./IDataPropertyRange";
 import { IDatatype } from "./IDatatype";
@@ -24,7 +22,7 @@ import { INamedIndividual } from "./INamedIndividual";
 import { IndividualWriter } from "./IndividualWriter";
 import { IObjectPropertyDomain } from "./IObjectPropertyDomain";
 import { IObjectPropertyRange } from "./IObjectPropertyRange";
-import { IObjectProperty, IDataProperty } from "./IProperty";
+import { IDataProperty, IObjectProperty } from "./IProperty";
 import { IReflexiveObjectProperty } from "./IReflexiveObjectProperty";
 import { ISubClassOf } from "./ISubClassOf";
 import { ISubDataPropertyOf } from "./ISubDataPropertyOf";
@@ -34,8 +32,8 @@ import { ITransitiveObjectProperty } from "./ITransitiveObjectProperty";
 
 export class AxiomWriter implements IAxiomSelector<string>
 {
-    private _classExpressionWriter: IClassExpressionSelector<string>
-    private _individualWriter = new IndividualWriter();
+    private _classExpressionWriter = new ClassExpressionWriter();
+    private _individualWriter      = new IndividualWriter();
 
     constructor()
     {
