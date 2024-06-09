@@ -53,20 +53,6 @@ export class AxiomWriter implements IAxiomSelector<string>
         return entity.Iri;
     }
 
-    AnnotationProperty(
-        annotationProperty: IAnnotationProperty
-        ): string
-    {
-        throw new Error("Method not implemented.");
-    }
-
-    NamedIndividual(
-        namedIndividual: INamedIndividual
-        ): string
-    {
-        return `Declaration(NamedIndividual(${namedIndividual.Select(this.IndividualWriter)}))`;
-    }
-
     HasKey(
         hasKey: IHasKey
         ): string
@@ -157,6 +143,13 @@ export class AxiomWriter implements IAxiomSelector<string>
         return `Declaration(Class(${this.Entity(class$)}))`;
     }
 
+    Datatype(
+        datatype: IDatatype
+        ): string
+    {
+        return `Declaration(Datatype(${this.Entity(datatype)}))`;
+    }
+
     ObjectProperty(
         objectProperty: IObjectProperty
         ): string
@@ -171,10 +164,17 @@ export class AxiomWriter implements IAxiomSelector<string>
         return `Declaration(DataProperty(${this.Entity(dataProperty)}))`;
     }
 
-    Datatype(
-        datatype: IDatatype
+    AnnotationProperty(
+        annotationProperty: IAnnotationProperty
         ): string
     {
-        return `Declaration(Datatype(${this.Entity(datatype)}))`;
+        throw new Error("Method not implemented.");
+    }
+
+    NamedIndividual(
+        namedIndividual: INamedIndividual
+        ): string
+    {
+        return `Declaration(NamedIndividual(${namedIndividual.Select(this.IndividualWriter)}))`;
     }
 }

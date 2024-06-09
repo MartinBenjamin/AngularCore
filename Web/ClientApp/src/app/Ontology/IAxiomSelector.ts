@@ -29,8 +29,8 @@ import { ITransitiveObjectProperty } from "./ITransitiveObjectProperty";
 
 export interface IAxiomSelector<TResult> extends
     IClassSelector<TResult>,
-    IPropertySelector<TResult>,
     IDatatypeSelector<TResult>,
+    IPropertySelector<TResult>,
     INamedIndividualSelector<TResult>
 {
     Axiom                      (axiom                     : IAxiom                     ): TResult;

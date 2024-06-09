@@ -72,18 +72,6 @@ export class AxiomInterpreter implements IAxiomVisitor
     {
     }
 
-    AnnotationProperty(
-        annotationProperty: IAnnotationProperty
-        ): void
-    {
-    }
-
-    NamedIndividual(
-        namedIndividual: INamedIndividual
-        ): void
-    {
-    }
-
     HasKey(
         hasKey: IHasKey
         ): void
@@ -279,6 +267,12 @@ export class AxiomInterpreter implements IAxiomVisitor
         this._rules.push([[class$.Iri, '?x'], [['?x', 'rdf:type', class$.Iri]]]);
     }
 
+    Datatype(
+        datatype: IDatatype
+        ): void
+    {
+    }
+
     ObjectProperty(
         objectProperty: IObjectProperty
         ): void
@@ -293,8 +287,14 @@ export class AxiomInterpreter implements IAxiomVisitor
         this.Property(dataProperty);
     }
 
-    Datatype(
-        datatype: IDatatype
+    AnnotationProperty(
+        annotationProperty: IAnnotationProperty
+        ): void
+    {
+    }
+
+    NamedIndividual(
+        namedIndividual: INamedIndividual
         ): void
     {
     }
