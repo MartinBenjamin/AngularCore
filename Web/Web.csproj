@@ -202,6 +202,7 @@
     <None Remove="ClientApp\src\app\Ontology\EavStoreQuery.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Entity.ts" />
     <None Remove="ClientApp\src\app\Ontology\EquivalentClasses.ts" />
+    <None Remove="ClientApp\src\app\Ontology\EquivalentClassesDatalog.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\EquivalentDataProperties.ts" />
     <None Remove="ClientApp\src\app\Ontology\EquivalentObjectProperties.ts" />
     <None Remove="ClientApp\src\app\Ontology\FunctionalDataProperty.ts" />

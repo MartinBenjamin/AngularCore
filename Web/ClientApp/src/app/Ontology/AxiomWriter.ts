@@ -67,10 +67,17 @@ export class AxiomWriter implements IAxiomSelector<string>
         return `SubClassOf(${subClassOf.SubClassExpression.Select(this.ClassExpressionWriter)} ${subClassOf.SuperClassExpression.Select(this.ClassExpressionWriter)})`;
     }
 
-    EquivalentClasses(equivalentClasses: IEquivalentClasses): string {
-        throw new Error("Method not implemented.");
+    EquivalentClasses(
+        equivalentClasses: IEquivalentClasses
+        ): string
+    {
+        return `EquivalentClasses(${equivalentClasses.ClassExpressions.map(classExpression => classExpression.Select(this.ClassExpressionWriter)).join(' ')})`;
     }
-    DisjointClasses(disjointClasses: IDisjointClasses): string {
+
+    DisjointClasses(
+        disjointClasses: IDisjointClasses
+        ): string
+    {
         throw new Error("Method not implemented.");
     }
 

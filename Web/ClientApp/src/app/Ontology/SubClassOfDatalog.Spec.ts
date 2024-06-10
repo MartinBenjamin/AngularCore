@@ -7,7 +7,6 @@ import { ClassAssertion } from './Assertion';
 import { AxiomInterpreter } from './AxiomInterpreterDatalog';
 import { AxiomWriter } from './AxiomWriter';
 import { Class } from './Class';
-import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { NamedIndividual } from './NamedIndividual';
 import { Ontology } from "./Ontology";
 import { SubClassOf } from './SubClassOf';
