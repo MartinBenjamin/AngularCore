@@ -44,30 +44,30 @@ describe(
                 //console.log(JSON.stringify(rules));
 
                 {
-                    const signal = store.Signal(['?x'], [[c1.Iri, '?x']], ...rules);
-                    const value = new SortedSet(tupleCompare, store.SignalScheduler.Sample(signal));
-                    store.SignalScheduler.RemoveSignal(signal);
+                    const c1Signal = store.Signal(['?x'], [[c1.Iri, '?x']], ...rules);
+                    const c1Interpretation = new SortedSet(tupleCompare, store.SignalScheduler.Sample(c1Signal));
+                    store.SignalScheduler.RemoveSignal(c1Signal);
                     it(
                         `(i1)I ∈ (${classExpressionWriter.Write(c1)})C`,
-                        () => expect(value.has([i1Interpretation])).toBe(true));
+                        () => expect(c1Interpretation.has([i1Interpretation])).toBe(true));
                     it(
                         `¬((i2)I ∈ (${classExpressionWriter.Write(c1)})C)`,
-                        () => expect(value.has([i2Interpretation])).toBe(false));
+                        () => expect(c1Interpretation.has([i2Interpretation])).toBe(false));
                 }
                 {
                     const datalogInterpreter: IDatalogInterpreter<WrapperType.Signal> = new DatalogSignalInterpreter(
                         store,
                         tupleCompare);
                     const signals = datalogInterpreter.Rules(rules);
-                    const signal = signals.get(c1.Iri);
-                    const value = new SortedSet(tupleCompare, store.SignalScheduler.Sample(signal));
-                    store.SignalScheduler.RemoveSignal(signal);
+                    const c1Signal = signals.get(c1.Iri);
+                    const c1Interpretation = new SortedSet(tupleCompare, store.SignalScheduler.Sample(c1Signal));
+                    store.SignalScheduler.RemoveSignal(c1Signal);
                     it(
                         `(i1)I ∈ (${classExpressionWriter.Write(c1)})C`,
-                        () => expect(value.has([c1.Iri, i1Interpretation])).toBe(true));
+                        () => expect(c1Interpretation.has([c1.Iri, i1Interpretation])).toBe(true));
                     it(
                         `¬((i2)I ∈ (${classExpressionWriter.Write(c1)})C)`,
-                        () => expect(value.has([i2Interpretation])).toBe(false));
+                        () => expect(c1Interpretation.has([i2Interpretation])).toBe(false));
                 }
             });
     });

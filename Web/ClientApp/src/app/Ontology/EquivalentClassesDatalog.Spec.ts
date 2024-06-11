@@ -49,7 +49,6 @@ describe(
                 const c2Signal = store.Signal(['?x'], [[c2.Iri, '?x']], ...rules);
                 const c2Interpretation = new SortedSet(tupleCompare, store.SignalScheduler.Sample(c2Signal));
                 store.SignalScheduler.RemoveSignal(c1Signal);
-                store.SignalScheduler.RemoveSignal(c2Signal);
                 it(
                     `(i1)I ∈ (${classExpressionWriter.Write(c1)})C`,
                     () => expect(c1Interpretation.has([i1Interpretation])).toBe(true));

@@ -40,11 +40,11 @@ describe(
 
                 //console.log(JSON.stringify(rules));
 
-                const signal = store.Signal(['?x'], [[c2.Iri, '?x']], ...rules);
-                const value = new SortedSet(tupleCompare, store.SignalScheduler.Sample(signal));
-                store.SignalScheduler.RemoveSignal(signal);
+                const c2Signal = store.Signal(['?x'], [[c2.Iri, '?x']], ...rules);
+                const c2Interpretation = new SortedSet(tupleCompare, store.SignalScheduler.Sample(c2Signal));
+                store.SignalScheduler.RemoveSignal(c2Signal);
                 it(
                     `(i1)I ∈ (${classExpressionWriter.Write(c2)})C`,
-                    () => expect(value.has([i1Interpretation])).toBe(true));
+                    () => expect(c2Interpretation.has([i1Interpretation])).toBe(true));
             });;
     });
