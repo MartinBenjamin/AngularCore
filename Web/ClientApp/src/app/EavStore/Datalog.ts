@@ -136,7 +136,8 @@ export function RecursiveDisjunction(
             return resultT;
         };
 
-        const wrappedDisjunctionPredecessors: [() => SortedSet<Tuple>, ...Wrapped<Iterable<Tuple>>[]] = [() => inputs[0] || new SortedSet(tupleCompare)];
+        const empty = new SortedSet(tupleCompare);
+        const wrappedDisjunctionPredecessors: [() => SortedSet<Tuple>, ...Wrapped<Iterable<Tuple>>[]] = [() => inputs[0] || empty];
 
         for(const rule of rules)
         {
@@ -157,7 +158,7 @@ export function RecursiveDisjunction(
                     if(!wrappedInput)
                     {
                         const index = inputAtoms.push(atom);
-                        wrappedInput = () => inputs[index];
+                        wrappedInput = () => inputs[index] || empty;
                         wrappedInputs.set(
                             atom,
                             wrappedInput);
@@ -213,7 +214,7 @@ export function Recursion(
                     return resultT;
                 };
 
-                const wrappedDisjunctionPredecessors: [() => SortedSet<Tuple>, ...Wrapped<Iterable<Tuple>>[]] = [() => resultTMinus1[index] || new SortedSet(this._tupleCompare)];
+                const wrappedDisjunctionPredecessors: [() => SortedSet<Tuple>, ...Wrapped<Iterable<Tuple>>[]] = [() => resultTMinus1[index] || new SortedSet(tupleCompare)];
 
                 for(const rule of rules)
                 {
