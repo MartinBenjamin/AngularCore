@@ -58,9 +58,9 @@ describe(
                     () => expect(c1Interpretation.has([i2Interpretation])).toBe(true));
                 it(
                     `(i1)I ∈ (${classExpressionWriter.Write(c2)})C`,
-                    () => expect(c1Interpretation.has([i1Interpretation])).toBe(true));
+                    () => expect(c2Interpretation.has([i1Interpretation])).toBe(true));
                 it(
                     `(i2)I ∈ (${classExpressionWriter.Write(c2)})C`,
-                    () => expect(c1Interpretation.has([i2Interpretation])).toBe(true));
+                    () => expect(c2Interpretation.has([i2Interpretation])).toBe(true));
             });
     });
