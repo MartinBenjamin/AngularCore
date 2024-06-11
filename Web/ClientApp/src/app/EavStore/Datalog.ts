@@ -214,7 +214,7 @@ export function Recursion(
                     return resultT;
                 };
 
-                const wrappedDisjunctionPredecessors: [() => SortedSet<Tuple>, ...Wrapped<Iterable<Tuple>>[]] = [() => resultTMinus1[index] || new SortedSet(tupleCompare)];
+                const wrappedDisjunctionPredecessors: [() => SortedSet<Tuple>, ...Wrapped<Iterable<Tuple>>[]] = [() => resultTMinus1[index]];
 
                 for(const rule of rules)
                 {
