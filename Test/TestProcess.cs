@@ -128,7 +128,7 @@ namespace Test
             Assert.That(input.Status, Is.EqualTo(global::Process.Status.Executed));
             Assert.That(input[variable], Is.EqualTo(value));
         }
-        
+
         public static IEnumerable<object[]> ProcessTestCases
         {
             get

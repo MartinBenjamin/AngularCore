@@ -16,7 +16,7 @@ namespace Process
                 channel,
                 out var synchronisation))
             {
-                synchronisation = new Synchronisation();
+                synchronisation = new Synchronisation(channel);
                 _synchronisations[channel] = synchronisation;
 
             }

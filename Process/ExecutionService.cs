@@ -9,6 +9,8 @@ namespace Process
         private readonly Queue<IExecutable>      _queue = new();
         private          int                     _entered;
 
+        Trace IExecutionService.Trace { get; set; }
+
         Guid IIdService<Guid>.NewId() => Guid.NewGuid();
 
         Definition.ISelector<Func<Process, IDictionary<string, object>, Process>> IExecutionService.Constructor => new Constructor(this);

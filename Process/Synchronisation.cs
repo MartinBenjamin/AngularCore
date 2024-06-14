@@ -6,8 +6,16 @@ namespace Process
 {
     public class Synchronisation: IExecutable
     {
-        private ISet<Input > _inputs  = new HashSet<Input >();
-        private ISet<Output> _outputs = new HashSet<Output>();
+        private readonly Channel      _channel;
+        private readonly ISet<Input > _inputs  = new HashSet<Input >();
+        private readonly ISet<Output> _outputs = new HashSet<Output>();
+
+        public Synchronisation(
+            Channel channel
+            )
+        {
+            _channel = channel;
+        }
 
         public int InputCount => _inputs.Count;
 
@@ -59,9 +67,15 @@ namespace Process
             var count   = SyncCount;
 
             for(var index = 0;index < count;++index)
+            {
+                var value = outputs[index].ExecuteOutput(executionService);
+                executionService.Trace?.Invoke(
+                _channel,
+                value);
                 inputs[index].Executelnput(
                     executionService,
-                    outputs[index].ExecuteOutput(executionService));
+                    value);
+            }
         }
     }
 }
