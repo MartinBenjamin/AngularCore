@@ -105,11 +105,11 @@ namespace Test
             const string variable = "target";
             const string value = "value";
             var outputDefinition = new Output(
-                 channel,
-                 new ConstantExpression<string>(value));
+                channel,
+                new ConstantExpression<string>(value));
             var inputDefinition = new Input(
-                 channel,
-                 variable);
+                channel,
+                variable);
 
             global::Process.IExecutionService service = new global::Process.ExecutionService();
             var input = inputDefinition.Select(service.Constructor)(
@@ -127,6 +127,34 @@ namespace Test
             Assert.That(output.Status, Is.EqualTo(global::Process.Status.Executed));
             Assert.That(input.Status, Is.EqualTo(global::Process.Status.Executed));
             Assert.That(input[variable], Is.EqualTo(value));
+        }
+
+        [Test]
+        public void IO2()
+        {
+            var channel = new Channel(new ConstantExpression<string>("channel"), typeof(string));
+            const string variable = "target";
+            const string value = "value";
+            var processDefinition = new Parallel(
+                new Output(
+                     channel,
+                     new ConstantExpression<string>(value)),
+                new Input(
+                     channel,
+                     variable));
+
+            global::Process.IExecutionService service = new global::Process.ExecutionService();
+            var trace = new List<Tuple<global::Process.Channel, object>>();
+            service.Trace = (channel, value) => trace.Add(Tuple.Create(channel, value));
+            var process = processDefinition.Select(service.Constructor)(
+                null,
+                null);
+            Assert.That(!trace.Any(), Is.True);
+            service.Execute(process);
+            Assert.That(process.Status, Is.EqualTo(global::Process.Status.Executed));
+            Assert.That(trace.Count, Is.EqualTo(1));
+            Assert.That(trace[0].Item1.Name, Is.EqualTo("channel"));
+            Assert.That(trace[0].Item2, Is.EqualTo(value));
         }
 
         public static IEnumerable<object[]> ProcessTestCases
