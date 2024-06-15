@@ -40,7 +40,7 @@ namespace Process.Definition
             Input input
             )
         {
-            input.Channel.Name.Accept(_expressionWriter);
+            input.Channel.Accept(_expressionWriter);
             _builder
                 .Append('?')
                 .Append(input.TargetVariable);
@@ -50,7 +50,7 @@ namespace Process.Definition
             Output output
             )
         {
-            output.Channel.Name.Accept(_expressionWriter);
+            output.Channel.Accept(_expressionWriter);
             _builder.Append('!');
             output.Source.Accept(_expressionWriter);
         }

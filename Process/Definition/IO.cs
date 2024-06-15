@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Process.Expression;
+using System;
 
 namespace Process.Definition
 {
     public abstract class IO: Process
     {
-        public virtual Channel Channel { get; protected set; }
+        public virtual IExpression<Channel> Channel { get; protected set; }
 
         protected IO(
-            Channel channel
+            IExpression<Channel> channel
             )
             : base()
         {

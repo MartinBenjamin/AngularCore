@@ -6,7 +6,7 @@ namespace Process
 {
     public abstract class IO: Process
     {
-        public virtual Channel Channel { get; protected set; }
+        public virtual Definition.Channel Channel { get; protected set; }
 
         protected IO(
             Guid                        id,
@@ -19,8 +19,7 @@ namespace Process
                 parent,
                 variables)
         {
-            var channelDefinition = definition.Channel;
-            Channel = channelDefinition.New(this);
+            Channel = definition.Channel.Evaluate(this);
         }
 
         protected override void Execute(

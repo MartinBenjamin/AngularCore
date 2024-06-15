@@ -2,12 +2,12 @@
 
 namespace Process
 {
-    public class Channel
+    public class ChannelX
     {
         public string Name { get; protected set; }
         public Type   Type { get; protected set; }
 
-        public Channel(
+        public ChannelX(
             string name,
             Type   type
             )
@@ -19,7 +19,7 @@ namespace Process
         public override bool Equals(
             object obj
             ) =>
-            obj is Channel channel &&
+            obj is ChannelX channel &&
             Name == channel.Name &&
             Type == channel.Type;
 

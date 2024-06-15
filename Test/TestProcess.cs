@@ -26,13 +26,13 @@ namespace Test
             service.Execute(process);
 
             var outputDefinition = new Output(
-                new Channel(new VariableExpression<string>("channel")),
+                new VariableExpression<Channel>("channel"),
                 new ConstantExpression<object>(null));
 
             var index = 0;
             foreach(var c in trace.Select(c => c.ToString()))
             {
-                var channel = new global::Process.Channel(
+                var channel = new Channel(
                     c,
                     null);
                 var synchronisation = service.SynchronisationService.Resolve(channel);
@@ -45,7 +45,7 @@ namespace Test
                     Assert.That(synchronisation.InputCount, Is.GreaterThanOrEqualTo(0));
                     var output = outputDefinition.Select(service.Constructor)(
                         null,
-                        new Dictionary<string, object> { { "channel", c } });
+                        new Dictionary<string, object> { { "channel", channel } });
                     service.Execute(output);
                 }
                 index++;
@@ -55,11 +55,11 @@ namespace Test
         [Test]
         public void Input()
         {
-            var channel  = new Channel(new ConstantExpression<string>("channel"), typeof(string));
+            var channel  = new Channel("channel", typeof(string));
             const string variable = "target";
             const string value    = "value";
             var inputDefinition = new Input(
-                 channel,
+                 new ConstantExpression<Channel>(channel),
                  variable);
 
             global::Process.IExecutionService service = new global::Process.ExecutionService();
@@ -68,7 +68,7 @@ namespace Test
                 null);
             service.Execute(input);
             Assert.That(input.Status, Is.EqualTo(global::Process.Status.Waiting));
-            Assert.That(service.SynchronisationService.AwaitIO.Any(c => c.Name == channel.Name.Evaluate(input)), Is.True);
+            Assert.That(service.SynchronisationService.AwaitIO.Any(c => c == channel), Is.True);
             Assert.That(input[variable], Is.Null);
             input.Executelnput(
                 service,
@@ -80,10 +80,10 @@ namespace Test
         [Test]
         public void Output()
         {
-            var channel = new Channel(new ConstantExpression<string>("channel"), typeof(string));
+            var channel = new Channel("channel", typeof(string));
             const string value = "value";
             var outputDefinition = new Output(
-                 channel,
+                 new ConstantExpression<Channel>(channel),
                  new ConstantExpression<string>(value));
 
             global::Process.IExecutionService service = new global::Process.ExecutionService();
@@ -92,7 +92,7 @@ namespace Test
                 null);
             service.Execute(output);
             Assert.That(output.Status, Is.EqualTo(global::Process.Status.Waiting));
-            Assert.That(service.SynchronisationService.AwaitIO.Any(c => c.Name == channel.Name.Evaluate(output)), Is.True);
+            Assert.That(service.SynchronisationService.AwaitIO.Any(c => c == channel), Is.True);
             var outputValue = output.ExecuteOutput(service);
             Assert.That(output.Status, Is.EqualTo(global::Process.Status.Executed));
             Assert.That(outputValue, Is.EqualTo(value));
@@ -101,14 +101,14 @@ namespace Test
         [Test]
         public void IO()
         {
-            var channel = new Channel(new ConstantExpression<string>("channel"), typeof(string));
+            var channel = new Channel("channel", typeof(string));
             const string variable = "target";
             const string value = "value";
             var outputDefinition = new Output(
-                channel,
+                new ConstantExpression<Channel>(channel),
                 new ConstantExpression<string>(value));
             var inputDefinition = new Input(
-                channel,
+                new ConstantExpression<Channel>(channel),
                 variable);
 
             global::Process.IExecutionService service = new global::Process.ExecutionService();
@@ -118,7 +118,7 @@ namespace Test
             service.Execute(input);
             Assert.That(input.Status, Is.EqualTo(global::Process.Status.Waiting));
             Assert.That(input[variable], Is.Null);
-            Assert.That(service.SynchronisationService.AwaitIO.Any(c => c.Name == channel.Name.Evaluate(input)), Is.True);
+            Assert.That(service.SynchronisationService.AwaitIO.Any(c => c == channel), Is.True);
 
             var output = outputDefinition.Select(service.Constructor)(
                 null,
@@ -132,19 +132,19 @@ namespace Test
         [Test]
         public void IO2()
         {
-            var channel = new Channel(new ConstantExpression<string>("channel"), typeof(string));
+            var channel = new Channel("channel", typeof(string));
             const string variable = "target";
             const string value = "value";
             var processDefinition = new Parallel(
                 new Output(
-                     channel,
+                     new ConstantExpression<Channel>(channel),
                      new ConstantExpression<string>(value)),
                 new Input(
-                     channel,
+                     new ConstantExpression<Channel>(channel),
                      variable));
 
             global::Process.IExecutionService service = new global::Process.ExecutionService();
-            var trace = new List<Tuple<global::Process.Channel, object>>();
+            var trace = new List<Tuple<Channel, object>>();
             service.Trace = (channel, value) => trace.Add(Tuple.Create(channel, value));
             var process = processDefinition.Select(service.Constructor)(
                 null,
@@ -153,8 +153,8 @@ namespace Test
             service.Execute(process);
             Assert.That(process.Status, Is.EqualTo(global::Process.Status.Executed));
             Assert.That(trace.Count, Is.EqualTo(1));
-            Assert.That(trace[0].Item1.Name, Is.EqualTo("channel"));
-            Assert.That(trace[0].Item2, Is.EqualTo(value));
+            Assert.That(trace[0].Item1, Is.EqualTo(channel));
+            Assert.That(trace[0].Item2, Is.EqualTo(value  ));
         }
 
         public static IEnumerable<object[]> ProcessTestCases
@@ -170,19 +170,19 @@ namespace Test
                     new Sequence(
                         sequence
                             .Select(c => c.ToString())
-                            .Select(c => new Input(new Channel(new ConstantExpression<string>(c)), targetVariable)).ToArray()),
+                            .Select(c => new Input(new ConstantExpression<Channel>(new Channel(c)), targetVariable)).ToArray()),
                     new Sequence(
                         new Sequence(
                             sequence
                                 .Take(sequence.Length - 1).Select(c => c.ToString())
-                                .Select(c => new Input(new Channel(new ConstantExpression<string>(c)), targetVariable)).ToArray()),
-                        new Input(new Channel(new ConstantExpression<string>(sequence.Last().ToString())), targetVariable)),
+                                .Select(c => new Input(new ConstantExpression<Channel>(new Channel(c)), targetVariable)).ToArray()),
+                        new Input(new ConstantExpression<Channel>(new Channel(sequence.Last().ToString())), targetVariable)),
                     new Sequence(
-                        new Input(new Channel(new ConstantExpression<string>(sequence.First().ToString())), targetVariable),
+                        new Input(new ConstantExpression<Channel>(new Channel(sequence.First().ToString())), targetVariable),
                         new Sequence(
                             sequence
                                 .Skip(1).Select(c => c.ToString())
-                                .Select(c => new Input(new Channel(new ConstantExpression<string>(c)), targetVariable)).ToArray()))
+                                .Select(c => new Input(new ConstantExpression<Channel>(new Channel(c)), targetVariable)).ToArray()))
                 };
 
                 testCases.AddRange(
@@ -203,24 +203,24 @@ namespace Test
                     new Parallel(
                         set
                             .Select(c => c.ToString())
-                            .Select(c => new Input(new Channel(new ConstantExpression<string>(c)), targetVariable)).ToArray()),
+                            .Select(c => new Input(new ConstantExpression<Channel>(new Channel(c)), targetVariable)).ToArray()),
                     new Parallel(
                         new Parallel(
                             set
                                 .Take(2).Select(c => c.ToString())
-                                .Select(c => c.ToString()).Select(c => new Input(new Channel(new ConstantExpression<string>(c)), targetVariable)).ToArray()),
-                        new Input(new Channel(new ConstantExpression<string>(set.Last().ToString())), targetVariable)),
+                                .Select(c => c.ToString()).Select(c => new Input(new ConstantExpression<Channel>(new Channel(c)), targetVariable)).ToArray()),
+                        new Input(new ConstantExpression<Channel>(new Channel(set.Last().ToString())), targetVariable)),
                     new Parallel(
-                        new Input(new Channel(new ConstantExpression<string>(set.First().ToString())), targetVariable),
+                        new Input(new ConstantExpression<Channel>(new Channel(set.First().ToString())), targetVariable),
                         new Parallel(
                             set
                                 .Skip(1).Select(c => c.ToString())
-                                .Select(c => new Input(new Channel(new ConstantExpression<string>(c)), targetVariable)).ToArray()))
+                                .Select(c => new Input(new ConstantExpression<Channel>(new Channel(c)), targetVariable)).ToArray()))
                 }.Select(
                     parallel => (Process)new Sequence
                     (
                         parallel,
-                        new Input(new Channel(new ConstantExpression<string>("D")), targetVariable)
+                        new Input(new ConstantExpression<Channel>(new Channel("D")), targetVariable)
                     )).ToList();
 
                 var permutations = set.Permute().Select(p => new string(p.ToArray()));
@@ -242,24 +242,24 @@ namespace Test
                     new Choice(
                         set
                             .Select(c => c.ToString())
-                            .Select(c => new GuardedProcess(new Input(new Channel(new ConstantExpression<string>(c)), targetVariable))).ToArray()),
+                            .Select(c => new GuardedProcess(new Input(new ConstantExpression<Channel>(new Channel(c)), targetVariable))).ToArray()),
                     new Choice(
                         new Choice(
                             set
                                 .Take(2).Select(c => c.ToString())
-                                .Select(c => new GuardedProcess(new Input(new Channel(new ConstantExpression<string>(c)), targetVariable))).ToArray()),
-                        new GuardedProcess(new Input(new Channel(new ConstantExpression<string>(set.Last().ToString())), targetVariable))),
+                                .Select(c => new GuardedProcess(new Input(new ConstantExpression<Channel>(new Channel(c)), targetVariable))).ToArray()),
+                        new GuardedProcess(new Input(new ConstantExpression<Channel>(new Channel(set.Last().ToString())), targetVariable))),
                     new Choice(
-                        new GuardedProcess(new Input(new Channel(new ConstantExpression<string>(set.First().ToString())), targetVariable)),
+                        new GuardedProcess(new Input(new ConstantExpression<Channel>(new Channel(set.First().ToString())), targetVariable)),
                         new Choice(
                             set
                                 .Skip(1).Select(c => c.ToString())
-                                .Select(c => new GuardedProcess(new Input(new Channel(new ConstantExpression<string>(c)), targetVariable))).ToArray()))
+                                .Select(c => new GuardedProcess(new Input(new ConstantExpression<Channel>(new Channel(c)), targetVariable))).ToArray()))
                 }.Select(
                     c => (Process)new Sequence
                     (
                         c,
-                        new Input(new Channel(new ConstantExpression<string>("D")), targetVariable)
+                        new Input(new ConstantExpression<Channel>(new Channel("D")), targetVariable)
                     )).ToList();
 
                 testCases.AddRange(
@@ -292,8 +292,8 @@ namespace Test
                 var choice = new Choice(
                     next.Select(
                         pair => new GuardedProcess(
-                            new Input(new Channel(new ConstantExpression<string>(pair.Key  )), targetVariable),
-                            new Input(new Channel(new ConstantExpression<string>(pair.Value)), targetVariable))).ToArray());
+                            new Input(new ConstantExpression<Channel>(new Channel(pair.Key)), targetVariable),
+                            new Input(new ConstantExpression<Channel>(new Channel(pair.Value)), targetVariable))).ToArray());
 
                 var allowedTraces = next.Keys
                     .Select(key => key.ToString())
@@ -325,8 +325,8 @@ namespace Test
                     next.Select(
                         pair => new GuardedProcess(
                             new ConstantExpression<bool>(allowed[pair.Key]),
-                            new Input(new Channel(new ConstantExpression<string>(pair.Key  )), targetVariable),
-                            new Input(new Channel(new ConstantExpression<string>(pair.Value)), targetVariable))).ToArray());
+                            new Input(new ConstantExpression<Channel>(new Channel(pair.Key)), targetVariable),
+                            new Input(new ConstantExpression<Channel>(new Channel(pair.Value)), targetVariable))).ToArray());
 
                 testCases.AddRange(
                     new List<object[]>

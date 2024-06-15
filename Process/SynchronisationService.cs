@@ -4,12 +4,12 @@ namespace Process
 {
     public class SynchronisationService: ISynchronisationService
     {
-        private IDictionary<Channel, Synchronisation> _synchronisations = new Dictionary<Channel, Synchronisation>();
+        private IDictionary<Definition.Channel, Synchronisation> _synchronisations = new Dictionary<Definition.Channel, Synchronisation>();
 
-        ICollection<Channel> ISynchronisationService.AwaitIO => _synchronisations.Keys;
+        ICollection<Definition.Channel> ISynchronisationService.AwaitIO => _synchronisations.Keys;
 
         Synchronisation ISynchronisationService.Resolve(
-            Channel channel
+            Definition.Channel channel
             )
         {
             if(!_synchronisations.TryGetValue(

@@ -6,12 +6,12 @@ namespace Process
 {
     public class Synchronisation: IExecutable
     {
-        private readonly Channel      _channel;
-        private readonly ISet<Input > _inputs  = new HashSet<Input >();
-        private readonly ISet<Output> _outputs = new HashSet<Output>();
+        private readonly Definition.Channel _channel;
+        private readonly ISet<Input >       _inputs  = new HashSet<Input >();
+        private readonly ISet<Output>       _outputs = new HashSet<Output>();
 
         public Synchronisation(
-            Channel channel
+            Definition.Channel channel
             )
         {
             _channel = channel;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Process.Expression;
+using System;
 
 namespace Process.Definition
 {
@@ -7,8 +8,8 @@ namespace Process.Definition
         public string TargetVariable { get; protected set; }
 
         public Input(
-            Channel channel,
-            string  targetVariable
+            IExpression<Channel> channel,
+            string               targetVariable
             )
             : base(channel)
         {
