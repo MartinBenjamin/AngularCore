@@ -13,6 +13,10 @@ namespace Process.Expression
             _builder = builder;
         }
 
+        void IVisitor.Enter(
+            Definition.Channel channel
+            ) => _builder.Append(channel);
+
         void IVisitor.Enter<T>(
             ConstantExpression<T> constantExpression
             ) => _builder.Append(constantExpression.Constant.ToString());

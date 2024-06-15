@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Process.Expression;
+using System;
 
 namespace Process.Definition
 {
-    public class Channel
+    public class Channel: IExpression<Channel>
     {
         public string Name { get; protected set; }
         public Type   Type { get; protected set; }
@@ -28,5 +29,13 @@ namespace Process.Definition
             Type);
 
         public override string ToString() => Name;
+
+        Channel IExpression<Channel>.Evaluate(
+            IScope scope
+            ) => this;
+
+        void IExpression<Channel>.Accept(
+            Expression.IVisitor visitor
+            ) => visitor.Enter(this);
     }
 }

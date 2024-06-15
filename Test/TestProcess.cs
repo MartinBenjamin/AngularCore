@@ -59,7 +59,7 @@ namespace Test
             const string variable = "target";
             const string value    = "value";
             var inputDefinition = new Input(
-                 new ConstantExpression<Channel>(channel),
+                 channel,
                  variable);
 
             global::Process.IExecutionService service = new global::Process.ExecutionService();
@@ -83,7 +83,7 @@ namespace Test
             var channel = new Channel("channel", typeof(string));
             const string value = "value";
             var outputDefinition = new Output(
-                 new ConstantExpression<Channel>(channel),
+                 channel,
                  new ConstantExpression<string>(value));
 
             global::Process.IExecutionService service = new global::Process.ExecutionService();
@@ -105,10 +105,10 @@ namespace Test
             const string variable = "target";
             const string value = "value";
             var outputDefinition = new Output(
-                new ConstantExpression<Channel>(channel),
+                channel,
                 new ConstantExpression<string>(value));
             var inputDefinition = new Input(
-                new ConstantExpression<Channel>(channel),
+                channel,
                 variable);
 
             global::Process.IExecutionService service = new global::Process.ExecutionService();
@@ -137,10 +137,10 @@ namespace Test
             const string value = "value";
             var processDefinition = new Parallel(
                 new Output(
-                     new ConstantExpression<Channel>(channel),
+                     channel,
                      new ConstantExpression<string>(value)),
                 new Input(
-                     new ConstantExpression<Channel>(channel),
+                     channel,
                      variable));
 
             global::Process.IExecutionService service = new global::Process.ExecutionService();
@@ -170,19 +170,19 @@ namespace Test
                     new Sequence(
                         sequence
                             .Select(c => c.ToString())
-                            .Select(c => new Input(new ConstantExpression<Channel>(new Channel(c)), targetVariable)).ToArray()),
+                            .Select(c => new Input(new Channel(c), targetVariable)).ToArray()),
                     new Sequence(
                         new Sequence(
                             sequence
                                 .Take(sequence.Length - 1).Select(c => c.ToString())
-                                .Select(c => new Input(new ConstantExpression<Channel>(new Channel(c)), targetVariable)).ToArray()),
-                        new Input(new ConstantExpression<Channel>(new Channel(sequence.Last().ToString())), targetVariable)),
+                                .Select(c => new Input(new Channel(c), targetVariable)).ToArray()),
+                        new Input(new Channel(sequence.Last().ToString()), targetVariable)),
                     new Sequence(
-                        new Input(new ConstantExpression<Channel>(new Channel(sequence.First().ToString())), targetVariable),
+                        new Input(new Channel(sequence.First().ToString()), targetVariable),
                         new Sequence(
                             sequence
                                 .Skip(1).Select(c => c.ToString())
-                                .Select(c => new Input(new ConstantExpression<Channel>(new Channel(c)), targetVariable)).ToArray()))
+                                .Select(c => new Input(new Channel(c), targetVariable)).ToArray()))
                 };
 
                 testCases.AddRange(
@@ -203,24 +203,24 @@ namespace Test
                     new Parallel(
                         set
                             .Select(c => c.ToString())
-                            .Select(c => new Input(new ConstantExpression<Channel>(new Channel(c)), targetVariable)).ToArray()),
+                            .Select(c => new Input(new Channel(c), targetVariable)).ToArray()),
                     new Parallel(
                         new Parallel(
                             set
                                 .Take(2).Select(c => c.ToString())
-                                .Select(c => c.ToString()).Select(c => new Input(new ConstantExpression<Channel>(new Channel(c)), targetVariable)).ToArray()),
-                        new Input(new ConstantExpression<Channel>(new Channel(set.Last().ToString())), targetVariable)),
+                                .Select(c => c.ToString()).Select(c => new Input(new Channel(c), targetVariable)).ToArray()),
+                        new Input(new Channel(set.Last().ToString()), targetVariable)),
                     new Parallel(
-                        new Input(new ConstantExpression<Channel>(new Channel(set.First().ToString())), targetVariable),
+                        new Input(new Channel(set.First().ToString()), targetVariable),
                         new Parallel(
                             set
                                 .Skip(1).Select(c => c.ToString())
-                                .Select(c => new Input(new ConstantExpression<Channel>(new Channel(c)), targetVariable)).ToArray()))
+                                .Select(c => new Input(new Channel(c), targetVariable)).ToArray()))
                 }.Select(
                     parallel => (Process)new Sequence
                     (
                         parallel,
-                        new Input(new ConstantExpression<Channel>(new Channel("D")), targetVariable)
+                        new Input(new Channel("D"), targetVariable)
                     )).ToList();
 
                 var permutations = set.Permute().Select(p => new string(p.ToArray()));
@@ -242,24 +242,24 @@ namespace Test
                     new Choice(
                         set
                             .Select(c => c.ToString())
-                            .Select(c => new GuardedProcess(new Input(new ConstantExpression<Channel>(new Channel(c)), targetVariable))).ToArray()),
+                            .Select(c => new GuardedProcess(new Input(new Channel(c), targetVariable))).ToArray()),
                     new Choice(
                         new Choice(
                             set
                                 .Take(2).Select(c => c.ToString())
-                                .Select(c => new GuardedProcess(new Input(new ConstantExpression<Channel>(new Channel(c)), targetVariable))).ToArray()),
-                        new GuardedProcess(new Input(new ConstantExpression<Channel>(new Channel(set.Last().ToString())), targetVariable))),
+                                .Select(c => new GuardedProcess(new Input(new Channel(c), targetVariable))).ToArray()),
+                        new GuardedProcess(new Input(new Channel(set.Last().ToString()), targetVariable))),
                     new Choice(
-                        new GuardedProcess(new Input(new ConstantExpression<Channel>(new Channel(set.First().ToString())), targetVariable)),
+                        new GuardedProcess(new Input(new Channel(set.First().ToString()), targetVariable)),
                         new Choice(
                             set
                                 .Skip(1).Select(c => c.ToString())
-                                .Select(c => new GuardedProcess(new Input(new ConstantExpression<Channel>(new Channel(c)), targetVariable))).ToArray()))
+                                .Select(c => new GuardedProcess(new Input(new Channel(c), targetVariable))).ToArray()))
                 }.Select(
                     c => (Process)new Sequence
                     (
                         c,
-                        new Input(new ConstantExpression<Channel>(new Channel("D")), targetVariable)
+                        new Input(new Channel("D"), targetVariable)
                     )).ToList();
 
                 testCases.AddRange(
@@ -292,8 +292,8 @@ namespace Test
                 var choice = new Choice(
                     next.Select(
                         pair => new GuardedProcess(
-                            new Input(new ConstantExpression<Channel>(new Channel(pair.Key)), targetVariable),
-                            new Input(new ConstantExpression<Channel>(new Channel(pair.Value)), targetVariable))).ToArray());
+                            new Input(new Channel(pair.Key), targetVariable),
+                            new Input(new Channel(pair.Value), targetVariable))).ToArray());
 
                 var allowedTraces = next.Keys
                     .Select(key => key.ToString())
@@ -325,8 +325,8 @@ namespace Test
                     next.Select(
                         pair => new GuardedProcess(
                             new ConstantExpression<bool>(allowed[pair.Key]),
-                            new Input(new ConstantExpression<Channel>(new Channel(pair.Key)), targetVariable),
-                            new Input(new ConstantExpression<Channel>(new Channel(pair.Value)), targetVariable))).ToArray());
+                            new Input(new Channel(pair.Key), targetVariable),
+                            new Input(new Channel(pair.Value), targetVariable))).ToArray());
 
                 testCases.AddRange(
                     new List<object[]>
