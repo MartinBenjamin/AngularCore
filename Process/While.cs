@@ -40,7 +40,7 @@ namespace Process
                         Replicated = null;
 
                 if(Replicated == null &&
-                   _definition.Condition.Evaluate(this))
+                   _definition.Condition(this))
                 {
                     Replicated = _definition.Replicated.Select(executionService.Constructor)(
                         this,

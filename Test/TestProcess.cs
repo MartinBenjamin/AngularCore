@@ -27,7 +27,7 @@ namespace Test
 
             var outputDefinition = new Output(
                 scope => (Channel)scope["channel"],
-                new ConstantExpression<object>(null));
+                _ => null);
 
             var index = 0;
             foreach(var c in trace.Select(c => c.ToString()))
@@ -84,7 +84,7 @@ namespace Test
             const string value = "value";
             var outputDefinition = new Output(
                  channel,
-                 new ConstantExpression<string>(value));
+                 _ => value);
 
             global::Process.IExecutionService service = new global::Process.ExecutionService();
             var output = (global::Process.Output)outputDefinition.Select(service.Constructor)(
@@ -106,7 +106,7 @@ namespace Test
             const string value = "value";
             var outputDefinition = new Output(
                 channel,
-                new ConstantExpression<string>(value));
+                _ => value);
             var inputDefinition = new Input(
                 channel,
                 variable);
@@ -138,7 +138,7 @@ namespace Test
             var processDefinition = new Parallel(
                 new Output(
                      channel,
-                     new ConstantExpression<string>(value)),
+                     _ => value),
                 new Input(
                      channel,
                      variable));
@@ -315,17 +315,17 @@ namespace Test
                         allowedTraces.Contains(trace)
                     });
 
-                var allowed = new Dictionary<string, bool>
+                var allowed = new Dictionary<string, Func<IScope, bool>>
                 {
-                    {"A", true },
-                    {"B", false},
+                    {"A", _ => true },
+                    {"B", _ => false},
                 };
 
                 choice = new Choice(
                     next.Select(
                         pair => new GuardedProcess(
-                            new ConstantExpression<bool>(allowed[pair.Key]),
-                            new Input(new Channel(pair.Key), targetVariable),
+                            allowed[pair.Key],
+                            new Input(new Channel(pair.Key  ), targetVariable),
                             new Input(new Channel(pair.Value), targetVariable))).ToArray());
 
                 testCases.AddRange(

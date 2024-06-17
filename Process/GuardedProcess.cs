@@ -32,7 +32,7 @@ namespace Process
             if(Status == Status.NotExecuted)
             {
                 if(_definition.GuardExpression == null ||
-                   _definition.GuardExpression.Evaluate(this))
+                   _definition.GuardExpression(this))
                 {
                     ChangeStatus(
                         executionService,

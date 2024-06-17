@@ -5,11 +5,11 @@ namespace Process.Definition
 {
     public class Output: IO
     {
-        public IExpression<object> Source { get; protected set; }
+        public Func<IScope, object> Source { get; protected set; }
 
         public Output(
             Func<IScope, Channel> channel,
-            IExpression<object>   source
+            Func<IScope, object>  source
             )
             : base(channel)
         {

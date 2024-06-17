@@ -65,9 +65,9 @@ namespace Process.Definition
         {
             //output.Channel.Accept(_expressionWriter);
             _builder
-            .AppendExpression(output.Channel)
-            .Append('!');
-            output.Source.Accept(_expressionWriter);
+                .AppendExpression(output.Channel)
+                .Append('!')
+                .AppendExpression(output.Source);
         }
 
         void IVisitor.Visit(
@@ -75,10 +75,9 @@ namespace Process.Definition
             )
         {
             if(guardedProcess.GuardExpression != null)
-            {
-                guardedProcess.GuardExpression.Accept(_expressionWriter);
-                _builder.Append('&');
-            }
+                _builder
+                    .AppendExpression(guardedProcess.GuardExpression)
+                    .Append('&');
 
             guardedProcess.Guard.Accept(this);
 

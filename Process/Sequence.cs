@@ -96,7 +96,7 @@ namespace Process
 
         protected override void NewChildren(
             IExecutionService executionService
-            ) => _definition.Variables.Evaluate(this).Select(variables => _definition.Replicated.Select(executionService.Constructor)(
+            ) => _definition.Variables(this).Select(variables => _definition.Replicated.Select(executionService.Constructor)(
                 this,
                 null)).ToList();
     }

@@ -48,8 +48,8 @@ namespace Process.Definition
 
     public class ChoiceForEach: ChoiceBase
     {
-        public IExpression<IEnumerable<IDictionary<string, object>>> Variables  { get; set; }
-        public Process                                               Replicated { get; set; }
+        public Func<IScope, IEnumerable<IDictionary<string, object>>> Variables  { get; set; }
+        public Process                                                Replicated { get; set; }
 
         public ChoiceForEach()
             : base()

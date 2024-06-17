@@ -1,11 +1,12 @@
 using Process.Expression;
+using System;
 
 namespace Process.Definition
 {
     public class While: Process
     {
-        public IExpression<bool> Condition  { get; protected set; }
-        public Process           Replicated { get; protected set; }
+        public Func<IScope, bool> Condition  { get; protected set; }
+        public Process            Replicated { get; protected set; }
 
         public While()
             : base()
@@ -13,8 +14,8 @@ namespace Process.Definition
         }
 
         public While(
-            IExpression<bool> condition,
-            Process           replicated
+            Func<IScope, bool> condition,
+            Process            replicated
             )
             : base()
         {

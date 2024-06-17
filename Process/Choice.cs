@@ -112,7 +112,7 @@ namespace Process
 
         protected override IList<Alternative> NewAlternatives(
             IExecutionService executionService
-            ) => _definition.Variables.Evaluate(this).Select(variables => _definition.Replicated.Select(executionService.Constructor)(
+            ) => _definition.Variables(this).Select(variables => _definition.Replicated.Select(executionService.Constructor)(
                 this,
                 variables)).Cast<Alternative>().ToList();
     }

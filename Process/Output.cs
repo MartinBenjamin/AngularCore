@@ -33,7 +33,7 @@ namespace Process
                 executionService,
                 Status.Executed);
 
-            return _definition.Source.Evaluate(this);
+            return _definition.Source(this);
         }
 
         protected override void Register(

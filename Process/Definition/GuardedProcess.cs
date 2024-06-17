@@ -1,12 +1,13 @@
 ﻿using Process.Expression;
+using System;
 
 namespace Process.Definition
 {
     public class GuardedProcess: Alternative
     {
-        public IExpression<bool> GuardExpression { get; protected set; }
-        public IO                Guard           { get; protected set; }
-        public Process           Guarded         { get; protected set; }
+        public Func<IScope, bool> GuardExpression { get; protected set; }
+        public IO                 Guard           { get; protected set; }
+        public Process            Guarded         { get; protected set; }
 
 
         public GuardedProcess()
@@ -15,9 +16,9 @@ namespace Process.Definition
         }
 
         public GuardedProcess(
-            IExpression<bool> guardExpression,
-            IO                guard,
-            Process           guarded
+            Func<IScope, bool> guardExpression,
+            IO                 guard,
+            Process            guarded
             )
             : base()
         {
