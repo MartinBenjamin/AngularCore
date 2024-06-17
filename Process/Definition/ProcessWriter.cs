@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 
 namespace Process.Definition
@@ -11,8 +10,11 @@ namespace Process.Definition
     {
         public static StringBuilder AppendExpression<T>(
             this StringBuilder stringBuilder,
-            Expression<Func<IScope, T>> expression
-            ) => stringBuilder.Append(expression.Parameters[0].Name == "_" ? expression.Compile()(null) : expression);
+            Func<IScope, T>    expression
+            )
+        {
+            return stringBuilder.Append(expression.Method.GetParameters()[0].Name == "_" ? expression(null): expression);
+        }
     }
 
     public class ProcessWriter: IVisitor

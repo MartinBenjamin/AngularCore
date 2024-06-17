@@ -19,7 +19,7 @@ namespace Process
                 parent,
                 variables)
         {
-            Channel = definition.Channel.Compile()(this);
+            Channel = definition.Channel(this);
         }
 
         protected override void Execute(

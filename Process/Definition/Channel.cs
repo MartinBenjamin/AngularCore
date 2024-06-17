@@ -1,6 +1,5 @@
 ﻿using Process.Expression;
 using System;
-using System.Linq.Expressions;
 
 namespace Process.Definition
 {
@@ -31,7 +30,7 @@ namespace Process.Definition
 
         public override string ToString() => Name;
 
-        public static implicit operator Expression<Func<IScope, Channel>>(
+        public static implicit operator Func<IScope, Channel>(
             Channel channel
             ) => _ => channel;
     }
