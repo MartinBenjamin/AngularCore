@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Process
@@ -10,13 +9,11 @@ namespace Process
         public Process Replicated { get; protected set; }
 
         internal protected While(
-            Guid                        id,
             Definition.While            definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
             : base(
-                id,
                 definition,
                 parent,
                 variables)

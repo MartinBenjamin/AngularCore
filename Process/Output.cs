@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Process
 {
@@ -8,13 +7,11 @@ namespace Process
         private readonly Definition.Output _definition;
 
         internal protected Output(
-            Guid                        id,
             Definition.Output           definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
             : base(
-                id,
                 definition,
                 parent,
                 variables)

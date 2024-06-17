@@ -1,5 +1,4 @@
 ﻿using CommonDomainObjects;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,13 +9,11 @@ namespace Process
         public virtual IList<Alternative> Alternatives { get; protected set; }
 
         internal protected ChoiceBase(
-            Guid                        id,
             Definition.ChoiceBase       definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
             : base(
-                id,
                 definition,
                 parent,
                 variables)
@@ -70,13 +67,11 @@ namespace Process
         private readonly Definition.Choice _definition;
 
         public Choice(
-            Guid                        id,
             Definition.Choice           definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
             : base(
-                id,
                 definition,
                 parent,
                 variables)
@@ -96,13 +91,11 @@ namespace Process
         private readonly Definition.ChoiceForEach _definition;
 
         public ChoiceForEach(
-            Guid                        id,
-            Definition.ChoiceForEach  definition,
+            Definition.ChoiceForEach    definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
             : base(
-                id,
                 definition,
                 parent,
                 variables)

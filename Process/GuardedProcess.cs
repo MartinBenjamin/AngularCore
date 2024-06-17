@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Process
 {
@@ -11,13 +10,11 @@ namespace Process
         public virtual Process Guarded { get; protected set; }
 
         internal protected GuardedProcess(
-            Guid                        id,
             Definition.GuardedProcess   definition,
             Choice                      parent,
             IDictionary<string, object> variables
             )
             : base(
-                id,
                 definition,
                 parent,
                 variables)

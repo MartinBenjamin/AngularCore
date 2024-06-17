@@ -21,7 +21,6 @@ namespace Process
                 Process                     parent,
                 IDictionary<string, object> variables
                 ) => new Sequence(
-                    _idService.NewId(),
                     definition,
                     parent,
                     variables);
@@ -32,7 +31,6 @@ namespace Process
                 Process                     parent,
                 IDictionary<string, object> variables
                 ) => new Parallel(
-                    _idService.NewId(),
                     definition,
                     parent,
                     variables);
@@ -43,7 +41,6 @@ namespace Process
                 Process                     parent,
                 IDictionary<string, object> variables
                 ) => new Choice(
-                    _idService.NewId(),
                     definition,
                     parent,
                     variables);
@@ -54,7 +51,6 @@ namespace Process
                 Process                     parent,
                 IDictionary<string, object> variables
                 ) => new Input(
-                    _idService.NewId(),
                     definition,
                     parent,
                     variables);
@@ -65,7 +61,6 @@ namespace Process
                 Process                     parent,
                 IDictionary<string, object> variables
                 ) => new Output(
-                    _idService.NewId(),
                     definition,
                     parent,
                     variables);
@@ -76,7 +71,6 @@ namespace Process
                 Process                     parent,
                 IDictionary<string, object> variables
                 ) => new GuardedProcess(
-                    _idService.NewId(),
                     definition,
                     (Choice)parent,
                     variables);
@@ -87,7 +81,6 @@ namespace Process
                 Process                     parent,
                 IDictionary<string, object> variables
                 ) => new While(
-                    _idService.NewId(),
                     definition,
                     parent,
                     variables);
@@ -98,7 +91,6 @@ namespace Process
                 Process                     parent,
                 IDictionary<string, object> variables
                 ) => new SequenceForEach(
-                    _idService.NewId(),
                     definition,
                     parent,
                     variables);
@@ -109,7 +101,6 @@ namespace Process
                 Process                     parent,
                 IDictionary<string, object> variables
                 ) => new ParallelForEach(
-                    _idService.NewId(),
                     definition,
                     parent,
                     variables);
@@ -120,7 +111,6 @@ namespace Process
                 Process parent,
                 IDictionary<string, object> variables
                 ) => new ChoiceForEach(
-                    _idService.NewId(),
                     definition,
                     parent,
                     variables);

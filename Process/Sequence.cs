@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Process
@@ -7,13 +6,11 @@ namespace Process
     public abstract class SequenceBase: Process
     {
         protected SequenceBase(
-            Guid                        id,
             Definition.SequenceBase     definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
             : base(
-                id,
                 definition,
                 parent,
                 variables)
@@ -54,13 +51,11 @@ namespace Process
         private readonly Definition.Sequence _definition;
 
         public Sequence(
-            Guid                        id,
             Definition.Sequence         definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
             : base(
-                id,
                 definition,
                 parent,
                 variables)
@@ -80,13 +75,11 @@ namespace Process
         private readonly Definition.SequenceForEach _definition;
 
         public SequenceForEach(
-            Guid                        id,
             Definition.SequenceForEach  definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
             : base(
-                id,
                 definition,
                 parent,
                 variables)

@@ -1,6 +1,4 @@
-﻿using CommonDomainObjects;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Process
 {
@@ -9,12 +7,11 @@ namespace Process
         public virtual Definition.Channel Channel { get; protected set; }
 
         protected IO(
-            Guid                        id,
             Definition.IO               definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
-            : base(id,
+            : base(
                 definition,
                 parent,
                 variables)
@@ -46,13 +43,13 @@ namespace Process
 
             if(status == Status.Executed)
             {
-                var guardedProcess = Parent.As<GuardedProcess>();
+                var guardedProcess = Parent as GuardedProcess;
                 if(guardedProcess != null &&
                    guardedProcess.Guard == this)
                 {
-                    var choice = guardedProcess.Parent.As<Choice>();
-                    while(choice.Parent != null && choice.Parent.Is<Choice>())
-                        choice = choice.Parent.As<Choice>();
+                    var choice = guardedProcess.Parent as Choice;
+                    while(choice.Parent != null && choice.Parent is Choice)
+                        choice = choice.Parent as Choice;
 
                     choice.Choose(
                         executionService,

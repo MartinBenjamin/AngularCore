@@ -1,13 +1,10 @@
-﻿using CommonDomainObjects;
-using Process.Definition;
-using System;
+﻿using Process.Definition;
 using System.Collections;
 using System.Collections.Generic;
 
 namespace Process
 {
     public abstract class Process:
-        DomainObject<Guid>,
         IExecutable,
         IScope,
         IEnumerable<Process>
@@ -25,12 +22,10 @@ namespace Process
         }
 
         protected Process(
-            Guid                        id,
             Definition.Process          definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
-            : base(id)
         {
             Children   = new List<Process>();
             Definition = definition;

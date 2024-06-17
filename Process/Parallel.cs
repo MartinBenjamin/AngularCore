@@ -1,5 +1,4 @@
 ﻿using CommonDomainObjects;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,13 +7,11 @@ namespace Process
     public abstract class ParallelBase: Process
     {
         protected ParallelBase(
-            Guid                        id,
             Definition.ParallelBase     definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
             : base(
-                id,
                 definition,
                 parent,
                 variables)
@@ -50,13 +47,11 @@ namespace Process
         private readonly Definition.Parallel _definition;
 
         public Parallel(
-            Guid                        id,
             Definition.Parallel         definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
             : base(
-                id,
                 definition,
                 parent,
                 variables)
@@ -76,13 +71,11 @@ namespace Process
         private readonly Definition.ParallelForEach _definition;
 
         public ParallelForEach(
-            Guid                        id,
             Definition.ParallelForEach  definition,
             Process                     parent,
             IDictionary<string, object> variables
             )
             : base(
-                id,
                 definition,
                 parent,
                 variables)
