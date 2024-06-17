@@ -26,7 +26,7 @@ namespace Test
             service.Execute(process);
 
             var outputDefinition = new Output(
-                new VariableExpression<Channel>("channel"),
+                scope => (Channel)scope["channel"],
                 new ConstantExpression<object>(null));
 
             var index = 0;

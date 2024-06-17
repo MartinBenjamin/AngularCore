@@ -1,14 +1,15 @@
 ﻿using Process.Expression;
 using System;
+using System.Linq.Expressions;
 
 namespace Process.Definition
 {
     public abstract class IO: Process
     {
-        public virtual IExpression<Channel> Channel { get; protected set; }
+        public virtual Expression<Func<IScope, Channel>> Channel { get; protected set; }
 
         protected IO(
-            IExpression<Channel> channel
+            Expression<Func<IScope, Channel>> channel
             )
             : base()
         {

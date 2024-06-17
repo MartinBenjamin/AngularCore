@@ -1,9 +1,10 @@
 ﻿using Process.Expression;
 using System;
+using System.Linq.Expressions;
 
 namespace Process.Definition
 {
-    public class Channel: IExpression<Channel>
+    public class Channel
     {
         public string Name { get; protected set; }
         public Type   Type { get; protected set; }
@@ -30,12 +31,8 @@ namespace Process.Definition
 
         public override string ToString() => Name;
 
-        Channel IExpression<Channel>.Evaluate(
-            IScope scope
-            ) => this;
-
-        void IExpression<Channel>.Accept(
-            Expression.IVisitor visitor
-            ) => visitor.Enter(this);
+        public static implicit operator Expression<Func<IScope, Channel>>(
+            Channel channel
+            ) => _ => channel;
     }
 }

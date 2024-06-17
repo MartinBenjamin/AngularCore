@@ -1,10 +1,20 @@
-﻿using System;
+﻿using Process.Expression;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace Process.Definition
 {
+    public static class StringBuilderExtensions
+    {
+        public static StringBuilder AppendExpression<T>(
+            this StringBuilder stringBuilder,
+            Expression<Func<IScope, T>> expression
+            ) => stringBuilder.Append(expression.Parameters[0].Name == "_" ? expression.Compile()(null) : expression);
+    }
+
     public class ProcessWriter: IVisitor
     {
         private readonly StringBuilder       _builder;
@@ -40,8 +50,9 @@ namespace Process.Definition
             Input input
             )
         {
-            input.Channel.Accept(_expressionWriter);
+            //input.Channel.Accept(_expressionWriter);
             _builder
+                .AppendExpression(input.Channel)
                 .Append('?')
                 .Append(input.TargetVariable);
         }
@@ -50,8 +61,10 @@ namespace Process.Definition
             Output output
             )
         {
-            output.Channel.Accept(_expressionWriter);
-            _builder.Append('!');
+            //output.Channel.Accept(_expressionWriter);
+            _builder
+            .AppendExpression(output.Channel)
+            .Append('!');
             output.Source.Accept(_expressionWriter);
         }
 
