@@ -11,23 +11,18 @@ namespace Process.Definition
         public static StringBuilder AppendExpression<T>(
             this StringBuilder stringBuilder,
             Func<IScope, T>    expression
-            )
-        {
-            return stringBuilder.Append(expression.Method.GetParameters()[0].Name == "_" ? expression(null): expression);
-        }
+            ) => stringBuilder.Append(expression.Method.GetParameters()[0].Name == "_" ? expression(null): expression);
     }
 
     public class ProcessWriter: IVisitor
     {
         private readonly StringBuilder       _builder;
-        private readonly Expression.IVisitor _expressionWriter;
 
         public ProcessWriter(
             StringBuilder builder
             )
         {
-            _builder          = builder;
-            _expressionWriter = new Expression.ExpressionWriter(builder);
+            _builder = builder;
         }
 
         void IVisitor.Visit(
@@ -50,25 +45,17 @@ namespace Process.Definition
 
         void IVisitor.Visit(
             Input input
-            )
-        {
-            //input.Channel.Accept(_expressionWriter);
-            _builder
+            ) => _builder
                 .AppendExpression(input.Channel)
                 .Append('?')
                 .Append(input.TargetVariable);
-        }
 
         void IVisitor.Visit(
             Output output
-            )
-        {
-            //output.Channel.Accept(_expressionWriter);
-            _builder
+            ) => _builder
                 .AppendExpression(output.Channel)
                 .Append('!')
                 .AppendExpression(output.Source);
-        }
 
         void IVisitor.Visit(
             GuardedProcess guardedProcess
