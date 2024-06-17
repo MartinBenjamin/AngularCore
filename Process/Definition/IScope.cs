@@ -1,4 +1,4 @@
-﻿namespace Process.Expression
+﻿namespace Process.Definition
 {
     public interface IScope
     {
