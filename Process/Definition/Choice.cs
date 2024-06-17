@@ -9,13 +9,6 @@ namespace Process.Definition
             : base()
         {
         }
-
-        protected ChoiceBase(
-            Guid id
-            )
-            : base(id)
-        {
-        }
     }
 
     public class Choice: ChoiceBase
@@ -28,13 +21,6 @@ namespace Process.Definition
             : base()
         {
             Alternatives = alternatives;
-        }
-
-        public Choice(
-            Guid id
-            )
-            : base(id)
-        {
         }
 
         public override void Accept(
@@ -52,13 +38,6 @@ namespace Process.Definition
 
         public ChoiceForEach()
             : base()
-        {
-        }
-
-        public ChoiceForEach(
-            Guid id
-            )
-            : base(id)
         {
         }
 

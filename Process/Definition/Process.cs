@@ -1,20 +1,11 @@
-﻿using CommonDomainObjects;
-using System;
-using System.Text;
+﻿using System.Text;
 
 namespace Process.Definition
 {
-    public abstract class Process: DomainObject<Guid>
+    public abstract class Process
     {
         protected Process()
             : base()
-        {
-        }
-
-        protected Process(
-            Guid id
-            )
-            : base(id)
         {
         }
 

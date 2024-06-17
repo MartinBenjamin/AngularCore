@@ -9,13 +9,6 @@ namespace Process.Definition
             : base()
         {
         }
-
-        protected ParallelBase(
-            Guid id
-            )
-            : base(id)
-        {
-        }
     }
 
     public class Parallel: ParallelBase
@@ -28,13 +21,6 @@ namespace Process.Definition
             : base()
         {
             Children = children;
-        }
-
-        public Parallel(
-            Guid id
-            )
-            : base(id)
-        {
         }
 
         public override void Accept(
@@ -52,13 +38,6 @@ namespace Process.Definition
 
         public ParallelForEach()
             : base()
-        {
-        }
-
-        public ParallelForEach(
-            Guid id
-            )
-            : base(id)
         {
         }
 

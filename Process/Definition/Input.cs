@@ -15,13 +15,6 @@ namespace Process.Definition
             TargetVariable = targetVariable;
         }
 
-        protected Input(
-            Guid id
-            )
-            : base(id)
-        {
-        }
-
         public override void Accept(
             IVisitor visitor
             ) => visitor.Visit(this);

@@ -13,12 +13,5 @@ namespace Process.Definition
         {
             Channel = channel;
         }
-
-        protected IO(
-            Guid id
-            )
-            : base(id)
-        {
-        }
     }
 }

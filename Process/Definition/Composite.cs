@@ -8,12 +8,5 @@ namespace Process.Definition
             : base()
         {
         }
-
-        protected Composite(
-            Guid id
-            )
-            : base(id)
-        {
-        }
     }
 }

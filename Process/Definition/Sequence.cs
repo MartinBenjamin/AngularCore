@@ -9,13 +9,6 @@ namespace Process.Definition
             : base()
         {
         }
-
-        protected SequenceBase(
-            Guid id
-            )
-            : base(id)
-        {
-        }
     }
 
     public class Sequence: SequenceBase
@@ -28,13 +21,6 @@ namespace Process.Definition
             : base()
         {
             Children = children;
-        }
-
-        public Sequence(
-            Guid id
-            )
-            : base(id)
-        {
         }
 
         public override void Accept(
@@ -53,13 +39,6 @@ namespace Process.Definition
 
         public SequenceForEach()
             : base()
-        {
-        }
-
-        public SequenceForEach(
-            Guid id
-            )
-            : base(id)
         {
         }
 
