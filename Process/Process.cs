@@ -92,6 +92,10 @@ namespace Process
             }
         }
 
+        public IScope DeclaringScope(
+            string variable
+            ) => _variables != null && _variables.ContainsKey(variable) ? this : Parent?.DeclaringScope(variable);
+
         protected abstract void Execute(IExecutionService executionService);
 
         public IEnumerator<Process> GetEnumerator()

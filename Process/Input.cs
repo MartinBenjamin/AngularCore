@@ -27,7 +27,9 @@ namespace Process
             if(Status != Status.Waiting)
                 throw new InvalidStateException();
 
-            (Parent??this)[_definition.TargetVariable] = input;
+            var scope = DeclaringScope(_definition.TargetVariable) ?? Parent ?? this;
+            if(scope != null)
+                scope[_definition.TargetVariable] = input;
 
             ChangeStatus(
                 executionService,
