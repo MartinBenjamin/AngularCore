@@ -62,19 +62,19 @@ namespace Process
             IExecutionService executionService
             )
         {
-            var outputs = _outputs.ToArray();
-            var inputs  = _inputs.ToArray();
-            var count   = SyncCount;
-
-            for(var index = 0;index < count;++index)
+            while(SyncCount > 0)
             {
-                var value = outputs[index].ExecuteOutput(executionService);
+                var output = _outputs.First();
+                var input = _inputs.First();
+                var message = output.ExecuteOutput(executionService);
                 executionService.Trace?.Invoke(
                 _channel,
-                value);
-                inputs[index].Executelnput(
+                message);
+                input.Executelnput(
                     executionService,
-                    value);
+                    message);
+                output.UltimateParent.Trace.Add((false, _channel, message));
+                input.UltimateParent.Trace.Add((true, _channel, message));
             }
         }
     }

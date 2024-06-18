@@ -9,10 +9,12 @@ namespace Process
         IScope,
         IEnumerable<Process>
     {
-        public virtual Status             Status     { get; protected set; }
-        public virtual Definition.Process Definition { get; protected set; }
-        public virtual Process            Parent     { get; protected set; }
-        public virtual IList<Process>     Children   { get; protected set; }
+        public Status                         Status         { get; private set; }
+        public Definition.Process             Definition     { get; private set; }
+        public Process                        Parent         { get; private set; }
+        public Process                        UltimateParent { get; private set; }
+        public IList<Process>                 Children       { get; private set; }
+        public IList<(bool, Channel, object)> Trace          { get; private set; }
 
         private IDictionary<string, object> _variables;
 
@@ -27,11 +29,15 @@ namespace Process
             IDictionary<string, object> variables
             )
         {
-            Children   = new List<Process>();
-            Definition = definition;
-            Parent     = parent;
-            _variables = variables;
+            Children       = new List<Process>();
+            Definition     = definition;
+            Parent         = parent;
+            UltimateParent = Parent?.UltimateParent ?? this;
+            _variables     = variables;
             Parent?.Children.Add(this);
+
+            if(UltimateParent == this)
+                Trace = new List<(bool, Channel, object)>();
         }
 
         protected virtual void ChangeStatus(
