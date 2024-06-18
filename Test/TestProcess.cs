@@ -143,8 +143,8 @@ namespace Test
                      variable));
 
             global::Process.IExecutionService service = new global::Process.ExecutionService();
-            var trace = new List<Tuple<Channel, object>>();
-            service.Trace = (channel, value) => trace.Add(Tuple.Create(channel, value));
+            var trace = new List<(Channel, object)>();
+            service.Trace = (channel, value) => trace.Add((channel, value));
             var process = processDefinition.Select(service.Constructor)(
                 null,
                 null);
