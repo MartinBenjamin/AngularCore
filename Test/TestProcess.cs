@@ -37,11 +37,11 @@ namespace Test
                 var synchronisation = service.SynchronisationService.Resolve(channel);
 
                 if(index == trace.Length - 1 && !pass)
-                    Assert.That(synchronisation.InputCount, Is.EqualTo(0));
+                    Assert.That(synchronisation.Inputs.Count, Is.EqualTo(0));
 
                 else
                 {
-                    Assert.That(synchronisation.InputCount, Is.GreaterThanOrEqualTo(0));
+                    Assert.That(synchronisation.Inputs.Count, Is.GreaterThanOrEqualTo(0));
                     var output = outputDefinition.Select(service.Constructor)(
                         null,
                         new Dictionary<string, object> { { "channel", channel } });
@@ -67,7 +67,9 @@ namespace Test
                 null);
             service.Execute(input);
             Assert.That(input.Status, Is.EqualTo(global::Process.Status.Waiting));
-            Assert.That(service.SynchronisationService.AwaitIO.Any(c => c == channel), Is.True);
+            var synchronisation = service.SynchronisationService.Resolve(channel);
+            Assert.That(synchronisation, Is.Not.Null);
+            Assert.That(synchronisation.Inputs.Contains(input), Is.True);
             Assert.That(input[variable], Is.Null);
             input.Executelnput(
                 service,
@@ -91,7 +93,9 @@ namespace Test
                 null);
             service.Execute(output);
             Assert.That(output.Status, Is.EqualTo(global::Process.Status.Waiting));
-            Assert.That(service.SynchronisationService.AwaitIO.Any(c => c == channel), Is.True);
+            var synchronisation = service.SynchronisationService.Resolve(channel);
+            Assert.That(synchronisation, Is.Not.Null);
+            Assert.That(synchronisation.Outputs.Contains(output), Is.True);
             var outputValue = output.ExecuteOutput(service);
             Assert.That(output.Status, Is.EqualTo(global::Process.Status.Executed));
             Assert.That(outputValue, Is.EqualTo(value));
@@ -117,7 +121,9 @@ namespace Test
             service.Execute(input);
             Assert.That(input.Status, Is.EqualTo(global::Process.Status.Waiting));
             Assert.That(input[variable], Is.Null);
-            Assert.That(service.SynchronisationService.AwaitIO.Any(c => c == channel), Is.True);
+            var synchronisation = service.SynchronisationService.Resolve(channel);
+            Assert.That(synchronisation, Is.Not.Null);
+            Assert.That(synchronisation.Inputs.Contains(input), Is.True);
 
             var output = outputDefinition.Select(service.Constructor)(
                 null,

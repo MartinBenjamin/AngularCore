@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Process
 {
     public class Synchronisation: IExecutable
     {
         private readonly Definition.Channel _channel;
-        private readonly ISet<Input >       _inputs  = new HashSet<Input >();
-        private readonly ISet<Output>       _outputs = new HashSet<Output>();
+        private readonly IList<Input >       _inputs  = new List<Input >();
+        private readonly IList<Output>       _outputs = new List<Output>();
 
         public Synchronisation(
             Definition.Channel channel
@@ -17,14 +16,11 @@ namespace Process
             _channel = channel;
         }
 
-        public int InputCount => _inputs.Count;
+        public IReadOnlyCollection<Input> Inputs => _inputs.AsReadOnly();
 
-        public int OutputCount => _outputs.Count;
+        public IReadOnlyCollection<Output> Outputs => _outputs.AsReadOnly();
 
-        public int SyncCount
-        {
-            get => Math.Min(InputCount, OutputCount);
-        }
+        public int SyncCount => Math.Min(_inputs.Count, _outputs.Count);
 
         public void Register(
             IExecutionService executionService,
@@ -32,7 +28,8 @@ namespace Process
             )
         {
             var previousSyncCount = SyncCount;
-            _inputs.Add(input);
+            if(!_inputs.Contains(input))
+                _inputs.Add(input);
 
             if(previousSyncCount == 0 && SyncCount > 0)
                 executionService.Execute(this);
@@ -44,7 +41,8 @@ namespace Process
             )
         {
             var previousSyncCount = SyncCount;
-            _outputs.Add(output);
+            if(!_outputs.Contains(output))
+                _outputs.Add(output);
 
             if(previousSyncCount == 0 && SyncCount > 0)
                 executionService.Execute(this);
@@ -64,8 +62,8 @@ namespace Process
         {
             while(SyncCount > 0)
             {
-                var output = _outputs.First();
-                var input = _inputs.First();
+                var output = _outputs[0];
+                var input = _inputs[0];
                 var message = output.ExecuteOutput(executionService);
                 executionService.Trace?.Invoke(
                 _channel,
