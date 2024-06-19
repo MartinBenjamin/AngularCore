@@ -1,5 +1,4 @@
 ﻿using Process.Definition;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,8 +17,6 @@ namespace Process
         }
 
         Trace IExecutionService.Trace { get; set; }
-
-        Guid IIdService<Guid>.NewId() => Guid.NewGuid();
 
         ISynchronisationService IExecutionService.SynchronisationService => _synchronisationService;
 

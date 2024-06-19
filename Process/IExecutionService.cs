@@ -1,5 +1,4 @@
 ﻿using Process.Definition;
-using System;
 
 namespace Process
 {
@@ -8,7 +7,7 @@ namespace Process
         Channel channel,
         object  value);
 
-    public interface IExecutionService: IIdService<Guid>
+    public interface IExecutionService
     {
         public Trace Trace { get; set; }
 

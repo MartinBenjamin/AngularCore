@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Process
 {
@@ -10,8 +9,6 @@ namespace Process
         private          int                     _entered;
 
         Trace IExecutionService.Trace { get; set; }
-
-        Guid IIdService<Guid>.NewId() => Guid.NewGuid();
 
         ISynchronisationService IExecutionService.SynchronisationService => _synchronisationService;
 
