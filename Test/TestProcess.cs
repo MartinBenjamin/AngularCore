@@ -29,19 +29,17 @@ namespace Test
                 _ => null);
 
             var index = 0;
-            foreach(var c in trace.Select(c => c.ToString()))
+            foreach(var channel in trace.Select(c => new Channel(c.ToString(), null)))
             {
-                var channel = new Channel(
-                    c,
-                    null);
                 var synchronisation = service.SynchronisationService.Resolve(channel);
+                Assert.That(synchronisation, Is.Not.Null);
 
                 if(index == trace.Length - 1 && !pass)
-                    Assert.That(synchronisation.Inputs.Count, Is.EqualTo(0));
+                    Assert.That(synchronisation.Inputs.Any(next => next.UltimateParent == process), Is.False);
 
                 else
                 {
-                    Assert.That(synchronisation.Inputs.Count, Is.GreaterThanOrEqualTo(0));
+                    Assert.That(synchronisation.Inputs.Any(next => next.UltimateParent == process), Is.True);
                     var output = outputDefinition.Select(service.Constructor)(
                         null,
                         new Dictionary<string, object> { { "channel", channel } });
