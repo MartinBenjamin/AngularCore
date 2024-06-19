@@ -19,7 +19,7 @@ namespace Test
             )  
         {
             global::Process.IExecutionService service = new global::Process.ExecutionService();
-            var process = definition.Select(service.Constructor)(
+            var process = definition.Select(global::Process.Constructor.Instance)(
                 null,
                 null);
             service.Execute(process);
@@ -40,7 +40,7 @@ namespace Test
                 else
                 {
                     Assert.That(synchronisation.Inputs.Any(next => next.UltimateParent == process), Is.True);
-                    var output = outputDefinition.Select(service.Constructor)(
+                    var output = outputDefinition.Select(global::Process.Constructor.Instance)(
                         null,
                         new Dictionary<string, object> { { "channel", channel } });
                     service.Execute(output);
@@ -60,7 +60,7 @@ namespace Test
                  variable);
 
             global::Process.IExecutionService service = new global::Process.ExecutionService();
-            var input = (global::Process.Input)inputDefinition.Select(service.Constructor)(
+            var input = (global::Process.Input)inputDefinition.Select(global::Process.Constructor.Instance)(
                 null,
                 null);
             service.Execute(input);
@@ -86,7 +86,7 @@ namespace Test
                  _ => value);
 
             global::Process.IExecutionService service = new global::Process.ExecutionService();
-            var output = (global::Process.Output)outputDefinition.Select(service.Constructor)(
+            var output = (global::Process.Output)outputDefinition.Select(global::Process.Constructor.Instance)(
                 null,
                 null);
             service.Execute(output);
@@ -113,7 +113,7 @@ namespace Test
                 variable);
 
             global::Process.IExecutionService service = new global::Process.ExecutionService();
-            var input = inputDefinition.Select(service.Constructor)(
+            var input = inputDefinition.Select(global::Process.Constructor.Instance)(
                 null,
                 null);
             service.Execute(input);
@@ -123,7 +123,7 @@ namespace Test
             Assert.That(synchronisation, Is.Not.Null);
             Assert.That(synchronisation.Inputs.Contains(input), Is.True);
 
-            var output = outputDefinition.Select(service.Constructor)(
+            var output = outputDefinition.Select(global::Process.Constructor.Instance)(
                 null,
                 null);
             service.Execute(output);
@@ -149,7 +149,7 @@ namespace Test
             global::Process.IExecutionService service = new global::Process.ExecutionService();
             var trace = new List<(Channel, object)>();
             service.Trace = (channel, value) => trace.Add((channel, value));
-            var process = processDefinition.Select(service.Constructor)(
+            var process = processDefinition.Select(global::Process.Constructor.Instance)(
                 null,
                 null);
             Assert.That(!trace.Any(), Is.True);

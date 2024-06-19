@@ -6,14 +6,10 @@ namespace Process
 {
     public class Constructor: ISelector<Func<Process, IDictionary<string, object>, Process>>
     {
-        private readonly IIdService<Guid> _idService;
+        public static readonly Constructor Instance = new();
 
-        public Constructor(
-            IIdService<Guid> idService
-            )
-        {
-            _idService = idService;
-        }
+        private Constructor()
+        { }
 
         Func<Process, IDictionary<string, object>, Process> ISelector<Func<Process, IDictionary<string, object>, Process>>.Select(
             Definition.Sequence definition

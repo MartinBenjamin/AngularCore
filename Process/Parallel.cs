@@ -61,7 +61,7 @@ namespace Process
 
         protected override void NewChildren(
             IExecutionService executionService
-            ) => _definition.Children.Select(child => child.Select(executionService.Constructor)(
+            ) => _definition.Children.Select(child => child.Select(Constructor.Instance)(
                 this,
                 null)).ToList();
     }
@@ -85,7 +85,7 @@ namespace Process
 
         protected override void NewChildren(
             IExecutionService executionService
-            ) => _definition.Variables(this).Select(variables => _definition.Replicated.Select(executionService.Constructor)(
+            ) => _definition.Variables(this).Select(variables => _definition.Replicated.Select(Constructor.Instance)(
                 this,
                 null)).ToList();
     }

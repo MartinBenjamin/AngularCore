@@ -81,7 +81,7 @@ namespace Process
 
         protected override IList<Alternative> NewAlternatives(
             IExecutionService executionService
-            ) => _definition.Alternatives.Select(alternative => alternative.Select(executionService.Constructor)(
+            ) => _definition.Alternatives.Select(alternative => alternative.Select(Constructor.Instance)(
                 this,
                 null)).Cast<Alternative>().ToList();
     }
@@ -105,7 +105,7 @@ namespace Process
 
         protected override IList<Alternative> NewAlternatives(
             IExecutionService executionService
-            ) => _definition.Variables(this).Select(variables => _definition.Replicated.Select(executionService.Constructor)(
+            ) => _definition.Variables(this).Select(variables => _definition.Replicated.Select(Constructor.Instance)(
                 this,
                 variables)).Cast<Alternative>().ToList();
     }

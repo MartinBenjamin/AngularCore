@@ -35,7 +35,7 @@ namespace Process
                         executionService,
                         Status.Waiting);
 
-                    Guard = (IO)_definition.Guard.Select(executionService.Constructor)(
+                    Guard = (IO)_definition.Guard.Select(Constructor.Instance)(
                         this,
                         null);
                     ((IExecutable)Guard).Execute(executionService);
@@ -52,7 +52,7 @@ namespace Process
                 {
                     if(Guarded == null)
                     {
-                        Guarded = _definition.Guarded.Select(executionService.Constructor)(
+                        Guarded = _definition.Guarded.Select(Constructor.Instance)(
                             this,
                             null);
                         executionService.Execute(Guarded);
