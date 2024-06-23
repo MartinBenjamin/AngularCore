@@ -153,7 +153,7 @@ namespace Test
             var process = processDefinition.Select(Execution.Constructor.Instance)(
                 null,
                 null);
-            Assert.That(!trace.Any(), Is.True);
+            Assert.That(trace.Count, Is.EqualTo(0));
             service.Execute(process);
             Assert.That(process.Status, Is.EqualTo(Execution.Status.Executed));
             Assert.That(trace.Count, Is.EqualTo(1));

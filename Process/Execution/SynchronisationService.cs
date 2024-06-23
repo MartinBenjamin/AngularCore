@@ -4,7 +4,7 @@ namespace Process.Execution
 {
     public class SynchronisationService: ISynchronisationService
     {
-        private IDictionary<Definition.Channel, Synchronisation> _synchronisations = new Dictionary<Definition.Channel, Synchronisation>();
+        private readonly IDictionary<Definition.Channel, Synchronisation> _synchronisations = new Dictionary<Definition.Channel, Synchronisation>();
 
         Synchronisation ISynchronisationService.Resolve(
             Definition.Channel channel

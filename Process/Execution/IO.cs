@@ -43,8 +43,7 @@ namespace Process.Execution
 
             if(status == Status.Executed)
             {
-                var guardedProcess = Parent as GuardedProcess;
-                if(guardedProcess != null &&
+                if(Parent is GuardedProcess guardedProcess &&
                    guardedProcess.Guard == this)
                 {
                     var choice = guardedProcess.Parent as Choice;
