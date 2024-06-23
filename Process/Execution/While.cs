@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Process
+namespace Process.Execution
 {
     public class While: Process
     {

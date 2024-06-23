@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Process
+namespace Process.Execution
 {
     public abstract class Process:
         IExecutable,

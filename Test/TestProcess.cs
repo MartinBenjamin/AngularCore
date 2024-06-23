@@ -7,6 +7,7 @@ using System.Linq;
 namespace Test
 {
     using Process.Definition;
+    using Execution = Process.Execution;
 
     [TestFixture]
     public class TestProcess
@@ -18,8 +19,8 @@ namespace Test
             bool    pass
             )  
         {
-            global::Process.IExecutionService service = new global::Process.ExecutionService();
-            var process = definition.Select(global::Process.Constructor.Instance)(
+            Execution.IExecutionService service = new Execution.ExecutionService();
+            var process = definition.Select(Execution.Constructor.Instance)(
                 null,
                 null);
             service.Execute(process);
@@ -40,7 +41,7 @@ namespace Test
                 else
                 {
                     Assert.That(synchronisation.Inputs.Any(next => next.UltimateParent == process), Is.True);
-                    var output = outputDefinition.Select(global::Process.Constructor.Instance)(
+                    var output = outputDefinition.Select(Execution.Constructor.Instance)(
                         null,
                         new Dictionary<string, object> { { "channel", channel } });
                     service.Execute(output);
@@ -59,12 +60,12 @@ namespace Test
                  channel,
                  variable);
 
-            global::Process.IExecutionService service = new global::Process.ExecutionService();
-            var input = (global::Process.Input)inputDefinition.Select(global::Process.Constructor.Instance)(
+            Execution.IExecutionService service = new Execution.ExecutionService();
+            var input = (Execution.Input)inputDefinition.Select(Execution.Constructor.Instance)(
                 null,
                 null);
             service.Execute(input);
-            Assert.That(input.Status, Is.EqualTo(global::Process.Status.Waiting));
+            Assert.That(input.Status, Is.EqualTo(Execution.Status.Waiting));
             var synchronisation = service.SynchronisationService.Resolve(channel);
             Assert.That(synchronisation, Is.Not.Null);
             Assert.That(synchronisation.Inputs.Contains(input), Is.True);
@@ -72,7 +73,7 @@ namespace Test
             input.Executelnput(
                 service,
                 value);
-            Assert.That(input.Status, Is.EqualTo(global::Process.Status.Executed));
+            Assert.That(input.Status, Is.EqualTo(Execution.Status.Executed));
             Assert.That(input[variable], Is.EqualTo(value));
         }
 
@@ -85,17 +86,17 @@ namespace Test
                  channel,
                  _ => value);
 
-            global::Process.IExecutionService service = new global::Process.ExecutionService();
-            var output = (global::Process.Output)outputDefinition.Select(global::Process.Constructor.Instance)(
+            Execution.IExecutionService service = new Execution.ExecutionService();
+            var output = (Execution.Output)outputDefinition.Select(Execution.Constructor.Instance)(
                 null,
                 null);
             service.Execute(output);
-            Assert.That(output.Status, Is.EqualTo(global::Process.Status.Waiting));
+            Assert.That(output.Status, Is.EqualTo(Execution.Status.Waiting));
             var synchronisation = service.SynchronisationService.Resolve(channel);
             Assert.That(synchronisation, Is.Not.Null);
             Assert.That(synchronisation.Outputs.Contains(output), Is.True);
             var outputValue = output.ExecuteOutput(service);
-            Assert.That(output.Status, Is.EqualTo(global::Process.Status.Executed));
+            Assert.That(output.Status, Is.EqualTo(Execution.Status.Executed));
             Assert.That(outputValue, Is.EqualTo(value));
         }
 
@@ -112,23 +113,23 @@ namespace Test
                 channel,
                 variable);
 
-            global::Process.IExecutionService service = new global::Process.ExecutionService();
-            var input = inputDefinition.Select(global::Process.Constructor.Instance)(
+            Execution.IExecutionService service = new Execution.ExecutionService();
+            var input = inputDefinition.Select(Execution.Constructor.Instance)(
                 null,
                 null);
             service.Execute(input);
-            Assert.That(input.Status, Is.EqualTo(global::Process.Status.Waiting));
+            Assert.That(input.Status, Is.EqualTo(Execution.Status.Waiting));
             Assert.That(input[variable], Is.Null);
             var synchronisation = service.SynchronisationService.Resolve(channel);
             Assert.That(synchronisation, Is.Not.Null);
             Assert.That(synchronisation.Inputs.Contains(input), Is.True);
 
-            var output = outputDefinition.Select(global::Process.Constructor.Instance)(
+            var output = outputDefinition.Select(Execution.Constructor.Instance)(
                 null,
                 null);
             service.Execute(output);
-            Assert.That(output.Status, Is.EqualTo(global::Process.Status.Executed));
-            Assert.That(input.Status, Is.EqualTo(global::Process.Status.Executed));
+            Assert.That(output.Status, Is.EqualTo(Execution.Status.Executed));
+            Assert.That(input.Status, Is.EqualTo(Execution.Status.Executed));
             Assert.That(input[variable], Is.EqualTo(value));
         }
 
@@ -146,15 +147,15 @@ namespace Test
                      channel,
                      variable));
 
-            global::Process.IExecutionService service = new global::Process.ExecutionService();
+            Execution.IExecutionService service = new Execution.ExecutionService();
             var trace = new List<(Channel, object)>();
             service.Trace = (channel, value) => trace.Add((channel, value));
-            var process = processDefinition.Select(global::Process.Constructor.Instance)(
+            var process = processDefinition.Select(Execution.Constructor.Instance)(
                 null,
                 null);
             Assert.That(!trace.Any(), Is.True);
             service.Execute(process);
-            Assert.That(process.Status, Is.EqualTo(global::Process.Status.Executed));
+            Assert.That(process.Status, Is.EqualTo(Execution.Status.Executed));
             Assert.That(trace.Count, Is.EqualTo(1));
             Assert.That(trace[0].Item1, Is.EqualTo(channel));
             Assert.That(trace[0].Item2, Is.EqualTo(value  ));

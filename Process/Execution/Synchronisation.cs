@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Process
+namespace Process.Execution
 {
     public class Synchronisation: IExecutable
     {

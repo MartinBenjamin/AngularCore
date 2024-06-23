@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Process
+namespace Process.Execution
 {
     public class InvalidStateException: ApplicationException
     {

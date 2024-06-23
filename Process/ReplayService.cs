@@ -4,6 +4,8 @@ using System.Linq;
 
 namespace Process
 {
+    using Execution;
+
     internal class ReplayService: IExecutionService
     {
         private readonly ISynchronisationService _synchronisationService;

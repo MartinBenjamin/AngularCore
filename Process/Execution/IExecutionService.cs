@@ -1,6 +1,6 @@
 ﻿using Process.Definition;
 
-namespace Process
+namespace Process.Execution
 {
 
     public delegate void Trace(

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Process
+namespace Process.Execution
 {
     public abstract class SequenceBase: Process
     {

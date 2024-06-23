@@ -1,4 +1,4 @@
-﻿namespace Process
+﻿namespace Process.Execution
 {
     public interface IExecutable
     {
