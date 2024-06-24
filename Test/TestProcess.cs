@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace Test
 {
+    using Process;
     using Process.Definition;
     using Execution = Process.Execution;
 
@@ -19,32 +20,21 @@ namespace Test
             bool    pass
             )  
         {
-            Execution.IExecutionService service = new Execution.ExecutionService();
-            var process = definition.Select(Execution.Constructor.Instance)(
-                null,
-                null);
-            service.Execute(process);
-
-            var outputDefinition = new Output(
-                scope => (Channel)scope["channel"],
-                _ => null);
+            IRuntime runtime = new Execution.Runtime();
+            var process = runtime.Run(definition);
 
             var index = 0;
             foreach(var channel in trace.Select(c => new Channel(c.ToString(), null)))
             {
-                var synchronisation = service.SynchronisationService.Resolve(channel);
-                Assert.That(synchronisation, Is.Not.Null);
-
                 if(index == trace.Length - 1 && !pass)
-                    Assert.That(synchronisation.Inputs.Any(next => next.UltimateParent == process), Is.False);
+                    Assert.That(runtime.Inputs(channel).Contains(process), Is.False);
 
                 else
                 {
-                    Assert.That(synchronisation.Inputs.Any(next => next.UltimateParent == process), Is.True);
-                    var output = outputDefinition.Select(Execution.Constructor.Instance)(
-                        null,
-                        new Dictionary<string, object> { { "channel", channel } });
-                    service.Execute(output);
+                    Assert.That(runtime.Inputs(channel).Contains(process), Is.True);
+                    runtime.Input(
+                        channel,
+                        null);
                 }
                 index++;
             }

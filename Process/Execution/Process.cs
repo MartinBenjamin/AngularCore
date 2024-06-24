@@ -5,6 +5,7 @@ using System.Collections.Generic;
 namespace Process.Execution
 {
     public abstract class Process:
+        IProcess,
         IExecutable,
         IScope,
         IEnumerable<Process>
