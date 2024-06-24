@@ -66,8 +66,8 @@ namespace Process.Execution
                 var input = _inputs[0];
                 var message = output.ExecuteOutput(executionService);
                 executionService.Trace?.Invoke(
-                _channel,
-                message);
+                    _channel,
+                    message);
                 input.Executelnput(
                     executionService,
                     message);
