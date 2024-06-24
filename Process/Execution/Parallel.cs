@@ -46,7 +46,7 @@ namespace Process.Execution
     {
         private readonly Definition.Parallel _definition;
 
-        public Parallel(
+        internal protected Parallel(
             Definition.Parallel         definition,
             Process                     parent,
             IDictionary<string, object> variables

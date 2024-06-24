@@ -50,7 +50,7 @@ namespace Process.Execution
     {
         private readonly Definition.Sequence _definition;
 
-        public Sequence(
+        internal protected Sequence(
             Definition.Sequence         definition,
             Process                     parent,
             IDictionary<string, object> variables
