@@ -66,7 +66,7 @@ namespace Process.Execution
     {
         private readonly Definition.Choice _definition;
 
-        public Choice(
+        internal protected Choice(
             Definition.Choice           definition,
             Process                     parent,
             IDictionary<string, object> variables
