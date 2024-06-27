@@ -57,12 +57,13 @@ namespace Process.Execution
             ) => _synchronisationService.Resolve(channel)?.Outputs.Select(process => process.UltimateParent) ?? Enumerable.Empty<IProcess>();
 
         IProcess IRuntime.Run(
-            Definition.Process definition
+            Definition.Process          definition,
+            IDictionary<string, object> variables
             )
         {
             var process = definition.Select(Constructor.Instance)(
                 null,
-                null);
+                variables);
             Execute(process);
             return process;
         }
