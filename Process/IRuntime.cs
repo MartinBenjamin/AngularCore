@@ -5,7 +5,7 @@ namespace Process
     public interface IRuntime
     {
         IProcess Run(
-            Definition.Process          definition,
+            Definition.IProcess         definition,
             IDictionary<string, object> variables = null);
         IEnumerable<IProcess> Inputs(Definition.Channel channel);
         IEnumerable<IProcess> Outputs(Definition.Channel channel);

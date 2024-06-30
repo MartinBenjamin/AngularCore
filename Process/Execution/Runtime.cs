@@ -57,7 +57,7 @@ namespace Process.Execution
             ) => _synchronisationService.Resolve(channel)?.Outputs.Select(process => process.UltimateParent) ?? Enumerable.Empty<IProcess>();
 
         IProcess IRuntime.Run(
-            Definition.Process          definition,
+            Definition.IProcess         definition,
             IDictionary<string, object> variables
             )
         {
