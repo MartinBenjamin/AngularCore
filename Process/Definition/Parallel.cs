@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Process.Definition
 {
-    public abstract class ParallelBase: Composite
+    public abstract class ParallelBase: Process
     {
         protected ParallelBase()
             : base()

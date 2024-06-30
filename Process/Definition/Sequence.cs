@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Process.Definition
 {
-    public abstract class SequenceBase: Composite
+    public abstract class SequenceBase: Process
     {
         protected SequenceBase()
             : base()
