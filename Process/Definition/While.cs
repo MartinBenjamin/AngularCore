@@ -7,7 +7,7 @@ namespace Process.Definition
         ISubprocess
     {
         public Func<IScope, bool> Condition  { get; protected set; }
-        public Process            Replicated { get; protected set; }
+        public ISubprocess        Replicated { get; protected set; }
 
         public While()
             : base()
@@ -16,7 +16,7 @@ namespace Process.Definition
 
         public While(
             Func<IScope, bool> condition,
-            Process            replicated
+            ISubprocess        replicated
             )
             : base()
         {

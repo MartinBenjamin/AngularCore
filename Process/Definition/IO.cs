@@ -4,7 +4,7 @@ namespace Process.Definition
 {
     public abstract class IO:
         Process,
-        ISubprocess
+        IIO
     {
         public virtual Func<IScope, Channel> Channel { get; protected set; }
 

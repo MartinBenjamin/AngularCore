@@ -37,7 +37,7 @@ namespace Process.Definition
     public class ChoiceForEach: ChoiceBase
     {
         public Func<IScope, IEnumerable<IDictionary<string, object>>> Variables  { get; set; }
-        public Process                                                Replicated { get; set; }
+        public ISubprocess                                            Replicated { get; set; }
 
         public ChoiceForEach()
             : base()

@@ -7,8 +7,8 @@ namespace Process.Definition
         IAlternative
     {
         public Func<IScope, bool> GuardExpression { get; protected set; }
-        public IO                 Guard           { get; protected set; }
-        public Process            Guarded         { get; protected set; }
+        public IIO                Guard           { get; protected set; }
+        public ISubprocess        Guarded         { get; protected set; }
 
 
         public GuardedProcess()
@@ -18,8 +18,8 @@ namespace Process.Definition
 
         public GuardedProcess(
             Func<IScope, bool> guardExpression,
-            IO                 guard,
-            Process            guarded
+            IIO                guard,
+            ISubprocess        guarded
             )
             : base()
         {
@@ -30,7 +30,7 @@ namespace Process.Definition
 
         public GuardedProcess(
             IO      guard,
-            Process guarded = null
+            ISubprocess guarded = null
             )
             : this(
                 null,
