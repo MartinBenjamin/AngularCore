@@ -3,7 +3,9 @@ using System.Collections.Generic;
 
 namespace Process.Definition
 {
-    public abstract class ParallelBase: Process
+    public abstract class ParallelBase:
+        Process,
+        ISubprocess
     {
         protected ParallelBase()
             : base()
@@ -13,10 +15,10 @@ namespace Process.Definition
 
     public class Parallel: ParallelBase
     {
-        public IList<Process> Children { get; protected set; }
+        public IList<ISubprocess> Children { get; protected set; }
 
         public Parallel(
-            params Process[] children
+            params ISubprocess[] children
             )
             : base()
         {
@@ -34,7 +36,7 @@ namespace Process.Definition
     public class ParallelForEach: ParallelBase
     {
         public Func<IScope, IEnumerable<IDictionary<string, object>>> Variables  { get; set; }
-        public Process                                                Replicated { get; set; }
+        public ISubprocess                                            Replicated { get; set; }
 
         public ParallelForEach()
             : base()

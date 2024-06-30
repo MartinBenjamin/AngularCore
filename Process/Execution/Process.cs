@@ -11,7 +11,7 @@ namespace Process.Execution
         IEnumerable<Process>
     {
         public Status                         Status         { get; private set; }
-        public Definition.Process             Definition     { get; private set; }
+        public Definition.IProcess            Definition     { get; private set; }
         public Process                        Parent         { get; private set; }
         public Process                        UltimateParent { get; private set; }
         public IList<Process>                 Children       { get; private set; }
@@ -25,7 +25,7 @@ namespace Process.Execution
         }
 
         protected Process(
-            Definition.Process          definition,
+            Definition.IProcess         definition,
             Process                     parent,
             IDictionary<string, object> variables
             )

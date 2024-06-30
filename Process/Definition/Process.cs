@@ -2,7 +2,7 @@
 
 namespace Process.Definition
 {
-    public abstract class Process
+    public abstract class Process: IProcess
     {
         protected Process()
             : base()

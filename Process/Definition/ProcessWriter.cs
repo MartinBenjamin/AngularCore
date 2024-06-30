@@ -104,8 +104,8 @@ namespace Process.Definition
         }
 
         private void Append(
-            IEnumerable<Process> processes,
-            string               separator
+            IEnumerable<IProcess> processes,
+            string                separator
             )
         {
             _builder.Append('[');

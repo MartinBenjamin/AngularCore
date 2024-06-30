@@ -3,7 +3,9 @@ using System.Collections.Generic;
 
 namespace Process.Definition
 {
-    public abstract class SequenceBase: Process
+    public abstract class SequenceBase:
+        Process,
+        ISubprocess
     {
         protected SequenceBase()
             : base()
@@ -13,10 +15,10 @@ namespace Process.Definition
 
     public class Sequence: SequenceBase
     {
-        public IList<Process> Children { get; protected set; }
+        public IList<ISubprocess> Children { get; protected set; }
 
         public Sequence(
-            params Process[] children
+            params ISubprocess[] children
             )
             : base()
         {
@@ -35,7 +37,7 @@ namespace Process.Definition
     public class SequenceForEach: SequenceBase
     {
         public Func<IScope, IEnumerable<IDictionary<string, object>>> Variables  { get; set; }
-        public Process                                                Replicated { get; set; }
+        public ISubprocess                                            Replicated { get; set; }
 
         public SequenceForEach()
             : base()

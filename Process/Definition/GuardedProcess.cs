@@ -2,7 +2,9 @@
 
 namespace Process.Definition
 {
-    public class GuardedProcess: Alternative
+    public class GuardedProcess:
+        Process,
+        IAlternative
     {
         public Func<IScope, bool> GuardExpression { get; protected set; }
         public IO                 Guard           { get; protected set; }

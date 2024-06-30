@@ -5,7 +5,7 @@ namespace Process.Execution
     public abstract class Alternative: Process
     {
         protected Alternative(
-            Definition.Alternative      definition,
+            Definition.IAlternative     definition,
             Process                     parent,
             IDictionary<string, object> variables
             )

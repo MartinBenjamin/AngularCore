@@ -231,7 +231,7 @@ namespace Test
                         permutation.Length == set.Length
                     });
 
-                processes = new List<Process>
+                processes = new List<Choice>
                 {
                     new Choice(
                         set

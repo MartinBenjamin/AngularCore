@@ -2,7 +2,9 @@ using System;
 
 namespace Process.Definition
 {
-    public class While: Process
+    public class While:
+        Process,
+        ISubprocess
     {
         public Func<IScope, bool> Condition  { get; protected set; }
         public Process            Replicated { get; protected set; }

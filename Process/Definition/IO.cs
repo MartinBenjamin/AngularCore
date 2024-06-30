@@ -2,7 +2,9 @@
 
 namespace Process.Definition
 {
-    public abstract class IO: Process
+    public abstract class IO:
+        Process,
+        ISubprocess
     {
         public virtual Func<IScope, Channel> Channel { get; protected set; }
 

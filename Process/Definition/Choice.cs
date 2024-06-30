@@ -3,7 +3,10 @@ using System.Collections.Generic;
 
 namespace Process.Definition
 {
-    public abstract class ChoiceBase: Alternative
+    public abstract class ChoiceBase:
+        Process,
+        ISubprocess,
+        IAlternative
     {
         protected ChoiceBase()
             : base()
@@ -13,10 +16,10 @@ namespace Process.Definition
 
     public class Choice: ChoiceBase
     {
-        public IList<Alternative> Alternatives { get; set; }
+        public IList<IAlternative> Alternatives { get; set; }
 
         public Choice(
-            params Alternative[] alternatives
+            params IAlternative[] alternatives
             )
             : base()
         {
