@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Process.Execution
 {
@@ -34,8 +35,8 @@ namespace Process.Execution
         }
 
         IProcess IExecutionService.Replay(
-            Definition.IProcess                                                     definition,
-            IReadOnlyList<(bool Input, Definition.Channel Channel, object Message)> trace
+            Definition.IProcess                                         definition,
+            IReadOnlyList<(bool Input, ITuple Channel, object Message)> trace
             )
         {
             throw new System.NotImplementedException();

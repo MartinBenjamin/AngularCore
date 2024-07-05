@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace Process.Definition
 {
@@ -6,10 +7,10 @@ namespace Process.Definition
         Process,
         IIO
     {
-        public virtual Func<IScope, Channel> Channel { get; protected set; }
+        public virtual Func<IScope, ITuple> Channel { get; protected set; }
 
         protected IO(
-            Func<IScope, Channel> channel
+            Func<IScope, ITuple> channel
             )
             : base()
         {

@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Process.Execution
 {
     public class SynchronisationService: ISynchronisationService
     {
-        private readonly IDictionary<Definition.Channel, Synchronisation> _synchronisations = new Dictionary<Definition.Channel, Synchronisation>();
+        private readonly IDictionary<ITuple, Synchronisation> _synchronisations = new Dictionary<ITuple, Synchronisation>();
 
         Synchronisation ISynchronisationService.Resolve(
-            Definition.Channel channel
+            ITuple channel
             )
         {
             if(!_synchronisations.TryGetValue(

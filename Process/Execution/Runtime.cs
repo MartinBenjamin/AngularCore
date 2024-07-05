@@ -1,6 +1,6 @@
-﻿using Process.Definition;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Process.Execution
 {
@@ -39,8 +39,8 @@ namespace Process.Execution
         
 
         IProcess IExecutionService.Replay(
-            Definition.IProcess                                          definition,
-            IReadOnlyList<(bool Input, Channel Channel, object Message)> trace
+            Definition.IProcess                                         definition,
+            IReadOnlyList<(bool Input, ITuple Channel, object Message)> trace
             )
         {
             var process = definition.Select(Constructor.Instance)(
@@ -51,22 +51,22 @@ namespace Process.Execution
         }
 
         void IRuntime.Input(
-            Channel channel,
-            object  value
+            ITuple channel,
+            object value
             ) => _synchronisationService.Resolve(channel).Inputs.First().Executelnput(
                 this,
                 value);
 
         IEnumerable<IProcess> IRuntime.Inputs(
-            Channel channel
+            ITuple channel
             ) => _synchronisationService.Resolve(channel)?.Inputs.Select(process => process.UltimateParent) ?? Enumerable.Empty<IProcess>();
 
         object IRuntime.Output(
-            Channel channel
+            ITuple channel
             ) => _synchronisationService.Resolve(channel).Outputs.First().ExecuteOutput(this);
 
         IEnumerable<IProcess> IRuntime.Outputs(
-            Channel channel
+            ITuple channel
             ) => _synchronisationService.Resolve(channel)?.Outputs.Select(process => process.UltimateParent) ?? Enumerable.Empty<IProcess>();
 
         IProcess IRuntime.Run(

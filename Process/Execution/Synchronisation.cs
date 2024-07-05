@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Process.Execution
 {
     public class Synchronisation: IExecutable
     {
-        private readonly Definition.Channel _channel;
-        private readonly IList<Input >       _inputs  = new List<Input >();
-        private readonly IList<Output>       _outputs = new List<Output>();
+        private readonly ITuple        _channel;
+        private readonly IList<Input > _inputs  = new List<Input >();
+        private readonly IList<Output> _outputs = new List<Output>();
 
         public Synchronisation(
-            Definition.Channel channel
+            ITuple channel 
             )
         {
             _channel = channel;

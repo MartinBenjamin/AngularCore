@@ -1,10 +1,10 @@
-﻿using Process.Definition;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Process
 {
     using Execution;
+    using System.Runtime.CompilerServices;
 
     internal class ReplayService: IExecutionService
     {
@@ -33,8 +33,8 @@ namespace Process
         }
 
         public void Replay(
-            Definition.Process                                           definition,
-            IReadOnlyList<(bool Input, Channel Channel, object Message)> trace
+            Definition.Process                                          definition,
+            IReadOnlyList<(bool Input, ITuple Channel, object Message)> trace
             )
         {
             var service = (IExecutionService)this;
@@ -62,7 +62,7 @@ namespace Process
             }
         }
 
-        IProcess IExecutionService.Replay(Definition.IProcess definition, IReadOnlyList<(bool Input, Channel Channel, object Message)> trace)
+        IProcess IExecutionService.Replay(Definition.IProcess definition, IReadOnlyList<(bool Input, ITuple Channel, object Message)> trace)
         {
             throw new System.NotImplementedException();
         }

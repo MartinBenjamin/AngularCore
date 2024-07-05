@@ -8,6 +8,7 @@ namespace Test
 {
     using Process;
     using Process.Definition;
+    using System.Runtime.CompilerServices;
     using Execution = Process.Execution;
 
     [TestFixture]
@@ -138,7 +139,7 @@ namespace Test
                      variable));
 
             Execution.IExecutionService service = new Execution.ExecutionService();
-            var trace = new List<(Channel, object)>();
+            var trace = new List<(ITuple, object)>();
             service.Trace = (channel, value) => trace.Add((channel, value));
             var process = processDefinition.Select(Execution.Constructor.Instance)(
                 null,
@@ -233,17 +234,17 @@ namespace Test
 
                 processes = new List<Choice>
                 {
-                    new Choice(
+                    new(
                         set
                             .Select(c => c.ToString())
                             .Select(c => new GuardedProcess(new Input(new Channel(c), targetVariable))).ToArray()),
-                    new Choice(
+                    new(
                         new Choice(
                             set
                                 .Take(2).Select(c => c.ToString())
                                 .Select(c => new GuardedProcess(new Input(new Channel(c), targetVariable))).ToArray()),
                         new GuardedProcess(new Input(new Channel(set.Last().ToString()), targetVariable))),
-                    new Choice(
+                    new(
                         new GuardedProcess(new Input(new Channel(set.First().ToString()), targetVariable)),
                         new Choice(
                             set

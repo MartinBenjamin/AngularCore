@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Process.Execution
 {
     public abstract class IO: Process
     {
-        public virtual Definition.Channel Channel { get; protected set; }
+        public virtual ITuple Channel { get; protected set; }
 
         protected IO(
             Definition.IO               definition,

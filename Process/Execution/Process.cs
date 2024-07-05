@@ -1,6 +1,7 @@
 ﻿using Process.Definition;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Process.Execution
 {
@@ -10,12 +11,12 @@ namespace Process.Execution
         IScope,
         IEnumerable<Process>
     {
-        public Status                         Status         { get; private set; }
-        public Definition.IProcess            Definition     { get; private set; }
-        public Process                        Parent         { get; private set; }
-        public Process                        UltimateParent { get; private set; }
-        public IList<Process>                 Children       { get; private set; }
-        public IList<(bool, Channel, object)> Trace          { get; private set; }
+        public Status                        Status         { get; private set; }
+        public Definition.IProcess           Definition     { get; private set; }
+        public Process                       Parent         { get; private set; }
+        public Process                       UltimateParent { get; private set; }
+        public IList<Process>                Children       { get; private set; }
+        public IList<(bool, ITuple, object)> Trace          { get; private set; }
 
         private IDictionary<string, object> _variables;
 
@@ -38,7 +39,7 @@ namespace Process.Execution
             Parent?.Children.Add(this);
 
             if(UltimateParent == this)
-                Trace = new List<(bool, Channel, object)>();
+                Trace = new List<(bool, ITuple, object)>();
         }
 
         protected virtual void ChangeStatus(

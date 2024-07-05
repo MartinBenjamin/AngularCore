@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace Process.Definition
 {
@@ -7,8 +8,8 @@ namespace Process.Definition
         public Func<IScope, object> Source { get; protected set; }
 
         public Output(
-            Func<IScope, Channel> channel,
-            Func<IScope, object>  source
+            Func<IScope, ITuple> channel,
+            Func<IScope, object> source
             )
             : base(channel)
         {

@@ -1,12 +1,11 @@
-﻿using Process.Definition;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Process.Execution
 {
-
     public delegate void Trace(
-        Channel channel,
-        object  value);
+        ITuple channel,
+        object value);
 
     public interface IExecutionService
     {
@@ -17,7 +16,7 @@ namespace Process.Execution
         void Execute(IExecutable executable);
 
         IProcess Replay(
-            Definition.IProcess                                          definition,
-            IReadOnlyList<(bool Input, Channel Channel, object Message)> trace);
+            Definition.IProcess                                         definition,
+            IReadOnlyList<(bool Input, ITuple Channel, object Message)> trace);
     }
 }

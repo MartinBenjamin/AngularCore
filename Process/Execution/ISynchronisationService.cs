@@ -1,9 +1,9 @@
-﻿using Process.Definition;
+﻿using System.Runtime.CompilerServices;
 
 namespace Process.Execution
 {
     public interface ISynchronisationService
     {
-        Synchronisation Resolve(Channel channel);
+        Synchronisation Resolve(ITuple channel);
     }
 }
