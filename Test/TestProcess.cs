@@ -11,6 +11,45 @@ namespace Test
     using System.Runtime.CompilerServices;
     using Execution = Process.Execution;
 
+    public class Channel: ITuple
+    {
+        public string Name { get; protected set; }
+
+        int ITuple.Length => 1;
+
+        object ITuple.this[int index]
+        {
+            get
+            {
+                if(index != 0)
+                    throw new IndexOutOfRangeException();
+
+                return Name;
+            }
+        }
+
+        public Channel(
+            string name
+            )
+        {
+            Name = name;
+        }
+
+        public override bool Equals(
+            object obj
+            ) =>
+            obj is Channel channel &&
+            Name == channel.Name;
+
+        public override int GetHashCode() => Name.GetHashCode();
+
+        public override string ToString() => Name;
+
+        public static implicit operator Func<IScope, Channel>(
+            Channel channel
+            ) => _ => channel;
+    }
+
     [TestFixture]
     public class TestProcess
     {
@@ -25,7 +64,7 @@ namespace Test
             var process = runtime.Run(definition);
 
             var index = 0;
-            foreach(var channel in trace.Select(c => new Channel(c.ToString(), null)))
+            foreach(var channel in trace.Select(c => new Channel(c.ToString())))
             {
                 if(index == trace.Length - 1 && !pass)
                     Assert.That(runtime.Inputs(channel).Contains(process), Is.False);
@@ -44,7 +83,7 @@ namespace Test
         [Test]
         public void Input()
         {
-            var channel  = new Channel("channel", typeof(string));
+            var channel  = new Channel("channel");
             const string variable = "target";
             const string value    = "value";
             var inputDefinition = new Input(
@@ -71,7 +110,7 @@ namespace Test
         [Test]
         public void Output()
         {
-            var channel = new Channel("channel", typeof(string));
+            var channel = new Channel("channel");
             const string value = "value";
             var outputDefinition = new Output(
                  channel,
@@ -94,7 +133,7 @@ namespace Test
         [Test]
         public void IO()
         {
-            var channel = new Channel("channel", typeof(string));
+            var channel = new Channel("channel");
             const string variable = "target";
             const string value = "value";
             var outputDefinition = new Output(
@@ -127,7 +166,7 @@ namespace Test
         [Test]
         public void IO2()
         {
-            var channel = new Channel("channel", typeof(string));
+            var channel = new Channel("channel");
             const string variable = "target";
             const string value = "value";
             var processDefinition = new Parallel(
