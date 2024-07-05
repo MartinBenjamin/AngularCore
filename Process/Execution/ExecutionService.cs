@@ -32,5 +32,13 @@ namespace Process.Execution
                 _entered -= 1;
             }
         }
+
+        IProcess IExecutionService.Replay(
+            Definition.IProcess                                                     definition,
+            IReadOnlyList<(bool Input, Definition.Channel Channel, object Message)> trace
+            )
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

@@ -36,6 +36,19 @@ namespace Process.Execution
                 _entered -= 1;
             }
         }
+        
+
+        IProcess IExecutionService.Replay(
+            Definition.IProcess                                          definition,
+            IReadOnlyList<(bool Input, Channel Channel, object Message)> trace
+            )
+        {
+            var process = definition.Select(Constructor.Instance)(
+                null,
+                null);
+
+            throw new System.NotImplementedException();
+        }
 
         void IRuntime.Input(
             Channel channel,

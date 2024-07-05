@@ -61,5 +61,10 @@ namespace Process
                     synchronisation.Outputs.Single(next => next.UltimateParent == process).ExecuteOutput(this);
             }
         }
+
+        IProcess IExecutionService.Replay(Definition.IProcess definition, IReadOnlyList<(bool Input, Channel Channel, object Message)> trace)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

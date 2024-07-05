@@ -1,4 +1,5 @@
 ﻿using Process.Definition;
+using System.Collections.Generic;
 
 namespace Process.Execution
 {
@@ -14,5 +15,9 @@ namespace Process.Execution
         ISynchronisationService SynchronisationService { get; }
 
         void Execute(IExecutable executable);
+
+        IProcess Replay(
+            Definition.IProcess                                          definition,
+            IReadOnlyList<(bool Input, Channel Channel, object Message)> trace);
     }
 }
