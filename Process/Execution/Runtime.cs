@@ -33,8 +33,29 @@ namespace Process.Execution
 
             var current = _queue;
             _queue = new Queue<IExecutable>();
-            var synchronisations = new HashSet<Synchronisation>();
             _queue.Enqueue(process);
+            var synchronisations = new HashSet<Synchronisation>();
+            if(trace.Count > 0)
+            {
+                var last = trace.Last();
+                foreach(var item in trace)
+                {
+
+                    var synchronisation = _synchronisationService.Resolve(item.Channel);
+                    if(item == trace.Last())
+                        _queue = current;
+
+                    if(item.Input)
+                        synchronisation.Inputs.Single(next => next.UltimateParent == process).Executelnput(
+                            this,
+                            item.Message);
+
+                    else
+                        synchronisation.Outputs.Single(next => next.UltimateParent == process).ExecuteOutput(this);
+                }
+
+            }
+
             while(_queue.Count > 0)
             {
                 var executable = _queue.Dequeue();
@@ -45,31 +66,8 @@ namespace Process.Execution
                     executable.Execute(this);
             }
 
-            foreach(var item in trace)
-            {
-                var synchronisation = _synchronisationService.Resolve(item.Channel);
-                if(item == trace.Last())
-                    _queue = current;
+            _queue = current;
 
-                if(item.Input)
-                    synchronisation.Inputs.Single(next => next.UltimateParent == process).Executelnput(
-                        this,
-                        item.Message);
-
-                else
-                    synchronisation.Outputs.Single(next => next.UltimateParent == process).ExecuteOutput(this);
-
-                while(_queue.Count > 0)
-                {
-                    var executable = _queue.Dequeue();
-                    if(executable is Synchronisation)
-                        synchronisations.Add((Synchronisation)executable);
-
-                    else
-                        executable.Execute(this);
-                }
-            }
-           
             foreach(var synchronisation in synchronisations)
                 if(synchronisation.SyncCount > 0 && !_queue.Contains(synchronisation))
                     _queue.Enqueue(synchronisation);
