@@ -65,12 +65,14 @@ namespace Process.Execution
             {
                 var output = _outputs[0];
                 var input = _inputs[0];
-                var message = output.ExecuteOutput(executionService);
+                output.Execute(
+                    executionService,
+                    out object message);
+                input.Execute(
+                    executionService,
+                    message);
                 executionService.Trace?.Invoke(
                     _channel,
-                    message);
-                input.Executelnput(
-                    executionService,
                     message);
                 output.UltimateParent.Trace.Add((false, _channel, message));
                 input.UltimateParent.Trace.Add((true, _channel, message));

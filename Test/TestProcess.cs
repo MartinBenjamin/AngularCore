@@ -100,7 +100,7 @@ namespace Test
             Assert.That(synchronisation, Is.Not.Null);
             Assert.That(synchronisation.Inputs.Contains(input), Is.True);
             Assert.That(input[variable], Is.Null);
-            input.Executelnput(
+            input.Execute(
                 service,
                 value);
             Assert.That(input.Status, Is.EqualTo(Execution.Status.Executed));
@@ -125,7 +125,9 @@ namespace Test
             var synchronisation = service.SynchronisationService.Resolve(channel);
             Assert.That(synchronisation, Is.Not.Null);
             Assert.That(synchronisation.Outputs.Contains(output), Is.True);
-            var outputValue = output.ExecuteOutput(service);
+            output.Execute(
+                service,
+                out object outputValue);
             Assert.That(output.Status, Is.EqualTo(Execution.Status.Executed));
             Assert.That(outputValue, Is.EqualTo(value));
         }

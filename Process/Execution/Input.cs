@@ -19,7 +19,7 @@ namespace Process.Execution
             _definition = definition;
         }
 
-        public virtual void Executelnput(
+        public virtual void Execute(
             IExecutionService executionService,
             object            input
             )

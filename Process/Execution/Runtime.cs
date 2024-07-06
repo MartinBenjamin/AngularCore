@@ -50,12 +50,14 @@ namespace Process.Execution
                 var synchronisation = _synchronisationService.Resolve(item.Channel);
 
                 if(item.Input)
-                    synchronisation.Inputs.Single(next => next.UltimateParent == process).Executelnput(
+                    synchronisation.Inputs.Single(next => next.UltimateParent == process).Execute(
                         this,
                         item.Message);
 
                 else
-                    synchronisation.Outputs.Single(next => next.UltimateParent == process).ExecuteOutput(this);
+                    synchronisation.Outputs.Single(next => next.UltimateParent == process).Execute(
+                        this,
+                        out object message);
             }
 
             while(_queue.Count > 0)
@@ -82,7 +84,7 @@ namespace Process.Execution
             object value
             )
         {
-            _synchronisationService.Resolve(channel).Inputs.First().Executelnput(
+            _synchronisationService.Resolve(channel).Inputs.First().Execute(
                 this,
                 value);
             Execute();
@@ -96,9 +98,11 @@ namespace Process.Execution
             ITuple channel
             )
         {
-            var value = _synchronisationService.Resolve(channel).Outputs.First().ExecuteOutput(this);
+            _synchronisationService.Resolve(channel).Outputs.First().Execute(
+                this,
+                out object output);
             Execute();
-            return value;
+            return output;
         }
 
         IEnumerable<IProcess> IRuntime.Outputs(

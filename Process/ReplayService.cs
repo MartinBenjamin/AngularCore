@@ -37,29 +37,6 @@ namespace Process
             IReadOnlyList<(bool Input, ITuple Channel, object Message)> trace
             )
         {
-            var service = (IExecutionService)this;
-            var process = definition.Select(Constructor.Instance)(
-                null,
-                null);
-
-            service.Execute(process);
-            foreach(var item in trace)
-            {
-                while(_queue.Count > 0)
-                {
-                    _queue.Peek().Execute(this);
-                    _queue.Dequeue();
-                }
-
-                var synchronisation = _synchronisationService.Resolve(item.Channel);
-                if(item.Input)
-                    synchronisation.Inputs.Single(next => next.UltimateParent == process).Executelnput(
-                        this,
-                        item.Message);
-
-                else
-                    synchronisation.Outputs.Single(next => next.UltimateParent == process).ExecuteOutput(this);
-            }
         }
 
         IProcess IExecutionService.Replay(Definition.IProcess definition, IReadOnlyList<(bool Input, ITuple Channel, object Message)> trace)

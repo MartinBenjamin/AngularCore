@@ -19,8 +19,9 @@ namespace Process.Execution
             _definition = definition;
         }
 
-        public virtual object ExecuteOutput(
-            IExecutionService executionService
+        public virtual void Execute(
+            IExecutionService executionService,
+            out object        output
             )
         {
             if(Status != Status.Waiting)
@@ -30,7 +31,7 @@ namespace Process.Execution
                 executionService,
                 Status.Executed);
 
-            return _definition.Source(this);
+            output = _definition.Source(this);
         }
 
         protected override void Register(
