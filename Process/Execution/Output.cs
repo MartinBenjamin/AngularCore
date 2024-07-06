@@ -21,7 +21,7 @@ namespace Process.Execution
 
         public virtual void Execute(
             IExecutionService executionService,
-            out object        output
+            out object        value
             )
         {
             if(Status != Status.Waiting)
@@ -31,7 +31,7 @@ namespace Process.Execution
                 executionService,
                 Status.Executed);
 
-            output = _definition.Source(this);
+            value = _definition.Source(this);
         }
 
         protected override void Register(

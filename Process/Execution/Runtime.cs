@@ -81,12 +81,12 @@ namespace Process.Execution
 
         void IRuntime.Input(
             ITuple    channel,
-            in object input
+            in object value
             )
         {
             _synchronisationService.Resolve(channel).Inputs.First().Execute(
                 this,
-                input);
+                value);
             Execute();
         }
 
@@ -96,12 +96,12 @@ namespace Process.Execution
 
         void IRuntime.Output(
             ITuple     channel,
-            out object output
+            out object value
             )
         {
             _synchronisationService.Resolve(channel).Outputs.First().Execute(
                 this,
-                out output);
+                out value);
             Execute();
         }
 

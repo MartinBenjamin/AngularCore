@@ -21,7 +21,7 @@ namespace Process.Execution
 
         public virtual void Execute(
             IExecutionService executionService,
-            in object         input
+            in object         value
             )
         {
             if(Status != Status.Waiting)
@@ -29,7 +29,7 @@ namespace Process.Execution
 
             var scope = DeclaringScope(_definition.TargetVariable) ?? Parent ?? this;
             if(scope != null)
-                scope[_definition.TargetVariable] = input;
+                scope[_definition.TargetVariable] = value;
 
             ChangeStatus(
                 executionService,
