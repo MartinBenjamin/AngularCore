@@ -35,25 +35,27 @@ namespace Process.Execution
             _queue = new Queue<IExecutable>();
             _queue.Enqueue(process);
             var synchronisations = new HashSet<Synchronisation>();
-            if(trace.Count > 0)
+            foreach(var item in trace)
             {
-                var last = trace.Last();
-                foreach(var item in trace)
+                while(_queue.Count > 0)
                 {
-
-                    var synchronisation = _synchronisationService.Resolve(item.Channel);
-                    if(item == trace.Last())
-                        _queue = current;
-
-                    if(item.Input)
-                        synchronisation.Inputs.Single(next => next.UltimateParent == process).Executelnput(
-                            this,
-                            item.Message);
+                    var executable = _queue.Dequeue();
+                    if(executable is Synchronisation)
+                        synchronisations.Add((Synchronisation)executable);
 
                     else
-                        synchronisation.Outputs.Single(next => next.UltimateParent == process).ExecuteOutput(this);
+                        executable.Execute(this);
                 }
 
+                var synchronisation = _synchronisationService.Resolve(item.Channel);
+
+                if(item.Input)
+                    synchronisation.Inputs.Single(next => next.UltimateParent == process).Executelnput(
+                        this,
+                        item.Message);
+
+                else
+                    synchronisation.Outputs.Single(next => next.UltimateParent == process).ExecuteOutput(this);
             }
 
             while(_queue.Count > 0)
