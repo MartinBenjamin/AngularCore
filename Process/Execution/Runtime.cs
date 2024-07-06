@@ -81,12 +81,12 @@ namespace Process.Execution
 
         void IRuntime.Input(
             ITuple channel,
-            object value
+            object input
             )
         {
             _synchronisationService.Resolve(channel).Inputs.First().Execute(
                 this,
-                value);
+                input);
             Execute();
         }
 
@@ -94,15 +94,15 @@ namespace Process.Execution
             ITuple channel
             ) => _synchronisationService.Resolve(channel)?.Inputs.Select(process => process.UltimateParent) ?? Enumerable.Empty<IProcess>();
 
-        object IRuntime.Output(
-            ITuple channel
+        void IRuntime.Output(
+            ITuple     channel,
+            out object output
             )
         {
             _synchronisationService.Resolve(channel).Outputs.First().Execute(
                 this,
-                out object output);
+                out output);
             Execute();
-            return output;
         }
 
         IEnumerable<IProcess> IRuntime.Outputs(
