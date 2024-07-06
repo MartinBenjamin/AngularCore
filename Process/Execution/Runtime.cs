@@ -9,34 +9,18 @@ namespace Process.Execution
         IRuntime
     {
         private readonly ISynchronisationService _synchronisationService = new SynchronisationService();
-        private readonly Queue<IExecutable>      _queue = new();
-        private          int                     _entered;
+        private          Queue<IExecutable>      _queue = new();
 
         Trace IExecutionService.Trace { get; set; }
 
         ISynchronisationService IExecutionService.SynchronisationService => _synchronisationService;
 
-        public void Execute(
+        void IExecutionService.Execute(
             IExecutable executable
             )
         {
-            try
-            {
-                _entered += 1;
-                _queue.Enqueue(executable);
-                if(_entered == 1)
-                    while(_queue.Count > 0)
-                    {
-                        _queue.Peek().Execute(this);
-                        _queue.Dequeue();
-                    }
-            }
-            finally
-            {
-                _entered -= 1;
-            }
+            _queue.Enqueue(executable);
         }
-        
 
         IProcess IExecutionService.Replay(
             Definition.IProcess                                         definition,
@@ -47,15 +31,62 @@ namespace Process.Execution
                 null,
                 null);
 
-            throw new System.NotImplementedException();
+            var current = _queue;
+            _queue = new Queue<IExecutable>();
+            var synchronisations = new HashSet<Synchronisation>();
+            _queue.Enqueue(process);
+            while(_queue.Count > 0)
+            {
+                var executable = _queue.Dequeue();
+                if(executable is Synchronisation)
+                    synchronisations.Add((Synchronisation)executable);
+
+                else
+                    executable.Execute(this);
+            }
+
+            foreach(var item in trace)
+            {
+                var synchronisation = _synchronisationService.Resolve(item.Channel);
+                if(item == trace.Last())
+                    _queue = current;
+
+                if(item.Input)
+                    synchronisation.Inputs.Single(next => next.UltimateParent == process).Executelnput(
+                        this,
+                        item.Message);
+
+                else
+                    synchronisation.Outputs.Single(next => next.UltimateParent == process).ExecuteOutput(this);
+
+                while(_queue.Count > 0)
+                {
+                    var executable = _queue.Dequeue();
+                    if(executable is Synchronisation)
+                        synchronisations.Add((Synchronisation)executable);
+
+                    else
+                        executable.Execute(this);
+                }
+            }
+           
+            foreach(var synchronisation in synchronisations)
+                if(synchronisation.SyncCount > 0 && !_queue.Contains(synchronisation))
+                    _queue.Enqueue(synchronisation);
+
+            return process;
         }
 
         void IRuntime.Input(
             ITuple channel,
             object value
-            ) => _synchronisationService.Resolve(channel).Inputs.First().Executelnput(
+            )
+        {
+            _synchronisationService.Resolve(channel).Inputs.First().Executelnput(
                 this,
                 value);
+            Execute();
+        }
 
         IEnumerable<IProcess> IRuntime.Inputs(
             ITuple channel
@@ -63,7 +94,12 @@ namespace Process.Execution
 
         object IRuntime.Output(
             ITuple channel
-            ) => _synchronisationService.Resolve(channel).Outputs.First().ExecuteOutput(this);
+            )
+        {
+            var value = _synchronisationService.Resolve(channel).Outputs.First().ExecuteOutput(this);
+            Execute();
+            return value;
+        }
 
         IEnumerable<IProcess> IRuntime.Outputs(
             ITuple channel
@@ -77,8 +113,18 @@ namespace Process.Execution
             var process = definition.Select(Constructor.Instance)(
                 null,
                 variables);
-            Execute(process);
+            _queue.Enqueue(process);
+            Execute();
             return process;
+        }
+
+        private void Execute()
+        {
+            while(_queue.Count > 0)
+            {
+                _queue.Peek().Execute(this);
+                _queue.Dequeue();
+            }
         }
     }
 }
