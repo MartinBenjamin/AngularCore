@@ -21,7 +21,7 @@ namespace Process.Execution
 
         public virtual void Execute(
             IExecutionService executionService,
-            object            input
+            in object         input
             )
         {
             if(Status != Status.Waiting)

@@ -80,8 +80,8 @@ namespace Process.Execution
         }
 
         void IRuntime.Input(
-            ITuple channel,
-            object input
+            ITuple    channel,
+            in object input
             )
         {
             _synchronisationService.Resolve(channel).Inputs.First().Execute(
