@@ -193,6 +193,30 @@ namespace Test
             Assert.That(trace[0].Item2, Is.EqualTo(value  ));
         }
 
+        [Test]
+        public void InfinitelyReplicated()
+        {
+            var a = new Channel("A");
+            var b = new Channel("B");
+
+            var definition = new Sequence(
+                new Parallel(
+                    new Output(a, (_) => null),
+                    new Output(a, (_) => null)),
+                new Input(b, "TargetVariable"));
+            IRuntime runtime = new Execution.Runtime();
+            var process = runtime.Run(definition);
+            Assert.AreEqual(runtime.Outputs(a).Count(p => p == process), 2);
+            Assert.AreEqual(runtime.Inputs(b).Count(p => p == process), 0);
+
+            var infinitelyReplicated = new InfinitelyReplicated(
+                new Input(a, "TargetVariable"),
+                null);
+            runtime.Run(infinitelyReplicated);
+            Assert.AreEqual(runtime.Outputs(a).Count(p => p == process), 0);
+            Assert.AreEqual(runtime.Inputs(b).Count(p => p == process), 1);
+        }
+
         public static IEnumerable<object[]> ProcessTestCases
         {
             get

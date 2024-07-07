@@ -5,7 +5,7 @@ namespace Process.Definition
 {
     //public class Invoke: Process
     //{
-    //    public Action<IScope> Action  { get; protected set; }
+    //    public Action<IScope> Action { get; protected set; }
 
     //    public Invoke(
     //        Action<IScope> action

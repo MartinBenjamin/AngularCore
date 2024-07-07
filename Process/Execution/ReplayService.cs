@@ -36,6 +36,7 @@ namespace Process.Execution
             var process = definition.Select(Constructor.Instance)(
                 null,
                 null);
+            _queue.Enqueue(process);
 
             var synchronisations = new HashSet<Synchronisation>();
             if (trace != null)
@@ -54,12 +55,12 @@ namespace Process.Execution
                     var synchronisation = _synchronisationService.Resolve(item.Channel);
 
                     if (item.Input)
-                        synchronisation.Inputs.Single(next => next.UltimateParent == process).Execute(
+                        synchronisation.Inputs.First(next => next.UltimateParent == process).Execute(
                             this,
                             item.Message);
 
                     else
-                        synchronisation.Outputs.Single(next => next.UltimateParent == process).Execute(
+                        synchronisation.Outputs.First(next => next.UltimateParent == process).Execute(
                             this,
                             out object message);
                 }

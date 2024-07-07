@@ -75,7 +75,7 @@ namespace Process.Execution
                 if(input.Parent != null && input.Parent.Definition is InfinitelyReplicated)
                 {
                     var replayService = new ReplayService(executionService.SynchronisationService);
-                    var (process, _) = replayService.Replay(output.Parent.Definition);
+                    var (process, _) = replayService.Replay(input.Parent.Definition);
                     input = (Input)((GuardedProcess)process).Guard;
                 }
                 output.Execute(
