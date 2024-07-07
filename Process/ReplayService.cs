@@ -4,6 +4,7 @@ using System.Linq;
 namespace Process
 {
     using Execution;
+    using System;
     using System.Runtime.CompilerServices;
 
     internal class ReplayService: IExecutionService
@@ -26,17 +27,56 @@ namespace Process
             IExecutable executable
             )
         {
-            if(executable is Synchronisation)
-                return;
-
             _queue.Enqueue(executable);
         }
 
-        public void Replay(
+        public ValueTuple<Process, IEnumerable<Synchronisation>> Replay(
             Definition.Process                                          definition,
-            IReadOnlyList<(bool Input, ITuple Channel, object Message)> trace
+            IReadOnlyList<(bool Input, ITuple Channel, object Message)> trace = null
             )
         {
+            var process = definition.Select(Constructor.Instance)(
+                null,
+                null);
+
+            var synchronisations = new HashSet<Synchronisation>();
+            if(trace != null)
+                foreach(var item in trace)
+                {
+                    while(_queue.Count > 0)
+                    {
+                        var executable = _queue.Dequeue();
+                        if(executable is Synchronisation sync)
+                            synchronisations.Add(sync);
+
+                        else
+                            executable.Execute(this);
+                    }
+
+                    var synchronisation = _synchronisationService.Resolve(item.Channel);
+
+                    if(item.Input)
+                        synchronisation.Inputs.Single(next => next.UltimateParent == process).Execute(
+                            this,
+                            item.Message);
+
+                    else
+                        synchronisation.Outputs.Single(next => next.UltimateParent == process).Execute(
+                            this,
+                            out object message);
+                }
+
+            while(_queue.Count > 0)
+            {
+                var executable = _queue.Dequeue();
+                if(executable is Synchronisation sync)
+                    synchronisations.Add(sync);
+
+                else
+                    executable.Execute(this);
+            }
+
+            return (process, synchronisations.Where(synchronisation => synchronisation.SyncCount > 0));
         }
 
         IProcess IExecutionService.Replay(Definition.IProcess definition, IReadOnlyList<(bool Input, ITuple Channel, object Message)> trace)
