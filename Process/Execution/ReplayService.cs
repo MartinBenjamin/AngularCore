@@ -29,7 +29,7 @@ namespace Process.Execution
         }
 
         public ValueTuple<Process, IEnumerable<Synchronisation>> Replay(
-            Definition.Process definition,
+            Definition.IProcess                                         definition,
             IReadOnlyList<(bool Input, ITuple Channel, object Message)> trace = null
             )
         {

@@ -66,23 +66,17 @@ namespace Process.Execution
             {
                 var output = _outputs[0];
                 var input = _inputs[0];
-                if(output.Parent != null && output.Parent.Definition is InfinitelyReplicated outputDefinition)
+                if(output.Parent != null && output.Parent.Definition is InfinitelyReplicated)
                 {
-                    var guardedProcess = new GuardedProcess(
-                        outputDefinition,
-                        null,
-                        null);
-                    ((IExecutable)guardedProcess).Execute(executionService);
-                    output = (Output)guardedProcess.Guard;
+                    var replayService = new ReplayService(executionService.SynchronisationService);
+                    var (process, _) = replayService.Replay(output.Parent.Definition);
+                    output = (Output)((GuardedProcess)process).Guard;
                 }
-                if(input.Parent != null && input.Parent.Definition is InfinitelyReplicated inputDefinition)
+                if(input.Parent != null && input.Parent.Definition is InfinitelyReplicated)
                 {
-                    var guardedProcess = new GuardedProcess(
-                        inputDefinition,
-                        null,
-                        null);
-                    ((IExecutable)guardedProcess).Execute(executionService);
-                    input = (Input)guardedProcess.Guard;
+                    var replayService = new ReplayService(executionService.SynchronisationService);
+                    var (process, _) = replayService.Replay(output.Parent.Definition);
+                    input = (Input)((GuardedProcess)process).Guard;
                 }
                 output.Execute(
                     executionService,
