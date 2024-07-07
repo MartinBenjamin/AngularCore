@@ -200,13 +200,15 @@ namespace Test
             var b = new Channel("B");
 
             var definition = new Sequence(
-                new Parallel(
-                    new Output(a, (_) => null),
-                    new Output(a, (_) => null)),
+                new ParallelForEach()
+                {
+                    Variables  = (_) => Enumerable.Repeat<IDictionary<string, object>>(null, 10),
+                    Replicated = new Output(a, (_) => null)
+                },
                 new Input(b, "TargetVariable"));
             IRuntime runtime = new Execution.Runtime();
             var process = runtime.Run(definition);
-            Assert.AreEqual(runtime.Outputs(a).Count(p => p == process), 2);
+            Assert.AreEqual(runtime.Outputs(a).Count(p => p == process), 10);
             Assert.AreEqual(runtime.Inputs(b).Count(p => p == process), 0);
 
             var infinitelyReplicated = new InfinitelyReplicated(
