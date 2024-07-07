@@ -194,25 +194,53 @@ namespace Test
         }
 
         [Test]
-        public void InfinitelyReplicated()
+        public void InfinitelyReplicatedInput()
         {
             var a = new Channel("A");
             var b = new Channel("B");
+            var count = 10;
 
             var definition = new Sequence(
                 new ParallelForEach()
                 {
-                    Variables  = (_) => Enumerable.Repeat<IDictionary<string, object>>(null, 10),
-                    Replicated = new Output(a, (_) => null)
+                    Variables  = _ => Enumerable.Repeat<IDictionary<string, object>>(null, count),
+                    Replicated = new Output(a, _ => null)
                 },
                 new Input(b, "TargetVariable"));
             IRuntime runtime = new Execution.Runtime();
             var process = runtime.Run(definition);
-            Assert.AreEqual(runtime.Outputs(a).Count(p => p == process), 10);
+            Assert.AreEqual(runtime.Outputs(a).Count(p => p == process), count);
             Assert.AreEqual(runtime.Inputs(b).Count(p => p == process), 0);
 
             var infinitelyReplicated = new InfinitelyReplicated(
                 new Input(a, "TargetVariable"),
+                null);
+            runtime.Run(infinitelyReplicated);
+            Assert.AreEqual(runtime.Outputs(a).Count(p => p == process), 0);
+            Assert.AreEqual(runtime.Inputs(b).Count(p => p == process), 1);
+        }
+
+        [Test]
+        public void InfinitelyReplicatedOutput()
+        {
+            var a = new Channel("A");
+            var b = new Channel("B");
+            var count = 10;
+
+            var definition = new Sequence(
+                new ParallelForEach()
+                {
+                    Variables = _ => Enumerable.Repeat<IDictionary<string, object>>(null, count),
+                    Replicated = new Input(a, "TargetVariable")
+                },
+                new Input(b, "TargetVariable"));
+            IRuntime runtime = new Execution.Runtime();
+            var process = runtime.Run(definition);
+            Assert.AreEqual(runtime.Inputs(a).Count(p => p == process), count);
+            Assert.AreEqual(runtime.Inputs(b).Count(p => p == process), 0);
+
+            var infinitelyReplicated = new InfinitelyReplicated(
+                new Output(a, _ => null),
                 null);
             runtime.Run(infinitelyReplicated);
             Assert.AreEqual(runtime.Outputs(a).Count(p => p == process), 0);
