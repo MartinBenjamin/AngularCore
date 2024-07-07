@@ -14,9 +14,5 @@ namespace Process.Execution
         ISynchronisationService SynchronisationService { get; }
 
         void Execute(IExecutable executable);
-
-        IProcess Replay(
-            Definition.IProcess                                         definition,
-            IReadOnlyList<(bool Input, ITuple Channel, object Message)> trace);
     }
 }

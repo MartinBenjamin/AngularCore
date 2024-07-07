@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
-namespace Process
+namespace Process.Execution
 {
-    using Execution;
-    using System;
-    using System.Runtime.CompilerServices;
-
-    internal class ReplayService: IExecutionService
+    internal class ReplayService : IExecutionService
     {
         private readonly ISynchronisationService _synchronisationService;
         private readonly Queue<IExecutable>      _queue = new();
@@ -31,7 +29,7 @@ namespace Process
         }
 
         public ValueTuple<Process, IEnumerable<Synchronisation>> Replay(
-            Definition.Process                                          definition,
+            Definition.Process definition,
             IReadOnlyList<(bool Input, ITuple Channel, object Message)> trace = null
             )
         {
@@ -40,13 +38,13 @@ namespace Process
                 null);
 
             var synchronisations = new HashSet<Synchronisation>();
-            if(trace != null)
-                foreach(var item in trace)
+            if (trace != null)
+                foreach (var item in trace)
                 {
-                    while(_queue.Count > 0)
+                    while (_queue.Count > 0)
                     {
                         var executable = _queue.Dequeue();
-                        if(executable is Synchronisation sync)
+                        if (executable is Synchronisation sync)
                             synchronisations.Add(sync);
 
                         else
@@ -55,7 +53,7 @@ namespace Process
 
                     var synchronisation = _synchronisationService.Resolve(item.Channel);
 
-                    if(item.Input)
+                    if (item.Input)
                         synchronisation.Inputs.Single(next => next.UltimateParent == process).Execute(
                             this,
                             item.Message);
@@ -66,10 +64,10 @@ namespace Process
                             out object message);
                 }
 
-            while(_queue.Count > 0)
+            while (_queue.Count > 0)
             {
                 var executable = _queue.Dequeue();
-                if(executable is Synchronisation sync)
+                if (executable is Synchronisation sync)
                     synchronisations.Add(sync);
 
                 else
@@ -77,11 +75,6 @@ namespace Process
             }
 
             return (process, synchronisations.Where(synchronisation => synchronisation.SyncCount > 0));
-        }
-
-        IProcess IExecutionService.Replay(Definition.IProcess definition, IReadOnlyList<(bool Input, ITuple Channel, object Message)> trace)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }
