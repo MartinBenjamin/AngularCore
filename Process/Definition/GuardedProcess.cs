@@ -10,12 +10,6 @@ namespace Process.Definition
         public IIO                Guard           { get; protected set; }
         public ISubprocess        Guarded         { get; protected set; }
 
-
-        public GuardedProcess()
-            : base()
-        {
-        }
-
         public GuardedProcess(
             Func<IScope, bool> guardExpression,
             IIO                guard,
@@ -29,7 +23,7 @@ namespace Process.Definition
         }
 
         public GuardedProcess(
-            IO      guard,
+            IIO         guard,
             ISubprocess guarded = null
             )
             : this(

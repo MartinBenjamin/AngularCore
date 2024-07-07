@@ -103,6 +103,14 @@ namespace Process.Definition
             throw new NotImplementedException();
         }
 
+        void IVisitor.Visit(
+            InfinitelyReplicated infinitelyReplicated
+            )
+        {
+            _builder.Append('!');
+            ((IVisitor)this).Visit((GuardedProcess)infinitelyReplicated);
+        }
+
         private void Append(
             IEnumerable<IProcess> processes,
             string                separator

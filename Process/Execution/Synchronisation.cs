@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Process.Definition;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -65,6 +66,24 @@ namespace Process.Execution
             {
                 var output = _outputs[0];
                 var input = _inputs[0];
+                if(output.Parent != null && output.Parent.Definition is InfinitelyReplicated outputDefinition)
+                {
+                    var guardedProcess = new GuardedProcess(
+                        outputDefinition,
+                        null,
+                        null);
+                    ((IExecutable)guardedProcess).Execute(executionService);
+                    output = (Output)guardedProcess.Guard;
+                }
+                if(input.Parent != null && input.Parent.Definition is InfinitelyReplicated inputDefinition)
+                {
+                    var guardedProcess = new GuardedProcess(
+                        inputDefinition,
+                        null,
+                        null);
+                    ((IExecutable)guardedProcess).Execute(executionService);
+                    input = (Input)guardedProcess.Guard;
+                }
                 output.Execute(
                     executionService,
                     out object message);

@@ -11,7 +11,7 @@ namespace Process.Execution
 
         internal protected GuardedProcess(
             Definition.GuardedProcess   definition,
-            Choice                      parent,
+            Process                     parent,
             IDictionary<string, object> variables
             )
             : base(

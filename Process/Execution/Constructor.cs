@@ -104,9 +104,19 @@ namespace Process.Execution
         Func<Process, IDictionary<string, object>, Process> ISelector<Func<Process, IDictionary<string, object>, Process>>.Select(
             Definition.ChoiceForEach definition
             ) => (
-                Process parent,
+                Process                     parent,
                 IDictionary<string, object> variables
                 ) => new ChoiceForEach(
+                    definition,
+                    parent,
+                    variables);
+
+        Func<Process, IDictionary<string, object>, Process> ISelector<Func<Process, IDictionary<string, object>, Process>>.Select(
+            Definition.InfinitelyReplicated definition
+            ) => (
+                Process                     parent,
+                IDictionary<string, object> variables
+                ) => new GuardedProcess(
                     definition,
                     parent,
                     variables);

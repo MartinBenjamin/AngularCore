@@ -47,11 +47,11 @@ namespace Process.Execution
                 if(Parent is GuardedProcess guardedProcess &&
                    guardedProcess.Guard == this)
                 {
-                    var choice = guardedProcess.Parent as Choice;
-                    while(choice.Parent != null && choice.Parent is Choice)
-                        choice = choice.Parent as Choice;
+                    Alternative alternative = guardedProcess;
+                    while(alternative.Parent is Choice choice)
+                        alternative = choice;
 
-                    choice.Choose(
+                    alternative.Choose(
                         executionService,
                         guardedProcess);
                 }
