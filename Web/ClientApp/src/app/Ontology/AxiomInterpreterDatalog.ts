@@ -1,6 +1,5 @@
 import { Rule, Variable } from "../EavStore/Datalog";
 import { IEavStore } from "../EavStore/IEavStore";
-import { AddIndividuals } from "./AddIndividuals";
 import { ClassAtom, ClassExpressionInterpreter } from "./ClassExpressionInterpreterDatalog";
 import { IDLSafeRule } from "./DLSafeRule";
 import { IAnnotationAssertion } from "./IAnnotationAssertion";
@@ -43,7 +42,7 @@ export class AxiomInterpreter implements IAxiomVisitor
     private readonly _range     : Variable = '?y';
     private readonly _individual: Variable = '?x';
 
-    private _individualInterpretation: ReadonlyMap<IIndividual, any>;
+    private _individualInterpretation = new Map<IIndividual, any>();
     private _classExpressionInterpreter: IClassExpressionSelector<ClassAtom> = new ClassExpressionInterpreter(
         this._individual,
         this._rules);
@@ -55,9 +54,6 @@ export class AxiomInterpreter implements IAxiomVisitor
         private _rules   : Rule[]
         )
     {
-        this._individualInterpretation = AddIndividuals(
-            this._ontology,
-            this._store);
     }
 
     Axiom(
@@ -107,7 +103,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
         if(this._ontology.IsClassExpression.IClass(classAssertion.ClassExpression))
-            this._rules.push([[classAssertion.ClassExpression.Iri, this._individualInterpretation.get(classAssertion.Individual)], []]);
+            this._rules.push([[classAssertion.ClassExpression.Iri, this.InterpretIndividual(classAssertion.Individual)], []]);
     }
 
     ObjectPropertyAssertion(
@@ -115,7 +111,33 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
         if(this._ontology.IsAxiom.IObjectProperty(objectPropertyAssertion.ObjectPropertyExpression))
-            this._rules.push([[objectPropertyAssertion.ObjectPropertyExpression.Iri, this._individualInterpretation.get(objectPropertyAssertion.SourceIndividual), this._individualInterpretation.get(objectPropertyAssertion.TargetIndividual)], []]);
+        {
+            const object = this.InterpretIndividual(objectPropertyAssertion.SourceIndividual);
+            const propertyName = objectPropertyAssertion.ObjectPropertyExpression.LocalName;
+
+            if(typeof object[propertyName] === 'undefined')
+            {
+                let functional = false;
+                for(const functionalObjectProperty of this._ontology.Get(this._ontology.IsAxiom.IFunctionalObjectProperty))
+                    if(functionalObjectProperty.ObjectPropertyExpression === objectPropertyAssertion.ObjectPropertyExpression)
+                    {
+                        functional = true;
+                        break;
+                    }
+
+                if(!functional)
+                    object[propertyName] = [];
+            }
+
+            if(object[propertyName] instanceof Array)
+                object[propertyName].push(this.InterpretIndividual(objectPropertyAssertion.TargetIndividual));
+
+            else
+                object[propertyName] = this.InterpretIndividual(objectPropertyAssertion.TargetIndividual);
+        }
+
+    //    if(this._ontology.IsAxiom.IObjectProperty(objectPropertyAssertion.ObjectPropertyExpression))
+    //        this._rules.push([[objectPropertyAssertion.ObjectPropertyExpression.Iri, this.InterpretIndividual(objectPropertyAssertion.SourceIndividual), this.InterpretIndividual(objectPropertyAssertion.TargetIndividual)], []]);
     }
 
     DataPropertyAssertion(
@@ -123,7 +145,32 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
         if(this._ontology.IsAxiom.IDataProperty(dataPropertyAssertion.DataPropertyExpression))
-            this._rules.push([[dataPropertyAssertion.DataPropertyExpression.Iri, this._individualInterpretation.get(dataPropertyAssertion.SourceIndividual), dataPropertyAssertion.TargetValue], []]);
+        {
+            const object = this.InterpretIndividual(dataPropertyAssertion.SourceIndividual);
+            const propertyName = dataPropertyAssertion.DataPropertyExpression.LocalName;
+            if(typeof object[propertyName] === 'undefined')
+            {
+                let functional = false;
+                for(const functionalDataProperty of this._ontology.Get(this._ontology.IsAxiom.IFunctionalDataProperty))
+                    if(functionalDataProperty.DataPropertyExpression === dataPropertyAssertion.DataPropertyExpression)
+                    {
+                        functional = true;
+                        break;
+                    }
+
+                if(!functional)
+                    object[propertyName] = [];
+            }
+
+            if(object[propertyName] instanceof Array)
+                object[propertyName].push(dataPropertyAssertion.TargetValue);
+
+            else
+                    object[propertyName] = dataPropertyAssertion.TargetValue;
+        }
+
+    //    if(this._ontology.IsAxiom.IDataProperty(dataPropertyAssertion.DataPropertyExpression))
+    //        this._rules.push([[dataPropertyAssertion.DataPropertyExpression.Iri, this.InterpretIndividual(dataPropertyAssertion.SourceIndividual), dataPropertyAssertion.TargetValue], []]);
     }
 
     SubObjectPropertyOf(
@@ -301,7 +348,17 @@ export class AxiomInterpreter implements IAxiomVisitor
         individual: IIndividual
         ): any
     {
-        return this._individualInterpretation.get(individual);
+        let interpretation = this._individualInterpretation.get(individual);
+
+        if(!interpretation)
+        {
+            interpretation = this._store.NewEntity();
+            this._individualInterpretation.set(
+                individual,
+                interpretation)
+        }
+
+        return interpretation;
     }
 
     private Property(
