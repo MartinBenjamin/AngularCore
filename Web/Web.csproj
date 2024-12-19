@@ -179,6 +179,7 @@
     <None Remove="ClientApp\src\app\Ontology\DataMinCardinalitySignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataOneOf.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataOneOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\DataPropertyAssertionDatalog.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataPropertyAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataPropertyDomain.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataPropertyRange.ts" />

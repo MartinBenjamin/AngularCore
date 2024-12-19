@@ -29,11 +29,13 @@ import { ISubDataPropertyOf } from "./ISubDataPropertyOf";
 import { ISubObjectPropertyOf } from "./ISubObjectPropertyOf";
 import { ISymmetricObjectProperty } from "./ISymmetricObjectProperty";
 import { ITransitiveObjectProperty } from "./ITransitiveObjectProperty";
+import { PropertyExpressionWriter } from "./PropertyExpressionWriter";
 
 export class AxiomWriter implements IAxiomSelector<string>
 {
-    public readonly ClassExpressionWriter = new ClassExpressionWriter();
-    public readonly IndividualWriter      = new IndividualWriter();
+    public readonly PropertyExpressionWriter = new PropertyExpressionWriter();
+    public readonly ClassExpressionWriter   = new ClassExpressionWriter();
+    public readonly IndividualWriter        = new IndividualWriter();
 
     constructor()
     {
@@ -91,9 +93,14 @@ export class AxiomWriter implements IAxiomSelector<string>
     ObjectPropertyAssertion(objectPropertyAssertion: IObjectPropertyAssertion): string {
         throw new Error("Method not implemented.");
     }
-    DataPropertyAssertion(dataPropertyAssertion: IDataPropertyAssertion): string {
-        throw new Error("Method not implemented.");
+
+    DataPropertyAssertion(
+        dataPropertyAssertion: IDataPropertyAssertion
+        ): string
+    {
+        return `DataPropertyAssertion(${dataPropertyAssertion.DataPropertyExpression.Select(this.PropertyExpressionWriter)} ${dataPropertyAssertion.SourceIndividual.Select(this.IndividualWriter)} ${dataPropertyAssertion.TargetValue})`;;
     }
+
     SubObjectPropertyOf(subObjectPropertyOf: ISubObjectPropertyOf): string {
         throw new Error("Method not implemented.");
     }

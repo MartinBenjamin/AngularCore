@@ -7,27 +7,27 @@ export class PropertyExpressionWriter implements IPropertyExpressionSelector<str
         objectProperty: IObjectProperty
         ): string
     {
-        return `ObjectProperty(${this.Property(objectProperty)})`;
+        return this.Property(objectProperty);
     }
 
     DataProperty(
         dataProperty: IDataProperty
         ): string
     {
-        return `DataProperty(${this.Property(dataProperty)})`;
+        return this.Property(dataProperty);
     }
 
     InverseObjectProperty(
         inverseObjectProperty: IInverseObjectProperty
         ): string
     {
-        return `InverseObjectPropert(${inverseObjectProperty.ObjectProperty.Select(this)})`;
+        return `ObjectInverseOf(${inverseObjectProperty.ObjectProperty.Select(this)})`;
     }
 
     private Property(
         property: IProperty
         )
     {
-        return property.LocalName;
+        return property.Iri;
     }
 }
