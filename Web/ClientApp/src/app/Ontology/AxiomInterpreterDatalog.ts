@@ -82,9 +82,8 @@ export class AxiomInterpreter implements IAxiomVisitor
         subClassOf: ISubClassOf
         ): void
     {
-        const superClassExpression = subClassOf.SuperClassExpression;
-        if(this._ontology.IsClassExpression.IClass(superClassExpression))
-            this._rules.push([[superClassExpression.Iri, this._individual], [subClassOf.SubClassExpression.Select(this._classExpressionInterpreter)]])
+        if(this._ontology.IsClassExpression.IClass(subClassOf.SuperClassExpression))
+            this._rules.push([[subClassOf.SuperClassExpression.Iri, this._individual], [subClassOf.SubClassExpression.Select(this._classExpressionInterpreter)]])
     }
 
     EquivalentClasses(
@@ -131,9 +130,8 @@ export class AxiomInterpreter implements IAxiomVisitor
         subObjectPropertyOf: ISubObjectPropertyOf
         ): void
     {
-        const superObjectPropertyExpression = subObjectPropertyOf.SuperObjectPropertyExpression;
-        if(this._ontology.IsAxiom.IObjectProperty(superObjectPropertyExpression))
-            this._rules.push([[superObjectPropertyExpression.Iri, this._domain, this._range], [subObjectPropertyOf.SubObjectPropertyExpression.Select(this._propertyExpressionInterpreter)]])
+        if(this._ontology.IsAxiom.IObjectProperty(subObjectPropertyOf.SuperObjectPropertyExpression))
+            this._rules.push([[subObjectPropertyOf.SuperObjectPropertyExpression.Iri, this._domain, this._range], [subObjectPropertyOf.SubObjectPropertyExpression.Select(this._propertyExpressionInterpreter)]])
     }
 
     EquivalentObjectProperties(
@@ -162,18 +160,16 @@ export class AxiomInterpreter implements IAxiomVisitor
         objectPropertyDomain: IObjectPropertyDomain
         ): void
     {
-        const domain = objectPropertyDomain.Domain;
-        if(this._ontology.IsClassExpression.IClass(domain))
-            this._rules.push([[domain.Iri, this._domain], [objectPropertyDomain.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter)]])
+        if(this._ontology.IsClassExpression.IClass(objectPropertyDomain.Domain))
+            this._rules.push([[objectPropertyDomain.Domain.Iri, this._domain], [objectPropertyDomain.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter)]])
     }
 
     ObjectPropertyRange(
         objectPropertyRange: IObjectPropertyRange
         ): void
     {
-        const range = objectPropertyRange.Range;
-        if(this._ontology.IsClassExpression.IClass(range))
-            this._rules.push([[range.Iri, this._range], [objectPropertyRange.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter)]])
+        if(this._ontology.IsClassExpression.IClass(objectPropertyRange.Range))
+            this._rules.push([[objectPropertyRange.Range.Iri, this._range], [objectPropertyRange.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter)]])
     }
 
     FunctionalObjectProperty(
@@ -216,9 +212,8 @@ export class AxiomInterpreter implements IAxiomVisitor
         subDataPropertyOf: ISubDataPropertyOf
         ): void
     {
-        const superDataPropertyExpression = subDataPropertyOf.SuperDataPropertyExpression;
-        if(this._ontology.IsAxiom.IDataProperty(superDataPropertyExpression))
-            this._rules.push([[superDataPropertyExpression.Iri, this._domain, this._range], [subDataPropertyOf.SubDataPropertyExpression.Select(this._propertyExpressionInterpreter)]])
+        if(this._ontology.IsAxiom.IDataProperty(subDataPropertyOf.SuperDataPropertyExpression))
+            this._rules.push([[subDataPropertyOf.SuperDataPropertyExpression.Iri, this._domain, this._range], [subDataPropertyOf.SubDataPropertyExpression.Select(this._propertyExpressionInterpreter)]])
     }
 
     EquivalentDataProperties(
@@ -235,9 +230,8 @@ export class AxiomInterpreter implements IAxiomVisitor
         dataPropertyDomain: IDataPropertyDomain
         ): void
     {
-        const domain = dataPropertyDomain.Domain;
-        if(this._ontology.IsClassExpression.IClass(domain))
-            this._rules.push([[domain.Iri, this._domain], [dataPropertyDomain.DataPropertyExpression.Select(this._propertyExpressionInterpreter)]])
+        if(this._ontology.IsClassExpression.IClass(dataPropertyDomain.Domain))
+            this._rules.push([[dataPropertyDomain.Domain.Iri, this._domain], [dataPropertyDomain.DataPropertyExpression.Select(this._propertyExpressionInterpreter)]])
     }
 
     DataPropertyRange(
