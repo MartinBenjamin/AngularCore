@@ -150,8 +150,12 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Clas
         dataHasValue: IDataHasValue
         ): ClassAtom
     {
-        return <ClassAtom>dataHasValue.DataPropertyExpression.Select(this._propertyExpressionInterpreter)
-            .map(term => term === this._range ? this._individualInterpretation.get(dataHasValue.Value) : term);
+        const predicateSymbol = dataHasValue.Select(this._predicateSymbolSelector);
+        this._rules.push([[predicateSymbol, this._domain], [<PropertyAtom>dataHasValue.DataPropertyExpression.Select(this._propertyExpressionInterpreter)
+            .map(term => term === this._range ? dataHasValue.Value : term)]]);
+        return [predicateSymbol, this.Individual];
+    //    return <ClassAtom>dataHasValue.DataPropertyExpression.Select(this._propertyExpressionInterpreter)
+    //        .map(term => term === this._range ? dataHasValue.Value : term);
     }
 
     DataMinCardinality(dataMinCardinality: IDataMinCardinality): ClassAtom {
