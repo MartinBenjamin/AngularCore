@@ -115,12 +115,16 @@ export class AxiomInterpreter implements IAxiomVisitor
         objectPropertyAssertion: IObjectPropertyAssertion
         ): void
     {
+        if(this._ontology.IsAxiom.IObjectProperty(objectPropertyAssertion.ObjectPropertyExpression))
+            this._rules.push([[objectPropertyAssertion.ObjectPropertyExpression.Iri, this._individualInterpretation.get(objectPropertyAssertion.SourceIndividual), this._individualInterpretation.get(objectPropertyAssertion.TargetIndividual)], []]);
     }
 
     DataPropertyAssertion(
         dataPropertyAssertion: IDataPropertyAssertion
         ): void
     {
+        if(this._ontology.IsAxiom.IDataProperty(dataPropertyAssertion.DataPropertyExpression))
+            this._rules.push([[dataPropertyAssertion.DataPropertyExpression.Iri, this._individualInterpretation.get(dataPropertyAssertion.SourceIndividual), dataPropertyAssertion.TargetValue], []]);
     }
 
     SubObjectPropertyOf(
