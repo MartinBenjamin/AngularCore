@@ -66,15 +66,22 @@ class PredicateSymbolGenerator implements IClassExpressionSelector<string>
 
 export class ClassExpressionInterpreter implements IClassExpressionSelector<ClassAtom>
 {
+    private readonly _domain: Variable = '?x';
+    private readonly _range : Variable = '?y';
+
     private _individualInterpretation     : ReadonlyMap<IIndividual, any>;
-    private _propertyExpressionInterpreter: PropertyExpressionInterpreter;// = new PropertyExpressionInterpreter('?x', '?y');
+    private _propertyExpressionInterpreter: IPropertyExpressionSelector<PropertyAtom>;
     private _predicateSymbolSelector      : IClassExpressionSelector<string>;
 
     constructor(
         public readonly Individual: Variable,
         private _rules: Rule[]
         )
-    {
+{
+        this._propertyExpressionInterpreter = new PropertyExpressionInterpreter(
+            this._domain,
+            this._range,
+            _rules);
     }
 
     ObjectIntersectionOf(
@@ -105,8 +112,8 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Clas
         ): ClassAtom
     {
         const predicateSymbol = objectHasValue.Select(this._predicateSymbolSelector);
-        this._rules.push([[predicateSymbol, this._propertyExpressionInterpreter.Domain], [<PropertyAtom>objectHasValue.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter)
-            .map(term => term === this._propertyExpressionInterpreter.Range ? this._individualInterpretation.get(objectHasValue.Individual) : term)]]);
+        this._rules.push([[predicateSymbol, this._domain], [<PropertyAtom>objectHasValue.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter)
+            .map(term => term === this._range ? this._individualInterpretation.get(objectHasValue.Individual) : term)]]);
         return [predicateSymbol, this.Individual];
     }
 
@@ -119,7 +126,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Clas
         ): ClassAtom
     {
         let minCardinality: string;
-        this._rules.push([[minCardinality, this._propertyExpressionInterpreter.Domain], [this.ObjectCardinality(objectMinCardinality), GreaterThanOrEqual(this._propertyExpressionInterpreter.Range, objectMinCardinality.Cardinality)]]);
+        this._rules.push([[minCardinality, this._domain], [this.ObjectCardinality(objectMinCardinality), GreaterThanOrEqual(this._range, objectMinCardinality.Cardinality)]]);
         return [minCardinality, this.Individual];
     }
 
@@ -144,7 +151,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Clas
         ): ClassAtom
     {
         return <ClassAtom>dataHasValue.DataPropertyExpression.Select(this._propertyExpressionInterpreter)
-            .map(term => term === '?y' ? this._individualInterpretation.get(dataHasValue.Value) : term);
+            .map(term => term === this._range ? this._individualInterpretation.get(dataHasValue.Value) : term);
     }
 
     DataMinCardinality(dataMinCardinality: IDataMinCardinality): ClassAtom {
@@ -172,12 +179,12 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Clas
         const predicateSymbol = objectCardinality.Select(this._predicateSymbolSelector) + "Multiplicity";
         if(!this._rules.find(([head,]) => head[0] === predicateSymbol))
         {
-            const rule: Rule = [[predicateSymbol, this._propertyExpressionInterpreter.Domain, Count()], [objectCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter)]]
+            const rule: Rule = [[predicateSymbol, this._domain, Count()], [objectCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter)]]
             if(objectCardinality.ClassExpression)
-                rule[1].push(<ClassAtom>objectCardinality.ClassExpression.Select(this).map(term => term === this.Individual ? this._propertyExpressionInterpreter.Range : term));
+                rule[1].push(<ClassAtom>objectCardinality.ClassExpression.Select(this).map(term => term === this.Individual ? this._range : term));
             this._rules.push(rule);
         }
 
-        return [predicateSymbol, this._propertyExpressionInterpreter.Domain, this._propertyExpressionInterpreter.Range];
+        return [predicateSymbol, this._domain, this._range];
     }
 }
