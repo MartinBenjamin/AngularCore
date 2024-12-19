@@ -34,7 +34,7 @@ import { ISubDataPropertyOf } from "./ISubDataPropertyOf";
 import { ISubObjectPropertyOf } from "./ISubObjectPropertyOf";
 import { ISymmetricObjectProperty } from "./ISymmetricObjectProperty";
 import { ITransitiveObjectProperty } from "./ITransitiveObjectProperty";
-import { PropertyAtom } from "./PropertyExpressionInterpreterDatalog";
+import { PropertyAtom, PropertyExpressionInterpreter } from "./PropertyExpressionInterpreterDatalog";
 
 export class AxiomInterpreter implements IAxiomVisitor
 {
@@ -42,11 +42,9 @@ export class AxiomInterpreter implements IAxiomVisitor
     private readonly _range     : Variable = '?y';
     private readonly _individual: Variable = '?x';
 
-    private _individualInterpretation = new Map<IIndividual, any>();
-    private _classExpressionInterpreter: IClassExpressionSelector<ClassAtom> = new ClassExpressionInterpreter(
-        this._individual,
-        this._rules);
-    private _propertyExpressionInterpreter: IPropertyExpressionSelector<PropertyAtom>;// = new PropertyExpressionInterpreter('?x', '?y')
+    private _individualInterpretation     = new Map<IIndividual, any>();
+    private _classExpressionInterpreter   : IClassExpressionSelector<ClassAtom>;
+    private _propertyExpressionInterpreter: IPropertyExpressionSelector<PropertyAtom>;
 
     constructor(
         private _ontology: IOntology,
@@ -54,6 +52,13 @@ export class AxiomInterpreter implements IAxiomVisitor
         private _rules   : Rule[]
         )
     {
+        this._classExpressionInterpreter = new ClassExpressionInterpreter(
+            this._individual,
+            this._rules);
+        this._propertyExpressionInterpreter = new PropertyExpressionInterpreter(
+            this._domain,
+            this._range,
+            _rules);
     }
 
     Axiom(
