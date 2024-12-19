@@ -1,16 +1,16 @@
-import {} from 'jasmine';
-import {SortedSet} from '../Collections/SortedSet';
-import {Rule} from "../EavStore/Datalog";
-import {EavStore, tupleCompare} from '../EavStore/EavStore';
-import {IEavStore} from '../EavStore/IEavStore';
-import {ClassAssertion} from './Assertion';
-import {AxiomInterpreter} from './AxiomInterpreterDatalog';
-import {AxiomWriter} from './AxiomWriter';
-import {Class} from './Class';
-import {EquivalentClasses} from './EquivalentClasses';
-import {IOntology} from './IOntology';
-import {NamedIndividual} from './NamedIndividual';
-import {Ontology} from "./Ontology";
+import { } from 'jasmine';
+import { SortedSet } from '../Collections/SortedSet';
+import { Rule } from "../EavStore/Datalog";
+import { EavStore, tupleCompare } from '../EavStore/EavStore';
+import { IEavStore } from '../EavStore/IEavStore';
+import { ClassAssertion } from './Assertion';
+import { AxiomInterpreter } from './AxiomInterpreterDatalog';
+import { AxiomWriter } from './AxiomWriter';
+import { Class } from './Class';
+import { EquivalentClasses } from './EquivalentClasses';
+import { IOntology } from './IOntology';
+import { NamedIndividual } from './NamedIndividual';
+import { Ontology } from "./Ontology";
 
 describe(
     'EquivalentClasses( CE1 ... CEn ) ((CEj)C = (CEk)C for each 1 ≤ j ≤ n and each 1 ≤ k ≤ n)',
