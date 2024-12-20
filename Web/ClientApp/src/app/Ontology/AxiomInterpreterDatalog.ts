@@ -1,5 +1,6 @@
 import { Rule, Variable } from "../EavStore/Datalog";
 import { IEavStore } from "../EavStore/IEavStore";
+import { AddIndividuals } from "./AddIndividuals";
 import { ClassAtom, ClassExpressionInterpreter } from "./ClassExpressionInterpreterDatalog";
 import { IDLSafeRule } from "./DLSafeRule";
 import { IAnnotationAssertion } from "./IAnnotationAssertion";
@@ -59,6 +60,9 @@ export class AxiomInterpreter implements IAxiomVisitor
             this._domain,
             this._range,
             _rules);
+        this._individualInterpretation = AddIndividuals(
+            this._ontology,
+            this._store);
     }
 
     Axiom(
@@ -115,32 +119,6 @@ export class AxiomInterpreter implements IAxiomVisitor
         objectPropertyAssertion: IObjectPropertyAssertion
         ): void
     {
-        if(this._ontology.IsAxiom.IObjectProperty(objectPropertyAssertion.ObjectPropertyExpression))
-        {
-            const object = this.InterpretIndividual(objectPropertyAssertion.SourceIndividual);
-            const propertyName = objectPropertyAssertion.ObjectPropertyExpression.LocalName;
-
-            if(typeof object[propertyName] === 'undefined')
-            {
-                let functional = false;
-                for(const functionalObjectProperty of this._ontology.Get(this._ontology.IsAxiom.IFunctionalObjectProperty))
-                    if(functionalObjectProperty.ObjectPropertyExpression === objectPropertyAssertion.ObjectPropertyExpression)
-                    {
-                        functional = true;
-                        break;
-                    }
-
-                if(!functional)
-                    object[propertyName] = [];
-            }
-
-            if(object[propertyName] instanceof Array)
-                object[propertyName].push(this.InterpretIndividual(objectPropertyAssertion.TargetIndividual));
-
-            else
-                object[propertyName] = this.InterpretIndividual(objectPropertyAssertion.TargetIndividual);
-        }
-
     //    if(this._ontology.IsAxiom.IObjectProperty(objectPropertyAssertion.ObjectPropertyExpression))
     //        this._rules.push([[objectPropertyAssertion.ObjectPropertyExpression.Iri, this.InterpretIndividual(objectPropertyAssertion.SourceIndividual), this.InterpretIndividual(objectPropertyAssertion.TargetIndividual)], []]);
     }
@@ -149,31 +127,6 @@ export class AxiomInterpreter implements IAxiomVisitor
         dataPropertyAssertion: IDataPropertyAssertion
         ): void
     {
-        if(this._ontology.IsAxiom.IDataProperty(dataPropertyAssertion.DataPropertyExpression))
-        {
-            const object = this.InterpretIndividual(dataPropertyAssertion.SourceIndividual);
-            const propertyName = dataPropertyAssertion.DataPropertyExpression.LocalName;
-            if(typeof object[propertyName] === 'undefined')
-            {
-                let functional = false;
-                for(const functionalDataProperty of this._ontology.Get(this._ontology.IsAxiom.IFunctionalDataProperty))
-                    if(functionalDataProperty.DataPropertyExpression === dataPropertyAssertion.DataPropertyExpression)
-                    {
-                        functional = true;
-                        break;
-                    }
-
-                if(!functional)
-                    object[propertyName] = [];
-            }
-
-            if(object[propertyName] instanceof Array)
-                object[propertyName].push(dataPropertyAssertion.TargetValue);
-
-            else
-                    object[propertyName] = dataPropertyAssertion.TargetValue;
-        }
-
     //    if(this._ontology.IsAxiom.IDataProperty(dataPropertyAssertion.DataPropertyExpression))
     //        this._rules.push([[dataPropertyAssertion.DataPropertyExpression.Iri, this.InterpretIndividual(dataPropertyAssertion.SourceIndividual), dataPropertyAssertion.TargetValue], []]);
     }
