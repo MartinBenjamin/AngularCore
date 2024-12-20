@@ -48,21 +48,22 @@ export class AxiomInterpreter implements IAxiomVisitor
     private _propertyExpressionInterpreter: IPropertyExpressionSelector<Idb>;
 
     constructor(
-        private _ontology: IOntology,
-        private _store   : IEavStore,
-        private _rules   : Rule[]
+        private readonly _ontology: IOntology,
+        private readonly _store   : IEavStore,
+        private readonly _rules   : Rule[]
         )
     {
+        this._individualInterpretation = AddIndividuals(
+            this._ontology,
+            this._store);
         this._classExpressionInterpreter = new ClassExpressionInterpreter(
             this._individual,
+            this._individualInterpretation,
             this._rules);
         this._propertyExpressionInterpreter = new PropertyExpressionInterpreter(
             this._domain,
             this._range,
             _rules);
-        this._individualInterpretation = AddIndividuals(
-            this._ontology,
-            this._store);
     }
 
     Axiom(

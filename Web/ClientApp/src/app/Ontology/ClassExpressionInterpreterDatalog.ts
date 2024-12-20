@@ -68,13 +68,13 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Idb>
     private readonly _domain: Variable = '?x';
     private readonly _range : Variable = '?y';
 
-    private _individualInterpretation     : ReadonlyMap<IIndividual, any>;
     private _propertyExpressionInterpreter: IPropertyExpressionSelector<Idb>;
     private _predicateSymbolSelector      : IClassExpressionSelector<string>;
 
     constructor(
         public readonly Individual: Variable,
-        private _rules: Rule[]
+        private readonly _individualInterpretation: ReadonlyMap<IIndividual, any>,
+        private readonly _rules: Rule[]
         )
 {
         this._propertyExpressionInterpreter = new PropertyExpressionInterpreter(
