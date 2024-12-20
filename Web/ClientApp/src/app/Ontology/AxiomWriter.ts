@@ -90,15 +90,18 @@ export class AxiomWriter implements IAxiomSelector<string>
         return `ClassAssertion(${classAssertion.ClassExpression.Select(this.ClassExpressionWriter)} ${classAssertion.Individual.Select(this.IndividualWriter)})`;
     }
 
-    ObjectPropertyAssertion(objectPropertyAssertion: IObjectPropertyAssertion): string {
-        throw new Error("Method not implemented.");
+    ObjectPropertyAssertion(
+        objectPropertyAssertion: IObjectPropertyAssertion
+        ): string
+    {
+        return `ObjectPropertyAssertion(${objectPropertyAssertion.ObjectPropertyExpression.Select(this.PropertyExpressionWriter)} ${objectPropertyAssertion.SourceIndividual.Select(this.IndividualWriter)} ${objectPropertyAssertion.TargetIndividual.Select(this.IndividualWriter)})`;
     }
 
     DataPropertyAssertion(
         dataPropertyAssertion: IDataPropertyAssertion
         ): string
     {
-        return `DataPropertyAssertion(${dataPropertyAssertion.DataPropertyExpression.Select(this.PropertyExpressionWriter)} ${dataPropertyAssertion.SourceIndividual.Select(this.IndividualWriter)} ${dataPropertyAssertion.TargetValue})`;;
+        return `DataPropertyAssertion(${dataPropertyAssertion.DataPropertyExpression.Select(this.PropertyExpressionWriter)} ${dataPropertyAssertion.SourceIndividual.Select(this.IndividualWriter)} ${dataPropertyAssertion.TargetValue})`;
     }
 
     SubObjectPropertyOf(subObjectPropertyOf: ISubObjectPropertyOf): string {

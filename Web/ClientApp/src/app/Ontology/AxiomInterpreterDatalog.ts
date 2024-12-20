@@ -306,17 +306,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         individual: IIndividual
         ): any
     {
-        let interpretation = this._individualInterpretation.get(individual);
-
-        if(!interpretation)
-        {
-            interpretation = this._store.NewEntity();
-            this._individualInterpretation.set(
-                individual,
-                interpretation)
-        }
-
-        return interpretation;
+        return this._individualInterpretation.get(individual);
     }
 
     private Property(

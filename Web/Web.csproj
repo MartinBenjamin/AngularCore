@@ -318,6 +318,7 @@
     <None Remove="ClientApp\src\app\Ontology\ObjectOneOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectOneOfObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectOneOfSignal.Spec.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectPropertyAssertion.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyDomain.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyRange.ts" />
