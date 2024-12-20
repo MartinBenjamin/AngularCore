@@ -1,8 +1,6 @@
-import { Rule, Variable } from "../EavStore/Datalog";
+import { Idb, Rule, Variable } from "../EavStore/Datalog";
 import { IDataProperty, IInverseObjectProperty, IObjectProperty, IProperty } from "./IProperty";
 import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
-
-export type PropertyAtom = [PredicateSymbol: string, Domain: any, Range: any];
 
 class PredicateSymbolGenerator implements IPropertyExpressionSelector<string>
 {
@@ -35,7 +33,7 @@ class PredicateSymbolGenerator implements IPropertyExpressionSelector<string>
     }
 }
 
-export class PropertyExpressionInterpreter implements IPropertyExpressionSelector<PropertyAtom>
+export class PropertyExpressionInterpreter implements IPropertyExpressionSelector<Idb>
 {
     private _predicateSymbolGenerator: IPropertyExpressionSelector<string> = new PredicateSymbolGenerator();
 
@@ -49,24 +47,21 @@ export class PropertyExpressionInterpreter implements IPropertyExpressionSelecto
 
     InverseObjectProperty(
         inverseObjectProperty: IInverseObjectProperty
-        ): PropertyAtom
+        ): Idb
     {
-        const predicateSymbol = inverseObjectProperty.Select(this._predicateSymbolGenerator);
-        if(!this._rules.find(([head,]) => head[0] === predicateSymbol))
-            this._rules.push([[predicateSymbol, this.Range, this.Domain], [inverseObjectProperty.ObjectProperty.Select(this)]]);
-        return [predicateSymbol, this.Domain, this.Range];
+        return [inverseObjectProperty.Select(this._predicateSymbolGenerator), this.Range, this.Domain];
     }
 
     ObjectProperty(
         objectProperty: IObjectProperty
-        ): PropertyAtom
+        ): Idb
     {
         return [objectProperty.Select(this._predicateSymbolGenerator), this.Domain, this.Range];
     }
 
     DataProperty(
         dataProperty: IDataProperty
-        ): PropertyAtom
+        ): Idb
     {
         return [dataProperty.Select(this._predicateSymbolGenerator), this.Domain, this.Range];
     }

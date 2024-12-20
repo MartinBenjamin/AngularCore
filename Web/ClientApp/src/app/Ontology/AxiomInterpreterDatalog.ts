@@ -1,7 +1,7 @@
-import { Rule, Variable } from "../EavStore/Datalog";
+import { Idb, Rule, Variable } from "../EavStore/Datalog";
 import { IEavStore } from "../EavStore/IEavStore";
 import { AddIndividuals } from "./AddIndividuals";
-import { ClassAtom, ClassExpressionInterpreter } from "./ClassExpressionInterpreterDatalog";
+import { ClassExpressionInterpreter } from "./ClassExpressionInterpreterDatalog";
 import { IDLSafeRule } from "./DLSafeRule";
 import { IAnnotationAssertion } from "./IAnnotationAssertion";
 import { IAnnotationProperty } from "./IAnnotationProperty";
@@ -35,7 +35,7 @@ import { ISubDataPropertyOf } from "./ISubDataPropertyOf";
 import { ISubObjectPropertyOf } from "./ISubObjectPropertyOf";
 import { ISymmetricObjectProperty } from "./ISymmetricObjectProperty";
 import { ITransitiveObjectProperty } from "./ITransitiveObjectProperty";
-import { PropertyAtom, PropertyExpressionInterpreter } from "./PropertyExpressionInterpreterDatalog";
+import { PropertyExpressionInterpreter } from "./PropertyExpressionInterpreterDatalog";
 
 export class AxiomInterpreter implements IAxiomVisitor
 {
@@ -44,8 +44,8 @@ export class AxiomInterpreter implements IAxiomVisitor
     private readonly _individual: Variable = '?x';
 
     private _individualInterpretation     = new Map<IIndividual, any>();
-    private _classExpressionInterpreter   : IClassExpressionSelector<ClassAtom>;
-    private _propertyExpressionInterpreter: IPropertyExpressionSelector<PropertyAtom>;
+    private _classExpressionInterpreter   : IClassExpressionSelector<Idb>;
+    private _propertyExpressionInterpreter: IPropertyExpressionSelector<Idb>;
 
     constructor(
         private _ontology: IOntology,
