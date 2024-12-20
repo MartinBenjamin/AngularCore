@@ -180,7 +180,11 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Idb>
         {
             const rule: Rule = [[predicateSymbol, this._domain, Count()], [objectCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter)]]
             if(objectCardinality.ClassExpression)
-                rule[1].push(<Idb>objectCardinality.ClassExpression.Select(this).map(term => term === this.Individual ? this._range : term));
+            {
+                let classExpressionIdb = objectCardinality.ClassExpression.Select(this);
+                classExpressionIdb[this.Individual] = this._range;
+                rule[1].push(classExpressionIdb);
+            }
             this._rules.push(rule);
         }
 
