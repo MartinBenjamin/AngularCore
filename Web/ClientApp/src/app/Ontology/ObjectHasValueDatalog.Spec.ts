@@ -54,12 +54,12 @@ describe(
                     const c1Interpretation = new SortedSet(tupleCompare, store.SignalScheduler.Sample(c1Signal));
                     store.SignalScheduler.RemoveSignal(c1Signal);
 
-                    //it(
-                    //    `(i1)I ∈ (${classExpressionWriter.Write(ce)})C`,
-                    //    () => expect(c1Interpretation.has(i1Interpretation)).toBe(true));
+                    it(
+                        `(i1)I ∈ (${classExpressionWriter.Write(ce)})C`,
+                        () => expect(c1Interpretation.has([i1Interpretation])).toBe(true));
                     it(
                         `¬((i2)I ∈ (${classExpressionWriter.Write(ce)})C)`,
-                        () => expect(c1Interpretation.has(i2Interpretation)).toBe(false));
+                        () => expect(c1Interpretation.has([i2Interpretation])).toBe(false));
                 }
             });
     });
