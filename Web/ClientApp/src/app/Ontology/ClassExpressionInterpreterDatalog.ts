@@ -108,9 +108,8 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Idb>
         objectHasValue: IObjectHasValue
         ): Idb
     {
-        let idb = objectHasValue.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter);
-        idb[this._range] = this._individualInterpretation.get(objectHasValue.Individual);
-        return idb;
+        return <Idb>objectHasValue.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter)
+            .map(term => term === this._range ? this._individualInterpretation.get(objectHasValue.Individual) : term);
     }
 
     ObjectHasSelf(objectHasSelf: IObjectHasSelf): Idb {
@@ -121,9 +120,9 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Idb>
         objectMinCardinality: IObjectMinCardinality
         ): Idb
     {
-        let minCardinality: string;
-        this._rules.push([[minCardinality, this._domain], [this.ObjectCardinality(objectMinCardinality), GreaterThanOrEqual(this._range, objectMinCardinality.Cardinality)]]);
-        return [minCardinality, this.Individual];
+        const predicateSymbol = objectMinCardinality.Select(this._predicateSymbolSelector);
+        this._rules.push([[predicateSymbol, this._domain], [this.ObjectCardinality(objectMinCardinality), GreaterThanOrEqual(this._range, objectMinCardinality.Cardinality)]]);
+        return [predicateSymbol, this.Individual];
     }
 
     ObjectMaxCardinality(objectMaxCardinality: IObjectMaxCardinality): Idb {
@@ -146,9 +145,8 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Idb>
         dataHasValue: IDataHasValue
         ): Idb
     {
-        let idb = dataHasValue.DataPropertyExpression.Select(this._propertyExpressionInterpreter);
-        idb[this._range] = dataHasValue.Value;
-        return idb;
+        return <Idb>dataHasValue.DataPropertyExpression.Select(this._propertyExpressionInterpreter)
+            .map(term => term === this._range ? this._individualInterpretation.get(dataHasValue.Value) : term);
     }
 
     DataMinCardinality(dataMinCardinality: IDataMinCardinality): Idb {
@@ -178,11 +176,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Idb>
         {
             const rule: Rule = [[predicateSymbol, this._domain, Count()], [objectCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter)]]
             if(objectCardinality.ClassExpression)
-            {
-                let classExpressionIdb = objectCardinality.ClassExpression.Select(this);
-                classExpressionIdb[this.Individual] = this._range;
-                rule[1].push(classExpressionIdb);
-            }
+                rule[1].push(<Idb>objectCardinality.ClassExpression.Select(this).map(term => term === this.Individual ? this._range : term));
             this._rules.push(rule);
         }
 
