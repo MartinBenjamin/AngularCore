@@ -304,6 +304,7 @@
     <None Remove="ClientApp\src\app\Ontology\ObjectHasSelfObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectHasSelfSignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectHasValue.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectHasValueDatalog.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectHasValueObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectHasValueSignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectIntersectionOf.ts" />

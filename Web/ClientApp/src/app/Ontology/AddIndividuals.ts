@@ -66,14 +66,14 @@ export function AddIndividuals(
 
     for(const objectPropertyAssertion of ontology.Get(ontology.IsAxiom.IObjectPropertyAssertion))
         if(ontology.IsAxiom.IObjectProperty(objectPropertyAssertion.ObjectPropertyExpression))
-    {
-        const source = map.get(objectPropertyAssertion.SourceIndividual);
-        if(source[objectPropertyAssertion.ObjectPropertyExpression.LocalName] instanceof Array)
-            source[objectPropertyAssertion.ObjectPropertyExpression.LocalName].push(map.get(objectPropertyAssertion.TargetIndividual));
+        {
+            const source = map.get(objectPropertyAssertion.SourceIndividual);
+            if(source[objectPropertyAssertion.ObjectPropertyExpression.LocalName] instanceof Array)
+                source[objectPropertyAssertion.ObjectPropertyExpression.LocalName].push(map.get(objectPropertyAssertion.TargetIndividual));
 
-        else
-            source[objectPropertyAssertion.ObjectPropertyExpression.LocalName] = map.get(objectPropertyAssertion.TargetIndividual);
-    }
+            else
+                source[objectPropertyAssertion.ObjectPropertyExpression.LocalName] = map.get(objectPropertyAssertion.TargetIndividual);
+        }
 
     return map;
 }

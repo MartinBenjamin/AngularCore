@@ -42,7 +42,7 @@ describe(
                 for(const axiom of o1.Axioms)
                     axiom.Accept(interpreter);
 
-                console.log(JSON.stringify(rules));
+                //console.log(JSON.stringify(rules));
 
                 const c1Signal = store.Signal(['?x'], [[c1.Iri, '?x']], ...rules);
                 const c1Interpretation = new SortedSet(tupleCompare, store.SignalScheduler.Sample(c1Signal));
