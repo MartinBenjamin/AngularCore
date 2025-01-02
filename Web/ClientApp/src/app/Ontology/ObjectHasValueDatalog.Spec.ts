@@ -3,15 +3,12 @@ import { SortedSet } from '../Collections/SortedSet';
 import { Rule } from '../EavStore/Datalog';
 import { EavStore, tupleCompare } from '../EavStore/EavStore';
 import { IEavStore } from '../EavStore/IEavStore';
-import { Signal } from '../Signal/Signal';
 import { ObjectPropertyAssertion } from './Assertion';
 import { AxiomInterpreter } from './AxiomInterpreterDatalog';
 import { AxiomWriter } from './AxiomWriter';
 import { Class } from './Class';
-import { ClassExpressionSignalInterpreter } from './ClassExpressionSignalInterpreter';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { EquivalentClasses } from './EquivalentClasses';
-import { IClassExpression } from './IClassExpression';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectHasValue } from './ObjectHasValue';
 import { Ontology } from "./Ontology";
@@ -47,7 +44,7 @@ describe(
                 for(const axiom of o1.Axioms)
                     axiom.Accept(interpreter);
 
-                console.log(JSON.stringify(rules));
+                //console.log(JSON.stringify(rules));
 
                 {
                     const c1Signal = store.Signal(['?x'], [[c1.Iri, '?x']], ...rules);
