@@ -39,8 +39,7 @@ export class PropertyExpressionInterpreter implements IPropertyExpressionSelecto
 
     constructor(
         public readonly Domain: Variable,
-        public readonly Range : Variable,
-        private _rules : Rule[]
+        public readonly Range : Variable
         )
     {
     }

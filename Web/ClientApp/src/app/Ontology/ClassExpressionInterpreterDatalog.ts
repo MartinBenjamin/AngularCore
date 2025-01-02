@@ -68,7 +68,9 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Idb>
     private readonly _domain: Variable = '?x';
     private readonly _range : Variable = '?y';
 
-    private _propertyExpressionInterpreter: IPropertyExpressionSelector<Idb>;
+    private _propertyExpressionInterpreter: IPropertyExpressionSelector<Idb> = new PropertyExpressionInterpreter(
+            this._domain,
+            this._range);
     private _predicateSymbolSelector      : IClassExpressionSelector<string>;
 
     constructor(
@@ -76,11 +78,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Idb>
         private readonly _individualInterpretation: ReadonlyMap<IIndividual, any>,
         private readonly _rules: Rule[]
         )
-{
-        this._propertyExpressionInterpreter = new PropertyExpressionInterpreter(
-            this._domain,
-            this._range,
-            _rules);
+    {
     }
 
     ObjectIntersectionOf(

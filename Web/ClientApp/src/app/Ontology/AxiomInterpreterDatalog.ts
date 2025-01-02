@@ -62,8 +62,7 @@ export class AxiomInterpreter implements IAxiomVisitor
             this._rules);
         this._propertyExpressionInterpreter = new PropertyExpressionInterpreter(
             this._domain,
-            this._range,
-            _rules);
+            this._range);
     }
 
     Axiom(
