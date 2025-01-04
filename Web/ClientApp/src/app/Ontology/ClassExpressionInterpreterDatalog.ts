@@ -146,7 +146,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Idb>
         ): Idb
     {
         return <Idb>dataHasValue.DataPropertyExpression.Select(this._propertyExpressionInterpreter)
-            .map(term => term === this._range ? this._individualInterpretation.get(dataHasValue.Value) : term);
+            .map(term => term === this._range ? dataHasValue.Value : term);
     }
 
     DataMinCardinality(dataMinCardinality: IDataMinCardinality): Idb {
