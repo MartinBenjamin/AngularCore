@@ -333,6 +333,7 @@
     <None Remove="ClientApp\src\app\Ontology\ObjectUnionOfSignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Ontology.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Ontology.ts" />
+    <None Remove="ClientApp\src\app\Ontology\OntologyWriter.ts" />
     <None Remove="ClientApp\src\app\Ontology\PrefixIris.ts" />
     <None Remove="ClientApp\src\app\Ontology\Property.ts" />
     <None Remove="ClientApp\src\app\Ontology\PropertyExpressionInterpreter.ts" />

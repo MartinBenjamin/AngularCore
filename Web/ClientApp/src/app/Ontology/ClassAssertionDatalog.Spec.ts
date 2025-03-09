@@ -7,19 +7,20 @@ import { IDatalogInterpreter } from '../EavStore/IDatalogInterpreter';
 import { IEavStore } from '../EavStore/IEavStore';
 import { ClassAssertion } from './Assertion';
 import { AxiomInterpreter } from './AxiomInterpreterDatalog';
-import { AxiomWriter } from './AxiomWriter';
 import { Class } from './Class';
+import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { IOntology } from './IOntology';
 import { NamedIndividual } from './NamedIndividual';
 import { Ontology } from "./Ontology";
+import { OntologyWriter } from './OntologyWriter';
 import { WrapperType } from './Wrapped';
 
 describe(
     'ClassAssertion( CE a ) ((a)I ∈ (CE)C)',
     () =>
     {
-        const axiomWriter = new AxiomWriter();
-        const classExpressionWriter = axiomWriter.ClassExpressionWriter;
+        const ontologyWriter = OntologyWriter();
+        const classExpressionWriter = new ClassExpressionWriter();
         const o1: IOntology = new Ontology('o1');
         const c1 = new Class(o1, 'c1');
         const i1 = new NamedIndividual(o1, 'i1');
@@ -27,7 +28,7 @@ describe(
         new ClassAssertion(o1, c1, i1);
 
         describe(
-            `Given an Ontology o1 with axioms ${o1.Axioms.map(axiom => axiom.Select(axiomWriter)).join(', ')}:`,
+            `Given ${ontologyWriter(o1)}:`,
             () =>
             {
                 const store: IEavStore = new EavStore();

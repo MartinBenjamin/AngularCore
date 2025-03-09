@@ -5,20 +5,20 @@ import { EavStore, tupleCompare } from '../EavStore/EavStore';
 import { IEavStore } from '../EavStore/IEavStore';
 import { DataPropertyAssertion } from './Assertion';
 import { AxiomInterpreter } from './AxiomInterpreterDatalog';
-import { AxiomWriter } from './AxiomWriter';
 import { Class } from './Class';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { DataHasValue } from './DataHasValue';
 import { EquivalentClasses } from './EquivalentClasses';
 import { NamedIndividual } from './NamedIndividual';
 import { Ontology } from "./Ontology";
+import { OntologyWriter } from './OntologyWriter';
 import { DataProperty } from './Property';
 
 describe(
     'DataHasValue( DPE lt ) ({ x | ( x , (lt)LT ) ∈ (DPE)DP })',
     () =>
     {
-        const axiomWriter = new AxiomWriter();
+        const ontologyWriter = OntologyWriter();
         const classExpressionWriter = new ClassExpressionWriter();
         const o1 = new Ontology('o1');
         const dp1 = new DataProperty(o1, 'dp1');
@@ -30,7 +30,7 @@ describe(
         new DataPropertyAssertion(o1, dp1, i1, 1);
 
         describe(
-            `Given an Ontology o1 with axioms ${o1.Axioms.map(axiom => axiom.Select(axiomWriter)).join(', ')}:`,
+            `Given ${ontologyWriter(o1)}:`,
             () =>
             {
                 const store: IEavStore = new EavStore();
