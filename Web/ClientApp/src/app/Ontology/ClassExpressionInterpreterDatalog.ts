@@ -61,7 +61,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Idb>
     private _propertyExpressionInterpreter: IPropertyExpressionSelector<Idb> = new PropertyExpressionInterpreter(
             this._domain,
             this._range);
-    private _predicateSymbolSelector      = new PredicateSymbolGenerator();
+    private _predicateSymbolSelector = new PredicateSymbolGenerator();
 
     constructor(
         public readonly Individual: Variable,
