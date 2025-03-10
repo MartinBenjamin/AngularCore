@@ -1,4 +1,4 @@
-import { Idb, Rule, Variable } from "../EavStore/Datalog";
+import { Rule } from "../EavStore/Datalog";
 import { IDataProperty, IInverseObjectProperty, IObjectProperty, IProperty } from "./IProperty";
 import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
 
@@ -10,7 +10,7 @@ class PredicateSymbolGenerator implements IPropertyExpressionSelector<string>
         inverseObjectProperty: IInverseObjectProperty
         ): string
     {
-        return "pe" + this._next++;
+        return "Inverse_" + inverseObjectProperty.ObjectProperty.Select(this);
     }
 
     ObjectProperty(
@@ -50,7 +50,8 @@ export class PropertyExpressionInterpreter implements IPropertyExpressionSelecto
         ): string
     {
         const predicateSymbol = inverseObjectProperty.Select(this._predicateSymbolSelector);
-        this._rules.push([[predicateSymbol, '?x', '?y'], [[inverseObjectProperty.ObjectProperty.Select(this._predicateSymbolSelector), '?y', '?x']]]);
+        if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
+            this._rules.push([[predicateSymbol, '?x', '?y'], [[inverseObjectProperty.ObjectProperty.Select(this._predicateSymbolSelector), '?y', '?x']]]);
         return predicateSymbol;
     }
 
