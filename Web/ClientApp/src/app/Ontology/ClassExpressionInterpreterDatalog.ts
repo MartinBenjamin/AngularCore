@@ -75,9 +75,15 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         throw new Error("Method not implemented.");
     }
 
-    ObjectUnionOf(objectUnionOf: IObjectUnionOf): string {
-        throw new Error("Method not implemented.");
+    ObjectUnionOf(
+        objectUnionOf: IObjectUnionOf
+        ): string
+    {
+        const predicateSymbol = objectUnionOf.Select(this._predicateSymbolSelector);
+        this._rules.push(...objectUnionOf.ClassExpressions.map(classExpression => <Rule>[[predicateSymbol, '?x'], [[classExpression.Select(this), '?x']]]));
+        return predicateSymbol;
     }
+
     ObjectComplementOf(objectComplementOf: IObjectComplementOf): string {
         throw new Error("Method not implemented.");
     }
