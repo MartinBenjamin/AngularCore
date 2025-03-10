@@ -4,11 +4,13 @@ import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
 
 class PredicateSymbolGenerator implements IPropertyExpressionSelector<string>
 {
+    private _next = 0;
+
     InverseObjectProperty(
         inverseObjectProperty: IInverseObjectProperty
         ): string
     {
-        return 'Inverse' + inverseObjectProperty.ObjectProperty.Select(this);
+        return "pe" + this._next++;
     }
 
     ObjectProperty(
@@ -33,35 +35,36 @@ class PredicateSymbolGenerator implements IPropertyExpressionSelector<string>
     }
 }
 
-export class PropertyExpressionInterpreter implements IPropertyExpressionSelector<Idb>
+export class PropertyExpressionInterpreter implements IPropertyExpressionSelector<string>
 {
-    private _predicateSymbolGenerator: IPropertyExpressionSelector<string> = new PredicateSymbolGenerator();
+    private _predicateSymbolSelector: IPropertyExpressionSelector<string> = new PredicateSymbolGenerator();
 
     constructor(
-        public readonly Domain: Variable,
-        public readonly Range : Variable
+        private readonly _rules: Rule[]
         )
     {
     }
 
     InverseObjectProperty(
         inverseObjectProperty: IInverseObjectProperty
-        ): Idb
+        ): string
     {
-        return [inverseObjectProperty.Select(this._predicateSymbolGenerator), this.Range, this.Domain];
+        const predicateSymbol = inverseObjectProperty.Select(this._predicateSymbolSelector);
+        this._rules.push([[predicateSymbol, '?x', '?y'], [[inverseObjectProperty.ObjectProperty.Select(this._predicateSymbolSelector), '?y', '?x']]]);
+        return predicateSymbol;
     }
 
     ObjectProperty(
         objectProperty: IObjectProperty
-        ): Idb
+        ): string
     {
-        return [objectProperty.Select(this._predicateSymbolGenerator), this.Domain, this.Range];
+        return objectProperty.Select(this._predicateSymbolSelector);
     }
 
     DataProperty(
         dataProperty: IDataProperty
-        ): Idb
+        ): string
     {
-        return [dataProperty.Select(this._predicateSymbolGenerator), this.Domain, this.Range];
+        return dataProperty.Select(this._predicateSymbolSelector);
     }
 }

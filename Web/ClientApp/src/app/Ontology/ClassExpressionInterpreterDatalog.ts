@@ -58,9 +58,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Idb>
     private readonly _domain: Variable = '?x';
     private readonly _range : Variable = '?y';
 
-    private _propertyExpressionInterpreter: IPropertyExpressionSelector<Idb> = new PropertyExpressionInterpreter(
-            this._domain,
-            this._range);
+    private _propertyExpressionInterpreter: IPropertyExpressionSelector<string>;
     private _predicateSymbolSelector = new PredicateSymbolGenerator();
 
     constructor(
@@ -69,6 +67,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Idb>
         private readonly _rules: Rule[]
         )
     {
+        this._propertyExpressionInterpreter = new PropertyExpressionInterpreter(this._rules);
     }
 
     ObjectIntersectionOf(
@@ -98,8 +97,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Idb>
         objectHasValue: IObjectHasValue
         ): Idb
     {
-        return <Idb>objectHasValue.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter)
-            .map(term => term === this._range ? this._individualInterpretation.get(objectHasValue.Individual) : term);
+        return [objectHasValue.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), this.Individual, this._individualInterpretation.get(objectHasValue.Individual)];
     }
 
     ObjectHasSelf(objectHasSelf: IObjectHasSelf): Idb {
@@ -135,8 +133,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Idb>
         dataHasValue: IDataHasValue
         ): Idb
     {
-        return <Idb>dataHasValue.DataPropertyExpression.Select(this._propertyExpressionInterpreter)
-            .map(term => term === this._range ? dataHasValue.Value : term);
+        return [dataHasValue.DataPropertyExpression.Select(this._propertyExpressionInterpreter), this.Individual, dataHasValue.Value];
     }
 
     DataMinCardinality(dataMinCardinality: IDataMinCardinality): Idb {
@@ -162,7 +159,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Idb>
         ): Idb
     {
         const predicateSymbol = objectCardinality.Select(this._predicateSymbolSelector);
-        const rule: Rule = [[predicateSymbol, this._domain, Count()], [objectCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter)]]
+        const rule: Rule = [[predicateSymbol, '?x', Count()], [[objectCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x',]]];
         if(objectCardinality.ClassExpression)
             rule[1].push(<Idb>objectCardinality.ClassExpression.Select(this).map(term => term === this.Individual ? this._range : term));
         this._rules.push(rule);
