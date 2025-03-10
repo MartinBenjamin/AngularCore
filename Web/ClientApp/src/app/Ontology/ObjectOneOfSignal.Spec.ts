@@ -8,20 +8,22 @@ import { IClassExpression } from './IClassExpression';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectOneOf } from './ObjectOneOf';
 import { Ontology } from "./Ontology";
+import { OntologyWriter } from './OntologyWriter';
 
 describe(
     'ObjectOneOf( a1 ... an ) ({ (a1)I , ... , (an)I })',
     () =>
     {
+        const ontologyWriter = OntologyWriter();
         const classExpressionWriter = new ClassExpressionWriter();
+        const o1 = new Ontology('o1');
+        const i1 = new NamedIndividual(o1, 'i1');
+        const i2 = new NamedIndividual(o1, 'i2');
 
         describe(
-            'Given an Ontology o1 with axioms NamedIndividual(i1) and NamedIndividual(i2):',
+            `Given ${ontologyWriter(o1)}:`,
             () =>
             {
-                const o1 = new Ontology('o1');
-                const i1 = new NamedIndividual(o1, 'i1');
-                const i2 = new NamedIndividual(o1, 'i2');
                 const ce1 = new ObjectOneOf([i1]);
                 const ce2 = new ObjectOneOf([i2]);
                 const store: IEavStore = new EavStore();
