@@ -362,8 +362,8 @@
     <None Remove="ClientApp\src\app\Ontology\Thing.ts" />
     <None Remove="ClientApp\src\app\Ontology\TransitiveClosure.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\TransitiveClosure.ts" />
-    <None Remove="ClientApp\src\app\Ontology\TransitiveObjectProperty.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\TransitiveObjectProperty.ts" />
+    <None Remove="ClientApp\src\app\Ontology\TransitiveObjectPropertyDatalog.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Wrapped.ts" />
     <None Remove="ClientApp\src\app\Ontology\Xsd.ts" />
     <None Remove="ClientApp\src\app\Organisations.ts" />

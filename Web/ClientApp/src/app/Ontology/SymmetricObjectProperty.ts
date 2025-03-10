@@ -1,3 +1,4 @@
+import { IAxiomSelector } from "./IAxiomSelector";
 import { IAxiomVisitor } from "./IAxiomVisitor";
 import { IOntology } from "./IOntology";
 import { IObjectPropertyExpression } from "./IPropertyExpression";
@@ -21,5 +22,12 @@ export class SymmetricObjectProperty
         )
     {
         visitor.SymmetricObjectProperty(this);
+    }
+
+    Select<TResult>(
+        selector: IAxiomSelector<TResult>
+        ): TResult
+    {
+        return selector.SymmetricObjectProperty(this);
     }
 }
