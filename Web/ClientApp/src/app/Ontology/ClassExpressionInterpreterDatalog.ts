@@ -72,7 +72,9 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         objectIntersectionOf: IObjectIntersectionOf
         ): string
     {
-        throw new Error("Method not implemented.");
+        const predicateSymbol = objectIntersectionOf.Select(this._predicateSymbolSelector);
+        this._rules.push([[predicateSymbol, '?x'], objectIntersectionOf.ClassExpressions.map(classExpression => [classExpression.Select(this), '?x'])]);
+        return predicateSymbol;
     }
 
     ObjectUnionOf(
@@ -122,7 +124,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         ): string
     {
         const predicateSymbol = objectMinCardinality.Select(this._predicateSymbolSelector);
-        this._rules.push([[predicateSymbol, '?x'], [[this.ObjectCardinality(objectMinCardinality), '?x', '?y'], GreaterThanOrEqual('?y', objectMinCardinality.Cardinality)]]);
+        this._rules.push([[predicateSymbol, '?x'], [[this.ObjectCardinality(objectMinCardinality), '?x', '?cardinality'], GreaterThanOrEqual('?cardinality', objectMinCardinality.Cardinality)]]);
         return predicateSymbol;
     }
 
