@@ -318,6 +318,7 @@
     <None Remove="ClientApp\src\app\Ontology\ObjectMinCardinalityObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMinCardinalitySignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectOneOf.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectOneOfDatalog.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectOneOfObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectOneOfSignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyAssertionDatalog.Spec.ts" />

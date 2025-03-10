@@ -81,9 +81,16 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
     ObjectComplementOf(objectComplementOf: IObjectComplementOf): string {
         throw new Error("Method not implemented.");
     }
-    ObjectOneOf(objectOneOf: IObjectOneOf): string {
-        throw new Error("Method not implemented.");
+
+    ObjectOneOf(
+        objectOneOf: IObjectOneOf
+        ): string
+    {
+        const predicateSymbol = objectOneOf.Select(this._predicateSymbolSelector);
+        this._rules.push(...objectOneOf.Individuals.map(individual => <Rule>[[predicateSymbol, this._individualInterpretation.get(individual)], []]));
+        return predicateSymbol;
     }
+
     ObjectSomeValuesFrom(objectSomeValuesFrom: IObjectSomeValuesFrom): string {
         throw new Error("Method not implemented.");
     }
