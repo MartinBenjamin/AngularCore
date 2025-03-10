@@ -8,22 +8,24 @@ import { IClassExpression } from './IClassExpression';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectHasValue } from './ObjectHasValue';
 import { Ontology } from "./Ontology";
+import { OntologyWriter } from './OntologyWriter';
 import { ObjectProperty } from './Property';
 
 describe(
     'ObjectHasValue( OPE a ) ({ x | ( x , (a)I ) ∈ (OPE)OP })',
     () =>
     {
+        const ontologyWriter = OntologyWriter();
         const classExpressionWriter = new ClassExpressionWriter();
+        const o1 = new Ontology('o1');
+        const op1 = new ObjectProperty(o1, 'op1');
+        const i1 = new NamedIndividual(o1, 'i1');
+        const ce = new ObjectHasValue(op1, i1);
 
         describe(
-            'Given an Ontology o1 with axiom NamedIndividual(i1):',
+            `Given ${ontologyWriter(o1)}:`,
             () =>
             {
-                const o1 = new Ontology('o1');
-                const op1 = new ObjectProperty(o1, 'op1');
-                const i1 = new NamedIndividual(o1, 'i1');
-                const ce = new ObjectHasValue(op1, i1);
                 const store: IEavStore = new EavStore();
                 const interpreter = new ClassExpressionSignalInterpreter(
                     o1,
