@@ -115,8 +115,13 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         return predicateSymbol;
     }
 
-    ObjectHasSelf(objectHasSelf: IObjectHasSelf): string {
-        throw new Error("Method not implemented.");
+    ObjectHasSelf(
+        objectHasSelf: IObjectHasSelf
+        ): string
+    {
+        const predicateSymbol = objectHasSelf.Select(this._predicateSymbolSelector);
+        this._rules.push([[predicateSymbol, '?x'], [[objectHasSelf.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', '?x']]]);
+        return predicateSymbol;
     }
 
     ObjectMinCardinality(
