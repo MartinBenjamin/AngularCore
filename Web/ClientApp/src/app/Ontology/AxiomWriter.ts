@@ -128,9 +128,14 @@ export class AxiomWriter implements IAxiomSelector<string>
     SymmetricObjectProperty(symmetricObjectProperty: ISymmetricObjectProperty): string {
         throw new Error("Method not implemented.");
     }
-    TransitiveObjectProperty(transitiveObjectProperty: ITransitiveObjectProperty): string {
-        throw new Error("Method not implemented.");
+
+    TransitiveObjectProperty(
+        transitiveObjectProperty: ITransitiveObjectProperty
+        ): string
+    {
+        return `TransitiveObjectProperty(${transitiveObjectProperty.ObjectPropertyExpression.Select( this.PropertyExpressionWriter)})`;
     }
+
     SubDataPropertyOf(subDataPropertyOf: ISubDataPropertyOf): string {
         throw new Error("Method not implemented.");
     }
