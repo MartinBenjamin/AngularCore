@@ -1,4 +1,4 @@
-import { Idb, Rule, Variable } from "../EavStore/Datalog";
+import { Rule } from "../EavStore/Datalog";
 import { IEavStore } from "../EavStore/IEavStore";
 import { AddIndividuals } from "./AddIndividuals";
 import { ClassExpressionInterpreter } from "./ClassExpressionInterpreterDatalog";
@@ -39,10 +39,8 @@ import { PropertyExpressionInterpreter } from "./PropertyExpressionInterpreterDa
 
 export class AxiomInterpreter implements IAxiomVisitor
 {
-    private readonly _individual: Variable = '?x';
-
     private _individualInterpretation     = new Map<IIndividual, any>();
-    private _classExpressionInterpreter   : IClassExpressionSelector<Idb>;
+    private _classExpressionInterpreter   : IClassExpressionSelector<string>;
     private _propertyExpressionInterpreter: IPropertyExpressionSelector<string>;
 
     constructor(
@@ -55,7 +53,6 @@ export class AxiomInterpreter implements IAxiomVisitor
             this._ontology,
             this._store);
         this._classExpressionInterpreter = new ClassExpressionInterpreter(
-            this._individual,
             this._individualInterpretation,
             this._rules);
         this._propertyExpressionInterpreter = new PropertyExpressionInterpreter(
@@ -85,7 +82,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
         if(this._ontology.IsClassExpression.IClass(subClassOf.SuperClassExpression))
-            this._rules.push([[subClassOf.SuperClassExpression.Iri, this._individual], [subClassOf.SubClassExpression.Select(this._classExpressionInterpreter)]])
+            this._rules.push([[subClassOf.SuperClassExpression.Select(this._classExpressionInterpreter), '?x'], [[subClassOf.SubClassExpression.Select(this._classExpressionInterpreter), '?x']]]);
     }
 
     EquivalentClasses(
@@ -95,7 +92,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         for(const classExpression1 of equivalentClasses.ClassExpressions)
             for(const classExpression2 of equivalentClasses.ClassExpressions)
                 if(classExpression1 !== classExpression2 && this._ontology.IsClassExpression.IClass(classExpression1))
-                    this._rules.push([[classExpression1.Iri, this._individual], [classExpression2.Select(this._classExpressionInterpreter)]]);
+                    this._rules.push([[classExpression1.Select(this._classExpressionInterpreter), '?x'], [[classExpression2.Select(this._classExpressionInterpreter), '?x']]]);
     }
 
     DisjointClasses(
@@ -109,7 +106,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
         if(this._ontology.IsClassExpression.IClass(classAssertion.ClassExpression))
-            this._rules.push([[classAssertion.ClassExpression.Iri, this.InterpretIndividual(classAssertion.Individual)], []]);
+            this._rules.push([[classAssertion.ClassExpression.Select(this._classExpressionInterpreter), this.InterpretIndividual(classAssertion.Individual)], []]);
     }
 
     ObjectPropertyAssertion(
@@ -117,7 +114,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
     //    if(this._ontology.IsAxiom.IObjectProperty(objectPropertyAssertion.ObjectPropertyExpression))
-    //        this._rules.push([[objectPropertyAssertion.ObjectPropertyExpression.Iri, this.InterpretIndividual(objectPropertyAssertion.SourceIndividual), this.InterpretIndividual(objectPropertyAssertion.TargetIndividual)], []]);
+    //        this._rules.push([[objectPropertyAssertion.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), this.InterpretIndividual(objectPropertyAssertion.SourceIndividual), this.InterpretIndividual(objectPropertyAssertion.TargetIndividual)], []]);
     }
 
     DataPropertyAssertion(
@@ -125,7 +122,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
     //    if(this._ontology.IsAxiom.IDataProperty(dataPropertyAssertion.DataPropertyExpression))
-    //        this._rules.push([[dataPropertyAssertion.DataPropertyExpression.Iri, this.InterpretIndividual(dataPropertyAssertion.SourceIndividual), dataPropertyAssertion.TargetValue], []]);
+    //        this._rules.push([[dataPropertyAssertion.DataPropertyExpression.Select(this._propertyExpressionInterpreter), this.InterpretIndividual(dataPropertyAssertion.SourceIndividual), dataPropertyAssertion.TargetValue], []]);
     }
 
     SubObjectPropertyOf(
@@ -262,7 +259,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         class$: IClass
         ): void
     {
-        this._rules.push([[class$.Iri, '?x'], [['?x', 'rdf:type', class$.Iri]]]);
+        this._rules.push([[class$.Select(this._classExpressionInterpreter), '?x'], [['?x', 'rdf:type', class$.Iri]]]);
     }
 
     Datatype(
@@ -308,6 +305,6 @@ export class AxiomInterpreter implements IAxiomVisitor
         property: IProperty
         ): void
     {
-        this._rules.push([[property.Iri, '?x', '?y'], [['?x', property.LocalName, '?y']]]);
+        this._rules.push([[property.Select(this._propertyExpressionInterpreter), '?x', '?y'], [['?x', property.LocalName, '?y']]]);
     }
 }

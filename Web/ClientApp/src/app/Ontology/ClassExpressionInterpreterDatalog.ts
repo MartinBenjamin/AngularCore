@@ -1,7 +1,6 @@
 import { Count } from "../EavStore/Aggregation";
 import { GreaterThanOrEqual } from "../EavStore/BuiltIn";
-import { Idb, Rule, Variable } from "../EavStore/Datalog";
-import { ICardinality } from "./ICardinality";
+import { Rule, Variable } from "../EavStore/Datalog";
 import { IClass } from "./IClass";
 import { IClassExpressionSelector } from "./IClassExpressionSelector";
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
@@ -53,7 +52,7 @@ class PredicateSymbolGenerator implements IClassExpressionSelector<string>
     }
 }
 
-export class ClassExpressionInterpreter implements IClassExpressionSelector<Idb>
+export class ClassExpressionInterpreter implements IClassExpressionSelector<string>
 {
     private readonly _domain: Variable = '?x';
     private readonly _range : Variable = '?y';
@@ -62,7 +61,6 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Idb>
     private _predicateSymbolSelector = new PredicateSymbolGenerator();
 
     constructor(
-        public readonly Individual: Variable,
         private readonly _individualInterpretation: ReadonlyMap<IIndividual, any>,
         private readonly _rules: Rule[]
         )
@@ -72,97 +70,101 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<Idb>
 
     ObjectIntersectionOf(
         objectIntersectionOf: IObjectIntersectionOf
-        ): Idb
+        ): string
     {
         throw new Error("Method not implemented.");
     }
 
-    ObjectUnionOf(objectUnionOf: IObjectUnionOf): Idb {
+    ObjectUnionOf(objectUnionOf: IObjectUnionOf): string {
         throw new Error("Method not implemented.");
     }
-    ObjectComplementOf(objectComplementOf: IObjectComplementOf): Idb {
+    ObjectComplementOf(objectComplementOf: IObjectComplementOf): string {
         throw new Error("Method not implemented.");
     }
-    ObjectOneOf(objectOneOf: IObjectOneOf): Idb {
+    ObjectOneOf(objectOneOf: IObjectOneOf): string {
         throw new Error("Method not implemented.");
     }
-    ObjectSomeValuesFrom(objectSomeValuesFrom: IObjectSomeValuesFrom): Idb {
+    ObjectSomeValuesFrom(objectSomeValuesFrom: IObjectSomeValuesFrom): string {
         throw new Error("Method not implemented.");
     }
-    ObjectAllValuesFrom(objectAllValuesFrom: IObjectAllValuesFrom): Idb {
+    ObjectAllValuesFrom(objectAllValuesFrom: IObjectAllValuesFrom): string {
         throw new Error("Method not implemented.");
     }
 
     ObjectHasValue(
         objectHasValue: IObjectHasValue
-        ): Idb
+        ): string
     {
-        return [objectHasValue.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), this.Individual, this._individualInterpretation.get(objectHasValue.Individual)];
+        const predicateSymbol = objectHasValue.Select(this._predicateSymbolSelector);
+        this._rules.push([[predicateSymbol, '?x'], [[objectHasValue.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', this._individualInterpretation.get(objectHasValue.Individual)]]]);
+        return predicateSymbol;
     }
 
-    ObjectHasSelf(objectHasSelf: IObjectHasSelf): Idb {
+    ObjectHasSelf(objectHasSelf: IObjectHasSelf): string {
         throw new Error("Method not implemented.");
     }
 
     ObjectMinCardinality(
         objectMinCardinality: IObjectMinCardinality
-        ): Idb
+        ): string
     {
         const predicateSymbol = objectMinCardinality.Select(this._predicateSymbolSelector);
-        this._rules.push([[predicateSymbol, this._domain], [this.ObjectCardinality(objectMinCardinality), GreaterThanOrEqual(this._range, objectMinCardinality.Cardinality)]]);
-        return [predicateSymbol, this.Individual];
+        this._rules.push([[predicateSymbol, '?x'], [[this.ObjectCardinality(objectMinCardinality), '?x', '?y'], GreaterThanOrEqual('?y', objectMinCardinality.Cardinality)]]);
+        return predicateSymbol;
     }
 
-    ObjectMaxCardinality(objectMaxCardinality: IObjectMaxCardinality): Idb {
+    ObjectMaxCardinality(objectMaxCardinality: IObjectMaxCardinality): string {
         throw new Error("Method not implemented.");
     }
 
     ObjectExactCardinality(
-        objectExactCardinality: IObjectExactCardinality): Idb
+        objectExactCardinality: IObjectExactCardinality): string
     {
         throw new Error("Method not implemented.");
     }
-    DataSomeValuesFrom(dataSomeValuesFrom: IDataSomeValuesFrom): Idb {
+    DataSomeValuesFrom(dataSomeValuesFrom: IDataSomeValuesFrom): string {
         throw new Error("Method not implemented.");
     }
-    DataAllValuesFrom(dataAllValuesFrom: IDataAllValuesFrom): Idb {
+    DataAllValuesFrom(dataAllValuesFrom: IDataAllValuesFrom): string {
         throw new Error("Method not implemented.");
     }
 
     DataHasValue(
         dataHasValue: IDataHasValue
-        ): Idb
+        ): string
     {
-        return [dataHasValue.DataPropertyExpression.Select(this._propertyExpressionInterpreter), this.Individual, dataHasValue.Value];
+        const predicateSymbol = dataHasValue.Select(this._predicateSymbolSelector);
+        this._rules.push([[predicateSymbol, '?x'], [[dataHasValue.DataPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', dataHasValue.Value]]]);
+        return predicateSymbol;
     }
 
-    DataMinCardinality(dataMinCardinality: IDataMinCardinality): Idb {
+    DataMinCardinality(dataMinCardinality: IDataMinCardinality): string {
         throw new Error("Method not implemented.");
     }
-    DataMaxCardinality(dataMaxCardinality: IDataMaxCardinality): Idb {
+    DataMaxCardinality(dataMaxCardinality: IDataMaxCardinality): string {
         throw new Error("Method not implemented.");
     }
-    DataExactCardinality(dataExactCardinality: IDataExactCardinality): Idb {
+    DataExactCardinality(dataExactCardinality: IDataExactCardinality): string {
         throw new Error("Method not implemented.");
     }
 
     Class(
         class$: IClass
-        ): Idb
+        ): string
     {
-        return [class$.Iri, this.Individual];
+        return class$.Select(this._predicateSymbolSelector);
     }
 
 
     ObjectCardinality(
         objectCardinality: IObjectCardinality
-        ): Idb
+        ): string
     {
         const predicateSymbol = objectCardinality.Select(this._predicateSymbolSelector);
         const rule: Rule = [[predicateSymbol, '?x', Count()], [[objectCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x',]]];
         if(objectCardinality.ClassExpression)
-            rule[1].push(<Idb>objectCardinality.ClassExpression.Select(this).map(term => term === this.Individual ? this._range : term));
+            rule[1].push([objectCardinality.ClassExpression.Select(this), '?x']);
         this._rules.push(rule);
-        return [predicateSymbol, this._domain, this._range];
+        return predicateSymbol;
     }
 }
