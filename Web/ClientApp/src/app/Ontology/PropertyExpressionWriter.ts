@@ -26,7 +26,7 @@ export class PropertyExpressionWriter implements IPropertyExpressionSelector<str
 
     private Property(
         property: IProperty
-        )
+        ): string
     {
         return property.Iri;
     }
