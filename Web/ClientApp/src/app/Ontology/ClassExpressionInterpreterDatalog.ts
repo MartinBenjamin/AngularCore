@@ -1,6 +1,6 @@
 import { Count } from "../EavStore/Aggregation";
-import { GreaterThanOrEqual } from "../EavStore/BuiltIn";
-import { Rule, Variable } from "../EavStore/Datalog";
+import { GreaterThanOrEqual, LessThanOrEqual } from "../EavStore/BuiltIn";
+import { Rule } from "../EavStore/Datalog";
 import { IClass } from "./IClass";
 import { IClassExpressionSelector } from "./IClassExpressionSelector";
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
@@ -130,15 +130,24 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         return predicateSymbol;
     }
 
-    ObjectMaxCardinality(objectMaxCardinality: IObjectMaxCardinality): string {
-        throw new Error("Method not implemented.");
+    ObjectMaxCardinality(
+        objectMaxCardinality: IObjectMaxCardinality
+        ): string
+    {
+        const predicateSymbol = objectMaxCardinality.Select(this._predicateSymbolSelector);
+        this._rules.push([[predicateSymbol, '?x'], [[this.ObjectCardinality(objectMaxCardinality), '?x', '?cardinality'], LessThanOrEqual('?cardinality', objectMaxCardinality.Cardinality)]]);
+        return predicateSymbol;
     }
 
     ObjectExactCardinality(
-        objectExactCardinality: IObjectExactCardinality): string
+        objectExactCardinality: IObjectExactCardinality
+        ): string
     {
-        throw new Error("Method not implemented.");
+        const predicateSymbol = objectExactCardinality.Select(this._predicateSymbolSelector);
+        this._rules.push([[predicateSymbol, '?x'], [[this.ObjectCardinality(objectExactCardinality), '?x', objectExactCardinality.Cardinality]]]);
+        return predicateSymbol;
     }
+
     DataSomeValuesFrom(dataSomeValuesFrom: IDataSomeValuesFrom): string {
         throw new Error("Method not implemented.");
     }
