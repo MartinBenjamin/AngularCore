@@ -188,7 +188,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         if(cePredicateSymbol)
             predicateSymbol += cePredicateSymbol;
 
-        const rule: Rule = [[predicateSymbol, '?x', Count()], [[objectCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', '?y']]];
+        const rule: Rule = [[predicateSymbol, '?x', Count()], [[objectCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x',]]];
         if(cePredicateSymbol)
             rule[1].push([cePredicateSymbol, '?x']);
 
