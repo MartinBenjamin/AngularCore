@@ -80,7 +80,7 @@ describe(
                     () =>
                     {
                         const x = store.NewEntity();
-                        const y = 2;
+                        const y = store.NewEntity();
                         store.Assert(x, op1.LocalName, y);
                         for(const ce of ces)
                             it(
@@ -94,8 +94,8 @@ describe(
                     () =>
                     {
                         const x = store.NewEntity();
-                        const y = 2;
-                        const z = 3;
+                        const y = store.NewEntity();
+                        const z = store.NewEntity();
                         store.Assert(x, op1.LocalName, y);
                         store.Assert(x, op1.LocalName, z);
                         for(const ce of ces)
@@ -156,7 +156,7 @@ describe(
                     () =>
                     {
                         const x = store.NewEntity();
-                        const y = 2;
+                        const y = store.NewEntity();
                         store.Assert(x, op1.LocalName, y);
                         it(
                             `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
@@ -179,7 +179,7 @@ describe(
                     () =>
                     {
                         const x = store.NewEntity();
-                        const y = 2;
+                        const y = store.NewEntity();
                         store.Assert(x, op1.LocalName, iInterpretation);
                         store.Assert(x, op1.LocalName, y              );
                         it(
