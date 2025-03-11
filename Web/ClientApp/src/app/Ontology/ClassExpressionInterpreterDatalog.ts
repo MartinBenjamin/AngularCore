@@ -54,9 +54,6 @@ class PredicateSymbolGenerator implements IClassExpressionSelector<string>
 
 export class ClassExpressionInterpreter implements IClassExpressionSelector<string>
 {
-    private readonly _domain: Variable = '?x';
-    private readonly _range : Variable = '?y';
-
     private _propertyExpressionInterpreter: IPropertyExpressionSelector<string>;
     private _predicateSymbolSelector = new PredicateSymbolGenerator();
 
