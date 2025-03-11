@@ -180,19 +180,22 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         objectCardinality: IObjectCardinality
         ): string
     {
-        let predicateSymbol = objectCardinality.Select(this._predicateSymbolSelector) + 'Cardinality';
+        let predicateSymbol = objectCardinality.PropertyExpression.Select(this._propertyExpressionInterpreter) + 'Cardinality';
         let cePredicateSymbol;
         if(objectCardinality.ClassExpression)
+        {
             cePredicateSymbol = objectCardinality.ClassExpression.Select(this);
-
-        if(cePredicateSymbol)
             predicateSymbol += cePredicateSymbol;
+        }
 
-        const rule: Rule = [[predicateSymbol, '?x', Count()], [[objectCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x',]]];
-        if(cePredicateSymbol)
-            rule[1].push([cePredicateSymbol, '?x']);
+        if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
+        {
+            const rule: Rule = [[predicateSymbol, '?x', Count()], [[objectCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x',]]];
+            if(cePredicateSymbol)
+                rule[1].push([cePredicateSymbol, '?x']);
+            this._rules.push(rule);
+        }
 
-        this._rules.push(rule);
         return predicateSymbol;
     }
 }
