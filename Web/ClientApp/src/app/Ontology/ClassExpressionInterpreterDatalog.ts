@@ -190,9 +190,9 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
 
         if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
         {
-            const rule: Rule = [[predicateSymbol, '?x', Count()], [[objectCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x',]]];
+            const rule: Rule = [[predicateSymbol, '?x', Count()], [[objectCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', '?y']]];
             if(cePredicateSymbol)
-                rule[1].push([cePredicateSymbol, '?x']);
+                rule[1].push([cePredicateSymbol, '?y']);
             this._rules.push(rule);
         }
 

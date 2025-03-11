@@ -40,7 +40,7 @@ describe(
 
                 const ces = [0, 1, 2].map(cardinality => new ObjectMinCardinality(op1, cardinality));
                 const cePredicateSymbols = new Map(ces.map(ce => [ce, ce.Select(interpreter.ClassExpressionInterpreter)]));
-                console.log(JSON.stringify(rules));
+                //console.log(JSON.stringify(rules));
 
                 function sample(
                     cePredicateSymbol: string
@@ -121,25 +121,29 @@ describe(
             `Given ${ontologyWriter(o1)}:`,
             () =>
             {
-                const ce = new ObjectMinCardinality(op1, 1, new ObjectOneOf([i]));
                 const store: IEavStore = new EavStore();
-                const interpreter = new ClassExpressionSignalInterpreter(
+                const rules: Rule[] = [];
+                const interpreter = new AxiomInterpreter(
                     o1,
-                    store);
+                    store,
+                    rules);
+                for(const axiom of o1.Axioms)
+                    axiom.Accept(interpreter);
+                const ce = new ObjectMinCardinality(op1, 1, new ObjectOneOf([i]));
+                const cePredicateSymbol = ce.Select(interpreter.ClassExpressionInterpreter);
                 const iInterpretation = interpreter.InterpretIndividual(i);
+                console.log(JSON.stringify(rules));
 
-                function elements(
-                    ce: IClassExpression
-                    ): Set<any>
+                function sample(
+                    cePredicateSymbol: string
+                    ): Set<Tuple>
                 {
-                    let signal: Signal<Set<any>>;
-                    let elements: Set<any> = null;
+                    let signal: Signal;
+
                     try
                     {
-                        signal = store.SignalScheduler.AddSignal(
-                            m => elements = m,
-                            [interpreter.ClassExpression(ce)]);
-                        return elements;
+                        signal = store.Signal(['?x'], [[cePredicateSymbol, '?x']], ...rules);
+                        return new SortedSet(tupleCompare, store.SignalScheduler.Sample(signal));
                     }
                     finally
                     {
@@ -156,7 +160,7 @@ describe(
                         store.Assert(x, op1.LocalName, y);
                         it(
                             `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                            () => expect(elements(ce).has(x)).toBe(false));
+                            () => expect(sample(cePredicateSymbol).has([x])).toBe(false));
                     });
 
                 describe(
@@ -167,7 +171,7 @@ describe(
                         store.Assert(x, op1.LocalName, iInterpretation);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(elements(ce).has(x)).toBe(true));
+                            () => expect(sample(cePredicateSymbol).has([x])).toBe(true));
                     });
 
                 describe(
@@ -180,7 +184,7 @@ describe(
                         store.Assert(x, op1.LocalName, y              );
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(elements(ce).has(x)).toBe(true));
+                            () => expect(sample(cePredicateSymbol).has([x])).toBe(true));
                     });
             });
     });
