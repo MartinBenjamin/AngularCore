@@ -315,6 +315,7 @@
     <None Remove="ClientApp\src\app\Ontology\ObjectMaxCardinalityObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMaxCardinalitySignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMinCardinality.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectMinCardinalityDatalog.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMinCardinalityObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMinCardinalitySignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectOneOf.ts" />

@@ -20,7 +20,6 @@ describe(
         const classExpressionWriter = new ClassExpressionWriter();
         const o1 = new Ontology('o1');
         const dp1 = new DataProperty(o1, 'dp1');
-        const ce = new DataHasValue(dp1, 1);
 
         describe(
             `Given ${ontologyWriter(o1)}:`,
@@ -35,7 +34,8 @@ describe(
                 for(const axiom of o1.Axioms)
                     axiom.Accept(interpreter);
 
-                let cePredicateSymbol = ce.Select(interpreter.ClassExpressionInterpreter);
+                const ce = new DataHasValue(dp1, 1);
+                const cePredicateSymbol = ce.Select(interpreter.ClassExpressionInterpreter);
                 //console.log(JSON.stringify(rules));
 
                 function sample(
