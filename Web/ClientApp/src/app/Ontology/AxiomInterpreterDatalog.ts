@@ -41,10 +41,10 @@ import { PropertyExpressionInterpreter } from "./PropertyExpressionInterpreterDa
 
 export class AxiomInterpreter implements IAxiomVisitor
 {
+    public  ClassExpressionInterpreter    : IClassExpressionSelector<string>;
     private _isAxiom                      = new IsAxiom();
     private _isClassExpression            = new IsClassExpression();
     private _individualInterpretation     = new Map<IIndividual, any>();
-    private _classExpressionInterpreter   : IClassExpressionSelector<string>;
     private _propertyExpressionInterpreter: IPropertyExpressionSelector<string>;
 
     constructor(
@@ -56,7 +56,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         this._individualInterpretation = AddIndividuals(
             this._ontology,
             this._store);
-        this._classExpressionInterpreter = new ClassExpressionInterpreter(
+        this.ClassExpressionInterpreter = new ClassExpressionInterpreter(
             this._individualInterpretation,
             this._rules);
         this._propertyExpressionInterpreter = new PropertyExpressionInterpreter(
@@ -86,7 +86,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
         if(this._isClassExpression.IClass(subClassOf.SuperClassExpression))
-            this._rules.push([[subClassOf.SuperClassExpression.Select(this._classExpressionInterpreter), '?x'], [[subClassOf.SubClassExpression.Select(this._classExpressionInterpreter), '?x']]]);
+            this._rules.push([[subClassOf.SuperClassExpression.Select(this.ClassExpressionInterpreter), '?x'], [[subClassOf.SubClassExpression.Select(this.ClassExpressionInterpreter), '?x']]]);
     }
 
     EquivalentClasses(
@@ -96,7 +96,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         for(const classExpression1 of equivalentClasses.ClassExpressions)
             for(const classExpression2 of equivalentClasses.ClassExpressions)
                 if(classExpression1 !== classExpression2 && this._isClassExpression.IClass(classExpression1))
-                    this._rules.push([[classExpression1.Select(this._classExpressionInterpreter), '?x'], [[classExpression2.Select(this._classExpressionInterpreter), '?x']]]);
+                    this._rules.push([[classExpression1.Select(this.ClassExpressionInterpreter), '?x'], [[classExpression2.Select(this.ClassExpressionInterpreter), '?x']]]);
     }
 
     DisjointClasses(
@@ -110,7 +110,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
         if(this._isClassExpression.IClass(classAssertion.ClassExpression))
-            this._rules.push([[classAssertion.ClassExpression.Select(this._classExpressionInterpreter), this.InterpretIndividual(classAssertion.Individual)], []]);
+            this._rules.push([[classAssertion.ClassExpression.Select(this.ClassExpressionInterpreter), this.InterpretIndividual(classAssertion.Individual)], []]);
     }
 
     ObjectPropertyAssertion(
@@ -263,7 +263,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         class$: IClass
         ): void
     {
-        this._rules.push([[class$.Select(this._classExpressionInterpreter), '?x'], [['?x', 'rdf:type', class$.Iri]]]);
+        this._rules.push([[class$.Select(this.ClassExpressionInterpreter), '?x'], [['?x', 'rdf:type', class$.Iri]]]);
     }
 
     Datatype(
