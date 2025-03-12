@@ -1,20 +1,18 @@
 import { } from 'jasmine';
+import { SortedSet } from '../Collections/SortedSet';
+import { Rule } from '../EavStore/Datalog';
 import { EavStore, tupleCompare } from '../EavStore/EavStore';
 import { IEavStore } from '../EavStore/IEavStore';
+import { Tuple } from '../EavStore/Tuple';
 import { Signal } from '../Signal/Signal';
-import { ClassExpressionSignalInterpreter } from './ClassExpressionSignalInterpreter';
+import { AxiomInterpreter } from './AxiomInterpreterDatalog';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
-import { IClassExpression } from './IClassExpression';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectMinCardinality } from './ObjectMinCardinality';
 import { ObjectOneOf } from './ObjectOneOf';
 import { Ontology } from "./Ontology";
 import { OntologyWriter } from './OntologyWriter';
-import {ObjectProperty} from './Property';
-import {Rule} from '../EavStore/Datalog';
-import { AxiomInterpreter } from './AxiomInterpreterDatalog';
-import { SortedSet } from '../Collections/SortedSet';
-import { Tuple } from '../EavStore/Tuple';
+import { ObjectProperty } from './Property';
 
 describe(
     'ObjectMinCardinality(n OPE) ({ x | #{ y | ( x , y ) ∈ (OPE)OP } ≥ n })',
@@ -40,7 +38,7 @@ describe(
 
                 const ces = [0, 1, 2].map(cardinality => new ObjectMinCardinality(op1, cardinality));
                 const cePredicateSymbols = new Map(ces.map(ce => [ce, ce.Select(interpreter.ClassExpressionInterpreter)]));
-                //console.log(JSON.stringify(rules));
+                console.log(JSON.stringify(rules));
 
                 function sample(
                     cePredicateSymbol: string
@@ -59,21 +57,17 @@ describe(
                     }
                 }
 
-                //it(
-                //    `(${classExpressionWriter.Write(ces[0])})C = ΔI`,
-                //    () => expect(interpreter.ClassExpression(ces[0])).toBe(interpreter.ObjectDomain));
-
-                //describe(
-                //    'Given x ∈ ΔI:',
-                //    () =>
-                //    {
-                //        const x = store.NewEntity();
-                //        for(const ce of ces)
-                //            it(
-                //                ce.Cardinality === 0 ?
-                //                    `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                //                () => expect(sample(cePredicateSymbols.get(ce)).has(x)).toBe(ce.Cardinality === 0));
-                //    });
+                describe(
+                    'Given x ∈ ΔI:',
+                    () =>
+                    {
+                        const x = store.NewEntity();
+                        for(const ce of ces)
+                            it(
+                                ce.Cardinality === 0 ?
+                                    `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
+                                () => expect(sample(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality === 0));
+                    });
 
                 describe(
                     'Given (op1)OP = {(x, y)}:',
@@ -132,7 +126,7 @@ describe(
                 const ce = new ObjectMinCardinality(op1, 1, new ObjectOneOf([i]));
                 const cePredicateSymbol = ce.Select(interpreter.ClassExpressionInterpreter);
                 const iInterpretation = interpreter.InterpretIndividual(i);
-                console.log(JSON.stringify(rules));
+                //console.log(JSON.stringify(rules));
 
                 function sample(
                     cePredicateSymbol: string

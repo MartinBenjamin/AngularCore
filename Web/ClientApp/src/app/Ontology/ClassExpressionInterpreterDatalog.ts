@@ -1,6 +1,7 @@
 import { Count } from "../EavStore/Aggregation";
 import { GreaterThanOrEqual, LessThanOrEqual } from "../EavStore/BuiltIn";
 import { Rule } from "../EavStore/Datalog";
+import { EntityId } from "../EavStore/EavStore";
 import { IClass } from "./IClass";
 import { IClassExpressionSelector } from "./IClassExpressionSelector";
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
@@ -19,6 +20,7 @@ import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
 import { PropertyExpressionInterpreter } from "./PropertyExpressionInterpreterDatalog";
+import { Thing } from './Thing';
 
 export type ClassAtom = [string, any];
 
@@ -125,6 +127,9 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         objectMinCardinality: IObjectMinCardinality
         ): string
     {
+        if(objectMinCardinality.Cardinality === 0)
+            return this.Class(Thing);
+
         const predicateSymbol = objectMinCardinality.Select(this._predicateSymbolSelector);
         this._rules.push([[predicateSymbol, '?x'], [[this.ObjectCardinality(objectMinCardinality), '?x', '?cardinality'], GreaterThanOrEqual('?cardinality', objectMinCardinality.Cardinality)]]);
         return predicateSymbol;
@@ -134,6 +139,9 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         objectMaxCardinality: IObjectMaxCardinality
         ): string
     {
+        if(objectMaxCardinality.Cardinality === 0)
+            return this.Class(Thing);
+
         const predicateSymbol = objectMaxCardinality.Select(this._predicateSymbolSelector);
         this._rules.push([[predicateSymbol, '?x'], [[this.ObjectCardinality(objectMaxCardinality), '?x', '?cardinality'], LessThanOrEqual('?cardinality', objectMaxCardinality.Cardinality)]]);
         return predicateSymbol;
@@ -143,6 +151,9 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         objectExactCardinality: IObjectExactCardinality
         ): string
     {
+        if(objectExactCardinality.Cardinality === 0)
+            return this.Class(Thing);
+
         const predicateSymbol = objectExactCardinality.Select(this._predicateSymbolSelector);
         this._rules.push([[predicateSymbol, '?x'], [[this.ObjectCardinality(objectExactCardinality), '?x', objectExactCardinality.Cardinality]]]);
         return predicateSymbol;
@@ -178,9 +189,17 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         class$: IClass
         ): string
     {
+        if(class$ === Thing)
+        {
+            let rule = this._rules.find(rule => rule[0][0] == Thing.Iri);
+            if(!rule)
+            {
+                rule = [[Thing.Iri, '?x'], [['?x', EntityId,]]];
+                this._rules.push(rule);
+            }
+        }
         return class$.Select(this._predicateSymbolSelector);
     }
-
 
     ObjectCardinality(
         objectCardinality: IObjectCardinality
