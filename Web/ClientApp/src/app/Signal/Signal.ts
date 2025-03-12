@@ -293,11 +293,6 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
         value : any
         ): void
     {
-        if(signal.AreEqual(
-            value,
-            this._values.get(signal)))
-            return;
-
         this._values.set(
             signal,
             value);
@@ -397,25 +392,20 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
             const signal = stronglyConnectedComponent[0]
             const value = signal.Function(...this._predecessors.get(signal).map(predecessor => this._values.get(predecessor)));
 
-            if(!signal.AreEqual(
-                value,
-                this._values.get(signal)))
-            {
-                this._values.set(
+            this._values.set(
+                signal,
+                value);
+
+            if(this._signalTrace)
+                this._signalTrace(
                     signal,
                     value);
 
-                if(this._signalTrace)
-                    this._signalTrace(
-                        signal,
-                        value);
+            const subscribers = this._subscribers.get(signal);
+            if(subscribers)
+                subscribers.forEach(subscriber => subscriber.next(value));
 
-                const subscribers = this._subscribers.get(signal);
-                if(subscribers)
-                    subscribers.forEach(subscriber => subscriber.next(value));
-
-                this.Schedule(...this._sccSuccessors.get(stronglyConnectedComponent));
-            }
+            this.Schedule(...this._sccSuccessors.get(stronglyConnectedComponent));
         }
         else
         {
