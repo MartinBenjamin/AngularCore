@@ -16,7 +16,18 @@ export type Edb = Fact | BuiltIn;
 export type Idb = [string, ...any[]];
 export const IsIdb = (atom): atom is Idb => atom instanceof Array && IsPredicateSymbol(atom[0]);
 
-export type Atom = Edb | Idb;
+class _Not
+{
+    constructor(
+        public readonly Atoms: Atom[]
+        )
+    {
+    }
+}
+
+export const Not = (...atoms: Atom[]) => new _Not(atoms);
+
+export type Atom = Edb | Idb | _Not;
 
 export type Rule = [Head: Idb, Body: Atom[]];
 
@@ -28,48 +39,10 @@ export function Conjunction(
     {
         return (...inputs: Iterable<Tuple>[]): Iterable<Tuple> =>
         {
-            let inputIndex = 0;
-            const substitutions = body.reduce(
-                (substitutions, atom) =>
-                {
-                    if(typeof atom === 'function')
-                        return [...atom(substitutions)];
-
-                    let count = substitutions.length;
-                    while(count--)
-                    {
-                        const substitution = substitutions.shift();
-                        for(const tuple of inputs[inputIndex])
-                        {
-                            let merged = {...substitution};
-                            for(let index = 0; index < atom.length && merged; ++index)
-                            {
-                                const term = atom[index];
-                                if(IsConstant(term))
-                                {
-                                    if(term !== tuple[index])
-                                        merged = null;
-                                }
-                                else if(IsVariable(term))
-                                {
-                                    if(typeof merged[term] === 'undefined')
-                                        merged[term] = tuple[index];
-
-                                    else if(merged[term] !== tuple[index])
-                                        // Fact does not match query pattern.
-                                        merged = null;
-                                }
-                            }
-
-                            if(merged)
-                                substitutions.push(merged);
-                        }
-                    }
-
-                    ++inputIndex;
-                    return substitutions;
-                },
-                [{}]);
+            let substitutions: object[];
+            [substitutions,] = RecursiveConjunction(
+                body,
+                ...inputs);
 
             if(head.some(term => term instanceof Aggregation))
             {
@@ -98,6 +71,88 @@ export function Conjunction(
             return substitutions.map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
         }
     }
+}
+
+let RecursiveConjunction: (body: Atom[], ...inputs: Iterable<Tuple>[])=> [object[], number];
+
+RecursiveConjunction = (body: Atom[], ...inputs: Iterable<Tuple>[]): [object[], number] =>
+{
+    let inputIndex = 0;
+    const substitutions = body.reduce(
+        (substitutions, atom) =>
+        {
+            if(typeof atom === 'function')
+                return [...atom(substitutions)];
+
+            if(atom instanceof _Not)
+            {
+                let input: Iterable<object>;
+                [input, inputIndex] = RecursiveConjunction(
+                    atom.Atoms,
+                    ...inputs.slice(inputIndex));
+
+                let count = substitutions.length;
+                while(count--)
+                {
+                    const outer = substitutions.shift();
+                    let match = false;
+                    for(const inner of input)
+                    {
+                        let match = true;
+                        for(const variable in inner)
+                            if(!(outer[variable] === undefined || outer[variable] === inner[variable]))
+                            {
+                                match = false;
+                                break;
+                            }
+
+                        if(match)
+                            break;
+                    }
+
+                    if(!match)
+                        substitutions.push(outer);
+                }
+            }
+            else
+            {
+                let count = substitutions.length;
+                const input = inputs[inputIndex++];
+                while(count--)
+                {
+                    const substitution = substitutions.shift();
+                    for(const tuple of input)
+                    {
+                        let merged = {...substitution};
+                        for(let index = 0; index < atom.length && merged; ++index)
+                        {
+                            const term = atom[index];
+                            if(IsConstant(term))
+                            {
+                                if(term !== tuple[index])
+                                    merged = null;
+                            }
+                            else if(IsVariable(term))
+                            {
+                                if(typeof merged[term] === 'undefined')
+                                    merged[term] = tuple[index];
+
+                                else if(merged[term] !== tuple[index])
+                                    // Fact does not match query pattern.
+                                    merged = null;
+                            }
+                        }
+
+                        if(merged)
+                            substitutions.push(merged);
+                    }
+                }
+            }
+
+            return substitutions;
+        },
+        [{}]);
+    return [substitutions, inputIndex];
 }
 
 export function Disjunction<T extends Tuple>(
