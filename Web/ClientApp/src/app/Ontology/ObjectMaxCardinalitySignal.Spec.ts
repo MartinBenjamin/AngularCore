@@ -9,21 +9,23 @@ import { NamedIndividual } from './NamedIndividual';
 import { ObjectMaxCardinality } from './ObjectMaxCardinality';
 import { ObjectOneOf } from './ObjectOneOf';
 import { Ontology } from "./Ontology";
+import { OntologyWriter } from './OntologyWriter';
 import { ObjectProperty } from './Property';
 
 describe(
     'ObjectMaxCardinality( n OPE ) ({ x | #{ y | ( x , y ) ∈ (OPE)OP } ≤ n })',
     () =>
     {
+        const ontologyWriter = OntologyWriter();
         const classExpressionWriter = new ClassExpressionWriter();
+        const o1 = new Ontology('o1');
+        const op1 = new ObjectProperty(o1, 'op1');
+        const ces = [0, 1, 2].map(cardinality => new ObjectMaxCardinality(op1, cardinality));
 
         describe(
-            'Given an Ontology o1 with axiom ObjectProperty(op1):',
+            `Given ${ontologyWriter(o1)}:`,
             () =>
             {
-                const o1 = new Ontology('o1');
-                const op1 = new ObjectProperty(o1, 'op1');
-                const ces = [0, 1, 2].map(cardinality => new ObjectMaxCardinality(op1, cardinality));
                 const store: IEavStore = new EavStore();
                 const interpreter = new ClassExpressionSignalInterpreter(
                     o1,
@@ -96,16 +98,17 @@ describe(
     'ObjectMaxCardinality( n OPE CE ) ({ x | #{ y | ( x , y ) ∈ (OPE)OP and y ∈ (CE)C } ≤ n })',
     () =>
     {
+        const ontologyWriter = OntologyWriter();
         const classExpressionWriter = new ClassExpressionWriter();
+        const o1 = new Ontology('o1');
+        const i1 = new NamedIndividual(o1, 'i1');
+        const i2 = new NamedIndividual(o1, 'i2');
+        const op1 = new ObjectProperty(o1, 'op1');
 
         describe(
-            'Given an Ontology o1 with axioms Class(c1), ObjectProperty(op1), NamedIndividual(i1) and NamedIndividual(i2):',
+            `Given ${ontologyWriter(o1)}:`,
             () =>
             {
-                const o1 = new Ontology('o1');
-                const i1 = new NamedIndividual(o1, 'i1');
-                const i2 = new NamedIndividual(o1, 'i2');
-                const op1 = new ObjectProperty(o1, 'op1');
                 const ce = new ObjectMaxCardinality(op1, 1, new ObjectOneOf([i1, i2]));
                 const store: IEavStore = new EavStore();
                 const interpreter = new ClassExpressionSignalInterpreter(
