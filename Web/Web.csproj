@@ -312,6 +312,7 @@
     <None Remove="ClientApp\src\app\Ontology\ObjectIntersectionOfObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectIntersectionOfSignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMaxCardinality.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectMaxCardinalityDatalog.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMaxCardinalityObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMaxCardinalitySignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectMinCardinality.ts" />

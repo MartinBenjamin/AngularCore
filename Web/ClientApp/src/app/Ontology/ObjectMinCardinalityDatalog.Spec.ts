@@ -38,7 +38,7 @@ describe(
 
                 const ces = [0, 1, 2].map(cardinality => new ObjectMinCardinality(op1, cardinality));
                 const cePredicateSymbols = new Map(ces.map(ce => [ce, ce.Select(interpreter.ClassExpressionInterpreter)]));
-                console.log(JSON.stringify(rules));
+                //console.log(JSON.stringify(rules));
 
                 function sample(
                     cePredicateSymbol: string
