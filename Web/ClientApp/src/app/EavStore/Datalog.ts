@@ -16,7 +16,7 @@ export type Edb = Fact;
 export type Idb = [string, ...any[]];
 export const IsIdb = (atom): atom is Idb => atom instanceof Array && IsPredicateSymbol(atom[0]);
 
-export class _Not
+class _Not
 {
     constructor(
         public readonly Atoms: Atom[]
@@ -98,7 +98,7 @@ RecursiveConjunction = (body: Atom[], ...inputs: Iterable<Tuple>[]): [object[], 
                     let match = false;
                     for(const inner of input)
                     {
-                        let match = true;
+                        match = true;
                         for(const variable in inner)
                             if(!(outer[variable] === undefined || outer[variable] === inner[variable]))
                             {
@@ -329,3 +329,25 @@ export function Recursion(
         }, inputAtoms];
     };
 }
+
+export let PredecessorAtoms: (atoms: Atom[]) => (Fact | Idb)[];
+
+PredecessorAtoms = (
+    atoms: Atom[]
+    ): (Fact | Idb)[] =>
+{
+    return atoms
+        .filter((atom): atom is Fact | Idb => typeof atom !== 'function')
+        .reduce<(Fact | Idb)[]>(
+            (predecessors, atom) =>
+            {
+                if(atom instanceof _Not)
+                    predecessors.push(...PredecessorAtoms(atom.Atoms));
+
+                else
+                    predecessors.push(atom);
+
+                return predecessors;
+            },
+            []);
+};
