@@ -3,6 +3,7 @@ import { assertBuilder } from '../assertBuilder';
 import { ArraySet } from '../Collections/ArraySet';
 import { SortedSet } from '../Collections/SortedSet';
 import { Add } from './BuiltIn';
+import { Not } from './Datalog';
 import { EavStore, tupleCompare } from './EavStore';
 import { Fact, IEavStore, Store } from './IEavStore';
 
@@ -551,7 +552,7 @@ describe(
     });
 
 describe(
-    'Signal<T extends any[]>(head: [...T], body: Atom[], ...rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>',
+    'Signal<T extends Tuple>(head: [...T], body: Atom[], ...rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>',
     () =>
     {
         const o = { a1: 1, a2: [{ a1: 2, a3: 3 }], a4: null, [Symbol.toPrimitive]: function() { } };
@@ -1059,6 +1060,28 @@ store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
                         assert('trace.length === 1');
                         assert('trace[0].size === 1');
                         assert('trace[0].has([1])');
+                    });
+
+                describe(
+                    `Given
+trace: Set<any[]>[] and
+signal = store.Signal(['?x'], [['r1', '?x'], Not(['r2', '?x'])], [['r1', 1], []], [['r1', 2], []], [['r2', 1], []]) and
+store.SignalScheduler.AddSignal(result => trace.push(result), [signal])`,
+                    () =>
+                    {
+                        const trace: Set<any[]>[] = [];
+                        const assert = assertBuilder('Store', 'store', 'e', 'trace')
+                            (Store, store, e, trace);
+                        const signal = store.Signal(
+                            ['?x'], [['r1', '?x'], Not(['r2', '?x'])],
+                            [['r1', 1], []],
+                            [['r1', 2], []],
+                            [['r2', 1], []]);
+                        const traceSignal = store.SignalScheduler.AddSignal(result => trace.push(new ArraySet(result)), [signal]);
+                        store.SignalScheduler.RemoveSignal(traceSignal);
+                        assert('trace.length === 1');
+                        assert('trace[0].size === 2');
+                        assert('trace[0].has([2])');
                     });
             });
 

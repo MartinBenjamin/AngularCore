@@ -12,11 +12,11 @@ export const IsVariable = (term): term is Variable => typeof term === 'string' &
 export const IsConstant = term => !(typeof term === 'undefined' || IsVariable(term));
 
 export const IsPredicateSymbol = (term): term is string => typeof term === 'string' && term[0] !== '?';
-export type Edb = Fact | BuiltIn;
+export type Edb = Fact;
 export type Idb = [string, ...any[]];
 export const IsIdb = (atom): atom is Idb => atom instanceof Array && IsPredicateSymbol(atom[0]);
 
-class _Not
+export class _Not
 {
     constructor(
         public readonly Atoms: Atom[]
@@ -27,7 +27,7 @@ class _Not
 
 export const Not = (...atoms: Atom[]) => new _Not(atoms);
 
-export type Atom = Edb | Idb | _Not;
+export type Atom = Idb | Edb | BuiltIn | _Not;
 
 export type Rule = [Head: Idb, Body: Atom[]];
 

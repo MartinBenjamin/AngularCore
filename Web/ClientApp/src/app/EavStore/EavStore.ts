@@ -4,6 +4,7 @@ import { ArrayKeyedMap, TrieNode } from '../Collections/ArrayKeyedMap';
 import { SortedSet } from '../Collections/SortedSet';
 import { WrapperType } from '../Ontology/Wrapped';
 import { IScheduler, Scheduler, Signal } from '../Signal/Signal';
+import { BuiltIn } from './BuiltIn';
 import { Edb, IsConstant, IsVariable } from './Datalog';
 import { DatalogObservableInterpreter } from './DatalogObservableInterpreter';
 import { DatalogSignalInterpreter } from './DatalogSignalInterpreter1';
@@ -303,7 +304,7 @@ export class EavStore implements IEavStore, IPublisher
 
     private QueryRule<T extends any[]>(
         head: [...T],
-        body: Edb[]): { [K in keyof T]: any; }[]
+        body: (Edb | BuiltIn)[]): { [K in keyof T]: any; }[]
     {
         return this.QueryRuleOptimised(
             head,
@@ -348,7 +349,7 @@ export class EavStore implements IEavStore, IPublisher
 
     private QueryRuleOptimised<T extends any[]>(
         head: [...T],
-        body: Edb[]): { [K in keyof T]: any; }[]
+        body: (Edb | BuiltIn)[]): { [K in keyof T]: any; }[]
     {
         return body.reduce(
             (substitutions, atom) =>

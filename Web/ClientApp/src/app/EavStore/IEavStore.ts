@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 import { IScheduler, Signal } from '../Signal/Signal';
+import { BuiltIn } from './BuiltIn';
 import { Atom, Edb, Rule } from './Datalog';
 import { Fact, PropertyKey } from './Fact';
 import { ITransaction } from './ITransactionManager';
@@ -30,7 +31,7 @@ export interface IEavStore
     Query(atom: Fact): Fact[];
     Query<T extends any[]>(
         head: [...T],
-        body: Edb[]): { [K in keyof T]: any; }[];
+        body: (Edb | BuiltIn)[]): { [K in keyof T]: any; }[];
 
     ObserveEntities(): Observable<Set<any>>;
     Observe(atom: Fact): Observable<Fact[]>;

@@ -3,7 +3,7 @@ import { Compare, SortedSet } from "../Collections/SortedSet";
 import { StronglyConnectedComponents } from "../Graph/StronglyConnectedComponents";
 import { WrapperType } from "../Ontology/Wrapped";
 import { Signal } from "../Signal/Signal";
-import { Atom, Conjunction, Disjunction, Idb, IsIdb, RecursiveDisjunction, Rule } from "./Datalog";
+import { Atom, Conjunction, Disjunction, Idb, IsIdb, RecursiveDisjunction, Rule, _Not } from "./Datalog";
 import { IDatalogInterpreter } from "./IDatalogInterpreter";
 import { Fact, IEavStore } from "./IEavStore";
 import { Tuple } from "./Tuple";
@@ -91,7 +91,7 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
                         []);
                     signalPredecessorAtoms.set(
                         conjunction,
-                        rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function'));
+                        this.PredecessorAtoms(rule[1]));
                     idbSignals.set(
                         predicateSymbol,
                         conjunction);
@@ -118,7 +118,7 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
                             []);
                         signalPredecessorAtoms.set(
                             conjunction,
-                            rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function'));
+                            this.PredecessorAtoms(rule[1]));
                     }
                 }
             }
@@ -137,5 +137,25 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
 
         this._eavStore.SignalScheduler.AddSignals(signalAdjacencyList);
         return idbSignals;
+    }
+
+    private PredecessorAtoms(
+        atoms: Atom[]
+        ): (Fact | Idb)[]
+    {
+        return atoms
+            .filter((atom): atom is Fact | Idb => typeof atom !== 'function')
+            .reduce<(Fact | Idb)[]>(
+                (predecessors, atom) =>
+                {
+                    if(atom instanceof _Not)
+                        predecessors.push(...this.PredecessorAtoms(atom.Atoms));
+
+                    else
+                        predecessors.push(atom);
+
+                    return predecessors;
+                },
+                []);
     }
 }
