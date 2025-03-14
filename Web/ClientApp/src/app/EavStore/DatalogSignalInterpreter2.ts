@@ -4,7 +4,7 @@ import { Transpose } from "../Graph/AdjacencyList";
 import { StronglyConnectedComponents } from "../Graph/StronglyConnectedComponents";
 import { WrapperType } from "../Ontology/Wrapped";
 import { Signal } from "../Signal/Signal";
-import { Atom, Conjunction, Disjunction, Idb, IsIdb, Recursion, Rule } from "./Datalog";
+import { Atom, Conjunction, Disjunction, Idb, IsIdb, PredecessorAtoms, Recursion, Rule } from "./Datalog";
 import { IDatalogInterpreter } from "./IDatalogInterpreter";
 import { Fact, IEavStore } from "./IEavStore";
 import { Tuple } from "./Tuple";
@@ -100,7 +100,7 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
                         conjunction);
                     signalPredecessorAtoms.set(
                         conjunction,
-                        rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function'));
+                        PredecessorAtoms(rule[1]));
                 }
                 else // Disjunction of conjunctions.
                 {
@@ -121,7 +121,7 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
                         predecessors.push(conjunction);
                         signalPredecessorAtoms.set(
                             conjunction,
-                            rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function'));
+                            PredecessorAtoms(rule[1]));
                     }
                 }
             }

@@ -3,7 +3,7 @@ import { Compare, SortedSet } from "../Collections/SortedSet";
 import { LongestPaths } from "../Graph/AdjacencyList";
 import { Condense } from "../Graph/StronglyConnectedComponents";
 import { Wrapped, WrapperType } from "../Ontology/Wrapped";
-import { Atom, Conjunction, Disjunction, Idb, IsIdb, Recursion, Rule } from "./Datalog";
+import { Atom, Conjunction, Disjunction, Idb, IsIdb, PredecessorAtoms, Recursion, Rule } from "./Datalog";
 import { Fact } from "./Fact";
 import { IDatalogInterpreter } from "./IDatalogInterpreter";
 import { Tuple } from "./Tuple";
@@ -97,7 +97,7 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
                     const conjunction = this._conjunction(
                         rule[0][0] === '' ? rule[0].slice(1) : rule[0],
                         rule[1]);
-                    const wrappedPredecessors: Wrapped<T, Iterable<Tuple>>[] = rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function').map(
+                    const wrappedPredecessors: Wrapped<T, Iterable<Tuple>>[] = PredecessorAtoms(rule[1]).map(
                         atom => IsIdb(atom) ? wrappedIdbs.get(atom[0]) : this.WrapEdb(atom));
 
                     const wrappedConjunction = this.Wrap(
@@ -115,7 +115,7 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
                             const conjunction = this._conjunction(
                                 rule[0][0] === '' ? rule[0].slice(1) : rule[0],
                                 rule[1]);
-                            const wrappedPredecessors: Wrapped<T, Iterable<Tuple>>[] = rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function').map(
+                            const wrappedPredecessors: Wrapped<T, Iterable<Tuple>>[] = PredecessorAtoms(rule[1]).map(
                                 atom => IsIdb(atom) ? wrappedIdbs.get(atom[0]) : this.WrapEdb(atom));
 
                             const wrappedConjunction = this.Wrap(
