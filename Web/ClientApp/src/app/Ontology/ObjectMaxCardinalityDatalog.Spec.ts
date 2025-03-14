@@ -1,5 +1,4 @@
 import { } from 'jasmine';
-import { Subscription } from 'rxjs';
 import { SortedSet } from '../Collections/SortedSet';
 import { Rule } from '../EavStore/Datalog';
 import { EavStore, tupleCompare } from '../EavStore/EavStore';
@@ -7,9 +6,7 @@ import { IEavStore } from '../EavStore/IEavStore';
 import { Tuple } from '../EavStore/Tuple';
 import { Signal } from '../Signal/Signal';
 import { AxiomInterpreter } from './AxiomInterpreterDatalog';
-import { ClassExpressionObservableInterpreter } from './ClassExpressionObservableInterpreter';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
-import { IClassExpression } from './IClassExpression';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectMaxCardinality } from './ObjectMaxCardinality';
 import { ObjectOneOf } from './ObjectOneOf';
@@ -119,28 +116,34 @@ describe(
             `Given ${ontologyWriter(o1)}:`,
             () =>
             {
-                const ce = new ObjectMaxCardinality(op1, 1, new ObjectOneOf([i1, i2]));
                 const store: IEavStore = new EavStore();
-                const interpreter = new ClassExpressionObservableInterpreter(
+                const rules: Rule[] = [];
+                const interpreter = new AxiomInterpreter(
                     o1,
-                    store);
+                    store,
+                    rules);
+                for(const axiom of o1.Axioms)
+                    axiom.Accept(interpreter);
+
+                const ce = new ObjectMaxCardinality(op1, 1, new ObjectOneOf([i1, i2]));
+                const cePredicateSymbol = ce.Select(interpreter.ClassExpressionInterpreter);
                 const i1Interpretation = interpreter.InterpretIndividual(i1);
                 const i2Interpretation = interpreter.InterpretIndividual(i2);
 
-                function elements(
-                    ce: IClassExpression
-                    ): Set<any>
+                function sample(
+                    cePredicateSymbol: string
+                    ): Set<Tuple>
                 {
-                    let subscription: Subscription;
+                    let signal: Signal;
+
                     try
                     {
-                        let elements: Set<any> = null;
-                        subscription = interpreter.ClassExpression(ce).subscribe(m => elements = m);
-                        return elements;
+                        signal = store.Signal(['?x'], [[cePredicateSymbol, '?x']], ...rules);
+                        return new SortedSet(tupleCompare, store.SignalScheduler.Sample(signal));
                     }
                     finally
                     {
-                        subscription.unsubscribe();
+                        store.SignalScheduler.RemoveSignal(signal);
                     }
                 }
 
@@ -153,7 +156,7 @@ describe(
                         store.Assert(x, op1.LocalName, y);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(elements(ce).has(x)).toBe(true));
+                            () => expect(sample(cePredicateSymbol).has([x])).toBe(true));
                     });
 
                 describe(
@@ -164,7 +167,7 @@ describe(
                         store.Assert(x, op1.LocalName, i1Interpretation);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(elements(ce).has(x)).toBe(true));
+                            () => expect(sample(cePredicateSymbol).has([x])).toBe(true));
                     });
 
                 describe(
@@ -177,7 +180,7 @@ describe(
                         store.Assert(x, op1.LocalName, y               );
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(elements(ce).has(x)).toBe(true));
+                            () => expect(sample(cePredicateSymbol).has([x])).toBe(true));
                     });
 
                 describe(
@@ -188,7 +191,7 @@ describe(
                         store.Assert(x, op1.LocalName, i2Interpretation);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(elements(ce).has(x)).toBe(true));
+                            () => expect(sample(cePredicateSymbol).has([x])).toBe(true));
                     });
 
                 describe(
@@ -201,7 +204,7 @@ describe(
                         store.Assert(x, op1.LocalName, y               );
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(elements(ce).has(x)).toBe(true));
+                            () => expect(sample(cePredicateSymbol).has([x])).toBe(true));
                     });
 
                 describe(
@@ -213,7 +216,7 @@ describe(
                         store.Assert(x, op1.LocalName, i2Interpretation);
                         it(
                             `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                            () => expect(elements(ce).has(x)).toBe(false));
+                            () => expect(sample(cePredicateSymbol).has([x])).toBe(false));
                     });
             });
     });
