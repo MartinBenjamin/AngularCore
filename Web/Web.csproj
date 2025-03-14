@@ -66,7 +66,6 @@
     <None Remove="ClientApp\src\app\EavStore\Datalog.ts" />
     <None Remove="ClientApp\src\app\EavStore\DatalogInterpreter.ts" />
     <None Remove="ClientApp\src\app\EavStore\DatalogObservableInterpreter.ts" />
-    <None Remove="ClientApp\src\app\EavStore\DatalogSignalInterpreter.ts" />
     <None Remove="ClientApp\src\app\EavStore\DatalogSignalInterpreter1.ts" />
     <None Remove="ClientApp\src\app\EavStore\DatalogSignalInterpreter2.ts" />
     <None Remove="ClientApp\src\app\EavStore\DatalogSignalInterpreter3.ts" />
