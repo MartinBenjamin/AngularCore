@@ -60,47 +60,47 @@ describe(
                     }
                 }
 
-                //describe(
-                //    'Given x ∈ ΔI:',
-                //    () =>
-                //    {
-                //        const x = store.NewEntity();
-                //        for(const ce of ces)
-                //            it(
-                //                ce.Cardinality === 0 ?
-                //                    `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                //                () => expect(sample(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality >= 0));
-                //    });
+                describe(
+                    'Given x ∈ ΔI:',
+                    () =>
+                    {
+                        const x = store.NewEntity();
+                        for(const ce of ces)
+                            it(
+                                ce.Cardinality === 0 ?
+                                    `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
+                                () => expect(sample(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality >= 0));
+                    });
 
-                //describe(
-                //    'Given (op1)OP = {(x, y)}:',
-                //    () =>
-                //    {
-                //        const x = store.NewEntity();
-                //        const y = 2;
-                //        store.Assert(x, op1.LocalName, y);
-                //        for(const ce of ces)
-                //            it(
-                //                ce.Cardinality === 1 ?
-                //                    `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                //                () => expect(sample(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality >= 1));
-                //    });
+                describe(
+                    'Given (op1)OP = {(x, y)}:',
+                    () =>
+                    {
+                        const x = store.NewEntity();
+                        const y = 2;
+                        store.Assert(x, op1.LocalName, y);
+                        for(const ce of ces)
+                            it(
+                                ce.Cardinality === 1 ?
+                                    `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
+                                () => expect(sample(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality >= 1));
+                    });
 
-                //describe(
-                //    'Given (op1)OP = {(x, y), (x, z)}:',
-                //    () =>
-                //    {
-                //        const x = store.NewEntity();
-                //        const y = 2;
-                //        const z = 3;
-                //        store.Assert(x, op1.LocalName, y);
-                //        store.Assert(x, op1.LocalName, z);
-                //        for(const ce of ces)
-                //            it(
-                //                ce.Cardinality === 2 ?
-                //                    `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                //                () => expect(sample(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality >= 2));
-                //    });
+                describe(
+                    'Given (op1)OP = {(x, y), (x, z)}:',
+                    () =>
+                    {
+                        const x = store.NewEntity();
+                        const y = 2;
+                        const z = 3;
+                        store.Assert(x, op1.LocalName, y);
+                        store.Assert(x, op1.LocalName, z);
+                        for(const ce of ces)
+                            it(
+                                ce.Cardinality === 2 ?
+                                    `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
+                                () => expect(sample(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality >= 2));
+                    });
             });
     });
 

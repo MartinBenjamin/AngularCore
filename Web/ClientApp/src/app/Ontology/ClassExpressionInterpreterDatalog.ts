@@ -1,6 +1,6 @@
 import { Count } from "../EavStore/Aggregation";
-import { GreaterThanOrEqual, LessThanOrEqual } from "../EavStore/BuiltIn";
-import { Rule } from "../EavStore/Datalog";
+import { GreaterThan, GreaterThanOrEqual } from "../EavStore/BuiltIn";
+import { Not, Rule } from "../EavStore/Datalog";
 import { EntityId } from "../EavStore/EavStore";
 import { IClass } from "./IClass";
 import { IClassExpressionSelector } from "./IClassExpressionSelector";
@@ -139,11 +139,8 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         objectMaxCardinality: IObjectMaxCardinality
         ): string
     {
-        if(objectMaxCardinality.Cardinality === 0)
-            return this.Class(Thing);
-
         const predicateSymbol = objectMaxCardinality.Select(this._predicateSymbolSelector);
-        this._rules.push([[predicateSymbol, '?x'], [[this.ObjectCardinality(objectMaxCardinality), '?x', '?cardinality'], LessThanOrEqual('?cardinality', objectMaxCardinality.Cardinality)]]);
+        this._rules.push([[predicateSymbol, '?x'], [[this.Class(Thing), '?x'], Not([this.ObjectCardinality(objectMaxCardinality), '?x', '?cardinality'], GreaterThan('?cardinality', objectMaxCardinality.Cardinality))]]);
         return predicateSymbol;
     }
 
