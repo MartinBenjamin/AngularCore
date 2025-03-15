@@ -4,7 +4,8 @@ import { SortedMap } from "../Collections/SortedMap";
 import { LongestPaths } from "../Graph/AdjacencyList";
 import { Condense } from "../Graph/StronglyConnectedComponents";
 import { Aggregation } from "./Aggregation";
-import { Atom, IsConstant, IsEdb, IsIdb, IsVariable, RecursiveConjunction, Rule } from "./Datalog";
+import { Atom, IsConstant, IsEdb, IsIdb, IsVariable, PredecessorAtoms, Rule } from "./Datalog";
+import { Not } from "./DatalogNot";
 import { tupleCompare } from "./EavStore";
 import { IEavStore } from "./IEavStore";
 import { Tuple } from "./Tuple";
@@ -27,7 +28,7 @@ function Query<T extends Tuple>(
         rules.map<[string, string[]]>(
             rule => [
                 rule[0][0],
-                [].concat(...rulesGroupedByPredicateSymbol.get(rule[0][0]).map(rule => rule[1].filter(IsIdb).map(idb => idb[0])))]));
+                [].concat(...rulesGroupedByPredicateSymbol.get(rule[0][0]).map(rule => PredecessorAtoms(rule[1]).filter(IsIdb).map(idb => idb[0])))]));
 
     // Condense the rule graph.
     let condensed: ReadonlyMap<SCC<string>, ReadonlyArray<SCC<string>>> = Condense(rulePredecessors);
@@ -140,7 +141,7 @@ function Conjunction(
             substitutions.map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term)));
 }
 
-let RecursiveConjunction: (body: Atom[], ...inputs: Iterable<Tuple>[])=> [object[], number];
+let RecursiveConjunction: (body: Atom[], values: Map<any[], Iterable<Tuple>>)=> [object[], number];
 
 RecursiveConjunction = (body: Atom[], values: Map<any[], Iterable<Tuple>>): [object[], number] =>
 {

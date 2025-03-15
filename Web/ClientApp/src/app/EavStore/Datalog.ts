@@ -4,6 +4,7 @@ import { Compare, SortedSet } from "../Collections/SortedSet";
 import { Wrap, Wrapped } from "../Wrap";
 import { Aggregation } from "./Aggregation";
 import { BuiltIn } from "./BuiltIn";
+import { Not } from "./DatalogNot";
 import { Fact } from "./Fact";
 import { Tuple } from "./Tuple";
 
@@ -15,15 +16,7 @@ export const IsPredicateSymbol = (term): term is string => typeof term === 'stri
 export type Edb = Fact;
 export type Idb = [string, ...any[]];
 export const IsIdb = (atom): atom is Idb => atom instanceof Array && IsPredicateSymbol(atom[0]);
-
-class Not
-{
-    constructor(
-        public readonly Atoms: Atom[]
-        )
-    {
-    }
-}
+export const IsEdb = (atom): atom is Idb => atom instanceof Array && !IsPredicateSymbol(atom[0]);
 
 const _Not = (...atoms: Atom[]) => new Not(atoms);
 
