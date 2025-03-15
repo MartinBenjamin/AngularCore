@@ -188,7 +188,7 @@ export function RecursiveDisjunction(
                 for(const tuple of conjunction)
                     resultT.add(tuple);
 
-            return resultT;
+            return resultTMinus1 && resultTMinus1.size === resultT.size ? resultTMinus1 : resultT;
         };
 
         const empty = new SortedSet(tupleCompare);

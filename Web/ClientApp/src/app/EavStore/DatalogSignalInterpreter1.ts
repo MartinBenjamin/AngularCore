@@ -65,9 +65,7 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
                 let recursiveDisjunction: (...inputs: [SortedSet<Tuple>, ...Iterable<Tuple>[]]) => SortedSet<Tuple>;
                 let predecessorAtoms: (Fact | Idb)[];
                 [recursiveDisjunction, predecessorAtoms] = this._recursiveDisjunction(rules);
-                const recursiveSignal = new Signal(
-                    recursiveDisjunction,
-                    (lhs, rhs) => lhs && rhs && lhs.size === rhs.size);
+                const recursiveSignal = new Signal(recursiveDisjunction);
                 signalAdjacencyList.set(
                     recursiveSignal,
                     [recursiveSignal]);
