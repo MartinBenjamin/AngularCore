@@ -16,7 +16,7 @@ export type Edb = Fact;
 export type Idb = [string, ...any[]];
 export const IsIdb = (atom): atom is Idb => atom instanceof Array && IsPredicateSymbol(atom[0]);
 
-class _Not
+class Not
 {
     constructor(
         public readonly Atoms: Atom[]
@@ -25,9 +25,11 @@ class _Not
     }
 }
 
-export const Not = (...atoms: Atom[]) => new _Not(atoms);
+const _Not = (...atoms: Atom[]) => new Not(atoms);
 
-export type Atom = Idb | Edb | BuiltIn | _Not;
+export { _Not as Not };
+
+export type Atom = Idb | Edb | BuiltIn | Not;
 
 export type Rule = [Head: Idb, Body: Atom[]];
 
@@ -84,7 +86,7 @@ RecursiveConjunction = (body: Atom[], ...inputs: Iterable<Tuple>[]): [object[], 
             if(typeof atom === 'function')
                 return [...atom(substitutions)];
 
-            if(atom instanceof _Not)
+            if(atom instanceof Not)
             {
                 let input: Iterable<object>;
                 [input, inputIndex] = RecursiveConjunction(
@@ -341,7 +343,7 @@ PredecessorAtoms = (
         .reduce<(Fact | Idb)[]>(
             (predecessors, atom) =>
             {
-                if(atom instanceof _Not)
+                if(atom instanceof Not)
                     predecessors.push(...PredecessorAtoms(atom.Atoms));
 
                 else
