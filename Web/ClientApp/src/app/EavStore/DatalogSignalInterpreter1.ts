@@ -80,16 +80,17 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
             {
                 if(rules.length === 1)
                 {
-                    const rule = rules[0];
+                    const [head, body] = rules[0];
+                    const [predicateSymbol,] = head;
                     const conjunction = new Signal(this._conjunction(
-                        rule[0][0] === '' ? rule[0].slice(1) : rule[0],
-                        rule[1]));
+                        predicateSymbol === '' ? head.slice(1) : head,
+                        body));
                     signalAdjacencyList.set(
                         conjunction,
                         []);
                     signalPredecessorAtoms.set(
                         conjunction,
-                        PredecessorAtoms(rule[1]));
+                        PredecessorAtoms(body));
                     idbSignals.set(
                         predicateSymbol,
                         conjunction);
@@ -105,18 +106,19 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
                         predicateSymbol,
                         disjunction);
 
-                    for(const rule of rules)
+                    for(const [head, body] of rules)
                     {
+                        const [predicateSymbol,] = head;
                         const conjunction = new Signal(this._conjunction(
-                            rule[0][0] === '' ? rule[0].slice(1) : rule[0],
-                            rule[1]));
+                            predicateSymbol === '' ? head.slice(1) : head,
+                            body));
                         predecessors.push(conjunction);
                         signalAdjacencyList.set(
                             conjunction,
                             []);
                         signalPredecessorAtoms.set(
                             conjunction,
-                            PredecessorAtoms(rule[1]));
+                            PredecessorAtoms(body));
                     }
                 }
             }
