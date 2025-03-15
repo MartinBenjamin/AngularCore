@@ -45,7 +45,7 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
             rules.map<[string, string[]]>(
                 rule => [
                     rule[0][0],
-                    [].concat(...rulesGroupedByPredicateSymbol.get(rule[0][0]).map(rule => rule[1].filter(IsIdb).map(idb => idb[0])))]));
+                    [].concat(...rulesGroupedByPredicateSymbol.get(rule[0][0]).map(rule => PredecessorAtoms(rule[1]).filter(IsIdb).map(idb => idb[0])))]));
 
         type SCC<T> = ReadonlyArray<T> & { LongestPath?: number; } & { Recursive?: boolean; };
 
@@ -93,11 +93,12 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
                 const rules = rulesGroupedByPredicateSymbol.get(predicateSymbol);
                 if(rules.length === 1)
                 {
-                    const rule = rules[0];
+                    const [head, body] = rules[0];
+                    const [predicateSymbol,] = head;
                     const conjunction = this._conjunction(
-                        rule[0][0] === '' ? rule[0].slice(1) : rule[0],
-                        rule[1]);
-                    const wrappedPredecessors: Wrapped<T, Iterable<Tuple>>[] = PredecessorAtoms(rule[1]).map(
+                        predicateSymbol === '' ? head.slice(1) : head,
+                        body);
+                    const wrappedPredecessors: Wrapped<T, Iterable<Tuple>>[] = PredecessorAtoms(body).map(
                         atom => IsIdb(atom) ? wrappedIdbs.get(atom[0]) : this.WrapEdb(atom));
 
                     const wrappedConjunction = this.Wrap(
@@ -112,10 +113,13 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
                     const wrappedPredecessors: Wrapped<T, Iterable<Tuple>>[] = rules.map(
                         rule =>
                         {
+                            const [head, body] = rule;
+                            const [predicateSymbol,] = head;
                             const conjunction = this._conjunction(
-                                rule[0][0] === '' ? rule[0].slice(1) : rule[0],
-                                rule[1]);
-                            const wrappedPredecessors: Wrapped<T, Iterable<Tuple>>[] = PredecessorAtoms(rule[1]).map(
+                                predicateSymbol === '' ? head.slice(1) : head,
+                                body);
+
+                            const wrappedPredecessors: Wrapped<T, Iterable<Tuple>>[] = PredecessorAtoms(body).map(
                                 atom => IsIdb(atom) ? wrappedIdbs.get(atom[0]) : this.WrapEdb(atom));
 
                             const wrappedConjunction = this.Wrap(

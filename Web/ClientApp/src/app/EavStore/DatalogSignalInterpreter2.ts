@@ -47,7 +47,7 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
             rules.map<[string, string[]]>(
                 rule => [
                     rule[0][0],
-                    [].concat(...rulesGroupedByPredicateSymbol.get(rule[0][0]).map(rule => rule[1].filter(IsIdb).map(idb => idb[0])))]));
+                    [].concat(...rulesGroupedByPredicateSymbol.get(rule[0][0]).map(rule => PredecessorAtoms(rule[1]).filter(IsIdb).map(idb => idb[0])))]));
         const ruleSuccessors = Transpose(rulePredecessors);
 
         type SCC<T> = ReadonlyArray<T> & { Recursive?: boolean; };
