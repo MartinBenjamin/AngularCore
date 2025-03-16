@@ -11,20 +11,17 @@ import { Tuple } from "./Tuple";
 export type Variable = `?${string}`;
 export const IsVariable = (term): term is Variable => typeof term === 'string' && term[0] === '?';
 export const IsConstant = term => !(typeof term === 'undefined' || IsVariable(term));
-
 export const IsPredicateSymbol = (term): term is string => typeof term === 'string' && term[0] !== '?';
 export type Edb = Fact;
 export type Idb = [string, ...any[]];
+export type Atom = Idb | Edb | BuiltIn | Not;
+export type Rule = [Head: Idb, Body: Atom[]];
 export const IsIdb = (atom): atom is Idb => atom instanceof Array && IsPredicateSymbol(atom[0]);
 export const IsEdb = (atom): atom is Edb => atom instanceof Array && !IsPredicateSymbol(atom[0]);
 
 const _Not = (...atoms: Atom[]) => new Not(atoms);
 
 export { _Not as Not };
-
-export type Atom = Idb | Edb | BuiltIn | Not;
-
-export type Rule = [Head: Idb, Body: Atom[]];
 
 export function Conjunction(
     tupleCompare: Compare<Tuple>
@@ -167,10 +164,26 @@ export function Disjunction<T extends Tuple>(
                 first));
 }
 
+export function Accumulate<T extends Tuple>(
+    tupleCompare: Compare<T>
+    ): (tMinus1: SortedSet<T>, current: Iterable<T>) => SortedSet<T>
+{
+    const empty = new SortedSet(tupleCompare);
+    return (previousResult: SortedSet<T>, input: Iterable<T>): SortedSet<T> =>
+    {
+        previousResult = previousResult || empty;
+        const result = new SortedSet(tupleCompare);
+        for(const tuple of input)
+            result.add(tuple);
+        return previousResult && previousResult.size === result.size ? previousResult : result;
+    }
+}
+
 export function RecursiveDisjunction(
     tupleCompare: Compare<Tuple>
     ): (rules: Rule[]) => [(...inputs: [SortedSet<Tuple>, ...Iterable<Tuple>[]]) => SortedSet<Tuple>, (Fact | Idb)[]]
 {
+    const empty = new SortedSet(tupleCompare);
     return (rules: Rule[]): [(...inputs: [SortedSet<Tuple>, ...Iterable<Tuple>[]]) => SortedSet<Tuple>, (Fact | Idb)[]] =>
     {
         type InputType = [SortedSet<Tuple>, ...Iterable<Tuple>[]];
@@ -195,7 +208,6 @@ export function RecursiveDisjunction(
             return resultTMinus1 && resultTMinus1.size === resultT.size ? resultTMinus1 : resultT;
         };
 
-        const empty = new SortedSet(tupleCompare);
         const wrappedDisjunctionPredecessors: [() => SortedSet<Tuple>, ...Wrapped<Iterable<Tuple>>[]] = [() => inputs[0] || empty];
 
         for(const [head, body] of rules)
@@ -248,10 +260,10 @@ export function Recursion(
     tupleCompare: Compare<Tuple>
     ): (rulesGroupedByPredicateSymbol: [string, Rule[]][]) => [(...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>[], (Fact | Idb)[]]
 {
+    const empty = new SortedSet(tupleCompare);
     return (rulesGroupedByPredicateSymbol: [string, Rule[]][]): [(...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>[], (Fact | Idb)[]] =>
     {
         type Result = SortedSet<Tuple>[];
-        const empty = new SortedSet(tupleCompare);
         const resultT0: Result = rulesGroupedByPredicateSymbol.map(() => empty);
         let resultTMinus1: Result;
         let inputs: Iterable<Tuple>[];
