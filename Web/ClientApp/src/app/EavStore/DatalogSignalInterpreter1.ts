@@ -12,7 +12,7 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
 {
     private readonly _conjunction         : (head: Tuple, body: Atom[]) => (...inputs: Iterable<Tuple>[]) => Iterable<Tuple>;
     private readonly _disjunction         : (...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>;
-    private readonly _recursiveDisjunction: (rules: Rule[]) => [(...inputs: [SortedSet<Tuple>, ...Iterable<Tuple>[]]) => SortedSet<Tuple>, (Fact | Idb)[]];
+    private readonly _recursiveDisjunction: (rules: Rule[]) => [(...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>, (Fact | Idb)[]];
     private readonly _accumulate          : (previousResult: SortedSet<Tuple>, input: Iterable<Tuple>) => SortedSet<Tuple>;
 
     constructor(
