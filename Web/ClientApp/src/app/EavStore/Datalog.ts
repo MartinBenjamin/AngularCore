@@ -172,9 +172,12 @@ export function Accumulate<T extends Tuple>(
     return (previousResult: SortedSet<T>, input: Iterable<T>): SortedSet<T> =>
     {
         previousResult = previousResult || empty;
-        const result = new SortedSet(tupleCompare);
+        const result = new SortedSet(
+            tupleCompare,
+            previousResult);
         for(const tuple of input)
             result.add(tuple);
+        // If no change, return previousResult to enable detection pf fixed point by referential equality.
         return previousResult && previousResult.size === result.size ? previousResult : result;
     }
 }
