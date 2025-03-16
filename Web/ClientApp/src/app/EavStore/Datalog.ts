@@ -216,8 +216,8 @@ export function RecursiveDisjunction(
                     wrappedInput = wrappedInputs.get(atom);
                     if(!wrappedInput)
                     {
-                        const index = inputAtoms.push(atom);
-                        wrappedInput = () => inputs[index] || empty;
+                        const inputIndex = inputAtoms.push(atom);
+                        wrappedInput = () => inputs[inputIndex] || empty;
                         wrappedInputs.set(
                             atom,
                             wrappedInput);
@@ -252,6 +252,8 @@ export function Recursion(
     ): (rulesGroupedByPredicateSymbol: [string, Rule[]][]) => [(...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>[], (Fact | Idb)[]]
 {
     const empty = new SortedSet(tupleCompare);
+    const disjunction = Disjunction(tupleCompare);
+    const accumulate = Accumulate(tupleCompare);
     return (rulesGroupedByPredicateSymbol: [string, Rule[]][]): [(...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>[], (Fact | Idb)[]] =>
     {
         type Result = SortedSet<Tuple>[];
@@ -266,18 +268,7 @@ export function Recursion(
         rulesGroupedByPredicateSymbol.forEach(
             ([, rules], index) =>
             {
-                const disjunction = (...params: [SortedSet<Tuple>, ...Iterable<Tuple>[]]): SortedSet<Tuple> =>
-                {
-                    const [resultTMinus1, ...conjunctions] = params;
-                    const resultT = new SortedSet(resultTMinus1);
-                    for(const conjunction of conjunctions)
-                        for(const tuple of conjunction)
-                            resultT.add(tuple);
-
-                    return resultT;
-                };
-
-                const wrappedDisjunctionPredecessors: [() => SortedSet<Tuple>, ...Wrapped<Iterable<Tuple>>[]] = [() => resultTMinus1[index]];
+                const wrappedDisjunctionPredecessors: [Wrapped<SortedSet<Tuple>>, ...Wrapped<Iterable<Tuple>>[]] = [() => resultTMinus1[index]];
 
                 for(const [head, body] of rules)
                 {
@@ -315,7 +306,11 @@ export function Recursion(
                 }
 
                 const wrappedDisjunction = Wrap(disjunction, ...wrappedDisjunctionPredecessors);
-                wrappedDisjunctions.push(wrappedDisjunction);
+                const wrappedAccumulate = Wrap(
+                    accumulate,
+                    wrappedDisjunctionPredecessors[0],
+                    wrappedDisjunction);
+                wrappedDisjunctions.push(wrappedAccumulate);
             });
 
         const wrapped = Wrap(
