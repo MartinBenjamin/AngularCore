@@ -267,14 +267,15 @@ export function Recursion(
 
                 const wrappedDisjunctionPredecessors: [() => SortedSet<Tuple>, ...Wrapped<Iterable<Tuple>>[]] = [() => resultTMinus1[index]];
 
-                for(const rule of rules)
+                for(const [head, body] of rules)
                 {
+                    const [predicateSymbol,] = head;
                     const conjunction = Conjunction(tupleCompare)(
-                        rule[0][0] === '' ? rule[0].slice(1) : rule[0],
-                        rule[1]);
+                        predicateSymbol === '' ? head.slice(1) : head,
+                        body);
                     const wrappedConjunctionPredecessors: Wrapped<Iterable<Tuple>>[] = [];
 
-                    for(const atom of rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function'))
+                    for(const atom of PredecessorAtoms(body))
                     {
                         let wrappedInput: Wrapped<Iterable<Tuple>>;
                         const resultTMinus1Index = IsIdb(atom) ? rulesGroupedByPredicateSymbol.findIndex(element => element[0] === atom[0]) : -1;
