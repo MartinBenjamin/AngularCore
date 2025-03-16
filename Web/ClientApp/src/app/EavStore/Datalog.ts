@@ -166,7 +166,7 @@ export function Disjunction<T extends Tuple>(
 
 export function Accumulate<T extends Tuple>(
     tupleCompare: Compare<T>
-    ): (tMinus1: SortedSet<T>, current: Iterable<T>) => SortedSet<T>
+    ): (previousResult: SortedSet<T>, input: Iterable<T>) => SortedSet<T>
 {
     const empty = new SortedSet(tupleCompare);
     return (previousResult: SortedSet<T>, input: Iterable<T>): SortedSet<T> =>
@@ -177,7 +177,7 @@ export function Accumulate<T extends Tuple>(
             previousResult);
         for(const tuple of input)
             result.add(tuple);
-        // If no change, return previousResult to enable detection pf fixed point by referential equality.
+        // If no change, return previousResult to enable detection of fixed point by referential equality.
         return previousResult && previousResult.size === result.size ? previousResult : result;
     }
 }
@@ -187,6 +187,7 @@ export function RecursiveDisjunction(
     ): (rules: Rule[]) => [(...inputs: [SortedSet<Tuple>, ...Iterable<Tuple>[]]) => SortedSet<Tuple>, (Fact | Idb)[]]
 {
     const empty = new SortedSet(tupleCompare);
+    const disjunction = Disjunction(tupleCompare);
     return (rules: Rule[]): [(...inputs: [SortedSet<Tuple>, ...Iterable<Tuple>[]]) => SortedSet<Tuple>, (Fact | Idb)[]] =>
     {
         type InputType = [SortedSet<Tuple>, ...Iterable<Tuple>[]];
@@ -194,24 +195,7 @@ export function RecursiveDisjunction(
         const inputAtoms: (Fact | Idb)[] = [];
         let inputs: InputType;
 
-        const disjunction = (...params: InputType): SortedSet<Tuple> =>
-        {
-            const [resultTMinus1, ...conjunctions] = params;
-            const resultT = conjunctions.reduce<SortedSet<Tuple>>(
-                (accumulator, conjunction) =>
-                {
-                    for(const tuple of conjunction)
-                        accumulator.add(tuple);
-                    return accumulator;
-                },
-                new SortedSet<Tuple>(
-                    tupleCompare,
-                    resultTMinus1));
-
-            return resultTMinus1 && resultTMinus1.size === resultT.size ? resultTMinus1 : resultT;
-        };
-
-        const wrappedDisjunctionPredecessors: [() => SortedSet<Tuple>, ...Wrapped<Iterable<Tuple>>[]] = [() => inputs[0] || empty];
+        const wrappedDisjunctionPredecessors: [Wrapped<SortedSet<Tuple>>, ...Wrapped<Iterable<Tuple>>[]] = [() => inputs[0] || empty];
 
         for(const [head, body] of rules)
         {
@@ -248,12 +232,16 @@ export function RecursiveDisjunction(
         }
 
         const wrappedDisjunction = Wrap(disjunction, ...wrappedDisjunctionPredecessors);
+        const wrappedAccumulate = Wrap(
+            Accumulate(tupleCompare),
+            wrappedDisjunctionPredecessors[0],
+            wrappedDisjunction);
 
         return [
             (...params: InputType): SortedSet<Tuple> =>
             {
                 inputs = params;
-                return wrappedDisjunction();
+                return wrappedAccumulate();
             },
             inputAtoms];
     };
