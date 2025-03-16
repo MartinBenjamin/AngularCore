@@ -181,10 +181,16 @@ export function RecursiveDisjunction(
         const disjunction = (...params: InputType): SortedSet<Tuple> =>
         {
             const [resultTMinus1, ...conjunctions] = params;
-            const resultT = new SortedSet(resultTMinus1);
-            for(const conjunction of conjunctions)
-                for(const tuple of conjunction)
-                    resultT.add(tuple);
+            const resultT = conjunctions.reduce<SortedSet<Tuple>>(
+                (accumulator, conjunction) =>
+                {
+                    for(const tuple of conjunction)
+                        accumulator.add(tuple);
+                    return accumulator;
+                },
+                new SortedSet<Tuple>(
+                    tupleCompare,
+                    resultTMinus1));
 
             return resultTMinus1 && resultTMinus1.size === resultT.size ? resultTMinus1 : resultT;
         };
