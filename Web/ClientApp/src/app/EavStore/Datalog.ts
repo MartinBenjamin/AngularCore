@@ -155,15 +155,16 @@ export function Disjunction<T extends Tuple>(
     ): (...inputs: Iterable<T>[]) => SortedSet<T>
 {
     return (first: Iterable<T>, ...rest: Iterable<T>[]): SortedSet<T> =>
-    {
-        let set = new SortedSet<T>(
-            tupleCompare,
-            first);
-        for(const input of rest)
-            for(const tuple of input)
-                set.add(tuple)
-        return set;
-    };
+        rest.reduce<SortedSet<T>>(
+            (accumulator, input)=>
+            {
+                for(const tuple of input)
+                    accumulator.add(tuple);
+                return accumulator;
+            },
+            new SortedSet<T>(
+                tupleCompare,
+                first));
 }
 
 export function RecursiveDisjunction(
