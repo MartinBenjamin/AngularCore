@@ -154,10 +154,12 @@ export function Disjunction<T extends Tuple>(
     tupleCompare: Compare<T>
     ): (...inputs: Iterable<T>[]) => SortedSet<T>
 {
-    return (...inputs: Iterable<T>[]): SortedSet<T> =>
+    return (first: Iterable<T>, ...rest: Iterable<T>[]): SortedSet<T> =>
     {
-        let set = new SortedSet<T>(tupleCompare);
-        for(const input of inputs)
+        let set = new SortedSet<T>(
+            tupleCompare,
+            first);
+        for(const input of rest)
             for(const tuple of input)
                 set.add(tuple)
         return set;
