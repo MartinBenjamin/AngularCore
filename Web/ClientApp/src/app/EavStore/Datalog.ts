@@ -16,7 +16,7 @@ export const IsPredicateSymbol = (term): term is string => typeof term === 'stri
 export type Edb = Fact;
 export type Idb = [string, ...any[]];
 export const IsIdb = (atom): atom is Idb => atom instanceof Array && IsPredicateSymbol(atom[0]);
-export const IsEdb = (atom): atom is Idb => atom instanceof Array && !IsPredicateSymbol(atom[0]);
+export const IsEdb = (atom): atom is Edb => atom instanceof Array && !IsPredicateSymbol(atom[0]);
 
 const _Not = (...atoms: Atom[]) => new Not(atoms);
 
@@ -189,17 +189,18 @@ export function RecursiveDisjunction(
         const empty = new SortedSet(tupleCompare);
         const wrappedDisjunctionPredecessors: [() => SortedSet<Tuple>, ...Wrapped<Iterable<Tuple>>[]] = [() => inputs[0] || empty];
 
-        for(const rule of rules)
+        for(const [head, body] of rules)
         {
+            const [predicateSymbol,] = head;
             const conjunction = Conjunction(tupleCompare)(
-                rule[0][0] === '' ? rule[0].slice(1) : rule[0],
-                rule[1]);
+                predicateSymbol === '' ? head.slice(1) : head,
+                body);
             const wrappedConjunctionPredecessors: Wrapped<Iterable<Tuple>>[] = [];
 
-            for(const atom of rule[1].filter((rule): rule is Fact | Idb => typeof rule !== 'function'))
+            for(const atom of PredecessorAtoms(body))
             {
                 let wrappedInput: Wrapped<Iterable<Tuple>>;
-                if(IsIdb(atom) && atom[0] === rule[0][0])
+                if(IsIdb(atom) && atom[0] === head[0])
                     wrappedInput = wrappedDisjunctionPredecessors[0];
 
                 else

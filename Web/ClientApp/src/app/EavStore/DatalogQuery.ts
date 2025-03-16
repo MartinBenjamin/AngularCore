@@ -1,6 +1,7 @@
 import { ArrayKeyedMap } from "../Collections/ArrayKeyedMap";
 import { Group } from "../Collections/Group";
 import { SortedMap } from "../Collections/SortedMap";
+import { SortedSet } from "../Collections/SortedSet";
 import { LongestPaths } from "../Graph/AdjacencyList";
 import { Condense } from "../Graph/StronglyConnectedComponents";
 import { Aggregation } from "./Aggregation";
@@ -44,29 +45,33 @@ function Query<T extends Tuple>(
 
     const sorted = [...condensed.keys()].sort((a, b) => a.LongestPath - b.LongestPath);
 
-    const values = new ArrayKeyedMap(rules.map(rule => rule[1].filter(IsEdb).map(edb => <[any[], Iterable<Tuple>]>[edb, store.Query(edb)])).flat());
+    const edbValues = new ArrayKeyedMap(rules.map(rule => rule[1].filter(IsEdb).map(edb => <[any[], Iterable<Tuple>]>[edb, store.Query(edb)])).flat());
+    const idbValues = new Map<string, Iterable<Tuple>>();
 
     for(const stronglyConnectedComponent of sorted)
         if(stronglyConnectedComponent.Recursive)
             StronglyConnectedComponent(
                 rulesGroupedByPredicateSymbol,
                 stronglyConnectedComponent,
-                values);
+                edbValues,
+                idbValues);
 
-    return <any[]>values.get(['', ...head]);
+    return <any[]>idbValues.get('');
 }
 
 function StronglyConnectedComponent(
     rulesGroupedByPredicateSymbol: ReadonlyMap<string, Rule[]>,
     stronglyConnectedComponent: SCC<string>,
-    values: Map<any[], Iterable<Tuple>>
+    edbValues: Map<any[], Iterable<Tuple>>,
+    idbValues: Map<string, Iterable<Tuple>>
     ): void
 {
     if(stronglyConnectedComponent.Recursive)
         Recursion(
             rulesGroupedByPredicateSymbol,
             stronglyConnectedComponent,
-            values);
+            edbValues,
+            idbValues);
     else
     {
         const predicateSymbol = stronglyConnectedComponent[0];
@@ -86,28 +91,31 @@ function StronglyConnectedComponent(
 function Recursion(
     rulesGroupedByPredicateSymbol: ReadonlyMap<string, Rule[]>,
     stronglyConnectedComponent: SCC<string>,
-    values: Map<any[], Iterable<Tuple>>
+    edbValues: Map<any[], Iterable<Tuple>>,
+    idbValues: Map<string, Iterable<Tuple>>
     ): void
 {
 }
 
 function RecursiveDisjunction(
     rules: Rule[],
-    values: Map<any[], Iterable<Tuple>>
+    edbValues: Map<any[], Iterable<Tuple>>
     ): void
 {
 }
 
 function Conjunction(
     rule: Rule,
-    values: Map<any[], Iterable<Tuple>>
+    edbValues: Map<any[], Iterable<Tuple>>,
+    idbValues: Map<string, Iterable<Tuple>>
     ): void
 {
     const [head, body] = rule;
     let substitutions: object[];
     [substitutions,] = RecursiveConjunction(
         rule[1],
-        values);
+        edbValues,
+        idbValues);
 
     if(body.some(term => term instanceof Aggregation))
     {
@@ -129,21 +137,21 @@ function Conjunction(
             },
             new SortedMap<Tuple, object[]>(tupleCompare));
 
-        values.set(
+        edbValues.set(
             head,
             [...grouped.keys()].map(key => key.map(element => element instanceof Aggregation ? element.Aggregate(grouped.get(key)) : element)))
         return;
 
     }
     else
-        values.set(
+        edbValues.set(
             head,
             substitutions.map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term)));
 }
 
-let RecursiveConjunction: (body: Atom[], values: Map<any[], Iterable<Tuple>>)=> [object[], number];
+let RecursiveConjunction: (body: Atom[], edbValues: Map<any[], Iterable<Tuple>>, idbValues: Map<string, Iterable<Tuple>>)=> [object[], number];
 
-RecursiveConjunction = (body: Atom[], values: Map<any[], Iterable<Tuple>>): [object[], number] =>
+RecursiveConjunction = (body: Atom[], edbValues: Map<any[], Iterable<Tuple>>, idbValues: Map<string, Iterable<Tuple>>): [object[], number] =>
 {
     let inputIndex = 0;
     const substitutions = body.reduce(
@@ -157,7 +165,8 @@ RecursiveConjunction = (body: Atom[], values: Map<any[], Iterable<Tuple>>): [obj
                 let input: Iterable<object>;
                 [input, inputIndex] = RecursiveConjunction(
                     atom.Atoms,
-                    values);
+                    edbValues,
+                    idbValues);
 
                 let count = substitutions.length;
                 while(count--)
@@ -185,7 +194,7 @@ RecursiveConjunction = (body: Atom[], values: Map<any[], Iterable<Tuple>>): [obj
             else
             {
                 let count = substitutions.length;
-                const input = values.get(atom);
+                const input = IsIdb(atom) ? idbValues.get(atom[0]) : edbValues.get(atom);
                 while(count--)
                 {
                     const substitution = substitutions.shift();
@@ -225,7 +234,21 @@ RecursiveConjunction = (body: Atom[], values: Map<any[], Iterable<Tuple>>): [obj
 
 function Disjunction(
     rules: Rule[],
-    values: Map<any[], Iterable<Tuple>>
+    edbValues: Map<any[], Iterable<Tuple>>,
+    idbValues: Map<string, Iterable<Tuple>>
     ): void
 {
+    for(const rule of rules)
+    {
+        let currentValue = idbValues.get(rule[0][0]) || new SortedSet(tupleCompare);
+        Conjunction(
+            rule,
+            edbValues,
+            idbValues);
+        let nextValue = new SortedSet(
+            tupleCompare,
+            idbValues.get(rule[0][0]));
+        for(const tuple of currentValue)
+            nextValue.add(tuple)
+    }
 }
