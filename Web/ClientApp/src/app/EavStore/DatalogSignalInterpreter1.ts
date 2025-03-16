@@ -3,7 +3,7 @@ import { Compare, SortedSet } from "../Collections/SortedSet";
 import { StronglyConnectedComponents } from "../Graph/StronglyConnectedComponents";
 import { WrapperType } from "../Ontology/Wrapped";
 import { Signal } from "../Signal/Signal";
-import { Atom, Conjunction, Disjunction, Idb, IsIdb, PredecessorAtoms, RecursiveDisjunction, Rule } from "./Datalog";
+import { Accumulate, Atom, Conjunction, Disjunction, Idb, IsIdb, PredecessorAtoms, RecursiveDisjunction, Rule } from "./Datalog";
 import { IDatalogInterpreter } from "./IDatalogInterpreter";
 import { Fact, IEavStore } from "./IEavStore";
 import { Tuple } from "./Tuple";
@@ -13,6 +13,7 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
     private readonly _conjunction         : (head: Tuple, body: Atom[]) => (...inputs: Iterable<Tuple>[]) => Iterable<Tuple>;
     private readonly _disjunction         : (...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>;
     private readonly _recursiveDisjunction: (rules: Rule[]) => [(...inputs: [SortedSet<Tuple>, ...Iterable<Tuple>[]]) => SortedSet<Tuple>, (Fact | Idb)[]];
+    private readonly _accumulate          : (previousResult: SortedSet<Tuple>, input: Iterable<Tuple>) => SortedSet<Tuple>;
 
     constructor(
         private readonly _eavStore: IEavStore,
@@ -22,6 +23,7 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
         this._conjunction          = Conjunction(tupleCompare);
         this._disjunction          = Disjunction(tupleCompare);
         this._recursiveDisjunction = RecursiveDisjunction(tupleCompare);
+        this._accumulate           = Accumulate(tupleCompare);
     }
 
     Query<T extends Tuple>(
@@ -65,10 +67,12 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
                 let recursiveDisjunction: (...inputs: [SortedSet<Tuple>, ...Iterable<Tuple>[]]) => SortedSet<Tuple>;
                 let predecessorAtoms: (Fact | Idb)[];
                 [recursiveDisjunction, predecessorAtoms] = this._recursiveDisjunction(rules);
-                const recursiveSignal = new Signal(recursiveDisjunction);
+                const recursiveSignal = new Signal(
+                    recursiveDisjunction,
+                    this._accumulate);
                 signalAdjacencyList.set(
                     recursiveSignal,
-                    [recursiveSignal]);
+                    []);
                 signalPredecessorAtoms.set(
                     recursiveSignal,
                     predecessorAtoms);

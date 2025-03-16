@@ -190,12 +190,11 @@ export function RecursiveDisjunction(
     const disjunction = Disjunction(tupleCompare);
     return (rules: Rule[]): [(...inputs: [SortedSet<Tuple>, ...Iterable<Tuple>[]]) => SortedSet<Tuple>, (Fact | Idb)[]] =>
     {
-        type InputType = [SortedSet<Tuple>, ...Iterable<Tuple>[]];
         const wrappedInputs = new ArrayKeyedMap<Fact | Idb, Wrapped<Iterable<Tuple>>>();
         const inputAtoms: (Fact | Idb)[] = [];
-        let inputs: InputType;
+        let inputs: Iterable<Tuple>[];
 
-        const wrappedDisjunctionPredecessors: [Wrapped<SortedSet<Tuple>>, ...Wrapped<Iterable<Tuple>>[]] = [() => inputs[0] || empty];
+        const wrappedDisjunctionPredecessors: Wrapped<Iterable<Tuple>>[] = [];
 
         for(const [head, body] of rules)
         {
@@ -207,21 +206,14 @@ export function RecursiveDisjunction(
 
             for(const atom of PredecessorAtoms(body))
             {
-                let wrappedInput: Wrapped<Iterable<Tuple>>;
-                if(IsIdb(atom) && atom[0] === head[0])
-                    wrappedInput = wrappedDisjunctionPredecessors[0];
-
-                else
+                let wrappedInput = wrappedInputs.get(atom);
+                if(!wrappedInput)
                 {
-                    wrappedInput = wrappedInputs.get(atom);
-                    if(!wrappedInput)
-                    {
-                        const inputIndex = inputAtoms.push(atom);
-                        wrappedInput = () => inputs[inputIndex] || empty;
-                        wrappedInputs.set(
-                            atom,
-                            wrappedInput);
-                    }
+                    const inputIndex = inputAtoms.push(atom) - 1;
+                    wrappedInput = () => inputs[inputIndex] || empty;
+                    wrappedInputs.set(
+                        atom,
+                        wrappedInput);
                 }
 
                 wrappedConjunctionPredecessors.push(wrappedInput);
@@ -232,16 +224,12 @@ export function RecursiveDisjunction(
         }
 
         const wrappedDisjunction = Wrap(disjunction, ...wrappedDisjunctionPredecessors);
-        const wrappedAccumulate = Wrap(
-            Accumulate(tupleCompare),
-            wrappedDisjunctionPredecessors[0],
-            wrappedDisjunction);
 
         return [
-            (...params: InputType): SortedSet<Tuple> =>
+            (...params: Iterable<Tuple>[]): SortedSet<Tuple> =>
             {
                 inputs = params;
-                return wrappedAccumulate();
+                return wrappedDisjunction();
             },
             inputAtoms];
     };

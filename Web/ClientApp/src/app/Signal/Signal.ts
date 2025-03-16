@@ -3,11 +3,11 @@ import { SortedList } from '../Collections/SortedSet';
 import { LongestPaths, Transpose } from '../Graph/AdjacencyList';
 import { Condense } from '../Graph/StronglyConnectedComponents';
 
-type AreEqual<T = any> = (lhs: T, rhs: T) => boolean;
+type Accumulate<T = any> = (previousResult: T, input: T) => T;
 
 type SignalParams<P> = { [Parameter in keyof P]: Signal<P[Parameter]>; };
 
-const ReferenceEquality: AreEqual = (lhs: any, rhs: any) => lhs === rhs;
+const ReferenceEquality: Accumulate = (lhs: any, rhs: any) => lhs === rhs;
 
 export type RemoveAction = (signal: Signal) => void;
 
@@ -24,7 +24,7 @@ export class Signal<TOut = any, TIn extends any[] = any[]> implements IVertex
 
     constructor(
         public Function?: (...parameters: TIn) => TOut,
-        public AreEqual: AreEqual<TOut> = ReferenceEquality
+        public Accumulate?: Accumulate<TOut>
         )
     {
     }
@@ -416,11 +416,11 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
             stronglyConnectedComponent.forEach(
                 signal => nextValues.set(
                     signal,
-                    signal.Function(...this._predecessors.get(signal).map(predecessor => this._values.get(predecessor)))));
+                    signal.Accumulate(
+                        this._values.get(signal),
+                        signal.Function(...this._predecessors.get(signal).map(predecessor => this._values.get(predecessor))))));
 
-            while(stronglyConnectedComponent.some(signal => !signal.AreEqual(
-                this._values.get(signal),
-                nextValues.get(signal))))
+            while(stronglyConnectedComponent.some(signal => this._values.get(signal) !== nextValues.get(signal)))
             {
                 stronglyConnectedComponent.forEach(
                     signal => this._values.set(
@@ -430,7 +430,9 @@ export class Scheduler extends SortedList<SCC<Signal>> implements IScheduler
                 stronglyConnectedComponent.forEach(
                     signal => nextValues.set(
                         signal,
-                        signal.Function(...this._predecessors.get(signal).map(predecessor => this._values.get(predecessor)))));
+                        signal.Accumulate(
+                            this._values.get(signal),
+                            signal.Function(...this._predecessors.get(signal).map(predecessor => this._values.get(predecessor))))));
             }
 
             for(const signal of stronglyConnectedComponent)
