@@ -1,19 +1,17 @@
 import { Group } from "../Collections/Group";
 import { Compare, SortedSet } from "../Collections/SortedSet";
 import { StronglyConnectedComponents } from "../Graph/StronglyConnectedComponents";
-import { WrapperType } from "../Ontology/Wrapped";
-import { Signal } from "../Signal/Signal";
-import { Accumulate, Atom, Conjunction, Disjunction, Idb, IsIdb, PredecessorAtoms, RecursiveDisjunction, Rule } from "./Datalog";
+import { Wrapped, WrapperType } from "../Ontology/Wrapped";
+import { Atom, Conjunction, Disjunction, Idb, IsIdb, PredecessorAtoms, RecursiveDisjunction, Rule } from "./Datalog";
 import { IDatalogInterpreter } from "./IDatalogInterpreter";
 import { Fact, IEavStore } from "./IEavStore";
 import { Tuple } from "./Tuple";
 
-export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType.Signal>
+export abstract class DatalogInterpreter<T extends WrapperType> implements IDatalogInterpreter<T>
 {
     private readonly _conjunction         : (head: Tuple, body: Atom[]) => (...inputs: Iterable<Tuple>[]) => Iterable<Tuple>;
     private readonly _disjunction         : (...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>;
     private readonly _recursiveDisjunction: (rules: Rule[]) => [(...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>, (Fact | Idb)[]];
-    private readonly _accumulate          : (previousResult: SortedSet<Tuple>, input: Iterable<Tuple>) => SortedSet<Tuple>;
 
     constructor(
         private readonly _eavStore: IEavStore,
@@ -23,21 +21,20 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
         this._conjunction          = Conjunction(tupleCompare);
         this._disjunction          = Disjunction(tupleCompare);
         this._recursiveDisjunction = RecursiveDisjunction(tupleCompare);
-        this._accumulate           = Accumulate(tupleCompare);
     }
 
-    Query<T extends Tuple>(
-        head: [...T],
+    Query<THead extends Tuple>(
+        head: [...THead],
         body: Atom[],
         ...rules: Rule[]
-        ): Signal<{[K in keyof T]: any;}[]>
+        ): Wrapped<T, {[K in keyof THead]: any;}[]>
     {
-        return <Signal>this.Rules([[['', ...head], body], ...rules]).get('');
+        return <Wrapped<T, {[K in keyof THead]: any;}[]>>this.Rules([[['', ...head], body], ...rules]).get('');
     }
 
     Rules(
         rules: Rule[]
-        ): Map<string, Signal<Iterable<Tuple>>>
+        ): Map<string, Wrapped<T, Iterable<Tuple>>>
     {
         const rulesGroupedByPredicateSymbol = Group(
             rules,
@@ -56,9 +53,9 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
 
         stronglyConnectedComponents.forEach(scc => scc.Recursive = scc.length > 1 || rulePredecessors.get(scc[0]).includes(scc[0]));
 
-        const signalAdjacencyList = new Map<Signal, Signal[]>();
-        const idbSignals = new Map<string, Signal<Iterable<Tuple>>>();
-        const signalPredecessorAtoms = new Map<Signal, (Fact | Idb)[]>();
+        const wrappedAdjacencyList = new Map<Wrapped<T, Iterable<Tuple>>, Wrapped<T, Iterable<Tuple>>[]>();
+        const wrappedIdbs = new Map<string, Wrapped<T, Iterable<Tuple>>>();
+        const wrappedPredecessorAtoms = new Map<Wrapped<T, Iterable<Tuple>>, (Fact | Idb)[]>();
 
         for(const [predicateSymbol, rules] of rulesGroupedByPredicateSymbol)
         {
@@ -67,18 +64,16 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
                 let recursiveDisjunction: (...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>;
                 let predecessorAtoms: (Fact | Idb)[];
                 [recursiveDisjunction, predecessorAtoms] = this._recursiveDisjunction(rules);
-                const recursiveSignal = new Signal(
-                    recursiveDisjunction,
-                    this._accumulate);
-                signalAdjacencyList.set(
-                    recursiveSignal,
+                const wrappedRecursiveDisjunction = this.Wrap(recursiveDisjunction);
+                wrappedAdjacencyList.set(
+                    wrappedRecursiveDisjunction,
                     []);
-                signalPredecessorAtoms.set(
-                    recursiveSignal,
+                wrappedPredecessorAtoms.set(
+                    wrappedRecursiveDisjunction,
                     predecessorAtoms);
-                idbSignals.set(
+                wrappedIdbs.set(
                     predicateSymbol,
-                    recursiveSignal);
+                    wrappedRecursiveDisjunction);
             }
             else
             {
@@ -86,60 +81,63 @@ export class DatalogSignalInterpreter implements IDatalogInterpreter<WrapperType
                 {
                     const [head, body] = rules[0];
                     const [predicateSymbol,] = head;
-                    const conjunction = new Signal(this._conjunction(
+                    const wrappedConjunction = this.Wrap(this._conjunction(
                         predicateSymbol === '' ? head.slice(1) : head,
                         body));
-                    signalAdjacencyList.set(
-                        conjunction,
+                    wrappedAdjacencyList.set(
+                        wrappedConjunction,
                         []);
-                    signalPredecessorAtoms.set(
-                        conjunction,
+                    wrappedPredecessorAtoms.set(
+                        wrappedConjunction,
                         PredecessorAtoms(body));
-                    idbSignals.set(
+                    wrappedIdbs.set(
                         predicateSymbol,
-                        conjunction);
+                        wrappedConjunction);
                 }
                 else // Disjunction of conjunctions.
                 {
-                    const disjunction = new Signal(this._disjunction);
-                    const predecessors: Signal[] = [];
-                    signalAdjacencyList.set(
-                        disjunction,
+                    const wrappedDisjunction = this.Wrap(this._disjunction);
+                    const predecessors: Wrapped<T, Iterable<Tuple>>[] = [];
+                    wrappedAdjacencyList.set(
+                        wrappedDisjunction,
                         predecessors);
-                    idbSignals.set(
+                    wrappedIdbs.set(
                         predicateSymbol,
-                        disjunction);
+                        wrappedDisjunction);
 
                     for(const [head, body] of rules)
                     {
                         const [predicateSymbol,] = head;
-                        const conjunction = new Signal(this._conjunction(
+                        const wrappedConjunction = this.Wrap(this._conjunction(
                             predicateSymbol === '' ? head.slice(1) : head,
                             body));
-                        predecessors.push(conjunction);
-                        signalAdjacencyList.set(
-                            conjunction,
+                        predecessors.push(wrappedConjunction);
+                        wrappedAdjacencyList.set(
+                            wrappedConjunction,
                             []);
-                        signalPredecessorAtoms.set(
-                            conjunction,
+                        wrappedPredecessorAtoms.set(
+                            wrappedConjunction,
                             PredecessorAtoms(body));
                     }
                 }
             }
         }
 
-        for(const [signal, predecessorAtoms] of signalPredecessorAtoms)
+        for(const [wrapped, predecessorAtoms] of wrappedPredecessorAtoms)
         {
-            const predecessors: Signal[] = signalAdjacencyList.get(signal);
+            const predecessors = wrappedAdjacencyList.get(wrapped);
             for(const atom of predecessorAtoms)
                 if(IsIdb(atom))
-                    predecessors.push(idbSignals.get(atom[0]));
+                    predecessors.push(wrappedIdbs.get(atom[0]));
 
                 else
-                    predecessors.push(this._eavStore.Signal(atom));
+                    predecessors.push(this.WrapEdb(atom));
         }
 
-        this._eavStore.SignalScheduler.AddSignals(signalAdjacencyList);
-        return idbSignals;
+        return wrappedIdbs;
     }
+
+    abstract Wrap<T>(map: (...inputs: Iterable<Tuple>[]) => Iterable<Tuple>): Wrapped<T, Iterable<Tuple>>
+
+    abstract WrapEdb(atom: Fact): Wrapped<T, Iterable<Fact>>
 }
