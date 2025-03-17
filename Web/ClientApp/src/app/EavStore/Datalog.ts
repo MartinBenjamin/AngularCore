@@ -147,29 +147,29 @@ RecursiveConjunction = (body: Atom[], ...inputs: Iterable<Tuple>[]): [object[], 
     return [substitutions, inputIndex];
 }
 
-export function Disjunction<T extends Tuple>(
-    tupleCompare: Compare<T>
-    ): (...inputs: Iterable<T>[]) => SortedSet<T>
+export function Disjunction<Tuple>(
+    tupleCompare: Compare<Tuple>
+    ): (...inputs: Iterable<Tuple>[]) => SortedSet<Tuple>
 {
-    return (first: Iterable<T>, ...rest: Iterable<T>[]): SortedSet<T> =>
-        rest.reduce<SortedSet<T>>(
+    return (first: Iterable<Tuple>, ...rest: Iterable<Tuple>[]): SortedSet<Tuple> =>
+        rest.reduce<SortedSet<Tuple>>(
             (accumulator, input)=>
             {
                 for(const tuple of input)
                     accumulator.add(tuple);
                 return accumulator;
             },
-            new SortedSet<T>(
+            new SortedSet<Tuple>(
                 tupleCompare,
                 first));
 }
 
-export function Accumulate<T extends Tuple>(
-    tupleCompare: Compare<T>
-    ): (previousResult: SortedSet<T>, input: Iterable<T>) => SortedSet<T>
+export function Accumulate<Tuple>(
+    tupleCompare: Compare<Tuple>
+    ): (previousResult: SortedSet<Tuple>, input: Iterable<Tuple>) => SortedSet<Tuple>
 {
     const empty = new SortedSet(tupleCompare);
-    return (previousResult: SortedSet<T>, input: Iterable<T>): SortedSet<T> =>
+    return (previousResult: SortedSet<Tuple>, input: Iterable<Tuple>): SortedSet<Tuple> =>
     {
         previousResult = previousResult || empty;
         const result = new SortedSet(
