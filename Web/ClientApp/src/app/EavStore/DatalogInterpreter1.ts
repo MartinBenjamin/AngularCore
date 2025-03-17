@@ -1,10 +1,11 @@
+import { ArrayKeyedMap } from "../Collections/ArrayKeyedMap";
 import { Group } from "../Collections/Group";
 import { Compare, SortedSet } from "../Collections/SortedSet";
 import { StronglyConnectedComponents } from "../Graph/StronglyConnectedComponents";
 import { Wrapped, WrapperType } from "../Ontology/Wrapped";
 import { Atom, Conjunction, Disjunction, Idb, IsIdb, PredecessorAtoms, RecursiveDisjunction, Rule } from "./Datalog";
 import { IDatalogInterpreter } from "./IDatalogInterpreter";
-import { Fact, IEavStore } from "./IEavStore";
+import { Fact, Fact, IEavStore } from "./IEavStore";
 import { Tuple } from "./Tuple";
 
 export abstract class DatalogInterpreter<T extends WrapperType> implements IDatalogInterpreter<T>
@@ -32,9 +33,9 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
         return <Wrapped<T, {[K in keyof THead]: any;}[]>>this.Rules([[['', ...head], body], ...rules]).get('');
     }
 
-    Rules(
+    Rulesx(
         rules: Rule[]
-        ): Map<string, Wrapped<T, Iterable<Tuple>>>
+        ): [Map<string, Wrapped<T, Iterable<Tuple>>>, Map<Fact, Wrapped<T, Iterable<Tuple>>>, Map<Wrapped<T, Iterable<Tuple>>, Wrapped<T, Iterable<Tuple>>[]>]
     {
         const rulesGroupedByPredicateSymbol = Group(
             rules,
@@ -123,6 +124,8 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
             }
         }
 
+        const wrappedEdbs = new ArrayKeyedMap<Fact, Wrapped<T, Iterable<Tuple>>>();
+
         for(const [wrapped, predecessorAtoms] of wrappedPredecessorAtoms)
         {
             const predecessors = wrappedAdjacencyList.get(wrapped);
@@ -131,13 +134,23 @@ export abstract class DatalogInterpreter<T extends WrapperType> implements IData
                     predecessors.push(wrappedIdbs.get(atom[0]));
 
                 else
-                    predecessors.push(this.WrapEdb(atom));
+                {
+                    let wrappedEdb = wrappedEdbs.get(atom);
+                    if(!wrappedEdb)
+                    {
+                        wrappedEdb = this.WrapEdb(atom);
+                        wrappedEdbs.set(
+                            atom,
+                            wrappedEdb);
+                    }
+                    predecessors.push();
+                }
         }
 
-        return wrappedIdbs;
+        return [wrappedIdbs, wrappedEdbs, wrappedAdjacencyList];
     }
 
-    abstract Wrap<T>(map: (...inputs: Iterable<Tuple>[]) => Iterable<Tuple>): Wrapped<T, Iterable<Tuple>>
+    abstract Wrap<T>(map: (...inputs: Iterable<Tuple>[]) => Iterable<Tuple>): Wrapped<T, Iterable<Tuple>>;
 
     abstract WrapEdb(atom: Fact): Wrapped<T, Iterable<Fact>>
 }
