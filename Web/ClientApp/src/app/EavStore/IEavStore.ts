@@ -1,7 +1,6 @@
 import { Observable } from 'rxjs';
 import { IScheduler, Signal } from '../Signal/Signal';
-import { BuiltIn } from './BuiltIn';
-import { Atom, Edb, Rule } from './Datalog';
+import { Atom, Rule } from './Datalog';
 import { Fact, PropertyKey } from './Fact';
 import { ITransaction } from './ITransactionManager';
 import { Tuple } from './Tuple';
@@ -32,7 +31,7 @@ export interface IEavStore
     Query<T extends Tuple>(
         head: [...T],
         body: Atom[],
-        ...rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>;
+        ...rules: Rule[]): { [K in keyof T]: any; }[];
 
     ObserveEntities(): Observable<Set<any>>;
     Observe(atom: Fact): Observable<Fact[]>;
