@@ -110,7 +110,7 @@ function Recursion(
                 edbValues,
                 idbValues);
         })
-    while(stronglyConnectedComponent.some(predicateSymbol => idbValues.get(predicateSymbol) !== previousValues.get(predicateSymbol)))
+    while(stronglyConnectedComponent.some(predicateSymbol => idbValues.get(predicateSymbol) !== previousValues.get(predicateSymbol)));
 }
 
 function Conjunction(
