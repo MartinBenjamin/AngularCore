@@ -168,10 +168,8 @@ export function Accumulate<Tuple>(
     tupleCompare: Compare<Tuple>
     ): (previousResult: SortedSet<Tuple>, input: Iterable<Tuple>) => SortedSet<Tuple>
 {
-    const empty = new SortedSet(tupleCompare);
     return (previousResult: SortedSet<Tuple>, input: Iterable<Tuple>): SortedSet<Tuple> =>
     {
-        previousResult = previousResult || empty;
         const result = new SortedSet(
             tupleCompare,
             previousResult);

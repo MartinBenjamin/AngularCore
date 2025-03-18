@@ -96,13 +96,21 @@ function Recursion(
     idbValues: Map<string, Iterable<Tuple>>
     ): void
 {
-}
+    const previousValues = new Map<string, any>();
 
-function RecursiveDisjunction(
-    rules: Rule[],
-    edbValues: Map<any[], Iterable<Tuple>>
-    ): void
-{
+    do stronglyConnectedComponent.forEach(
+        predicateSymbol =>
+        {
+            previousValues.set(
+                predicateSymbol,
+                idbValues.get(predicateSymbol));
+
+            Disjunction(
+                rulesGroupedByPredicateSymbol.get(predicateSymbol),
+                edbValues,
+                idbValues);
+        })
+    while(stronglyConnectedComponent.some(predicateSymbol => idbValues.get(predicateSymbol) !== previousValues.get(predicateSymbol)))
 }
 
 function Conjunction(
@@ -242,20 +250,21 @@ function Disjunction(
     ): void
 {
     const predicateSymbol = rules[0][0][0];
-    const accumulater = rules.reduce(
-        (accumulator, rule) =>
-        {
-            const [head,] = rule;
-            Conjunction(
-                rule,
-                edbValues,
-                idbValues);
-            for(const tuple of idbValues.get(predicateSymbol))
-                accumulater.add(tuple);
-            return accumulator;
-        },
-        new SortedSet(tupleCompare));
+    const previousResult = <SortedSet<Tuple>>idbValues.get(predicateSymbol);
+    const result = new SortedSet<Tuple>(
+        tupleCompare,
+        previousResult);
+    for(const rule of rules)
+    {
+        Conjunction(
+            rule,
+            edbValues,
+            idbValues);
+        for(const tuple of idbValues.get(predicateSymbol))
+            result.add(tuple);
+    }
+
     idbValues.set(
         predicateSymbol,
-        accumulater);
+        previousResult && previousResult.size === result.size ? previousResult : result);
 }
