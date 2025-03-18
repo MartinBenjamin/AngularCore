@@ -146,8 +146,6 @@ function Conjunction(
         idbValues.set(
             predicateSymbol,
             [...grouped.keys()].map(key => key.map(element => element instanceof Aggregation ? element.Aggregate(grouped.get(key)) : element)))
-        return;
-
     }
     else
         idbValues.set(
