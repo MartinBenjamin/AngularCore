@@ -45,7 +45,7 @@ function Query<T extends Tuple>(
 
     const sorted = [...condensed.keys()].sort((a, b) => a.LongestPath - b.LongestPath);
 
-    const edbValues = new ArrayKeyedMap(rules.map(rule => rule[1].filter(IsEdb).map(edb => <[any[], Iterable<Tuple>]>[edb, store.Query(edb)])).flat());
+    const edbValues = new ArrayKeyedMap(rules.map(rule => PredecessorAtoms(rule[1]).filter(IsEdb).map(edb => <[any[], Iterable<Tuple>]>[edb, store.Query(edb)])).flat());
     const idbValues = new Map<string, Iterable<Tuple>>();
 
     for(const stronglyConnectedComponent of sorted)
@@ -77,14 +77,16 @@ function StronglyConnectedComponent(
         const predicateSymbol = stronglyConnectedComponent[0];
         const rules = rulesGroupedByPredicateSymbol.get(predicateSymbol);
         if(rules.length === 1)
-        {
-            const rule = rules[0];
+            Conjunction(
+                rules[0],
+                edbValues,
+                idbValues);
 
-        }
-        else // Disjunction of conjunctions.
-        {
-
-        }
+        else
+            Disjunction(
+                rules,
+                edbValues,
+                idbValues);
     }
 }
 
@@ -110,10 +112,14 @@ function Conjunction(
     idbValues: Map<string, Iterable<Tuple>>
     ): void
 {
-    const [head, body] = rule;
+    const [, body] = rule;
+    let head = [...rule[0]];
+    const predicateSymbol = head[0];
+    head = predicateSymbol === '' ? head.slice(1) : head;
+
     let substitutions: object[];
     [substitutions,] = RecursiveConjunction(
-        rule[1],
+        body,
         edbValues,
         idbValues);
 
@@ -137,15 +143,15 @@ function Conjunction(
             },
             new SortedMap<Tuple, object[]>(tupleCompare));
 
-        edbValues.set(
-            head,
+        idbValues.set(
+            predicateSymbol,
             [...grouped.keys()].map(key => key.map(element => element instanceof Aggregation ? element.Aggregate(grouped.get(key)) : element)))
         return;
 
     }
     else
-        edbValues.set(
-            head,
+        idbValues.set(
+            predicateSymbol,
             substitutions.map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term)));
 }
 
@@ -238,17 +244,21 @@ function Disjunction(
     idbValues: Map<string, Iterable<Tuple>>
     ): void
 {
-    for(const rule of rules)
-    {
-        let currentValue = idbValues.get(rule[0][0]) || new SortedSet(tupleCompare);
-        Conjunction(
-            rule,
-            edbValues,
-            idbValues);
-        let nextValue = new SortedSet(
-            tupleCompare,
-            idbValues.get(rule[0][0]));
-        for(const tuple of currentValue)
-            nextValue.add(tuple)
-    }
+    const predicateSymbol = rules[0][0][0];
+    const accumulater = rules.reduce(
+        (accumulator, rule) =>
+        {
+            const [head,] = rule;
+            Conjunction(
+                rule,
+                edbValues,
+                idbValues);
+            for(const tuple of idbValues.get(predicateSymbol))
+                accumulater.add(tuple);
+            return accumulator;
+        },
+        new SortedSet(tupleCompare));
+    idbValues.set(
+        predicateSymbol,
+        accumulater);
 }
