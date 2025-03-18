@@ -107,19 +107,20 @@ function Recursion(
             idbValues,
             nextIdbValues));
 
-    do stronglyConnectedComponent.forEach(
-        predicateSymbol =>
-        {
-            idbValues.set(
+    while(stronglyConnectedComponent.some(predicateSymbol => idbValues.get(predicateSymbol) !== nextIdbValues.get(predicateSymbol)))
+    {
+        stronglyConnectedComponent.forEach(
+            predicateSymbol => idbValues.set(
                 predicateSymbol,
-                idbValues.get(predicateSymbol));
+                nextIdbValues.get(predicateSymbol)));
 
-            Disjunction(
+        stronglyConnectedComponent.forEach(
+            predicateSymbol => Disjunction(
                 rulesGroupedByPredicateSymbol.get(predicateSymbol),
                 edbValues,
-                idbValues);
-        })
-    while(stronglyConnectedComponent.some(predicateSymbol => idbValues.get(predicateSymbol) !== previousValues.get(predicateSymbol)));
+                idbValues,
+                nextIdbValues));
+    }
 }
 
 function Conjunction(
