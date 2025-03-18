@@ -98,8 +98,13 @@ function Recursion(
     idbValues: Map<string, Iterable<Tuple>>
     ): void
 {
+    const empty = new SortedSet(tupleCompare);
     const nextIdbValues = new Map<string, any>();
 
+    stronglyConnectedComponent.forEach(
+        predicateSymbol => idbValues.set(
+            predicateSymbol,
+            empty));
     stronglyConnectedComponent.forEach(
         predicateSymbol => Disjunction(
             rulesGroupedByPredicateSymbol.get(predicateSymbol),
@@ -274,7 +279,7 @@ function Disjunction(
             idbValues,
             nextIdbValues);
         for(const tuple of nextIdbValues.get(predicateSymbol))
-            result.add(tuple);
+            nextResult.add(tuple);
     }
 
     nextIdbValues.set(

@@ -46,9 +46,7 @@ describe(
 
                 //console.log(JSON.stringify(rules));
 
-                const op1Signal = store.Signal(['?x', '?y'], [[op1.Iri, '?x', '?y']], ...rules);
-                const op1Interpretation = new SortedSet(tupleCompare, store.SignalScheduler.Sample(op1Signal));
-                store.SignalScheduler.RemoveSignal(op1Signal);
+                const op1Interpretation = new SortedSet(tupleCompare, store.Query(['?x', '?y'], [[op1.Iri, '?x', '?y']], ...rules));
                 it(
                     `( (i1)I , (i2)I ) ∈ (${op1.Select(propertyExpressionWriter)})OP`,
                     () => expect(op1Interpretation.has([i1Interpretation, i2Interpretation])).toBe(true));
