@@ -79,12 +79,14 @@ function StronglyConnectedComponent(
             Conjunction(
                 rules[0],
                 edbValues,
+                idbValues,
                 idbValues);
 
         else
             Disjunction(
                 rules,
                 edbValues,
+                idbValues,
                 idbValues);
     }
 }
@@ -96,12 +98,19 @@ function Recursion(
     idbValues: Map<string, Iterable<Tuple>>
     ): void
 {
-    const previousValues = new Map<string, any>();
+    const nextIdbValues = new Map<string, any>();
+
+    stronglyConnectedComponent.forEach(
+        predicateSymbol => Disjunction(
+            rulesGroupedByPredicateSymbol.get(predicateSymbol),
+            edbValues,
+            idbValues,
+            nextIdbValues));
 
     do stronglyConnectedComponent.forEach(
         predicateSymbol =>
         {
-            previousValues.set(
+            idbValues.set(
                 predicateSymbol,
                 idbValues.get(predicateSymbol));
 
@@ -116,7 +125,8 @@ function Recursion(
 function Conjunction(
     rule: Rule,
     edbValues: Map<any[], Iterable<Tuple>>,
-    idbValues: Map<string, Iterable<Tuple>>
+    idbValues: ReadonlyMap<string, Iterable<Tuple>>,
+    nextIdbValues: Map<string, Iterable<Tuple>>
     ): void
 {
     const [, body] = rule;
@@ -150,19 +160,19 @@ function Conjunction(
             },
             new SortedMap<Tuple, object[]>(tupleCompare));
 
-        idbValues.set(
+        nextIdbValues.set(
             predicateSymbol,
             [...grouped.keys()].map(key => key.map(element => element instanceof Aggregation ? element.Aggregate(grouped.get(key)) : element)))
     }
     else
-        idbValues.set(
+        nextIdbValues.set(
             predicateSymbol,
             substitutions.map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term)));
 }
 
-let RecursiveConjunction: (body: Atom[], edbValues: Map<any[], Iterable<Tuple>>, idbValues: Map<string, Iterable<Tuple>>)=> [object[], number];
+let RecursiveConjunction: (body: Atom[], edbValues: Map<any[], Iterable<Tuple>>, idbValues: ReadonlyMap<string, Iterable<Tuple>>)=> [object[], number];
 
-RecursiveConjunction = (body: Atom[], edbValues: Map<any[], Iterable<Tuple>>, idbValues: Map<string, Iterable<Tuple>>): [object[], number] =>
+RecursiveConjunction = (body: Atom[], edbValues: Map<any[], Iterable<Tuple>>, idbValues: ReadonlyMap<string, Iterable<Tuple>>): [object[], number] =>
 {
     let inputIndex = 0;
     const substitutions = body.reduce(
@@ -246,25 +256,27 @@ RecursiveConjunction = (body: Atom[], edbValues: Map<any[], Iterable<Tuple>>, id
 function Disjunction(
     rules: Rule[],
     edbValues: Map<any[], Iterable<Tuple>>,
-    idbValues: Map<string, Iterable<Tuple>>
+    idbValues: ReadonlyMap<string, Iterable<Tuple>>,
+    nextIdbValues: Map<string, Iterable<Tuple>>
     ): void
 {
     const predicateSymbol = rules[0][0][0];
-    const previousResult = <SortedSet<Tuple>>idbValues.get(predicateSymbol);
-    const result = new SortedSet<Tuple>(
+    const result = <SortedSet<Tuple>>idbValues.get(predicateSymbol);
+    const nextResult = new SortedSet<Tuple>(
         tupleCompare,
-        previousResult);
+        result);
     for(const rule of rules)
     {
         Conjunction(
             rule,
             edbValues,
-            idbValues);
-        for(const tuple of idbValues.get(predicateSymbol))
+            idbValues,
+            nextIdbValues);
+        for(const tuple of nextIdbValues.get(predicateSymbol))
             result.add(tuple);
     }
 
-    idbValues.set(
+    nextIdbValues.set(
         predicateSymbol,
-        previousResult && previousResult.size === result.size ? previousResult : result);
+        result && result.size === nextResult.size ? result : nextResult);
 }
