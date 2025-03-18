@@ -13,7 +13,7 @@ import { Tuple } from "./Tuple";
 
 type SCC<T> = ReadonlyArray<T> & {LongestPath?: number;} & {Recursive?: boolean;};
 
-function Query<T extends Tuple>(
+export function Query<T extends Tuple>(
     store: IEavStore,
     head: [...T],
     body: Atom[],
@@ -49,12 +49,11 @@ function Query<T extends Tuple>(
     const idbValues = new Map<string, Iterable<Tuple>>();
 
     for(const stronglyConnectedComponent of sorted)
-        if(stronglyConnectedComponent.Recursive)
-            StronglyConnectedComponent(
-                rulesGroupedByPredicateSymbol,
-                stronglyConnectedComponent,
-                edbValues,
-                idbValues);
+        StronglyConnectedComponent(
+            rulesGroupedByPredicateSymbol,
+            stronglyConnectedComponent,
+            edbValues,
+            idbValues);
 
     return <any[]>idbValues.get('');
 }
