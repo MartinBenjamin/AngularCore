@@ -45,9 +45,7 @@ describe(
                 //console.log(JSON.stringify(rules));
 
                 {
-                    const c1Signal = store.Signal(['?x'], [[c1.Iri, '?x']], ...rules);
-                    const c1Interpretation = new SortedSet(tupleCompare, store.SignalScheduler.Sample(c1Signal));
-                    store.SignalScheduler.RemoveSignal(c1Signal);
+                    const c1Interpretation = new SortedSet(tupleCompare, store.Query(['?x'], [[c1.Iri, '?x']], ...rules));
                     it(
                         `(i1)I ∈ (${classExpressionWriter.Write(c1)})C`,
                         () => expect(c1Interpretation.has([i1Interpretation])).toBe(true));
