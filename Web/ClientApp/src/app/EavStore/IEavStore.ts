@@ -29,9 +29,10 @@ export interface IEavStore
     readonly SignalScheduler: IScheduler;
     Entities(): Set<any>;
     Query(atom: Fact): Fact[];
-    Query<T extends any[]>(
+    Query<T extends Tuple>(
         head: [...T],
-        body: (Edb | BuiltIn)[]): { [K in keyof T]: any; }[];
+        body: Atom[],
+        ...rules: Rule[]): Signal<{ [K in keyof T]: any; }[]>;
 
     ObserveEntities(): Observable<Set<any>>;
     Observe(atom: Fact): Observable<Fact[]>;

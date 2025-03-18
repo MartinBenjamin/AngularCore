@@ -4,9 +4,9 @@ import { ArrayKeyedMap, TrieNode } from '../Collections/ArrayKeyedMap';
 import { SortedSet } from '../Collections/SortedSet';
 import { WrapperType } from '../Ontology/Wrapped';
 import { IScheduler, Scheduler, Signal } from '../Signal/Signal';
-import { BuiltIn } from './BuiltIn';
-import { Edb, IsConstant, IsVariable } from './Datalog';
+import { IsVariable } from './Datalog';
 import { DatalogObservableInterpreter } from './DatalogObservableInterpreter';
+import { Query } from './DatalogQuery';
 import { DatalogSignalInterpreter } from './DatalogSignalInterpreter1';
 import { Assert, AssertRetract, DeleteEntity, NewEntity, Retract } from './EavStoreLog';
 import { IDatalogInterpreter } from './IDatalogInterpreter';
@@ -196,9 +196,10 @@ export class EavStore implements IEavStore, IPublisher
     }
 
     private QueryAtom(
-        [entity, attribute, value]: Fact
+        atom: Fact
         ): Fact[]
     {
+        const [entity, attribute, value] = atom.map(term => IsVariable(term) ? undefined : term);
         const facts: Fact[] = [];
         if(typeof entity !== 'undefined')
         {
@@ -302,198 +303,17 @@ export class EavStore implements IEavStore, IPublisher
         return facts;
     }
 
-    private QueryRule<T extends any[]>(
-        head: [...T],
-        body: (Edb | BuiltIn)[]): { [K in keyof T]: any; }[]
-    {
-        return this.QueryRuleOptimised(
-            head,
-            body);
-        return body.reduce(
-            (substitutions, atom) =>
-            {
-                if(typeof atom === 'function')
-                    return [...atom(substitutions)];
-
-                let count = substitutions.length;
-                while(count--)
-                {
-                    const substitution = substitutions.shift();
-                    // Substitute known variables.
-                    for(const fact of this.QueryAtom(<Fact>atom.map(term => IsVariable(term) ? substitution[term] : term)))
-                    {
-                        let merged = { ...substitution };
-                        for(let index = 0; index < atom.length && merged; ++index)
-                        {
-                            const term = atom[index];
-                            if(IsVariable(term))
-                            {
-                                if(typeof merged[term] === 'undefined')
-                                    merged[term] = fact[index];
-
-                                else if(merged[term] !== fact[index])
-                                    // Fact does not match query pattern.
-                                    merged = null;
-                            }
-                        }
-
-                        if(merged)
-                            substitutions.push(merged);
-                    }
-                }
-
-                return substitutions;
-            },
-            [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[<string>term] : term));
-    }
-
-    private QueryRuleOptimised<T extends any[]>(
-        head: [...T],
-        body: (Edb | BuiltIn)[]): { [K in keyof T]: any; }[]
-    {
-        return body.reduce(
-            (substitutions, atom) =>
-            {
-                if(typeof atom === 'function')
-                    return [...atom(substitutions)];
-
-                let count = substitutions.length;
-
-                let boundVariables = substitutions.length ? substitutions[0] : {};
-                let [entity, attribute, value] = atom;
-                if(IsVariable(entity) && IsConstant(attribute) && entity in boundVariables && this._aev.has(attribute))
-                {
-                    let ev = this._aev.get(attribute);
-                    while(count--)
-                    {
-                        const substitution = substitutions.shift();
-                        const v = ev.get(substitution[entity])
-                        if(v instanceof Array)
-                            v.forEach(
-                                v =>
-                                {
-                                    if(typeof value === 'undefined')
-                                        substitutions.push(substitution);
-
-                                    else if(IsConstant(value) && v === value)
-                                        substitutions.push(substitution);
-
-                                    else if(IsVariable(value))
-                                    {
-                                        if(typeof substitution[value] === 'undefined')
-                                            substitutions.push({ ...substitution, [value]: v });
-
-                                        else if(substitution[value] === v)
-                                            substitutions.push(substitution);
-                                    }
-
-                                })
-                        else if(typeof v !== 'undefined')
-                        {
-
-                            if(typeof value === 'undefined')
-                                substitutions.push(substitution);
-
-                            else if(IsConstant(value) && v === value)
-                                substitutions.push(substitution);
-
-                            else if(IsVariable(value))
-                            {
-                                if(typeof substitution[value] === 'undefined')
-                                    substitutions.push({ ...substitution, [value]: v });
-
-                                else if(substitution[value] === v)
-                                    substitutions.push(substitution);
-                            }
-                        }
-                    }
-                }
-                else if(IsVariable(value) && IsConstant(attribute) && value in boundVariables && this._ave.has(attribute))
-                {
-                    let ve = this._ave.get(attribute);
-                    while(count--)
-                    {
-                        const substitution = substitutions.shift();
-                        const e = ve.get(substitution[value])
-                        if(e instanceof Array)
-                            e.forEach(
-                                e =>
-                                {
-                                    if(typeof entity === 'undefined')
-                                        substitutions.push(substitution);
-
-                                    else if(IsConstant(entity) && e === entity)
-                                        substitutions.push(substitution);
-
-                                    else if(IsVariable(entity))
-                                    {
-                                        if(typeof substitution[entity] === 'undefined')
-                                            substitutions.push({ ...substitution, [entity]: e });
-
-                                        else if(substitution[entity] === e)
-                                            substitutions.push(substitution);
-                                    }
-
-                                })
-                        else if(typeof e !== 'undefined')
-                        {
-                            if(typeof entity === 'undefined')
-                                substitutions.push(substitution);
-
-                            else if(IsConstant(entity) && e === entity)
-                                substitutions.push(substitution);
-
-                            else if(IsVariable(entity))
-                            {
-                                if(typeof substitution[entity] === 'undefined')
-                                    substitutions.push({ ...substitution, [entity]: e });
-
-                                else if(substitution[entity] === e)
-                                    substitutions.push(substitution);
-                            }
-                        }
-                    }
-                }
-                else while(count--)
-                {
-                    const substitution = substitutions.shift();
-                    // Substitute known variables.
-                    for(const fact of this.QueryAtom(<Fact>atom.map(term => IsVariable(term) ? substitution[term] : term)))
-                    {
-                        let merged = { ...substitution };
-                        for(let index = 0; index < atom.length && merged; ++index)
-                        {
-                            const term = atom[index];
-                            if(IsVariable(term))
-                            {
-                                if(typeof merged[term] === 'undefined')
-                                    merged[term] = fact[index];
-
-                                else if(merged[term] !== fact[index])
-                                    // Fact does not match query pattern.
-                                    merged = null;
-                            }
-                        }
-
-                        if(merged)
-                            substitutions.push(merged);
-                    }
-                }
-
-                return substitutions;
-            },
-            [{}]).map(substitution => <{ [K in keyof T]: any; }>head.map(term => (IsVariable(term) && term in substitution) ? substitution[<string>term] : term));
-    }
-
     Query(
         ...params
         ): any
     {
         return params.length === 1 ?
             this.QueryAtom(<Fact>params[0]) :
-            this.QueryRule(
+            Query(
+                this,
                 params[0],
-                params[1]);
+                params[1],
+                ...params.slice(2));
     }
 
     private ObserveAtom(
