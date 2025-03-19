@@ -178,9 +178,11 @@ function Conjunction(
             substitutions.map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term)));
 }
 
-let RecursiveConjunction: (body: Atom[], edbValues: Map<any[], Iterable<Tuple>>, idbValues: ReadonlyMap<string, Iterable<Tuple>>)=> object[];
-
-RecursiveConjunction = (body: Atom[], edbValues: Map<any[], Iterable<Tuple>>, idbValues: ReadonlyMap<string, Iterable<Tuple>>): object[] =>
+function RecursiveConjunction(
+    body: Atom[],
+    edbValues: Map<any[], Iterable<Tuple>>,
+    idbValues: ReadonlyMap<string, Iterable<Tuple>>
+    ): object[]
 {
     const substitutions = body.reduce(
         (substitutions, atom) =>

@@ -67,9 +67,10 @@ export function Conjunction(
     }
 }
 
-let RecursiveConjunction: (body: Atom[], ...inputs: Iterable<Tuple>[])=> [object[], number];
-
-RecursiveConjunction = (body: Atom[], ...inputs: Iterable<Tuple>[]): [object[], number] =>
+function RecursiveConjunction(
+    body: Atom[],
+    ...inputs: Iterable<Tuple>[]
+    ): [object[], number]
 {
     let inputIndex = 0;
     const substitutions = body.reduce(
