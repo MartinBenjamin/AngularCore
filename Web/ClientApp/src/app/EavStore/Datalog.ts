@@ -38,10 +38,11 @@ export function Conjunction(
 
             if(head.some(term => term instanceof Aggregation))
             {
+                const keyVariables = head.filter(IsVariable);
                 const grouped = substitutions.reduce<Map<Tuple, object[]>>(
                     (grouped, substitution) =>
                     {
-                        const key = head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term);
+                        const key = keyVariables.map(term =>  substitution[term]);
                         let group = grouped.get(key);
                         if(group)
                             group.push(substitution);
@@ -56,8 +57,9 @@ export function Conjunction(
                     },
                     new SortedMap<Tuple, object[]>(tupleCompare));
 
-                return [...grouped.keys()].map(key => key.map(element => element instanceof Aggregation ? element.Aggregate(grouped.get(key)) : element));
-
+                return [...grouped.entries()].map(
+                    entry => head.map(
+                        term => term instanceof Aggregation ? term.Aggregate(entry[1]) : IsVariable(term) ? entry[0][keyVariables.indexOf(term)] : term ));
             }
 
             return substitutions.map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
