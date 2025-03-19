@@ -140,8 +140,7 @@ function Conjunction(
     const predicateSymbol = head[0];
     head = predicateSymbol === '' ? head.slice(1) : head;
 
-    let substitutions: object[];
-    [substitutions,] = RecursiveConjunction(
+    let substitutions = RecursiveConjunction(
         body,
         edbValues,
         idbValues);
@@ -179,11 +178,10 @@ function Conjunction(
             substitutions.map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term)));
 }
 
-let RecursiveConjunction: (body: Atom[], edbValues: Map<any[], Iterable<Tuple>>, idbValues: ReadonlyMap<string, Iterable<Tuple>>)=> [object[], number];
+let RecursiveConjunction: (body: Atom[], edbValues: Map<any[], Iterable<Tuple>>, idbValues: ReadonlyMap<string, Iterable<Tuple>>)=> object[];
 
-RecursiveConjunction = (body: Atom[], edbValues: Map<any[], Iterable<Tuple>>, idbValues: ReadonlyMap<string, Iterable<Tuple>>): [object[], number] =>
+RecursiveConjunction = (body: Atom[], edbValues: Map<any[], Iterable<Tuple>>, idbValues: ReadonlyMap<string, Iterable<Tuple>>): object[] =>
 {
-    let inputIndex = 0;
     const substitutions = body.reduce(
         (substitutions, atom) =>
         {
@@ -192,8 +190,7 @@ RecursiveConjunction = (body: Atom[], edbValues: Map<any[], Iterable<Tuple>>, id
 
             if(atom instanceof Not)
             {
-                let input: Iterable<object>;
-                [input, inputIndex] = RecursiveConjunction(
+                let input = RecursiveConjunction(
                     atom.Atoms,
                     edbValues,
                     idbValues);
@@ -259,7 +256,7 @@ RecursiveConjunction = (body: Atom[], edbValues: Map<any[], Iterable<Tuple>>, id
             return substitutions;
         },
         [{}]);
-    return [substitutions, inputIndex];
+    return substitutions;
 }
 
 function Disjunction(
