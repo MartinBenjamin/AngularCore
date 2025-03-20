@@ -42,9 +42,7 @@ describe(
 
                 //console.log(JSON.stringify(rules));
 
-                const dp1Signal = store.Signal(['?x', '?y'], [[dp1.Iri, '?x', '?y']], ...rules);
-                const dp1Interpretation = new SortedSet(tupleCompare, store.SignalScheduler.Sample(dp1Signal));
-                store.SignalScheduler.RemoveSignal(dp1Signal);
+                const dp1Interpretation = new SortedSet(tupleCompare, store.Query(['?x', '?y'], [[dp1.Iri, '?x', '?y']], ...rules));
                 it(
                     `( (i1)I , (1)LT ) ∈ (${dp1.Select(propertyExpressionWriter)})DP`,
                     () => expect(dp1Interpretation.has([i1Interpretation, 1])).toBe(true));
