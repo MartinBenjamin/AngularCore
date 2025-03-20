@@ -175,7 +175,7 @@ function Conjunction(
     else
         nextIdbValues.set(
             predicateSymbol,
-            substitutions.map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term)));
+            substitutions.map(substitution => head.map(term => IsVariable(term) ? substitution[term] : term)));
 }
 
 function RecursiveConjunction(

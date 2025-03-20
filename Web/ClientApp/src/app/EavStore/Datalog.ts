@@ -62,7 +62,7 @@ export function Conjunction(
                         term => term instanceof Aggregation ? term.Aggregate(entry[1]) : IsVariable(term) ? entry[0][keyVariables.indexOf(term)] : term ));
             }
 
-            return substitutions.map(substitution => head.map(term => (IsVariable(term) && term in substitution) ? substitution[term] : term));
+            return substitutions.map(substitution => head.map(term => IsVariable(term) ? substitution[term] : term));
         }
     }
 }

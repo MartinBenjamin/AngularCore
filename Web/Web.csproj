@@ -39,6 +39,7 @@
     <None Remove="ClientApp\src\app\ClassificationScheme.ts" />
     <None Remove="ClientApp\src\app\ClassificationSchemeServiceProvider.ts" />
     <None Remove="ClientApp\src\app\Collections\Iterable.ts" />
+    <None Remove="ClientApp\src\app\Collections\MergeSort.Spec.ts" />
     <None Remove="ClientApp\src\app\Collections\MergeSort.ts" />
     <None Remove="ClientApp\src\app\CommonDomainObjects.ts" />
     <None Remove="ClientApp\src\app\Components\AccrualDate.ts" />
