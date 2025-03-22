@@ -8,7 +8,6 @@ import { Signal } from '../Signal/Signal';
 import { AxiomInterpreter } from './AxiomInterpreterDatalog';
 import { ClassExpressionSignalInterpreter } from './ClassExpressionSignalInterpreter';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
-import { FunctionalObjectProperty } from './FunctionalObjectProperty';
 import { IClassExpression } from './IClassExpression';
 import { NamedIndividual } from './NamedIndividual';
 import { ObjectExactCardinality } from './ObjectExactCardinality';
@@ -110,79 +109,6 @@ describe(
                                     () => expect(Query(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality === 2));
                         });
                 });
-        }
-
-        {
-            const o1 = new Ontology('o1');
-            const op1 = new ObjectProperty(o1, 'op1');
-            new FunctionalObjectProperty(o1, op1);
-
-            describe(
-                `Given ${ontologyWriter(o1)}:`,
-                () =>
-                {
-                    const ce = new ObjectExactCardinality(op1, 1);
-                    const store: IEavStore = new EavStore();
-                    const interpreter = new ClassExpressionSignalInterpreter(
-                        o1,
-                        store);
-
-                    function elements(
-                        ce: IClassExpression
-                        ): Set<any>
-                    {
-                        let signal: Signal<Set<any>>;
-                        let elements: Set<any> = null;
-                        try
-                        {
-                            signal = store.SignalScheduler.AddSignal(
-                                m => elements = m,
-                                [interpreter.ClassExpression(ce)]);
-                            return elements;
-                        }
-                        finally
-                        {
-                            store.SignalScheduler.RemoveSignal(signal);
-                        }
-                    }
-
-                    describe(
-                        'Given x ∈ ΔI:',
-                        () =>
-                        {
-                            const x = store.NewEntity();
-                            it(
-                                `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                                () => expect(elements(ce).has(x)).toBe(false));
-                        });
-
-                    describe(
-                        'Given (op1)OP = {(x, y)}:',
-                        () =>
-                        {
-                            const x = store.NewEntity();
-                            const y = 2;
-                            store.Assert(x, op1.LocalName, y);
-                            it(
-                                `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                                () => expect(elements(ce).has(x)).toBe(true));
-                        });
-
-                    describe(
-                        'Given (dp1)DP = {(x, y), (x, z)}:',
-                        () =>
-                        {
-                            const x = store.NewEntity();
-                            const y = 2;
-                            const z = 3;
-                            store.Assert(x, op1.LocalName, y);
-                            store.Assert(x, op1.LocalName, z);
-                            it(
-                                `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                                () => expect(elements(ce).has(x)).toBe(true));
-                        });
-                });
-
         }
     });
 
