@@ -55,7 +55,7 @@ describe(
                         const x = store.NewEntity();
                         for(const ce of ces)
                             it(
-                                ce.Cardinality === 0 ?
+                                ce.Cardinality >= 0 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
                                 () => expect(elements(ce).has(x)).toBe(ce.Cardinality >= 0));
                     });
@@ -69,7 +69,7 @@ describe(
                         store.Assert(x, op1.LocalName, y);
                         for(const ce of ces)
                             it(
-                                ce.Cardinality === 1 ?
+                                ce.Cardinality >= 1 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
                                 () => expect(elements(ce).has(x)).toBe(ce.Cardinality >= 1));
                     });
@@ -85,7 +85,7 @@ describe(
                         store.Assert(x, op1.LocalName, z);
                         for(const ce of ces)
                             it(
-                                ce.Cardinality === 2 ?
+                                ce.Cardinality >= 2 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
                                 () => expect(elements(ce).has(x)).toBe(ce.Cardinality >= 2));
                     });

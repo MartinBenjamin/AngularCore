@@ -40,21 +40,11 @@ describe(
                 const cePredicateSymbols = new Map(ces.map(ce => [ce, ce.Select(interpreter.ClassExpressionInterpreter)]));
                 //console.log(JSON.stringify(rules));
 
-                function sample(
+                function Query(
                     cePredicateSymbol: string
                     ): Set<Tuple>
                 {
-                    let signal: Signal;
-
-                    try
-                    {
-                        signal = store.Signal(['?x'], [[cePredicateSymbol, '?x']], ...rules);
-                        return new SortedSet(tupleCompare, store.SignalScheduler.Sample(signal));
-                    }
-                    finally
-                    {
-                        store.SignalScheduler.RemoveSignal(signal);
-                    }
+                    return new SortedSet(tupleCompare, store.Query(['?x'], [[cePredicateSymbol, '?x']], ...rules));
                 }
 
                 describe(
@@ -66,7 +56,7 @@ describe(
                             it(
                                 ce.Cardinality === 0 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                                () => expect(sample(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality === 0));
+                                () => expect(Query(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality === 0));
                     });
 
                 describe(
@@ -80,7 +70,7 @@ describe(
                             it(
                                 ce.Cardinality <= 1 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                                () => expect(sample(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality <= 1));
+                                () => expect(Query(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality <= 1));
                     });
 
                 describe(
@@ -96,7 +86,7 @@ describe(
                             it(
                                 ce.Cardinality <= 2 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                                () => expect(sample(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality <= 2));
+                                () => expect(Query(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality <= 2));
                     });
             });
     });
@@ -128,21 +118,11 @@ describe(
                 const iInterpretation = interpreter.InterpretIndividual(i);
                 //console.log(JSON.stringify(rules));
 
-                function sample(
+                function Query(
                     cePredicateSymbol: string
                     ): Set<Tuple>
                 {
-                    let signal: Signal;
-
-                    try
-                    {
-                        signal = store.Signal(['?x'], [[cePredicateSymbol, '?x']], ...rules);
-                        return new SortedSet(tupleCompare, store.SignalScheduler.Sample(signal));
-                    }
-                    finally
-                    {
-                        store.SignalScheduler.RemoveSignal(signal);
-                    }
+                    return new SortedSet(tupleCompare, store.Query(['?x'], [[cePredicateSymbol, '?x']], ...rules));
                 }
 
                 describe(
@@ -154,7 +134,7 @@ describe(
                         store.Assert(x, op1.LocalName, y);
                         it(
                             `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                            () => expect(sample(cePredicateSymbol).has([x])).toBe(false));
+                            () => expect(Query(cePredicateSymbol).has([x])).toBe(false));
                     });
 
                 describe(
@@ -165,7 +145,7 @@ describe(
                         store.Assert(x, op1.LocalName, iInterpretation);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(sample(cePredicateSymbol).has([x])).toBe(true));
+                            () => expect(Query(cePredicateSymbol).has([x])).toBe(true));
                     });
 
                 describe(
@@ -178,7 +158,7 @@ describe(
                         store.Assert(x, op1.LocalName, y              );
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(sample(cePredicateSymbol).has([x])).toBe(true));
+                            () => expect(Query(cePredicateSymbol).has([x])).toBe(true));
                     });
             });
     });

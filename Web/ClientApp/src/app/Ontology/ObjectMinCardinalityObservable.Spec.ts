@@ -59,9 +59,9 @@ describe(
                         const x = store.NewEntity();
                         for(const ce of ces)
                             it(
-                                ce.Cardinality === 0 ?
+                                ce.Cardinality <= 0 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                                () => expect(elements(ce).has(x)).toBe(ce.Cardinality === 0));
+                                () => expect(elements(ce).has(x)).toBe(ce.Cardinality <= 0));
                     });
 
                 describe(
