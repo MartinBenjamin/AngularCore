@@ -145,7 +145,7 @@ function Conjunction(
         edbValues,
         idbValues);
 
-    if(body.some(term => term instanceof Aggregation))
+    if(head.some(term => term instanceof Aggregation))
     {
         const keyVariables = head.filter(IsVariable);
         const grouped = substitutions.reduce<Map<Tuple, object[]>>(

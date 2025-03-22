@@ -3,6 +3,7 @@ import { SortedSet } from '../Collections/SortedSet';
 import { Rule } from '../EavStore/Datalog';
 import { EavStore, tupleCompare } from '../EavStore/EavStore';
 import { IEavStore } from '../EavStore/IEavStore';
+import { Tuple } from '../EavStore/Tuple';
 import { AxiomInterpreter } from './AxiomInterpreterDatalog';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { DataHasValue } from './DataHasValue';
@@ -36,6 +37,13 @@ describe(
                 const cePredicateSymbol = ce.Select(interpreter.ClassExpressionInterpreter);
                 //console.log(JSON.stringify(rules));
 
+                function Query(
+                    cePredicateSymbol: string
+                    ): Set<Tuple>
+                {
+                    return new SortedSet(tupleCompare, store.Query(['?x'], [[cePredicateSymbol, '?x']], ...rules));
+                }
+
                 describe(
                     'Given (dp1)DP = {}:',
                     () =>
@@ -43,7 +51,7 @@ describe(
                         const x = store.NewEntity();
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(new SortedSet(tupleCompare, store.Query(['?x'], [[cePredicateSymbol, '?x']], ...rules)).has([x])).toBe(false));
+                            () => expect(Query(cePredicateSymbol).has([x])).toBe(false));
                     });
 
                 describe(
@@ -54,7 +62,7 @@ describe(
                         store.Assert(x, dp1.LocalName, 1);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(new SortedSet(tupleCompare, store.Query(['?x'], [[cePredicateSymbol, '?x']], ...rules)).has([x])).toBe(true));
+                            () => expect(Query(cePredicateSymbol).has([x])).toBe(true));
                     });
 
                 describe(
@@ -65,7 +73,7 @@ describe(
                         store.Assert(x, dp1.LocalName, 2);
                         it(
                             `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                            () => expect(new SortedSet(tupleCompare, store.Query(['?x'], [[cePredicateSymbol, '?x']], ...rules)).has([x])).toBe(false));
+                            () => expect(Query(cePredicateSymbol).has([x])).toBe(false));
                     });
 
                 describe(
@@ -77,7 +85,7 @@ describe(
                         store.Assert(x, dp1.LocalName, 2);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(new SortedSet(tupleCompare, store.Query(['?x'], [[cePredicateSymbol, '?x']], ...rules)).has([x])).toBe(true));
+                            () => expect(Query(cePredicateSymbol).has([x])).toBe(true));
                     });
             });
     });
