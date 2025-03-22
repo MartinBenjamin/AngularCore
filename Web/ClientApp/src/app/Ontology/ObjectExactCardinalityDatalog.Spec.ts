@@ -1,8 +1,12 @@
 import { } from 'jasmine';
-import { Subscription } from 'rxjs';
-import { EavStore } from '../EavStore/EavStore';
+import { SortedSet } from '../Collections/SortedSet';
+import { Rule } from '../EavStore/Datalog';
+import { EavStore, tupleCompare } from '../EavStore/EavStore';
 import { IEavStore } from '../EavStore/IEavStore';
-import { ClassExpressionObservableInterpreter } from './ClassExpressionObservableInterpreter';
+import { Tuple } from '../EavStore/Tuple';
+import { Signal } from '../Signal/Signal';
+import { AxiomInterpreter } from './AxiomInterpreterDatalog';
+import { ClassExpressionSignalInterpreter } from './ClassExpressionSignalInterpreter';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { FunctionalObjectProperty } from './FunctionalObjectProperty';
 import { IClassExpression } from './IClassExpression';
@@ -28,29 +32,42 @@ describe(
                 `Given ${ontologyWriter(o1)}:`,
                 () =>
                 {
-                    const ces = [0, 1, 2].map(cardinality => new ObjectExactCardinality(op1, cardinality));
                     const store: IEavStore = new EavStore();
-                    const interpreter = new ClassExpressionObservableInterpreter(
+                    const rules: Rule[] = [];
+                    const interpreter = new AxiomInterpreter(
                         o1,
-                        store);
+                        store,
+                        rules);
+                    for(const axiom of o1.Axioms)
+                        axiom.Accept(interpreter);
 
-                    function elements(
-                        ce: IClassExpression
-                        ): Set<any>
+                    const ces = [0, 1, 2].map(cardinality => new ObjectExactCardinality(op1, cardinality));
+                    const cePredicateSymbols = new Map(ces.map(ce => [ce, ce.Select(interpreter.ClassExpressionInterpreter)]));
+                    //console.log(JSON.stringify(rules));
+
+                    function Query(
+                        cePredicateSymbol: string
+                        ): Set<Tuple>
                     {
-                        let subscription: Subscription;
+                        return new SortedSet(tupleCompare, store.Query(['?x'], [[cePredicateSymbol, '?x']], ...rules));
+                    }
+
+                    function Query1(
+                        cePredicateSymbol: string
+                        ): Set<Tuple>
+                    {
+                        let signal: Signal;
+
                         try
                         {
-                            let elements: Set<any> = null;
-                            subscription = interpreter.ClassExpression(ce).subscribe(m => elements = m);
-                            return elements;
+                            signal = store.Signal(['?x'], [[cePredicateSymbol, '?x']], ...rules);
+                            return new SortedSet(tupleCompare, store.SignalScheduler.Sample(signal));
                         }
                         finally
                         {
-                            subscription.unsubscribe();
+                            store.SignalScheduler.RemoveSignal(signal);
                         }
                     }
-
                     describe(
                         'Given x ∈ ΔI:',
                         () =>
@@ -60,7 +77,7 @@ describe(
                                 it(
                                     ce.Cardinality === 0 ?
                                         `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                                    () => expect(elements(ce).has(x)).toBe(ce.Cardinality === 0));
+                                    () => expect(Query(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality === 0));
                         });
 
                     describe(
@@ -74,7 +91,7 @@ describe(
                                 it(
                                     ce.Cardinality === 1 ?
                                         `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                                    () => expect(elements(ce).has(x)).toBe(ce.Cardinality === 1));
+                                    () => expect(Query(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality === 1));
                         });
 
                     describe(
@@ -90,7 +107,7 @@ describe(
                                 it(
                                     ce.Cardinality === 2 ?
                                         `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                                    () => expect(elements(ce).has(x)).toBe(ce.Cardinality === 2));
+                                    () => expect(Query(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality === 2));
                         });
                 });
         }
@@ -106,7 +123,7 @@ describe(
                 {
                     const ce = new ObjectExactCardinality(op1, 1);
                     const store: IEavStore = new EavStore();
-                    const interpreter = new ClassExpressionObservableInterpreter(
+                    const interpreter = new ClassExpressionSignalInterpreter(
                         o1,
                         store);
 
@@ -114,16 +131,18 @@ describe(
                         ce: IClassExpression
                         ): Set<any>
                     {
-                        let subscription: Subscription;
+                        let signal: Signal<Set<any>>;
+                        let elements: Set<any> = null;
                         try
                         {
-                            let elements: Set<any> = null;
-                            subscription = interpreter.ClassExpression(ce).subscribe(m => elements = m);
+                            signal = store.SignalScheduler.AddSignal(
+                                m => elements = m,
+                                [interpreter.ClassExpression(ce)]);
                             return elements;
                         }
                         finally
                         {
-                            subscription.unsubscribe();
+                            store.SignalScheduler.RemoveSignal(signal);
                         }
                     }
 
@@ -163,6 +182,7 @@ describe(
                                 () => expect(elements(ce).has(x)).toBe(true));
                         });
                 });
+
         }
     });
 
@@ -172,7 +192,6 @@ describe(
     {
         const ontologyWriter = OntologyWriter();
         const classExpressionWriter = new ClassExpressionWriter();
-
         {
             const o1 = new Ontology('o1');
             const op1 = new ObjectProperty(o1, 'op1');
@@ -184,7 +203,7 @@ describe(
                 {
                     const ce = new ObjectExactCardinality(op1, 0, new ObjectOneOf([i]));
                     const store: IEavStore = new EavStore();
-                    const interpreter = new ClassExpressionObservableInterpreter(
+                    const interpreter = new ClassExpressionSignalInterpreter(
                         o1,
                         store);
                     const iInterpretation = interpreter.InterpretIndividual(i);
@@ -193,16 +212,18 @@ describe(
                         ce: IClassExpression
                         ): Set<any>
                     {
-                        let subscription: Subscription;
+                        let signal: Signal<Set<any>>;
+                        let elements: Set<any> = null;
                         try
                         {
-                            let elements: Set<any> = null;
-                            subscription = interpreter.ClassExpression(ce).subscribe(m => elements = m);
+                            signal = store.SignalScheduler.AddSignal(
+                                m => elements = m,
+                                [interpreter.ClassExpression(ce)]);
                             return elements;
                         }
                         finally
                         {
-                            subscription.unsubscribe();
+                            store.SignalScheduler.RemoveSignal(signal);
                         }
                     }
 
@@ -243,7 +264,7 @@ describe(
                 {
                     const ce = new ObjectExactCardinality(op1, 1, new ObjectOneOf([i1, i2]));
                     const store: IEavStore = new EavStore();
-                    const interpreter = new ClassExpressionObservableInterpreter(
+                    const interpreter = new ClassExpressionSignalInterpreter(
                         o1,
                         store);
                     const i1Interpretation = interpreter.InterpretIndividual(i1);
@@ -253,16 +274,18 @@ describe(
                         ce: IClassExpression
                         ): Set<any>
                     {
-                        let subscription: Subscription;
+                        let signal: Signal<Set<any>>;
+                        let elements: Set<any> = null;
                         try
                         {
-                            let elements: Set<any> = null;
-                            subscription = interpreter.ClassExpression(ce).subscribe(m => elements = m);
+                            signal = store.SignalScheduler.AddSignal(
+                                m => elements = m,
+                                [interpreter.ClassExpression(ce)]);
                             return elements;
                         }
                         finally
                         {
-                            subscription.unsubscribe();
+                            store.SignalScheduler.RemoveSignal(signal);
                         }
                     }
 

@@ -303,6 +303,7 @@
     <None Remove="ClientApp\src\app\Ontology\ObjectComplementOfObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectComplementOfSignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectExactCardinality.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectExactCardinalityDatalog.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectExactCardinalityObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectExactCardinalitySignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectHasSelf.ts" />
