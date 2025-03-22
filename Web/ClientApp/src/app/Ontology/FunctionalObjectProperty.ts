@@ -1,3 +1,4 @@
+import { IAxiomSelector } from "./IAxiomSelector";
 import { IAxiomVisitor } from "./IAxiomVisitor";
 import { IFunctionalObjectProperty } from "./IFunctionalObjectProperty";
 import { IOntology } from "./IOntology";
@@ -21,5 +22,12 @@ export class FunctionalObjectProperty
         )
     {
         visitor.FunctionalObjectProperty(this);
+    }
+
+    Select<TResult>(
+        selector: IAxiomSelector<TResult>
+        ): TResult
+    {
+        return selector.FunctionalObjectProperty(this);
     }
 }

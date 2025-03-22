@@ -119,9 +119,14 @@ export class AxiomWriter implements IAxiomSelector<string>
     ObjectPropertyRange(objectPropertyRange: IObjectPropertyRange): string {
         throw new Error("Method not implemented.");
     }
-    FunctionalObjectProperty(functionalObjectProperty: IFunctionalObjectProperty): string {
-        throw new Error("Method not implemented.");
+
+    FunctionalObjectProperty(
+        functionalObjectProperty: IFunctionalObjectProperty
+        ): string
+    {
+        return `FunctionalObjectProperty(${functionalObjectProperty.ObjectPropertyExpression.Select(this.PropertyExpressionWriter)})`;
     }
+
     ReflexiveObjectProperty(reflexiveObjectProperty: IReflexiveObjectProperty): string {
         throw new Error("Method not implemented.");
     }
