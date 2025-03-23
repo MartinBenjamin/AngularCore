@@ -5,7 +5,7 @@ import { EntityId } from "../EavStore/EavStore";
 import { IClass } from "./IClass";
 import { IClassExpressionSelector } from "./IClassExpressionSelector";
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
-import { IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
+import { IDataCardinality, IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
 import { IDataHasValue } from "./IDataHasValue";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
 import { IIndividual } from "./IIndividual";
@@ -174,13 +174,29 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         return predicateSymbol;
     }
 
-    DataMinCardinality(dataMinCardinality: IDataMinCardinality): string {
+    DataMinCardinality(
+        dataMinCardinality: IDataMinCardinality
+        ): string
+    {
+        if(dataMinCardinality.Cardinality === 0)
+            return this.Class(Thing);
+
+        const predicateSymbol = dataMinCardinality.Select(this._predicateSymbolSelector);
+        this._rules.push([[predicateSymbol, '?x'], [[this.DataCardinality(dataMinCardinality), '?x', '?cardinality'], GreaterThanOrEqual('?cardinality', dataMinCardinality.Cardinality)]]);
+        return predicateSymbol;
+    }
+
+    DataMaxCardinality(
+        dataMaxCardinality: IDataMaxCardinality
+        ): string
+    {
         throw new Error("Method not implemented.");
     }
-    DataMaxCardinality(dataMaxCardinality: IDataMaxCardinality): string {
-        throw new Error("Method not implemented.");
-    }
-    DataExactCardinality(dataExactCardinality: IDataExactCardinality): string {
+
+    DataExactCardinality(
+        dataExactCardinality: IDataExactCardinality
+        ): string
+    {
         throw new Error("Method not implemented.");
     }
 
@@ -200,7 +216,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         return class$.Select(this._predicateSymbolSelector);
     }
 
-    ObjectCardinality(
+    private ObjectCardinality(
         objectCardinality: IObjectCardinality
         ): string
     {
@@ -217,6 +233,20 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
             const rule: Rule = [[predicateSymbol, '?x', Count()], [[objectCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', '?y']]];
             if(cePredicateSymbol)
                 rule[1].push([cePredicateSymbol, '?y']);
+            this._rules.push(rule);
+        }
+
+        return predicateSymbol;
+    }
+
+    private DataCardinality(
+        dataCardinality: IDataCardinality
+        ): string
+    {
+        let predicateSymbol = dataCardinality.PropertyExpression.Select(this._propertyExpressionInterpreter) + 'Cardinality';
+        if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
+        {
+            const rule: Rule = [[predicateSymbol, '?x', Count()], [[dataCardinality.DataPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', '?y']]];
             this._rules.push(rule);
         }
 

@@ -180,6 +180,7 @@
     <None Remove="ClientApp\src\app\Ontology\DataMaxCardinalityObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMaxCardinalitySignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMinCardinality.ts" />
+    <None Remove="ClientApp\src\app\Ontology\DataMinCardinalityDatalog.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMinCardinalityObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMinCardinalitySignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataOneOf.Spec.ts" />
