@@ -8,20 +8,22 @@ import { DataMaxCardinality } from './DataMaxCardinality';
 import { DataOneOf } from './DataOneOf';
 import { IClassExpression } from './IClassExpression';
 import { Ontology } from "./Ontology";
+import { OntologyWriter } from './OntologyWriter';
 import { DataProperty } from './Property';
 
 describe(
     'DataMaxCardinality( n DPE ) ({ x | #{ y | ( x , y ) ∈ (DPE)DP } ≤ n })',
     () =>
     {
+        const ontologyWriter = OntologyWriter();
         const classExpressionWriter = new ClassExpressionWriter();
+        const o1 = new Ontology('o1');
+        const dp1 = new DataProperty(o1, 'dp1');
 
         describe(
-            'Given an Ontology o1 with axiom DataProperty(dp1):',
+            `Given ${ontologyWriter(o1)}:`,
             () =>
             {
-                const o1 = new Ontology('o1');
-                const dp1 = new DataProperty(o1, 'dp1');
                 const ces = [0, 1, 2].map(cardinality => new DataMaxCardinality(dp1, cardinality));
                 const store: IEavStore = new EavStore();
                 const interpreter = new ClassExpressionSignalInterpreter(
@@ -92,14 +94,15 @@ describe(
     'DataMaxCardinality( n DPE DR ) ({ x | #{ y | ( x , y ) ∈ (DPE)DP and y ∈ (DR)DT } ≤ n })',
     () =>
     {
+        const ontologyWriter = OntologyWriter();
         const classExpressionWriter = new ClassExpressionWriter();
+        const o1 = new Ontology('o1');
+        const dp1 = new DataProperty(o1, 'dp1');
 
         describe(
-            'Given an Ontology o1 with axioms Class(c1) and DataProperty(dp1):',
+            `Given ${ontologyWriter(o1)}:`,
             () =>
             {
-                const o1 = new Ontology('o1');
-                const dp1 = new DataProperty(o1, 'dp1');
                 const ce = new DataMaxCardinality(dp1, 1, new DataOneOf([1, 2]));
                 const store: IEavStore = new EavStore();
                 const interpreter = new ClassExpressionSignalInterpreter(
