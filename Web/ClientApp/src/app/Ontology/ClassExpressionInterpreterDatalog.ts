@@ -1,7 +1,8 @@
 import { Count } from "../EavStore/Aggregation";
-import { GreaterThan, GreaterThanOrEqual } from "../EavStore/BuiltIn";
-import { Not, Rule } from "../EavStore/Datalog";
+import { BuiltIn, GreaterThan, GreaterThanOrEqual } from "../EavStore/BuiltIn";
+import { Not, Rule, Variable } from "../EavStore/Datalog";
 import { EntityId } from "../EavStore/EavStore";
+import { DataRange } from "./DataRange";
 import { IClass } from "./IClass";
 import { IClassExpressionSelector } from "./IClassExpressionSelector";
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
@@ -247,9 +248,26 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
         {
             const rule: Rule = [[predicateSymbol, '?x', Count()], [[dataCardinality.DataPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', '?y']]];
+            if(dataCardinality.DataRange)
+                rule[1].push(this.Wrap(dataCardinality.DataRange, '?y'))
             this._rules.push(rule);
         }
 
         return predicateSymbol;
+    }
+
+    private Wrap(
+        dataRange: DataRange,
+        variable: Variable
+        ): BuiltIn
+    {
+        return function*(
+            substitutions: Iterable<object>
+            )
+        {
+            for(const substitution of substitutions)
+                if(dataRange.HasMember(substitution[variable]))
+                    yield substitution;
+        };
     }
 }
