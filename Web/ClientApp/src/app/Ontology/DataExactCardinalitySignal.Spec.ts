@@ -6,6 +6,7 @@ import { ClassExpressionSignalInterpreter } from './ClassExpressionSignalInterpr
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { DataExactCardinality } from './DataExactCardinality';
 import { DataOneOf } from './DataOneOf';
+import { FunctionalDataProperty } from './FunctionalDataProperty';
 import { IClassExpression } from './IClassExpression';
 import { Ontology } from "./Ontology";
 import { OntologyWriter } from './OntologyWriter';
@@ -17,77 +18,140 @@ describe(
     {
         const ontologyWriter = OntologyWriter();
         const classExpressionWriter = new ClassExpressionWriter();
-        const o1 = new Ontology('o1');
-        const dp1 = new DataProperty(o1, 'dp1');
 
-        describe(
-            `Given ${ontologyWriter(o1)}:`,
-            () =>
-            {
-                const ces = [0, 1, 2].map(cardinality => new DataExactCardinality(dp1, cardinality));
-                const store: IEavStore = new EavStore();
-                const interpreter = new ClassExpressionSignalInterpreter(
-                    o1,
-                    store);
+        {
+            const o1 = new Ontology('o1');
+            const dp1 = new DataProperty(o1, 'dp1');
 
-                function elements(
-                    ce: IClassExpression
-                    ): Set<any>
+            describe(
+                `Given ${ontologyWriter(o1)}:`,
+                () =>
                 {
-                    let signal: Signal<Set<any>>;
-                    let elements: Set<any> = null;
-                    try
+                    const ces = [0, 1, 2].map(cardinality => new DataExactCardinality(dp1, cardinality));
+                    const store: IEavStore = new EavStore();
+                    const interpreter = new ClassExpressionSignalInterpreter(
+                        o1,
+                        store);
+
+                    function elements(
+                        ce: IClassExpression
+                        ): Set<any>
                     {
-                        signal = store.SignalScheduler.AddSignal(
-                            m => elements = m,
-                            [interpreter.ClassExpression(ce)]);
-                        return elements;
+                        let signal: Signal<Set<any>>;
+                        let elements: Set<any> = null;
+                        try
+                        {
+                            signal = store.SignalScheduler.AddSignal(
+                                m => elements = m,
+                                [interpreter.ClassExpression(ce)]);
+                            return elements;
+                        }
+                        finally
+                        {
+                            store.SignalScheduler.RemoveSignal(signal);
+                        }
                     }
-                    finally
+
+                    describe(
+                        'Given x ∈ ΔI:',
+                        () =>
+                        {
+                            const x = store.NewEntity();
+                            for(const ce of ces)
+                                it(
+                                    ce.Cardinality === 0 ?
+                                        `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
+                                    () => expect(elements(ce).has(x)).toBe(ce.Cardinality === 0));
+                        });
+
+                    describe(
+                        'Given (dp1)DP = {(x, 1)}:',
+                        () =>
+                        {
+                            const x = store.NewEntity();
+                            store.Assert(x, dp1.LocalName, 1);
+                            for(const ce of ces)
+                                it(
+                                    ce.Cardinality === 1 ?
+                                        `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
+                                    () => expect(elements(ce).has(x)).toBe(ce.Cardinality === 1));
+                        });
+
+                    describe(
+                        'Given (dp1)DP = {(x, 1), (x, 2)}:',
+                        () =>
+                        {
+                            const x = store.NewEntity();
+                            store.Assert(x, dp1.LocalName, 1);
+                            store.Assert(x, dp1.LocalName, 2);
+                            for(const ce of ces)
+                                it(
+                                    ce.Cardinality === 2 ?
+                                        `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
+                                    () => expect(elements(ce).has(x)).toBe(ce.Cardinality === 2));
+                        });
+                });
+        }
+
+        {
+            const o1 = new Ontology('o1');
+            const dp1 = new DataProperty(o1, 'dp1');
+            new FunctionalDataProperty(o1, dp1);
+
+            describe(
+                `Given ${ontologyWriter(o1)}:`,
+                () =>
+                {
+                    const ce = new DataExactCardinality(dp1, 1);
+                    const store: IEavStore = new EavStore();
+                    const interpreter = new ClassExpressionSignalInterpreter(
+                        o1,
+                        store);
+
+                    function elements(
+                        ce: IClassExpression
+                        ): Set<any>
                     {
-                        store.SignalScheduler.RemoveSignal(signal);
+                        let signal: Signal<Set<any>>;
+                        let elements: Set<any> = null;
+                        try
+                        {
+                            signal = interpreter.ClassExpression(ce);
+                            store.SignalScheduler.AddSignal(
+                                m => elements = m,
+                                [signal]);
+                            return elements;
+                        }
+                        finally
+                        {
+                            store.SignalScheduler.RemoveSignal(signal);
+                        }
                     }
-                }
 
-                describe(
-                    'Given x ∈ ΔI:',
-                    () =>
-                    {
-                        const x = store.NewEntity();
-                        for(const ce of ces)
+                    describe(
+                        'Given (dp1)DP = {(x, 1)}:',
+                        () =>
+                        {
+                            const x = store.NewEntity();
+                            store.Assert(x, dp1.LocalName, 1);
                             it(
-                                ce.Cardinality === 0 ?
-                                    `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                                () => expect(elements(ce).has(x)).toBe(ce.Cardinality === 0));
-                    });
+                                `x ∈ (${classExpressionWriter.Write(ce)})C`,
+                                () => expect(elements(ce).has(x)).toBe(true));
+                        });
 
-                describe(
-                    'Given (dp1)DP = {(x, 1)}:',
-                    () =>
-                    {
-                        const x = store.NewEntity();
-                        store.Assert(x, dp1.LocalName, 1);
-                        for(const ce of ces)
+                    describe(
+                        'Given (dp1)DP = {(x, 1), (x, 2)}:',
+                        () =>
+                        {
+                            const x = store.NewEntity();
+                            store.Assert(x, dp1.LocalName, 1);
+                            store.Assert(x, dp1.LocalName, 2);
                             it(
-                                ce.Cardinality === 1 ?
-                                    `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                                () => expect(elements(ce).has(x)).toBe(ce.Cardinality === 1));
-                    });
-
-                describe(
-                    'Given (dp1)DP = {(x, 1), (x, 2)}:',
-                    () =>
-                    {
-                        const x = store.NewEntity();
-                        store.Assert(x, dp1.LocalName, 1);
-                        store.Assert(x, dp1.LocalName, 2);
-                        for(const ce of ces)
-                            it(
-                                ce.Cardinality === 2 ?
-                                    `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                                () => expect(elements(ce).has(x)).toBe(ce.Cardinality === 2));
-                    });
-            });
+                                `x ∈ (${classExpressionWriter.Write(ce)})C`,
+                                () => expect(elements(ce).has(x)).toBe(true));
+                        });
+                });
+        }
     });
 
 describe(

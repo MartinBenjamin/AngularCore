@@ -153,13 +153,25 @@ export class AxiomWriter implements IAxiomSelector<string>
     DataPropertyRange(dataPropertyRange: IDataPropertyRange): string {
         throw new Error("Method not implemented.");
     }
-    FunctionalDataProperty(functionalDataProperty: IFunctionalDataProperty): string {
+
+    FunctionalDataProperty(
+        functionalDataProperty: IFunctionalDataProperty
+        ): string
+    {
+        return `FunctionalObjectProperty(${functionalDataProperty.DataPropertyExpression.Select(this.PropertyExpressionWriter)})`;
+    }
+
+    AnnotationAssertion(
+        annotationAssertion: IAnnotationAssertion
+        ): string
+    {
         throw new Error("Method not implemented.");
     }
-    AnnotationAssertion(annotationAssertion: IAnnotationAssertion): string {
-        throw new Error("Method not implemented.");
-    }
-    DLSafeRule(dlSafeRule: IDLSafeRule): string {
+
+    DLSafeRule(
+        dlSafeRule: IDLSafeRule
+        ): string
+    {
         throw new Error("Method not implemented.");
     }
 
