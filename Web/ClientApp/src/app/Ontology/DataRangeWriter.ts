@@ -26,7 +26,7 @@ export class DataRangeWriter implements IDataRangeSelector<string>
         dataUnionOf: IDataUnionOf
         ): string
     {
-        return `DataIntersectionOf(${dataUnionOf.DataRanges.map(dataRange => dataRange.Select(this)).join(' ')})`;
+        return `DataUnionOf(${dataUnionOf.DataRanges.map(dataRange => dataRange.Select(this)).join(' ')})`;
     }
 
     DataComplementOf(

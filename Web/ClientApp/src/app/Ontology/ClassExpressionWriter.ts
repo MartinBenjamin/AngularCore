@@ -62,10 +62,7 @@ export class ClassExpressionWriter implements
         objectOneOf: IObjectOneOf
         ): string
     {
-        const individuals = objectOneOf.Individuals
-            .map(individual => individual.Select(this._individualWriter))
-            .join(' ');
-        return `ObjectOneOf(${individuals})`;
+        return `ObjectOneOf(${objectOneOf.Individuals.map(individual => individual.Select(this._individualWriter)).join(' ')})`;
     }
 
     ObjectSomeValuesFrom(
