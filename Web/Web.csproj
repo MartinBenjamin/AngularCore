@@ -168,6 +168,7 @@
     <None Remove="ClientApp\src\app\Ontology\DataComplementOf.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataComplementOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataExactCardinality.ts" />
+    <None Remove="ClientApp\src\app\Ontology\DataExactCardinalityDatalog.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataExactCardinalityObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataExactCardinalitySignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataHasValue.ts" />

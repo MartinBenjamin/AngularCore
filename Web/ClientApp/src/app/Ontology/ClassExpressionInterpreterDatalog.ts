@@ -217,7 +217,17 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         dataExactCardinality: IDataExactCardinality
         ): string
     {
-        throw new Error("Method not implemented.");
+        const predicateSymbol = dataExactCardinality.Select(this._predicateSymbolSelector);
+        if(this._rules.find(rule => rule[0][0] == predicateSymbol))
+            return predicateSymbol;
+
+        if(dataExactCardinality.Cardinality === 0)
+            this._rules.push([[predicateSymbol, '?x'], [[this.Class(Thing), '?x'], Not([this.DataCardinality(dataExactCardinality), '?x', '?cardinality'])]]);
+
+        else
+            this._rules.push([[predicateSymbol, '?x'], [[this.DataCardinality(dataExactCardinality), '?x', dataExactCardinality.Cardinality]]]);
+
+        return predicateSymbol;
     }
 
     Class(
