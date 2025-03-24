@@ -2,12 +2,15 @@ import { Count } from "../EavStore/Aggregation";
 import { BuiltIn, GreaterThan, GreaterThanOrEqual } from "../EavStore/BuiltIn";
 import { Not, Rule, Variable } from "../EavStore/Datalog";
 import { EntityId } from "../EavStore/EavStore";
+import { ClassExpressionWriter } from "./ClassExpressionWriter";
 import { DataRange } from "./DataRange";
+import { DataRangeWriter } from "./DataRangeWriter";
 import { IClass } from "./IClass";
 import { IClassExpressionSelector } from "./IClassExpressionSelector";
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataCardinality, IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
 import { IDataHasValue } from "./IDataHasValue";
+import { IDataRangeSelector } from "./IDataRangeSelector";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
 import { IIndividual } from "./IIndividual";
 import { IObjectAllValuesFrom } from "./IObjectAllValuesFrom";
@@ -58,7 +61,8 @@ class PredicateSymbolGenerator implements IClassExpressionSelector<string>
 export class ClassExpressionInterpreter implements IClassExpressionSelector<string>
 {
     private _propertyExpressionInterpreter: IPropertyExpressionSelector<string>;
-    private _predicateSymbolSelector = new PredicateSymbolGenerator();
+    private _predicateSymbolSelector: IClassExpressionSelector<string> = new ClassExpressionWriter();//PredicateSymbolGenerator();
+    private _dataRangeWriter: IDataRangeSelector<string> = new DataRangeWriter();
 
     constructor(
         private readonly _individualInterpretation: ReadonlyMap<IIndividual, any>,
@@ -221,17 +225,16 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         objectCardinality: IObjectCardinality
         ): string
     {
-        let predicateSymbol = objectCardinality.PropertyExpression.Select(this._propertyExpressionInterpreter) + 'Cardinality';
+        const propertyPredicateSymbol = objectCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter);
         let cePredicateSymbol;
         if(objectCardinality.ClassExpression)
-        {
             cePredicateSymbol = objectCardinality.ClassExpression.Select(this);
-            predicateSymbol += cePredicateSymbol;
-        }
+
+        let predicateSymbol = `ObjectCardinality(${propertyPredicateSymbol}${cePredicateSymbol ? ' ' + cePredicateSymbol : ''})`;
 
         if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
         {
-            const rule: Rule = [[predicateSymbol, '?x', Count()], [[objectCardinality.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', '?y']]];
+            const rule: Rule = [[predicateSymbol, '?x', Count()], [[propertyPredicateSymbol, '?x', '?y']]];
             if(cePredicateSymbol)
                 rule[1].push([cePredicateSymbol, '?y']);
             this._rules.push(rule);
@@ -244,10 +247,16 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         dataCardinality: IDataCardinality
         ): string
     {
-        let predicateSymbol = dataCardinality.PropertyExpression.Select(this._propertyExpressionInterpreter) + 'Cardinality';
+        const propertyPredicateSymbol = dataCardinality.DataPropertyExpression.Select(this._propertyExpressionInterpreter);
+        let drPredicateSymbol;
+        if(dataCardinality.DataRange)
+            drPredicateSymbol = dataCardinality.DataRange.Select(this._dataRangeWriter);
+
+        let predicateSymbol = `DataCardinality(${propertyPredicateSymbol}${drPredicateSymbol ? ' ' + drPredicateSymbol : ''})`
+
         if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
         {
-            const rule: Rule = [[predicateSymbol, '?x', Count()], [[dataCardinality.DataPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', '?y']]];
+            const rule: Rule = [[predicateSymbol, '?x', Count()], [[propertyPredicateSymbol, '?x', '?y']]];
             if(dataCardinality.DataRange)
                 rule[1].push(this.Wrap(dataCardinality.DataRange, '?y'))
             this._rules.push(rule);

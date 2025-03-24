@@ -1,6 +1,7 @@
 import { Rule } from "../EavStore/Datalog";
 import { IDataProperty, IInverseObjectProperty, IObjectProperty, IProperty } from "./IProperty";
 import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
+import { PropertyExpressionWriter } from "./PropertyExpressionWriter";
 
 class PredicateSymbolGenerator implements IPropertyExpressionSelector<string>
 {
@@ -37,7 +38,7 @@ class PredicateSymbolGenerator implements IPropertyExpressionSelector<string>
 
 export class PropertyExpressionInterpreter implements IPropertyExpressionSelector<string>
 {
-    private _predicateSymbolSelector: IPropertyExpressionSelector<string> = new PredicateSymbolGenerator();
+    private _predicateSymbolSelector: IPropertyExpressionSelector<string> = new PropertyExpressionWriter();
 
     constructor(
         private readonly _rules: Rule[]

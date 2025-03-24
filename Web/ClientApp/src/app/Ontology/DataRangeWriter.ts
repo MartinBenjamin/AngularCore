@@ -40,7 +40,7 @@ export class DataRangeWriter implements IDataRangeSelector<string>
         dataOneOf: IDataOneOf
         ): string
     {
-        return `DataOneOf(${dataOneOf.Values.join(' ')})`;
+        return `DataOneOf(${dataOneOf.Values.map(value => this.Value(value)).join(' ')})`;
     }
 
     DatatypeRestriction(
@@ -48,5 +48,12 @@ export class DataRangeWriter implements IDataRangeSelector<string>
         ): string
     {
         throw new Error("Method not implemented.");
+    }
+
+    private Value(
+        value: any
+        ): string
+    {
+        return value;
     }
 }
