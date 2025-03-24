@@ -5,8 +5,9 @@ import { IClassExpressionSelector } from './IClassExpressionSelector';
 import { IDataAllValuesFrom } from "./IDataAllValuesFrom";
 import { IDataCardinality, IDataExactCardinality, IDataMaxCardinality, IDataMinCardinality } from "./IDataCardinality";
 import { IDataHasValue } from "./IDataHasValue";
+import { IDataRangeSelector } from "./IDataRangeSelector";
 import { IDataSomeValuesFrom } from "./IDataSomeValuesFrom";
-import { IEntity } from './IEntity';
+import { IIndividualSelector } from "./IIndividualSelector";
 import { IndividualWriter } from "./IndividualWriter";
 import { IObjectAllValuesFrom } from "./IObjectAllValuesFrom";
 import { IObjectCardinality, IObjectExactCardinality, IObjectMaxCardinality, IObjectMinCardinality } from "./IObjectCardinality";
@@ -17,24 +18,23 @@ import { IObjectIntersectionOf } from "./IObjectIntersectionOf";
 import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
-import { IDataProperty, IInverseObjectProperty, IObjectProperty, IProperty } from './IProperty';
 import { IPropertyExpressionSelector } from './IPropertyExpressionSelector';
 import { IsAxiom } from "./IsAxiom";
+import { PropertyExpressionWriter } from "./PropertyExpressionWriter";
 
 const isAxiom = new IsAxiom();
 
-export class ClassExpressionWriter implements
-    IClassExpressionSelector<string>,
-    IPropertyExpressionSelector<string>
+export class ClassExpressionWriter implements IClassExpressionSelector<string>
 {
-    private _dataRangeWriter  = new DataRangeWriter();
-    private _individualWriter = new IndividualWriter();
+    private _propertyExpressionWriter: IPropertyExpressionSelector<string> = new PropertyExpressionWriter();
+    private _dataRangeWriter: IDataRangeSelector<string> = new DataRangeWriter();
+    private _individualWriter: IIndividualSelector<string> = new IndividualWriter();
 
     Class(
         class$: IClass
         ): string
     {
-        return this.Entity(class$);
+        return class$.Iri;
     }
 
     ObjectIntersectionOf(
@@ -83,14 +83,14 @@ export class ClassExpressionWriter implements
         objectHasValue: IObjectHasValue
         ): string
     {
-        return `ObjectHasValue(${objectHasValue.ObjectPropertyExpression.Select(this)} ${objectHasValue.Individual.Select(this._individualWriter)})`;
+        return `ObjectHasValue(${objectHasValue.ObjectPropertyExpression.Select(this._propertyExpressionWriter)} ${objectHasValue.Individual.Select(this._individualWriter)})`;
     }
 
     ObjectHasSelf(
         objectHasSelf: IObjectHasSelf
         ): string
     {
-        return `ObjectHasSelf(${objectHasSelf.ObjectPropertyExpression.Select(this)})`;
+        return `ObjectHasSelf(${objectHasSelf.ObjectPropertyExpression.Select(this._propertyExpressionWriter)})`;
     }
 
     ObjectMinCardinality(
@@ -120,7 +120,7 @@ export class ClassExpressionWriter implements
     {
         return `(\
 ${objectCardinality.Cardinality} \
-${objectCardinality.ObjectPropertyExpression.Select(this)}\
+${objectCardinality.ObjectPropertyExpression.Select(this._propertyExpressionWriter)}\
 ${objectCardinality.ClassExpression ? ' ' + objectCardinality.ClassExpression.Select(this) : ''})`;
     }
 
@@ -142,7 +142,7 @@ ${objectCardinality.ClassExpression ? ' ' + objectCardinality.ClassExpression.Se
         dataHasValue: IDataHasValue
         ): string
     {
-        return `DataHasValue(${dataHasValue.DataPropertyExpression.Select(this)}, ${dataHasValue.Value})`;
+        return `DataHasValue(${dataHasValue.DataPropertyExpression.Select(this._propertyExpressionWriter)}, ${dataHasValue.Value})`;
     }
 
     DataMinCardinality(
@@ -172,43 +172,8 @@ ${objectCardinality.ClassExpression ? ' ' + objectCardinality.ClassExpression.Se
     {
         return `(\
 ${dataCardinality.Cardinality} \
-${dataCardinality.DataPropertyExpression.Select(this)}\
+${dataCardinality.DataPropertyExpression.Select(this._propertyExpressionWriter)}\
 ${dataCardinality.DataRange ? ' ' + dataCardinality.DataRange.Select(this._dataRangeWriter) : ''})`;
-    }
-    
-    ObjectProperty(
-        objectProperty: IObjectProperty
-        ): string
-    {
-        return this.Property(objectProperty);
-    }
-
-    DataProperty(
-        dataProperty: IDataProperty
-        ): string
-    {
-        return this.Property(dataProperty);
-    }
-
-    InverseObjectProperty(
-        inverseObjectProperty: IInverseObjectProperty
-        ): string
-    {
-        return `InverseObjectProperty(${inverseObjectProperty.ObjectProperty.Select(this)})`;
-    }
-
-    private Property(
-        property: IProperty
-        )
-    {
-        return this.Entity(property);
-    }
-
-    Entity(
-        entity: IEntity
-        ): string
-    {
-        return entity.Iri;
     }
 
     Write(
