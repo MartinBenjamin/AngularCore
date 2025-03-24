@@ -4,13 +4,10 @@ import { Rule } from '../EavStore/Datalog';
 import { EavStore, tupleCompare } from '../EavStore/EavStore';
 import { IEavStore } from '../EavStore/IEavStore';
 import { Tuple } from '../EavStore/Tuple';
-import { Signal } from '../Signal/Signal';
 import { AxiomInterpreter } from './AxiomInterpreterDatalog';
-import { ClassExpressionSignalInterpreter } from './ClassExpressionSignalInterpreter';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { DataMaxCardinality } from './DataMaxCardinality';
 import { DataOneOf } from './DataOneOf';
-import { IClassExpression } from './IClassExpression';
 import { Ontology } from "./Ontology";
 import { OntologyWriter } from './OntologyWriter';
 import { DataProperty } from './Property';
@@ -102,29 +99,24 @@ describe(
             `Given ${ontologyWriter(o1)}:`,
             () =>
             {
-                const ce = new DataMaxCardinality(dp1, 1, new DataOneOf([1, 2]));
                 const store: IEavStore = new EavStore();
-                const interpreter = new ClassExpressionSignalInterpreter(
+                const rules: Rule[] = [];
+                const interpreter = new AxiomInterpreter(
                     o1,
-                    store);
+                    store,
+                    rules);
+                for(const axiom of o1.Axioms)
+                    axiom.Accept(interpreter);
 
-                function elements(
-                    ce: IClassExpression
-                    ): Set<any>
+                const ce = new DataMaxCardinality(dp1, 1, new DataOneOf([1, 2]));
+                const cePredicateSymbol = ce.Select(interpreter.ClassExpressionInterpreter);
+                //console.log(JSON.stringify(rules));
+
+                function Query(
+                    cePredicateSymbol: string
+                    ): Set<Tuple>
                 {
-                    let signal: Signal<Set<any>>;
-                    let elements: Set<any> = null;
-                    try
-                    {
-                        signal = store.SignalScheduler.AddSignal(
-                            m => elements = m,
-                            [interpreter.ClassExpression(ce)]);
-                        return elements;
-                    }
-                    finally
-                    {
-                        store.SignalScheduler.RemoveSignal(signal);
-                    }
+                    return new SortedSet(tupleCompare, store.Query(['?x'], [[cePredicateSymbol, '?x']], ...rules));
                 }
 
                 describe(
@@ -135,7 +127,7 @@ describe(
                         store.Assert(x, dp1.LocalName, 3);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(elements(ce).has(x)).toBe(true));
+                            () => expect(Query(cePredicateSymbol).has([x])).toBe(true));
                     });
 
                 describe(
@@ -146,7 +138,7 @@ describe(
                         store.Assert(x, dp1.LocalName, 1);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(elements(ce).has(x)).toBe(true));
+                            () => expect(Query(cePredicateSymbol).has([x])).toBe(true));
                     });
 
                 describe(
@@ -158,7 +150,7 @@ describe(
                         store.Assert(x, dp1.LocalName, 3);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(elements(ce).has(x)).toBe(true));
+                            () => expect(Query(cePredicateSymbol).has([x])).toBe(true));
                     });
 
                 describe(
@@ -169,7 +161,7 @@ describe(
                         store.Assert(x, dp1.LocalName, 2);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(elements(ce).has(x)).toBe(true));
+                            () => expect(Query(cePredicateSymbol).has([x])).toBe(true));
                     });
 
                 describe(
@@ -181,7 +173,7 @@ describe(
                         store.Assert(x, dp1.LocalName, 3);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(elements(ce).has(x)).toBe(true));
+                            () => expect(Query(cePredicateSymbol).has([x])).toBe(true));
                     });
 
                 describe(
@@ -193,7 +185,7 @@ describe(
                         store.Assert(x, dp1.LocalName, 2);
                         it(
                             `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                            () => expect(elements(ce).has(x)).toBe(false));
+                            () => expect(Query(cePredicateSymbol).has([x])).toBe(false));
                     });
             });
     });
