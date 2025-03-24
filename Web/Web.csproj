@@ -177,6 +177,7 @@
     <None Remove="ClientApp\src\app\Ontology\DataIntersectionOf.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataIntersectionOf.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMaxCardinality.ts" />
+    <None Remove="ClientApp\src\app\Ontology\DataMaxCardinalityDatalog.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMaxCardinalityObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMaxCardinalitySignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataMinCardinality.ts" />

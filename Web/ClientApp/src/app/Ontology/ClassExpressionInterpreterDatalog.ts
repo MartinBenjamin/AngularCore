@@ -207,7 +207,10 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         dataMaxCardinality: IDataMaxCardinality
         ): string
     {
-        throw new Error("Method not implemented.");
+        const predicateSymbol = dataMaxCardinality.Select(this._predicateSymbolSelector);
+        if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
+            this._rules.push([[predicateSymbol, '?x'], [[this.Class(Thing), '?x'], Not([this.DataCardinality(dataMaxCardinality), '?x', '?cardinality'], GreaterThan('?cardinality', dataMaxCardinality.Cardinality))]]);
+        return predicateSymbol;
     }
 
     DataExactCardinality(

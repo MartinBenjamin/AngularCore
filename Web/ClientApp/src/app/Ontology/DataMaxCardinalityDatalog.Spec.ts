@@ -4,16 +4,19 @@ import { Rule } from '../EavStore/Datalog';
 import { EavStore, tupleCompare } from '../EavStore/EavStore';
 import { IEavStore } from '../EavStore/IEavStore';
 import { Tuple } from '../EavStore/Tuple';
+import { Signal } from '../Signal/Signal';
 import { AxiomInterpreter } from './AxiomInterpreterDatalog';
+import { ClassExpressionSignalInterpreter } from './ClassExpressionSignalInterpreter';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
-import { DataMinCardinality } from './DataMinCardinality';
+import { DataMaxCardinality } from './DataMaxCardinality';
 import { DataOneOf } from './DataOneOf';
+import { IClassExpression } from './IClassExpression';
 import { Ontology } from "./Ontology";
 import { OntologyWriter } from './OntologyWriter';
 import { DataProperty } from './Property';
 
 describe(
-    'DataMinCardinality( n DPE ) ({ x | #{ y | ( x , y ) ∈ (DPE)DP} ≥ n })',
+    'DataMaxCardinality( n DPE ) ({ x | #{ y | ( x , y ) ∈ (DPE)DP } ≤ n })',
     () =>
     {
         const ontologyWriter = OntologyWriter();
@@ -34,7 +37,7 @@ describe(
                 for(const axiom of o1.Axioms)
                     axiom.Accept(interpreter);
 
-                const ces = [0, 1, 2].map(cardinality => new DataMinCardinality(dp1, cardinality));
+                const ces = [0, 1, 2].map(cardinality => new DataMaxCardinality(dp1, cardinality));
                 const cePredicateSymbols = new Map(ces.map(ce => [ce, ce.Select(interpreter.ClassExpressionInterpreter)]));
                 //console.log(JSON.stringify(rules));
 
@@ -52,22 +55,22 @@ describe(
                         const x = store.NewEntity();
                         for(const ce of ces)
                             it(
-                                ce.Cardinality <= 0 ?
+                                ce.Cardinality >= 0 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                                () => expect(Query(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality <= 0));
+                                () => expect(Query(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality >= 0));
                     });
 
                 describe(
-                    'Given (dp1)DP = {(x, 1)}:',
+                    'Given (dp1)DP = {(x, 2)}:',
                     () =>
                     {
                         const x = store.NewEntity();
-                        store.Assert(x, dp1.LocalName, 1);
+                        store.Assert(x, dp1.LocalName, 2);
                         for(const ce of ces)
                             it(
-                                ce.Cardinality <= 1 ?
+                                ce.Cardinality >= 1 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                                () => expect(Query(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality <= 1));
+                                () => expect(Query(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality >= 1));
                     });
 
                 describe(
@@ -79,15 +82,15 @@ describe(
                         store.Assert(x, dp1.LocalName, 2);
                         for(const ce of ces)
                             it(
-                                ce.Cardinality <= 2 ?
+                                ce.Cardinality >= 2 ?
                                     `x ∈ (${classExpressionWriter.Write(ce)})C` : `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                                () => expect(Query(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality <= 2));
+                                () => expect(Query(cePredicateSymbols.get(ce)).has([x])).toBe(ce.Cardinality >= 2));
                     });
             });
     });
 
 describe(
-    'DataMinCardinality( n DPE DR ) ({ x | #{ y | ( x , y ) ∈ (DPE)DP and y ∈ (DR)DT } ≥ n })',
+    'DataMaxCardinality( n DPE DR ) ({ x | #{ y | ( x , y ) ∈ (DPE)DP and y ∈ (DR)DT } ≤ n })',
     () =>
     {
         const ontologyWriter = OntologyWriter();
@@ -99,35 +102,40 @@ describe(
             `Given ${ontologyWriter(o1)}:`,
             () =>
             {
+                const ce = new DataMaxCardinality(dp1, 1, new DataOneOf([1, 2]));
                 const store: IEavStore = new EavStore();
-                const rules: Rule[] = [];
-                const interpreter = new AxiomInterpreter(
+                const interpreter = new ClassExpressionSignalInterpreter(
                     o1,
-                    store,
-                    rules);
-                for(const axiom of o1.Axioms)
-                    axiom.Accept(interpreter);
+                    store);
 
-                const ce = new DataMinCardinality(dp1, 1, new DataOneOf([1]));
-                const cePredicateSymbol = ce.Select(interpreter.ClassExpressionInterpreter);
-                //console.log(JSON.stringify(rules));
-
-                function Query(
-                    cePredicateSymbol: string
-                    ): Set<Tuple>
+                function elements(
+                    ce: IClassExpression
+                    ): Set<any>
                 {
-                    return new SortedSet(tupleCompare, store.Query(['?x'], [[cePredicateSymbol, '?x']], ...rules));
+                    let signal: Signal<Set<any>>;
+                    let elements: Set<any> = null;
+                    try
+                    {
+                        signal = store.SignalScheduler.AddSignal(
+                            m => elements = m,
+                            [interpreter.ClassExpression(ce)]);
+                        return elements;
+                    }
+                    finally
+                    {
+                        store.SignalScheduler.RemoveSignal(signal);
+                    }
                 }
 
                 describe(
-                    'Given (dp1)DP = {(x, 2)}:',
+                    'Given (dp1)DP = {(x, 3)}:',
                     () =>
                     {
                         const x = store.NewEntity();
-                        store.Assert(x, dp1.LocalName, 2);
+                        store.Assert(x, dp1.LocalName, 3);
                         it(
-                            `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                            () => expect(Query(cePredicateSymbol).has([x])).toBe(false));
+                            `x ∈ (${classExpressionWriter.Write(ce)})C`,
+                            () => expect(elements(ce).has(x)).toBe(true));
                     });
 
                 describe(
@@ -138,7 +146,42 @@ describe(
                         store.Assert(x, dp1.LocalName, 1);
                         it(
                             `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(Query(cePredicateSymbol).has([x])).toBe(true));
+                            () => expect(elements(ce).has(x)).toBe(true));
+                    });
+
+                describe(
+                    'Given (dp1)DP = {(x, 1), (x, 3)}:',
+                    () =>
+                    {
+                        const x = store.NewEntity();
+                        store.Assert(x, dp1.LocalName, 1);
+                        store.Assert(x, dp1.LocalName, 3);
+                        it(
+                            `x ∈ (${classExpressionWriter.Write(ce)})C`,
+                            () => expect(elements(ce).has(x)).toBe(true));
+                    });
+
+                describe(
+                    'Given (dp1)DP = {(x, 2)}:',
+                    () =>
+                    {
+                        const x = store.NewEntity();
+                        store.Assert(x, dp1.LocalName, 2);
+                        it(
+                            `x ∈ (${classExpressionWriter.Write(ce)})C`,
+                            () => expect(elements(ce).has(x)).toBe(true));
+                    });
+
+                describe(
+                    'Given (dp1)DP = {(x, 2), (x, 3)}:',
+                    () =>
+                    {
+                        const x = store.NewEntity();
+                        store.Assert(x, dp1.LocalName, 2);
+                        store.Assert(x, dp1.LocalName, 3);
+                        it(
+                            `x ∈ (${classExpressionWriter.Write(ce)})C`,
+                            () => expect(elements(ce).has(x)).toBe(true));
                     });
 
                 describe(
@@ -146,12 +189,11 @@ describe(
                     () =>
                     {
                         const x = store.NewEntity();
-                        const y = 2;
                         store.Assert(x, dp1.LocalName, 1);
                         store.Assert(x, dp1.LocalName, 2);
                         it(
-                            `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                            () => expect(Query(cePredicateSymbol).has([x])).toBe(true));
+                            `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
+                            () => expect(elements(ce).has(x)).toBe(false));
                     });
             });
     });
