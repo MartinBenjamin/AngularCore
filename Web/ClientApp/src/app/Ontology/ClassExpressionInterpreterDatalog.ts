@@ -77,7 +77,8 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         ): string
     {
         const predicateSymbol = objectIntersectionOf.Select(this._predicateSymbolSelector);
-        this._rules.push([[predicateSymbol, '?x'], objectIntersectionOf.ClassExpressions.map(classExpression => [classExpression.Select(this), '?x'])]);
+        if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
+            this._rules.push([[predicateSymbol, '?x'], objectIntersectionOf.ClassExpressions.map(classExpression => [classExpression.Select(this), '?x'])]);
         return predicateSymbol;
     }
 
@@ -86,7 +87,8 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         ): string
     {
         const predicateSymbol = objectUnionOf.Select(this._predicateSymbolSelector);
-        this._rules.push(...objectUnionOf.ClassExpressions.map(classExpression => <Rule>[[predicateSymbol, '?x'], [[classExpression.Select(this), '?x']]]));
+        if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
+            this._rules.push(...objectUnionOf.ClassExpressions.map(classExpression => <Rule>[[predicateSymbol, '?x'], [[classExpression.Select(this), '?x']]]));
         return predicateSymbol;
     }
 
@@ -99,7 +101,8 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         ): string
     {
         const predicateSymbol = objectOneOf.Select(this._predicateSymbolSelector);
-        this._rules.push(...objectOneOf.Individuals.map(individual => <Rule>[[predicateSymbol, this._individualInterpretation.get(individual)], []]));
+        if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
+            this._rules.push(...objectOneOf.Individuals.map(individual => <Rule>[[predicateSymbol, this._individualInterpretation.get(individual)], []]));
         return predicateSymbol;
     }
 
@@ -115,7 +118,8 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         ): string
     {
         const predicateSymbol = objectHasValue.Select(this._predicateSymbolSelector);
-        this._rules.push([[predicateSymbol, '?x'], [[objectHasValue.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', this._individualInterpretation.get(objectHasValue.Individual)]]]);
+        if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
+            this._rules.push([[predicateSymbol, '?x'], [[objectHasValue.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', this._individualInterpretation.get(objectHasValue.Individual)]]]);
         return predicateSymbol;
     }
 
@@ -124,7 +128,8 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         ): string
     {
         const predicateSymbol = objectHasSelf.Select(this._predicateSymbolSelector);
-        this._rules.push([[predicateSymbol, '?x'], [[objectHasSelf.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', '?x']]]);
+        if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
+            this._rules.push([[predicateSymbol, '?x'], [[objectHasSelf.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', '?x']]]);
         return predicateSymbol;
     }
 
@@ -136,7 +141,8 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
             return this.Class(Thing);
 
         const predicateSymbol = objectMinCardinality.Select(this._predicateSymbolSelector);
-        this._rules.push([[predicateSymbol, '?x'], [[this.ObjectCardinality(objectMinCardinality), '?x', '?cardinality'], GreaterThanOrEqual('?cardinality', objectMinCardinality.Cardinality)]]);
+        if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
+            this._rules.push([[predicateSymbol, '?x'], [[this.ObjectCardinality(objectMinCardinality), '?x', '?cardinality'], GreaterThanOrEqual('?cardinality', objectMinCardinality.Cardinality)]]);
         return predicateSymbol;
     }
 
@@ -145,7 +151,8 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         ): string
     {
         const predicateSymbol = objectMaxCardinality.Select(this._predicateSymbolSelector);
-        this._rules.push([[predicateSymbol, '?x'], [[this.Class(Thing), '?x'], Not([this.ObjectCardinality(objectMaxCardinality), '?x', '?cardinality'], GreaterThan('?cardinality', objectMaxCardinality.Cardinality))]]);
+        if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
+            this._rules.push([[predicateSymbol, '?x'], [[this.Class(Thing), '?x'], Not([this.ObjectCardinality(objectMaxCardinality), '?x', '?cardinality'], GreaterThan('?cardinality', objectMaxCardinality.Cardinality))]]);
         return predicateSymbol;
     }
 
@@ -154,6 +161,9 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         ): string
     {
         const predicateSymbol = objectExactCardinality.Select(this._predicateSymbolSelector);
+        if(this._rules.find(rule => rule[0][0] == predicateSymbol))
+            return predicateSymbol;
+
         if(objectExactCardinality.Cardinality === 0)
             this._rules.push([[predicateSymbol, '?x'], [[this.Class(Thing), '?x'], Not([this.ObjectCardinality(objectExactCardinality), '?x', '?cardinality'], GreaterThan('?cardinality', 0))]]);
 
@@ -175,7 +185,8 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         ): string
     {
         const predicateSymbol = dataHasValue.Select(this._predicateSymbolSelector);
-        this._rules.push([[predicateSymbol, '?x'], [[dataHasValue.DataPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', dataHasValue.Value]]]);
+        if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
+            this._rules.push([[predicateSymbol, '?x'], [[dataHasValue.DataPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', dataHasValue.Value]]]);
         return predicateSymbol;
     }
 
@@ -187,7 +198,8 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
             return this.Class(Thing);
 
         const predicateSymbol = dataMinCardinality.Select(this._predicateSymbolSelector);
-        this._rules.push([[predicateSymbol, '?x'], [[this.DataCardinality(dataMinCardinality), '?x', '?cardinality'], GreaterThanOrEqual('?cardinality', dataMinCardinality.Cardinality)]]);
+        if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
+            this._rules.push([[predicateSymbol, '?x'], [[this.DataCardinality(dataMinCardinality), '?x', '?cardinality'], GreaterThanOrEqual('?cardinality', dataMinCardinality.Cardinality)]]);
         return predicateSymbol;
     }
 
@@ -211,12 +223,8 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
     {
         if(class$ === Thing)
         {
-            let rule = this._rules.find(rule => rule[0][0] == Thing.Iri);
-            if(!rule)
-            {
-                rule = [[Thing.Iri, '?x'], [['?x', EntityId,]]];
-                this._rules.push(rule);
-            }
+            if(!this._rules.find(rule => rule[0][0] == Thing.Iri))
+                this._rules.push([[Thing.Iri, '?x'], [['?x', EntityId,]]]);
         }
         return class$.Select(this._predicateSymbolSelector);
     }
