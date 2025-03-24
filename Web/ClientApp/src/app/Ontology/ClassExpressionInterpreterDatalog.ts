@@ -165,7 +165,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
             return predicateSymbol;
 
         if(objectExactCardinality.Cardinality === 0)
-            this._rules.push([[predicateSymbol, '?x'], [[this.Class(Thing), '?x'], Not([this.ObjectCardinality(objectExactCardinality), '?x', '?cardinality'], GreaterThan('?cardinality', 0))]]);
+            this._rules.push([[predicateSymbol, '?x'], [[this.Class(Thing), '?x'], Not([this.ObjectCardinality(objectExactCardinality), '?x', '?cardinality'])]]);
 
         else
             this._rules.push([[predicateSymbol, '?x'], [[this.ObjectCardinality(objectExactCardinality), '?x', objectExactCardinality.Cardinality]]]);
