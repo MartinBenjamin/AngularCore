@@ -337,6 +337,7 @@
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyRange.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectPropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectSomeValuesFrom.ts" />
+    <None Remove="ClientApp\src\app\Ontology\ObjectSomeValuesFromDatalog.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectSomeValuesFromObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectSomeValuesFromSignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\ObjectUnionOf.ts" />
