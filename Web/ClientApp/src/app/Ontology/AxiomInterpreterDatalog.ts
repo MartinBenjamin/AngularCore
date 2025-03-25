@@ -164,7 +164,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
         if(this._isClassExpression.IClass(objectPropertyDomain.Domain))
-            this._rules.push([[objectPropertyDomain.Domain.Iri, '?x'], [[objectPropertyDomain.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x',]]]);
+            this._rules.push([[objectPropertyDomain.Domain.Select(this.ClassExpressionInterpreter), '?x'], [[objectPropertyDomain.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x',]]]);
     }
 
     ObjectPropertyRange(
@@ -172,7 +172,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
         if(this._isClassExpression.IClass(objectPropertyRange.Range))
-            this._rules.push([[objectPropertyRange.Range.Iri, '?y'], [[objectPropertyRange.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), , '?y']]]);
+            this._rules.push([[objectPropertyRange.Range.Select(this.ClassExpressionInterpreter), '?y'], [[objectPropertyRange.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), , '?y']]]);
     }
 
     FunctionalObjectProperty(
@@ -232,7 +232,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
         if(this._isClassExpression.IClass(dataPropertyDomain.Domain))
-            this._rules.push([[dataPropertyDomain.Domain.Iri, '?x'], [[dataPropertyDomain.DataPropertyExpression.Select(this._propertyExpressionInterpreter), '?x',]]]);
+            this._rules.push([[dataPropertyDomain.Domain.Select(this.ClassExpressionInterpreter), '?x'], [[dataPropertyDomain.DataPropertyExpression.Select(this._propertyExpressionInterpreter), '?x',]]]);
     }
 
     DataPropertyRange(
