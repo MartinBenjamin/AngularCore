@@ -8,20 +8,22 @@ import { DataOneOf } from './DataOneOf';
 import { DataSomeValuesFrom } from './DataSomeValuesFrom';
 import { IClassExpression } from './IClassExpression';
 import { Ontology } from "./Ontology";
+import { OntologyWriter } from './OntologyWriter';
 import { DataProperty } from './Property';
 
 describe(
     'DataSomeValuesFrom( DPE1 ... DPEn DR ) ({ x | ∃ y1, ... , yn : ( x , yk ) ∈ (DPEk)DP for each 1 ≤ k ≤ n and ( y1 , ... , yn ) ∈ (DR)DT })',
     () =>
     {
+        const ontologyWriter = OntologyWriter();
         const classExpressionWriter = new ClassExpressionWriter();
+        const o1 = new Ontology('o1');
+        const dp1 = new DataProperty(o1, 'dp1');
 
         describe(
-            'Given an Ontology o1 with axiom DataProperty(dp1):',
+            `Given ${ontologyWriter(o1)}:`,
             () =>
             {
-                const o1 = new Ontology('o1');
-                const dp1 = new DataProperty(o1, 'dp1');
                 const ce = new DataSomeValuesFrom(dp1, new DataOneOf([1]));
                 const store: IEavStore = new EavStore();
                 const interpreter = new ClassExpressionSignalInterpreter(
