@@ -9,23 +9,25 @@ import { NamedIndividual } from './NamedIndividual';
 import { ObjectAllValuesFrom } from './ObjectAllValuesFrom';
 import { ObjectOneOf } from './ObjectOneOf';
 import { Ontology } from "./Ontology";
+import { OntologyWriter } from './OntologyWriter';
 import { ObjectProperty } from './Property';
 
 describe(
     'ObjectAllValuesFrom( OPE CE ) ({ x | ∀ y : ( x, y ) ∈ (OPE)OP implies y ∈ (CE)C })',
     () =>
     {
+        const ontologyWriter = OntologyWriter();
         const classExpressionWriter = new ClassExpressionWriter();
+        const o1 = new Ontology('o1');
+        const op1 = new ObjectProperty(o1, 'op1');
+        const i1 = new NamedIndividual(o1, 'i1');
+        const i2 = new NamedIndividual(o1, 'i2');
+        const i3 = new NamedIndividual(o1, 'i3');
 
         describe(
-            'Given an Ontology o1 with axioms NamedIndividual(i1), NamedIndividual(i2) and NamedIndividual(i3):',
+            `Given ${ontologyWriter(o1)}:`,
             () =>
             {
-                const o1 = new Ontology('o1');
-                const op1 = new ObjectProperty(o1, 'op1');
-                const i1 = new NamedIndividual(o1, 'i1');
-                const i2 = new NamedIndividual(o1, 'i2');
-                const i3 = new NamedIndividual(o1, 'i3');
                 const ce = new ObjectAllValuesFrom(op1, new ObjectOneOf([i1, i2]));
                 const store: IEavStore = new EavStore();
                 const interpreter = new ClassExpressionSignalInterpreter(
