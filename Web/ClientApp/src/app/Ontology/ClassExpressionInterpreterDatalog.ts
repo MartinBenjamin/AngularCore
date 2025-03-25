@@ -123,7 +123,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         const predicateSymbol = objectAllValuesFrom.Select(this._predicateSymbolSelector);
         if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
             this._rules.push([[predicateSymbol, '?x'],
-                [[this.Class(Thing), '?x'], Not([objectAllValuesFrom.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', '?y'], Not([objectAllValuesFrom.ClassExpression.Select(this), '?y']))]]);
+                [[Thing.Select(this), '?x'], Not([objectAllValuesFrom.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', '?y'], Not([objectAllValuesFrom.ClassExpression.Select(this), '?y']))]]);
         return predicateSymbol;
     }
 
@@ -152,7 +152,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         ): string
     {
         if(objectMinCardinality.Cardinality === 0)
-            return this.Class(Thing);
+            return Thing.Select(this);
 
         const predicateSymbol = objectMinCardinality.Select(this._predicateSymbolSelector);
         if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
@@ -166,7 +166,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
     {
         const predicateSymbol = objectMaxCardinality.Select(this._predicateSymbolSelector);
         if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
-            this._rules.push([[predicateSymbol, '?x'], [[this.Class(Thing), '?x'], Not([this.ObjectCardinality(objectMaxCardinality), '?x', '?cardinality'], GreaterThan('?cardinality', objectMaxCardinality.Cardinality))]]);
+            this._rules.push([[predicateSymbol, '?x'], [[Thing.Select(this), '?x'], Not([this.ObjectCardinality(objectMaxCardinality), '?x', '?cardinality'], GreaterThan('?cardinality', objectMaxCardinality.Cardinality))]]);
         return predicateSymbol;
     }
 
@@ -179,7 +179,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
             return predicateSymbol;
 
         if(objectExactCardinality.Cardinality === 0)
-            this._rules.push([[predicateSymbol, '?x'], [[this.Class(Thing), '?x'], Not([this.ObjectCardinality(objectExactCardinality), '?x', '?cardinality'])]]);
+            this._rules.push([[predicateSymbol, '?x'], [[Thing.Select(this), '?x'], Not([this.ObjectCardinality(objectExactCardinality), '?x', '?cardinality'])]]);
 
         else
             this._rules.push([[predicateSymbol, '?x'], [[this.ObjectCardinality(objectExactCardinality), '?x', objectExactCardinality.Cardinality]]]);
@@ -209,7 +209,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         ): string
     {
         if(dataMinCardinality.Cardinality === 0)
-            return this.Class(Thing);
+            return Thing.Select(this);
 
         const predicateSymbol = dataMinCardinality.Select(this._predicateSymbolSelector);
         if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
@@ -223,7 +223,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
     {
         const predicateSymbol = dataMaxCardinality.Select(this._predicateSymbolSelector);
         if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
-            this._rules.push([[predicateSymbol, '?x'], [[this.Class(Thing), '?x'], Not([this.DataCardinality(dataMaxCardinality), '?x', '?cardinality'], GreaterThan('?cardinality', dataMaxCardinality.Cardinality))]]);
+            this._rules.push([[predicateSymbol, '?x'], [[Thing.Select(this), '?x'], Not([this.DataCardinality(dataMaxCardinality), '?x', '?cardinality'], GreaterThan('?cardinality', dataMaxCardinality.Cardinality))]]);
         return predicateSymbol;
     }
 
@@ -236,7 +236,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
             return predicateSymbol;
 
         if(dataExactCardinality.Cardinality === 0)
-            this._rules.push([[predicateSymbol, '?x'], [[this.Class(Thing), '?x'], Not([this.DataCardinality(dataExactCardinality), '?x', '?cardinality'])]]);
+            this._rules.push([[predicateSymbol, '?x'], [[Thing.Select(this), '?x'], Not([this.DataCardinality(dataExactCardinality), '?x', '?cardinality'])]]);
 
         else
             this._rules.push([[predicateSymbol, '?x'], [[this.DataCardinality(dataExactCardinality), '?x', dataExactCardinality.Cardinality]]]);
