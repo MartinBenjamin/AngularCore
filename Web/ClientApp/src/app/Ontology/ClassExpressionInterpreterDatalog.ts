@@ -91,7 +91,10 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         return predicateSymbol;
     }
 
-    ObjectComplementOf(objectComplementOf: IObjectComplementOf): string {
+    ObjectComplementOf(
+        objectComplementOf: IObjectComplementOf
+        ): string
+    {
         throw new Error("Method not implemented.");
     }
 
