@@ -323,7 +323,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
     {
         return function*(
             substitutions: Iterable<object>
-            )
+            ): Generator<object>
         {
             for(const substitution of substitutions)
                 if(dataRange.HasMember(substitution[variable]))
@@ -338,7 +338,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
     {
         return function*(
             substitutions: Iterable<object>
-            )
+            ): Generator<object>
         {
             for(const substitution of substitutions)
                 if(!dataRange.HasMember(substitution[variable]))
