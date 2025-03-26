@@ -3,39 +3,6 @@ import { IDataProperty, IInverseObjectProperty, IObjectProperty, IProperty } fro
 import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
 import { PropertyExpressionWriter } from "./PropertyExpressionWriter";
 
-class PredicateSymbolGenerator implements IPropertyExpressionSelector<string>
-{
-    private _next = 0;
-
-    InverseObjectProperty(
-        inverseObjectProperty: IInverseObjectProperty
-        ): string
-    {
-        return "Inverse_" + inverseObjectProperty.ObjectProperty.Select(this);
-    }
-
-    ObjectProperty(
-        objectProperty: IObjectProperty
-        ): string
-    {
-        return this.Property(objectProperty);
-    }
-
-    DataProperty(
-        dataProperty: IDataProperty
-        ): string
-    {
-        return this.Property(dataProperty);
-    }
-
-    Property(
-        property: IProperty
-        ): string
-    {
-        return property.Iri;
-    }
-}
-
 export class PropertyExpressionInterpreter implements IPropertyExpressionSelector<string>
 {
     private _predicateSymbolSelector: IPropertyExpressionSelector<string> = new PropertyExpressionWriter();

@@ -53,13 +53,13 @@ export class AxiomInterpreter implements IAxiomVisitor
         private readonly _rules   : Rule[]
         )
     {
+        this._propertyExpressionInterpreter = new PropertyExpressionInterpreter(this._rules);
         this._individualInterpretation = AddIndividuals(
             this._ontology,
             this._store);
         this.ClassExpressionInterpreter = new ClassExpressionInterpreter(
+            this._propertyExpressionInterpreter,
             this._individualInterpretation,
-            this._rules);
-        this._propertyExpressionInterpreter = new PropertyExpressionInterpreter(
             this._rules);
     }
 

@@ -60,16 +60,15 @@ class PredicateSymbolGenerator implements IClassExpressionSelector<string>
 
 export class ClassExpressionInterpreter implements IClassExpressionSelector<string>
 {
-    private _propertyExpressionInterpreter: IPropertyExpressionSelector<string>;
-    private _predicateSymbolSelector: IClassExpressionSelector<string> = new ClassExpressionWriter();//PredicateSymbolGenerator();
-    private _dataRangeWriter: IDataRangeSelector<string> = new DataRangeWriter();
+    private readonly _predicateSymbolSelector: IClassExpressionSelector<string> = new ClassExpressionWriter();//PredicateSymbolGenerator();
+    private readonly _dataRangeWriter: IDataRangeSelector<string> = new DataRangeWriter();
 
     constructor(
+        private readonly _propertyExpressionInterpreter: IPropertyExpressionSelector<string>,
         private readonly _individualInterpretation: ReadonlyMap<IIndividual, any>,
         private readonly _rules: Rule[]
         )
     {
-        this._propertyExpressionInterpreter = new PropertyExpressionInterpreter(this._rules);
     }
 
     ObjectIntersectionOf(
