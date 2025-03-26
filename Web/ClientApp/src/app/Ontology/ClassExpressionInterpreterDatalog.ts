@@ -192,7 +192,7 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
     {
         const predicateSymbol = dataSomeValuesFrom.Select(this._predicateSymbolSelector);
         if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
-            this._rules.push([[predicateSymbol, '?x'], [[dataSomeValuesFrom.DataPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', '?y'], this.Wrap(dataSomeValuesFrom.DataRange, '?y')]]);
+            this._rules.push([[predicateSymbol, '?x'], [[dataSomeValuesFrom.DataPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', '?y'], this.HasMember(dataSomeValuesFrom.DataRange, '?y')]]);
         return predicateSymbol;
     }
 
@@ -200,7 +200,11 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         dataAllValuesFrom: IDataAllValuesFrom
         ): string
     {
-        throw new Error("Method not implemented.");
+        const predicateSymbol = dataAllValuesFrom.Select(this._predicateSymbolSelector);
+        if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
+            this._rules.push([[predicateSymbol, '?x'],
+            [[Thing.Select(this), '?x'], Not([dataAllValuesFrom.DataPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', '?y'], this.NotHasMember(dataAllValuesFrom.DataRange, '?y'))]]);
+        return predicateSymbol;
     }
 
     DataHasValue(
@@ -302,14 +306,14 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         {
             const rule: Rule = [[predicateSymbol, '?x', Count()], [[propertyPredicateSymbol, '?x', '?y']]];
             if(dataCardinality.DataRange)
-                rule[1].push(this.Wrap(dataCardinality.DataRange, '?y'))
+                rule[1].push(this.HasMember(dataCardinality.DataRange, '?y'))
             this._rules.push(rule);
         }
 
         return predicateSymbol;
     }
 
-    private Wrap(
+    private HasMember(
         dataRange: DataRange,
         variable: Variable
         ): BuiltIn
@@ -320,6 +324,21 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         {
             for(const substitution of substitutions)
                 if(dataRange.HasMember(substitution[variable]))
+                    yield substitution;
+        };
+    }
+
+    private NotHasMember(
+        dataRange: DataRange,
+        variable: Variable
+        ): BuiltIn
+    {
+        return function*(
+            substitutions: Iterable<object>
+            )
+        {
+            for(const substitution of substitutions)
+                if(!dataRange.HasMember(substitution[variable]))
                     yield substitution;
         };
     }
