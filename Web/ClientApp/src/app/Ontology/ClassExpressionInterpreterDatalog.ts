@@ -186,10 +186,20 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         return predicateSymbol;
     }
 
-    DataSomeValuesFrom(dataSomeValuesFrom: IDataSomeValuesFrom): string {
-        throw new Error("Method not implemented.");
+    DataSomeValuesFrom(
+        dataSomeValuesFrom: IDataSomeValuesFrom
+        ): string
+    {
+        const predicateSymbol = dataSomeValuesFrom.Select(this._predicateSymbolSelector);
+        if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
+            this._rules.push([[predicateSymbol, '?x'], [[dataSomeValuesFrom.DataPropertyExpression.Select(this._propertyExpressionInterpreter), '?x', '?y'], this.Wrap(dataSomeValuesFrom.DataRange, '?y')]]);
+        return predicateSymbol;
     }
-    DataAllValuesFrom(dataAllValuesFrom: IDataAllValuesFrom): string {
+
+    DataAllValuesFrom(
+        dataAllValuesFrom: IDataAllValuesFrom
+        ): string
+    {
         throw new Error("Method not implemented.");
     }
 

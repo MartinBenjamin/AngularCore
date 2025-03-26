@@ -195,6 +195,7 @@
     <None Remove="ClientApp\src\app\Ontology\DataRange.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataRangeWriter.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataSomeValuesFrom.ts" />
+    <None Remove="ClientApp\src\app\Ontology\DataSomeValuesFromDatalog.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataSomeValuesFromObservable.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataSomeValuesFromSignal.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\Datatype.ts" />
