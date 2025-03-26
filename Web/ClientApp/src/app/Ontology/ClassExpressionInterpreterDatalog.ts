@@ -23,7 +23,6 @@ import { IObjectOneOf } from "./IObjectOneOf";
 import { IObjectSomeValuesFrom } from "./IObjectSomeValuesFrom";
 import { IObjectUnionOf } from "./IObjectUnionOf";
 import { IPropertyExpressionSelector } from "./IPropertyExpressionSelector";
-import { PropertyExpressionInterpreter } from "./PropertyExpressionInterpreterDatalog";
 import { Thing } from './Thing';
 
 export type ClassAtom = [string, any];
