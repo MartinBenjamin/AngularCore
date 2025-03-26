@@ -5,18 +5,19 @@ import { EavStore, tupleCompare } from '../EavStore/EavStore';
 import { IEavStore } from '../EavStore/IEavStore';
 import { ClassAssertion } from './Assertion';
 import { AxiomInterpreter } from './AxiomInterpreterDatalog';
-import { AxiomWriter } from './AxiomWriter';
 import { Class } from './Class';
+import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { NamedIndividual } from './NamedIndividual';
 import { Ontology } from "./Ontology";
+import { OntologyWriter } from './OntologyWriter';
 import { SubClassOf } from './SubClassOf';
 
 describe(
     'SubClassOf( CE1 CE2 ) ((CE1)C ⊆ (CE2)C)',
     () =>
     {
-        const axiomWriter = new AxiomWriter();
-        const classExpressionWriter = axiomWriter.ClassExpressionWriter;
+        const ontologyWriter = OntologyWriter();
+        const classExpressionWriter = new ClassExpressionWriter();
         const o1 = new Ontology('o1');
         const c1 = new Class(o1, 'c1');
         const c2 = new Class(o1, 'c2');
@@ -25,7 +26,7 @@ describe(
         new SubClassOf(o1, c1, c2);
 
         describe(
-            `Given an Ontology o1 with axioms ${o1.Axioms.map(axiom => axiom.Select(axiomWriter)).join(', ')}:`,
+            `Given ${ontologyWriter(o1)}:`,
             () =>
             {
                 const store: IEavStore = new EavStore();
