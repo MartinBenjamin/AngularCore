@@ -95,7 +95,10 @@ export class ClassExpressionInterpreter implements IClassExpressionSelector<stri
         objectComplementOf: IObjectComplementOf
         ): string
     {
-        throw new Error("Method not implemented.");
+        const predicateSymbol = objectComplementOf.Select(this._predicateSymbolSelector);
+        if(!this._rules.find(rule => rule[0][0] == predicateSymbol))
+            this._rules.push([[predicateSymbol, '?x'], [[Thing.Select(this), '?x'], Not([objectComplementOf.ClassExpression.Select(this), '?x'])]]);
+        return predicateSymbol;
     }
 
     ObjectOneOf(
