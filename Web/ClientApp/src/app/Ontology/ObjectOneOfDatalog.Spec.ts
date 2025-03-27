@@ -34,8 +34,8 @@ describe(
                     rules);
                 for(const axiom of o1.Axioms)
                     axiom.Accept(interpreter);
-                const i1Interpretation = interpreter.InterpretIndividual(i1);
-                const i2Interpretation = interpreter.InterpretIndividual(i2);
+                const i1Interpretation = interpreter.Individual(i1);
+                const i2Interpretation = interpreter.Individual(i2);
 
                 const ce1 = new ObjectOneOf([i1]);
                 const ce2 = new ObjectOneOf([i2]);

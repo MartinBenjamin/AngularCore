@@ -114,7 +114,7 @@ describe(
                     axiom.Accept(interpreter);
                 const ce = new ObjectMinCardinality(op1, 1, new ObjectOneOf([i]));
                 const cePredicateSymbol = ce.Select(interpreter.ClassExpressionInterpreter);
-                const iInterpretation = interpreter.InterpretIndividual(i);
+                const iInterpretation = interpreter.Individual(i);
                 //console.log(JSON.stringify(rules));
 
                 function Query(

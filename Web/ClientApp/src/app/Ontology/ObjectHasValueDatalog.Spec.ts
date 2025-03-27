@@ -34,7 +34,7 @@ describe(
                     o1,
                     store,
                     rules);
-                const i1Interpretation = interpreter.InterpretIndividual(i1);
+                const i1Interpretation = interpreter.Individual(i1);
                 for(const axiom of o1.Axioms)
                     axiom.Accept(interpreter);
 

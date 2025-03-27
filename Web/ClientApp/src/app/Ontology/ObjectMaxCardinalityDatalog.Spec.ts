@@ -116,8 +116,8 @@ describe(
 
                 const ce = new ObjectMaxCardinality(op1, 1, new ObjectOneOf([i1, i2]));
                 const cePredicateSymbol = ce.Select(interpreter.ClassExpressionInterpreter);
-                const i1Interpretation = interpreter.InterpretIndividual(i1);
-                const i2Interpretation = interpreter.InterpretIndividual(i2);
+                const i1Interpretation = interpreter.Individual(i1);
+                const i2Interpretation = interpreter.Individual(i2);
 
                 function Query(
                     cePredicateSymbol: string

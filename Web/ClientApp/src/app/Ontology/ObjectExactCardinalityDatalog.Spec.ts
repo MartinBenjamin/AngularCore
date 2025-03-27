@@ -116,7 +116,7 @@ describe(
 
                     const ce = new ObjectExactCardinality(op1, 0, new ObjectOneOf([i]));
                     const cePredicateSymbol = ce.Select(interpreter.ClassExpressionInterpreter);
-                    const iInterpretation = interpreter.InterpretIndividual(i);
+                    const iInterpretation = interpreter.Individual(i);
 
                     function Query(
                         cePredicateSymbol: string
@@ -172,8 +172,8 @@ describe(
 
                     const ce = new ObjectExactCardinality(op1, 1, new ObjectOneOf([i1, i2]));
                     const cePredicateSymbol = ce.Select(interpreter.ClassExpressionInterpreter);
-                    const i1Interpretation = interpreter.InterpretIndividual(i1);
-                    const i2Interpretation = interpreter.InterpretIndividual(i2);
+                    const i1Interpretation = interpreter.Individual(i1);
+                    const i2Interpretation = interpreter.Individual(i2);
 
                     function Query(
                         cePredicateSymbol: string

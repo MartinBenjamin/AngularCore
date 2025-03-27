@@ -115,7 +115,7 @@ describe(
                 const interpreter = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
-                const iInterpretation = interpreter.InterpretIndividual(i);
+                const iInterpretation = interpreter.Individual(i);
 
                 function elements(
                     ce: IClassExpression

@@ -33,8 +33,8 @@ describe(
                 const interpreter = new ClassExpressionSignalInterpreter(
                     o1,
                     store);
-                const i1Interpretation = interpreter.InterpretIndividual(i1);
-                const i2Interpretation = interpreter.InterpretIndividual(i2);
+                const i1Interpretation = interpreter.Individual(i1);
+                const i2Interpretation = interpreter.Individual(i2);
 
                 it(
                     'ClassExpressionSignalInterpreter returns same Signal for same class',
@@ -93,8 +93,8 @@ describe(
                 const interpreter = new ClassExpressionSignalInterpreter(
                     o1,
                     store);
-                const i1Interpretation = interpreter.InterpretIndividual(i1);
-                const i2Interpretation = interpreter.InterpretIndividual(i2);
+                const i1Interpretation = interpreter.Individual(i1);
+                const i2Interpretation = interpreter.Individual(i2);
 
                 it(
                     'ClassExpressionSignalInterpreter returns same Signal for same class',
@@ -142,8 +142,8 @@ describe(
                 const interpreter = new ClassExpressionSignalInterpreter(
                     o1,
                     store);
-                const i1Interpretation = interpreter.InterpretIndividual(i1);
-                const i2Interpretation = interpreter.InterpretIndividual(i2);
+                const i1Interpretation = interpreter.Individual(i1);
+                const i2Interpretation = interpreter.Individual(i2);
 
                 it(
                     'ClassExpressionSignalInterpreter returns same Signal for same class',

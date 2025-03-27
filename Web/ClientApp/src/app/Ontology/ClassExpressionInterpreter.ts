@@ -198,7 +198,7 @@ export abstract class ClassExpressionInterpreter<T extends WrapperType> implemen
         objectOneOf: IObjectOneOf
         ): Wrapped<T, Set<any>>
     {
-        return this._wrap(() => new Set<any>(objectOneOf.Individuals.map(individual => this.InterpretIndividual(individual))));
+        return this._wrap(() => new Set<any>(objectOneOf.Individuals.map(individual => this.Individual(individual))));
     }
 
     ObjectSomeValuesFrom(
@@ -243,7 +243,7 @@ export abstract class ClassExpressionInterpreter<T extends WrapperType> implemen
         objectHasValue: IObjectHasValue
         ): Wrapped<T, Set<any>>
     {
-        const individual = this.InterpretIndividual(objectHasValue.Individual);
+        const individual = this.Individual(objectHasValue.Individual);
         return this._wrap(
             objectPropertyExpression =>
                 new Set<any>(objectPropertyExpression
@@ -541,7 +541,7 @@ export abstract class ClassExpressionInterpreter<T extends WrapperType> implemen
         return classExpression.Select(this);
     }
 
-    InterpretIndividual(
+    Individual(
         individual: IIndividual
         ): any
     {

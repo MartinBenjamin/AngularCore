@@ -110,7 +110,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
         if(this._isClassExpression.IClass(classAssertion.ClassExpression))
-            this._rules.push([[classAssertion.ClassExpression.Select(this.ClassExpressionInterpreter), this.InterpretIndividual(classAssertion.Individual)], []]);
+            this._rules.push([[classAssertion.ClassExpression.Select(this.ClassExpressionInterpreter), this.Individual(classAssertion.Individual)], []]);
     }
 
     ObjectPropertyAssertion(
@@ -118,7 +118,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
     //    if(this._isAxiom.IObjectProperty(objectPropertyAssertion.ObjectPropertyExpression))
-    //        this._rules.push([[objectPropertyAssertion.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), this.InterpretIndividual(objectPropertyAssertion.SourceIndividual), this.InterpretIndividual(objectPropertyAssertion.TargetIndividual)], []]);
+    //        this._rules.push([[objectPropertyAssertion.ObjectPropertyExpression.Select(this._propertyExpressionInterpreter), this.Individual(objectPropertyAssertion.SourceIndividual), this.Individual(objectPropertyAssertion.TargetIndividual)], []]);
     }
 
     DataPropertyAssertion(
@@ -126,7 +126,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         ): void
     {
     //    if(this._isAxiom.IDataProperty(dataPropertyAssertion.DataPropertyExpression))
-    //        this._rules.push([[dataPropertyAssertion.DataPropertyExpression.Select(this._propertyExpressionInterpreter), this.InterpretIndividual(dataPropertyAssertion.SourceIndividual), dataPropertyAssertion.TargetValue], []]);
+    //        this._rules.push([[dataPropertyAssertion.DataPropertyExpression.Select(this._propertyExpressionInterpreter), this.Individual(dataPropertyAssertion.SourceIndividual), dataPropertyAssertion.TargetValue], []]);
     }
 
     SubObjectPropertyOf(
@@ -298,7 +298,7 @@ export class AxiomInterpreter implements IAxiomVisitor
     {
     }
 
-    InterpretIndividual(
+    Individual(
         individual: IIndividual
         ): any
     {

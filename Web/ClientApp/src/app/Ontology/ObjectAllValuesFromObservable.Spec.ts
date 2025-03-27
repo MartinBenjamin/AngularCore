@@ -31,9 +31,9 @@ describe(
                 const interpreter = new ClassExpressionObservableInterpreter(
                     o1,
                     store);
-                const i1Interpretation = interpreter.InterpretIndividual(i1);
-                const i2Interpretation = interpreter.InterpretIndividual(i2);
-                const i3Interpretation = interpreter.InterpretIndividual(i3);
+                const i1Interpretation = interpreter.Individual(i1);
+                const i2Interpretation = interpreter.Individual(i2);
+                const i3Interpretation = interpreter.Individual(i3);
 
                 function elements(
                     ce: IClassExpression

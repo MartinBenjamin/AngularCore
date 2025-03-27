@@ -30,7 +30,7 @@ describe(
                 const interpreter = new ClassExpressionSignalInterpreter(
                     o1,
                     store);
-                const i1Interpretation = interpreter.InterpretIndividual(i1);
+                const i1Interpretation = interpreter.Individual(i1);
 
                 function elements(
                     ce: IClassExpression

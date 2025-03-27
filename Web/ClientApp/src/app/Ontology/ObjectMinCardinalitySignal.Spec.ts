@@ -117,7 +117,7 @@ describe(
                 const interpreter = new ClassExpressionSignalInterpreter(
                     o1,
                     store);
-                const iInterpretation = interpreter.InterpretIndividual(i);
+                const iInterpretation = interpreter.Individual(i);
 
                 function elements(
                     ce: IClassExpression
