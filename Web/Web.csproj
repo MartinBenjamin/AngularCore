@@ -262,7 +262,6 @@
     <None Remove="ClientApp\src\app\Ontology\IHasKey.ts" />
     <None Remove="ClientApp\src\app\Ontology\IIndividual.ts" />
     <None Remove="ClientApp\src\app\Ontology\IIndividualSelector.ts" />
-    <None Remove="ClientApp\src\app\Ontology\IInterpretation.ts" />
     <None Remove="ClientApp\src\app\Ontology\IInverseObjectProperties.ts" />
     <None Remove="ClientApp\src\app\Ontology\IIsAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IIsClassExpression.ts" />
