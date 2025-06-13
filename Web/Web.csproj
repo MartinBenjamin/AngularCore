@@ -74,6 +74,7 @@
     <None Remove="ClientApp\src\app\EavStore\DatalogSignalInterpreter1.ts" />
     <None Remove="ClientApp\src\app\EavStore\DatalogSignalInterpreter2.ts" />
     <None Remove="ClientApp\src\app\EavStore\DatalogSignalInterpreter3.ts" />
+    <None Remove="ClientApp\src\app\EavStore\Distinct.ts" />
     <None Remove="ClientApp\src\app\EavStore\Fact.ts" />
     <None Remove="ClientApp\src\app\EavStore\IDatalogInterpreter.ts" />
     <None Remove="ClientApp\src\app\EavStore\Tuple.ts" />
@@ -195,6 +196,7 @@
     <None Remove="ClientApp\src\app\Ontology\DataPropertyRestriction.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataRange.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataRangeWriter.ts" />
+    <None Remove="ClientApp\src\app\Ontology\DataSomeValuesFrom.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataSomeValuesFrom.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataSomeValuesFromDatalog.Spec.ts" />
     <None Remove="ClientApp\src\app\Ontology\DataSomeValuesFromObservable.Spec.ts" />
@@ -233,6 +235,7 @@
     <None Remove="ClientApp\src\app\Ontology\IClass.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClassAxiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClassExpression.ts" />
+    <None Remove="ClientApp\src\app\Ontology\IClassExpressionInterpreter.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClassExpressionSelector.ts" />
     <None Remove="ClientApp\src\app\Ontology\IClassExpressionVisitor.ts" />
     <None Remove="ClientApp\src\app\Ontology\IDataAllValuesFrom.ts" />
