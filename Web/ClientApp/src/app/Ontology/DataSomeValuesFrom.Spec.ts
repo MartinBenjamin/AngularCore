@@ -31,7 +31,7 @@ describe(
             () =>
             {
                 function Test(
-                    membership: (ce: IClassExpression) => ReadonlySet<any>
+                    ceInterpretation: (ce: IClassExpression) => ReadonlySet<any>
                     )
                 {
                     describe(
@@ -41,7 +41,7 @@ describe(
                             const x = store.NewEntity();
                             it(
                                 `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                                () => expect(membership(ce).has(x)).toBe(false));
+                                () => expect(ceInterpretation(ce).has(x)).toBe(false));
                         });
 
                     describe(
@@ -52,7 +52,7 @@ describe(
                             store.Assert(x, dp1.LocalName, 1);
                             it(
                                 `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                                () => expect(membership(ce).has(x)).toBe(true));
+                                () => expect(ceInterpretation(ce).has(x)).toBe(true));
                         });
 
                     describe(
@@ -63,7 +63,7 @@ describe(
                             store.Assert(x, dp1.LocalName, 2);
                             it(
                                 `¬(x ∈ (${classExpressionWriter.Write(ce)})C)`,
-                                () => expect(membership(ce).has(x)).toBe(false));
+                                () => expect(ceInterpretation(ce).has(x)).toBe(false));
                         });
 
                     describe(
@@ -75,16 +75,15 @@ describe(
                             store.Assert(x, dp1.LocalName, 2);
                             it(
                                 `x ∈ (${classExpressionWriter.Write(ce)})C`,
-                                () => expect(membership(ce).has(x)).toBe(true));
+                                () => expect(ceInterpretation(ce).has(x)).toBe(true));
                         });
                 }
-
                 {
                     const interpreter = new ClassExpressionSignalInterpreter(
                         o1,
                         store);
 
-                    function membership(
+                    function ceInterpretation(
                         ce: IClassExpression
                         ): ReadonlySet<any>
                     {
@@ -100,14 +99,14 @@ describe(
                         }
                     }
 
-                    Test(membership);
+                    Test(ceInterpretation);
                 }
                 {
                     const interpreter = new ClassExpressionObservableInterpreter(
                         o1,
                         store);
 
-                    function membership(
+                    function ceInterpretation(
                         ce: IClassExpression
                         ): ReadonlySet<any>
                     {
@@ -124,7 +123,7 @@ describe(
                         }
                     }
 
-                    Test(membership);
+                    Test(ceInterpretation);
                 }
                 {
                     const rules: Rule[] = [];
@@ -135,14 +134,14 @@ describe(
                     for(const axiom of o1.Axioms)
                         axiom.Accept(interpreter);
 
-                    function membership(
+                    function ceInterpretation(
                         ce: IClassExpression
                         ): ReadonlySet<any>
                     {
                         return new Set(store.Query(['?x'], [[ce.Select(interpreter.ClassExpressionInterpreter), '?x']], ...rules).flat());
                     }
 
-                    Test(membership);
+                    Test(ceInterpretation);
                 }
             });
     });
