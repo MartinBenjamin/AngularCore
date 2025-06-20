@@ -31,7 +31,9 @@ describe(
             () =>
             {
                 function Test(
-                    ceInterpretation: (ce: IClassExpression) => ReadonlySet<any>
+                    store           : IEavStore,
+                    ceInterpretation: (ce: IClassExpression) => ReadonlySet<any>,
+                    iInterpretation : (i: any) => any
                     )
                 {
                     describe(
@@ -99,7 +101,10 @@ describe(
                         }
                     }
 
-                    Test(ceInterpretation);
+                    Test(
+                        store,
+                        ceInterpretation,
+                        null);
                 }
                 {
                     const interpreter = new ClassExpressionObservableInterpreter(
@@ -123,7 +128,10 @@ describe(
                         }
                     }
 
-                    Test(ceInterpretation);
+                    Test(
+                        store,
+                        ceInterpretation,
+                        null);
                 }
                 {
                     const rules: Rule[] = [];
@@ -141,7 +149,10 @@ describe(
                         return new Set(store.Query(['?x'], [[ce.Select(interpreter.ClassExpressionInterpreter), '?x']], ...rules).flat());
                     }
 
-                    Test(ceInterpretation);
+                    Test(
+                        store,
+                        ceInterpretation,
+                        null);
                 }
             });
     });
