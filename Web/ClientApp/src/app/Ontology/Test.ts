@@ -6,6 +6,7 @@ import { AxiomInterpreter } from "./AxiomInterpreterDatalog";
 import { ClassExpressionObservableInterpreter } from "./ClassExpressionObservableInterpreter";
 import { ClassExpressionSignalInterpreter } from "./ClassExpressionSignalInterpreter";
 import { IClassExpression } from "./IClassExpression";
+import { IIndividual } from "./IIndividual";
 import { IOntology } from "./IOntology";
 
 export function Test(
@@ -42,7 +43,7 @@ export function Test(
         test(
             store,
             ceInterpretation,
-            null);
+            (individual: IIndividual): any => interpreter.Individual(individual));
     }
     {
         const interpreter = new ClassExpressionObservableInterpreter(
@@ -69,7 +70,7 @@ export function Test(
         test(
             store,
             ceInterpretation,
-            null);
+            (individual: IIndividual): any => interpreter.Individual(individual));
     }
     {
         const rules: Rule[] = [];
@@ -90,6 +91,6 @@ export function Test(
         test(
             store,
             ceInterpretation,
-            null);
+            (individual: IIndividual): any => interpreter.Individual(individual));
     }
 }
