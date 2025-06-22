@@ -55,7 +55,7 @@ export function ObserveErrors(
         ontology,
         store,
         rules);
-    for(const axiom of ontology.Axioms)
+    for(const axiom of ontology.Get(ontology.IsAxiom.IAxiom))
         axiom.Accept(interpreter);
 
     const classEpressionInterpreter = new ClassExpressionObservableInterpreter(
