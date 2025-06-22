@@ -123,6 +123,7 @@
     <None Remove="ClientApp\src\app\Ontologies\LeveragedFinance.ts" />
     <None Remove="ClientApp\src\app\Ontologies\LifeCycles.ts" />
     <None Remove="ClientApp\src\app\Ontologies\ObserveErrors.ts" />
+    <None Remove="ClientApp\src\app\Ontologies\ObserveErrors2.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Organisations.ts" />
     <None Remove="ClientApp\src\app\Ontologies\Parties.ts" />
     <None Remove="ClientApp\src\app\Ontologies\PartWhole.ts" />

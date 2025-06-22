@@ -4,7 +4,6 @@ import { Rule } from '../EavStore/Datalog';
 import { EavStore, tupleCompare } from '../EavStore/EavStore';
 import { IEavStore } from '../EavStore/IEavStore';
 import { Tuple } from '../EavStore/Tuple';
-import { Signal } from '../Signal/Signal';
 import { AxiomInterpreter } from './AxiomInterpreterDatalog';
 import { ClassExpressionWriter } from './ClassExpressionWriter';
 import { NamedIndividual } from './NamedIndividual';
