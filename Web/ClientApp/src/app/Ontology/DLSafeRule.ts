@@ -1,3 +1,4 @@
+import { Variable } from '../EavStore/Datalog';
 import { Axiom } from './Axiom';
 import { IAxiom } from "./IAxiom";
 import { IClassExpression } from "./IClassExpression";
@@ -39,10 +40,8 @@ MainClasses   ::= ‘MainClasses’ ‘(’ Class {Class } ‘)’
 
 */
 
-export type IndividualVariable = string;
-export type IArg = IIndividual | IndividualVariable;
-export type LiteralVariable = string;
-export type DArg = any | LiteralVariable;
+export type IArg = IIndividual | Variable;
+export type DArg = any | Variable;
 export type Arg = IArg | DArg;
 
 export interface IAtom
@@ -116,8 +115,6 @@ export interface IAtomSelector<TResult>
 
 export interface IDLSafeRuleBuilder
 {
-    IndividualVariable(name: string): IndividualVariable;
-    LiteralVariable   (name: string): LiteralVariable;
     ClassAtom         (ce: IClassExpression, individual: IArg): IClassAtom;
     DataRangeAtom     (dr: IDataRange, value: DArg): IDataRangeAtom;
     ObjectPropertyAtom(ope: IObjectPropertyExpression, domain: IArg, range: IArg): IObjectPropertyAtom;
@@ -141,20 +138,6 @@ export class DLSafeRuleBuilder implements IDLSafeRuleBuilder
         private _ontology: IOntology
         )
     {
-    }
-
-    IndividualVariable(
-        name: string
-        ): string
-    {
-        return name;
-    }
-
-    LiteralVariable(
-        name: string
-        ): string
-    {
-        return name;
     }
 
     ClassAtom(

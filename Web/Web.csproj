@@ -148,6 +148,7 @@
     <None Remove="ClientApp\src\app\Ontology\Assertion.ts" />
     <None Remove="ClientApp\src\app\Ontology\Atom.ts" />
     <None Remove="ClientApp\src\app\Ontology\AtomInterpreter.ts" />
+    <None Remove="ClientApp\src\app\Ontology\AtomInterpreterDatalog.ts" />
     <None Remove="ClientApp\src\app\Ontology\Axiom.ts" />
     <None Remove="ClientApp\src\app\Ontology\AxiomInterpreterDatalog.ts" />
     <None Remove="ClientApp\src\app\Ontology\AxiomWriter.ts" />
