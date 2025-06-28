@@ -46,6 +46,8 @@ export type Arg = IArg | DArg;
 
 export interface IAtom
 {
+    [Symbol.iterator](): IterableIterator<Arg>;
+
     Select<TResult>(selector: IAtomSelector<TResult>): TResult
 }
 
@@ -88,8 +90,8 @@ export interface IDataPropertyAtom extends IPropertyAtom
 
 export interface IComparisonAtom extends IAtom
 {
-    readonly Lhs: Arg;
-    readonly Rhs: Arg;
+    readonly Lhs: DArg;
+    readonly Rhs: DArg;
 }
 
 export interface ILessThanAtom           extends IComparisonAtom {};
@@ -120,12 +122,12 @@ export interface IDLSafeRuleBuilder
     ObjectPropertyAtom(ope: IObjectPropertyExpression, domain: IArg, range: IArg): IObjectPropertyAtom;
     DataPropertyAtom  (dpe: IDataPropertyExpression  , domain: IArg, range: DArg): IDataPropertyAtom;
 
-    LessThan          (lhs: Arg, rhs: Arg): ILessThanAtom          ;
-    LessThanOrEqual   (lhs: Arg, rhs: Arg): ILessThanOrEqualAtom   ;
-    Equal             (lhs: Arg, rhs: Arg): IEqualAtom             ;
-    NotEqual          (lhs: Arg, rhs: Arg): INotEqualAtom          ;
-    GreaterThanOrEqual(lhs: Arg, rhs: Arg): IGreaterThanOrEqualAtom;
-    GreaterThan       (lhs: Arg, rhs: Arg): IGreaterThanAtom       ;
+    LessThan          (lhs: DArg, rhs: DArg): ILessThanAtom          ;
+    LessThanOrEqual   (lhs: DArg, rhs: DArg): ILessThanOrEqualAtom   ;
+    Equal             (lhs: DArg, rhs: DArg): IEqualAtom             ;
+    NotEqual          (lhs: DArg, rhs: DArg): INotEqualAtom          ;
+    GreaterThanOrEqual(lhs: DArg, rhs: DArg): IGreaterThanOrEqualAtom;
+    GreaterThan       (lhs: DArg, rhs: DArg): IGreaterThanAtom       ;
 
     Rule(
         head: IAtom[],
@@ -185,53 +187,48 @@ export class DLSafeRuleBuilder implements IDLSafeRuleBuilder
     }
 
     LessThan(
-        lhs: any,
-        rhs: any
+        lhs: DArg,
+        rhs: DArg
         ): ILessThanAtom
     {
         return new LessThanAtom(lhs, rhs);
     }
 
     LessThanOrEqual(
-        lhs: any,
-        rhs: any
+        lhs: DArg,
+        rhs: DArg
         ): ILessThanOrEqualAtom
     {
         return new LessThanOrEqualAtom(lhs, rhs);
     }
 
     Equal(
-        lhs: any,
-        rhs: any
+        lhs: DArg,
+        rhs: DArg
         ): IEqualAtom
     {
         return new EqualAtom(lhs, rhs);
     }
 
     NotEqual(
-        lhs: any,
-        rhs: any
+        lhs: DArg,
+        rhs: DArg
         ): INotEqualAtom
     {
-        const notEqual = {
-            Lhs: lhs,
-            Rhs: rhs,
-            Select: <TResult>(selector: IAtomSelector<TResult>): TResult => selector.NotEqual(notEqual)
-        };
         return new NotEqualAtom(lhs, rhs);
     }
 
     GreaterThanOrEqual(
-        lhs: any,
-        rhs: any
+        lhs: DArg,
+        rhs: DArg
         ): IGreaterThanOrEqualAtom
     {
         return new GreaterThanOrEqualAtom(lhs, rhs);
     }
 
     GreaterThan(
-        lhs: any,
-        rhs: any
+        lhs: DArg,
+        rhs: DArg
         ): IGreaterThanAtom
     {
         return new GreaterThanAtom(lhs, rhs);
@@ -258,6 +255,11 @@ export class ClassAtom implements IClassAtom
     {
     }
 
+    *[Symbol.iterator](): IterableIterator<any>
+    {
+        yield this.Individual;
+    }
+
     Select<TResult>(
         selector: IAtomSelector<TResult>
         ): TResult
@@ -273,6 +275,11 @@ export class DataRangeAtom implements IDataRangeAtom
         public readonly Value    : DArg
         )
     {
+    }
+
+    *[Symbol.iterator](): IterableIterator<any>
+    {
+        yield this.Value;
     }
 
     Select<TResult>(
@@ -291,6 +298,12 @@ export abstract class PropertyAtom implements IPropertyAtom
         public readonly Range             : Arg
         )
     {
+    }
+
+    *[Symbol.iterator](): IterableIterator<any>
+    {
+        yield this.Domain;
+        yield this.Range;
     }
 
     Select<TResult>(
@@ -348,10 +361,16 @@ export class DataPropertyAtom extends PropertyAtom implements IDataPropertyAtom
 export abstract class ComparisonAtom implements IComparisonAtom
 {
     constructor(
-        public Lhs: Arg,
-        public Rhs: Arg,
+        public Lhs: DArg,
+        public Rhs: DArg,
         )
     {
+    }
+
+    *[Symbol.iterator](): IterableIterator<any>
+    {
+        yield this.Lhs;
+        yield this.Rhs;
     }
 
     Select<TResult>(
@@ -362,12 +381,12 @@ export abstract class ComparisonAtom implements IComparisonAtom
     }
 }
 
-export class LessThanAtom           extends ComparisonAtom implements ILessThanAtom           { constructor(lhs: Arg, rhs: Arg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.LessThan          (this);}};
-export class LessThanOrEqualAtom    extends ComparisonAtom implements ILessThanOrEqualAtom    { constructor(lhs: Arg, rhs: Arg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.LessThanOrEqual   (this);}};
-export class EqualAtom              extends ComparisonAtom implements IEqualAtom              { constructor(lhs: Arg, rhs: Arg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.Equal             (this);}};
-export class NotEqualAtom           extends ComparisonAtom implements INotEqualAtom           { constructor(lhs: Arg, rhs: Arg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.NotEqual          (this);}};
-export class GreaterThanOrEqualAtom extends ComparisonAtom implements IGreaterThanOrEqualAtom { constructor(lhs: Arg, rhs: Arg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.GreaterThanOrEqual(this);}};
-export class GreaterThanAtom        extends ComparisonAtom implements IGreaterThanAtom        { constructor(lhs: Arg, rhs: Arg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.GreaterThan       (this);}};
+export class LessThanAtom           extends ComparisonAtom implements ILessThanAtom           { constructor(lhs: DArg, rhs: DArg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.LessThan          (this);}};
+export class LessThanOrEqualAtom    extends ComparisonAtom implements ILessThanOrEqualAtom    { constructor(lhs: DArg, rhs: DArg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.LessThanOrEqual   (this);}};
+export class EqualAtom              extends ComparisonAtom implements IEqualAtom              { constructor(lhs: DArg, rhs: DArg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.Equal             (this);}};
+export class NotEqualAtom           extends ComparisonAtom implements INotEqualAtom           { constructor(lhs: DArg, rhs: DArg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.NotEqual          (this);}};
+export class GreaterThanOrEqualAtom extends ComparisonAtom implements IGreaterThanOrEqualAtom { constructor(lhs: DArg, rhs: DArg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.GreaterThanOrEqual(this);}};
+export class GreaterThanAtom        extends ComparisonAtom implements IGreaterThanAtom        { constructor(lhs: DArg, rhs: DArg) { super(lhs, rhs); } Select<TResult>(selector: IAtomSelector<TResult>): TResult { return selector.GreaterThan       (this);}};
 
 type TypeGuard<T extends object> = (o: object) => o is T;
 
