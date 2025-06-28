@@ -1,4 +1,4 @@
-import { BuiltIn, Equal, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual } from "../EavStore/BuiltIn";
+import { BuiltIn, Equal, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, NotEqual } from "../EavStore/BuiltIn";
 import { Idb, IsVariable } from '../EavStore/Datalog';
 import { IAtomSelector, IClassAtom, IDataPropertyAtom, IDataRangeAtom, IEqualAtom, IGreaterThanAtom, IGreaterThanOrEqualAtom, ILessThanAtom, ILessThanOrEqualAtom, INotEqualAtom, IObjectPropertyAtom } from './DLSafeRule';
 import { IClassExpressionSelector } from './IClassExpressionSelector';

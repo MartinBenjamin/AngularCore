@@ -1,8 +1,11 @@
-import { Rule } from "../EavStore/Datalog";
+import { BuiltIn } from '../EavStore/BuiltIn';
+import { Idb, Rule } from "../EavStore/Datalog";
+import { EntityId } from '../EavStore/EavStore';
 import { IEavStore } from "../EavStore/IEavStore";
 import { AddIndividuals } from "./AddIndividuals";
+import { AtomInterpreter } from './AtomInterpreterDatalog';
 import { ClassExpressionInterpreter } from "./ClassExpressionInterpreterDatalog";
-import { IDLSafeRule } from "./DLSafeRule";
+import { IAtomSelector, IDLSafeRule, IsAtom } from "./DLSafeRule";
 import { IAnnotationAssertion } from "./IAnnotationAssertion";
 import { IAnnotationProperty } from "./IAnnotationProperty";
 import { IClassAssertion, IDataPropertyAssertion, IObjectPropertyAssertion } from "./IAssertion";
@@ -39,10 +42,13 @@ import { ISymmetricObjectProperty } from "./ISymmetricObjectProperty";
 import { ITransitiveObjectProperty } from "./ITransitiveObjectProperty";
 import { PropertyExpressionInterpreter } from "./PropertyExpressionInterpreterDatalog";
 
+const isAtom = new IsAtom();
+
 export class AxiomInterpreter implements IAxiomVisitor
 {
     public  ClassExpressionInterpreter    : IClassExpressionSelector<string>;
     public  PropertyExpressionInterpreter : IPropertyExpressionSelector<string>;
+    public  AtomInterpreter               : IAtomSelector<Idb | BuiltIn>;
     private _isAxiom                      = new IsAxiom();
     private _isClassExpression            = new IsClassExpression();
     private _individualInterpretation     = new Map<IIndividual, any>();
@@ -61,6 +67,10 @@ export class AxiomInterpreter implements IAxiomVisitor
             this.PropertyExpressionInterpreter,
             this._individualInterpretation,
             this._rules);
+        this.AtomInterpreter = new AtomInterpreter(
+            this.ClassExpressionInterpreter,
+            this.PropertyExpressionInterpreter,
+            this._individualInterpretation);
     }
 
     Axiom(
@@ -185,6 +195,11 @@ export class AxiomInterpreter implements IAxiomVisitor
         reflexiveObjectProperty: IReflexiveObjectProperty
         ): void
     {
+        if(this._isAxiom.IObjectProperty(reflexiveObjectProperty.ObjectPropertyExpression))
+        {
+            const predicateSymbol = reflexiveObjectProperty.ObjectPropertyExpression.Select(this.PropertyExpressionInterpreter)
+            this._rules.push([[predicateSymbol, '?x', '?x'], [['?x', EntityId,]]]);
+        }
     }
 
     SymmetricObjectProperty(
@@ -257,6 +272,12 @@ export class AxiomInterpreter implements IAxiomVisitor
         dlSafeRule: IDLSafeRule
         ): void
     {
+        if(dlSafeRule.Head.length === 1)
+        {
+            const headAtom = dlSafeRule.Head[0];
+            if((isAtom.IClassAtom(headAtom) && this._isAxiom.IEntity(headAtom.ClassExpression)) || (isAtom.IPropertyAtom(headAtom) && this._isAxiom.IEntity(headAtom.PropertyExpression)))
+            this._rules.push([<Idb>headAtom.Select(this.AtomInterpreter), dlSafeRule.Body.map(atom => atom.Select(this.AtomInterpreter))]);
+        }
     }
 
     Class(

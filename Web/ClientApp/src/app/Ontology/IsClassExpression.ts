@@ -39,7 +39,8 @@ import { PropertyRestriction } from "./PropertyRestriction";
 
 export class IsClassExpression implements IIsClassExpression
 {
-    IClassExpression          (ce: object): ce is IClassExpression           { return ce instanceof ClassExpression          ; }
+    IClassExpression          (ce: object): ce is IClassExpression           { return ce instanceof ClassExpression ||
+                                                                                      ce instanceof Class                    ; }
     IClass                    (ce: object): ce is IClass                     { return ce instanceof Class                    ; }
     IObjectIntersectionOf     (ce: object): ce is IObjectIntersectionOf      { return ce instanceof ObjectIntersectionOf     ; }
     IObjectUnionOf            (ce: object): ce is IObjectUnionOf             { return ce instanceof ObjectUnionOf            ; }
