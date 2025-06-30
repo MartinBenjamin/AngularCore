@@ -12,7 +12,7 @@ import { DealOntologyServiceToken } from '../../Ontologies/DealOntologyServicePr
 import { DealBuilderToken, IDealBuilder } from '../../Ontologies/IDealBuilder';
 import { IDealOntology } from '../../Ontologies/IDealOntology';
 import { IDealOntologyService } from '../../Ontologies/IDealOntologyService';
-import { Error, ObserveErrors } from '../../Ontologies/ObserveErrors';
+import { Error, ObserveErrors } from '../../Ontologies/ObserveErrors2';
 import { Origination } from '../Origination';
 import { Facility } from './Facility';
 import { FeesTab } from './FeesTab';

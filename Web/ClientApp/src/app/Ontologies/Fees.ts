@@ -39,7 +39,7 @@ export class Fees extends Ontology
 
         this.HasAccrualDate = this.DeclareFunctionalObjectProperty("AccrualDate");
 
-        this.AccrualDate = this.DeclareClass("AccrualDate");
+        this.AccrualDate = this.DeclareClass("AccrualDateClass");
         new ObjectPropertyRange(
             this,
             this.HasAccrualDate,
