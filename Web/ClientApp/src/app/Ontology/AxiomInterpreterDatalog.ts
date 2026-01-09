@@ -119,8 +119,8 @@ export class AxiomInterpreter implements IAxiomVisitor
         classAssertion: IClassAssertion
         ): void
     {
-        if(this._isClassExpression.IClass(classAssertion.ClassExpression))
-            this._rules.push([[classAssertion.ClassExpression.Select(this.ClassExpressionInterpreter), this.Individual(classAssertion.Individual)], []]);
+    //    if(this._isClassExpression.IClass(classAssertion.ClassExpression))
+    //        this._rules.push([[classAssertion.ClassExpression.Select(this.ClassExpressionInterpreter), this.Individual(classAssertion.Individual)], []]);
     }
 
     ObjectPropertyAssertion(

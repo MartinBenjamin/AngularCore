@@ -35,13 +35,13 @@ export function AddIndividual(
                 object[propertyName] = dataPropertyAssertion.TargetValue;
         }
 
-    //const types = [...ontology.Get(ontology.IsAxiom.IClassAssertion)]
-    //    .filter(classAssertion => classAssertion.Individual === individual && ontology.IsClassExpression.IClass(classAssertion.ClassExpression))
-    //    .map(classAssertion => <IClass>classAssertion.ClassExpression)
-    //    .map(class$ => class$.Iri);
+    const types = [...ontology.Get(ontology.IsAxiom.IClassAssertion)]
+        .filter(classAssertion => classAssertion.Individual === individual && ontology.IsClassExpression.IClass(classAssertion.ClassExpression))
+        .map(classAssertion => <IClass>classAssertion.ClassExpression)
+        .map(class$ => class$.Iri);
 
-    //if(types.length)
-    //    object['rdf:type'] = types;
+    if(types.length)
+        object['rdf:type'] = types;
 
     return store.Assert(object);
 }

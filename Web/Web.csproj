@@ -222,6 +222,7 @@
     <None Remove="ClientApp\src\app\Ontology\EquivalentObjectProperties.ts" />
     <None Remove="ClientApp\src\app\Ontology\FunctionalDataProperty.ts" />
     <None Remove="ClientApp\src\app\Ontology\FunctionalObjectProperty.ts" />
+    <None Remove="ClientApp\src\app\Ontology\GenerateAttributeSchema.ts" />
     <None Remove="ClientApp\src\app\Ontology\Group.ts" />
     <None Remove="ClientApp\src\app\Ontology\HasKey.ts" />
     <None Remove="ClientApp\src\app\Ontology\IAnnotated.ts" />

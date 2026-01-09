@@ -142,6 +142,21 @@ export class EavStore implements IEavStore, IPublisher
         private _defaultCardinality = Cardinality.Many
         )
     {
+        attributeSchema = attributeSchema.concat(
+            [
+                {
+                    Name: Symbol.toPrimitive,
+                    Cardinality: Cardinality.One
+                },
+                {
+                    Name: EntityId,
+                    Cardinality: Cardinality.One
+                },
+                {
+                    Name: StoreSymbol,
+                    Cardinality: Cardinality.One
+                }
+            ]);
         this._schema = new Map<PropertyKey, AttributeSchema>(attributeSchema.map(attributeSchema => [attributeSchema.Name, attributeSchema]));
         this._ave = new Map<PropertyKey, Map<any, any>>(
             attributeSchema
@@ -770,6 +785,8 @@ export class EavStore implements IEavStore, IPublisher
         value    : any
         ): void
     {
+        this.Cardinality(attribute);
+
         if(this._transactionManager.Active)
             this._transactionManager.Log(
                 new Assert(
@@ -789,6 +806,8 @@ export class EavStore implements IEavStore, IPublisher
         value    : any
         ): void
     {
+        this.Cardinality(attribute);
+
         if(this._transactionManager.Active)
             this._transactionManager.Log(
                 new Retract(
