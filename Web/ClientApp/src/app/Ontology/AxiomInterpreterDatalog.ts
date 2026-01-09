@@ -127,24 +127,21 @@ export class AxiomInterpreter implements IAxiomVisitor
         objectPropertyAssertion: IObjectPropertyAssertion
         ): void
     {
-    //    if(this._isAxiom.IObjectProperty(objectPropertyAssertion.ObjectPropertyExpression))
-    //        this._rules.push([[objectPropertyAssertion.ObjectPropertyExpression.Select(this.PropertyExpressionInterpreter), this.Individual(objectPropertyAssertion.SourceIndividual), this.Individual(objectPropertyAssertion.TargetIndividual)], []]);
+    //    this._rules.push([[objectPropertyAssertion.ObjectPropertyExpression.Select(this.PropertyExpressionInterpreter), this.Individual(objectPropertyAssertion.SourceIndividual), this.Individual(objectPropertyAssertion.TargetIndividual)], []]);
     }
 
     DataPropertyAssertion(
         dataPropertyAssertion: IDataPropertyAssertion
         ): void
     {
-    //    if(this._isAxiom.IDataProperty(dataPropertyAssertion.DataPropertyExpression))
-    //        this._rules.push([[dataPropertyAssertion.DataPropertyExpression.Select(this.PropertyExpressionInterpreter), this.Individual(dataPropertyAssertion.SourceIndividual), dataPropertyAssertion.TargetValue], []]);
+    //    this._rules.push([[dataPropertyAssertion.DataPropertyExpression.Select(this.PropertyExpressionInterpreter), this.Individual(dataPropertyAssertion.SourceIndividual), dataPropertyAssertion.TargetValue], []]);
     }
 
     SubObjectPropertyOf(
         subObjectPropertyOf: ISubObjectPropertyOf
         ): void
     {
-        if(this._isAxiom.IObjectProperty(subObjectPropertyOf.SuperObjectPropertyExpression))
-            this._rules.push([[subObjectPropertyOf.SuperObjectPropertyExpression.Select(this.PropertyExpressionInterpreter), '?x', '?y'], [[subObjectPropertyOf.SubObjectPropertyExpression.Select(this.PropertyExpressionInterpreter), '?x', '?y']]]);
+        this._rules.push([[subObjectPropertyOf.SuperObjectPropertyExpression.Select(this.PropertyExpressionInterpreter), '?x', '?y'], [[subObjectPropertyOf.SubObjectPropertyExpression.Select(this.PropertyExpressionInterpreter), '?x', '?y']]]);
     }
 
     EquivalentObjectProperties(
@@ -153,7 +150,7 @@ export class AxiomInterpreter implements IAxiomVisitor
     {
         for(const objectPropertyExpression1 of equivalentObjectProperties.ObjectPropertyExpressions)
             for(const objectPropertyExpression2 of equivalentObjectProperties.ObjectPropertyExpressions)
-                if(objectPropertyExpression1 !== objectPropertyExpression2 && this._isAxiom.IObjectProperty(objectPropertyExpression1))
+                if(objectPropertyExpression1 !== objectPropertyExpression2)
                     this._rules.push([[objectPropertyExpression1.Select(this.PropertyExpressionInterpreter), '?x', '?y'], [[objectPropertyExpression2.Select(this.PropertyExpressionInterpreter), '?x', '?y']]]);
     }
 
@@ -163,10 +160,8 @@ export class AxiomInterpreter implements IAxiomVisitor
     {
         const objectPropertyExpression1 = inverseObjectProperties.ObjectPropertyExpression1;
         const objectPropertyExpression2 = inverseObjectProperties.ObjectPropertyExpression2;
-        if(this._isAxiom.IObjectProperty(objectPropertyExpression1))
-            this._rules.push([[objectPropertyExpression1.Select(this.PropertyExpressionInterpreter), '?x', '?y'], [[objectPropertyExpression2.Select(this.PropertyExpressionInterpreter), '?y', '?x']]]);
-        if(this._isAxiom.IObjectProperty(objectPropertyExpression2))
-            this._rules.push([[objectPropertyExpression2.Select(this.PropertyExpressionInterpreter), '?x', '?y'], [[objectPropertyExpression1.Select(this.PropertyExpressionInterpreter), '?y', '?x']]]);
+        this._rules.push([[objectPropertyExpression1.Select(this.PropertyExpressionInterpreter), '?x', '?y'], [[objectPropertyExpression2.Select(this.PropertyExpressionInterpreter), '?y', '?x']]]);
+        this._rules.push([[objectPropertyExpression2.Select(this.PropertyExpressionInterpreter), '?x', '?y'], [[objectPropertyExpression1.Select(this.PropertyExpressionInterpreter), '?y', '?x']]]);
     }
 
     ObjectPropertyDomain(
@@ -195,41 +190,31 @@ export class AxiomInterpreter implements IAxiomVisitor
         reflexiveObjectProperty: IReflexiveObjectProperty
         ): void
     {
-        if(this._isAxiom.IObjectProperty(reflexiveObjectProperty.ObjectPropertyExpression))
-        {
-            const predicateSymbol = reflexiveObjectProperty.ObjectPropertyExpression.Select(this.PropertyExpressionInterpreter)
-            this._rules.push([[predicateSymbol, '?x', '?x'], [['?x', EntityId,]]]);
-        }
+        const predicateSymbol = reflexiveObjectProperty.ObjectPropertyExpression.Select(this.PropertyExpressionInterpreter)
+        this._rules.push([[predicateSymbol, '?x', '?x'], [['?x', EntityId,]]]);
     }
 
     SymmetricObjectProperty(
         symmetricObjectProperty: ISymmetricObjectProperty
         ): void
     {
-        if(this._isAxiom.IObjectProperty(symmetricObjectProperty.ObjectPropertyExpression))
-        {
-            const predicateSymbol = symmetricObjectProperty.ObjectPropertyExpression.Select(this.PropertyExpressionInterpreter)
-            this._rules.push([[predicateSymbol, '?x', '?y'], [[predicateSymbol, '?y', '?x']]]);
-        }
+        const predicateSymbol = symmetricObjectProperty.ObjectPropertyExpression.Select(this.PropertyExpressionInterpreter)
+        this._rules.push([[predicateSymbol, '?x', '?y'], [[predicateSymbol, '?y', '?x']]]);
     }
 
     TransitiveObjectProperty(
         transitiveObjectProperty: ITransitiveObjectProperty
         ): void
     {
-        if(this._isAxiom.IObjectProperty(transitiveObjectProperty.ObjectPropertyExpression))
-        {
-            const predicateSymbol = transitiveObjectProperty.ObjectPropertyExpression.Select(this.PropertyExpressionInterpreter)
-            this._rules.push([[predicateSymbol, '?x', '?z'], [[predicateSymbol, '?x', '?y'], [predicateSymbol, '?y', '?z']]]);
-        }
+        const predicateSymbol = transitiveObjectProperty.ObjectPropertyExpression.Select(this.PropertyExpressionInterpreter)
+        this._rules.push([[predicateSymbol, '?x', '?z'], [[predicateSymbol, '?x', '?y'], [predicateSymbol, '?y', '?z']]]);
     }
 
     SubDataPropertyOf(
         subDataPropertyOf: ISubDataPropertyOf
         ): void
     {
-        if(this._isAxiom.IDataProperty(subDataPropertyOf.SuperDataPropertyExpression))
-            this._rules.push([[subDataPropertyOf.SuperDataPropertyExpression.Select(this.PropertyExpressionInterpreter), '?x', '?y'], [[subDataPropertyOf.SubDataPropertyExpression.Select(this.PropertyExpressionInterpreter), '?x', '?y']]]);
+        this._rules.push([[subDataPropertyOf.SuperDataPropertyExpression.Select(this.PropertyExpressionInterpreter), '?x', '?y'], [[subDataPropertyOf.SubDataPropertyExpression.Select(this.PropertyExpressionInterpreter), '?x', '?y']]]);
     }
 
     EquivalentDataProperties(
@@ -238,7 +223,7 @@ export class AxiomInterpreter implements IAxiomVisitor
     {
         for(const dataPropertyExpression1 of equivalentDataProperties.DataPropertyExpressions)
             for(const dataPropertyExpression2 of equivalentDataProperties.DataPropertyExpressions)
-                if(dataPropertyExpression1 !== dataPropertyExpression2 && this._isAxiom.IDataProperty(dataPropertyExpression1))
+                if(dataPropertyExpression1 !== dataPropertyExpression2)
                     this._rules.push([[dataPropertyExpression1.Select(this.PropertyExpressionInterpreter), '?x', '?y'], [[dataPropertyExpression2.Select(this.PropertyExpressionInterpreter), '?x', '?y']]]);
     }
 
