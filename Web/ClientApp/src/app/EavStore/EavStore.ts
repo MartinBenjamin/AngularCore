@@ -167,7 +167,9 @@ export class EavStore implements IEavStore, IPublisher
             this,
             tupleCompare);
 
-        this._datalogObservableInterpreter = new DatalogObservableInterpreter(this);
+        this._datalogObservableInterpreter = new DatalogObservableInterpreter(
+            this.SignalScheduler,
+            this._datalogSignalInterpreter);
 
         this._entitiesTopic = new Topic(
             EntitiesTopicId,

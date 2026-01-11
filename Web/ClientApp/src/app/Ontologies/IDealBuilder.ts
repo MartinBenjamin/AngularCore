@@ -5,13 +5,12 @@ import { ClassificationSchemeServiceToken } from "../ClassificationSchemeService
 import { Guid } from "../CommonDomainObjects";
 import { ClassificationSchemeIdentifier, Deal } from "../Deals";
 import { EavStore } from '../EavStore/EavStore';
-import { AttributeSchema, Cardinality, IEavStore } from '../EavStore/IEavStore';
+import { IEavStore } from '../EavStore/IEavStore';
 import { DealLifeCycleServiceToken, IDealLifeCycleService } from '../IDealLifeCycleService';
 import { IDomainObjectService } from "../IDomainObjectService";
 import { AddIndividual } from '../Ontology/AddIndividuals';
+import { GenerateAttributeSchema } from '../Ontology/GenerateAttributeSchema';
 import { IIndividual } from '../Ontology/IIndividual';
-import { IDataProperty, IObjectProperty } from '../Ontology/IProperty';
-import { Thing } from '../Ontology/Thing';
 import { commonDomainObjects } from './CommonDomainObjects';
 import { deals } from './Deals';
 import { IDealOntology } from "./IDealOntology";
@@ -47,65 +46,7 @@ export class DealBuilder implements IDealBuilder
             Classifiers: []
         };
 
-        const functionalObjectProperties = new Set<IObjectProperty>(
-            [...ontology.Get(ontology.IsAxiom.IFunctionalObjectProperty)]
-                .map(functionalObjectProperty => functionalObjectProperty.ObjectPropertyExpression)
-                .filter(ontology.IsAxiom.IObjectProperty));
-        const functionalDataProperties = new Set<IDataProperty>(
-            [...ontology.Get(ontology.IsAxiom.IFunctionalDataProperty)]
-                .map(functionalDataProperty => <IDataProperty>functionalDataProperty.DataPropertyExpression));
-        const keyProperties = new Set<IDataProperty>(
-            [...ontology.Get(ontology.IsAxiom.IHasKey)]
-                .filter(hasKey =>
-                    hasKey.ClassExpression                === Thing &&
-                    hasKey.DataPropertyExpressions.length === 1)
-                .map(hasKey => <IDataProperty>hasKey.DataPropertyExpressions[0])
-                .filter(keyProperty => functionalDataProperties.has(keyProperty)));
-
-        const attributeSchema: AttributeSchema[] = [
-            {
-                Name       : Symbol.toPrimitive,
-                Cardinality: Cardinality.One
-            }];
-
-        for(const keyProperty of keyProperties)
-            attributeSchema.push(
-                {
-                    Name          : keyProperty.LocalName,
-                    UniqueIdentity: true,
-                    Cardinality   : Cardinality.One
-                });
-
-        for(const functionalObjectProperty of functionalObjectProperties)
-            attributeSchema.push(
-                {
-                    Name       : functionalObjectProperty.LocalName,
-                    Cardinality: Cardinality.One
-                });
-
-        for(const functionalDataProperty of functionalDataProperties)
-            if(!keyProperties.has(functionalDataProperty))
-                attributeSchema.push(
-                    {
-                        Name       : functionalDataProperty.LocalName,
-                        Cardinality: Cardinality.One
-                    });
-
-        for(const objectProperty of ontology.Get(ontology.IsAxiom.IObjectProperty))
-            if(!functionalObjectProperties.has(objectProperty))
-                attributeSchema.push(
-                    {
-                        Name       : objectProperty.LocalName,
-                        Cardinality: Cardinality.Many
-                    });
-
-        for(const dataProperty of ontology.Get(ontology.IsAxiom.IDataProperty))
-            if(!functionalDataProperties.has(dataProperty))
-                attributeSchema.push(
-                    {
-                        Name       : dataProperty.LocalName,
-                        Cardinality: Cardinality.Many
-                    });
+        const attributeSchema = GenerateAttributeSchema(ontology);
 
         const store: IEavStore = new EavStore(attributeSchema);
         deal = <Deal>store.Assert(deal);

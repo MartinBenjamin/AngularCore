@@ -7,7 +7,6 @@ export function GenerateAttributeSchema(
     ontology: IOntology
     ): AttributeSchema[]
 {
-
     const functionalObjectProperties = new Set<IObjectProperty>(
         [...ontology.Get(ontology.IsAxiom.IFunctionalObjectProperty)]
             .map(functionalObjectProperty => functionalObjectProperty.ObjectPropertyExpression)

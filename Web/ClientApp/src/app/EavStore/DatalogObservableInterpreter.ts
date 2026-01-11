@@ -1,5 +1,7 @@
 import { Observable } from 'rxjs';
+import { Subscriber } from '../../../node_modules/rxjs/index';
 import { WrapperType } from "../Ontology/Wrapped";
+import { IScheduler, Signal } from '../Signal/Signal';
 import { Atom, Rule } from './Datalog';
 import { IDatalogInterpreter } from "./IDatalogInterpreter";
 import { IEavStore } from './IEavStore';
@@ -8,7 +10,8 @@ import { Tuple } from "./Tuple";
 export class DatalogObservableInterpreter implements IDatalogInterpreter<WrapperType.Observable>
 {
     constructor(
-        private readonly _eavStore: IEavStore
+        private readonly _signalScheduler: IScheduler,
+        private readonly _datalogInterpreter: IDatalogInterpreter<WrapperType.Signal>
         )
     {
     }
@@ -19,21 +22,44 @@ export class DatalogObservableInterpreter implements IDatalogInterpreter<Wrapper
         ...rules: Rule[]
         ): Observable<{ [K in keyof T]: any; }[]>
     {
+        const subscribers = new Set<Subscriber<{ [K in keyof T]: any; }[]>>();
+        let signal: Signal<void>;
+        let querySignal: Signal<{[K in keyof T]: any;}[]>
         return new Observable<{[K in keyof T]: any;}[]>(
-            subscriber =>
+            (subscriber: Subscriber<{[K in keyof T]: any;}[]>) =>
             {
-                const signal = this._eavStore.SignalScheduler.AddSignal(
-                    result => subscriber.next(result),
-                    [this._eavStore.Signal<T>(head, body, ...rules)]);
+                subscribers.add(subscriber);
+                if(!signal)
+                {
+                    querySignal = this._datalogInterpreter.Query(
+                        head,
+                        body,
+                        ...rules);
+                    signal = this._signalScheduler.AddSignal(
+                        result => subscriber.next(result),
+                        [querySignal]);
+                    subscriber.next(this._signalScheduler.Sample(querySignal));
+                }
 
-                subscriber.add(() => this._eavStore.SignalScheduler.RemoveSignal(signal));
+                subscriber.add(
+                    () =>
+                    {
+                        subscribers.delete(subscriber);
+                        if(!subscribers.size)
+                        {
+                            this._signalScheduler.RemoveSignal(signal);
+                            signal = null;
+                            querySignal = null;
+                        }
+                    });
             });
     }
 
     Rules(
         rules: Rule[]
-        ): Map<string, any>
+        ): Map<string, Observable<Iterable<Tuple>>>
     {
-        throw new Error('Method not implemented.');
+        return new Map([...this._datalogInterpreter.Rules(rules)].map(([predicateSymbol, signal]) =>
+            [predicateSymbol, this._signalScheduler.Observe(signal)]));
     }
 }
