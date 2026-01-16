@@ -11,7 +11,7 @@ type Error = [Property, string, string];
     {
         selector: 'errors',
         template: `
-<div *ngIf="DealErrors || SponsorErrors || ExclusivityErrors" style="color: red;">
+<div *ngIf="DealErrors || SponsorErrors || ExclusivityErrors || FacilityErrors" style="color: red;">
   Save was unsuccessful.  Please fix the errors and try again.
   <ul>
     <li *ngFor="let error of DealErrors" [innerHTML]="error[1] + ': ' + error[2]" (click)="Highlight(error[0])" style="cursor: pointer;"></li>
