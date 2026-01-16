@@ -41,7 +41,7 @@ export function AddIndividual(
         .map(class$ => class$.Iri);
 
     if(types.length)
-        object['rdf:type'] = types;
+        object['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = types;
 
     return store.Assert(object);
 }

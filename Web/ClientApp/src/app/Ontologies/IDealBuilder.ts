@@ -39,9 +39,10 @@ export class DealBuilder implements IDealBuilder
         ): Deal
     {
         let deal: Deal = {
+            'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+                       : [ontology.Deal.Iri],
             Parties    : [],
             Commitments: [],
-            ClassIri   : ontology.Deal.Iri,
             Agreements : [],
             Classifiers: []
         };

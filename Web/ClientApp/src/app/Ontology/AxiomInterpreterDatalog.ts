@@ -269,7 +269,7 @@ export class AxiomInterpreter implements IAxiomVisitor
         class$: IClass
         ): void
     {
-        this._rules.push([[class$.Select(this.ClassExpressionInterpreter), '?x'], [['?x', 'rdf:type', class$.Iri]]]);
+        this._rules.push([[class$.Select(this.ClassExpressionInterpreter), '?x'], [['?x', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', class$.Iri]]]);
     }
 
     Datatype(

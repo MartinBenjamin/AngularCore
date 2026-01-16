@@ -2,7 +2,12 @@ export type Guid = string;
 const EmptyGuid = '00000000-0000-0000-0000-000000000000';
 export { EmptyGuid };
 
-export interface DomainObject<TId>
+export interface Thing
+{
+    'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'?: string[];
+}
+
+export interface DomainObject<TId> extends Thing
 {
     Id?: TId;
 }

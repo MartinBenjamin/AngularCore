@@ -22,7 +22,6 @@ export class ProjectFinance
         dealType.DataPropertyValue(commonDomainObjects.Id, DealTypeIdentifier.ProjectFinance);
 
         this.Deal = this.DeclareClass("Deal");
-        this.Deal.Define(deals.Class.HasValue(this.Deal.Iri));
         this.Deal.SubClassOf(deals.Debt);
         this.Deal.SubClassOf(deals.Type.HasValue(dealType));
         this.Deal.SubClassOf(deals.Sponsored);

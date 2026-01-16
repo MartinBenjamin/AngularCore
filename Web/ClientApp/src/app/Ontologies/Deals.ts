@@ -7,7 +7,6 @@ import { DisjointClasses } from "../Ontology/DisjointClasses";
 import { IClass } from "../Ontology/IClass";
 import { INamedIndividual } from "../Ontology/INamedIndividual";
 import { IDataPropertyExpression, IObjectPropertyExpression } from "../Ontology/IPropertyExpression";
-import { NamedIndividual } from '../Ontology/NamedIndividual';
 import { ObjectOneOf } from "../Ontology/ObjectOneOf";
 import { ObjectSomeValuesFrom } from "../Ontology/ObjectSomeValuesFrom";
 import { Ontology } from "../Ontology/Ontology";
@@ -73,7 +72,6 @@ export class Deals extends Ontology
         this.Deal = this.DeclareClass("Deal");
         this.Deal.SubClassOf(commonDomainObjects.Named);
 
-        this.Class       = this.DeclareFunctionalDataProperty("ClassIri");
         this.Classifiers = this.DeclareObjectProperty("Classifiers");
         this.LifeCycle   = this.DeclareFunctionalObjectProperty("LifeCycle");
         this.Type        = this.DeclareFunctionalObjectProperty("Type");
@@ -164,9 +162,7 @@ export class Deals extends Ontology
             .Annotate(annotations.NominalProperty, "Sponsors");
         this.Sponsored.Annotate(annotations.ComponentBuildAction, "AddSponsors");
 
-        this.NotSponsoredClassifier = new NamedIndividual(
-            this,
-            "NotSponsoredClassifier");
+        this.NotSponsoredClassifier = this.DeclareNamedIndividual("NotSponsoredClassifier");
         this.NotSponsoredClassifier.DataPropertyValue(commonDomainObjects.Id, NotSponsoredClassifierIdentifier);
         this.NotSponsoredClassifier.DataPropertyValue(commonDomainObjects.$type, 'Web.Model.NotSponsoredClassifier, Web');
 
@@ -204,9 +200,7 @@ export class Deals extends Ontology
         fee.Define(commonDomainObjects.$type.HasValue("Web.Model.Fee, Web"));
         fee.SubClassOf(fees.Fee);
         fee.SubClassOf(quantities.MeasurementUnit.ExactCardinality(1))
-            .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect)
-
-        new DisjointClasses(this, [this.Deal, parties.PartyInRole, commonDomainObjects.Classifier]);
+            .Annotate(annotations.RestrictedfromStage, DealStageIdentifier.Prospect);
     }
 }
 

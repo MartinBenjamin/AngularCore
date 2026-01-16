@@ -29,7 +29,6 @@ export class Advisory
         lifeCycle.DataPropertyValue(commonDomainObjects.Id, DealLifeCycleIdentifier.Advisory);
 
         this.Deal = this.DeclareClass("Deal");
-        this.Deal.Define(deals.Class.HasValue(this.Deal.Iri));
         this.Deal.SubClassOf(deals.Deal);
         this.Deal.SubClassOf(deals.Type.HasValue(dealType));
         this.Deal.SubClassOf(deals.LifeCycle.HasValue(lifeCycle));
