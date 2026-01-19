@@ -54,7 +54,15 @@ namespace Peg
                     length += childLength;
                     matches += 1;
                     if(_max.HasValue && matches == _max)
+                    {
+                        Match?.Invoke(
+                           this,
+                           input,
+                           position,
+                           length);
+
                         return length;
+                    }
                 }
             }
             while(childLength >= 0);

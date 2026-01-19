@@ -1,22 +1,20 @@
-﻿using System.Text;
-
-namespace Peg
+﻿namespace Peg
 {
-    public class Identifier: Expression
+    public class Definition: Expression
     {
-        public string     Name       { get; private set; }
+        public string     Identifier { get; private set; }
 
         public Expression Expression { get; set; }
 
-        public Identifier(): this(null)
+        public Definition(): this(null)
         {
         }
 
-        public Identifier(
-            string name
+        public Definition(
+            string identifier
             ) : base(5)
         {
-            Name = name;
+            Identifier = identifier;
         }
 
         public override int Parse(

@@ -7,39 +7,39 @@ namespace Peg
     public class Parser
     {
         // Hierarchical syntax
-        public Identifier Grammar                = new Identifier(nameof(Grammar               ));
-        public Identifier Definition             = new Identifier(nameof(Definition            ));
-        public Identifier Expression             = new Identifier(nameof(Expression            ));
-        public Identifier Sequence               = new Identifier(nameof(Sequence              ));
-        public Identifier Prefix                 = new Identifier(nameof(Prefix                ));
-        public Identifier Suffix                 = new Identifier(nameof(Suffix                ));
-        public Identifier Primary                = new Identifier(nameof(Primary               ));
+        public Definition Grammar                = new Definition(nameof(Grammar               ));
+        public Definition Definition             = new Definition(nameof(Definition            ));
+        public Definition Expression             = new Definition(nameof(Expression            ));
+        public Definition Sequence               = new Definition(nameof(Sequence              ));
+        public Definition Prefix                 = new Definition(nameof(Prefix                ));
+        public Definition Suffix                 = new Definition(nameof(Suffix                ));
+        public Definition Primary                = new Definition(nameof(Primary               ));
 
         // Lexical syntax
-        public Identifier Identifier             = new Identifier(nameof(Identifier            ));
-        public Identifier IdentStart             = new Identifier(nameof(IdentStart            ));
-        public Identifier IdentCont              = new Identifier(nameof(IdentCont             ));
-        public Identifier Literal                = new Identifier(nameof(Literal               ));
-        public Identifier CharacterSet           = new Identifier(nameof(CharacterSet          ));
-        public Identifier CharacterSetComplement = new Identifier(nameof(CharacterSetComplement));
-        public Identifier Range                  = new Identifier(nameof(Range                 ));
-        public Identifier Char                   = new Identifier(nameof(Char                  ));
-        public Identifier LEFTARROW              = new Identifier(nameof(LEFTARROW             ));
+        public Definition Identifier             = new Definition(nameof(Identifier            ));
+        public Definition IdentStart             = new Definition(nameof(IdentStart            ));
+        public Definition IdentCont              = new Definition(nameof(IdentCont             ));
+        public Definition Literal                = new Definition(nameof(Literal               ));
+        public Definition CharacterSet           = new Definition(nameof(CharacterSet          ));
+        public Definition CharacterSetComplement = new Definition(nameof(CharacterSetComplement));
+        public Definition Range                  = new Definition(nameof(Range                 ));
+        public Definition Char                   = new Definition(nameof(Char                  ));
+        public Definition LEFTARROW              = new Definition(nameof(LEFTARROW             ));
 
-        public Identifier SLASH                  = new Identifier(nameof(SLASH                 ));
-        public Identifier AND                    = new Identifier(nameof(AND                   ));
-        public Identifier NOT                    = new Identifier(nameof(NOT                   ));
-        public Identifier QUESTION               = new Identifier(nameof(QUESTION              ));
-        public Identifier STAR                   = new Identifier(nameof(STAR                  ));
-        public Identifier PLUS                   = new Identifier(nameof(PLUS                  ));
-        public Identifier OPEN                   = new Identifier(nameof(OPEN                  ));
-        public Identifier CLOSE                  = new Identifier(nameof(CLOSE                 ));
-        public Identifier DOT                    = new Identifier(nameof(DOT                   ));
-        public Identifier Spacing                = new Identifier(nameof(Spacing               ));
-        public Identifier Comment                = new Identifier(nameof(Comment               ));
-        public Identifier Space                  = new Identifier(nameof(Space                 ));
-        public Identifier EndOfLine              = new Identifier(nameof(EndOfLine             ));
-        public Identifier EndOfFile              = new Identifier(nameof(EndOfFile             ));
+        public Definition SLASH                  = new Definition(nameof(SLASH                 ));
+        public Definition AND                    = new Definition(nameof(AND                   ));
+        public Definition NOT                    = new Definition(nameof(NOT                   ));
+        public Definition QUESTION               = new Definition(nameof(QUESTION              ));
+        public Definition STAR                   = new Definition(nameof(STAR                  ));
+        public Definition PLUS                   = new Definition(nameof(PLUS                  ));
+        public Definition OPEN                   = new Definition(nameof(OPEN                  ));
+        public Definition CLOSE                  = new Definition(nameof(CLOSE                 ));
+        public Definition DOT                    = new Definition(nameof(DOT                   ));
+        public Definition Spacing                = new Definition(nameof(Spacing               ));
+        public Definition Comment                = new Definition(nameof(Comment               ));
+        public Definition Space                  = new Definition(nameof(Space                 ));
+        public Definition EndOfLine              = new Definition(nameof(EndOfLine             ));
+        public Definition EndOfFile              = new Definition(nameof(EndOfFile             ));
 
         public Parser()
         {
@@ -127,7 +127,7 @@ namespace Peg
 
         public override string ToString()
         {
-            var identifiers = new []
+            var definitions = new []
             {
                 Grammar               ,
                 Definition            ,
@@ -161,14 +161,14 @@ namespace Peg
                 EndOfFile
             };
 
-            var maxIdentifierLength = identifiers.Select(identifier => identifier.Name.Length).Max();
+            var maxIdentifierLength = definitions.Select(definition => definition.Identifier.Length).Max();
             var builder = new StringBuilder();
             IExpressionWriter writer = new ExpressionWriter(builder);
-            foreach(var identifier in identifiers)
+            foreach(var definition in definitions)
             {
-                writer.Write(identifier);
+                writer.Write(definition);
                 builder.Append(" <- ");
-                writer.Write(identifier.Expression);
+                writer.Write(definition.Expression);
                 builder.AppendLine();
             }
 

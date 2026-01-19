@@ -26,10 +26,10 @@ namespace Peg
         }
 
         void IExpressionWriter.Write(
-            Identifier identifier
+            Definition definition
             )
         {
-            _builder.Append(identifier.Name ?? string.Empty);
+            _builder.Append(definition.Identifier ?? string.Empty);
         }
 
         void IExpressionWriter.Write(

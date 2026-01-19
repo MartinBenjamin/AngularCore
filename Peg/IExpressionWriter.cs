@@ -3,7 +3,7 @@
     public interface IExpressionWriter
     {
         void Write(Expression             expression            );
-        void Write(Identifier             identifier            );
+        void Write(Definition             definition            );
         void Write(Literal                literal               );
         void Write(CharacterSet           characterSet          );
         void Write(CharacterSetComplement characterSetComplement);
