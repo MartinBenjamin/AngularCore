@@ -149,13 +149,15 @@ namespace Test
         public void TestSequence(
             Expression expression,
             string     input,
-            int        match
+            bool       match,
+            int        length
             )
         {
             TestExpression(
                 expression,
                 input,
-                match);
+                match,
+                length);
         }
 
         [TestCaseSource("ChoiceTestCases"    )]
@@ -404,7 +406,8 @@ namespace Test
                                 .Select(c => new Literal(c.ToString()))
                                 .ToArray()),
                         input.Substring(0, inputLength),
-                        inputLength < length ? -(inputLength + 1) : inputLength
+                        inputLength == length,
+                        inputLength
                     });
 
                 testCases.AddRange(
@@ -418,7 +421,8 @@ namespace Test
                                 .Select(c => new Literal(c.ToString()))
                                 .ToArray()),
                         input.Substring(0, inputLength) + 'X',
-                        -(inputLength + 1)
+                        false,
+                        inputLength
                     });
 
                 return testCases;
