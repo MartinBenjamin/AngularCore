@@ -162,13 +162,15 @@ namespace Test
         public void TestChoice(
             Expression expression,
             string     input,
-            int        match
+            bool       match,
+            int        length
             )
         {
             TestExpression(
                 expression,
                 input,
-                match);
+                match,
+                length);
         }
 
         [Test]
@@ -433,11 +435,13 @@ namespace Test
                     choices.Select(c => new Literal(c.ToString())).ToArray());
                 testCases.AddRange(
                     from c in choices.Append('X')
+                    let match = choices.Contains(c)
                     select new object[]
                     {
                         expression,
                         c.ToString(),
-                        choices.Contains(c) ? 1 : -1
+                        match,
+                        match ? 1 : 0
                     });
                 return testCases;
             }
