@@ -80,6 +80,42 @@ namespace Peg
 
             return NoMatch(position + length);
         }
+
+        public override Node Parse2(
+            string input,
+            int    position
+            )
+        {
+            var node = new Node(
+                this,
+                input,
+                position);
+
+            while(true)
+            {
+                var childNode = Repeated.Parse2(
+                    input,
+                    position + node.Length);
+
+                if(childNode.Match)
+                {
+                    node.Length += childNode.Length;
+                    node.Children.Add(childNode);
+                    if(_max.HasValue && node.Children.Count == _max)
+                        return node;
+                }
+                else
+                {
+                    if(node.Children.Count >= _min)
+                        return node;
+
+                    node.Length += childNode.Length;
+                    node.Match = false;
+                    node.Children.Add(childNode);
+                    return node;
+                }
+            }
+        }
     }
 
     public class Optional: Repetition // ZeroOrOne

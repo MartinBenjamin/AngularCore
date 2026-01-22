@@ -48,6 +48,28 @@ namespace Peg
             return NoMatch(position);
         }
 
+        public override Node Parse2(
+            string input,
+            int    position
+            )
+        {
+            var node = new Node(
+                this,
+                input,
+                position);
+
+            node.Match = position < input.Length && Subsets.Any(
+                subset => subset.Switch(
+                    characters => characters.Contains(input[position]),
+                    range => range.Contains(input[position]),
+                    null));
+
+            if(node.Match)
+                node.Length = 1;
+
+            return node;
+        }
+
         public override void Write(
             IExpressionWriter writer
             )
@@ -100,6 +122,28 @@ namespace Peg
             return NoMatch(position);
         }
 
+        public override Node Parse2(
+            string input,
+            int    position
+            )
+        {
+            var node = new Node(
+                this,
+                input,
+                position);
+
+            node.Match = position < input.Length && !Subsets.Any(
+                subset => subset.Switch(
+                    characters => characters.Contains(input[position]),
+                    range => range.Contains(input[position]),
+                    null));
+
+            if(node.Match)
+                node.Length = 1;
+
+            return node;
+        }
+
         public override void Write(
             IExpressionWriter writer
             )
@@ -129,6 +173,24 @@ namespace Peg
                1);
 
             return 1;
+        }
+
+        public override Node Parse2(
+            string input,
+            int    position
+            )
+        {
+            var node = new Node(
+                this,
+                input,
+                position);
+
+            node.Match = position < input.Length;
+
+            if(node.Match)
+                node.Length = 1;
+
+            return node;
         }
 
         public override void Write(

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using CommonDomainObjects;
+using System.Text;
 
 namespace Peg
 {
@@ -31,6 +32,10 @@ namespace Peg
         public abstract int Parse(
             string input,
             int    position);
+
+        public abstract Node Parse2(
+            string input,
+            int position);
 
         public abstract void Write(IExpressionWriter writer);
 

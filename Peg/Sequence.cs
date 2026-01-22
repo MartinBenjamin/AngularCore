@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CommonDomainObjects;
+using System.Collections.Generic;
 
 namespace Peg
 {
@@ -38,6 +39,33 @@ namespace Peg
                 length);
 
             return length;
+        }
+
+        public override Node Parse2(
+            string input,
+            int    position
+            )
+        {
+            var node = new Node(
+                this,
+                input,
+                position);
+
+            foreach(var child in Children)
+            {
+                var childNode = child.Parse2(
+                    input,
+                    position + node.Length);
+
+                node.Length += childNode.Length;
+                node.Match = childNode.Match;
+                node.Children.Add(childNode);
+
+                if(!node.Match)
+                    break;
+            }
+
+            return node;
         }
 
         public override void Write(

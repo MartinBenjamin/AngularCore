@@ -21,6 +21,23 @@
                 position) < 0 ? 0 : NoMatch(position);
         }
 
+        public override Node Parse2(
+            string input,
+            int position
+            )
+        {
+            var node = new Node(
+                this,
+                input,
+                position);
+
+            node.Match = !Expression.Parse2(
+                input,
+                position).Match;
+
+            return node;
+        }
+
         public override void Write(
             IExpressionWriter writer
             )

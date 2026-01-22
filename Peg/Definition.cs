@@ -36,6 +36,26 @@
             return length;
         }
 
+        public override Node Parse2(
+            string input,
+            int    position
+            )
+        {
+            var node = new Node(
+                this,
+                input,
+                position);
+
+            var childNode = Expression.Parse2(
+                input,
+                position);
+
+            node.Length = childNode.Length;
+            node.Match = childNode.Match;
+            node.Children.Add(childNode);
+            return node;
+        }
+
         public override void Write(
             IExpressionWriter writer
             )

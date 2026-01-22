@@ -25,6 +25,20 @@
             return NoMatch(position);
         }
 
+        public override Node Parse2(
+            string input,
+            int    position
+            )
+        {
+            var node = new Node(
+                this,
+                input,
+                position);
+
+            node.Match = position == input.Length;
+            return node;
+        }
+
         public override void Write(
             IExpressionWriter writer
             )

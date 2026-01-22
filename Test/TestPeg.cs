@@ -31,17 +31,34 @@ namespace Test
             Assert.That(expression.Parse(input, 0), Is.EqualTo(match));
         }
 
+        public void TestExpression(
+            Expression expression,
+            string     input,
+            bool       match,
+            int        length
+            )
+        {
+            var node = expression.Parse2(
+                input,
+                0);
+            Assert.That(node, Is.Not.Null);
+            Assert.That(node.Match, Is.EqualTo(match));
+            Assert.That(node.Length, Is.EqualTo(length));
+        }
+
         [TestCaseSource("LiteralTestCases"   )]
         public void TestLiteral(
             Expression expression,
             string     input,
-            int        match
+            bool       match,
+            int        length
             )
         {
             TestExpression(
                 expression,
                 input,
-                match);
+                match,
+                length);
         }
 
         [TestCaseSource("CharacterSetTestCases")]
@@ -61,39 +78,45 @@ namespace Test
         public void TestOptional(
             Expression expression,
             string     input,
-            int        match
+            bool       match,
+            int        length
             )
         {
             TestExpression(
                 expression,
                 input,
-                match);
+                match,
+                length);
         }
 
         [TestCaseSource("ZeroOrMoreTestCases")]
         public void TestZeroOrMore(
             Expression expression,
             string     input,
-            int        match
+            bool       match,
+            int        length
             )
         {
             TestExpression(
                 expression,
                 input,
-                match);
+                match,
+                length);
         }
 
         [TestCaseSource("OneOrMoreTestCases" )]
         public void TestOneOrMore(
             Expression expression,
             string     input,
-            int        match
+            bool       match,
+            int        length
             )
         {
             TestExpression(
                 expression,
                 input,
-                match);
+                match,
+                length);
         }
 
         [TestCaseSource("AndTestCases"       )]
@@ -168,11 +191,13 @@ namespace Test
                 var input = literal + 'D';
                 testCases.AddRange(
                     from length in Enumerable.Range(0, input.Length + 1)
+                    let match = length >= literal.Length
                     select new object[]
                     {
                         expression,
                         input.Substring(0, length),
-                        length < literal.Length ? -1 : literal.Length
+                        match,
+                        match ? literal.Length : 0
                     });
 
                 return testCases;
@@ -268,6 +293,7 @@ namespace Test
                     {
                         expression,
                         new string(Enumerable.Repeat('A', count).ToArray()) + 'B',
+                        true,
                         count + 1
                     });
                 return testCases;
@@ -286,12 +312,12 @@ namespace Test
                     b);
                 testCases.AddRange(
                     from count in Enumerable.Range(0, 3)
-                    from final in new[] { 'B', 'C' }
                     select new object[]
                     {
                         expression,
-                        new string(Enumerable.Repeat('A', count).ToArray()) + final,
-                        final == 'B' ? count + 1 : -(count + 1)
+                        new string(Enumerable.Repeat('A', count).ToArray()) + 'B',
+                        true,
+                        count + 1
                     });
                 return testCases;
             }
@@ -309,12 +335,13 @@ namespace Test
                     b);
                 testCases.AddRange(
                     from count in Enumerable.Range(0, 3)
-                    from final in new[] { 'B', 'C' }
+                    let match = count >= 1
                     select new object[]
                     {
                         expression,
-                        new string(Enumerable.Repeat('A', count).ToArray()) + final,
-                        count < 1 ? -1 : final == 'B' ? count + 1 : -(count + 1)
+                        new string(Enumerable.Repeat('A', count).ToArray()) + 'B',
+                        match,
+                        match ? count + 1 : 0
                     });
                 return testCases;
             }

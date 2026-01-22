@@ -39,6 +39,34 @@ namespace Peg
             return NoMatch(position);
         }
 
+        public override Node Parse2(
+            string input,
+            int    position
+            )
+        {
+            var node = new Node(
+                this,
+                input,
+                position);
+
+            foreach(var child in Children)
+            {
+                var childNode = child.Parse2(
+                    input,
+                    position);
+
+                if(childNode.Match)
+                {
+                    node.Length += childNode.Length;
+                    node.Children.Add(childNode);
+                    return node;
+                }
+            }
+
+            node.Match = false;
+            return node;
+        }
+
         public override void Write(
             IExpressionWriter writer
             )
