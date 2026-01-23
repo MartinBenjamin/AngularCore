@@ -123,26 +123,30 @@ namespace Test
         public void TestAnd(
             Expression expression,
             string     input,
-            int        match
+            bool       match,
+            int        length
             )
         {
             TestExpression(
                 expression,
                 input,
-                match);
+                match,
+                length);
         }
 
         [TestCaseSource("NotTestCases"       )]
         public void TestNot(
             Expression expression,
             string     input,
-            int        match
+            bool       match,
+            int        length
             )
         {
             TestExpression(
                 expression,
                 input,
-                match);
+                match,
+                length);
         }
 
         [TestCaseSource("SequenceTestCases"  )]
@@ -364,7 +368,8 @@ namespace Test
                     {
                         expression,
                         literal,
-                        literal == literals[0] ? 0 : -1
+                        literal == literals[0],
+                        0
                     });
                 return testCases;
             }
@@ -383,7 +388,8 @@ namespace Test
                     {
                         expression,
                         literal,
-                        literal != literals[0] ? 0 : -1
+                        literal != literals[0],
+                        0
                     });
                 return testCases;
             }
