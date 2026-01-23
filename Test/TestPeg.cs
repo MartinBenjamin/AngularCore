@@ -25,15 +25,6 @@ namespace Test
         public void TestExpression(
             Expression expression,
             string     input,
-            int        match
-            )
-        {
-            Assert.That(expression.Parse(input, 0), Is.EqualTo(match));
-        }
-
-        public void TestExpression(
-            Expression expression,
-            string     input,
             bool       match,
             int        length
             )
@@ -65,13 +56,15 @@ namespace Test
         public void TestCharacterSet(
             Expression expression,
             string     input,
-            int        match
+            bool       match,
+            int        length
             )
         {
             TestExpression(
                 expression,
                 input,
-                match);
+                match,
+                length);
         }
 
         [TestCaseSource("OptionalTestCases"  )]
@@ -226,41 +219,49 @@ namespace Test
                 Expression expression = new CharacterSet(range);
                 testCases.AddRange(
                     from c in testCharacters
+                    let match = range.Contains(c)
                     select new object[]
                     {
                         expression,
                         c.ToString(),
-                        range.Contains(c) ? 1 : -1
+                        match,
+                        match ? 1 : 0
                     });
 
                 expression = new CharacterSetComplement(range);
                 testCases.AddRange(
                     from c in testCharacters
+                    let match = !range.Contains(c)
                     select new object[]
                     {
                         expression,
                         c.ToString(),
-                        range.Contains(c) ? -1 : 1
+                        match,
+                        match ? 1 : 0
                     });
 
                 expression = new CharacterSet(characters);
                 testCases.AddRange(
                     from c in testCharacters
+                    let match = characters.Contains(c)
                     select new object[]
                     {
                         expression,
                         c.ToString(),
-                        characters.Contains(c) ? 1 : -1
+                        match,
+                        match ? 1 : 0
                     });
 
                 expression = new CharacterSetComplement(characters);
                 testCases.AddRange(
                     from c in testCharacters
+                    let match = !characters.Contains(c)
                     select new object[]
                     {
                         expression,
                         c.ToString(),
-                        characters.Contains(c) ? -1 : 1
+                        match,
+                        match ? 1 : 0
                     });
 
                 expression = new Dot();
@@ -270,6 +271,7 @@ namespace Test
                     {
                         expression,
                         c.ToString(),
+                        true,
                         1
                     });
 
@@ -278,7 +280,8 @@ namespace Test
                     {
                         expression,
                         string.Empty,
-                        -1
+                        false,
+                        0
                     });
 
                 return testCases;
