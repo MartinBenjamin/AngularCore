@@ -44,11 +44,6 @@ namespace Peg
             int    position
             )
         {
-            var node = new Node(
-                this,
-                input,
-                position);
-
             foreach(var child in Children)
             {
                 var childNode = child.Parse2(
@@ -56,15 +51,20 @@ namespace Peg
                     position);
 
                 if(childNode.Match)
-                {
-                    node.Length += childNode.Length;
-                    node.Children.Add(childNode);
-                    return node;
-                }
+                    return new NonTerminalNode(
+                        this,
+                        input,
+                        position,
+                        true,
+                        [childNode]);
             }
 
-            node.Match = false;
-            return node;
+            return new NonTerminalNode(
+                this,
+                input,
+                position,
+                false,
+                []);
         }
 
         public override void Write(

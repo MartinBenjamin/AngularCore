@@ -23,20 +23,15 @@
 
         public override Node Parse2(
             string input,
-            int position
-            )
-        {
-            var node = new Node(
+            int    position
+            ) => new TerminalNode(
                 this,
                 input,
-                position);
-
-            node.Match = !Expression.Parse2(
-                input,
-                position).Match;
-
-            return node;
-        }
+                position,
+                0,
+                !Expression.Parse2(
+                    input,
+                    position).Match);
 
         public override void Write(
             IExpressionWriter writer

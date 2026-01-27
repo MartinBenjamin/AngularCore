@@ -1,5 +1,6 @@
 ﻿using CommonDomainObjects;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Peg
 {
@@ -46,26 +47,31 @@ namespace Peg
             int    position
             )
         {
-            var node = new Node(
-                this,
-                input,
-                position);
+            var match = true;
+            IList<Node> children = [];
+            var currentPosition = position;
 
             foreach(var child in Children)
             {
                 var childNode = child.Parse2(
                     input,
-                    position + node.Length);
+                    currentPosition);
 
-                node.Length += childNode.Length;
-                node.Match = childNode.Match;
-                node.Children.Add(childNode);
+                match = childNode.Match;
 
-                if(!node.Match)
+                if(!match)
                     break;
+
+                children.Add(childNode);
+                currentPosition += childNode.Length;
             }
 
-            return node;
+            return new NonTerminalNode(
+                this,
+                input,
+                position,
+                match,
+                children);
         }
 
         public override void Write(

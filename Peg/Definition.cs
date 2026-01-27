@@ -41,19 +41,16 @@
             int    position
             )
         {
-            var node = new Node(
-                this,
-                input,
-                position);
-
             var childNode = Expression.Parse2(
                 input,
                 position);
 
-            node.Length = childNode.Length;
-            node.Match = childNode.Match;
-            node.Children.Add(childNode);
-            return node;
+            return new NonTerminalNode(
+                this,
+                input,
+                position,
+                childNode.Match,
+                [childNode]);
         }
 
         public override void Write(

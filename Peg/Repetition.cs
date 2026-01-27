@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Peg
 {
@@ -86,33 +87,44 @@ namespace Peg
             int    position
             )
         {
-            var node = new Node(
-                this,
-                input,
-                position);
+            IList<Node> children = [];
+            var currentPosition = position;
 
-            while(true)
+            while (true)
             {
                 var childNode = Repeated.Parse2(
                     input,
-                    position + node.Length);
+                    currentPosition);
 
                 if(childNode.Match)
                 {
-                    node.Length += childNode.Length;
-                    node.Children.Add(childNode);
-                    if(_max.HasValue && node.Children.Count == _max)
-                        return node;
+                    children.Add(childNode);
+                    currentPosition += childNode.Length;
+                    if(_max.HasValue && children.Count == _max)
+                        return new NonTerminalNode(
+                            this,
+                            input,
+                            position,
+                            true,
+                            children);
                 }
                 else
                 {
-                    if(node.Children.Count >= _min)
-                        return node;
+                    if(children.Count >= _min)
+                        return new NonTerminalNode(
+                            this,
+                            input,
+                            position,
+                            true,
+                            children);
 
-                    node.Length += childNode.Length;
-                    node.Match = false;
-                    node.Children.Add(childNode);
-                    return node;
+                    children.Add(childNode);
+                    return new NonTerminalNode(
+                        this,
+                        input,
+                        position,
+                        false,
+                        children);
                 }
             }
         }

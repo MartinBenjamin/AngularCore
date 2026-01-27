@@ -1,6 +1,8 @@
 ﻿using CommonDomainObjects;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Peg
 {
@@ -53,21 +55,18 @@ namespace Peg
             int    position
             )
         {
-            var node = new Node(
-                this,
-                input,
-                position);
-
-            node.Match = position < input.Length && Subsets.Any(
+            var match = position < input.Length && Subsets.Any(
                 subset => subset.Switch(
                     characters => characters.Contains(input[position]),
                     range => range.Contains(input[position]),
                     null));
 
-            if(node.Match)
-                node.Length = 1;
-
-            return node;
+            return new TerminalNode(
+                this,
+                input,
+                position,
+                match ? 1 : 0,
+                match);
         }
 
         public override void Write(
@@ -127,21 +126,18 @@ namespace Peg
             int    position
             )
         {
-            var node = new Node(
-                this,
-                input,
-                position);
-
-            node.Match = position < input.Length && !Subsets.Any(
+            var match = position < input.Length && !Subsets.Any(
                 subset => subset.Switch(
                     characters => characters.Contains(input[position]),
                     range => range.Contains(input[position]),
                     null));
 
-            if(node.Match)
-                node.Length = 1;
-
-            return node;
+            return new TerminalNode(
+                this,
+                input,
+                position,
+                match ? 1 : 0,
+                match);
         }
 
         public override void Write(
@@ -180,17 +176,14 @@ namespace Peg
             int    position
             )
         {
-            var node = new Node(
+            var match = position < input.Length;
+
+            return new TerminalNode(
                 this,
                 input,
-                position);
-
-            node.Match = position < input.Length;
-
-            if(node.Match)
-                node.Length = 1;
-
-            return node;
+                position,
+                match ? 1 : 0,
+                match);
         }
 
         public override void Write(

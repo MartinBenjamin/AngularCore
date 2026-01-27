@@ -1,4 +1,6 @@
-﻿namespace Peg
+﻿using System.Text.RegularExpressions;
+
+namespace Peg
 {
     public class EndOfFile: Expression
     {
@@ -28,16 +30,12 @@
         public override Node Parse2(
             string input,
             int    position
-            )
-        {
-            var node = new Node(
+            ) => new TerminalNode(
                 this,
                 input,
-                position);
-
-            node.Match = position == input.Length;
-            return node;
-        }
+                position,
+                0,
+                position == input.Length);
 
         public override void Write(
             IExpressionWriter writer

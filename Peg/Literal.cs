@@ -36,19 +36,14 @@
             int    position
             )
         {
-            var node = new Node(
+            var match = position + Value.Length <= input.Length && input.Substring(position, Value.Length) == Value;
+
+            return new TerminalNode(
                 this,
                 input,
-                position);
-
-            if(position + Value.Length <= input.Length &&
-               input.Substring(position, Value.Length) == Value)
-                node.Length = Value.Length;
-
-            else
-                node.Match = false;
-
-            return node;
+                position,
+                match ? Value.Length : 0,
+                match);
         }
 
         public override void Write(
