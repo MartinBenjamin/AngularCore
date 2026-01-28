@@ -108,31 +108,31 @@ namespace Test
                     [
                         string.Empty,
                         Convert(new string[,]{}),
-                        -1
+                        0
                     ]);
                 testCases.Add(
                     [
                         "ab",
                         Convert(new string[,]{ { "ab" } }),
-                        -3
+                        -1
                     ]);
                 testCases.Add(
                     [
                         "ab\r\ncd",
                         Convert(new string[,]{ { "ab" }, { "cd" } }),
-                        -7
+                        -5
                     ]);
                 testCases.Add(
                     [
                         "ab,cd",
                         Convert(new string[,]{ { "ab", "cd" } }),
-                        -6
+                        -1
                     ]);
                 testCases.Add(
                     [
                         "ab,cd\r\nef,gh",
                         Convert(new string[,]{ { "ab", "cd" }, { "ef", "gh" } }),
-                        -13
+                        -8
                     ]);
                 testCases.Add(
                     [
@@ -144,7 +144,7 @@ namespace Test
                     [
                         "a\n",
                         Convert(new string[,]{ { "a" } }),
-                        -2
+                        -1
                     ]);
                 testCases.Add(
                     [
@@ -156,13 +156,13 @@ namespace Test
                     [
                         "\"a\"b",
                         Convert(new string[,]{ { "a" } }),
-                        -4
+                        -1
                     ]);
                 testCases.Add(
                     [
                         "a\"",
                         Convert(new string[,]{ { "a" } }),
-                        -2
+                        -1
                     ]);
 
                 return testCases;
