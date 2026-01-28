@@ -3,6 +3,13 @@ using System.Linq;
 
 namespace Peg
 {
+    public interface INodeVisitor
+    {
+        void Enter(NonTerminalNode node);
+        void Enter(TerminalNode   node);
+        void Exit(NonTerminalNode node);
+        void Exit(TerminalNode    node);
+    }
     public abstract class Node
     {
         public Expression Expression { get; private set; }
@@ -10,6 +17,8 @@ namespace Peg
         public int        Position   { get; private set; }
         public int        Length     { get; private set; }
         public bool       Match      { get; private set; }
+
+        public abstract void Visit(INodeVisitor visitor);
 
         protected Node(
             Expression expression,
@@ -46,6 +55,16 @@ namespace Peg
         {
             Children = children.AsReadOnly();
         }
+
+        public override void Visit(
+            INodeVisitor visitor
+            )
+        {
+            visitor.Enter(this);
+            foreach(var child in Children)
+                child.Visit(visitor);
+            visitor.Exit(this);
+        }
     }
 
     public class TerminalNode: Node
@@ -63,6 +82,14 @@ namespace Peg
                 length,
                 match)
         {
+        }
+
+        public override void Visit(
+            INodeVisitor visitor
+            )
+        {
+            visitor.Enter(this);
+            visitor.Exit(this);
         }
     }
 }
