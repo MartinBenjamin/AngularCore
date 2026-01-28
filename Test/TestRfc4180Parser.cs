@@ -58,47 +58,41 @@ namespace Test
             {
                 var testCases = new List<object[]>();
                 testCases.Add(
-                    new object[]
-                    {
+                    [
                         "\r\n",
                         Convert(new string[,]{ { string.Empty } }),
                         2
-                    });
+                    ]);
                 testCases.Add(
-                    new object[]
-                    {
+                    [
                         "\r\n\r\n",
                         Convert(new string[,]{ { string.Empty }, { string.Empty } }),
                         4
-                    });
+                    ]);
                 testCases.Add(
-                    new object[]
-                    {
+                    [
                         "ab\r\n",
                         Convert(new string[,]{ { "ab" } }),
                         4
-                    });
+                    ]);
                 testCases.Add(
-                    new object[]
-                    {
+                    [
                         "ab\r\ncd\r\n",
                         Convert(new string[,]{ { "ab" }, { "cd" } }),
                         8
-                    });
+                    ]);
                 testCases.Add(
-                    new object[]
-                    {
+                    [
                         "ab,cd\r\n",
                         Convert(new string[,]{ { "ab", "cd" } }),
                         7
-                    });
+                    ]);
                 testCases.Add(
-                    new object[]
-                    {
+                    [
                         "ab,cd\r\nef,gh\r\n",
                         Convert(new string[,]{ { "ab", "cd" }, { "ef", "gh" } }),
                         14
-                    });
+                    ]);
                 testCases.AddRange(
                     from escaped in ",\r\n\""
                     from field in ("ab" + escaped).Permute().Select(charList => new string(charList.ToArray()))
@@ -111,75 +105,65 @@ namespace Test
                     });
 
                 testCases.Add(
-                    new object[]
-                    {
+                    [
                         string.Empty,
                         Convert(new string[,]{}),
                         -1
-                    });
+                    ]);
                 testCases.Add(
-                    new object[]
-                    {
+                    [
                         "ab",
                         Convert(new string[,]{ { "ab" } }),
                         -3
-                    });
+                    ]);
                 testCases.Add(
-                    new object[]
-                    {
+                    [
                         "ab\r\ncd",
                         Convert(new string[,]{ { "ab" }, { "cd" } }),
                         -7
-                    });
+                    ]);
                 testCases.Add(
-                    new object[]
-                    {
+                    [
                         "ab,cd",
                         Convert(new string[,]{ { "ab", "cd" } }),
                         -6
-                    });
+                    ]);
                 testCases.Add(
-                    new object[]
-                    {
+                    [
                         "ab,cd\r\nef,gh",
                         Convert(new string[,]{ { "ab", "cd" }, { "ef", "gh" } }),
                         -13
-                    });
+                    ]);
                 testCases.Add(
-                    new object[]
-                    {
+                    [
                         "\na",
                         Convert(new string[,]{ { string.Empty } }),
                         -1
-                    });
+                    ]);
                 testCases.Add(
-                    new object[]
-                    {
+                    [
                         "a\n",
                         Convert(new string[,]{ { "a" } }),
                         -2
-                    });
+                    ]);
                 testCases.Add(
-                    new object[]
-                    {
+                    [
                         "\"",
                         Convert(new string[,]{ { string.Empty } }),
                         -1
-                    });
+                    ]);
                 testCases.Add(
-                   new object[]
-                   {
+                    [
                         "\"a\"b",
                         Convert(new string[,]{ { "a" } }),
                         -4
-                   });
+                    ]);
                 testCases.Add(
-                    new object[]
-                    {
+                    [
                         "a\"",
                         Convert(new string[,]{ { "a" } }),
                         -2
-                    });
+                    ]);
 
                 return testCases;
             }
