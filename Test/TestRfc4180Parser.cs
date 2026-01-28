@@ -27,7 +27,7 @@ namespace Test
             var parser = new Rfc4180Parser(
                 field => { },
                 ()    => count += 1);
-            var length = parser.Parse(content);
+            var length = parser.Parse2(content);
             Assert.That(length, Is.EqualTo(content.Length));
         }
 
@@ -48,7 +48,7 @@ namespace Test
                     row += 1;
                     record.Clear();
                 });
-            var length = parser.Parse(input);
+            var length = parser.Parse2(input);
             Assert.That(length, Is.EqualTo(expectedLength));
         }
 

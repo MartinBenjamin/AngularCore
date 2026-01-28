@@ -6,6 +6,56 @@ namespace Peg
     // https://www.ietf.org/rfc/rfc4180.txt
     public class Rfc4180Parser
     {
+        private class Visitor : INodeVisitor
+        {
+            private readonly StringBuilder _fieldBuilder = new StringBuilder();
+            private readonly Rfc4180Parser _parser;
+
+            public Visitor(
+                Rfc4180Parser parser
+                )
+            {
+                _parser = parser;
+            }
+
+            void INodeVisitor.Enter(
+                NonTerminalNode node
+                )
+            {
+            }
+
+            void INodeVisitor.Enter(
+                TerminalNode node
+                )
+            {
+            }
+
+            void INodeVisitor.Exit(
+                NonTerminalNode node
+                )
+            {
+                if(node.Match)
+                {
+                    if(node.Expression == _parser.NotEscapedContent || node.Expression == _parser.EscapedContent || node.Expression == _parser.DquoteDquote)
+                        _fieldBuilder.Append(node.Input[node.Position]);
+
+                    else if(node.Expression == _parser.Field)
+                    {
+                        _parser._fieldAction(_fieldBuilder.ToString());
+                        _fieldBuilder.Clear();
+                    }
+                    else if(node.Expression == _parser.Record)
+                        _parser._recordAction();
+                }
+            }
+
+            void INodeVisitor.Exit(
+                TerminalNode node
+                )
+            {
+            }
+        }
+
         public Definition File              = new Definition(nameof(File             ));
         public Definition Record            = new Definition(nameof(Record           ));
         public Definition CrLf              = new Definition(nameof(CrLf             ));
@@ -64,6 +114,17 @@ namespace Peg
             return File.Parse(
                 input,
                 0);
+        }
+
+        public int Parse2(
+            string input
+            )
+        {
+            var node = File.Parse2(
+                input,
+                0);
+
+            return node.Match ? node.Length : -(node.Length + 1);
         }
     }
 }
