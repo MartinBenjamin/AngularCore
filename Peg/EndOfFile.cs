@@ -1,6 +1,4 @@
-﻿using System.Text.RegularExpressions;
-
-namespace Peg
+﻿namespace Peg
 {
     public class EndOfFile: Expression
     {
