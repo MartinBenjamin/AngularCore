@@ -124,6 +124,8 @@ namespace Peg
                 input,
                 0);
 
+            node.Visit(new Visitor(this));
+
             return node.Match ? node.Length : -(node.Length + 1);
         }
     }
