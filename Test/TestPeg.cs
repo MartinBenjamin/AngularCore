@@ -434,6 +434,22 @@ namespace Test
                         inputLength
                     });
 
+                var sequence = new Sequence(new Literal("A"), new Sequence(new Literal("B"), new Literal("C")));
+                testCases.Add(
+                    [
+                        sequence,
+                        "ABC",
+                        true,
+                        3
+                    ]);
+                testCases.Add(
+                    [
+                        sequence,
+                        "ABX",
+                        false,
+                        2
+                    ]);
+
                 return testCases;
             }
         }
@@ -456,6 +472,7 @@ namespace Test
                         match,
                         match ? 1 : 0
                     });
+
                 return testCases;
             }
         }

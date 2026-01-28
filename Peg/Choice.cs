@@ -67,6 +67,47 @@ namespace Peg
                 []);
         }
 
+        public override IEnumerable<Event> Parse3(
+            string input,
+            int    position
+            )
+        {
+            yield return new Begin(
+                this,
+                input,
+                position);
+
+            foreach(var child in Children)
+            {
+                Event last = null;
+                foreach(var parseEvent in child.Parse3(input, position))
+                {
+                    yield return parseEvent;
+                    last = parseEvent;
+                }
+
+                var end = (End)last;
+                if(end.Match)
+                {
+                    yield return new End(
+                        this,
+                        input,
+                        position,
+                        end.Length,
+                        true);
+
+                    yield break;
+                }
+            }
+
+            yield return new End(
+                this,
+                input,
+                position,
+                0,
+                false);
+        }
+
         public override void Write(
             IExpressionWriter writer
             )

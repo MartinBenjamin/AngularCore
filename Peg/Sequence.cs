@@ -56,12 +56,11 @@ namespace Peg
                     currentPosition);
 
                 match = childNode.Match;
+                children.Add(childNode);
+                currentPosition += childNode.Length;
 
                 if(!match)
                     break;
-
-                children.Add(childNode);
-                currentPosition += childNode.Length;
             }
 
             return new NonTerminalNode(
@@ -70,6 +69,44 @@ namespace Peg
                 position,
                 match,
                 children);
+        }
+
+        public override IEnumerable<Event> Parse3(
+            string input,
+            int    position
+            )
+        {
+            yield return new Begin(
+                this,
+                input,
+                position);
+
+            var match = true;
+            var length = 0;
+
+            foreach(var child in Children)
+            {
+                Event last = null;
+                foreach(var parseEvent in child.Parse3(input, position + length))
+                {
+                    yield return parseEvent;
+                    last = parseEvent;
+                }
+
+                var end = (End)last;
+                match = end.Match;
+                length += end.Length;
+
+                if(!match)
+                    break;
+            }
+
+            yield return new End(
+                this,
+                input,
+                position,
+                length,
+                match);
         }
 
         public override void Write(

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 
 namespace Peg
 {
@@ -36,11 +37,9 @@ namespace Peg
             string input,
             int position);
 
-        //public abstract (Event, Expression) StartParse(
-        //    string input,
-        //    int    position);
-
-        //public abstract (Event, Expression) ChildParsed(End end);
+        public virtual IEnumerable<Event> Parse3(
+            string input,
+            int    position) => null;
 
         public abstract void Write(IExpressionWriter writer);
 
