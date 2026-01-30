@@ -35,6 +35,21 @@ namespace Test
             Assert.That(node, Is.Not.Null);
             Assert.That(node.Match, Is.EqualTo(match));
             Assert.That(node.Length, Is.EqualTo(length));
+        } 
+
+        public void TestExpressionEnumerable(
+            Expression expression,
+            string     input,
+            bool       match,
+            int        length
+            )
+        {
+            var end = expression.Parse3(
+                input,
+                0).OfType<End>().Last();
+            Assert.That(end, Is.Not.Null);
+            Assert.That(end.Match, Is.EqualTo(match));
+            Assert.That(end.Length, Is.EqualTo(length));
         }
 
         [TestCaseSource("LiteralTestCases"   )]

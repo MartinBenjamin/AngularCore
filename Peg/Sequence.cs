@@ -103,7 +103,7 @@ namespace Peg
                 input,
                 position,
                 length,
-                last.Match);
+                last?.Match ?? true);
         }
 
         public override void Write(
