@@ -79,21 +79,20 @@ namespace Peg
 
             foreach(var child in Children)
             {
-                Event last = null;
+                End last = null;
                 foreach(var parseEvent in child.Parse3(input, position))
                 {
                     yield return parseEvent;
-                    last = parseEvent;
+                    last = parseEvent as End;
                 }
 
-                var end = (End)last;
-                if(end.Match)
+                if(last.Match)
                 {
                     yield return new End(
                         this,
                         input,
                         position,
-                        end.Length,
+                        last.Length,
                         true);
 
                     yield break;

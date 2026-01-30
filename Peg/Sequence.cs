@@ -81,23 +81,20 @@ namespace Peg
                 input,
                 position);
 
-            var match = true;
             var length = 0;
+            End last = null;
 
             foreach(var child in Children)
             {
-                Event last = null;
                 foreach(var parseEvent in child.Parse3(input, position + length))
                 {
                     yield return parseEvent;
-                    last = parseEvent;
+                    last = parseEvent as End;
                 }
 
-                var end = (End)last;
-                match = end.Match;
-                length += end.Length;
+                length += last.Length;
 
-                if(!match)
+                if(!last.Match)
                     break;
             }
 
@@ -106,7 +103,7 @@ namespace Peg
                 input,
                 position,
                 length,
-                match);
+                last.Match);
         }
 
         public override void Write(

@@ -90,7 +90,7 @@ namespace Peg
             IList<Node> children = [];
             var currentPosition = position;
 
-            while (true)
+            while(true)
             {
                 var childNode = Repeated.Parse2(
                     input,
