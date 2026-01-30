@@ -67,6 +67,25 @@ namespace Peg
                 match);
         }
 
+        public override IEnumerable<Event> Parse3(
+            string input,
+            int    position
+            )
+        {
+            var match = position < input.Length && Subsets.Any(
+                subset => subset.Switch(
+                    characters => characters.Contains(input[position]),
+                    range => range.Contains(input[position]),
+                    null));
+
+            yield return new End(
+                this,
+                input,
+                position,
+                match ? 1 : 0,
+                match);
+        }
+
         public override void Write(
             IExpressionWriter writer
             )
@@ -138,6 +157,25 @@ namespace Peg
                 match);
         }
 
+        public override IEnumerable<Event> Parse3(
+            string input,
+            int    position
+            )
+        {
+            var match = position < input.Length && !Subsets.Any(
+                subset => subset.Switch(
+                    characters => characters.Contains(input[position]),
+                    range => range.Contains(input[position]),
+                    null));
+
+            yield return new End(
+                this,
+                input,
+                position,
+                match ? 1 : 0,
+                match);
+        }
+
         public override void Write(
             IExpressionWriter writer
             )
@@ -177,6 +215,21 @@ namespace Peg
             var match = position < input.Length;
 
             return new TerminalNode(
+                this,
+                input,
+                position,
+                match ? 1 : 0,
+                match);
+        }
+
+        public override IEnumerable<Event> Parse3(
+            string input,
+            int    position
+            )
+        {
+            var match = position < input.Length;
+
+            yield return new End(
                 this,
                 input,
                 position,

@@ -1,4 +1,7 @@
-﻿namespace Peg
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Peg
 {
     public class Not: Expression
     {
@@ -32,6 +35,19 @@
                 !Expression.Parse2(
                     input,
                     position).Match);
+
+        public override IEnumerable<Event> Parse3(
+            string input,
+            int    position
+            )
+        {
+            yield return new End(
+                this,
+                input,
+                position,
+                0,
+                !Expression.Parse3(input, position).OfType<End>().Last().Match);
+        }
 
         public override void Write(
             IExpressionWriter writer

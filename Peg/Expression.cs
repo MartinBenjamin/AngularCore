@@ -35,11 +35,11 @@ namespace Peg
 
         public abstract Node Parse2(
             string input,
-            int position);
+            int    position);
 
-        public virtual IEnumerable<Event> Parse3(
+        public abstract IEnumerable<Event> Parse3(
             string input,
-            int    position) => null;
+            int    position);
 
         public abstract void Write(IExpressionWriter writer);
 

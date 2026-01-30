@@ -128,6 +128,62 @@ namespace Peg
                 }
             }
         }
+
+        public override IEnumerable<Event> Parse3(
+            string input,
+            int    position
+            )
+        {
+            yield return new Begin(
+                this,
+                input,
+                position);
+
+            var length = 0;
+            var childCount = 0;
+            while(true)
+            {
+                End last = null;
+                foreach (var parseEvent in Repeated.Parse3(input, position + length))
+                {
+                    yield return parseEvent;
+                    last = parseEvent as End;
+                }
+
+                if(last.Match)
+                {
+                    length += last.Length;
+                    ++childCount;
+                    if(_max.HasValue && childCount == _max)
+                        yield return new End(
+                            this,
+                            input,
+                            position,
+                            length,
+                            true);
+                }
+                else
+                {
+                    if(childCount >= _min)
+                        yield return new End(
+                            this,
+                            input,
+                            position,
+                            length,
+                            true);
+
+                    else
+                        yield return new End(
+                            this,
+                            input,
+                            position,
+                            length + last.Length,
+                            false);
+
+                    yield break;
+                }
+            }
+        }
     }
 
     public class Optional: Repetition // ZeroOrOne

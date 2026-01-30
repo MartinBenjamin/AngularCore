@@ -1,4 +1,6 @@
-﻿namespace Peg
+﻿using System.Collections.Generic;
+
+namespace Peg
 {
     public class Definition: Expression
     {
@@ -51,6 +53,31 @@
                 position,
                 childNode.Match,
                 [childNode]);
+        }
+
+        public override IEnumerable<Event> Parse3(
+            string input,
+            int    position
+            )
+        {
+            yield return new Begin(
+                this,
+                input,
+                position);
+
+            End last = null;
+            foreach(var parseEvent in Expression.Parse3(input, position))
+            {
+                yield return parseEvent;
+                last = parseEvent as End;
+            }
+
+            yield return new End(
+                this,
+                input,
+                position,
+                last.Length,
+                last.Match);
         }
 
         public override void Write(

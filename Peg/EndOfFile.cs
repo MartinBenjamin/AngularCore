@@ -1,4 +1,6 @@
-﻿namespace Peg
+﻿using System.Collections.Generic;
+
+namespace Peg
 {
     public class EndOfFile: Expression
     {
@@ -34,6 +36,19 @@
                 position,
                 0,
                 position == input.Length);
+
+        public override IEnumerable<Event> Parse3(
+            string input,
+            int    position
+            )
+        {
+            yield return new End(
+                this,
+                input,
+                position,
+                0,
+                position == input.Length);
+        }
 
         public override void Write(
             IExpressionWriter writer
