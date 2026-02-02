@@ -85,8 +85,8 @@ namespace Peg
             Field            .Expression = new Choice(Escaped, NotEscaped);
             Escaped          .Expression = new Sequence(Dquote, new ZeroOrMore(new Choice(EscapedContent, DquoteDquote)), Dquote);
             NotEscaped       .Expression = new ZeroOrMore(NotEscapedContent);
-            EscapedContent   .Expression = new CharacterSetComplement("\""); 
-            NotEscapedContent.Expression = new CharacterSetComplement(",\r\n\"");
+            EscapedContent   .Expression = new Sequence(new Not(new CharacterSet("\"")), new Dot()); 
+            NotEscapedContent.Expression = new Sequence(new Not(new CharacterSet(",\r\n\"")), new Dot());
             DquoteDquote     .Expression = new Literal("\"\"");
             CrLf             .Expression = new Literal("\r\n");
             Dquote           .Expression = new Literal("\"");
