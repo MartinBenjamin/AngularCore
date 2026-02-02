@@ -53,15 +53,6 @@ namespace Peg
         }
 
         void IExpressionWriter.Write(
-            CharacterSetComplement characterSetComplement
-            )
-        {
-            _builder.Append("[^");
-            Write(characterSetComplement.Subsets);
-            _builder.Append(']');
-        }
-
-        void IExpressionWriter.Write(
             Dot dot
             )
         {

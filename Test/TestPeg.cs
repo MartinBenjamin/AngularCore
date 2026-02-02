@@ -243,34 +243,10 @@ namespace Test
                         match ? 1 : 0
                     });
 
-                expression = new CharacterSetComplement(range);
-                testCases.AddRange(
-                    from c in testCharacters
-                    let match = !range.Contains(c)
-                    select new object[]
-                    {
-                        expression,
-                        c.ToString(),
-                        match,
-                        match ? 1 : 0
-                    });
-
                 expression = new CharacterSet(characters);
                 testCases.AddRange(
                     from c in testCharacters
                     let match = characters.Contains(c)
-                    select new object[]
-                    {
-                        expression,
-                        c.ToString(),
-                        match,
-                        match ? 1 : 0
-                    });
-
-                expression = new CharacterSetComplement(characters);
-                testCases.AddRange(
-                    from c in testCharacters
-                    let match = !characters.Contains(c)
                     select new object[]
                     {
                         expression,
