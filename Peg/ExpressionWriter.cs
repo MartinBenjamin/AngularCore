@@ -8,8 +8,25 @@ namespace Peg
 {
     public class ExpressionWriter : IExpressionWriter
     {
+        private readonly IDictionary<char, string> _literalEscape = new Dictionary<char, string>
+        {
+            {'\\', "\\\\"},
+            {'\r', "\\r" },
+            {'\n', "\\n" },
+            {'\t', "\\t" },
+            {'"' , "\\\""}
+        };
+
+        private readonly IDictionary<char, string> _characterSetEscape = new Dictionary<char, string>
+        {
+            {'\\', "\\\\"},
+            {'\r', "\\r" },
+            {'\n', "\\n" },
+            {'\t', "\\t" },
+            {']' , "\\]" }
+        };
+
         private readonly StringBuilder _builder;
-        private          char[]        _escaped;
 
         public ExpressionWriter(
             StringBuilder builder
@@ -36,10 +53,9 @@ namespace Peg
             Literal literal
             )
         {
-            _escaped = "\\\"".ToCharArray();
             _builder.Append('"');
             foreach(var c in literal.Value)
-                _builder.Append(Escape(c));
+                _builder.Append(_literalEscape.TryGetValue(c, out string escaped) ? escaped : c);
             _builder.Append('"');
         }
 
@@ -168,26 +184,18 @@ namespace Peg
             IEnumerable<Union<char[], Range<char>>> subsets
             )
         {
-            _escaped = "\\-]".ToCharArray();
             foreach(var subset in subsets)
                 subset.Switch(
                     characters =>
                     {
                         foreach(var c in characters)
-                            _builder.Append(Escape(c));
+                            _builder.Append(_characterSetEscape.TryGetValue(c, out string escaped) ? escaped : c);
                     },
                     range => _builder
-                        .Append(Escape(range.Start))
+                        .Append(_characterSetEscape.TryGetValue(range.Start, out string escaped) ? escaped : range.Start)
                         .Append('-')
-                        .Append(Escape(range.End)),
+                        .Append(_characterSetEscape.TryGetValue(range.End, out escaped) ? escaped : range.End),
                     null);
-        }
-
-        private string Escape(
-            char c
-            )
-        {
-            return _escaped.Contains(c) ? "\\" + c : c.ToString();
         }
     }
 }
