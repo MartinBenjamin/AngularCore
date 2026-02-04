@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Peg
@@ -6,11 +7,11 @@ namespace Peg
     public interface INodeVisitor
     {
         void Enter(NonTerminalNode node);
-        void Enter(TerminalNode   node);
+        void Enter(TerminalNode    node);
         void Exit(NonTerminalNode node);
         void Exit(TerminalNode    node);
     }
-    public abstract class Node
+    public abstract class Node: IEnumerable<Node>
     {
         public Expression Expression { get; private set; }
         public string     Input      { get; private set; }
@@ -19,6 +20,13 @@ namespace Peg
         public bool       Match      { get; private set; }
 
         public abstract void Visit(INodeVisitor visitor);
+
+        public abstract IEnumerator<Node> GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
 
         protected Node(
             Expression expression,
@@ -38,7 +46,7 @@ namespace Peg
 
     public class NonTerminalNode: Node
     {
-        public IReadOnlyList<Node> Children   { get; private set; }
+        public IReadOnlyList<Node> Children { get; private set; }
 
         public NonTerminalNode(
             Expression  expression,
@@ -65,6 +73,13 @@ namespace Peg
                 child.Visit(visitor);
             visitor.Exit(this);
         }
+
+        public override IEnumerator<Node> GetEnumerator()
+        {
+            yield return this;
+            foreach(var child in Children)
+                yield return child;
+        }
     }
 
     public class TerminalNode: Node
@@ -90,6 +105,11 @@ namespace Peg
         {
             visitor.Enter(this);
             visitor.Exit(this);
+        }
+
+        public override IEnumerator<Node> GetEnumerator()
+        {
+            yield return this;
         }
     }
 }
