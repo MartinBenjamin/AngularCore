@@ -7,40 +7,40 @@ namespace Peg
     public class Parser
     {
         // Hierarchical syntax
-        public Definition Grammar      = new Definition(nameof(Grammar     ));
-        public Definition Definition   = new Definition(nameof(Definition  ));
-        public Definition Expression   = new Definition(nameof(Expression  ));
-        public Definition Sequence     = new Definition(nameof(Sequence    ));
-        public Definition Prefix       = new Definition(nameof(Prefix      ));
-        public Definition Suffix       = new Definition(nameof(Suffix      ));
-        public Definition Primary      = new Definition(nameof(Primary     ));
-
-        // Lexical syntax
-        public Definition Identifier   = new Definition(nameof(Identifier  ));
-        public Definition IdentStart   = new Definition(nameof(IdentStart  ));
-        public Definition IdentCont    = new Definition(nameof(IdentCont   ));
-        public Definition Literal      = new Definition(nameof(Literal     ));
-        public Definition CharacterSet = new Definition(nameof(CharacterSet));
-        public Definition Range        = new Definition(nameof(Range       ));
+        public Definition Grammar          = new Definition(nameof(Grammar         ));
+        public Definition Definition       = new Definition(nameof(Definition      ));
+        public Definition Expression       = new Definition(nameof(Expression      ));
+        public Definition Sequence         = new Definition(nameof(Sequence        ));
+        public Definition Prefix           = new Definition(nameof(Prefix          ));
+        public Definition Suffix           = new Definition(nameof(Suffix          ));
+        public Definition Primary          = new Definition(nameof(Primary         ));
+                                                                                   
+        // Lexical syntax                                                          
+        public Definition Identifier       = new Definition(nameof(Identifier      ));
+        public Definition IdentStart       = new Definition(nameof(IdentStart      ));
+        public Definition IdentCont        = new Definition(nameof(IdentCont       ));
+        public Definition Literal          = new Definition(nameof(Literal         ));
+        public Definition CharacterSet     = new Definition(nameof(CharacterSet    ));
+        public Definition Range            = new Definition(nameof(Range           ));
         public Definition DoubleStringChar = new Definition(nameof(DoubleStringChar));
         public Definition SingleStringChar = new Definition(nameof(SingleStringChar));
         public Definition CharacterSetChar = new Definition(nameof(CharacterSetChar));
-        public Definition LEFTARROW    = new Definition(nameof(LEFTARROW   ));
-
-        public Definition SLASH        = new Definition(nameof(SLASH       ));
-        public Definition AND          = new Definition(nameof(AND         ));
-        public Definition NOT          = new Definition(nameof(NOT         ));
-        public Definition QUESTION     = new Definition(nameof(QUESTION    ));
-        public Definition STAR         = new Definition(nameof(STAR        ));
-        public Definition PLUS         = new Definition(nameof(PLUS        ));
-        public Definition OPEN         = new Definition(nameof(OPEN        ));
-        public Definition CLOSE        = new Definition(nameof(CLOSE       ));
-        public Definition DOT          = new Definition(nameof(DOT         ));
-        public Definition Spacing      = new Definition(nameof(Spacing     ));
-        public Definition Comment      = new Definition(nameof(Comment     ));
-        public Definition Space        = new Definition(nameof(Space       ));
-        public Definition EndOfLine    = new Definition(nameof(EndOfLine   ));
-        public Definition EndOfFile    = new Definition(nameof(EndOfFile   ));
+        public Definition LEFTARROW        = new Definition(nameof(LEFTARROW       ));
+                                                                                   
+        public Definition SLASH            = new Definition(nameof(SLASH           ));
+        public Definition AND              = new Definition(nameof(AND             ));
+        public Definition NOT              = new Definition(nameof(NOT             ));
+        public Definition QUESTION         = new Definition(nameof(QUESTION        ));
+        public Definition STAR             = new Definition(nameof(STAR            ));
+        public Definition PLUS             = new Definition(nameof(PLUS            ));
+        public Definition OPEN             = new Definition(nameof(OPEN            ));
+        public Definition CLOSE            = new Definition(nameof(CLOSE           ));
+        public Definition DOT              = new Definition(nameof(DOT             ));
+        public Definition Spacing          = new Definition(nameof(Spacing         ));
+        public Definition Comment          = new Definition(nameof(Comment         ));
+        public Definition Space            = new Definition(nameof(Space           ));
+        public Definition EndOfLine        = new Definition(nameof(EndOfLine       ));
+        public Definition EndOfFile        = new Definition(nameof(EndOfFile       ));
 
         public Parser()
         {
