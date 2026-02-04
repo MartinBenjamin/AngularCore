@@ -22,7 +22,9 @@ namespace Peg
         public Definition Literal      = new Definition(nameof(Literal     ));
         public Definition CharacterSet = new Definition(nameof(CharacterSet));
         public Definition Range        = new Definition(nameof(Range       ));
-        public Definition Char         = new Definition(nameof(Char        ));
+        public Definition DoubleStringChar = new Definition(nameof(DoubleStringChar));
+        public Definition SingleStringChar = new Definition(nameof(SingleStringChar));
+        public Definition CharacterSetChar = new Definition(nameof(CharacterSetChar));
         public Definition LEFTARROW    = new Definition(nameof(LEFTARROW   ));
 
         public Definition SLASH        = new Definition(nameof(SLASH       ));
@@ -65,23 +67,29 @@ namespace Peg
             Literal.Expression = new Choice(
                 new Sequence(
                     new CharacterSet("\""),
-                    new ZeroOrMore(new Sequence(new Not(new CharacterSet("\"")), Char)),
+                    new ZeroOrMore(DoubleStringChar),
                     new CharacterSet("\""),
                     Spacing),
                 new Sequence(
                     new CharacterSet("'"),
-                    new ZeroOrMore(new Sequence(new Not(new CharacterSet("'")), Char)),
+                    SingleStringChar,
                     new CharacterSet("'"),
                     Spacing));
             CharacterSet.Expression = new Sequence(
                 new Literal("["),
-                new ZeroOrMore(new Sequence(new Not(new Literal("]")), Range)),
+                new ZeroOrMore(Range),
                 new Literal("]"),
                 Spacing);
-            Range       .Expression = new Choice(new Sequence(Char, new Literal("-"), Char), Char);
-            Char        .Expression = new Choice(
-                new Sequence(new Literal("\\"), new CharacterSet("nrt'\"[]\\")),
-                new Sequence(new Not(new Literal("\\")), new Dot()));
+            Range       .Expression = new Choice(new Sequence(CharacterSetChar, new Literal("-"), CharacterSetChar), CharacterSetChar);
+            DoubleStringChar.Expression = new Choice(
+                new Sequence(new Not(new CharacterSet("\"\\")), new Dot()),
+                new Sequence(new Literal("\\"), new CharacterSet("nrt\\\"")));
+            SingleStringChar.Expression = new Choice(
+                new Sequence(new Not(new CharacterSet("'\\")), new Dot()),
+                new Sequence(new Literal("\\"), new CharacterSet("nrt\\'")));
+            CharacterSetChar.Expression = new Choice(
+                new Sequence(new Not(new CharacterSet("]\\")), new Dot()),
+                new Sequence(new Literal("\\"), new CharacterSet("nrt\\]")));
             LEFTARROW   .Expression = new Sequence(new Literal("<-"), Spacing);
             SLASH       .Expression = new Sequence(new Literal( "/"), Spacing);
             AND         .Expression = new Sequence(new Literal( "&"), Spacing);
@@ -122,7 +130,9 @@ namespace Peg
                 Literal               ,
                 CharacterSet          ,
                 Range                 ,
-                Char                  ,
+                DoubleStringChar      ,
+                SingleStringChar      ,
+                CharacterSetChar      ,
                 LEFTARROW             ,
                 SLASH                 ,
                 AND                   ,
