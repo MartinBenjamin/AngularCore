@@ -170,15 +170,25 @@ namespace Peg
             Node node
             )
         {
-            return from n in node where n.Expression == Definition select new Definition(ExtractIdentifer(n.Children[0].Children[0]));
+            return from n in node where n.Expression == Definition select new Definition(
+                ExtractIdentifer(n.Children[0].Children[0]),
+                ExtractExpression(n.Children[0].Children[0]));
         }
 
-        public string ExtractIdentifer(
+        private string ExtractIdentifer(
             Node node
             )
         {
             var spacing = (from n in node where n.Expression == Spacing select n).First();
             return node.Input.Substring(node.Position, node.Length -  spacing.Length);
         }
+
+        private Expression ExtractExpression(
+            Node node
+            )
+        {
+            return null;
+        }
+
     }
 }

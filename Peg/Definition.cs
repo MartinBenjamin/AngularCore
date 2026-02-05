@@ -8,15 +8,13 @@ namespace Peg
 
         public Expression Expression { get; set; }
 
-        public Definition(): this(null)
-        {
-        }
-
         public Definition(
-            string identifier
+            string     identifier,
+            Expression expression = null
             ) : base(5)
         {
             Identifier = identifier;
+            Expression = expression;
         }
 
         public override int Parse(
