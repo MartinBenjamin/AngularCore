@@ -40,7 +40,7 @@ namespace Peg
         {
             var match = position + Value.Length <= input.Length && input.Substring(position, Value.Length) == Value;
 
-            return new TerminalNode(
+            return new Node(
                 this,
                 input,
                 position,

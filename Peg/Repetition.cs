@@ -101,7 +101,7 @@ namespace Peg
                     children.Add(childNode);
                     currentPosition += childNode.Length;
                     if(_max.HasValue && children.Count == _max)
-                        return new NonTerminalNode(
+                        return new Node(
                             this,
                             input,
                             position,
@@ -111,7 +111,7 @@ namespace Peg
                 else
                 {
                     if(children.Count >= _min)
-                        return new NonTerminalNode(
+                        return new Node(
                             this,
                             input,
                             position,
@@ -119,7 +119,7 @@ namespace Peg
                             children);
 
                     children.Add(childNode);
-                    return new NonTerminalNode(
+                    return new Node(
                         this,
                         input,
                         position,

@@ -59,7 +59,7 @@ namespace Peg
                     range => range.Contains(input[position]),
                     null));
 
-            return new TerminalNode(
+            return new Node(
                 this,
                 input,
                 position,
@@ -124,7 +124,7 @@ namespace Peg
         {
             var match = position < input.Length;
 
-            return new TerminalNode(
+            return new Node(
                 this,
                 input,
                 position,

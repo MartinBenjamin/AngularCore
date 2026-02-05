@@ -27,7 +27,7 @@ namespace Peg
         public override Node Parse2(
             string input,
             int    position
-            ) => new TerminalNode(
+            ) => new Node(
                 this,
                 input,
                 position,

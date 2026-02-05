@@ -47,7 +47,7 @@ namespace Peg
                 input,
                 position);
 
-            return new NonTerminalNode(
+            return new Node(
                 this,
                 input,
                 position,

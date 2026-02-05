@@ -63,7 +63,7 @@ namespace Peg
                     break;
             }
 
-            return new NonTerminalNode(
+            return new Node(
                 this,
                 input,
                 position,

@@ -51,7 +51,7 @@ namespace Peg
                     position);
 
                 if(childNode.Match)
-                    return new NonTerminalNode(
+                    return new Node(
                         this,
                         input,
                         position,
@@ -59,7 +59,7 @@ namespace Peg
                         [childNode]);
             }
 
-            return new NonTerminalNode(
+            return new Node(
                 this,
                 input,
                 position,
