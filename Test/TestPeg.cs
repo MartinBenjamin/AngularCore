@@ -198,10 +198,10 @@ namespace Test
                 grammar,
                 0);
             Assert.That(node.Length, Is.EqualTo(grammar.Length));
-            var definitions = from n in node where n.Expression == parser.Definition select parser.ExtractIdentifer(n.Children[0].Children[0]);
+            var definitions = parser.ExtractDefinitions(node);
             Trace.WriteLine(definitions.Count());
             foreach (var definition in definitions)
-                Trace.WriteLine(definition);
+                Trace.WriteLine(definition.Identifier);
         }
 
         public static IEnumerable<object[]> LiteralTestCases

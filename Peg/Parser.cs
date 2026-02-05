@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Peg
@@ -162,6 +164,13 @@ namespace Peg
             }
 
             return builder.ToString();
+        }
+
+        public IEnumerable<Definition> ExtractDefinitions(
+            Node node
+            )
+        {
+            return from n in node where n.Expression == Definition select new Definition(ExtractIdentifer(n.Children[0].Children[0]));
         }
 
         public string ExtractIdentifer(
