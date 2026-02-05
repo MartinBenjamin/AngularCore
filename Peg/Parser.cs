@@ -163,5 +163,13 @@ namespace Peg
 
             return builder.ToString();
         }
+
+        public string ExtractIdentifer(
+            Node node
+            )
+        {
+            var spacing = (from n in node where n.Expression == Spacing select n).First();
+            return node.Input.Substring(node.Position, node.Length -  spacing.Length);
+        }
     }
 }

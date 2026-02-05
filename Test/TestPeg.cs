@@ -192,8 +192,16 @@ namespace Test
         {
             var parser = new Parser();
             var grammar = parser.ToString();
-            Trace.Write(grammar);
+            //Trace.Write(grammar);
             Assert.That(parser.Grammar.Parse(grammar, 0), Is.EqualTo(grammar.Length));
+            var node = parser.Grammar.Parse2(
+                grammar,
+                0);
+            Assert.That(node.Length, Is.EqualTo(grammar.Length));
+            var definitions = from n in node where n.Expression == parser.Definition select parser.ExtractIdentifer(n.Children[0].Children[0]);
+            Trace.WriteLine(definitions.Count());
+            foreach (var definition in definitions)
+                Trace.WriteLine(definition);
         }
 
         public static IEnumerable<object[]> LiteralTestCases

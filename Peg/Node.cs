@@ -46,11 +46,19 @@ namespace Peg
             Children   = children.AsReadOnly();
         }
 
+        public string Value
+        {
+            get => Input.Substring(
+                Position,
+                Length);
+        }
+
         public IEnumerator<Node> GetEnumerator()
         {
             yield return this;
             foreach(var child in Children)
-                yield return child;
+                foreach(var node in child)
+                    yield return node;
         }
 
         IEnumerator IEnumerable.GetEnumerator()
