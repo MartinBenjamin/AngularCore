@@ -193,7 +193,7 @@ namespace Peg
             var children = new List<Expression>();
             children.Add(ExtractSequence(node.Children[0]));
 
-            foreach (var child in node.Children[1].Children)
+            foreach(var child in node.Children[1].Children)
                 children.Add(ExtractSequence(child.Children[1]));
 
             return children.Count == 1 ? children[0] : new Choice(children);
@@ -216,6 +216,10 @@ namespace Peg
             Node node
             )
         {
+            var definition = (Definition)node.Expression;
+            if(definition.Identifier != "Prefix")
+                throw new ArgumentException($"Expected Prefix but got {definition.Identifier}.");
+
             var children = new List<Expression>();
             return new Sequence();
         }
