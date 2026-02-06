@@ -251,10 +251,20 @@ namespace Peg
             )
         {
             var definition = (Definition)node.Expression;
-            if (definition.Identifier != "Primary")
+            if(definition.Identifier != "Primary")
                 throw new ArgumentException($"Expected Primary but got {definition.Identifier}.");
 
-            var children = new List<Expression>();
+            node = node.Children[0];
+            var chosen = node.Children[0];
+            if(chosen.Expression is Sequence)
+            {
+                if(chosen.Children[0].Expression == Identifier)
+                    ;
+
+                else // Group.
+                    return ExtractChoice(chosen.Children[1]);
+            }
+
             return new Sequence();
         }
     }
