@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 
@@ -169,9 +170,20 @@ namespace Peg
 
         public IEnumerable<Definition> ExtractDefinitions(
             Node node
-            ) => from n in node where n.Expression == Definition select new Definition(
-                ExtractIdentifer(n.Children[0].Children[0]),
-                ExtractChoice(n.Children[0].Children[2]));
+            )
+        {
+            var definitions = from n in node where n.Expression == Definition select (new Definition(ExtractIdentifer(n.Children[0].Children[0])), n.Children[0].Children[2]);
+            var map = definitions.ToDictionary(
+                t => t.Item1.Identifier,
+                t => t.Item1);
+
+            foreach(var (definition, definitionNode) in definitions)
+                definition.Expression = ExtractChoice(
+                    map,
+                    definitionNode);
+
+            return from definition in definitions select definition.Item1;
+        }
 
         private string ExtractIdentifer(
             Node node
@@ -186,21 +198,27 @@ namespace Peg
         }
 
         private Expression ExtractChoice(
-            Node node
+            IDictionary<string, Definition> definitions,
+            Node                            node
             )
         {
             node = node.Children[0];
             var children = new List<Expression>();
-            children.Add(ExtractSequence(node.Children[0]));
+            children.Add(ExtractSequence(
+                definitions,
+                node.Children[0]));
 
             foreach(var child in node.Children[1].Children)
-                children.Add(ExtractSequence(child.Children[1]));
+                children.Add(ExtractSequence(
+                    definitions,
+                    child.Children[1]));
 
             return children.Count == 1 ? children[0] : new Choice(children);
         }
 
         private Expression ExtractSequence(
-            Node node
+            IDictionary<string, Definition> definitions,
+            Node                            node
             )
         {
             var definition = (Definition)node.Expression;
@@ -208,12 +226,13 @@ namespace Peg
                 throw new ArgumentException($"Expected Sequence but got {definition.Identifier}.");
 
             node = node.Children[0];
-            var children = node.Children.Select(ExtractPrefix).ToList();
+            var children = node.Children.Select(child => ExtractPrefix(definitions, child)).ToList();
             return children.Count == 1 ? children[0] : new Sequence(children);
         }
 
         private Expression ExtractPrefix(
-            Node node
+            IDictionary<string, Definition> definitions,
+            Node                            node
             )
         {
             var definition = (Definition)node.Expression;
@@ -221,7 +240,9 @@ namespace Peg
                 throw new ArgumentException($"Expected Prefix but got {definition.Identifier}.");
 
             node = node.Children[0];
-            var suffix = ExtractSuffix(node.Children[1]);
+            var suffix = ExtractSuffix(
+                definitions,
+                node.Children[1]);
             if(node.Children[0].Children.Count == 0)
                 return suffix;
 
@@ -229,7 +250,8 @@ namespace Peg
         }
 
         private Expression ExtractSuffix(
-            Node node
+            IDictionary<string, Definition> definitions,
+            Node                            node
             )
         {
             var definition = (Definition)node.Expression;
@@ -237,7 +259,9 @@ namespace Peg
                 throw new ArgumentException($"Expected Suffix but got {definition.Identifier}.");
 
             node = node.Children[0];
-            var primary = ExtractPrimary(node.Children[0]);
+            var primary = ExtractPrimary(
+                definitions,
+                node.Children[0]);
 
             if(node.Children[1].Children.Count == 0)
                 return primary;
@@ -247,7 +271,8 @@ namespace Peg
         }
 
         private Expression ExtractPrimary(
-            Node node
+            IDictionary<string, Definition> definitions,
+            Node                            node
             )
         {
             var definition = (Definition)node.Expression;
@@ -259,10 +284,12 @@ namespace Peg
             if(chosen.Expression is Sequence)
             {
                 if(chosen.Children[0].Expression == Identifier)
-                    ;
+                    return definitions[ExtractIdentifer(chosen.Children[0])];
 
                 else // Group.
-                    return ExtractChoice(chosen.Children[1]);
+                    return ExtractChoice(
+                        definitions,
+                        chosen.Children[1]);
             }
 
             return new Sequence();
