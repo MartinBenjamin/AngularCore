@@ -7,6 +7,13 @@ namespace Peg
         public IReadOnlyList<Expression> Children { get; private set; }
 
         public Choice(
+            IList<Expression> children
+            ) : base(1)
+        {
+            Children = children.AsReadOnly();
+        }
+
+        public Choice(
             params Expression[] children
             ) : base(1)
         {

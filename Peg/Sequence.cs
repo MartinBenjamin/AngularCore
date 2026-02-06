@@ -7,6 +7,13 @@ namespace Peg
         public IReadOnlyList<Expression> Children { get; private set; }
 
         public Sequence(
+            IList<Expression> children
+            ) : base(2)
+        {
+            Children = children.AsReadOnly();
+        }
+
+        public Sequence(
             params Expression[] children
             ) : base(2)
         {

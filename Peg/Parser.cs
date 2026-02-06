@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -168,27 +169,55 @@ namespace Peg
 
         public IEnumerable<Definition> ExtractDefinitions(
             Node node
-            )
-        {
-            return from n in node where n.Expression == Definition select new Definition(
+            ) => from n in node where n.Expression == Definition select new Definition(
                 ExtractIdentifer(n.Children[0].Children[0]),
-                ExtractExpression(n.Children[0].Children[0]));
-        }
+                ExtractChoice(n.Children[0].Children[2]));
 
         private string ExtractIdentifer(
             Node node
             )
         {
+            var definition = (Definition)node.Expression;
+            if(definition.Identifier != "Identifier")
+                throw new ArgumentException($"Expected Identifier but got {definition.Identifier}.");
+
             var spacing = (from n in node where n.Expression == Spacing select n).First();
             return node.Input.Substring(node.Position, node.Length -  spacing.Length);
         }
 
-        private Expression ExtractExpression(
+        private Expression ExtractChoice(
             Node node
             )
         {
-            return null;
+            node = node.Children[0];
+            var children = new List<Expression>();
+            children.Add(ExtractSequence(node.Children[0]));
+
+            foreach (var child in node.Children[1].Children)
+                children.Add(ExtractSequence(child.Children[1]));
+
+            return children.Count == 1 ? children[0] : new Choice(children);
         }
 
+        private Expression ExtractSequence(
+            Node node
+            )
+        {
+            var definition = (Definition)node.Expression;
+            if(definition.Identifier != "Sequence")
+                throw new ArgumentException($"Expected Sequence but got {definition.Identifier}.");
+
+            node = node.Children[0];
+            var children = node.Children.Select(ExtractPrefix).ToList();
+            return children.Count == 1 ? children[0] : new Sequence(children);
+        }
+
+        private Expression ExtractPrefix(
+            Node node
+            )
+        {
+            var children = new List<Expression>();
+            return new Sequence();
+        }
     }
 }
