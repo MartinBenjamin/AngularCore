@@ -292,7 +292,34 @@ namespace Peg
                         chosen.Children[1]);
             }
 
+            if(chosen.Expression == Literal)
+                return ExtractLiteral(chosen);
+
             return new Sequence();
+        }
+
+        private Literal ExtractLiteral(
+            Node node
+            )
+        {
+            var definition = (Definition)node.Expression;
+            if (definition.Identifier != "Literal")
+                throw new ArgumentException($"Expected Literal but got {definition.Identifier}.");
+
+            node = node.Children[0];
+            if(node.Children[0].Value == "\"")
+                return new Literal(
+                    new String([.. (from n in node
+                    where n.Expression == DoubleStringChar
+                    let s = n.Value
+                    select s[s.Length - 1])]));
+
+
+            return new Literal(
+                new String([.. (from n in node
+                    where n.Expression == SingleStringChar
+                    let s = n.Value
+                    select s[s.Length - 1])]));
         }
     }
 }
