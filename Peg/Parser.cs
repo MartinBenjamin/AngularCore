@@ -236,6 +236,24 @@ namespace Peg
             if(definition.Identifier != "Suffix")
                 throw new ArgumentException($"Expected Suffix but got {definition.Identifier}.");
 
+            node = node.Children[0];
+            var primary = ExtractPrimary(node.Children[0]);
+
+            if(node.Children[1].Children.Count == 0)
+                return primary;
+
+            var suffix = node.Children[1].Children[0];
+            return suffix.Expression == QUESTION ? new Optional(primary) : suffix.Expression == STAR ? new ZeroOrMore(primary) : new OneOrMore(primary);
+        }
+
+        private Expression ExtractPrimary(
+            Node node
+            )
+        {
+            var definition = (Definition)node.Expression;
+            if (definition.Identifier != "Primary")
+                throw new ArgumentException($"Expected Primary but got {definition.Identifier}.");
+
             var children = new List<Expression>();
             return new Sequence();
         }
