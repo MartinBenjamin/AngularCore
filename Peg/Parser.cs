@@ -220,6 +220,22 @@ namespace Peg
             if(definition.Identifier != "Prefix")
                 throw new ArgumentException($"Expected Prefix but got {definition.Identifier}.");
 
+            node = node.Children[0];
+            var suffix = ExtractSuffix(node.Children[1]);
+            if(node.Children[0].Children.Count == 0)
+                return suffix;
+
+            return node.Children[0].Children[0].Expression == AND ? new And(suffix) : new Not(suffix);
+        }
+
+        private Expression ExtractSuffix(
+            Node node
+            )
+        {
+            var definition = (Definition)node.Expression;
+            if(definition.Identifier != "Suffix")
+                throw new ArgumentException($"Expected Suffix but got {definition.Identifier}.");
+
             var children = new List<Expression>();
             return new Sequence();
         }
