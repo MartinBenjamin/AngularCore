@@ -295,6 +295,9 @@ namespace Peg
             if(chosen.Expression == Literal)
                 return ExtractLiteral(chosen);
 
+            if (chosen.Expression == CharacterSet)
+                return ExtractCharacterSet(chosen);
+
             return new Sequence();
         }
 
@@ -320,6 +323,32 @@ namespace Peg
                     where n.Expression == SingleStringChar
                     let s = n.Value
                     select s[s.Length - 1])]));
+        }
+
+        private CharacterSet ExtractCharacterSet(
+            Node node
+            )
+        {
+            var definition = (Definition)node.Expression;
+            if (definition.Identifier != "CharacterSet")
+                throw new ArgumentException($"Expected CharacterSet but got {definition.Identifier}.");
+
+            return new CharacterSet((from n in node where n.Expression == Range select ExtractRange(n)).ToList());
+        }
+
+        private CommonDomainObjects.Range<char> ExtractRange(
+            Node node
+            )
+        {
+            var definition = (Definition)node.Expression;
+            if (definition.Identifier != "Range")
+                throw new ArgumentException($"Expected Range but got {definition.Identifier}.");
+
+            var characters = (from n in node where n.Expression == CharacterSetChar select n.Value[n.Length - 1]).ToList();
+
+            return new CommonDomainObjects.Range<char>(
+                characters[0],
+                characters[characters.Count - 1]);
         }
     }
 }
