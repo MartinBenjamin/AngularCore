@@ -154,25 +154,14 @@ namespace Peg
                 EndOfFile
             };
 
-            var maxIdentifierLength = definitions.Select(definition => definition.Identifier.Length).Max();
-            var builder = new StringBuilder();
-            IExpressionWriter writer = new ExpressionWriter(builder);
-            foreach(var definition in definitions)
-            {
-                writer.Write(definition);
-                builder.Append(" <- ");
-                writer.Write(definition.Expression);
-                builder.AppendLine();
-            }
-
-            return builder.ToString();
+            return ExpressionWriter.Write(definitions);
         }
 
         public IEnumerable<Definition> ExtractDefinitions(
             Node node
             )
         {
-            var definitions = from n in node where n.Expression == Definition select (new Definition(ExtractIdentifer(n.Children[0].Children[0])), n.Children[0].Children[2]);
+            var definitions = (from n in node where n.Expression == Definition select (new Definition(ExtractIdentifer(n.Children[0].Children[0])), n.Children[0].Children[2])).ToList();
             var map = definitions.ToDictionary(
                 t => t.Item1.Identifier,
                 t => t.Item1);
@@ -266,7 +255,7 @@ namespace Peg
             if(node.Children[1].Children.Count == 0)
                 return primary;
 
-            var suffix = node.Children[1].Children[0];
+            var suffix = node.Children[1].Children[0].Children[0];
             return suffix.Expression == QUESTION ? new Optional(primary) : suffix.Expression == STAR ? new ZeroOrMore(primary) : new OneOrMore(primary);
         }
 

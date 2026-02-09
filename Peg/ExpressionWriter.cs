@@ -164,6 +164,23 @@ namespace Peg
             }
         }
 
+        public static string Write(
+            IEnumerable<Definition> definitions
+            )
+        {
+            var builder = new StringBuilder();
+            IExpressionWriter writer = new ExpressionWriter(builder);
+            foreach(var definition in definitions)
+            {
+                writer.Write(definition);
+                builder.Append(" <- ");
+                writer.Write(definition.Expression);
+                builder.AppendLine();
+            }
+
+            return builder.ToString();
+        }
+
         private void Write(
             Expression expression,
             Expression subExpression
