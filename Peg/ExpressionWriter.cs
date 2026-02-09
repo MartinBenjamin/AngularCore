@@ -63,7 +63,7 @@ namespace Peg
             )
         {
             _builder.Append("[");
-            Write(characterSet.Subsets);
+            Write(characterSet.Ranges);
             _builder.Append(']');
         }
 
@@ -180,21 +180,20 @@ namespace Peg
         }
 
         private void Write(
-            IEnumerable<Union<char[], Range<char>>> subsets
+            IEnumerable<Range<char>> ranges
             )
         {
-            foreach(var subset in subsets)
-                subset.Switch(
-                    characters =>
-                    {
-                        foreach(var c in characters)
-                            _builder.Append(_characterSetEscape.TryGetValue(c, out string escaped) ? escaped : c);
-                    },
-                    range => _builder
+            foreach(var range in ranges)
+                if(range.Start == range.End)
+                    _builder.Append(_characterSetEscape.TryGetValue(range.Start, out string escaped) ? escaped : range.Start);
+
+                else
+                {
+                    _builder
                         .Append(_characterSetEscape.TryGetValue(range.Start, out string escaped) ? escaped : range.Start)
                         .Append('-')
-                        .Append(_characterSetEscape.TryGetValue(range.End, out escaped) ? escaped : range.End),
-                    null);
+                        .Append(_characterSetEscape.TryGetValue(range.End, out escaped) ? escaped : range.End);
+                }
         }
     }
 }

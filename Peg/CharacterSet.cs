@@ -6,20 +6,37 @@ namespace Peg
 {
     public class CharacterSet: Expression
     {
-        public IReadOnlyList<Union<char[], Range<char>>> Subsets { get; private set; }
+        public IReadOnlyList<Range<char>> Ranges { get; private set; }
 
         public CharacterSet(
-            params Union<char[], Range<char>>[] subsets
+            params Union<char[], Range<char>>[] ranges
             ) : base(5)
         {
-            Subsets = subsets;
+            var consolidatedRanges = new List<Range<char>>();
+            foreach(var range in ranges)
+                range.Switch(
+                    characters =>
+                    {
+                        foreach(var character in characters)
+                            consolidatedRanges.Add(new Range<char>(character, character));
+                    },
+                    range => consolidatedRanges.Add(new Range<char>(range.Start, range.End)),
+                    null);
+            Ranges = consolidatedRanges;
+        }
+
+        public CharacterSet(
+            IList<Range<char>> ranges
+            ) : base(5)
+        {
+            Ranges = ranges.AsReadOnly();
         }
 
         public CharacterSet(
             string characters
             ) : base(5)
         {
-            Subsets = new List<Union<char[], Range<char>>> { characters.ToCharArray() };
+            Ranges = characters.Select(character => new Range<char>(character, character)).ToList();
         }
 
         public override int Parse(
@@ -30,11 +47,7 @@ namespace Peg
             if(position >= input.Length)
                 return NoMatch(position);
 
-            if(Subsets.Any(
-                subset => subset.Switch(
-                    characters => characters.Contains(input[position]),
-                    range      => range.Contains(input[position]),
-                    null)))
+            if(Ranges.Any(range => range.Contains(input[position])))
             {
                 Match?.Invoke(
                    this,
@@ -53,11 +66,7 @@ namespace Peg
             int    position
             )
         {
-            var match = position < input.Length && Subsets.Any(
-                subset => subset.Switch(
-                    characters => characters.Contains(input[position]),
-                    range => range.Contains(input[position]),
-                    null));
+            var match = position < input.Length && Ranges.Any(range => range.Contains(input[position]));
 
             return new Node(
                 this,
@@ -72,11 +81,7 @@ namespace Peg
             int    position
             )
         {
-            var match = position < input.Length && Subsets.Any(
-                subset => subset.Switch(
-                    characters => characters.Contains(input[position]),
-                    range => range.Contains(input[position]),
-                    null));
+            var match = position < input.Length && Ranges.Any(range => range.Contains(input[position]));
 
             yield return new End(
                 this,
