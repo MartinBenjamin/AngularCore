@@ -292,13 +292,17 @@ namespace Peg
                         chosen.Children[1]);
             }
 
-            if(chosen.Expression == Literal)
+            var chosenDefinition = (Definition)chosen.Expression;
+            if(chosenDefinition == Literal)
                 return ExtractLiteral(chosen);
 
-            if (chosen.Expression == CharacterSet)
+            if(chosenDefinition == CharacterSet)
                 return ExtractCharacterSet(chosen);
 
-            return new Sequence();
+            if(chosenDefinition == DOT)
+                return new Dot();
+
+            throw new ApplicationException($"Unexpected definition: {chosenDefinition.Identifier}.");
         }
 
         private Literal ExtractLiteral(
