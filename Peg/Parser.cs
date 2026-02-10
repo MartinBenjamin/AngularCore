@@ -10,6 +10,24 @@ namespace Peg
     // http://bford.info/pub/lang/peg.pdf
     public class Parser
     {
+        private readonly IDictionary<string, char> _literalEscape = new Dictionary<string, char>
+        {
+            {"\\\\", '\\'},
+            {"\\r" , '\r'},
+            {"\\n" , '\n'},
+            {"\\t" , '\t'},
+            {"\\\"", '"' }
+        };
+
+        private readonly IDictionary<string, char> _characterSetEscape = new Dictionary<string, char>
+        {
+            {"\\\\", '\\'},
+            {"\\r" , '\r'},
+            {"\\n" , '\n'},
+            {"\\t" , '\t'},
+            {"\\]" , ']' }
+        };
+
         // Hierarchical syntax
         public Definition Grammar          = new Definition(nameof(Grammar         ));
         public Definition Definition       = new Definition(nameof(Definition      ));
@@ -76,7 +94,7 @@ namespace Peg
                     Spacing),
                 new Sequence(
                     new CharacterSet("'"),
-                    SingleStringChar,
+                    new ZeroOrMore(SingleStringChar),
                     new CharacterSet("'"),
                     Spacing));
             CharacterSet.Expression = new Sequence(
@@ -303,19 +321,18 @@ namespace Peg
                 throw new ArgumentException($"Expected Literal but got {definition.Identifier}.");
 
             node = node.Children[0];
-            if (node.Children[0].Value[0] == '"')
+            if(node.Children[0].Value[0] == '"')
                 return new Literal(
                     new String([.. (from n in node
                     where n.Expression == DoubleStringChar
                     let s = n.Value
-                    select s[s.Length - 1])]));
-
+                    select s.Length == 2 ?_literalEscape[s] : s[0])]));
 
             return new Literal(
                 new String([.. (from n in node
                     where n.Expression == SingleStringChar
                     let s = n.Value
-                    select s[s.Length - 1])]));
+                    select s.Length == 2 ?_characterSetEscape[s] : s[0])]));
         }
 
         private CharacterSet ExtractCharacterSet(
