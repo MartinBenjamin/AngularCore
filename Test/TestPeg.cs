@@ -199,10 +199,9 @@ namespace Test
                 0);
             Assert.That(node.Length, Is.EqualTo(grammar.Length));
             var definitions = parser.ExtractDefinitions(node);
+            var grammar2 = ExpressionWriter.Write(definitions);
             Trace.Write(ExpressionWriter.Write(definitions));
-            //Trace.WriteLine(definitions.Count());
-            //foreach (var definition in definitions)
-            //    Trace.WriteLine(definition.Identifier);
+            Assert.That(grammar, Is.EqualTo(grammar2));
         }
 
         public static IEnumerable<object[]> LiteralTestCases
