@@ -332,7 +332,7 @@ namespace Peg
                 new String([.. (from n in node
                     where n.Expression == SingleStringChar
                     let s = n.Value
-                    select s.Length == 2 ?_characterSetEscape[s] : s[0])]));
+                    select s.Length == 2 ?_literalEscape[s] : s[0])]));
         }
 
         private CharacterSet ExtractCharacterSet(
@@ -354,7 +354,10 @@ namespace Peg
             if (definition.Identifier != "Range")
                 throw new ArgumentException($"Expected Range but got {definition.Identifier}.");
 
-            var characters = (from n in node where n.Expression == CharacterSetChar select n.Value[n.Length - 1]).ToList();
+            var characters = (
+                from n in node where n.Expression == CharacterSetChar
+                let s = n.Value
+                select s.Length == 2 ? _characterSetEscape[s] : s[0]).ToList();
 
             return new CommonDomainObjects.Range<char>(
                 characters[0],
