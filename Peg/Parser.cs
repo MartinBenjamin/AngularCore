@@ -303,7 +303,7 @@ namespace Peg
                 throw new ArgumentException($"Expected Literal but got {definition.Identifier}.");
 
             node = node.Children[0];
-            if(node.Children[0].Value == "\"")
+            if (node.Children[0].Value[0] == '"')
                 return new Literal(
                     new String([.. (from n in node
                     where n.Expression == DoubleStringChar
